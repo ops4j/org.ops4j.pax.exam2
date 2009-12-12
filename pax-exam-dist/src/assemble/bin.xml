@@ -1,0 +1,10 @@
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <dependencySets>
+        <dependencySet>
+        </dependencySet>
+    </dependencySets>
+</assembly>

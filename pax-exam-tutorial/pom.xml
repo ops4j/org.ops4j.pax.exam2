@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ops4j.pax</groupId>
+    <artifactId>exam</artifactId>
+    <version>1.2.0</version>
+  </parent>
+
+  <groupId>org.ops4j.pax.exam</groupId>
+  <artifactId>pax-exam-tutorial</artifactId>
+  <version>1.2.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>OPS4J Pax Exam - Tutorial</name>
+  <repositories>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-container-default</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- use pax exam maven plugin -->
+
+      <!--
+      Note: settings and dependencies for the final osgi runtime (TESTS) are just used in TestCases
+      that annotated with this:
+      @RunWith( MavenConfiguredJUnit4TestRunner.class )
+
+      All other testcases will use their own settings/provisioning inside @Configure Methods.
+      -->
+      <plugin>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>maven-paxexam-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-config</id>
+            <goals>
+              <goal>generate-config</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+
+          <options>
+            <platform>equinox</platform>
+            <profiles>log</profiles>
+          </options>
+
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
