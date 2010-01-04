@@ -17,10 +17,13 @@
  */
 package org.ops4j.pax.exam.rbc.client;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URI;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -34,6 +37,8 @@ import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerException;
 import org.ops4j.pax.exam.spi.container.TimeoutException;
+import org.ops4j.store.Store;
+import org.ops4j.store.StoreFactory;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
@@ -53,15 +58,17 @@ public class RemoteBundleContextClient
     /**
      * RMI communication port.
      */
-    private final Integer m_rmiPort;
+    final private Integer m_rmiPort;
     /**
      * Timeout for looking up the remote bundle context via RMI.
      */
-    private final long m_rmiLookupTimeout;
+    final private long m_rmiLookupTimeout;
     /**
      * Remote bundle context instance.
      */
     private RemoteBundleContext m_remoteBundleContext;
+
+    final private Store<InputStream> m_store;
 
     /**
      * Constructor.
@@ -74,6 +81,7 @@ public class RemoteBundleContextClient
     {
         m_rmiPort = rmiPort;
         m_rmiLookupTimeout = rmiLookupTimeout;
+        m_store = StoreFactory.sharedLocalStore();
     }
 
     /**
@@ -131,6 +139,20 @@ public class RemoteBundleContextClient
                 }
             }
         );
+    }
+
+    public long installBundle( InputStream probe )
+        throws TestContainerException
+    {
+        // turn this into a local url because we don't want pass the stream any further.
+        try
+        {
+            URI location = m_store.getLocation( m_store.store( probe ) );
+            return installBundle( location.toASCIIString() );
+        } catch( IOException e )
+        {
+            throw new TestContainerException( e );
+        }
     }
 
     /**
@@ -299,8 +321,7 @@ public class RemoteBundleContextClient
                 {
                     try
                     {
-                        m_remoteBundleContext =
-                            (RemoteBundleContext) registry.lookup( RemoteBundleContext.class.getName() );
+                        m_remoteBundleContext = (RemoteBundleContext) registry.lookup( RemoteBundleContext.class.getName() );
                     }
                     catch( ConnectException e )
                     {

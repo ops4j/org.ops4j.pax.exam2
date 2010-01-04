@@ -177,6 +177,25 @@ class PaxRunnerTestContainer
         return id;
     }
 
+    public long installBundle( InputStream probe )
+        throws TestContainerException
+    {
+        LOG.debug( "Preparing and Installing bundle (from stream ).." );
+
+        long id = 0;
+        try
+        {
+            id = m_remoteBundleContextClient.installBundle( m_store.getLocation( m_store.store( probe ) ).toASCIIString() );
+        }
+        catch( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+        LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
+        return id;
+    }
+
+
     private Handle storeAndGetData( String bundleUrl )
     {
         try

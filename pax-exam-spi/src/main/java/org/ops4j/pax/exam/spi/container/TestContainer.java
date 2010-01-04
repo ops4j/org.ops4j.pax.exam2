@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
+import java.io.InputStream;
+
 /**
  * Management of an OSGi framework that can be used as a integration test container.
  *
@@ -37,6 +39,8 @@ public interface TestContainer
 
     long installBundle( String bundleLocation, byte[] bundle )
         throws TestContainerException;
+
+    long installBundle( InputStream bundleUrl );
 
     void startBundle( long bundleId )
         throws TestContainerException;
@@ -79,5 +83,4 @@ public interface TestContainer
      */
     void waitForState( long bundleId, int state, long timeoutInMillis )
         throws TimeoutException;
-
 }
