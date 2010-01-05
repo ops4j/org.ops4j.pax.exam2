@@ -29,7 +29,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
     public TestProbeBuilder addTest( Class clazz, String method )
     {
         
-        return null;
+        return this;
     }
 
     public TestProbe get()

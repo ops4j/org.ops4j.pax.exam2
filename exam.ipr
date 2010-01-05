@@ -222,6 +222,7 @@
       <module fileurl="file://$PROJECT_DIR$/maven-paxexam-plugin/maven-paxexam-plugin.iml" filepath="$PROJECT_DIR$/maven-paxexam-plugin/maven-paxexam-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-exam/pax-exam.iml" filepath="$PROJECT_DIR$/pax-exam/pax-exam.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-exam-container-default/pax-exam-container-default.iml" filepath="$PROJECT_DIR$/pax-exam-container-default/pax-exam-container-default.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pax-exam-container-native/pax-exam-container-native.iml" filepath="$PROJECT_DIR$/pax-exam-container-native/pax-exam-container-native.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-exam-container-rbc/pax-exam-container-rbc.iml" filepath="$PROJECT_DIR$/pax-exam-container-rbc/pax-exam-container-rbc.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-exam-container-rbc-client/pax-exam-container-rbc-client.iml" filepath="$PROJECT_DIR$/pax-exam-container-rbc-client/pax-exam-container-rbc-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-exam-dist/pax-exam-dist.iml" filepath="$PROJECT_DIR$/pax-exam-dist/pax-exam-dist.iml" />

@@ -38,7 +38,7 @@ public class Sample
         // capabilities you set here are container specific.
         TestContainer container = PaxExamRuntime.getTestContainerFactory()
             .newInstance(
-                options( equinox(), felix() )
+                options( felix() )
             );
 
         container.start();

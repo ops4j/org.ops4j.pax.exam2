@@ -40,7 +40,10 @@
         <module>pax-exam-runtime</module>
         <module>pax-exam-container-rbc</module>
         <module>pax-exam-container-rbc-client</module>
+
         <module>pax-exam-container-default</module>
+        <module>pax-exam-container-native</module>
+
         <module>pax-exam-junit</module>
         <module>pax-exam-junit-extender</module>
         <module>pax-exam-junit-extender-impl</module>
