@@ -35,6 +35,13 @@
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-lang</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-bnd</artifactId>
+            <version>1.1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -50,7 +57,7 @@
             <scope>test</scope>
         </dependency>
 
-         <!-- Choice 2-->
+        <!-- Choice 2-->
         <!--
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
