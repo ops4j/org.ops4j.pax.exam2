@@ -1,5 +1,5 @@
 Bundle-Activator:\
-  ${bundle.namespace}.internal.Activator
+  ${bundle.namespace}.Activator
 
 Bundle-Version>:\
   ${pom.version}
@@ -10,7 +10,7 @@ Bundle-SymbolicName:\
 Export-Package:
 
 Private-Package:\
-  ${bundle.namespace}.internal.*
+  ${bundle.namespace}.*
 
 Embed-Dependency:\
   *; scope=compile|runtime; type=!pom

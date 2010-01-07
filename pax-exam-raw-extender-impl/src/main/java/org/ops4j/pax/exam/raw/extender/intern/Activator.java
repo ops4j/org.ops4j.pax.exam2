@@ -17,11 +17,49 @@
  */
 package org.ops4j.pax.exam.raw.extender.intern;
 
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.ops4j.pax.swissbox.extender.BundleManifestScanner;
+import org.ops4j.pax.swissbox.extender.BundleWatcher;
+import org.ops4j.pax.swissbox.extender.ManifestEntry;
+import org.ops4j.pax.swissbox.extender.RegexKeyManifestFilter;
+
 /**
  * @author Toni Menzel
  * @since Dec 5, 2009
  */
-public class Activator
+public class Activator implements BundleActivator
 {
 
+   /**
+     * Bundle watcher of web.xml.
+     */
+    private BundleWatcher<ManifestEntry> m_probeWatcher;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void start( BundleContext bundleContext )
+        throws Exception
+    {
+        m_probeWatcher = new BundleWatcher<ManifestEntry>(
+            bundleContext,
+            new BundleManifestScanner(
+                new RegexKeyManifestFilter(
+                    "PaxExam-.*"
+                )
+            ),
+            new TestBundleObserver()
+        );
+        m_probeWatcher.start();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void stop( BundleContext bundleContext )
+        throws Exception
+    {
+        m_probeWatcher.stop();
+    }
 }

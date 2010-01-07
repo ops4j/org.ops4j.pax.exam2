@@ -14,7 +14,7 @@
     <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-store:1.2.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-io:1.2.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.ops4j.base:ops4j-base-monitors:1.2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.osgi:org.osgi.core:4.0.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.osgi:org.osgi.core:4.2.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.easymock:easymock:2.4" level="project" />
   </component>

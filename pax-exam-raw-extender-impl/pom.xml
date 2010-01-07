@@ -11,12 +11,12 @@
   <groupId>org.ops4j.pax.exam</groupId>
   <artifactId>pax-exam-raw-extender-impl</artifactId>
   <version>2.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
 
   <name>OPS4J Pax Exam - Raw Extender Impl</name>
   <properties>
-    <bundle.symbolicName>${namespace}.junit.extender.impl</bundle.symbolicName>
-    <bundle.namespace>${namespace}.junit.extender.impl</bundle.namespace>
+    <bundle.symbolicName>${namespace}.raw.extender.impl</bundle.symbolicName>
+    <bundle.namespace>${namespace}.raw.extender.intern</bundle.namespace>
   </properties>
 
   <build>

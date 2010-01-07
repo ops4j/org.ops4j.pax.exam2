@@ -13,10 +13,15 @@
 package org.ops4j.pax.exam.raw;
 
 import org.junit.Test;
+import org.ops4j.pax.exam.Info;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
+import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.raw.internal.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 
+import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
@@ -27,7 +32,7 @@ public class Sample
 {
 
     @Test
-    public void demo()
+    public void nativeDemo()
     {
 
         TestProbe probe = new TestProbeBuilderImpl()
@@ -36,10 +41,9 @@ public class Sample
             .get();
 
         // capabilities you set here are container specific.
-        TestContainer container = PaxExamRuntime.getTestContainerFactory()
-            .newInstance(
-                options( felix() )
-            );
+        TestContainer container = new NativeTestContainer(
+            options( felix(), getOptions() )
+        );
 
         container.start();
 
@@ -53,5 +57,32 @@ public class Sample
 
         container.stop();
 
+    }
+
+    public Option getOptions()
+    {
+
+        // always add the junit extender
+        final DefaultCompositeOption option = new DefaultCompositeOption(
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam-raw-extender" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam-raw-extender-impl" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+        );
+        return option;
     }
 }

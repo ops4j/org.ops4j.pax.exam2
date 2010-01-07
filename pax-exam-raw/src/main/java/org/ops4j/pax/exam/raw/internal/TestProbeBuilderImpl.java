@@ -12,7 +12,9 @@
  */
 package org.ops4j.pax.exam.raw.internal;
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.Properties;
 import org.ops4j.pax.exam.raw.TestHandle;
 import org.ops4j.pax.exam.raw.TestProbe;
 import org.ops4j.pax.exam.raw.TestProbeBuilder;
@@ -28,7 +30,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
 
     public TestProbeBuilder addTest( Class clazz, String method )
     {
-        
+
         return this;
     }
 
@@ -44,7 +46,8 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
 
             public InputStream getProbe()
             {
-                return null;
+                Properties p = new Properties();
+                return new BundleBuilder( p, new ResourceWriter( new File( "." ) ) ).build();
             }
         };
     }
