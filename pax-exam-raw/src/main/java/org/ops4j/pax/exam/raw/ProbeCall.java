@@ -15,33 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.raw.extender.intern;
+package org.ops4j.pax.exam.raw;
 
-import java.util.Dictionary;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
-import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 
 /**
  * @author Toni Menzel
- * @since Jan 10, 2010
+ * @since Jan 11, 2010
  */
-public class Probe
+public interface ProbeCall
 {
 
-    private final String m_service;
-    private final ProbeInvoker m_impl;
-    private final Dictionary m_dict;
+    String getInstruction();
 
-    public Probe( String service, ProbeInvoker impl, Dictionary dict )
-    {
-        m_service = service;
-        m_impl = impl;
-        m_dict = dict;
-    }
-
-    public ServiceRegistration register( BundleContext ctx )
-    {
-        return ctx.registerService( m_service, m_impl, m_dict );
-    }
+    void invoke( BundleContext ctx );
 }

@@ -21,7 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
-import org.ops4j.pax.exam.raw.extender.ProbeMethod;
 
 /**
  * @author Toni Menzel
@@ -30,21 +29,28 @@ import org.ops4j.pax.exam.raw.extender.ProbeMethod;
 public class ProbeInvokerImpl implements ProbeInvoker
 {
 
-    private BundleContext m_bundleContext;
+    private String m_expression;
+    private BundleContext m_ctx;
+    private String m_clazz;
+    private String m_method;
 
-    public ProbeInvokerImpl( BundleContext bundleContext )
+    public ProbeInvokerImpl( String expr, BundleContext bundleContext )
     {
-        m_bundleContext = bundleContext;
+        m_expression = expr;
+        // parse class and method out of expression:
+        m_clazz = "";
+        m_method = "";
+        m_ctx = bundleContext;
     }
 
-    public void call( final ProbeMethod probeMethod )
+    public void call()
         throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
-        final Class testClass = m_bundleContext.getBundle().loadClass( probeMethod.getProbeClassName() );
+        final Class testClass = m_ctx.getBundle().loadClass( m_clazz );
         int encountered = 0;
         for( final Method testMethod : testClass.getMethods() )
         {
-            if( testMethod.getName().equals( probeMethod.getProbeMethodName() ) )
+            if( testMethod.getName().equals( m_method ) )
             {
                 injectContextAndInvoke( testClass.newInstance(), testMethod );
                 encountered++;
@@ -52,7 +58,7 @@ public class ProbeInvokerImpl implements ProbeInvoker
         }
         if( encountered == 0 )
         {
-            throw new RuntimeException( " test " + probeMethod.getProbeMethodName() + " not found in test class " + testClass.getName() );
+            throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
         }
     }
 
@@ -84,7 +90,7 @@ public class ProbeInvokerImpl implements ProbeInvoker
             if( paramTypes.length == 1
                 && paramTypes[ 0 ].isAssignableFrom( BundleContext.class ) )
             {
-                testMethod.invoke( testInstance, m_bundleContext );
+                testMethod.invoke( testInstance, m_ctx );
             }
             else
             {

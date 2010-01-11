@@ -18,7 +18,12 @@
 package org.ops4j.pax.exam.raw.extender.intern;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
+import org.osgi.framework.BundleContext;
+import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
+import org.ops4j.pax.swissbox.extender.ManifestEntry;
 
 /**
  * @author Toni Menzel
@@ -27,21 +32,39 @@ import java.util.List;
 public class Parser
 {
 
-    private String m_exec;
     private Probe[] m_probes;
 
-    public Parser( String testExec )
+    public Parser( BundleContext ctx, String sigs, List<ManifestEntry> manifestEntries )
     {
-        m_exec = testExec;
+        List<String> signatures = new ArrayList<String>();
         List<Probe> probes = new ArrayList<Probe>();
 
-        for( String clazz : testExec.split( ";" ) )
+        // read signatures
+        for( String sig : sigs.split( "," ) )
         {
-            for( String m : clazz.split( "," ) )
+            System.out.println( "-- " + sig );
+            signatures.add( sig );
+        }
+        for( ManifestEntry manifestEntry : manifestEntries )
+        {
+            System.out.println( "checking " + manifestEntry.getKey() );
+            if( signatures.contains( manifestEntry.getKey() ) )
             {
-                probes.add( new Probe( clazz, m ) );
+                probes.add( make( ctx, manifestEntry.getKey(), manifestEntry.getValue() ) );
+
             }
         }
+
+        m_probes = probes.toArray( new Probe[probes.size()] );
+    }
+
+    private Probe make( BundleContext ctx, String sig, String expr )
+    {
+        // should be a service really
+        // turn this expression into a service detail later
+        Dictionary<String, String> props = new Hashtable<String, String>();
+        props.put( "Probe-Signature", sig );
+        return new Probe( ProbeInvoker.class.getName(), new ProbeInvokerImpl( expr, ctx ), props );
     }
 
     public Probe[] getProbes()

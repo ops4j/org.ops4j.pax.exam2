@@ -27,6 +27,8 @@ import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
+import static org.ops4j.pax.exam.raw.DefaultRaw.*;
+
 /**
  * @author Toni Menzel
  * @since Jan 10, 2010
@@ -40,7 +42,7 @@ public class TestProbeBuilderImplTest
     {
         TestProbeBuilder builder = new TestProbeBuilderImpl();
 
-        builder.addTest( TestProbeBuilderImplTest.class, "foo" );
+        builder.addTest( call( TestProbeBuilderImplTest.class, "foo" ) );
         InputStream inp = builder.get().getProbe();
 
         Store<InputStream> store = StoreFactory.sharedLocalStore();

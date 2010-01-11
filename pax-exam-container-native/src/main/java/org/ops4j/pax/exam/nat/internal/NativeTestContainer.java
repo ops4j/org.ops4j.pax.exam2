@@ -71,24 +71,77 @@ public class NativeTestContainer implements TestContainer
 
     }
 
-    public <T> T getService( Class<T> serviceType )
+    public <T> T getService( Class<T> serviceType, String filter )
         throws TestContainerException
     {
-        // service should appear at certain point in time
-        LOG.info( "# Framework " + m_framework.getBundleContext().getBundle().getSymbolicName() );
-
-        for( Bundle b : m_framework.getBundleContext().getBundles() )
-        {
-            LOG.debug( "+ " + b.getSymbolicName() + " in state " + b.getState() );
-        }
-        System.out.println( "---" );
-        ServiceReference reference = m_framework.getBundleContext().getServiceReference( serviceType.getName() );
-
-        if( reference == null )
+        List<T> services = getServices( serviceType, filter );
+        if( services == null )
         {
             return null;
         }
-        return (T) m_framework.getBundleContext().getService( reference );
+        else
+        {
+            return services.get( 0 );
+        }
+    }
+
+    public <T> List<T> getServices( Class<T> serviceType, String filter )
+        throws TestContainerException
+    {
+        try
+        {
+            ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences( serviceType.getName(), filter );
+            if( reference == null )
+            {
+                return null;
+            }
+
+            List<T> res = new ArrayList<T>();
+            for( ServiceReference ref : reference )
+            {
+                res.add( (T) m_framework.getBundleContext().getService( ref ) );
+            }
+
+            return res;
+
+        } catch( Exception e )
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public <T> T getService( Class<T> serviceType )
+        throws TestContainerException
+    {
+        try
+        {
+            // service should appear at certain point in time
+            LOG.info( "# Framework " + m_framework.getBundleContext().getBundle().getSymbolicName() );
+
+            for( Bundle b : m_framework.getBundleContext().getBundles() )
+            {
+                LOG.debug( "+ " + b.getSymbolicName() + " in state " + b.getState() );
+            }
+            System.out.println( "---" );
+            Thread.sleep( 1000 );
+            System.out.println( "looking for " + serviceType.getName() );
+            BundleContext ctx = m_framework.getBundleContext();
+            ServiceReference[] reference3 = ctx.getServiceReferences( null, null );
+
+            ServiceReference[] reference = ctx.getServiceReferences( serviceType.getName(), "(objectClass=*)" );
+
+            if( reference == null )
+            {
+                return null;
+            }
+            return (T) m_framework.getBundleContext().getService( reference[ 0 ] );
+
+        } catch( Exception e )
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public <T> T getService( Class<T> serviceType, long timeoutInMillis )
@@ -181,10 +234,11 @@ public class NativeTestContainer implements TestContainer
         ClassLoader parent = null;
         try
         {
-            final Map p = new HashMap();
+            final Map<String, String> p = new HashMap<String, String>();
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
             FileUtils.delete( new File( folder ) );
             p.put( "org.osgi.framework.storage", folder );
+            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" );
 
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
@@ -200,7 +254,6 @@ public class NativeTestContainer implements TestContainer
             for( String bundle : m_bundles )
             {
                 Bundle b = context.installBundle( bundle );
-
             }
             m_framework.start();
             for( Bundle b : m_framework.getBundleContext().getBundles() )
@@ -219,7 +272,6 @@ public class NativeTestContainer implements TestContainer
                 Thread.currentThread().setContextClassLoader( parent );
 
             }
-
         }
     }
 

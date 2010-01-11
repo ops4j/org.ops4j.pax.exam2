@@ -17,7 +17,10 @@
  */
 package org.ops4j.pax.exam.raw;
 
+import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
+import org.ops4j.pax.exam.raw.internal.ClassMethodProbeCall;
 import org.ops4j.pax.exam.raw.internal.TestProbeBuilderImpl;
+import org.ops4j.pax.exam.spi.container.TestContainer;
 
 /**
  * @author Toni Menzel
@@ -29,5 +32,17 @@ public class DefaultRaw
     public static TestProbeBuilder createProbe()
     {
         return new TestProbeBuilderImpl();
+    }
+
+    public static ProbeCall call( Class clazz, String method )
+    {
+        return new ClassMethodProbeCall( clazz, method );
+    }
+
+    public static void execute( TestContainer container, ProbeCall call )
+    {
+
+        ProbeInvoker probe1 = container.getService( ProbeInvoker.class, "(Probe-Signature=PaxExam-Executable-SIG1)" );
+
     }
 }

@@ -17,6 +17,7 @@ import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
+import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 
 import static org.ops4j.pax.exam.Constants.*;
@@ -32,28 +33,28 @@ public class Sample
 
     @Test
     public void nativeDemo()
-        throws InterruptedException
+        throws Exception
     {
 
-        TestProbe probe = createProbe()
-            .addTest( MyCode.class, "runMe" )
-            .addTest( MyCode.class, "runMeToo" )
-            .get();
+        TestProbeBuilder probe = createProbe()
+            .addTest( call( MyCode.class, "runMe" ) )
+            .addTest( call( MyCode.class, "runMeToo" ) )
+            .setAnchor( MyCode.class );
 
-        // capabilities you set here are container specific.
         TestContainer container = new NativeTestContainer(
-            options( felix(), getOptions() )
+            options( getOptions() )
         );
 
         container.start();
 
         // install the probe(s)
-        long id = container.installBundle( "dynamic-probe", probe.getProbe() );
+        long id = container.installBundle( probe.get().getProbe() );
         container.startBundle( id );
-        //Thread.sleep( 2000 );
-//        for( TestHandle handle : container.getService( TestProbe.class ).getTestHandles() )
+
+        // run them
+        for( ProbeCall call : probe.getTests() )
         {
-            //  handle.call();
+            execute( container, call );
         }
 
         container.stop();
@@ -87,12 +88,16 @@ public class Sample
                 .artifactId( "org.osgi.compendium" )
                 .version( "4.2.0" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-raw-extender" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+
+            /**
+
+             mavenBundle()
+             .groupId( "org.ops4j.pax.exam" )
+             .artifactId( "pax-exam-raw-extender" )
+             .version( Info.getPaxExamVersion() )
+             .update( Info.isPaxExamSnapshotVersion() )
+             .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+             **/
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-raw-extender-impl" )

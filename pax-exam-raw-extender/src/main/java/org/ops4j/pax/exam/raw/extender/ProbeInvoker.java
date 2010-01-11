@@ -35,6 +35,6 @@ public interface ProbeInvoker
      * @throws java.lang.reflect.InvocationTargetException
      *                                - Re-thrown from reflective invokation of test method
      */
-    void call( ProbeMethod probeMethod )
+    void call( )
         throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException;
 }

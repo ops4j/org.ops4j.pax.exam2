@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.spi.container;
 
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Management of an OSGi framework that can be used as a integration test container.
@@ -29,6 +30,12 @@ public interface TestContainer
 {
 
     <T> T getService( Class<T> serviceType )
+        throws TestContainerException;
+
+    <T> T getService( Class<T> serviceType, String filter )
+        throws TestContainerException;
+
+    <T> List<T> getServices( Class<T> serviceType, String filter )
         throws TestContainerException;
 
     <T> T getService( Class<T> serviceType, long timeoutInMillis )

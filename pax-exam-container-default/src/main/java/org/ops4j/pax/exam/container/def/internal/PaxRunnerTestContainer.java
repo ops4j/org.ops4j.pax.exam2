@@ -154,6 +154,18 @@ class PaxRunnerTestContainer
         return m_remoteBundleContextClient.getService( serviceType );
     }
 
+    public <T> T getService( Class<T> serviceType, String filter )
+        throws TestContainerException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public <T> List<T> getServices( Class<T> serviceType, String filter )
+        throws TestContainerException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
      */

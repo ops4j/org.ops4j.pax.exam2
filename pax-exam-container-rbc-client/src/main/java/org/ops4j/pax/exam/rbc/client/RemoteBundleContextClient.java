@@ -29,6 +29,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleException;
@@ -90,6 +91,18 @@ public class RemoteBundleContextClient
     public <T> T getService( final Class<T> serviceType )
     {
         return getService( serviceType, Constants.NO_WAIT );
+    }
+
+    public <T> T getService( Class<T> serviceType, String filter )
+        throws TestContainerException
+    {
+        return null;
+    }
+
+    public <T> List<T> getServices( Class<T> serviceType, String filter )
+        throws TestContainerException
+    {
+        return null; 
     }
 
     /**

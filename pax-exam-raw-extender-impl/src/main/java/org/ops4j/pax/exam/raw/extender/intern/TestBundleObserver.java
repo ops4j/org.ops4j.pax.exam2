@@ -67,27 +67,24 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
         String testExec = null;
         for( ManifestEntry manifestEntry : manifestEntries )
         {
+            System.out.println( "checking " + manifestEntry.getKey() );
             if( Constants.PROBE_EXECUTABLE.equals( manifestEntry.getKey() ) )
             {
                 testExec = manifestEntry.getValue();
+                break;
             }
         }
         if( testExec != null )
         {
+            System.out.println( "FOUND TEST " + testExec );
             LOG.info( "Found test: " + testExec );
-            Parser parser = new Parser( testExec );
+            Parser parser = new Parser( bundle.getBundleContext(), testExec, manifestEntries );
             for( Probe p : parser.getProbes() )
             {
-                Dictionary<String, String> props = new Hashtable<String, String>();
-                props.put( "Probe-Signature", p.getSignature() );
                 final BundleContext bundleContext = BundleUtils.getBundleContext( bundle );
-                final ServiceRegistration serviceRegistration = bundleContext.registerService(
-                    ProbeInvoker.class.getName(),
-                    new ProbeInvokerImpl( bundleContext ),
-                    props
-                );
+                final ServiceRegistration serviceRegistration = p.register( bundleContext );
                 m_registrations.put( bundle, new Registration( p, serviceRegistration ) );
-                LOG.info( "Registered testprobe [" + p.getSignature() + "]" );
+                System.out.println( "------------------Registered Test as " + ProbeInvoker.class.getName() );
             }
 
         }
@@ -106,7 +103,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
             // Do not unregister as bellow, because the services are automatically unregistered as soon as the bundle
             // for which the services are reigistred gets stopped
             // registration.serviceRegistration.unregister();
-            LOG.info( "Unregistered testcase [" + registration.probe.getSignature() + "." + "]" );
+            LOG.info( "Unregistered testcase [" + registration.probe + "." + "]" );
         }
     }
 

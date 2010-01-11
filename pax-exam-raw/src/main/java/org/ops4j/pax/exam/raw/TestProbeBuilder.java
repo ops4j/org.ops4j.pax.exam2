@@ -7,7 +7,11 @@ package org.ops4j.pax.exam.raw;
 public interface TestProbeBuilder
 {
 
-    TestProbeBuilder addTest( Class clazz, String method );
+    TestProbeBuilder addTest( ProbeCall call );
 
     TestProbe get();
+
+    TestProbeBuilder setAnchor( Class anchor );
+
+    ProbeCall[] getTests();
 }

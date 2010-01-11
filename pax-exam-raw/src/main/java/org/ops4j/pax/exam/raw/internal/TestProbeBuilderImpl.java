@@ -15,9 +15,10 @@ package org.ops4j.pax.exam.raw.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import org.ops4j.pax.exam.raw.ProbeCall;
 import org.ops4j.pax.exam.raw.TestHandle;
 import org.ops4j.pax.exam.raw.TestProbe;
 import org.ops4j.pax.exam.raw.TestProbeBuilder;
@@ -33,14 +34,25 @@ import org.ops4j.store.StoreFactory;
 public class TestProbeBuilderImpl implements TestProbeBuilder
 {
 
-    private String m_tail = null;
-    private final Multimap<String, String> m_map = HashMultimap.create();
+    private List<ProbeCall> m_probeCalls = new ArrayList<ProbeCall>();
 
-    public TestProbeBuilder addTest( Class clazz, String method )
+    private Class m_anchor;
+
+    public TestProbeBuilder addTest( ProbeCall call )
     {
-        m_tail = clazz.getName().replace( ".", "/" ) + ".class";
-        m_map.put( clazz.getName(), method );
+        m_probeCalls.add( call );
         return this;
+    }
+
+    public TestProbeBuilder setAnchor( Class clazz )
+    {
+        m_anchor = clazz;
+        return this;
+    }
+
+    public ProbeCall[] getTests()
+    {
+        return m_probeCalls.toArray( new ProbeCall[m_probeCalls.size()] );
     }
 
     public TestProbe get()
@@ -56,11 +68,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
             public InputStream getProbe()
             {
                 Properties p = new Properties();
-                p.put( "PaxExam-Executable", constructProbeTag() );
+                constructProbeTag( p );
 
                 try
                 {
-                    File base = new FileTailImpl( new File( "." ), m_tail ).getParentOfTail();
+                    String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
+                    File base = new FileTailImpl( new File( "." ), tail ).getParentOfTail();
                     return sink( new BundleBuilder( p, new ResourceWriter( base ) ).build() );
 
                 } catch( IOException e )
@@ -76,23 +89,22 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
                 return store.load( store.store( inputStream ) );
             }
 
-            private String constructProbeTag()
+            private String constructProbeTag( Properties p )
             {
                 // construct out of added Tests
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sbKeyChain = new StringBuilder();
 
-                for( String clazz : m_map.keySet() )
+                int i = 0;
+                for( ProbeCall call : m_probeCalls )
                 {
-                    sb.append( clazz );
-                    sb.append( "=" );
-                    for( String m : m_map.get( clazz ) )
-                    {
-                        sb.append( m );
-                        sb.append( "," );
-                    }
-                    sb.append( ";" );
+                    i++;
+                    String key = "PaxExam-Executable-SIG" + ( i );
+                    sbKeyChain.append( key );
+                    sbKeyChain.append( "," );
+                    p.put( key, call.getInstruction() );
                 }
-                return sb.toString();
+                p.put( "PaxExam-Executable", sbKeyChain.toString() );
+                return sbKeyChain.toString();
             }
         };
     }
