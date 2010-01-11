@@ -33,13 +33,19 @@ import org.osgi.framework.Bundle;
 import org.ops4j.io.FileUtils;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.CompositeCustomizer;
+
 import static org.ops4j.pax.exam.Constants.*;
+
 import org.ops4j.pax.exam.CoreOptions;
+
 import static org.ops4j.pax.exam.CoreOptions.*;
+
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+
 import static org.ops4j.pax.exam.OptionUtils.*;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
+
 import org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption;
 import org.ops4j.pax.exam.container.def.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.def.options.Scanner;
@@ -59,7 +65,7 @@ import org.ops4j.store.StoreFactory;
 
 /**
  * {@link TestContainer} implementation using Pax Runner.
- * 
+ *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
@@ -122,9 +128,9 @@ class PaxRunnerTestContainer
 
     /**
      * Constructor.
-     * 
+     *
      * @param javaRunner java runner to be used to start up Pax Runner
-     * @param options user startup options
+     * @param options    user startup options
      */
     PaxRunnerTestContainer( final DefaultJavaRunner javaRunner, final Option... options )
     {
@@ -169,7 +175,7 @@ class PaxRunnerTestContainer
             id =
                 m_remoteBundleContextClient.installBundle( m_store.getLocation( storeAndGetData( bundleUrl ) ).toASCIIString() );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             throw new RuntimeException( e );
         }
@@ -177,7 +183,7 @@ class PaxRunnerTestContainer
         return id;
     }
 
-    public long installBundle( InputStream probe )
+    public long installBundle( String location, InputStream probe )
         throws TestContainerException
     {
         LOG.debug( "Preparing and Installing bundle (from stream ).." );
@@ -195,13 +201,19 @@ class PaxRunnerTestContainer
         return id;
     }
 
+    public long installBundle( InputStream probe )
+        throws TestContainerException
+    {
+        long l = System.nanoTime();
+        return installBundle( "paxexamAdhocBundle-" + l, probe );
+    }
 
     private Handle storeAndGetData( String bundleUrl )
     {
         try
         {
             Handle handle = m_cache.get( bundleUrl );
-            if ( handle == null )
+            if( handle == null )
             {
                 // new, so build, customize and store
                 URL url = new URL( bundleUrl );
@@ -217,7 +229,7 @@ class PaxRunnerTestContainer
             return handle;
 
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             LOG.error( "problem in preparing probe. ", e );
         }
@@ -267,14 +279,15 @@ class PaxRunnerTestContainer
         // this makes sure the system is ready to launch a new instance.
         // this could fail, based on what acquire actually checks.
         // this also creates some persistent mark that will be removed by m_semaphore.release()
-        if ( !m_semaphore.acquire() )
+        if( !m_semaphore.acquire() )
         {
             // here we can react.
             // Prompt user with the fact that there might be another instance running.
-            if ( !FileUtils.delete( m_arguments.getWorkingFolder() ) )
+            if( !FileUtils.delete( m_arguments.getWorkingFolder() ) )
             {
                 throw new RuntimeException( "There might be another instance of Pax Exam running. Have a look at "
-                    + m_semaphore.getLockFile().getAbsolutePath() );
+                                            + m_semaphore.getLockFile().getAbsolutePath()
+                );
             }
         }
 
@@ -282,18 +295,21 @@ class PaxRunnerTestContainer
         URLUtils.resetURLStreamHandlerFactory();
         Run.start( m_javaRunner, m_arguments.getArguments() );
         LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
-            + ( System.currentTimeMillis() - startedAt ) + " millis" );
+                  + ( System.currentTimeMillis() - startedAt ) + " millis"
+        );
 
         LOG.info( "Wait for test container to finish its initialization "
-            + ( m_startTimeout == WAIT_FOREVER ? "without timing out" : "for " + m_startTimeout + " millis" ) );
+                  + ( m_startTimeout == WAIT_FOREVER ? "without timing out" : "for " + m_startTimeout + " millis" )
+        );
         try
         {
             waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, m_startTimeout );
         }
-        catch ( TimeoutException e )
+        catch( TimeoutException e )
         {
             throw new TimeoutException( "Test container did not initialize in the expected time of " + m_startTimeout
-                + " millis" );
+                                        + " millis"
+            );
         }
         m_customizers.customizeEnvironment( m_arguments.getWorkingFolder() );
 
@@ -308,13 +324,13 @@ class PaxRunnerTestContainer
         LOG.info( "Shutting down the test container (Pax Runner)" );
         try
         {
-            if ( m_started )
+            if( m_started )
             {
-                if ( m_remoteBundleContextClient != null )
+                if( m_remoteBundleContextClient != null )
                 {
                     m_remoteBundleContextClient.stop();
                 }
-                if ( m_javaRunner != null )
+                if( m_javaRunner != null )
                 {
                     m_javaRunner.waitForExit();
                 }
@@ -338,46 +354,54 @@ class PaxRunnerTestContainer
 
     /**
      * Return the options required by this container implementation.
-     * 
+     *
      * @return local options
      */
     private Option[] localOptions()
     {
-        return new Option[] {
-        // remote bundle context bundle
+        return new Option[]{
+            // remote bundle context bundle
             mavenBundle().groupId( "org.ops4j.pax.exam" ).artifactId( "pax-exam-container-rbc" ).version(
-                                                                                                          Info.getPaxExamVersion() ).update(
-                                                                                                                                             Info.isPaxExamSnapshotVersion() ).startLevel(
-                                                                                                                                                                                           START_LEVEL_SYSTEM_BUNDLES ),
+                Info.getPaxExamVersion()
+            ).update(
+                Info.isPaxExamSnapshotVersion()
+            ).startLevel(
+                START_LEVEL_SYSTEM_BUNDLES
+            ),
             // rmi communication port
             systemProperty( Constants.RMI_PORT_PROPERTY ).value( m_remoteBundleContextClient.getRmiPort().toString() ),
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
-            bootDelegationPackage( "sun.*" ) };
+            bootDelegationPackage( "sun.*" )
+        };
     }
 
     /**
      * Wrap provision options that are not already scanner provision bundles with a {@link BundleScannerProvisionOption}
      * in order to force update.
-     * 
+     *
      * @param options options to be wrapped (can be null or an empty array)
+     *
      * @return eventual wrapped bundles
      */
     private Option[] wrap( final Option... options )
     {
-        if ( options != null && options.length > 0 )
+        if( options != null && options.length > 0 )
         {
             // get provison options out of options
             final ProvisionOption[] provisionOptions = filter( ProvisionOption.class, options );
-            if ( provisionOptions != null && provisionOptions.length > 0 )
+            if( provisionOptions != null && provisionOptions.length > 0 )
             {
                 final List<Option> processed = new ArrayList<Option>();
-                for ( final ProvisionOption provisionOption : provisionOptions )
+                for( final ProvisionOption provisionOption : provisionOptions )
                 {
-                    if ( !( provisionOption instanceof Scanner ) )
+                    if( !( provisionOption instanceof Scanner ) )
                     {
                         processed.add( scanBundle( provisionOption ).start( provisionOption.shouldStart() ).startLevel(
-                                                                                                                        provisionOption.getStartLevel() ).update(
-                                                                                                                                                                  provisionOption.shouldUpdate() ) );
+                            provisionOption.getStartLevel()
+                        ).update(
+                            provisionOption.shouldUpdate()
+                        )
+                        );
                     }
                     else
                     {
@@ -387,7 +411,8 @@ class PaxRunnerTestContainer
                 // finally combine the processed provision options with the original options
                 // (where provison options are removed)
                 return combine( remove( ProvisionOption.class, options ),
-                                processed.toArray( new Option[processed.size()] ) );
+                                processed.toArray( new Option[processed.size()] )
+                );
             }
         }
         // if there is nothing to process of there are no provision options just return the original options
@@ -398,16 +423,17 @@ class PaxRunnerTestContainer
      * Determine the rmi lookup timeout.<br/>
      * Timeout is dermined by first looking for a {@link RBCLookupTimeoutOption} in the user options. If not specified a
      * default is used.
-     * 
+     *
      * @param options user options
+     *
      * @return rmi lookup timeout
      */
     private static long getRMITimeout( final Option... options )
     {
         final RBCLookupTimeoutOption[] timeoutOptions = filter( RBCLookupTimeoutOption.class, options );
-        if ( timeoutOptions.length > 0 )
+        if( timeoutOptions.length > 0 )
         {
-            return timeoutOptions[0].getTimeout();
+            return timeoutOptions[ 0 ].getTimeout();
         }
         return getTestContainerStartTimeout( options );
     }
@@ -416,24 +442,25 @@ class PaxRunnerTestContainer
      * Determine the timeout while starting the osgi framework.<br/>
      * Timeout is dermined by first looking for a {@link TestContainerStartTimeoutOption} in the user options. If not
      * specified a default is used.
-     * 
+     *
      * @param options user options
+     *
      * @return rmi lookup timeout
      */
     private static long getTestContainerStartTimeout( final Option... options )
     {
         final TestContainerStartTimeoutOption[] timeoutOptions =
             filter( TestContainerStartTimeoutOption.class, options );
-        if ( timeoutOptions.length > 0 )
+        if( timeoutOptions.length > 0 )
         {
-            return timeoutOptions[0].getTimeout();
+            return timeoutOptions[ 0 ].getTimeout();
         }
         return CoreOptions.waitForFrameworkStartup().getTimeout();
     }
 
     /**
      * Scanns ports for a free port to be used for RMI communication.
-     * 
+     *
      * @return found free port
      */
     public static Integer findFreeCommunicationPort()
