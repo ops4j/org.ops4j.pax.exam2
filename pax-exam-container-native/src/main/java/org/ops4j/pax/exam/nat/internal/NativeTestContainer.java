@@ -17,20 +17,31 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.discovery.tools.DiscoverSingleton;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerException;
+import org.ops4j.pax.exam.spi.container.TestContainerFactory;
 import org.ops4j.pax.exam.spi.container.TimeoutException;
 
 /**
@@ -40,14 +51,25 @@ import org.ops4j.pax.exam.spi.container.TimeoutException;
 public class NativeTestContainer implements TestContainer
 {
 
+    private static final Log LOG = LogFactory.getLog( NativeTestContainer.class );
     final private List<String> m_bundles;
 
     private Framework m_framework;
 
     public NativeTestContainer( Option[] options )
     {
+        // install url handlers:
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+
         // catch all bundles
         m_bundles = new ArrayList<String>();
+        for( Option option : options )
+        {
+            if( option instanceof ProvisionOption )
+            {
+                m_bundles.add( ( (ProvisionOption) ( (ProvisionOption) option ) ).getURL() );
+            }
+        }
 
     }
 
@@ -55,7 +77,19 @@ public class NativeTestContainer implements TestContainer
         throws TestContainerException
     {
         // service should appear at certain point in time
+        LOG.info( "# Framework " + m_framework.getBundleContext().getBundle().getSymbolicName() );
+
+        for( Bundle b : m_framework.getBundleContext().getBundles() )
+        {
+            LOG.debug( "+ " + b.getSymbolicName() + " in state " + b.getState() );
+        }
+        System.out.println( "---" );
         ServiceReference reference = m_framework.getBundleContext().getServiceReference( serviceType.getName() );
+
+        if( reference == null )
+        {
+            return null;
+        }
         return (T) m_framework.getBundleContext().getService( reference );
     }
 
@@ -68,18 +102,43 @@ public class NativeTestContainer implements TestContainer
     public long installBundle( String bundleUrl )
         throws TestContainerException
     {
-        return 0;
+        try
+        {
+            return installBundle( bundleUrl, new URL( bundleUrl ).openStream() );
+        } catch( IOException e )
+        {
+            throw new TestContainerException( e );
+        }
+    }
+
+    public long installBundle( InputStream inp )
+        throws TestContainerException
+    {
+        long time = System.nanoTime();
+        return installBundle( "PaxExamAdhocBundle" + time, inp );
     }
 
     public long installBundle( String bundleLocation, byte[] bundle )
         throws TestContainerException
     {
-        return 0;
+        return installBundle( bundleLocation, new ByteArrayInputStream( bundle ) );
     }
 
-    public long installBundle( InputStream bundleUrl )
+    public long installBundle( String location, InputStream stream )
     {
-        return 0;
+        try
+        {
+            Bundle b = m_framework.getBundleContext().installBundle( location, stream );
+            LOG.debug( "Installed bundle " + location + " as Bundle ID " + b.getBundleId() );
+
+            // stream.close();
+            b.start();
+            return b.getBundleId();
+        } catch( BundleException e )
+        {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public void startBundle( long bundleId )
@@ -119,17 +178,31 @@ public class NativeTestContainer implements TestContainer
         try
         {
             Map p = new HashMap();
-            p.put( "org.osgi.framework.storage", System.getProperty( "user.home" ) + File.separator + "osgi" );
-            FrameworkFactory factory = (FrameworkFactory) Class.forName( "org.apache.felix.framework.FrameworkFactory" ).newInstance();
+            String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
+            FileUtils.delete( new File( folder ) );
+            p.put( "org.osgi.framework.storage", folder );
+
+            // org/eclipse/osgi/launch/EquinoxFactory.class
+            // org.apache.felix.framework.FrameworkFactory
+            FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
+
+            // FrameworkFactory factory = (FrameworkFactory) Class.forName( "org.eclipse.osgi.launch.EquinoxFactory" ).newInstance();
             m_framework = factory.newFramework( p );
             m_framework.init();
+
             BundleContext context = m_framework.getBundleContext();
             for( String bundle : m_bundles )
             {
-                context.installBundle( bundle );
+                Bundle b = context.installBundle( bundle );
+
             }
             m_framework.start();
-            m_framework.waitForStop( 0 );
+            for( Bundle b : m_framework.getBundleContext().getBundles() )
+            {
+                b.start();
+                LOG.debug( "Started: " + b.getSymbolicName() );
+            }
+
         } catch( Exception e )
         {
             e.printStackTrace();
