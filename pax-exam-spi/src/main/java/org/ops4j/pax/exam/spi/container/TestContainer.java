@@ -40,7 +40,9 @@ public interface TestContainer
     long installBundle( String bundleLocation, byte[] bundle )
         throws TestContainerException;
 
-    long installBundle( InputStream bundleUrl );
+    long installBundle( String location, InputStream stream );
+
+    long installBundle( InputStream stream );
 
     void startBundle( long bundleId )
         throws TestContainerException;
