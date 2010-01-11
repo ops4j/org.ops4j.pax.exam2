@@ -86,6 +86,7 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../../pax/url/pax-url-dir/pom.xml" />
+        <option value="$PROJECT_DIR$/../../pax/swissbox/pax-swissbox-bnd/pom.xml" />
       </list>
     </option>
   </component>
@@ -236,6 +237,7 @@
       <module fileurl="file://$PROJECT_DIR$/pax-exam-runtime/pax-exam-runtime.iml" filepath="$PROJECT_DIR$/pax-exam-runtime/pax-exam-runtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-exam-spi/pax-exam-spi.iml" filepath="$PROJECT_DIR$/pax-exam-spi/pax-exam-spi.iml" />
       <module fileurl="file://$PROJECT_DIR$/pax-exam-testng/pax-exam-testng.iml" filepath="$PROJECT_DIR$/pax-exam-testng/pax-exam-testng.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../pax/swissbox/pax-swissbox-bnd/pax-swissbox-bnd.iml" filepath="$PROJECT_DIR$/../../pax/swissbox/pax-swissbox-bnd/pax-swissbox-bnd.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../pax/url/pax-url-dir/pax-url-dir.iml" filepath="$PROJECT_DIR$/../../pax/url/pax-url-dir/pax-url-dir.iml" />
     </modules>
   </component>
@@ -268,6 +270,7 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/../../pax/swissbox/pax-swissbox-bnd" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../pax/url/pax-url-dir" vcs="svn" />
   </component>
   <component name="VssConfiguration">
@@ -1086,17 +1089,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/easymock/easymock/2.3/easymock-2.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.ops4j.pax.swissbox:pax-swissbox-bnd:1.1.0">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/swissbox/pax-swissbox-bnd/1.1.0/pax-swissbox-bnd-1.1.0.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/swissbox/pax-swissbox-bnd/1.1.0/pax-swissbox-bnd-1.1.0-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/swissbox/pax-swissbox-bnd/1.1.0/pax-swissbox-bnd-1.1.0-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.osgi:org.osgi.core:4.2.0">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar!/" />
@@ -1108,17 +1100,6 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.apache.felix:org.apache.felix.framework:2.0.1">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/2.0.1/org.apache.felix.framework-2.0.1.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/2.0.1/org.apache.felix.framework-2.0.1-javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/2.0.1/org.apache.felix.framework-2.0.1-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Maven: org.ops4j.pax.swissbox:pax-swissbox-property:1.2.0">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/swissbox/pax-swissbox-property/1.2.0/pax-swissbox-property-1.2.0.jar!/" />
@@ -1128,6 +1109,50 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/swissbox/pax-swissbox-property/1.2.0/pax-swissbox-property-1.2.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.ops4j.pax.url:pax-url-mvn:1.1.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/url/pax-url-mvn/1.1.2/pax-url-mvn-1.1.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/url/pax-url-mvn/1.1.2/pax-url-mvn-1.1.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/pax/url/pax-url-mvn/1.1.2/pax-url-mvn-1.1.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.ops4j.base:ops4j-base-lang:1.2.2-SNAPSHOT">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/base/ops4j-base-lang/1.2.2-SNAPSHOT/ops4j-base-lang-1.2.2-SNAPSHOT.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/base/ops4j-base-lang/1.2.2-SNAPSHOT/ops4j-base-lang-1.2.2-SNAPSHOT-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/ops4j/base/ops4j-base-lang/1.2.2-SNAPSHOT/ops4j-base-lang-1.2.2-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.google.collections:google-collections:1.0">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/collections/google-collections/1.0/google-collections-1.0.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/collections/google-collections/1.0/google-collections-1.0-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/google/collections/google-collections/1.0/google-collections-1.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.apache.felix:org.apache.felix.framework:2.0.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/2.0.1/org.apache.felix.framework-2.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/2.0.1/org.apache.felix.framework-2.0.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/2.0.1/org.apache.felix.framework-2.0.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.osgi:org.osgi.compendium:4.2.0">

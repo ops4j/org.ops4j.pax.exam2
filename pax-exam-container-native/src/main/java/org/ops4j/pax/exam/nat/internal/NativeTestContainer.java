@@ -29,7 +29,6 @@ import java.util.Map;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -41,7 +40,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerException;
-import org.ops4j.pax.exam.spi.container.TestContainerFactory;
 import org.ops4j.pax.exam.spi.container.TimeoutException;
 
 /**
@@ -158,11 +156,16 @@ public class NativeTestContainer implements TestContainer
     {
         try
         {
+            LOG.debug( "Framework goes down.." );
             m_framework.stop();
+            m_framework.waitForStop( 1000 );
 
         } catch( BundleException e )
         {
             e.printStackTrace();
+        } catch( InterruptedException e )
+        {
+
         }
     }
 
@@ -175,19 +178,22 @@ public class NativeTestContainer implements TestContainer
     public void start()
         throws TimeoutException
     {
+        ClassLoader parent = null;
         try
         {
-            Map p = new HashMap();
+            final Map p = new HashMap();
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
             FileUtils.delete( new File( folder ) );
             p.put( "org.osgi.framework.storage", folder );
 
-            // org/eclipse/osgi/launch/EquinoxFactory.class
-            // org.apache.felix.framework.FrameworkFactory
+            // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
+            parent = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader( null );
+
             FrameworkFactory factory = (FrameworkFactory) DiscoverSingleton.find( FrameworkFactory.class );
 
-            // FrameworkFactory factory = (FrameworkFactory) Class.forName( "org.eclipse.osgi.launch.EquinoxFactory" ).newInstance();
             m_framework = factory.newFramework( p );
+
             m_framework.init();
 
             BundleContext context = m_framework.getBundleContext();
@@ -202,10 +208,35 @@ public class NativeTestContainer implements TestContainer
                 b.start();
                 LOG.debug( "Started: " + b.getSymbolicName() );
             }
-
+            Thread.currentThread().setContextClassLoader( parent );
         } catch( Exception e )
         {
             e.printStackTrace();
+        } finally
+        {
+            if( parent != null )
+            {
+                Thread.currentThread().setContextClassLoader( parent );
+
+            }
+
         }
+    }
+
+    private FrameworkFactory getFrameworkFactory( String factoryClass )
+        throws ClassNotFoundException
+
+    {
+        return null;//return (FrameworkFactory) Class.forName( factoryClass );
+    }
+
+    private String getFelixFactory()
+    {
+        return "org.apache.felix.framework.FrameworkFactory";
+    }
+
+    private String getEquinoxFactory()
+    {
+        return "org.eclipse.osgi.launch.EquinoxFactory";
     }
 }

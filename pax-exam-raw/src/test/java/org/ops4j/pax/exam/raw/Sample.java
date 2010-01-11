@@ -17,12 +17,11 @@ import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
-import org.ops4j.pax.exam.raw.internal.TestProbeBuilderImpl;
-import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.raw.DefaultRaw.*;
 
 /**
  * @author Toni Menzel
@@ -36,7 +35,7 @@ public class Sample
         throws InterruptedException
     {
 
-        TestProbe probe = new TestProbeBuilderImpl()
+        TestProbe probe = createProbe()
             .addTest( MyCode.class, "runMe" )
             .addTest( MyCode.class, "runMeToo" )
             .get();
@@ -75,12 +74,13 @@ public class Sample
             mavenBundle()
                 .groupId( "org.ops4j.pax.logging" )
                 .artifactId( "pax-logging-api" )
-                .version( "1.4.1-SNAPSHOT" )
+                .version( "1.4" )
+                //.version( "1.4.1-SNAPSHOT" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             mavenBundle()
                 .groupId( "org.ops4j.pax.logging" )
                 .artifactId( "pax-logging-service" )
-                .version( "1.4.1-SNAPSHOT" )
+                .version( "1.4" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             mavenBundle()
                 .groupId( "org.osgi" )
