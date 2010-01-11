@@ -195,6 +195,19 @@ public class RemoteBundleContextClient
         }
     }
 
+    public long installBundle( String loc, InputStream stream )
+    {
+        // turn this into a local url because we don't want pass the stream any further.
+        try
+        {
+            URI location = m_store.getLocation( m_store.store( stream ) );
+            return installBundle( location.toASCIIString() );
+        } catch( IOException e )
+        {
+            throw new TestContainerException( e );
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

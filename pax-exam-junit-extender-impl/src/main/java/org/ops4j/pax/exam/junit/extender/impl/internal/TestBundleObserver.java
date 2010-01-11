@@ -67,6 +67,7 @@ class TestBundleObserver
     public void addingEntries( final Bundle bundle,
                                final List<ManifestEntry> manifestEntries )
     {
+        System.out.println( "Found !" );
         String testClassName = null;
         String testMethodName = null;
         for( ManifestEntry manifestEntry : manifestEntries )
