@@ -25,13 +25,9 @@ public class Constants
 {
 
     /**
-     * Manifest header specifying the full qualified name of the test class.
+     * Manifest header specifying the string of executable services.
      */
-    public static final String PROBE_TEST_CLASS = "PaxExam-TestClassName";
-    /**
-     * Manifest header specifying the test method name in the test class.
-     */
-    public static final String PROBE_TEST_METHOD = "PaxExam-TestMethodName";
+    public static final String PROBE_EXECUTABLE = "PaxExam-Executable";
     /**
      * Test bundle symbolic name.
      */

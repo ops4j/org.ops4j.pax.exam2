@@ -13,11 +13,16 @@
 package org.ops4j.pax.exam.raw.internal;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.ops4j.pax.exam.raw.TestHandle;
 import org.ops4j.pax.exam.raw.TestProbe;
 import org.ops4j.pax.exam.raw.TestProbeBuilder;
+import org.ops4j.store.Store;
+import org.ops4j.store.StoreFactory;
 
 /**
  * Default implementation allows you to dynamically create a probe from current classpath.
@@ -28,9 +33,13 @@ import org.ops4j.pax.exam.raw.TestProbeBuilder;
 public class TestProbeBuilderImpl implements TestProbeBuilder
 {
 
+    private String m_tail = null;
+    private final Multimap<String, String> m_map = HashMultimap.create();
+
     public TestProbeBuilder addTest( Class clazz, String method )
     {
-
+        m_tail = clazz.getName().replace( ".", "/" ) + ".class";
+        m_map.put( clazz.getName(), method );
         return this;
     }
 
@@ -47,7 +56,43 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
             public InputStream getProbe()
             {
                 Properties p = new Properties();
-                return new BundleBuilder( p, new ResourceWriter( new File( "." ) ) ).build();
+                p.put( "PaxExam-Executable", constructProbeTag() );
+
+                try
+                {
+                    File base = new FileTailImpl( new File( "." ), m_tail ).getParentOfTail();
+                    return sink( new BundleBuilder( p, new ResourceWriter( base ) ).build() );
+
+                } catch( IOException e )
+                {
+                    throw new RuntimeException( e );
+                }
+            }
+
+            private InputStream sink( InputStream inputStream )
+                throws IOException
+            {
+                Store<InputStream> store = StoreFactory.anonymousStore();
+                return store.load( store.store( inputStream ) );
+            }
+
+            private String constructProbeTag()
+            {
+                // construct out of added Tests
+                StringBuilder sb = new StringBuilder();
+
+                for( String clazz : m_map.keySet() )
+                {
+                    sb.append( clazz );
+                    sb.append( "=" );
+                    for( String m : m_map.get( clazz ) )
+                    {
+                        sb.append( m );
+                        sb.append( "," );
+                    }
+                    sb.append( ";" );
+                }
+                return sb.toString();
             }
         };
     }

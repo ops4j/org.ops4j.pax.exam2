@@ -33,6 +33,7 @@ public class Sample
 
     @Test
     public void nativeDemo()
+        throws InterruptedException
     {
 
         TestProbe probe = new TestProbeBuilderImpl()
@@ -48,11 +49,12 @@ public class Sample
         container.start();
 
         // install the probe(s)
-        container.installBundle( probe.getProbe() );
-
-        for( TestHandle handle : container.getService( TestProbe.class ).getTestHandles() )
+        long id = container.installBundle( "dynamic-probe", probe.getProbe() );
+        container.startBundle( id );
+        //Thread.sleep( 2000 );
+//        for( TestHandle handle : container.getService( TestProbe.class ).getTestHandles() )
         {
-            handle.call();
+            //  handle.call();
         }
 
         container.stop();
@@ -69,6 +71,21 @@ public class Sample
                 .artifactId( "pax-exam" )
                 .version( Info.getPaxExamVersion() )
                 .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.logging" )
+                .artifactId( "pax-logging-api" )
+                .version( "1.4.1-SNAPSHOT" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.logging" )
+                .artifactId( "pax-logging-service" )
+                .version( "1.4.1-SNAPSHOT" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.osgi" )
+                .artifactId( "org.osgi.compendium" )
+                .version( "4.2.0" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )

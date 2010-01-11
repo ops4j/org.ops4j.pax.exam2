@@ -64,32 +64,32 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
     public void addingEntries( final Bundle bundle,
                                final List<ManifestEntry> manifestEntries )
     {
-        String testClassName = null;
-        String testMethodName = null;
+        String testExec = null;
         for( ManifestEntry manifestEntry : manifestEntries )
         {
-            if( Constants.PROBE_TEST_CLASS.equals( manifestEntry.getKey() ) )
+            if( Constants.PROBE_EXECUTABLE.equals( manifestEntry.getKey() ) )
             {
-                testClassName = manifestEntry.getValue();
-            }
-            if( Constants.PROBE_TEST_METHOD.equals( manifestEntry.getKey() ) )
-            {
-                testMethodName = manifestEntry.getValue();
+                testExec = manifestEntry.getValue();
             }
         }
-        if( testClassName != null && testMethodName != null )
+        if( testExec != null )
         {
-            LOG.info( "Found test: " + testClassName + "." + testMethodName );
-            Dictionary<String, String> props = new Hashtable<String, String>();
+            LOG.info( "Found test: " + testExec );
+            Parser parser = new Parser( testExec );
+            for( Probe p : parser.getProbes() )
+            {
+                Dictionary<String, String> props = new Hashtable<String, String>();
+                props.put( "Probe-Signature", p.getSignature() );
+                final BundleContext bundleContext = BundleUtils.getBundleContext( bundle );
+                final ServiceRegistration serviceRegistration = bundleContext.registerService(
+                    ProbeInvoker.class.getName(),
+                    new ProbeInvokerImpl( bundleContext ),
+                    props
+                );
+                m_registrations.put( bundle, new Registration( p, serviceRegistration ) );
+                LOG.info( "Registered testprobe [" + p.getSignature() + "]" );
+            }
 
-            final BundleContext bundleContext = BundleUtils.getBundleContext( bundle );
-            final ServiceRegistration serviceRegistration = bundleContext.registerService(
-                ProbeInvoker.class.getName(),
-                new ProbeInvokerImpl( bundleContext ),
-                props
-            );
-            m_registrations.put( bundle, new Registration( testClassName, testMethodName, serviceRegistration ) );
-            LOG.info( "Registered testcase [" + testClassName + "." + testMethodName + "]" );
         }
     }
 
@@ -106,7 +106,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
             // Do not unregister as bellow, because the services are automatically unregistered as soon as the bundle
             // for which the services are reigistred gets stopped
             // registration.serviceRegistration.unregister();
-            LOG.info( "Unregistered testcase [" + registration.testCase + "." + registration.testMethod + "]" );
+            LOG.info( "Unregistered testcase [" + registration.probe.getSignature() + "." + "]" );
         }
     }
 
@@ -116,16 +116,13 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
     private static class Registration
     {
 
-        final String testCase;
-        final String testMethod;
+        final Probe probe;
         final ServiceRegistration serviceRegistration;
 
-        public Registration( final String testCase,
-                             final String testMethod,
+        public Registration( Probe probe,
                              final ServiceRegistration serviceRegistration )
         {
-            this.testCase = testCase;
-            this.testMethod = testMethod;
+            this.probe = probe;
             this.serviceRegistration = serviceRegistration;
         }
     }
