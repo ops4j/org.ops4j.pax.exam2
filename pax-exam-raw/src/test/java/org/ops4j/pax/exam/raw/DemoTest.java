@@ -28,7 +28,7 @@ import static org.ops4j.pax.exam.raw.DefaultRaw.*;
  * @author Toni Menzel
  * @since Dec 2, 2009
  */
-public class Sample
+public class DemoTest
 {
 
     @Test
@@ -58,7 +58,6 @@ public class Sample
         }
 
         container.stop();
-
     }
 
     public Option getOptions()

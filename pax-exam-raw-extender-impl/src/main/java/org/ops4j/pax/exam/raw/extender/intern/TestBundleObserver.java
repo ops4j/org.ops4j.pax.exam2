@@ -67,7 +67,6 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
         String testExec = null;
         for( ManifestEntry manifestEntry : manifestEntries )
         {
-            System.out.println( "checking " + manifestEntry.getKey() );
             if( Constants.PROBE_EXECUTABLE.equals( manifestEntry.getKey() ) )
             {
                 testExec = manifestEntry.getValue();
@@ -76,7 +75,6 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
         }
         if( testExec != null )
         {
-            System.out.println( "FOUND TEST " + testExec );
             LOG.info( "Found test: " + testExec );
             Parser parser = new Parser( bundle.getBundleContext(), testExec, manifestEntries );
             for( Probe p : parser.getProbes() )
@@ -84,7 +82,6 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
                 final BundleContext bundleContext = BundleUtils.getBundleContext( bundle );
                 final ServiceRegistration serviceRegistration = p.register( bundleContext );
                 m_registrations.put( bundle, new Registration( p, serviceRegistration ) );
-                System.out.println( "------------------Registered Test as " + ProbeInvoker.class.getName() );
             }
 
         }

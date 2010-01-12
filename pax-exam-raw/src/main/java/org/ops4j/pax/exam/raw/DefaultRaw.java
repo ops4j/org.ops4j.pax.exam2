@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.raw;
 
+import java.lang.reflect.InvocationTargetException;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.raw.internal.ClassMethodProbeCall;
 import org.ops4j.pax.exam.raw.internal.TestProbeBuilderImpl;
@@ -28,6 +29,7 @@ import org.ops4j.pax.exam.spi.container.TestContainer;
  */
 public class DefaultRaw
 {
+    private static int id = 0;
 
     public static TestProbeBuilder createProbe()
     {
@@ -36,13 +38,12 @@ public class DefaultRaw
 
     public static ProbeCall call( Class clazz, String method )
     {
-        return new ClassMethodProbeCall( clazz, method );
+        return new ClassMethodProbeCall( "PaxExam-Executable-SIG" + ( id++ ), clazz, method );
     }
 
     public static void execute( TestContainer container, ProbeCall call )
+        throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-
-        ProbeInvoker probe1 = container.getService( ProbeInvoker.class, "(Probe-Signature=PaxExam-Executable-SIG1)" );
-
+        container.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")" ).call();
     }
 }

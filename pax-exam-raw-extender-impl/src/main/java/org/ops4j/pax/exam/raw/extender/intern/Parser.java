@@ -42,16 +42,13 @@ public class Parser
         // read signatures
         for( String sig : sigs.split( "," ) )
         {
-            System.out.println( "-- " + sig );
             signatures.add( sig );
         }
         for( ManifestEntry manifestEntry : manifestEntries )
         {
-            System.out.println( "checking " + manifestEntry.getKey() );
             if( signatures.contains( manifestEntry.getKey() ) )
             {
                 probes.add( make( ctx, manifestEntry.getKey(), manifestEntry.getValue() ) );
-
             }
         }
 

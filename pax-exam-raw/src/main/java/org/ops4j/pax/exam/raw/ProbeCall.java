@@ -29,4 +29,6 @@ public interface ProbeCall
     String getInstruction();
 
     void invoke( BundleContext ctx );
+
+     public String signature();
 }

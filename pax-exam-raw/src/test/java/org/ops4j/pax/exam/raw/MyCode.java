@@ -12,6 +12,9 @@
  */
 package org.ops4j.pax.exam.raw;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+
 /**
  * This class can be a minimal pax exam test using pax exam raw api.
  *
@@ -24,5 +27,14 @@ public class MyCode
     public void runMe()
     {
         System.out.println( "Hello World!" );
+    }
+
+    public void runMeToo( BundleContext ctx )
+    {
+        System.out.println( "Hello World 2" );
+        for( Bundle b : ctx.getBundles() )
+        {
+            System.out.println( "Have " + b.getSymbolicName() );
+        }
     }
 }

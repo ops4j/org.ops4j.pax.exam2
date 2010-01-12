@@ -42,7 +42,7 @@ public class TestProbeBuilderImplTest
     {
         TestProbeBuilder builder = new TestProbeBuilderImpl();
 
-        builder.addTest( call( TestProbeBuilderImplTest.class, "foo" ) );
+        builder.addTest( call( TestProbeBuilderImplTest.class, "foo" ) ).setAnchor( TestProbeBuilderImplTest.class );
         InputStream inp = builder.get().getProbe();
 
         Store<InputStream> store = StoreFactory.sharedLocalStore();

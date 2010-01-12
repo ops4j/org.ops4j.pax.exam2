@@ -94,14 +94,11 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
                 // construct out of added Tests
                 StringBuilder sbKeyChain = new StringBuilder();
 
-                int i = 0;
                 for( ProbeCall call : m_probeCalls )
                 {
-                    i++;
-                    String key = "PaxExam-Executable-SIG" + ( i );
-                    sbKeyChain.append( key );
+                    sbKeyChain.append( call.signature() );
                     sbKeyChain.append( "," );
-                    p.put( key, call.getInstruction() );
+                    p.put( call.signature(), call.getInstruction() );
                 }
                 p.put( "PaxExam-Executable", sbKeyChain.toString() );
                 return sbKeyChain.toString();

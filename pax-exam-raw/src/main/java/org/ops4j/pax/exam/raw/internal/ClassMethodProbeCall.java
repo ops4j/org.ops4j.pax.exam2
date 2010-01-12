@@ -29,11 +29,13 @@ public class ClassMethodProbeCall implements ProbeCall
 
     final private String m_clazz;
     final private String m_method;
+    private String m_sig;
 
-    public ClassMethodProbeCall( Class clazz, String method )
+    public ClassMethodProbeCall( String sig, Class clazz, String method )
     {
         m_clazz = clazz.getName();
         m_method = method;
+        m_sig = sig;
     }
 
     public ClassMethodProbeCall( String s )
@@ -52,6 +54,11 @@ public class ClassMethodProbeCall implements ProbeCall
     public void invoke( BundleContext ctx )
     {
         System.out.println( "Should invoke now.." );
+    }
+
+    public String signature()
+    {
+        return m_sig;
     }
 
 

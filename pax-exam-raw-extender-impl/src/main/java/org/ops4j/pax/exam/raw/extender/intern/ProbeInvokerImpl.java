@@ -38,8 +38,9 @@ public class ProbeInvokerImpl implements ProbeInvoker
     {
         m_expression = expr;
         // parse class and method out of expression:
-        m_clazz = "";
-        m_method = "";
+        String[] parts = expr.split( ";" );
+        m_clazz = parts[ 0 ];
+        m_method = parts[ 1 ];
         m_ctx = bundleContext;
     }
 
