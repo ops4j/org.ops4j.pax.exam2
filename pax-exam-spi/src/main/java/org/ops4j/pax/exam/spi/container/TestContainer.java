@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * Management of an OSGi framework that can be used as a integration test container.
+ * Each container is also a test target.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
@@ -31,25 +32,13 @@ public interface TestContainer extends TestTarget
 {
 
     /**
-     *
-     * @param location
-     * @param stream
-     * @return
-     */
-    long installBundle( String location, InputStream stream );
-
-    /**
-     * 
      * @param bundleId
-     * @throws TestContainerException
      */
     void startBundle( long bundleId )
         throws TestContainerException;
 
-     /**
-     * 
+    /**
      * @param bundleId
-     * @throws TestContainerException
      */
     void stopBundle( long bundleId )
         throws TestContainerException;
