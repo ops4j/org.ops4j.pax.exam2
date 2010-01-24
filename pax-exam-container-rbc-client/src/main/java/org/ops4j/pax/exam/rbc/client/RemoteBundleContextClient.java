@@ -382,9 +382,4 @@ public class RemoteBundleContextClient
         return m_rmiPort;
     }
 
-    public <T> List<T> getServices( Class<T> serviceType, String filter, long timeoutInMillis )
-        throws TestContainerException
-    {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

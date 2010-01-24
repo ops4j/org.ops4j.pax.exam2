@@ -71,21 +71,7 @@ public class NativeTestContainer implements TestContainer
 
     }
 
-    public <T> T getService( Class<T> serviceType, String filter )
-        throws TestContainerException
-    {
-        List<T> services = getServices( serviceType, filter );
-        if( services == null )
-        {
-            return null;
-        }
-        else
-        {
-            return services.get( 0 );
-        }
-    }
-
-    public <T> List<T> getServices( Class<T> serviceType, String filter )
+    public <T> T getService( Class<T> serviceType, String filter, long timeout )
         throws TestContainerException
     {
         try
@@ -96,58 +82,16 @@ public class NativeTestContainer implements TestContainer
                 return null;
             }
 
-            List<T> res = new ArrayList<T>();
             for( ServiceReference ref : reference )
             {
-                res.add( (T) m_framework.getBundleContext().getService( ref ) );
+                return ( (T) m_framework.getBundleContext().getService( ref ) );
             }
-
-            return res;
 
         } catch( Exception e )
         {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public <T> T getService( Class<T> serviceType )
-        throws TestContainerException
-    {
-        try
-        {
-            // service should appear at certain point in time
-            LOG.info( "# Framework " + m_framework.getBundleContext().getBundle().getSymbolicName() );
-
-            for( Bundle b : m_framework.getBundleContext().getBundles() )
-            {
-                LOG.debug( "+ " + b.getSymbolicName() + " in state " + b.getState() );
-            }
-            System.out.println( "---" );
-            Thread.sleep( 1000 );
-            System.out.println( "looking for " + serviceType.getName() );
-            BundleContext ctx = m_framework.getBundleContext();
-            ServiceReference[] reference3 = ctx.getServiceReferences( null, null );
-
-            ServiceReference[] reference = ctx.getServiceReferences( serviceType.getName(), "(objectClass=*)" );
-
-            if( reference == null )
-            {
-                return null;
-            }
-            return (T) m_framework.getBundleContext().getService( reference[ 0 ] );
-
-        } catch( Exception e )
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public <T> T getService( Class<T> serviceType, long timeoutInMillis )
-        throws TestContainerException
-    {
-        return getService( serviceType );
     }
 
     public long installBundle( String bundleUrl )
@@ -195,19 +139,37 @@ public class NativeTestContainer implements TestContainer
     public void startBundle( long bundleId )
         throws TestContainerException
     {
-
+        try
+        {
+            m_framework.getBundleContext().getBundle( bundleId ).start();
+        } catch( BundleException e )
+        {
+            e.printStackTrace();
+        }
     }
 
     public void stopBundle( long bundleId )
         throws TestContainerException
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        try
+        {
+            m_framework.getBundleContext().getBundle( bundleId ).stop();
+        } catch( BundleException e )
+        {
+            e.printStackTrace();
+        }
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )
         throws TestContainerException
     {
-        // overwrite startlevels of bundles to start.
+        try
+        {
+            m_framework.getBundleContext().getBundle( bundleId ).start( startLevel );
+        } catch( BundleException e )
+        {
+            e.printStackTrace();
+        }
     }
 
     public void stop()

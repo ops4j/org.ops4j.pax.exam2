@@ -138,11 +138,11 @@ public class PaxRunnerTestContainer
         m_cache = new HashMap<String, Handle>();
     }
 
-    public <T> List<T> getServices( Class<T> serviceType, String filter, long timeoutInMillis )
+    public <T> T getService( Class<T> serviceType, String filter, long timeoutInMillis )
         throws TestContainerException
     {
         LOG.debug( "Lookup a [" + serviceType.getName() + "]" );
-        return m_remoteBundleContextClient.getServices( serviceType, filter, timeoutInMillis );
+        return m_remoteBundleContextClient.getService( serviceType, filter, timeoutInMillis );
     }
 
     public long installBundle( String location, InputStream probe )

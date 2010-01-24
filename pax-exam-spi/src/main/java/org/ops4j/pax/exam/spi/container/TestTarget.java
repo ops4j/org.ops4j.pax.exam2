@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
-import java.util.List;
-
 /**
  * @author Toni Menzel
  * @since Jan 22, 2010
@@ -26,6 +24,6 @@ import java.util.List;
 public interface TestTarget
 {
 
-    <T> List<T> getServices( Class<T> serviceType, String filter, long timeoutInMillis )
+    <T> T getService( Class<T> serviceType, String filter, long timeoutInMillis )
         throws TestContainerException;
 }
