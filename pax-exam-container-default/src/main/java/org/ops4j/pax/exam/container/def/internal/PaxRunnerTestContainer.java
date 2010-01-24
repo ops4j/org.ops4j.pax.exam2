@@ -67,19 +67,12 @@ import org.ops4j.store.StoreFactory;
  * {@link TestContainer} implementation using Pax Runner.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
+ * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
  */
-class PaxRunnerTestContainer
+public class PaxRunnerTestContainer
     implements TestContainer
 {
-
-    /**
-     * JCL logger.
-     */
-    // private static final Log LOG = GrowlFactory.getLogger( LogFactory.getLog( PaxRunnerTestContainer.class ),
-    // "Pax Exam",
-    // GrowlLogger.GROWL_INFO | GrowlLogger.GROWL_ERROR
-    // );
 
     private static final Log LOG = LogFactory.getLog( PaxRunnerTestContainer.class );
 
@@ -132,7 +125,7 @@ class PaxRunnerTestContainer
      * @param javaRunner java runner to be used to start up Pax Runner
      * @param options    user startup options
      */
-    PaxRunnerTestContainer( final DefaultJavaRunner javaRunner, final Option... options )
+    public PaxRunnerTestContainer( final DefaultJavaRunner javaRunner, final Option... options )
     {
         m_javaRunner = javaRunner;
         m_startTimeout = getTestContainerStartTimeout( options );
@@ -145,54 +138,11 @@ class PaxRunnerTestContainer
         m_cache = new HashMap<String, Handle>();
     }
 
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
-    public <T> T getService( final Class<T> serviceType )
-    {
-        LOG.debug( "Lookup a [" + serviceType.getName() + "]" );
-        return m_remoteBundleContextClient.getService( serviceType );
-    }
-
-    public <T> T getService( Class<T> serviceType, String filter )
+    public <T> List<T> getServices( Class<T> serviceType, String filter, long timeoutInMillis )
         throws TestContainerException
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public <T> List<T> getServices( Class<T> serviceType, String filter )
-        throws TestContainerException
-    {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
-    public <T> T getService( final Class<T> serviceType, final long timeoutInMillis )
-    {
         LOG.debug( "Lookup a [" + serviceType.getName() + "]" );
-        return m_remoteBundleContextClient.getService( serviceType, timeoutInMillis );
-    }
-
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
-    public long installBundle( final String bundleUrl )
-    {
-        LOG.debug( "Preparing and Installing bundle [" + bundleUrl + "] .." );
-        long id = 0;
-        try
-        {
-            id =
-                m_remoteBundleContextClient.installBundle( m_store.getLocation( storeAndGetData( bundleUrl ) ).toASCIIString() );
-        }
-        catch( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
-        LOG.debug( "Installed bundle " + bundleUrl + " as ID: " + id );
-        return id;
+        return m_remoteBundleContextClient.getServices( serviceType, filter, timeoutInMillis );
     }
 
     public long installBundle( String location, InputStream probe )
@@ -201,61 +151,8 @@ class PaxRunnerTestContainer
         LOG.debug( "Preparing and Installing bundle (from stream ).." );
 
         long id = 0;
-        try
-        {
-            id = m_remoteBundleContextClient.installBundle( m_store.getLocation( m_store.store( probe ) ).toASCIIString() );
-        }
-        catch( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
+        id = m_remoteBundleContextClient.installBundle( location, probe );
         LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
-        return id;
-    }
-
-    public long installBundle( InputStream probe )
-        throws TestContainerException
-    {
-        long l = System.nanoTime();
-        return installBundle( "paxexamAdhocBundle-" + l, probe );
-    }
-
-    private Handle storeAndGetData( String bundleUrl )
-    {
-        try
-        {
-            Handle handle = m_cache.get( bundleUrl );
-            if( handle == null )
-            {
-                // new, so build, customize and store
-                URL url = new URL( bundleUrl );
-                InputStream in = url.openStream();
-
-                in = m_customizers.customizeTestProbe( in );
-
-                // store in and overwrite handle
-                handle = m_store.store( in );
-                m_cache.put( bundleUrl, handle );
-
-            }
-            return handle;
-
-        }
-        catch( Exception e )
-        {
-            LOG.error( "problem in preparing probe. ", e );
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
-    public long installBundle( final String bundleLocation, final byte[] bundle )
-    {
-        LOG.debug( "Installing bundle [" + bundleLocation + "] .." );
-        final long id = m_remoteBundleContextClient.installBundle( bundleLocation, bundle );
-        LOG.debug( "Installed bundle " + bundleLocation + " as ID: " + id );
         return id;
     }
 
@@ -268,6 +165,17 @@ class PaxRunnerTestContainer
         LOG.debug( "Starting test bundle with ID " + bundleId );
         m_remoteBundleContextClient.startBundle( bundleId );
         LOG.debug( "Started test bundle with ID " + bundleId );
+    }
+
+    /**
+     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
+     */
+    public void stopBundle( long bundleId )
+        throws TestContainerException
+    {
+        LOG.debug( "Stopping test bundle with ID " + bundleId );
+        m_remoteBundleContextClient.stopBundle( bundleId );
+        LOG.debug( "Stopping test bundle with ID " + bundleId );
     }
 
     /**
@@ -484,6 +392,34 @@ class PaxRunnerTestContainer
     public String toString()
     {
         return "PaxRunnerTestContainer{}";
+    }
+
+    private Handle storeAndGetData( String bundleUrl )
+    {
+        try
+        {
+            Handle handle = m_cache.get( bundleUrl );
+            if( handle == null )
+            {
+                // new, so build, customize and store
+                URL url = new URL( bundleUrl );
+                InputStream in = url.openStream();
+
+                in = m_customizers.customizeTestProbe( in );
+
+                // store in and overwrite handle
+                handle = m_store.store( in );
+                m_cache.put( bundleUrl, handle );
+
+            }
+            return handle;
+
+        }
+        catch( Exception e )
+        {
+            LOG.error( "problem in preparing probe. ", e );
+        }
+        return null;
     }
 
 }

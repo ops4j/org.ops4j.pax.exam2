@@ -198,6 +198,12 @@ public class NativeTestContainer implements TestContainer
 
     }
 
+    public void stopBundle( long bundleId )
+        throws TestContainerException
+    {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void setBundleStartLevel( long bundleId, int startLevel )
         throws TestContainerException
     {
@@ -290,5 +296,11 @@ public class NativeTestContainer implements TestContainer
     private String getEquinoxFactory()
     {
         return "org.eclipse.osgi.launch.EquinoxFactory";
+    }
+
+    public <T> List<T> getServices( Class<T> serviceType, String filter, long timeoutInMillis )
+        throws TestContainerException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

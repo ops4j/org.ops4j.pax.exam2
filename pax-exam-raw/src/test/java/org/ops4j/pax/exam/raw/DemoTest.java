@@ -15,13 +15,17 @@ package org.ops4j.pax.exam.raw;
 import org.junit.Test;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainer;
+import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
+import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 import static org.ops4j.pax.exam.raw.DefaultRaw.*;
 
 /**
@@ -32,7 +36,7 @@ public class DemoTest
 {
 
     @Test
-    public void nativeDemo()
+    public void demo()
         throws Exception
     {
 
@@ -41,8 +45,10 @@ public class DemoTest
             .addTest( call( MyCode.class, "runMeToo" ) )
             .setAnchor( MyCode.class );
 
-        TestContainer container = new NativeTestContainer(
-            options( getOptions() )
+        TestContainer container = PaxExamRuntime.getTestContainerFactory().newInstance(
+            options( getOptions(),
+                     rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
+            )
         );
 
         container.start();

@@ -24,34 +24,34 @@ import java.util.List;
  * Management of an OSGi framework that can be used as a integration test container.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
+ * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
  */
-public interface TestContainer
+public interface TestContainer extends TestTarget
 {
 
-    <T> T getService( Class<T> serviceType )
-        throws TestContainerException;
-
-    <T> T getService( Class<T> serviceType, String filter )
-        throws TestContainerException;
-
-    <T> List<T> getServices( Class<T> serviceType, String filter )
-        throws TestContainerException;
-
-    <T> T getService( Class<T> serviceType, long timeoutInMillis )
-        throws TestContainerException;
-
-    long installBundle( String bundleUrl )
-        throws TestContainerException;
-
-    long installBundle( String bundleLocation, byte[] bundle )
-        throws TestContainerException;
-
+    /**
+     *
+     * @param location
+     * @param stream
+     * @return
+     */
     long installBundle( String location, InputStream stream );
 
-    long installBundle( InputStream stream );
-
+    /**
+     * 
+     * @param bundleId
+     * @throws TestContainerException
+     */
     void startBundle( long bundleId )
+        throws TestContainerException;
+
+     /**
+     * 
+     * @param bundleId
+     * @throws TestContainerException
+     */
+    void stopBundle( long bundleId )
         throws TestContainerException;
 
     /**

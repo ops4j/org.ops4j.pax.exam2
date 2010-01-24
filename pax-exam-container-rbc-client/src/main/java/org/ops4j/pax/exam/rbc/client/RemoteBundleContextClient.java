@@ -45,6 +45,7 @@ import org.ops4j.store.StoreFactory;
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
+ * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 15, 2008
  */
 public class RemoteBundleContextClient
@@ -88,21 +89,49 @@ public class RemoteBundleContextClient
     /**
      * {@inheritDoc}
      */
-    public <T> T getService( final Class<T> serviceType )
-    {
-        return getService( serviceType, Constants.NO_WAIT );
-    }
-
-    public <T> T getService( Class<T> serviceType, String filter )
+    public <T> T getService( Class<T> serviceType, String filter, final long timeout )
         throws TestContainerException
     {
-        return null;
-    }
-
-    public <T> List<T> getServices( Class<T> serviceType, String filter )
-        throws TestContainerException
-    {
-        return null; 
+        return (T) Proxy.newProxyInstance(
+            getClass().getClassLoader(),
+            new Class<?>[]{ serviceType },
+            new InvocationHandler()
+            {
+                /**
+                 * {@inheritDoc}
+                 * Delegates the call to remote bundle context.
+                 */
+                public Object invoke( final Object proxy,
+                                      final Method method,
+                                      final Object[] params )
+                    throws Throwable
+                {
+                    try
+                    {
+                        return getRemoteBundleContext().remoteCall(
+                            method.getDeclaringClass(),
+                            method.getName(),
+                            method.getParameterTypes(),
+                            timeout,
+                            params
+                        );
+                    }
+                    catch( InvocationTargetException e )
+                    {
+                        throw e.getCause();
+                    }
+                    catch( RemoteException e )
+                    {
+                        throw new TestContainerException( "Remote exception", e );
+                    }
+                    catch( Exception e )
+                    {
+                        throw new TestContainerException( "Invocation exception", e );
+                    }
+                }
+            }
+        )
+            ;
     }
 
     /**
@@ -154,70 +183,19 @@ public class RemoteBundleContextClient
         );
     }
 
-    public long installBundle( InputStream probe )
-        throws TestContainerException
-    {
-        // turn this into a local url because we don't want pass the stream any further.
-        try
-        {
-            URI location = m_store.getLocation( m_store.store( probe ) );
-            return installBundle( location.toASCIIString() );
-        } catch( IOException e )
-        {
-            throw new TestContainerException( e );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public long installBundle( final String bundleUrl )
-    {
-        try
-        {
-            return getRemoteBundleContext().installBundle( bundleUrl );
-        }
-        catch( RemoteException e )
-        {
-            throw new TestContainerException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new TestContainerException( "Bundle cannot be installed", e );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public long installBundle( final String bundleLocation,
-                               final byte[] bundle )
-        throws TestContainerException
-    {
-        try
-        {
-            return getRemoteBundleContext().installBundle( bundleLocation, bundle );
-        }
-        catch( RemoteException e )
-        {
-            throw new TestContainerException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new TestContainerException( "Bundle cannot be installed", e );
-        }
-    }
-
     public long installBundle( String loc, InputStream stream )
     {
         // turn this into a local url because we don't want pass the stream any further.
         try
         {
             URI location = m_store.getLocation( m_store.store( stream ) );
-            return installBundle( location.toASCIIString() );
+            return getRemoteBundleContext().installBundle( location.toASCIIString() );
         } catch( IOException e )
         {
             throw new TestContainerException( e );
+        } catch( BundleException e )
+        {
+            throw new TestContainerException( "Bundle cannot be installed", e );
         }
     }
 
@@ -238,6 +216,23 @@ public class RemoteBundleContextClient
         catch( BundleException e )
         {
             throw new TestContainerException( "Bundle cannot be started", e );
+        }
+    }
+
+    public void stopBundle( long bundleId )
+        throws TestContainerException
+    {
+        try
+        {
+            getRemoteBundleContext().stopBundle( bundleId );
+        }
+        catch( RemoteException e )
+        {
+            throw new TestContainerException( "Remote exception", e );
+        }
+        catch( BundleException e )
+        {
+            throw new TestContainerException( "Bundle cannot be stopped", e );
         }
     }
 
@@ -387,4 +382,9 @@ public class RemoteBundleContextClient
         return m_rmiPort;
     }
 
+    public <T> List<T> getServices( Class<T> serviceType, String filter, long timeoutInMillis )
+        throws TestContainerException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
