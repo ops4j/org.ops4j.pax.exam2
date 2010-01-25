@@ -169,7 +169,7 @@ public class PaxRunnerTestContainer
     /**
      * {@inheritDoc}
      */
-    public void start()
+    public TestContainer start()
     {
         LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
         /**
@@ -213,12 +213,13 @@ public class PaxRunnerTestContainer
         m_customizers.customizeEnvironment( m_arguments.getWorkingFolder() );
 
         m_started = true;
+        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void stop()
+    public TestContainer stop()
     {
         LOG.info( "Shutting down the test container (Pax Runner)" );
         try
@@ -240,6 +241,7 @@ public class PaxRunnerTestContainer
             m_semaphore.release();
             m_started = false;
         }
+        return this;
     }
 
     /**

@@ -15,7 +15,6 @@ package org.ops4j.pax.exam.raw;
 import org.junit.Test;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
-import org.ops4j.pax.exam.spi.container.TestTarget;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.raw.DefaultRaw.*;
@@ -31,12 +30,16 @@ public class DemoTest
     public void testPlan()
         throws Exception
     {
-        TestTarget testTarget = getTestTarget();
+        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory().newInstance(
+            options(
+
+            )
+        ).start();
+
         try
         {
             TestProbeBuilder probe = createProbe().addTest( MyCode.class );
 
-            // install the probe(s)
             testTarget.installBundle( probe.build() );
 
             for( ProbeCall call : probe.getTests() )
@@ -47,28 +50,6 @@ public class DemoTest
         {
             stopIfPossible( testTarget );
         }
-    }
-
-    private TestContainer getTestTarget()
-    {
-        TestContainer container =
-            PaxExamRuntime.getTestContainerFactory().newInstance(
-                options(
-
-                    //  rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
-                )
-            );
-
-        container.start();
-        return container;
-    }
-
-    private TestContainer getAceTarget()
-    {
-        TestContainer container = null; //newAceTarget();
-
-        container.start();
-        return container;
     }
 
 

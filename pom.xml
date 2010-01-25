@@ -43,6 +43,7 @@
 
         <module>pax-exam-container-default</module>
         <module>pax-exam-container-native</module>
+		<module>pax-exam-target-default</module>
 
         <module>pax-exam-junit</module>
         <module>pax-exam-junit-extender</module>

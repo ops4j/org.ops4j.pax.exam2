@@ -47,7 +47,7 @@ public interface TestContainer extends TestTarget
      *
      * @throws TimeoutException - if timeout occured and the test container cannot be started
      */
-    void start()
+    TestContainer start()
         throws TimeoutException;
 
     /**
@@ -55,7 +55,7 @@ public interface TestContainer extends TestTarget
      *
      * @throws TimeoutException - if timeout occured and the test container cannot be stopped
      */
-    void stop()
+    TestContainer stop()
         throws TimeoutException;
 
     /**
