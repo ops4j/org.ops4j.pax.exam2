@@ -46,8 +46,8 @@ public class RBCRemoteTargetOptions
      *
      * @return port option
      */
-    public static RBCPortOption port( final Integer port )
+    public static RBCPortOption location( String host, final Integer port )
     {
-        return new RBCPortOption( port );
+        return new RBCPortOption( host, port );
     }
 }

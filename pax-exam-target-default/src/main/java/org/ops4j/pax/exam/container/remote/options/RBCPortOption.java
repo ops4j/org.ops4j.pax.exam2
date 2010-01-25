@@ -27,10 +27,17 @@ public class RBCPortOption implements Option
 {
 
     private Integer m_port;
+    private String m_host;
 
-    public RBCPortOption( Integer port )
+    public RBCPortOption( String host, Integer port )
     {
+        m_host = host;
         m_port = port;
+    }
+
+    public String getHost()
+    {
+        return m_host;
     }
 
     public Integer getPort()
