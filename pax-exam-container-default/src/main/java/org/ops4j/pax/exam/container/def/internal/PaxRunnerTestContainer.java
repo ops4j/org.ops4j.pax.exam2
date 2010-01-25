@@ -49,6 +49,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 import org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption;
 import org.ops4j.pax.exam.container.def.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.def.options.Scanner;
+import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.Constants;
@@ -145,13 +146,13 @@ public class PaxRunnerTestContainer
         return m_remoteBundleContextClient.getService( serviceType, filter, timeoutInMillis );
     }
 
-    public long installBundle( String location, InputStream probe )
+    public long installBundle( InputStream probe )
         throws TestContainerException
     {
         LOG.debug( "Preparing and Installing bundle (from stream ).." );
 
         long id = 0;
-        id = m_remoteBundleContextClient.installBundle( location, probe );
+        id = m_remoteBundleContextClient.installBundle( probe );
         LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
         return id;
     }
@@ -269,7 +270,38 @@ public class PaxRunnerTestContainer
             // rmi communication port
             systemProperty( Constants.RMI_PORT_PROPERTY ).value( m_remoteBundleContextClient.getRmiPort().toString() ),
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
-            bootDelegationPackage( "sun.*" )
+            bootDelegationPackage( "sun.*" ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.logging" )
+                .artifactId( "pax-logging-api" )
+                .version( "1.4" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+
+            mavenBundle()
+                .groupId( "org.osgi" )
+                .artifactId( "org.osgi.compendium" )
+                .version( "4.2.0" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam-raw-extender" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam-raw-extender-impl" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
         };
     }
 
@@ -399,5 +431,4 @@ public class PaxRunnerTestContainer
         }
         return null;
     }
-
 }

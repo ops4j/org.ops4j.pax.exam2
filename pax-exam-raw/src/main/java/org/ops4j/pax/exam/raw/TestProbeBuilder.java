@@ -9,9 +9,11 @@ import java.io.InputStream;
 public interface TestProbeBuilder
 {
 
-    TestProbeBuilder addTest( ProbeCall call );
+    TestProbeBuilder addTest( ProbeCall... calls );
 
-    InputStream get();
+    TestProbeBuilder addTest( Class... clazz );
+    
+    InputStream build();
 
     TestProbeBuilder setAnchor( Class anchor );
 

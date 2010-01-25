@@ -66,12 +66,14 @@
         </dependency>
 
         <!-- Choice 1-->
+        <!--
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>pax-exam-container-default</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        -->
         
         <!-- Choice 2-->
         <dependency>

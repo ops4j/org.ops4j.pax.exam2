@@ -39,10 +39,9 @@ public interface TestTarget
         throws TestContainerException;
 
     /**
-     * @param location location callback of receiver wants to get an update. (may or may not be supported)
      * @param stream   stream the content
      *
      * @return Bundle ID
      */
-    long installBundle( String location, InputStream stream );
+    long installBundle( InputStream stream );
 }

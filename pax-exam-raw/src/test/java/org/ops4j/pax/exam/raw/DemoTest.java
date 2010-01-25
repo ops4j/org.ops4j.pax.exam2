@@ -13,20 +13,11 @@
 package org.ops4j.pax.exam.raw;
 
 import org.junit.Test;
-import org.ops4j.pax.exam.Info;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainer;
-import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
-import org.ops4j.pax.exam.nat.internal.NativeTestContainer;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
-import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestTarget;
 
-import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 import static org.ops4j.pax.exam.raw.DefaultRaw.*;
 
 /**
@@ -37,45 +28,36 @@ public class DemoTest
 {
 
     @Test
-    public void demo()
+    public void testPlan()
         throws Exception
     {
-
-        TestProbeBuilder probe = createProbe()
-            .addTest( call( MyCode.class, "runMe" ) )
-            .addTest( call( MyCode.class, "runMeToo" ) )
-            .setAnchor( MyCode.class );
-
-        TestTarget container = getTestTarget();
-
-        // install the probe(s)
-        container.installBundle( "myProbe", probe.get() );
-
-        // run them
-        System.out.println( "waiting.." );
-        Thread.sleep( 5000 );
-        System.out.println( "DONE" );
-
-        for( ProbeCall call : probe.getTests() )
+        TestTarget testTarget = getTestTarget();
+        try
         {
-            execute( container, call );
-        }
+            TestProbeBuilder probe = createProbe().addTest( MyCode.class );
 
-        // if its a container, stop it
-        if( container instanceof TestContainer )
+            // install the probe(s)
+            testTarget.installBundle( probe.build() );
+
+            for( ProbeCall call : probe.getTests() )
+            {
+                execute( testTarget, call );
+            }
+        } finally
         {
-            ( (TestContainer) container ).stop();
+            stopIfPossible( testTarget );
         }
     }
 
     private TestContainer getTestTarget()
     {
-        TestContainer container = PaxExamRuntime.getTestContainerFactory().newInstance(
-            options( getOptions()
-                    
-                     //  rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
-            )
-        );
+        TestContainer container =
+            PaxExamRuntime.getTestContainerFactory().newInstance(
+                options(
+
+                    //  rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
+                )
+            );
 
         container.start();
         return container;
@@ -89,48 +71,5 @@ public class DemoTest
         return container;
     }
 
-    public Option getOptions()
-    {
 
-        // always add the junit extender
-        final DefaultCompositeOption option = new DefaultCompositeOption(
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.logging" )
-                .artifactId( "pax-logging-api" )
-                .version( "1.4" )
-                //.version( "1.4.1-SNAPSHOT" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.logging" )
-                .artifactId( "pax-logging-service" )
-                .version( "1.4" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.osgi" )
-                .artifactId( "org.osgi.compendium" )
-                .version( "4.2.0" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-raw-extender" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-raw-extender-impl" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
-        );
-        return option;
-    }
 }

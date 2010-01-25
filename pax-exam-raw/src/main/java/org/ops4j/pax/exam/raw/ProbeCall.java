@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam.raw;
 
-import org.osgi.framework.BundleContext;
-
 /**
  * @author Toni Menzel
  * @since Jan 11, 2010
@@ -28,7 +26,5 @@ public interface ProbeCall
 
     String getInstruction();
 
-    void invoke( BundleContext ctx );
-
-     public String signature();
+    public String signature();
 }

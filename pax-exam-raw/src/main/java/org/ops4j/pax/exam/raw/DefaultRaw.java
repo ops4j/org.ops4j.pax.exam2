@@ -18,6 +18,9 @@
 package org.ops4j.pax.exam.raw;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.raw.internal.ClassMethodProbeCall;
 import org.ops4j.pax.exam.raw.internal.TestProbeBuilderImpl;
@@ -30,6 +33,7 @@ import org.ops4j.pax.exam.spi.container.TestTarget;
  */
 public class DefaultRaw
 {
+
     private static int id = 0;
 
     public static TestProbeBuilder createProbe()
@@ -42,9 +46,44 @@ public class DefaultRaw
         return new ClassMethodProbeCall( "PaxExam-Executable-SIG" + ( id++ ), clazz, method );
     }
 
+    public static ProbeCall[] call( Class clazz )
+    {
+        List<ProbeCall> calls = new ArrayList<ProbeCall>();
+        for( String m : parseMethods( clazz ) )
+        {
+            calls.add( new ClassMethodProbeCall( "PaxExam-Executable-SIG" + ( id++ ), clazz, m ) );
+        }
+        return calls.toArray( new ProbeCall[calls.size()] );
+    }
+
+    /**
+     * parse test methods using reflection
+     *
+     * @param clazz
+     */
+    private static String[] parseMethods( Class clazz )
+    {
+        List<String> calls = new ArrayList<String>();
+
+        for( Method m : clazz.getDeclaredMethods() )
+        {
+            calls.add( m.getName() );
+        }
+        return calls.toArray( new String[calls.size()] );
+    }
+
     public static void execute( TestTarget target, ProbeCall call )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-        target.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")",0 ).call();
+        target.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")", 0 ).call();
+    }
+
+    public static void stopIfPossible( TestTarget target )
+    {
+        // if its a container, stop it
+        if( target instanceof TestContainer )
+        {
+            ( (TestContainer) target ).stop();
+        }
     }
 }

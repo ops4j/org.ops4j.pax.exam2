@@ -33,11 +33,16 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerException;
 import org.ops4j.pax.exam.spi.container.TimeoutException;
+
+import static org.ops4j.pax.exam.Constants.*;
+import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * @author Toni Menzel
@@ -53,6 +58,7 @@ public class NativeTestContainer implements TestContainer
 
     public NativeTestContainer( Option[] options )
     {
+        options = combine( localOptions(), options );
         // install url handlers:
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
 
@@ -66,6 +72,45 @@ public class NativeTestContainer implements TestContainer
             }
         }
 
+    }
+
+    private Option[] localOptions()
+    {
+        return new Option[]{
+            bootDelegationPackage( "sun.*" ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.logging" )
+                .artifactId( "pax-logging-api" )
+                .version( "1.4" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+
+            mavenBundle()
+                .groupId( "org.osgi" )
+                .artifactId( "org.osgi.compendium" )
+                .version( "4.2.0" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+/**
+ mavenBundle()
+ .groupId( "org.ops4j.pax.exam" )
+ .artifactId( "pax-exam-raw-extender" )
+ .version( Info.getPaxExamVersion() )
+ .update( Info.isPaxExamSnapshotVersion() )
+ .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+ **/
+
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam-raw-extender-impl" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+        };
     }
 
     public <T> T getService( Class<T> serviceType, String filter, long timeout )
@@ -91,12 +136,12 @@ public class NativeTestContainer implements TestContainer
         return null;
     }
 
-    public long installBundle( String location, InputStream stream )
+    public long installBundle( InputStream stream )
     {
         try
         {
-            Bundle b = m_framework.getBundleContext().installBundle( location, stream );
-            LOG.debug( "Installed bundle " + location + " as Bundle ID " + b.getBundleId() );
+            Bundle b = m_framework.getBundleContext().installBundle( "local", stream );
+            LOG.debug( "Installed bundle " + "local" + " as Bundle ID " + b.getBundleId() );
 
             // stream.close();
             b.start();
@@ -107,6 +152,8 @@ public class NativeTestContainer implements TestContainer
         }
         return -1;
     }
+
+
 
     public void setBundleStartLevel( long bundleId, int startLevel )
         throws TestContainerException
