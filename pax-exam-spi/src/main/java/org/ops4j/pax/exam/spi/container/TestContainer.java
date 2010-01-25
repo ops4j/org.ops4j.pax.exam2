@@ -32,18 +32,6 @@ public interface TestContainer extends TestTarget
 {
 
     /**
-     * @param bundleId
-     */
-    void startBundle( long bundleId )
-        throws TestContainerException;
-
-    /**
-     * @param bundleId
-     */
-    void stopBundle( long bundleId )
-        throws TestContainerException;
-
-    /**
      * Sets the start level for a bundle.
      *
      * @param bundleId   bundle id

@@ -55,54 +55,43 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return m_probeCalls.toArray( new ProbeCall[m_probeCalls.size()] );
     }
 
-    public TestProbe get()
+    public InputStream get()
     {
-        return new TestProbe()
+
+        Properties p = new Properties();
+        constructProbeTag( p );
+
+        try
         {
+            String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
+            File base = new FileTailImpl( new File( "." ), tail ).getParentOfTail();
+            return sink( new BundleBuilder( p, new ResourceWriter( base ) ).build() );
 
-            public TestHandle[] getTestHandles()
-            {
-                return new TestHandle[0];
-            }
+        } catch( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
 
-            public InputStream getProbe()
-            {
-                Properties p = new Properties();
-                constructProbeTag( p );
+    private InputStream sink( InputStream inputStream )
+        throws IOException
+    {
+        Store<InputStream> store = StoreFactory.anonymousStore();
+        return store.load( store.store( inputStream ) );
+    }
 
-                try
-                {
-                    String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
-                    File base = new FileTailImpl( new File( "." ), tail ).getParentOfTail();
-                    return sink( new BundleBuilder( p, new ResourceWriter( base ) ).build() );
+    private String constructProbeTag( Properties p )
+    {
+        // construct out of added Tests
+        StringBuilder sbKeyChain = new StringBuilder();
 
-                } catch( IOException e )
-                {
-                    throw new RuntimeException( e );
-                }
-            }
-
-            private InputStream sink( InputStream inputStream )
-                throws IOException
-            {
-                Store<InputStream> store = StoreFactory.anonymousStore();
-                return store.load( store.store( inputStream ) );
-            }
-
-            private String constructProbeTag( Properties p )
-            {
-                // construct out of added Tests
-                StringBuilder sbKeyChain = new StringBuilder();
-
-                for( ProbeCall call : m_probeCalls )
-                {
-                    sbKeyChain.append( call.signature() );
-                    sbKeyChain.append( "," );
-                    p.put( call.signature(), call.getInstruction() );
-                }
-                p.put( "PaxExam-Executable", sbKeyChain.toString() );
-                return sbKeyChain.toString();
-            }
-        };
+        for( ProbeCall call : m_probeCalls )
+        {
+            sbKeyChain.append( call.signature() );
+            sbKeyChain.append( "," );
+            p.put( call.signature(), call.getInstruction() );
+        }
+        p.put( "PaxExam-Executable", sbKeyChain.toString() );
+        return sbKeyChain.toString();
     }
 }

@@ -24,7 +24,5 @@ import java.io.InputStream;
 public interface TestProbe
 {
 
-    TestHandle[] getTestHandles();
-
     InputStream getProbe();
 }

@@ -43,7 +43,7 @@ public class TestProbeBuilderImplTest
         TestProbeBuilder builder = new TestProbeBuilderImpl();
 
         builder.addTest( call( TestProbeBuilderImplTest.class, "foo" ) ).setAnchor( TestProbeBuilderImplTest.class );
-        InputStream inp = builder.get().getProbe();
+        InputStream inp = builder.get();
 
         Store<InputStream> store = StoreFactory.sharedLocalStore();
         Handle handle = store.store( inp );
