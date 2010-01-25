@@ -15,8 +15,10 @@ package org.ops4j.pax.exam.raw;
 import org.junit.Test;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
+import org.ops4j.pax.exam.spi.container.TestTarget;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
 import static org.ops4j.pax.exam.raw.DefaultRaw.*;
 
 /**
@@ -30,24 +32,27 @@ public class DemoTest
     public void testPlan()
         throws Exception
     {
-        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory().newInstance(
+        TestTarget testTarget = PaxExamRuntime.getTestTargetFactory().newInstance(
             options(
-
+                waitForRBCFor( 2000 ),
+                port( 9191 )
             )
-        ).start();
+        );
 
+        long probeId = 0;
         try
         {
             TestProbeBuilder probe = createProbe().addTest( MyCode.class );
-
-            testTarget.installBundle( probe.build() );
-
+            probeId = testTarget.installBundle( probe.build() );
+           
             for( ProbeCall call : probe.getTests() )
             {
                 execute( testTarget, call );
             }
+
         } finally
         {
+            testTarget.uninstallBundle( probeId );
             stopIfPossible( testTarget );
         }
     }

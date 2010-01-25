@@ -140,17 +140,7 @@ public class PaxRunnerOptions
         return new CleanCachesOption();
     }
 
-    /**
-     * Creates a {@link org.ops4j.pax.exam.container.def.options.RBCLookupTimeoutOption}.
-     *
-     * @param timeoutInMillis timeout in millis
-     *
-     * @return timeout option
-     */
-    public static RBCLookupTimeoutOption waitForRBCFor( final Integer timeoutInMillis )
-    {
-        return new RBCLookupTimeoutOption( timeoutInMillis );
-    }
+   
 
     /**
      * Creates a composite option of {@link VMOption}s.

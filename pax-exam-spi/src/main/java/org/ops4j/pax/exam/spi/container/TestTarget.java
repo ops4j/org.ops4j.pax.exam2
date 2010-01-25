@@ -39,9 +39,15 @@ public interface TestTarget
         throws TestContainerException;
 
     /**
-     * @param stream   stream the content
+     * @param stream stream the content
      *
      * @return Bundle ID
      */
     long installBundle( InputStream stream );
+
+    /**
+     * @param id bundleid
+     *
+     */
+    void uninstallBundle( long id );
 }

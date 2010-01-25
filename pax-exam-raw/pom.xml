@@ -74,7 +74,7 @@
             <scope>test</scope>
         </dependency>
         -->
-        
+
         <!-- Choice 2-->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -90,6 +90,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Choice 3-->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pax-exam-target-default</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!--
         <dependency>
             <groupId>org.eclipse</groupId>

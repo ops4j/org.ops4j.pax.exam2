@@ -26,12 +26,12 @@ public class MyCode
 
     public void runMe()
     {
-        System.out.println( "Hello World!" );
+        System.out.println( "Hello World! Me too !" );
     }
 
     public void runMeToo( BundleContext ctx )
     {
-        System.out.println( "Hello World 2" );
+        System.out.println( "Hello World Lister" );
         for( Bundle b : ctx.getBundles() )
         {
             System.out.println( "Have " + b.getSymbolicName() );

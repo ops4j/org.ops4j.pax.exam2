@@ -26,7 +26,7 @@ import org.osgi.framework.BundleException;
  * Remote BundleContext like access.
  *
  * TODO: this is probably somwhat too fluffy (too shaky interface) - improve here
- * 
+ *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 10, 2008
  */
@@ -148,4 +148,12 @@ public interface RemoteBundleContext
     void waitForState( long bundleId, int state, long timeoutInMillis )
         throws RemoteException, BundleException, TimeoutException;
 
+    /**
+     * @param id of bundle to uninstall
+     *
+     * @throws RemoteException - Remote communication related exception (mandatory by RMI)
+     * @throws BundleException - If bundle cannot be found
+     */
+    void uninstallBundle( long id )
+        throws RemoteException, BundleException;
 }
