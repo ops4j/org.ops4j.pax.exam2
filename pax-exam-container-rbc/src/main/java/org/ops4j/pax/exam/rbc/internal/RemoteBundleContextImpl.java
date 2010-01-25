@@ -29,8 +29,10 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.startlevel.StartLevel;
+
 import static org.ops4j.lang.NullArgumentException.*;
 
 /**
@@ -72,13 +74,15 @@ public class RemoteBundleContextImpl
     public Object remoteCall( final Class<?> serviceType,
                               final String methodName,
                               final Class<?>[] methodParams,
+                              String filter,
                               final long timeoutInMillis,
                               final Object... actualParams )
         throws NoSuchServiceException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
         LOG.info( "Remote call of [" + serviceType.getName() + "." + methodName + "]" );
+
         return serviceType.getMethod( methodName, methodParams ).invoke(
-            getService( serviceType, timeoutInMillis ),
+            getService( serviceType, filter, timeoutInMillis ),
             actualParams
         );
     }
@@ -145,7 +149,7 @@ public class RemoteBundleContextImpl
     {
         try
         {
-            final StartLevel startLevelService = getService( StartLevel.class, 0 );
+            final StartLevel startLevelService = getService( StartLevel.class, null, 0 );
             startLevelService.setBundleStartLevel( m_bundleContext.getBundle( bundleId ), startLevel );
         }
         catch( NoSuchServiceException e )
@@ -173,15 +177,15 @@ public class RemoteBundleContextImpl
         long startedTrying = System.currentTimeMillis();
         do
         {
-           try
-           {
-              Thread.sleep(50);
-           }
-           catch (InterruptedException e)
-           {
-              Thread.currentThread().interrupt();
-              break;
-           }
+            try
+            {
+                Thread.sleep( 50 );
+            }
+            catch( InterruptedException e )
+            {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
         while( bundle.getState() < state
                && ( timeoutInMillis == WAIT_FOREVER
@@ -207,23 +211,34 @@ public class RemoteBundleContextImpl
      * @throws NoSuchServiceException - If service cannot be found in the service registry
      */
     private <T> T getService( final Class<T> serviceType,
+                              String filter,
                               final long timeoutInMillis )
         throws NoSuchServiceException
     {
         LOG.info( "Look up service [" + serviceType.getName() + "], timeout in " + timeoutInMillis + " millis" );
-        final ServiceReference ref = m_bundleContext.getServiceReference( serviceType.getName() );
-        if( ref != null )
+        final ServiceReference[] ref;
+        try
         {
-            final Object service = m_bundleContext.getService( ref );
-            if( service == null )
+            ref = m_bundleContext.getServiceReferences( serviceType.getName(), filter );
+
+            if( ref != null )
+            {
+                LOG.info( "Found " + ref.length + " matching services for " + serviceType.getName() + " filter " + filter );
+
+                final Object service = m_bundleContext.getService( ref[ 0 ] );
+                if( service == null )
+                {
+                    throw new NoSuchServiceException( serviceType );
+                }
+                return (T) service;
+            }
+            else
             {
                 throw new NoSuchServiceException( serviceType );
             }
-            return (T) service;
-        }
-        else
+        } catch( InvalidSyntaxException e )
         {
-            throw new NoSuchServiceException( serviceType );
+            throw new RuntimeException( e );
         }
     }
 

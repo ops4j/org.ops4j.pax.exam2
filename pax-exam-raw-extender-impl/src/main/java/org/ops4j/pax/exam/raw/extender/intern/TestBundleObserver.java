@@ -67,6 +67,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
         String testExec = null;
         for( ManifestEntry manifestEntry : manifestEntries )
         {
+
             if( Constants.PROBE_EXECUTABLE.equals( manifestEntry.getKey() ) )
             {
                 testExec = manifestEntry.getValue();

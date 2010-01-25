@@ -159,28 +159,6 @@ public class PaxRunnerTestContainer
     /**
      * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
      */
-    public void startBundle( long bundleId )
-        throws TestContainerException
-    {
-        LOG.debug( "Starting test bundle with ID " + bundleId );
-        m_remoteBundleContextClient.startBundle( bundleId );
-        LOG.debug( "Started test bundle with ID " + bundleId );
-    }
-
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
-    public void stopBundle( long bundleId )
-        throws TestContainerException
-    {
-        LOG.debug( "Stopping test bundle with ID " + bundleId );
-        m_remoteBundleContextClient.stopBundle( bundleId );
-        LOG.debug( "Stopping test bundle with ID " + bundleId );
-    }
-
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
     public void setBundleStartLevel( final long bundleId, final int startLevel )
         throws TestContainerException
     {

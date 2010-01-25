@@ -89,12 +89,12 @@ public class RemoteBundleContextClient
     /**
      * {@inheritDoc}
      */
-    public <T> T getService( Class<T> serviceType, String filter, final long timeout )
+    public <T> T getService( Class<T> serviceType, final String filter, final long timeout )
         throws TestContainerException
     {
         return (T) Proxy.newProxyInstance(
             getClass().getClassLoader(),
-            new Class<?>[]{ serviceType },
+            new Class<?>[]{ serviceType},
             new InvocationHandler()
             {
                 /**
@@ -112,6 +112,7 @@ public class RemoteBundleContextClient
                             method.getDeclaringClass(),
                             method.getName(),
                             method.getParameterTypes(),
+                            filter,
                             timeout,
                             params
                         );
@@ -134,54 +135,7 @@ public class RemoteBundleContextClient
             ;
     }
 
-    /**
-     * {@inheritDoc}
-     * Returns a dynamic proxy in place of the actual service, forwarding the calls via the remote bundle context.
-     */
-    @SuppressWarnings( "unchecked" )
-    public <T> T getService( final Class<T> serviceType,
-                             final long timeoutInMillis )
-    {
-        return (T) Proxy.newProxyInstance(
-            getClass().getClassLoader(),
-            new Class<?>[]{ serviceType },
-            new InvocationHandler()
-            {
-                /**
-                 * {@inheritDoc}
-                 * Delegates the call to remote bundle context.
-                 */
-                public Object invoke( final Object proxy,
-                                      final Method method,
-                                      final Object[] params )
-                    throws Throwable
-                {
-                    try
-                    {
-                        return getRemoteBundleContext().remoteCall(
-                            method.getDeclaringClass(),
-                            method.getName(),
-                            method.getParameterTypes(),
-                            timeoutInMillis,
-                            params
-                        );
-                    }
-                    catch( InvocationTargetException e )
-                    {
-                        throw e.getCause();
-                    }
-                    catch( RemoteException e )
-                    {
-                        throw new TestContainerException( "Remote exception", e );
-                    }
-                    catch( Exception e )
-                    {
-                        throw new TestContainerException( "Invocation exception", e );
-                    }
-                }
-            }
-        );
-    }
+
 
     public long installBundle( String loc, InputStream stream )
     {
@@ -189,50 +143,15 @@ public class RemoteBundleContextClient
         try
         {
             URI location = m_store.getLocation( m_store.store( stream ) );
-            return getRemoteBundleContext().installBundle( location.toASCIIString() );
+            long id = getRemoteBundleContext().installBundle( location.toASCIIString() );
+            getRemoteBundleContext().startBundle( id );
+            return id;
         } catch( IOException e )
         {
             throw new TestContainerException( e );
         } catch( BundleException e )
         {
             throw new TestContainerException( "Bundle cannot be installed", e );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void startBundle( final long bundleId )
-        throws TestContainerException
-    {
-        try
-        {
-            getRemoteBundleContext().startBundle( bundleId );
-        }
-        catch( RemoteException e )
-        {
-            throw new TestContainerException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new TestContainerException( "Bundle cannot be started", e );
-        }
-    }
-
-    public void stopBundle( long bundleId )
-        throws TestContainerException
-    {
-        try
-        {
-            getRemoteBundleContext().stopBundle( bundleId );
-        }
-        catch( RemoteException e )
-        {
-            throw new TestContainerException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new TestContainerException( "Bundle cannot be stopped", e );
         }
     }
 
