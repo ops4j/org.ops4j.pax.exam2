@@ -46,14 +46,14 @@ public class RBCRemoteContainer implements TestContainer
         return m_target.getService( serviceType, filter, timeoutInMillis );
     }
 
-    public long installBundle( InputStream stream )
+    public long install( InputStream stream )
     {
-        return m_target.installBundle( stream );
+        return m_target.install( stream );
     }
 
-    public void uninstallBundle( long id )
+    public void cleanup( )
     {
-        m_target.uninstallBundle( id );
+        m_target.cleanup( );
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )
@@ -72,7 +72,8 @@ public class RBCRemoteContainer implements TestContainer
     public TestContainer stop()
         throws TimeoutException
     {
-        // do nothing
+        // implicit cleanup
+        cleanup();
         return this;
     }
 

@@ -24,4 +24,8 @@ package org.ops4j.pax.exam.junit.options;
 public enum ReUsePolicy
 {
 
+    NEVER, // the pax exam 1.x behaviour
+    TEST,  // new test container per test class
+    ALWAYS // just create one container (-connection) for the entire JUnit Run
+
 }

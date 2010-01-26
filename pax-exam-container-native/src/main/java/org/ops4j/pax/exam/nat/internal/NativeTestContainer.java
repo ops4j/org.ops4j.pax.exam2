@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,6 +56,8 @@ public class NativeTestContainer implements TestContainer
     final private List<String> m_bundles;
 
     private Framework m_framework;
+
+    private Stack<Long> m_installed;
 
     public NativeTestContainer( Option[] options )
     {
@@ -127,11 +130,17 @@ public class NativeTestContainer implements TestContainer
         return null;
     }
 
-    public long installBundle( InputStream stream )
+    public long install( InputStream stream )
     {
+
         try
         {
+            if( m_installed == null )
+            {
+                m_installed = new Stack<Long>();
+            }
             Bundle b = m_framework.getBundleContext().installBundle( "local", stream );
+            m_installed.push( b.getBundleId() );
             LOG.debug( "Installed bundle " + "local" + " as Bundle ID " + b.getBundleId() );
 
             // stream.close();
@@ -144,18 +153,26 @@ public class NativeTestContainer implements TestContainer
         return -1;
     }
 
-    public void uninstallBundle( long id )
+    public void cleanup()
     {
-        try
+        if( m_installed != null )
         {
-            Bundle bundle = m_framework.getBundleContext().getBundle( id );
-            bundle.uninstall();
-            LOG.debug( "Uninstalled bundle " + id );
-
-        } catch( BundleException e )
-        {
-            e.printStackTrace();
+            while( ( !m_installed.isEmpty() ) )
+            {
+                try
+                {
+                    Long id = m_installed.pop();
+                    Bundle bundle = m_framework.getBundleContext().getBundle( id );
+                    bundle.uninstall();
+                    LOG.debug( "Uninstalled bundle " + id );
+                } catch( BundleException e )
+                {
+                    e.printStackTrace();
+                }
+            }
         }
+
+
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )

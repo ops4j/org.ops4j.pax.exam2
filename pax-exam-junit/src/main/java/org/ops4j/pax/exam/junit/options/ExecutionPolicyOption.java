@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.junit.options;
 
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainerFactory;
 
 /**
@@ -27,10 +28,49 @@ import org.ops4j.pax.exam.spi.container.TestContainerFactory;
 public class ExecutionPolicyOption implements Option
 {
 
-    private Class<? extends TestContainerFactory> m_select;
+    private TestContainerFactory m_select;
+    private ReUsePolicy m_reUsePolicy;
 
-    public ExecutionPolicyOption( Class<? extends TestContainerFactory> selection )
+    public ExecutionPolicyOption()
     {
-        m_select = selection;
+        m_reUsePolicy = ReUsePolicy.NEVER; // pax exam 1.x compatibility
+        m_select = PaxExamRuntime.getTestContainerFactory();
+    }
+
+    public ExecutionPolicyOption testContainer( Class<? extends TestContainerFactory> factory )
+    {
+        try
+        {
+            m_select = factory.newInstance();
+        } catch( InstantiationException e )
+        {
+            e.printStackTrace();
+        } catch( IllegalAccessException e )
+        {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    public ExecutionPolicyOption testContainer( TestContainerFactory factory )
+    {
+        m_select = factory;
+        return this;
+    }
+
+    public TestContainerFactory getTestContainer()
+    {
+        return m_select;
+    }
+
+    public ReUsePolicy reuseContainer()
+    {
+        return m_reUsePolicy;
+    }
+
+    public ExecutionPolicyOption reuseContainer( ReUsePolicy policy )
+    {
+        m_reUsePolicy = policy;
+        return this;
     }
 }

@@ -73,23 +73,23 @@ public class RBCRemoteTarget implements TestTarget
         return m_remoteBundleContextClient.getService( serviceType, filter, timeoutInMillis );
     }
 
-    public long installBundle( InputStream probe )
+    public long install( InputStream probe )
         throws TestContainerException
     {
         LOG.debug( "Preparing and Installing bundle (from stream ).." );
 
         long id = 0;
-        id = m_remoteBundleContextClient.installBundle( probe );
+        id = m_remoteBundleContextClient.install( probe );
         LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
         return id;
     }
 
-    public void uninstallBundle( long id )
+    public void cleanup()
         throws TestContainerException
     {
-        LOG.debug( "Preparing and Uninstalling bundle " + id );
+        LOG.debug( "Cleaning up.. " );
 
-        m_remoteBundleContextClient.uninstallBundle( id );
+        m_remoteBundleContextClient.cleanup();
     }
 
     private Integer getPort( Option[] options )
