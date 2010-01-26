@@ -21,8 +21,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.remote.RBCRemoteContainerFactory;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.options.ReUsePolicy;
+
+import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
+import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 
 /**
  * @author Toni Menzel
@@ -32,10 +39,24 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 public class T1S7_RemoteTarget
 {
 
+    /*
+     * Here you can configure most of exam.
+     * Annotate any method with @Configuration and be sure to set return type to Option[]
+     *
+     * Thats all. In this case, we just "tell" via fluent api, to use equinox.
+     *
+     */
+
     @Configuration
-    public void configure()
+    public static Option[] configure()
     {
-        
+        return options(
+            executionPolicy()
+                .testContainer( RBCRemoteContainerFactory.class )
+                .reuseContainer( ReUsePolicy.NEVER ),
+            waitForRBCFor( 2000 ),
+            location( "192.168.73.204", 8181 )
+        );
     }
 
     /**
@@ -43,11 +64,11 @@ public class T1S7_RemoteTarget
      * plus your testcase, wrapped into a bundle called pax-exam-probe
      */
     @Test
-    public void run( BundleContext bundleContext )
+    public void helloRemote( BundleContext bundleContext )
     {
         for( Bundle b : bundleContext.getBundles() )
         {
-            System.out.println( "Bundle " + b.getBundleId() + " : " + b.getSymbolicName() );
+            System.out.println( "bundle " + b.getBundleId() + " : " + b.getSymbolicName() );
         }
 
     }

@@ -17,11 +17,52 @@
  */
 package org.ops4j.pax.exam.tutorial1;
 
+import org.junit.Test;
+import org.ops4j.pax.exam.container.remote.RBCRemoteContainerFactory;
+import org.ops4j.pax.exam.tutorial1.MyCode;
+import org.ops4j.pax.exam.raw.ProbeCall;
+import org.ops4j.pax.exam.raw.TestProbeBuilder;
+import org.ops4j.pax.exam.runtime.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.container.TestContainer;
+
+import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
+import static org.ops4j.pax.exam.raw.DefaultRaw.*;
+
 /**
+ * This demo shows how to not necessarily use the junit user interface but fully
+ * control the lifecycle yourself
+ *
  * @author Toni Menzel
  * @since Jan 26, 2010
  */
 public class T1S8_RemoteRaw
 {
+
+    @Test
+    public void testPlan()
+        throws Exception
+    {
+        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( RBCRemoteContainerFactory.class ).newInstance(
+            options(
+                waitForRBCFor( 2000 ),
+                location( "192.168.73.204", 8181 )
+            )
+        );
+
+        try
+        {
+            TestProbeBuilder probe = createProbe().addTest( MyCode.class );
+            testTarget.install( probe.build() );
+
+            for( ProbeCall call : probe.getTests() )
+            {
+                execute( testTarget, call );
+            }
+        } finally
+        {
+            testTarget.stop();
+        }
+    }
 
 }
