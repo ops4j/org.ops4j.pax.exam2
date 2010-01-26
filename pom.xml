@@ -43,8 +43,8 @@
                 <module>pax-exam-spi</module>
 
                 <!-- Low Level Communication -->
-                <module>pax-exam-raw-extender</module>
-                <module>pax-exam-raw-extender-impl</module>
+                <module>pax-exam-extender</module>
+                <module>pax-exam-extender-service</module>
 
                 <!-- remoting glue (RMI impl, and possibly more (like http remoting) -->
                 <module>pax-exam-container-rbc</module>
