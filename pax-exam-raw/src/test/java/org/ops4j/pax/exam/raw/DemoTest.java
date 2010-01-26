@@ -39,7 +39,7 @@ public class DemoTest
         TestTarget testTarget = PaxExamRuntime.getTestTargetFactory().newInstance(
             options(
                 waitForRBCFor( 2000 ),
-                location( "localhost", 9191 )
+                location( "192.168.73.204", 8181 )
             )
         );
 
