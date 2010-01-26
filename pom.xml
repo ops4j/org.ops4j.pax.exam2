@@ -50,9 +50,9 @@
                 <module>pax-exam-container-rbc-client</module>
 
                 <!-- Some containers and targets -->
-                <module>pax-exam-container-default</module>
                 <module>pax-exam-container-native</module>
                 <module>pax-exam-target-default</module>
+                <module>pax-exam-container-paxrunner</module>
 
                 <!-- JUnit API and Launcher-->
                 <module>pax-exam-junit</module>

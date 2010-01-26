@@ -32,6 +32,8 @@ import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
 import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 
 /**
+ * Running a test on a remote device using an already installed rbc and a know connection
+ *
  * @author Toni Menzel
  * @since Jan 26, 2010
  */
@@ -51,6 +53,7 @@ public class T1S7_RemoteTarget
     public static Option[] configure()
     {
         return options(
+            //
             executionPolicy()
                 .testContainer( RBCRemoteContainerFactory.class )
                 .reuseContainer( ReUsePolicy.NEVER ),
@@ -62,6 +65,8 @@ public class T1S7_RemoteTarget
     /**
      * You will get a list of bundles installed by default
      * plus your testcase, wrapped into a bundle called pax-exam-probe
+     *
+     * @param bundleContext injected
      */
     @Test
     public void helloRemote( BundleContext bundleContext )
