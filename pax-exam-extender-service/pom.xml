@@ -1,64 +1,65 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.ops4j.pax</groupId>
-    <artifactId>exam</artifactId>
+    <parent>
+        <groupId>org.ops4j.pax</groupId>
+        <artifactId>exam</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.ops4j.pax.exam</groupId>
+    <artifactId>pax-exam-extender-service</artifactId>
     <version>2.0.0-SNAPSHOT</version>
-  </parent>
+    <packaging>bundle</packaging>
 
-  <groupId>org.ops4j.pax.exam</groupId>
-  <artifactId>pax-exam-extender-service</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
-  <packaging>bundle</packaging>
+    <name>OPS4J Pax Exam - Extender Service</name>
+    <properties>
+        <bundle.symbolicName>${namespace}.extender.service</bundle.symbolicName>
+        <bundle.namespace>${namespace}.raw.extender.intern</bundle.namespace>
+    </properties>
 
-  <name>OPS4J Pax Exam - Extender Service</name>
-  <properties>
-    <bundle.symbolicName>${namespace}.raw.extender.impl</bundle.symbolicName>
-    <bundle.namespace>${namespace}.raw.extender.intern</bundle.namespace>
-  </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+    <dependencies>
 
-  <dependencies>
-     
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-extender</artifactId>
-      <version>${pom.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-extender</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam</artifactId>
+            <version>${pom.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.base</groupId>
-      <artifactId>ops4j-base-lang</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.swissbox</groupId>
-      <artifactId>pax-swissbox-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.swissbox</groupId>
-      <artifactId>pax-swissbox-extender</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
-      
-  </dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-extender</artifactId>
+        </dependency>
+
+
+    </dependencies>
 
 </project>

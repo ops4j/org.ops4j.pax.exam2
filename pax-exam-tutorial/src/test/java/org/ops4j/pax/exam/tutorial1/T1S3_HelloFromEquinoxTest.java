@@ -23,6 +23,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
@@ -49,7 +50,8 @@ public class T1S3_HelloFromEquinoxTest
     public static Option[] configure( BundleContext bundleContext )
     {
         return options(
-            equinox()
+            equinox(),
+            cleanCaches()
         );
     }
 
