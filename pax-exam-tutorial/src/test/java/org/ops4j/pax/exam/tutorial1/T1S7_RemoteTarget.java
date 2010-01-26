@@ -58,7 +58,8 @@ public class T1S7_RemoteTarget
                 .testContainer( RBCRemoteContainerFactory.class )
                 .reuseContainer( ReUsePolicy.NEVER ),
             waitForRBCFor( 2000 ),
-            location( "192.168.73.204", 8181 )
+            //-Dorg.ops4j.pax.exam.rbc.rmi.port=9191
+            location( "localhost", 9191 )
         );
     }
 
