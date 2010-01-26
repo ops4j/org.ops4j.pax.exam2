@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Toni Menzel.
+ * Copyright 2009 Toni Menzel.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -15,19 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.raw.internal;
+package org.ops4j.pax.exam.spi.container.internal;
 
-import java.io.IOException;
-import java.util.jar.JarOutputStream;
+import java.io.File;
 
 /**
  * @author Toni Menzel (tonit)
- * @since Dec 10, 2008
+ * @since Mar 7, 2009
  */
-public interface ResourceLocator
+public interface FileTail
 {
 
-    // TODO add JavaDoc
-    void write( JarOutputStream jos )
-        throws IOException;
+    File getParentOfTail();
 }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.raw.internal;
+package org.ops4j.pax.exam.spi.container.internal;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +23,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import org.ops4j.pax.exam.raw.DefaultRaw;
-import org.ops4j.pax.exam.raw.ProbeCall;
-import org.ops4j.pax.exam.raw.TestHandle;
-import org.ops4j.pax.exam.raw.TestProbe;
-import org.ops4j.pax.exam.raw.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.container.DefaultRaw;
+import org.ops4j.pax.exam.spi.container.ProbeCall;
+import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 

@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.raw.internal;
+package org.ops4j.pax.exam.spi.container.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
