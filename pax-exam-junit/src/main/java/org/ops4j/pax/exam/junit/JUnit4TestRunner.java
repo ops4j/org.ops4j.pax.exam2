@@ -124,7 +124,6 @@ public class JUnit4TestRunner
                 use = executionPolicyOptions[ 0 ];
             }
 
-
             final Option[] filteredOptions = OptionUtils.remove( FrameworkOption.class, configOptions );
 
             if( frameworkOptions.length == 0 )
@@ -350,24 +349,27 @@ public class JUnit4TestRunner
     {
         // always add the junit extender
         final DefaultCompositeOption option = new DefaultCompositeOption(
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-junit-extender" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-junit-extender-impl" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+            /**
+             mavenBundle()
+             .groupId( "org.ops4j.pax.exam" )
+             .artifactId( "pax-exam" )
+             .version( Info.getPaxExamVersion() )
+             .update( Info.isPaxExamSnapshotVersion() )
+             .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+
+             mavenBundle()
+             .groupId( "org.ops4j.pax.exam" )
+             .artifactId( "pax-exam-junit-extender" )
+             .version( Info.getPaxExamVersion() )
+             .update( Info.isPaxExamSnapshotVersion() )
+             .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+             mavenBundle()
+             .groupId( "org.ops4j.pax.exam" )
+             .artifactId( "pax-exam-junit-extender-impl" )
+             .version( Info.getPaxExamVersion() )
+             .update( Info.isPaxExamSnapshotVersion() )
+             .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+             **/
         );
         // add options based on available configuration options from the test itself
         for( JUnit4ConfigMethod configMethod : configMethods )

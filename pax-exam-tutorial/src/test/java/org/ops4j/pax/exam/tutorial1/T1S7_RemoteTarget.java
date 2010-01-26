@@ -73,8 +73,7 @@ public class T1S7_RemoteTarget
     {
         for( Bundle b : bundleContext.getBundles() )
         {
-            System.out.println( "bundle " + b.getBundleId() + " : " + b.getSymbolicName() );
+            System.out.println( "boo " + b.getBundleId() + " : " + b.getSymbolicName() );
         }
-
     }
 }

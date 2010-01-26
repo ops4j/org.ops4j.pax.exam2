@@ -22,10 +22,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
-import org.ops4j.pax.exam.raw.internal.ClassMethodProbeCall;
-import org.ops4j.pax.exam.raw.internal.TestProbeBuilderImpl;
-import org.ops4j.pax.exam.spi.container.TestContainer;
-import org.ops4j.pax.exam.spi.container.TestTarget;
+import org.ops4j.pax.exam.spi.container.internal.ClassMethodProbeCall;
+import org.ops4j.pax.exam.spi.container.internal.TestProbeBuilderImpl;
 
 /**
  * @author Toni Menzel
@@ -78,12 +76,4 @@ public class DefaultRaw
         target.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")", 0 ).call();
     }
 
-    public static void stopIfPossible( TestTarget target )
-    {
-        // if its a container, stop it
-        if( target instanceof TestContainer )
-        {
-            ( (TestContainer) target ).stop();
-        }
-    }
 }

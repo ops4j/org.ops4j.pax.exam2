@@ -19,16 +19,15 @@ package org.ops4j.pax.exam.tutorial1;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
-import org.ops4j.pax.exam.container.remote.RBCRemoteContainerFactory;
+import org.ops4j.pax.exam.spi.container.ProbeCall;
 import org.ops4j.pax.exam.tutorial1.MyCode;
-import org.ops4j.pax.exam.raw.ProbeCall;
-import org.ops4j.pax.exam.raw.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
-import static org.ops4j.pax.exam.raw.DefaultRaw.*;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 /**
  * This demo shows how to not necessarily use the junit user interface but fully

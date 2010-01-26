@@ -37,11 +37,10 @@
             <modules>
                 <!-- Fundamentals. Mostly API -->
                 <module>pax-exam</module>
-                <module>pax-exam-spi</module>
                 <module>pax-exam-runtime</module>
-
-                <!-- Low Level Core -->
-                <module>pax-exam-raw</module>
+                <module>pax-exam-spi</module>
+               
+                <!-- Low Level Communication -->
                 <module>pax-exam-raw-extender</module>
                 <module>pax-exam-raw-extender-impl</module>
 

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import org.junit.Test;
+import org.ops4j.pax.exam.spi.container.internal.BundleBuilder;
+import org.ops4j.pax.exam.spi.container.internal.ResourceWriter;
 import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
