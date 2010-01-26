@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.raw;
+package org.ops4j.pax.exam.tutorial1;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
