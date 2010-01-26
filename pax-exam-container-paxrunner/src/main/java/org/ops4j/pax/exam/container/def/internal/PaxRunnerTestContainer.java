@@ -262,14 +262,14 @@ public class PaxRunnerTestContainer
 
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-raw-extender" )
+                .artifactId( "pax-exam-extender" )
                 .version( Info.getPaxExamVersion() )
                 .update( Info.isPaxExamSnapshotVersion() )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
 
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-raw-extender-impl" )
+                .artifactId( "pax-exam-extender-service" )
                 .version( Info.getPaxExamVersion() )
                 .update( Info.isPaxExamSnapshotVersion() )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES )
