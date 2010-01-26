@@ -53,7 +53,7 @@
             <artifactId>pax-exam-raw-extender</artifactId>
             <version>${pom.version}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-raw-extender-impl</artifactId>
             <version>${pom.version}</version>
@@ -70,7 +70,7 @@
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-target-default</artifactId>
+            <artifactId>pax-exam-container-remote</artifactId>
             <version>${pom.version}</version>
         </dependency>
     </dependencies>

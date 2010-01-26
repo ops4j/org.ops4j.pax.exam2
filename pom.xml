@@ -38,8 +38,10 @@
                 <!-- Fundamentals. Mostly API -->
                 <module>pax-exam</module>
                 <module>pax-exam-runtime</module>
+
+                <!-- Fundamental UI -->
                 <module>pax-exam-spi</module>
-               
+
                 <!-- Low Level Communication -->
                 <module>pax-exam-raw-extender</module>
                 <module>pax-exam-raw-extender-impl</module>
@@ -48,9 +50,9 @@
                 <module>pax-exam-container-rbc</module>
                 <module>pax-exam-container-rbc-client</module>
 
-                <!-- Some containers and targets -->
+                <!-- Some containers -->
                 <module>pax-exam-container-native</module>
-                <module>pax-exam-target-default</module>
+                <module>pax-exam-container-remote</module>
                 <module>pax-exam-container-paxrunner</module>
 
                 <!-- JUnit API and Launcher-->
