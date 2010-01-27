@@ -76,7 +76,6 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
         }
         if( testExec != null )
         {
-            LOG.info( "Found test: " + testExec );
             Parser parser = new Parser( bundle.getBundleContext(), testExec, manifestEntries );
             for( Probe p : parser.getProbes() )
             {
