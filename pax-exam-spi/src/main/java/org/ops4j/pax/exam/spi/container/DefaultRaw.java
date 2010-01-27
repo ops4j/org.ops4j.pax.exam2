@@ -58,6 +58,7 @@ public class DefaultRaw
      * parse test methods using reflection
      *
      * @param clazz
+     * @return
      */
     private static String[] parseMethods( Class clazz )
     {
