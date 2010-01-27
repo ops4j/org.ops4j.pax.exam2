@@ -56,13 +56,12 @@
                 <module>pax-exam-container-paxrunner</module>
 
                 <!-- JUnit API and Launcher-->
-                <module>pax-exam-junit</module>
-                <module>pax-exam-testng</module>
+                <module>ui/pax-exam-junit</module>
+                <module>ui/pax-exam-testng</module>
 
                 <!-- Maven plugin -->
-                <module>maven-paxexam-plugin</module>
-
-                <module>maven-archetype-paxexam-junit</module>
+                <module>extensions/maven-paxexam-plugin</module>
+                <module>extensions/maven-archetype-paxexam-junit</module>
 
                 <module>distributions/pax-exam-dist</module>
             </modules>
@@ -71,7 +70,7 @@
         <profile>
             <id>it</id>
             <modules>
-                <module>pax-exam-tutorial</module>
+                <module>samples/pax-exam-tutorial</module>
 
                 <module>samples/pax-exam-it-01</module>
                 <module>samples/pax-exam-it-02</module>
