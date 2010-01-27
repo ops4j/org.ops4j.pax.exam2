@@ -73,12 +73,12 @@
             <modules>
                 <module>pax-exam-tutorial</module>
 
-                <module>pax-exam-it/pax-exam-it-01</module>
-                <module>pax-exam-it/pax-exam-it-02</module>
-                <module>pax-exam-it/pax-exam-it-03</module>
-                <module>pax-exam-it/pax-exam-it-04</module>
-                <module>pax-exam-it/pax-exam-it-05</module>
-                <module>pax-exam-it/pax-exam-it-06</module>
+                <module>samples/pax-exam-it-01</module>
+                <module>samples/pax-exam-it-02</module>
+                <module>samples/pax-exam-it-03</module>
+                <module>samples/pax-exam-it-04</module>
+                <module>samples/pax-exam-it-05</module>
+                <module>samples/pax-exam-it-06</module>
 
             </modules>
         </profile>
