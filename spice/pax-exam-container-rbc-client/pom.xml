@@ -1,41 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.ops4j.pax</groupId>
-    <artifactId>exam</artifactId>
+    <parent>
+        <groupId>org.ops4j.pax</groupId>
+        <artifactId>exam</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../../pom/pom.xml</relativePath>        
+    </parent>
+
+    <groupId>org.ops4j.pax.exam</groupId>
+    <artifactId>pax-exam-container-rbc-client</artifactId>
     <version>2.0.0-SNAPSHOT</version>
-  </parent>
+    <packaging>jar</packaging>
 
-  <groupId>org.ops4j.pax.exam</groupId>
-  <artifactId>pax-exam-container-rbc-client</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+    <name>OPS4J Pax Exam - Remote Bundle Context Client</name>
 
-  <name>OPS4J Pax Exam - Remote Bundle Context Client</name>
+    <dependencies>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-spi</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-container-rbc</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-rbc</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-io</artifactId>
+            <version>1.2.1</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
 
 </project>

@@ -31,4 +31,5 @@ public interface Constants
      */
     String RMI_PORT_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.port";
 
+    long WAIT_FOREVER = 0;
 }
