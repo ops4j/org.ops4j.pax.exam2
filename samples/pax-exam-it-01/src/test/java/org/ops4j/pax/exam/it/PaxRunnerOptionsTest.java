@@ -47,7 +47,7 @@ public class PaxRunnerOptionsTest
     public static Option[] configure()
     {
         return options(
-            logProfile().version( "1.3.0" )
+            logProfile()
         );
     }
 
