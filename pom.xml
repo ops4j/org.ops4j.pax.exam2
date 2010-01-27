@@ -36,24 +36,24 @@
             </activation>
             <modules>
                 <!-- Fundamentals. Mostly API -->
-                <module>pax-exam</module>
-                <module>pax-exam-runtime</module>
+                <module>core/pax-exam</module>
+                <module>core/pax-exam-runtime</module>
 
                 <!-- Fundamental UI -->
-                <module>pax-exam-spi</module>
+                <module>core/pax-exam-spi</module>
 
                 <!-- Low Level Communication -->
-                <module>pax-exam-extender</module>
-                <module>pax-exam-extender-service</module>
+                <module>core/pax-exam-extender</module>
+                <module>core/pax-exam-extender-service</module>
 
                 <!-- remoting glue (RMI impl, and possibly more (like http remoting) -->
-                <module>pax-exam-container-rbc</module>
-                <module>pax-exam-container-rbc-client</module>
+                <module>spice/pax-exam-container-rbc</module>
+                <module>spice/pax-exam-container-rbc-client</module>
 
                 <!-- Some containers -->
-                <module>pax-exam-container-native</module>
-                <module>pax-exam-container-remote</module>
-                <module>pax-exam-container-paxrunner</module>
+                <module>containers/pax-exam-container-native</module>
+                <module>containers/pax-exam-container-remote</module>
+                <module>containers/pax-exam-container-paxrunner</module>
 
                 <!-- JUnit API and Launcher-->
                 <module>ui/pax-exam-junit</module>
