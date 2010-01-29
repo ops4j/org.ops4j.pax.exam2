@@ -22,6 +22,7 @@ import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.raw.internal.ClassMethodProbeCall;
 import org.ops4j.pax.exam.raw.internal.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.spi.container.TestContainer;
+import org.ops4j.pax.exam.spi.container.TestTarget;
 
 /**
  * @author Toni Menzel
@@ -41,9 +42,9 @@ public class DefaultRaw
         return new ClassMethodProbeCall( "PaxExam-Executable-SIG" + ( id++ ), clazz, method );
     }
 
-    public static void execute( TestContainer container, ProbeCall call )
+    public static void execute( TestTarget target, ProbeCall call )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-        container.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")",0 ).call();
+        target.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")",0 ).call();
     }
 }

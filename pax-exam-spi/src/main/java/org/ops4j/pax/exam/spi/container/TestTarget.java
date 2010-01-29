@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
+import java.io.InputStream;
+
 /**
  * @author Toni Menzel
  * @since Jan 22, 2010
@@ -24,6 +26,23 @@ package org.ops4j.pax.exam.spi.container;
 public interface TestTarget
 {
 
+    /**
+     * @param serviceType     type of service
+     * @param filter          filter (osgi)
+     * @param timeoutInMillis timout of request. Zero means: no timeout.
+     *
+     * @return service (or at least client proxy) of service. Or Null if lookup failed.
+     *
+     * @throws TestContainerException in case a container problem occured.
+     */
     <T> T getService( Class<T> serviceType, String filter, long timeoutInMillis )
         throws TestContainerException;
+
+    /**
+     * @param location location callback of receiver wants to get an update. (may or may not be supported)
+     * @param stream   stream the content
+     *
+     * @return Bundle ID
+     */
+    long installBundle( String location, InputStream stream );
 }
