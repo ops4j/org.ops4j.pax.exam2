@@ -17,11 +17,8 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,31 +91,6 @@ public class NativeTestContainer implements TestContainer
         return null;
     }
 
-    public long installBundle( String bundleUrl )
-        throws TestContainerException
-    {
-        try
-        {
-            return installBundle( bundleUrl, new URL( bundleUrl ).openStream() );
-        } catch( IOException e )
-        {
-            throw new TestContainerException( e );
-        }
-    }
-
-    public long installBundle( InputStream inp )
-        throws TestContainerException
-    {
-        long time = System.nanoTime();
-        return installBundle( "PaxExamAdhocBundle" + time, inp );
-    }
-
-    public long installBundle( String bundleLocation, byte[] bundle )
-        throws TestContainerException
-    {
-        return installBundle( bundleLocation, new ByteArrayInputStream( bundle ) );
-    }
-
     public long installBundle( String location, InputStream stream )
     {
         try
@@ -134,30 +106,6 @@ public class NativeTestContainer implements TestContainer
             e.printStackTrace();
         }
         return -1;
-    }
-
-    public void startBundle( long bundleId )
-        throws TestContainerException
-    {
-        try
-        {
-            m_framework.getBundleContext().getBundle( bundleId ).start();
-        } catch( BundleException e )
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void stopBundle( long bundleId )
-        throws TestContainerException
-    {
-        try
-        {
-            m_framework.getBundleContext().getBundle( bundleId ).stop();
-        } catch( BundleException e )
-        {
-            e.printStackTrace();
-        }
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )

@@ -22,6 +22,7 @@ import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
+import org.ops4j.pax.exam.spi.container.TestTarget;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -45,17 +46,10 @@ public class DemoTest
             .addTest( call( MyCode.class, "runMeToo" ) )
             .setAnchor( MyCode.class );
 
-        TestContainer container = PaxExamRuntime.getTestContainerFactory().newInstance(
-            options( getOptions(),
-                     rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
-            )
-        );
-
-        container.start();
+        TestTarget container = getTestTarget();
 
         // install the probe(s)
-        long id = container.installBundle( "myProbe", probe.get().getProbe() );
-        container.startBundle( id );
+        container.installBundle( "myProbe", probe.get() );
 
         // run them
         for( ProbeCall call : probe.getTests() )
@@ -63,7 +57,31 @@ public class DemoTest
             execute( container, call );
         }
 
-        container.stop();
+        // if its a container, stop it
+        if( container instanceof TestContainer )
+        {
+            ( (TestContainer) container ).stop();
+        }
+    }
+
+    private TestContainer getTestTarget()
+    {
+        TestContainer container = PaxExamRuntime.getTestContainerFactory().newInstance(
+            options( getOptions(),
+                     rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
+            )
+        );
+
+        container.start();
+        return container;
+    }
+
+    private TestContainer getAceTarget()
+    {
+        TestContainer container = null; //newAceTarget();
+        
+        container.start();
+        return container;
     }
 
     public Option getOptions()
