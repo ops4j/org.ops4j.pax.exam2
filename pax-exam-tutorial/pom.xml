@@ -4,83 +4,95 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.ops4j.pax</groupId>
-    <artifactId>exam</artifactId>
+    <parent>
+        <groupId>org.ops4j.pax</groupId>
+        <artifactId>exam</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.ops4j.pax.exam</groupId>
+    <artifactId>pax-exam-tutorial</artifactId>
     <version>2.0.0-SNAPSHOT</version>
-  </parent>
+    <packaging>jar</packaging>
 
-  <groupId>org.ops4j.pax.exam</groupId>
-  <artifactId>pax-exam-tutorial</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+    <name>OPS4J Pax Exam - Tutorial</name>
+    <repositories>
+    </repositories>
 
-  <name>OPS4J Pax Exam - Tutorial</name>
-  <repositories>
-  </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-junit</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-junit</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-container-default</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-    </dependency>
+        <!-- INFO: having multiple test containers loaded you should select it at factory lookup ! -->
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-default</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-native</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-target-default</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <!-- use pax exam maven plugin -->
+    <build>
+        <plugins>
+            <!-- use pax exam maven plugin -->
 
-      <!--
-      Note: settings and dependencies for the final osgi runtime (TESTS) are just used in TestCases
-      that annotated with this:
-      @RunWith( MavenConfiguredJUnit4TestRunner.class )
+            <!--
+            Note: settings and dependencies for the final osgi runtime (TESTS) are just used in TestCases
+            that annotated with this:
+            @RunWith( MavenConfiguredJUnit4TestRunner.class )
 
-      All other testcases will use their own settings/provisioning inside @Configure Methods.
-      -->
-      <plugin>
-        <groupId>org.ops4j.pax.exam</groupId>
-        <artifactId>maven-paxexam-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-config</id>
-            <goals>
-              <goal>generate-config</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
+            All other testcases will use their own settings/provisioning inside @Configure Methods.
+            -->
+            <plugin>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>maven-paxexam-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-config</id>
+                        <goals>
+                            <goal>generate-config</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
 
-          <options>
-            <platform>equinox</platform>
-            <profiles>log</profiles>
-          </options>
+                    <options>
+                        <platform>equinox</platform>
+                        <profiles>log</profiles>
+                    </options>
 
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

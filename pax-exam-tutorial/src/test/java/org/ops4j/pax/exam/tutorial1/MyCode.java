@@ -41,7 +41,7 @@ public class MyCode
         String bund = "phoebe";
         for( Bundle b : ctx.getBundles() )
         {
-            System.out.println( "Have " + b.getSymbolicName() );
+            System.out.println( "Bee " + b.getSymbolicName() );
             if (bund.startsWith( b.getSymbolicName() )) {
                 found = true;
             }
