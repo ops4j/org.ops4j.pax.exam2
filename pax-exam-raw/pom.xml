@@ -16,7 +16,6 @@
     <name>OPS4J Pax Exam - Raw</name>
 
     <dependencies>
-       
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-runtime</artifactId>
@@ -60,47 +59,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- Choice 1-->
-        <!--
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>pax-exam-container-default</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        -->
-
-        <!-- Choice 2-->
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-native</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>2.0.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Choice 3-->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>pax-exam-target-default</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>osgi</artifactId>
-            <version>3.5.1.R35x_v20090827</version>
-        </dependency>
-        -->
     </dependencies>
 
 </project>

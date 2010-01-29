@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.tutorial1;
 
 import org.junit.Test;
+import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
 import org.ops4j.pax.exam.container.remote.RBCRemoteContainerFactory;
 import org.ops4j.pax.exam.tutorial1.MyCode;
 import org.ops4j.pax.exam.raw.ProbeCall;
@@ -43,12 +44,12 @@ public class T1S8_RemoteRaw
     public void testPlan()
         throws Exception
     {
-        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( RBCRemoteContainerFactory.class ).newInstance(
+        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).newInstance(
             options(
-                waitForRBCFor( 2000 ),
-                location( "192.168.73.204", 8181 )
+                waitForRBCFor( 2000 )
+                //location( "192.168.73.204", 8181 )
             )
-        );
+        ).start();
 
         try
         {
