@@ -24,13 +24,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URI;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.List;
 import java.util.Stack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,10 +38,7 @@ import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerException;
-import org.ops4j.pax.exam.spi.container.TestTarget;
 import org.ops4j.pax.exam.spi.container.TimeoutException;
-import org.ops4j.store.Store;
-import org.ops4j.store.StoreFactory;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
@@ -74,8 +69,6 @@ public class RemoteBundleContextClient
      */
     private RemoteBundleContext m_remoteBundleContext;
 
-    final private Store<InputStream> m_store;
-
     private String m_host = null;
 
     private Stack<Long> m_installed;
@@ -94,7 +87,6 @@ public class RemoteBundleContextClient
         m_rmiPort = rmiPort;
         m_host = host;
         m_rmiLookupTimeout = rmiLookupTimeout;
-        m_store = StoreFactory.sharedLocalStore();
     }
 
     /**
