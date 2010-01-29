@@ -32,15 +32,12 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 public class T1S2_HowToUseBundleContextTest
 {
 
-    @Inject
-    BundleContext bundleContext = null;
-
     /**
      * You will get a list of bundles installed by default
      * plus your testcase, wrapped into a bundle called pax-exam-probe
      */
     @Test
-    public void listBundles()
+    public void listBundles( BundleContext bundleContext)
     {
         for( Bundle b : bundleContext.getBundles() )
         {

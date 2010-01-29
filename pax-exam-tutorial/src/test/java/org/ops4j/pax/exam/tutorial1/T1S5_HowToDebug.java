@@ -21,10 +21,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
 import static org.ops4j.pax.exam.CoreOptions.*;
+
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
+
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
+
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
@@ -36,11 +40,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 public class T1S5_HowToDebug
 {
 
-    @Inject
-    BundleContext bundleContext = null;
-
     @Configuration
-    public static Option[] configure()
+    public static Option[] configure( BundleContext bundleContext )
     {
         return options(
             // this just adds all what you write here to java vm argumenents of the (new) osgi process.
@@ -54,7 +55,7 @@ public class T1S5_HowToDebug
     }
 
     @Test
-    public void helloAgain()
+    public void helloAgain( BundleContext bundleContext )
     {
         System.out.println( "This is running inside Felix. With all configuration set up like you specified. " );
         // feel free to add breakpoints and debug.

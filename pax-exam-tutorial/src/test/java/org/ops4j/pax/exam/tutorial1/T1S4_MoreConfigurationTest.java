@@ -24,12 +24,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
 import static org.ops4j.pax.exam.CoreOptions.*;
 
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
+
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
+
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
@@ -40,9 +43,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 @RunWith( JUnit4TestRunner.class )
 public class T1S4_MoreConfigurationTest
 {
-
-    @Inject
-    BundleContext bundleContext = null;
 
     // you get that because you "installed" a log profile in configuration.
     public Log logger = LogFactory.getLog( T1S4_MoreConfigurationTest.class );
@@ -55,8 +55,9 @@ public class T1S4_MoreConfigurationTest
      * - add custom bundles via the mvn handler
      * - add additional, non bundlized dependencies. (wrapping on the fly)
      */
+
     @Configuration
-    public static Option[] configure()
+    public static Option[] configure( BundleContext bundleContext )
     {
         return options(
             // install log service using pax runners profile abstraction (there are more profiles, like DS)
@@ -84,7 +85,7 @@ public class T1S4_MoreConfigurationTest
     }
 
     @Test
-    public void helloAgain()
+    public void helloAgain( BundleContext bundleContext )
     {
         logger.info( "This is running inside Felix. With all configuration set up like you specified. " );
         for( Bundle b : bundleContext.getBundles() )

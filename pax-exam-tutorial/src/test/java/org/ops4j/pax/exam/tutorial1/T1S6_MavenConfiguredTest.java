@@ -1,6 +1,7 @@
 package org.ops4j.pax.exam.tutorial1;
 
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
@@ -16,11 +17,8 @@ import org.ops4j.pax.exam.junit.MavenConfiguredJUnit4TestRunner;
 public class T1S6_MavenConfiguredTest
 {
 
-    @Inject
-    BundleContext context;
-
     @Test
-    public void testMe()
+    public void testMe( BundleContext context )
     {
         assertNotNull( context );
         System.out.println( "printing bundle states.." );
