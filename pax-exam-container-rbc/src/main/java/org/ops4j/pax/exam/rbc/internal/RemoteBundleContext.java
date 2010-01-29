@@ -63,6 +63,7 @@ public interface RemoteBundleContext
     Object remoteCall( Class<?> serviceType,
                        String methodName,
                        Class<?>[] methodParamTypes,
+                       String filter,
                        long timeoutInMillis,
                        Object... actualParams )
         throws

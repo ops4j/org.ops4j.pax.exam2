@@ -52,6 +52,10 @@ public class DemoTest
         container.installBundle( "myProbe", probe.get() );
 
         // run them
+        System.out.println( "waiting.." );
+        Thread.sleep( 5000 );
+        System.out.println( "DONE" );
+
         for( ProbeCall call : probe.getTests() )
         {
             execute( container, call );
@@ -67,8 +71,9 @@ public class DemoTest
     private TestContainer getTestTarget()
     {
         TestContainer container = PaxExamRuntime.getTestContainerFactory().newInstance(
-            options( getOptions(),
-                     rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
+            options( getOptions()
+                    
+                     //  rawPaxRunnerOption( "systemPackages", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" )
             )
         );
 
@@ -79,7 +84,7 @@ public class DemoTest
     private TestContainer getAceTarget()
     {
         TestContainer container = null; //newAceTarget();
-        
+
         container.start();
         return container;
     }
@@ -112,15 +117,13 @@ public class DemoTest
                 .version( "4.2.0" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
 
-            /**
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam-raw-extender" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
 
-             mavenBundle()
-             .groupId( "org.ops4j.pax.exam" )
-             .artifactId( "pax-exam-raw-extender" )
-             .version( Info.getPaxExamVersion() )
-             .update( Info.isPaxExamSnapshotVersion() )
-             .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-             **/
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-raw-extender-impl" )
