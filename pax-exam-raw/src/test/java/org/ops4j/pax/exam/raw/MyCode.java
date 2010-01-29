@@ -36,10 +36,18 @@ public class MyCode
 
     public void runMeToo( BundleContext ctx )
     {
-        System.out.println( "Hello World Lister" );
+        System.out.println( "Hello World wdqwqw" );
+        boolean found = false;
+        String bund = "phoebe";
         for( Bundle b : ctx.getBundles() )
         {
             System.out.println( "Have " + b.getSymbolicName() );
+            if (bund.startsWith( b.getSymbolicName() )) {
+                found = true;
+            }
+        }
+        if (!found) {
+            //throw new RuntimeException("You need a planon module, dude!");
         }
     }
 }
