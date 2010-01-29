@@ -37,6 +37,7 @@ import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerException;
+import org.ops4j.pax.exam.spi.container.TestTarget;
 import org.ops4j.pax.exam.spi.container.TimeoutException;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
@@ -179,7 +180,7 @@ public class RemoteBundleContextClient
     /**
      * {@inheritDoc}
      */
-    public void start()
+    public TestContainer start()
     {
         try
         {
@@ -193,12 +194,13 @@ public class RemoteBundleContextClient
         {
             throw new TestContainerException( "System bundle cannot be started", e );
         }
+        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void stop()
+    public TestContainer stop()
     {
         try
         {
@@ -212,6 +214,7 @@ public class RemoteBundleContextClient
         {
             throw new TestContainerException( "System bundle cannot be stopped", e );
         }
+        return this;
     }
 
     /**

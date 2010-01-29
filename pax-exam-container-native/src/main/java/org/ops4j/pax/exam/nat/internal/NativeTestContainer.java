@@ -95,15 +95,6 @@ public class NativeTestContainer implements TestContainer
                 .artifactId( "org.osgi.compendium" )
                 .version( "4.2.0" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-/**
- mavenBundle()
- .groupId( "org.ops4j.pax.exam" )
- .artifactId( "pax-exam-raw-extender" )
- .version( Info.getPaxExamVersion() )
- .update( Info.isPaxExamSnapshotVersion() )
- .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
- **/
-
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-raw-extender-impl" )
@@ -153,8 +144,6 @@ public class NativeTestContainer implements TestContainer
         return -1;
     }
 
-
-
     public void setBundleStartLevel( long bundleId, int startLevel )
         throws TestContainerException
     {
@@ -167,7 +156,7 @@ public class NativeTestContainer implements TestContainer
         }
     }
 
-    public void stop()
+    public TestContainer stop()
         throws TimeoutException
     {
         try
@@ -183,6 +172,7 @@ public class NativeTestContainer implements TestContainer
         {
 
         }
+        return this;
     }
 
     public void waitForState( long bundleId, int state, long timeoutInMillis )
@@ -191,7 +181,7 @@ public class NativeTestContainer implements TestContainer
         // look for a certain state in fw
     }
 
-    public void start()
+    public TestContainer start()
         throws TimeoutException
     {
         ClassLoader parent = null;
@@ -236,6 +226,7 @@ public class NativeTestContainer implements TestContainer
 
             }
         }
+        return this;
     }
 
     private FrameworkFactory getFrameworkFactory( String factoryClass )
@@ -255,9 +246,5 @@ public class NativeTestContainer implements TestContainer
         return "org.eclipse.osgi.launch.EquinoxFactory";
     }
 
-    public <T> List<T> getServices( Class<T> serviceType, String filter, long timeoutInMillis )
-        throws TestContainerException
-    {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+
 }
