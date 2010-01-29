@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam.tutorial1;
 
-import java.io.InputStream;
-import java.net.URL;
 import org.junit.Test;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
@@ -28,7 +26,6 @@ import org.ops4j.pax.exam.spi.container.TestProbeProvider;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
-import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 /**
@@ -44,8 +41,6 @@ public class T2S3_HandrolledTest
     {
         TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).newInstance(
             options(
-                // waitForRBCFor( 2000 )
-                //location( "192.168.73.204", 8181 )
                 logProfile(),
                 rawPaxRunnerOption( "log", "debug" ),
                 mavenBundle().groupId( "org.apache.felix" ).artifactId( "org.apache.felix.dependencymanager" ).version( "3.0.0-SNAPSHOT" )
@@ -54,37 +49,12 @@ public class T2S3_HandrolledTest
 
         try
         {
-            TestProbeProvider probe = new TestProbeProvider()
-            {
+            // here we take a handrolled probe bundle
 
-                public ProbeCall[] getTests()
-                {
-                    return new ProbeCall[]{
-                        new ProbeCall()
-                        {
-
-                            public String getInstruction()
-                            {
-                                return null;
-                            }
-
-                            public String signature()
-                            {
-                                return "mytest";
-                            }
-                        }
-                    };
-                }
-
-                public InputStream getStream()
-                {
-                    return fromURL( "file:samples/probe1/target/samples.probe1-2.0.0-SNAPSHOT.jar" );
-                    //return fromURL( "mvn:org.ops4j.pax.exam/samples-probe1/2.0.0-SNAPSHOT" );
-                }
-            };
+            TestProbeProvider probe = probe( fromURL( "file:samples/probe1/target/samples.probe1-2.0.0-SNAPSHOT.jar" ), "mytest" );
 
             testTarget.install( probe.getStream() );
-            Thread.sleep( 5000 );
+
             for( ProbeCall call : probe.getTests() )
             {
                 execute( testTarget, call );
