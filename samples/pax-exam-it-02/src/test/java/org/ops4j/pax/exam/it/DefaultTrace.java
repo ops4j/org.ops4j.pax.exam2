@@ -37,13 +37,10 @@ import org.ops4j.pax.exam.Inject;
 public abstract class DefaultTrace
 {
 
-    @Inject
-    BundleContext bundleContext = null;
-
     public Log logger = LogFactory.getLog( DefaultTrace.class );
 
     @Test
-    public void test1()
+    public void test1( BundleContext bundleContext )
     {
         logger.trace( "******** This a trace from OSGi" );
         logger.debug( "******** This a debug from OSGi" );

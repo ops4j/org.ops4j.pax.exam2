@@ -22,7 +22,7 @@ import org.osgi.framework.Constants;
  * This example shows how you can use {@link Customizer} and {@link TinyBundles} to customize the test probe how you
  * want to. You could also add/remove resources of cause. This example just shows a "common" usage to "fix" some headers
  * in the testprobe.
- * 
+ *
  * @author Toni Menzel (tonit)
  * @since Oct 02, 2009
  */
@@ -35,25 +35,23 @@ public class OverwriteTestProbe
     {
         return options(
 
-        new Customizer()
-        {
-            @Override
-            public InputStream customizeTestProbe( InputStream testProbe )
-                throws IOException
+            new Customizer()
             {
-                return TinyBundles.modifyBundle( testProbe ).
-                                  removeHeader( Constants.EXPORT_PACKAGE )
-                                  .set( Constants.BUNDLE_SYMBOLICNAME, "HelloWorld" )
-                                  .build();
+                @Override
+                public InputStream customizeTestProbe( InputStream testProbe )
+                    throws IOException
+                {
+                    return TinyBundles.modifyBundle( testProbe ).
+                        removeHeader( Constants.EXPORT_PACKAGE )
+                        .set( Constants.BUNDLE_SYMBOLICNAME, "HelloWorld" )
+                        .build();
+                }
             }
-        } );
+        );
     }
 
-    @Inject
-    BundleContext context;
-
     @Test
-    public void show()
+    public void show( BundleContext context )
 
     {
         // test that our testprobe has been changed like we wanted to:

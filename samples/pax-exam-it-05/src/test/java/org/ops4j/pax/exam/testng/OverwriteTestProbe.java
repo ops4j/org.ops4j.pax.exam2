@@ -43,17 +43,14 @@ public class OverwriteTestProbe {
 		});
 	}
 
-	@Inject
-	BundleContext context;
-
 	@Test
-	public void show()
+	public void show( BundleContext bundleContext )
 
 	{
 		// test that our testprobe has been changed like we wanted to:
-		assertEquals("HelloWorld", context.getBundle().getHeaders().get(
+		assertEquals("HelloWorld", bundleContext.getBundle().getHeaders().get(
 				Constants.BUNDLE_SYMBOLICNAME));
-		assertEquals(null, context.getBundle().getHeaders().get(
+		assertEquals(null, bundleContext.getBundle().getHeaders().get(
 				Constants.EXPORT_PACKAGE));
 	}
 }
