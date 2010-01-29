@@ -64,7 +64,7 @@
 
                 <module>maven-archetype-paxexam-junit</module>
 
-                <module>pax-exam-dist</module>
+                <module>distributions/pax-exam-dist</module>
             </modules>
         </profile>
 
