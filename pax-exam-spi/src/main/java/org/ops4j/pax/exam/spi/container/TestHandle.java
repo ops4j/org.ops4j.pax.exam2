@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.raw;
+package org.ops4j.pax.exam.spi.container;
 
 /**
  * @author Toni Menzel
