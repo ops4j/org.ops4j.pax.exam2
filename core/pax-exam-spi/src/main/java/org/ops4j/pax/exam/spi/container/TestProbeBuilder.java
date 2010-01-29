@@ -6,16 +6,13 @@ import java.io.InputStream;
  * @author Toni Menzel
  * @since Dec 2, 2009
  */
-public interface TestProbeBuilder
+public interface TestProbeBuilder extends TestProbeProvider
 {
 
     TestProbeBuilder addTest( ProbeCall... calls );
 
     TestProbeBuilder addTest( Class... clazz );
     
-    InputStream build();
-
     TestProbeBuilder setAnchor( Class anchor );
 
-    ProbeCall[] getTests();
 }

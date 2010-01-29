@@ -161,7 +161,7 @@ public class JUnit4TestMethod
             executionState = CONTAINER_STARTED;
 
             LOG.trace( "Install and start test bundle" );
-            final long bundleId = container.install( m_probe.build() );
+            final long bundleId = container.install( m_probe.getStream() );
             executionState = PROBE_INSTALLED;
 
             container.setBundleStartLevel( bundleId, START_LEVEL_TEST_BUNDLE );

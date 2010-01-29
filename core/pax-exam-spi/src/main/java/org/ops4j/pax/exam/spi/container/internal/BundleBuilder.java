@@ -63,7 +63,7 @@ public class BundleBuilder
      * Builds an osgi bundle out of settings given while creating this instance.
      * Output is being asynchronously in a new thread when reading from the InputStream returned by this method.
      *
-     * @return an inputstream that must be flushed in order to actually invoke the bundle build process.
+     * @return an inputstream that must be flushed in order to actually invoke the bundle getStream process.
      */
     public InputStream build()
     {

@@ -73,7 +73,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return m_probeCalls.toArray( new ProbeCall[m_probeCalls.size()] );
     }
 
-    public InputStream build()
+    public InputStream getStream()
     {
 
         Properties p = new Properties();

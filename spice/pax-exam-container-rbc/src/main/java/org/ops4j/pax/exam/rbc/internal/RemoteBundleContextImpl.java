@@ -229,7 +229,7 @@ public class RemoteBundleContextImpl
                               final long timeoutInMillis )
         throws NoSuchServiceException
     {
-        LOG.info( "Look up service [" + serviceType.getName() + "], timeout in " + timeoutInMillis + " millis" );
+        LOG.info( "Look up service [" + serviceType.getName() + "] filter [" + filter + "], timeout in " + timeoutInMillis + " millis" );
         final ServiceReference[] ref;
         try
         {

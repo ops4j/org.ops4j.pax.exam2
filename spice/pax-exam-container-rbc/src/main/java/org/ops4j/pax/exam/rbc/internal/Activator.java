@@ -33,6 +33,8 @@ import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
  * Registers the an instance of RemoteTestRunnerService as RMI service using a port set by system property
  * pax.exam.communication.port.
  *
+ * Test
+ *
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since Jun 2, 2008

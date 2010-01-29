@@ -17,8 +17,11 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
@@ -58,7 +61,6 @@ public class DefaultRaw
      * parse test methods using reflection
      *
      * @param clazz
-     * @return
      */
     private static String[] parseMethods( Class clazz )
     {
@@ -75,6 +77,17 @@ public class DefaultRaw
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
         target.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")", 0 ).call();
+    }
+
+    public static InputStream fromURL( String s )
+    {
+        try
+        {
+            return new URL( s ).openStream();
+        } catch( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
 }

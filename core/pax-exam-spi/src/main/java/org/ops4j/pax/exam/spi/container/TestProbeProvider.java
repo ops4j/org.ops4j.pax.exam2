@@ -17,11 +17,17 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
+import java.io.InputStream;
+
 /**
  * @author Toni Menzel
  * @since Jan 29, 2010
  */
 public interface TestProbeProvider
 {
+
+    ProbeCall[] getTests();
+
+    InputStream getStream();
 
 }

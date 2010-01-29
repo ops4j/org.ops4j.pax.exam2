@@ -343,7 +343,7 @@ public class PaxRunnerTestContainer
             Handle handle = m_cache.get( bundleUrl );
             if( handle == null )
             {
-                // new, so build, customize and store
+                // new, so getStream, customize and store
                 URL url = new URL( bundleUrl );
                 InputStream in = url.openStream();
 
