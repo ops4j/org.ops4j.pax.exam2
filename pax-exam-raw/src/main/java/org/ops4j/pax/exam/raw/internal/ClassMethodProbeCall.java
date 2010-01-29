@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.raw.internal;
 
+import java.lang.reflect.Method;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.raw.ProbeCall;
 
@@ -51,10 +52,6 @@ public class ClassMethodProbeCall implements ProbeCall
         return m_clazz + ";" + m_method;
     }
 
-    public void invoke( BundleContext ctx )
-    {
-        System.out.println( "Should invoke now.." );
-    }
 
     public String signature()
     {

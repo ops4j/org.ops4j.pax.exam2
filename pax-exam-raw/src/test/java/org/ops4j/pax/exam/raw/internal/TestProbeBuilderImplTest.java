@@ -17,10 +17,8 @@
  */
 package org.ops4j.pax.exam.raw.internal;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 import org.junit.Test;
 import org.ops4j.pax.exam.raw.TestProbeBuilder;
 import org.ops4j.store.Handle;
@@ -43,7 +41,7 @@ public class TestProbeBuilderImplTest
         TestProbeBuilder builder = new TestProbeBuilderImpl();
 
         builder.addTest( call( TestProbeBuilderImplTest.class, "foo" ) ).setAnchor( TestProbeBuilderImplTest.class );
-        InputStream inp = builder.get();
+        InputStream inp = builder.build();
 
         Store<InputStream> store = StoreFactory.sharedLocalStore();
         Handle handle = store.store( inp );

@@ -137,7 +137,7 @@ public class RemoteBundleContextClient
 
 
 
-    public long installBundle( String loc, InputStream stream )
+    public long installBundle( InputStream stream )
     {
         // turn this into a local url because we don't want pass the stream any further.
         try

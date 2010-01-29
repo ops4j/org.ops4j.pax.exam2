@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import org.ops4j.pax.exam.raw.DefaultRaw;
 import org.ops4j.pax.exam.raw.ProbeCall;
 import org.ops4j.pax.exam.raw.TestHandle;
 import org.ops4j.pax.exam.raw.TestProbe;
@@ -38,9 +39,23 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
 
     private Class m_anchor;
 
-    public TestProbeBuilder addTest( ProbeCall call )
+    public TestProbeBuilder addTest( ProbeCall... calls )
     {
-        m_probeCalls.add( call );
+        for( ProbeCall call : calls )
+        {
+            m_probeCalls.add( call );
+        }
+
+        return this;
+    }
+
+    public TestProbeBuilder addTest( Class... calls )
+    {
+        for( Class call : calls )
+        {
+            addTest( DefaultRaw.call( call ) );
+            setAnchor( call );
+        }
         return this;
     }
 
@@ -55,7 +70,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return m_probeCalls.toArray( new ProbeCall[m_probeCalls.size()] );
     }
 
-    public InputStream get()
+    public InputStream build()
     {
 
         Properties p = new Properties();
