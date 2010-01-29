@@ -54,7 +54,7 @@ public class DemoTest
         container.start();
 
         // install the probe(s)
-        long id = container.installBundle( probe.get().getProbe() );
+        long id = container.installBundle( "myProbe", probe.get().getProbe() );
         container.startBundle( id );
 
         // run them

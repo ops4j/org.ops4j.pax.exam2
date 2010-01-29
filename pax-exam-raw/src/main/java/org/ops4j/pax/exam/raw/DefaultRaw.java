@@ -44,6 +44,6 @@ public class DefaultRaw
     public static void execute( TestContainer container, ProbeCall call )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-        container.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")" ).call();
+        container.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")",0 ).call();
     }
 }
