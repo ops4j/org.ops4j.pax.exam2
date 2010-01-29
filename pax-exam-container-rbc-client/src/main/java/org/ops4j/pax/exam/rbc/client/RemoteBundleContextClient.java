@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.rbc.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
@@ -33,6 +34,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleException;
+import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 import org.ops4j.pax.exam.spi.container.TestContainer;
@@ -73,6 +75,25 @@ public class RemoteBundleContextClient
 
     final private Store<InputStream> m_store;
 
+    private String m_host = null;
+
+    /**
+     * Constructor.
+     *
+     * @param host             RMI Registry Host
+     * @param rmiPort          RMI communication port (cannot be null)
+     * @param rmiLookupTimeout timeout for looking up the remote bundle context via RMI (cannot be null)
+     */
+    public RemoteBundleContextClient( final String host,
+                                      final Integer rmiPort,
+                                      final long rmiLookupTimeout )
+    {
+        m_rmiPort = rmiPort;
+        m_host = host;
+        m_rmiLookupTimeout = rmiLookupTimeout;
+        m_store = StoreFactory.sharedLocalStore();
+    }
+
     /**
      * Constructor.
      *
@@ -82,9 +103,7 @@ public class RemoteBundleContextClient
     public RemoteBundleContextClient( final Integer rmiPort,
                                       final long rmiLookupTimeout )
     {
-        m_rmiPort = rmiPort;
-        m_rmiLookupTimeout = rmiLookupTimeout;
-        m_store = StoreFactory.sharedLocalStore();
+        this( null, rmiPort, rmiLookupTimeout );
     }
 
     /**
@@ -141,8 +160,10 @@ public class RemoteBundleContextClient
         // turn this into a local url because we don't want pass the stream any further.
         try
         {
-            URI location = m_store.getLocation( m_store.store( stream ) );
-            long id = getRemoteBundleContext().installBundle( location.toASCIIString() );
+            //URI location = m_store.getLocation( m_store.store( stream ) );
+            // pack as bytecode
+            byte[] packed = pack( stream );
+            long id = getRemoteBundleContext().installBundle( "no", packed );
             getRemoteBundleContext().startBundle( id );
             return id;
         } catch( IOException e )
@@ -152,6 +173,20 @@ public class RemoteBundleContextClient
         {
             throw new TestContainerException( "Bundle cannot be installed", e );
         }
+    }
+
+    private byte[] pack( InputStream stream )
+    {
+        LOG.info( "Packing probe into memory for true RMI. Hopefully things will fill in.." );
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try
+        {
+            StreamUtils.copyStream( stream, out, true );
+        } catch( IOException e )
+        {
+
+        }
+        return out.toByteArray();
     }
 
     public void uninstallBundle( long id )
@@ -272,7 +307,16 @@ public class RemoteBundleContextClient
             Throwable reason = null;
             try
             {
-                final Registry registry = LocateRegistry.getRegistry( m_rmiPort );
+                Registry registry;
+                if( m_host == null )
+                {
+                    registry = LocateRegistry.getRegistry( m_rmiPort );
+                }
+                else
+                {
+                    registry = LocateRegistry.getRegistry( m_host, m_rmiPort );
+                }
+
                 do
                 {
                     try

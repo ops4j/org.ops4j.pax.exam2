@@ -14,7 +14,6 @@ package org.ops4j.pax.exam.raw;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestTarget;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -35,7 +34,7 @@ public class DemoTest
         TestTarget testTarget = PaxExamRuntime.getTestTargetFactory().newInstance(
             options(
                 waitForRBCFor( 2000 ),
-                port( 9191 )
+                location( "localhost", 9191 )
             )
         );
 
@@ -44,7 +43,7 @@ public class DemoTest
         {
             TestProbeBuilder probe = createProbe().addTest( MyCode.class );
             probeId = testTarget.installBundle( probe.build() );
-           
+
             for( ProbeCall call : probe.getTests() )
             {
                 execute( testTarget, call );

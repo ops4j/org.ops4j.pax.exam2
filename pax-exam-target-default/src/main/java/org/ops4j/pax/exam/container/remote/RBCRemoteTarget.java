@@ -53,7 +53,7 @@ public class RBCRemoteTarget implements TestTarget
 
     {
         m_remoteBundleContextClient =
-            new RemoteBundleContextClient( getPort( options ), getRMITimeout( options ) );
+            new RemoteBundleContextClient( getHost( options ), getPort( options ), getRMITimeout( options ) );
     }
 
     /**
@@ -103,7 +103,19 @@ public class RBCRemoteTarget implements TestTarget
         {
             return DEFAULTPORT;
         }
+    }
 
+    private String getHost( Option[] options )
+    {
+        final RBCPortOption[] ports = filter( RBCPortOption.class, options );
+        if( ports.length > 0 )
+        {
+            return ports[ 0 ].getHost();
+        }
+        else
+        {
+            return null;
+        }
     }
 
     /**
