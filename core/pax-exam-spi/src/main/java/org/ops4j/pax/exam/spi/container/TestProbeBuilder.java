@@ -14,5 +14,4 @@ public interface TestProbeBuilder extends TestProbeProvider
     TestProbeBuilder addTest( Class... clazz );
     
     TestProbeBuilder setAnchor( Class anchor );
-
 }

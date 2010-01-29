@@ -61,6 +61,7 @@ public class DefaultRaw
      * parse test methods using reflection
      *
      * @param clazz
+     * @return
      */
     private static String[] parseMethods( Class clazz )
     {
@@ -87,7 +88,7 @@ public class DefaultRaw
         } catch( IOException e )
         {
             throw new RuntimeException( e );
-        }
+}
     }
 
     public static TestProbeProvider probe( final InputStream is, final String... testsSignatures )

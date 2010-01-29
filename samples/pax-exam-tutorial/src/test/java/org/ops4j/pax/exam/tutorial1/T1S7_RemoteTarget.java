@@ -32,7 +32,8 @@ import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
 import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 
 /**
- * Running a test on a remote device using an already installed rbc and a known connection
+
+ * Running a test on a remote device using an already installed rbc and a know connection
  *
  * @author Toni Menzel
  * @since Jan 26, 2010
@@ -40,6 +41,16 @@ import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 @RunWith( JUnit4TestRunner.class )
 public class T1S7_RemoteTarget
 {
+
+
+    /*
+     * Here you can configure most of exam.
+     * Annotate any method with @Configuration and be sure to set return type to Option[]
+     *
+     * Thats all. In this case, we just "tell" via fluent api, to use equinox.
+     *
+     */
+
 
     @Configuration
     public static Option[] configure()
@@ -49,11 +60,11 @@ public class T1S7_RemoteTarget
             executionPolicy().testContainer( RBCRemoteContainerFactory.class ),
             
             waitForRBCFor( 2000 ),
-
             //-Dorg.ops4j.pax.exam.rbc.rmi.port=9191
             location( "localhost", 9191 )
         );
     }
+
 
     @Test
     public void helloRemote( BundleContext bundleContext )
