@@ -43,11 +43,11 @@ public interface TestTarget
      *
      * @return Bundle ID
      */
-    long installBundle( InputStream stream );
+    long install( InputStream stream );
 
     /**
-     * @param id bundleid
-     *
+     * Do the cleanup operation as good as possible.
+     * Like rewinding all installed probes.
      */
-    void uninstallBundle( long id );
+    void cleanup(  );
 }

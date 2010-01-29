@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.internal.runners.ClassRoadie;
 import org.junit.internal.runners.InitializationError;
@@ -40,18 +42,26 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
+
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
+
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
+
 import static org.ops4j.pax.exam.junit.JUnitOptions.*;
+
 import org.ops4j.pax.exam.junit.internal.JUnit4MethodRoadie;
 import org.ops4j.pax.exam.junit.internal.JUnit4TestMethod;
+import org.ops4j.pax.exam.junit.options.ExecutionPolicyOption;
 import org.ops4j.pax.exam.junit.options.JUnitBundlesOption;
 import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.runtime.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.container.TestContainer;
+import org.ops4j.pax.exam.spi.container.TestContainerFactory;
 
 /**
  * JUnit4 Runner to be used with the {@link org.junit.runner.RunWith} annotation to run with Pax Exam.
@@ -67,6 +77,11 @@ public class JUnit4TestRunner
     extends Runner
     implements Filterable, Sortable
 {
+
+    /**
+     * JCL logger.
+     */
+    private static final Log LOG = LogFactory.getLog( JUnit4TestMethod.class );
 
     private final List<JUnit4TestMethod> m_testMethods;
     private final TestClass m_testClass;
@@ -92,20 +107,35 @@ public class JUnit4TestRunner
         final Collection<JUnit4ConfigMethod> configMethods = getConfigurationMethods();
         final List<JUnit4TestMethod> methods = new ArrayList<JUnit4TestMethod>();
         final Collection<Method> testMethods = m_testClass.getAnnotatedMethods( Test.class );
+
         for( Method testMethod : testMethods )
         {
             final Option configOptions = getOptions( testMethod, configMethods );
             final FrameworkOption[] frameworkOptions = OptionUtils.filter( FrameworkOption.class, configOptions );
+            final ExecutionPolicyOption[] executionPolicyOptions = OptionUtils.filter( ExecutionPolicyOption.class, configOptions );
+
+            final ExecutionPolicyOption use;
+            if( executionPolicyOptions.length == 0 )
+            {
+                use = executionPolicy();
+            }
+            else
+            {
+                use = executionPolicyOptions[ 0 ];
+            }
+
+
             final Option[] filteredOptions = OptionUtils.remove( FrameworkOption.class, configOptions );
+
             if( frameworkOptions.length == 0 )
             {
-                methods.add( new JUnit4TestMethod( testMethod, m_testClass, null, filteredOptions ) );
+                methods.add( new JUnit4TestMethod( use.getTestContainer(), testMethod, m_testClass, null, filteredOptions ) );
             }
             else
             {
                 for( FrameworkOption frameworkOption : frameworkOptions )
                 {
-                    methods.add( new JUnit4TestMethod( testMethod, m_testClass, frameworkOption, filteredOptions ) );
+                    methods.add( new JUnit4TestMethod( use.getTestContainer(), testMethod, m_testClass, frameworkOption, filteredOptions ) );
                 }
             }
         }

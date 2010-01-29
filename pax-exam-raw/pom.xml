@@ -16,11 +16,7 @@
     <name>OPS4J Pax Exam - Raw</name>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>2.0</version>
-        </dependency>
+       
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-runtime</artifactId>

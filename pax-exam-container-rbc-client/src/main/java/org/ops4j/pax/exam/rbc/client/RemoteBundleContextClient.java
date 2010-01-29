@@ -31,6 +31,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
+import java.util.Stack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleException;
@@ -76,6 +77,8 @@ public class RemoteBundleContextClient
     final private Store<InputStream> m_store;
 
     private String m_host = null;
+
+    private Stack<Long> m_installed;
 
     /**
      * Constructor.
@@ -155,7 +158,7 @@ public class RemoteBundleContextClient
             ;
     }
 
-    public long installBundle( InputStream stream )
+    public long install( InputStream stream )
     {
         // turn this into a local url because we don't want pass the stream any further.
         try
@@ -163,7 +166,12 @@ public class RemoteBundleContextClient
             //URI location = m_store.getLocation( m_store.store( stream ) );
             // pack as bytecode
             byte[] packed = pack( stream );
+            if( m_installed == null )
+            {
+                m_installed = new Stack<Long>();
+            }
             long id = getRemoteBundleContext().installBundle( "no", packed );
+            m_installed.push( id );
             getRemoteBundleContext().startBundle( id );
             return id;
         } catch( IOException e )
@@ -189,11 +197,15 @@ public class RemoteBundleContextClient
         return out.toByteArray();
     }
 
-    public void uninstallBundle( long id )
+    public void cleanup()
     {
         try
         {
-            getRemoteBundleContext().uninstallBundle( id );
+            while( ( !m_installed.isEmpty() ) )
+            {
+                Long id = m_installed.pop();
+                getRemoteBundleContext().uninstallBundle( id );
+            }
         } catch( IOException e )
         {
             throw new TestContainerException( e );
