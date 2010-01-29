@@ -7,7 +7,9 @@ Bundle-Version>:\
 Bundle-SymbolicName:\
   ${bundle.symbolicName}
 
-Export-Package:
+Export-Package: 
+
+-exportcontents: org.ops4j.pax.exam.raw.extender;version="${pom.version}",org.ops4j.pax.exam;version="${pom.version}"
 
 Private-Package:\
   ${bundle.namespace}.*

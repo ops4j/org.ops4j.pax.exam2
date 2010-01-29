@@ -16,7 +16,7 @@
   <name>OPS4J Pax Exam - Extender API</name>
 
   <properties>
-    <bundle.symbolicName>${namespace}.raw.extender</bundle.symbolicName>
+    <bundle.symbolicName>${namespace}.extender</bundle.symbolicName>
     <bundle.namespace>${namespace}.raw.extender</bundle.namespace>
   </properties>
 

@@ -242,12 +242,7 @@ public class PaxRunnerTestContainer
             systemProperty( Constants.RMI_PORT_PROPERTY ).value( m_target.getClientRBC().getRmiPort().toString() ),
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
             bootDelegationPackage( "sun.*" ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+          
             mavenBundle()
                 .groupId( "org.ops4j.pax.logging" )
                 .artifactId( "pax-logging-api" )
@@ -260,12 +255,7 @@ public class PaxRunnerTestContainer
                 .version( "4.2.0" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
 
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-extender" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+
 
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )

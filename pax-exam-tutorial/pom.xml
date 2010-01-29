@@ -33,27 +33,39 @@
             <artifactId>pax-exam-junit</artifactId>
             <version>2.0.0-SNAPSHOT</version>
             <scope>test</scope>
-            
+
         </dependency>
 
         <!-- INFO: having multiple test containers loaded you should select it at factory lookup ! -->
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-paxrunner</artifactId>
             <version>2.0.0-SNAPSHOT</version>
             <scope>test</scope>
-
         </dependency>
-        <dependency>
+        <!-- -->
+        <!--
+            It is not recommded to have a osgi framework AND paxrunner container installed in the same CP.
+            So chose: either pax runner (above) or the native + any osgi core 4.2 compatible fw
+            (conflicting resources !)
+            <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-native</artifactId>
             <version>2.0.0-SNAPSHOT</version>
             <scope>test</scope>
-            
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        -->
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-target-default</artifactId>
+            <artifactId>pax-exam-container-remote</artifactId>
             <version>2.0.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
@@ -61,7 +73,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <scope>test</scope>            
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
