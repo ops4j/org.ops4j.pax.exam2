@@ -29,15 +29,14 @@ import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.options.FrameworkOption;
-import org.ops4j.pax.exam.raw.ProbeCall;
-import org.ops4j.pax.exam.raw.TestProbeBuilder;
-import org.ops4j.pax.exam.runtime.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.container.ProbeCall;
+import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerFactory;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
-import static org.ops4j.pax.exam.raw.DefaultRaw.*;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 import static org.ops4j.lang.NullArgumentException.*;
 import static org.ops4j.pax.exam.Constants.*;

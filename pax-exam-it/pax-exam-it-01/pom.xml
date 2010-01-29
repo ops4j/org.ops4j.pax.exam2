@@ -26,11 +26,6 @@
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam</artifactId>
-            <version>${exam.it.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit</artifactId>
             <version>${exam.it.version}</version>
         </dependency>
