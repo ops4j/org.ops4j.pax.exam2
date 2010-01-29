@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-raw-extender</artifactId>
+            <artifactId>pax-exam-extender</artifactId>
             <version>${pom.version}</version>
         </dependency>
 

@@ -4,6 +4,6 @@
 scan-file:file:runner.config
 #--vmOptions="-Dorg.ops4j.pax.exam.rbc.rmi.port=9191"
 mvn:org.ops4j.pax.exam/pax-exam/2.0.0-SNAPSHOT
-mvn:org.ops4j.pax.exam/pax-exam-raw-extender/2.0.0-SNAPSHOT
-mvn:org.ops4j.pax.exam/pax-exam-raw-extender-impl/2.0.0-SNAPSHOT
+mvn:org.ops4j.pax.exam/pax-exam-extender/2.0.0-SNAPSHOT
+mvn:org.ops4j.pax.exam/pax-exam-extender-service/2.0.0-SNAPSHOT
 mvn:org.ops4j.pax.exam/pax-exam-container-rbc/2.0.0-SNAPSHOT

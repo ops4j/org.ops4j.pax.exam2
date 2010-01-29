@@ -21,12 +21,7 @@
       <artifactId>pax-exam-runtime</artifactId>
       <version>${pom.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-raw-extender</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
-
+   
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
