@@ -17,32 +17,31 @@
  */
 package org.ops4j.pax.exam.junit.internal;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.internal.runners.TestClass;
 import org.junit.internal.runners.TestMethod;
-
-import static org.ops4j.lang.NullArgumentException.*;
-import static org.ops4j.pax.exam.Constants.*;
-
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
-import org.ops4j.pax.exam.junit.extender.CallableTestMethod;
-import org.ops4j.pax.exam.junit.extender.Constants;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.raw.ProbeCall;
+import org.ops4j.pax.exam.raw.TestProbeBuilder;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestContainerFactory;
 import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
+
+import static org.ops4j.pax.exam.raw.DefaultRaw.*;
+
+import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.pax.exam.Constants.*;
 
 /**
  * A {@link TestMethod} that upon invokation starts a {@link TestContainer} and executes the test in the test container.
@@ -103,7 +102,7 @@ public class JUnit4TestMethod
      *
      */
     private final Store<InputStream> m_store;
-    private final Handle m_probe;
+    private final TestProbeBuilder m_probe;
 
     /**
      * Constructor.
@@ -129,7 +128,7 @@ public class JUnit4TestMethod
         try
         {
             m_store = StoreFactory.anonymousStore();
-            m_probe = m_store.store( new URL( getTestBundleUrl( testClass.getName(), m_testMethod.getName() ) ).openStream() );
+            m_probe = createProbe().addTest( call( testClass.getJavaClass(), testMethod.getName() ) ).setAnchor( testClass.getJavaClass() );
         } catch( IOException e )
         {
             throw new RuntimeException( e );
@@ -159,21 +158,23 @@ public class JUnit4TestMethod
             executionState = CONTAINER_STARTED;
 
             LOG.trace( "Install and start test bundle" );
-            final long bundleId = container.installBundle( m_store.load( m_probe ) );
+            final long bundleId = container.installBundle( m_probe.build() );
             executionState = PROBE_INSTALLED;
 
             container.setBundleStartLevel( bundleId, START_LEVEL_TEST_BUNDLE );
 
             executionState = PROBE_STARTED;
 
-            LOG.trace( "Execute test [" + m_name + "]" );
-            // we just have one callable if using (old) junit extender
-            final CallableTestMethod callable = container.getService( CallableTestMethod.class, null, 0 );
+            LOG.trace( "Execute tests for class [" + m_name + "]" );
             try
             {
-                LOG.info( "Starting test " + fullTestName );
-                callable.call();
-                LOG.info( "Test " + fullTestName + " ended succesfully" );
+                for( ProbeCall call : m_probe.getTests() )
+                {
+                    LOG.info( "Starting test " + call.getInstruction() );
+                    execute( container, call );
+                    LOG.info( "Test " + fullTestName + " ended succesfully" );
+
+                }
                 executionState = SUCCESFUL;
             }
             catch( InstantiationException e )
@@ -183,11 +184,12 @@ public class JUnit4TestMethod
             catch( ClassNotFoundException e )
             {
                 throw new InvocationTargetException( e );
+            } finally
+            {
+                container.uninstallBundle( bundleId );
+
             }
-        }
-        catch( IOException e )
-        {
-            e.printStackTrace();
+
         } finally
         {
             if( container != null )
@@ -262,37 +264,5 @@ public class JUnit4TestMethod
         return name.toString();
     }
 
-    /**
-     * Returns the test bundle url using an Pax URL Dir url.
-     *
-     * @param testClassName  test class name
-     * @param testMethodName test method name
-     *
-     * @return test bundle url
-     */
-    private static String getTestBundleUrl( final String testClassName,
-                                            final String testMethodName )
-    {
-        final StringBuilder url = new StringBuilder();
-        url.append( "dir:" )
-            .append( new File( "." ).getAbsolutePath() )
-            .append( "$" )
-            .append( "tail=" ).append( testClassName.replace( ".", "/" ) ).append( ".class" )
-            .append( "&" )
-            .append( Constants.PROBE_TEST_CLASS ).append( "=" ).append( testClassName )
-            .append( "&" )
-            .append( Constants.PROBE_TEST_METHOD ).append( "=" ).append( testMethodName )
-            .append( "&" )
-            .append( org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME )
-            .append( "=" )
-            .append( Constants.PROBE_SYMBOLICNAME )
-            .append( "&" )
-            .append( org.osgi.framework.Constants.DYNAMICIMPORT_PACKAGE )
-            .append( "=*" )
-            .append( "&" )
-            .append( org.osgi.framework.Constants.EXPORT_PACKAGE )
-            .append( "=!*" );
-        return url.toString();
-    }
 
 }
