@@ -90,4 +90,38 @@ public class DefaultRaw
         }
     }
 
+    public static TestProbeProvider probe( final InputStream is, final String... testsSignatures )
+    {
+        return new TestProbeProvider()
+        {
+
+            public ProbeCall[] getTests()
+            {
+                List<ProbeCall> calls = new ArrayList<ProbeCall>();
+                for( final String test : testsSignatures )
+                {
+                    calls.add( new ProbeCall()
+                    {
+                        public String getInstruction()
+                        {
+                            return null;
+                        }
+
+                        public String signature()
+                        {
+                            return test;
+                        }
+                    }
+                    );
+                }
+                return calls.toArray( new ProbeCall[calls.size()] );
+            }
+
+            public InputStream getStream()
+            {
+                return is;
+            }
+        };
+    }
+
 }
