@@ -2,19 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="ebd32a12-78af-4820-ad96-6b210174d099" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/DefaultRaw.java" afterPath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/DefaultRaw.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/containers/pax-exam-container-paxrunner/src/main/java/org/ops4j/pax/exam/container/def/internal/PaxRunnerTestContainer.java" afterPath="$PROJECT_DIR$/containers/pax-exam-container-paxrunner/src/main/java/org/ops4j/pax/exam/container/def/internal/PaxRunnerTestContainer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spice/pax-exam-container-rbc/src/main/java/org/ops4j/pax/exam/rbc/internal/RemoteBundleContextImpl.java" afterPath="$PROJECT_DIR$/spice/pax-exam-container-rbc/src/main/java/org/ops4j/pax/exam/rbc/internal/RemoteBundleContextImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S8_RemoteRaw.java" afterPath="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S8_RemoteRaw.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/internal/BundleBuilder.java" afterPath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/internal/BundleBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/TestProbeBuilder.java" afterPath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/TestProbeBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/internal/TestProbeBuilderImpl.java" afterPath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/internal/TestProbeBuilderImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom/pom.xml" afterPath="$PROJECT_DIR$/pom/pom.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T2S3_HandrolledTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/pax-exam-junit/src/main/java/org/ops4j/pax/exam/junit/internal/JUnit4TestMethod.java" afterPath="$PROJECT_DIR$/ui/pax-exam-junit/src/main/java/org/ops4j/pax/exam/junit/internal/JUnit4TestMethod.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spice/pax-exam-container-rbc/src/main/java/org/ops4j/pax/exam/rbc/internal/Activator.java" afterPath="$PROJECT_DIR$/spice/pax-exam-container-rbc/src/main/java/org/ops4j/pax/exam/rbc/internal/Activator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/TestProbeProvider.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exam-reactor.iws" afterPath="$PROJECT_DIR$/exam-reactor.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
     </list>
     <ignored path=".idea/workspace.xml" />
     <ignored path="exam-reactor.iws" />
@@ -74,24 +63,11 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MyHandrolledTest.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/MyHandrolledTest.java">
+      <file leaf-file-name="T1S7_RemoteTarget.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S7_RemoteTarget.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="0" selection-start="1030" selection-end="1030" vertical-scroll-proportion="0.31630972">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Activator.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/internal/Activator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="48" selection-start="1369" selection-end="1369" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="50" column="34" selection-start="1719" selection-end="1719" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -99,7 +75,7 @@
       <file leaf-file-name="T2S3_HandrolledTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T2S3_HandrolledTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="86" column="30" selection-start="2964" selection-end="2964" vertical-scroll-proportion="0.0">
+            <state line="52" column="0" selection-start="1771" selection-end="1771" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -107,64 +83,39 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="log4j.properties" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/resources/log4j.properties">
+      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="23" selection-start="178" selection-end="178" vertical-scroll-proportion="0.0">
+            <state line="6" column="5" selection-start="49" selection-end="49" vertical-scroll-proportion="0.17142858">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RemoteBundleContextImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spice/pax-exam-container-rbc/src/main/java/org/ops4j/pax/exam/rbc/internal/RemoteBundleContextImpl.java">
+      <file leaf-file-name="Activator.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/internal/Activator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="238" column="12" selection-start="7538" selection-end="7538" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="40" column="44" selection-start="1359" selection-end="1365" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="osgi.bnd" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/samples/probe1/osgi.bnd">
+      <file leaf-file-name="DefaultRaw.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/DefaultRaw.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="18" selection-start="18" selection-end="18" vertical-scroll-proportion="0.0">
+            <state line="93" column="5" selection-start="2802" selection-end="2802" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/samples/probe1/pom.xml">
+        <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="21" selection-start="1275" selection-end="1275" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="T1S7_RemoteTarget.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S7_RemoteTarget.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="13" selection-start="1398" selection-end="1398" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="T1S8_RemoteRaw.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S8_RemoteRaw.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="76" selection-start="1761" selection-end="1761" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="T1S6_MavenConfiguredTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S6_MavenConfiguredTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="13" selection-start="430" selection-end="430" vertical-scroll-proportion="0.0">
+            <state line="70" column="21" selection-start="2278" selection-end="2505" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -180,21 +131,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/spice/pax-exam-container-rbc/src/main/java/org/ops4j/pax/exam/rbc/internal/Activator.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/pom/pom.xml" />
         <option value="$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/MyProbe.java" />
         <option value="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/TestProbeBuilder.java" />
         <option value="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/TestProbeProvider.java" />
-        <option value="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/DefaultRaw.java" />
-        <option value="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S8_RemoteRaw.java" />
         <option value="$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/internal/Activator.java" />
-        <option value="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T2S3_HandrolledTest.java" />
         <option value="$PROJECT_DIR$/spice/pax-exam-container-rbc/src/main/java/org/ops4j/pax/exam/rbc/internal/RemoteBundleContextImpl.java" />
         <option value="$PROJECT_DIR$/samples/probe1/osgi.bnd" />
         <option value="$PROJECT_DIR$/samples/probe1/pom.xml" />
         <option value="$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/MyHandrolledTest.java" />
+        <option value="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S8_RemoteRaw.java" />
+        <option value="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S7_RemoteTarget.java" />
+        <option value="$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/DefaultRaw.java" />
+        <option value="$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T2S3_HandrolledTest.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -277,6 +229,116 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exam-reactor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exxam" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="samples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pax-exam-tutorial" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exam-reactor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exxam" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="samples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pax-exam-tutorial" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exam-reactor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exxam" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="samples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pax-exam-tutorial" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tutorial1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exam-reactor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exxam" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="samples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pax-exam-it-06" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exam-reactor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exxam" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="containers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
@@ -289,6 +351,7 @@
     <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
+    <property name="GoToClass.includeJavaFiles" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -412,6 +475,33 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
+    <configuration default="false" name="T1S7_RemoteTarget" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="org.ops4j.pax.exam.tutorial1.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="pax-exam-tutorial" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="org.ops4j.pax.exam.tutorial1" />
+      <option name="MAIN_CLASS_NAME" value="org.ops4j.pax.exam.tutorial1.T1S7_RemoteTarget" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -520,11 +610,12 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="JUnit.T1S1_HelloWorldTest" />
       <item index="1" class="java.lang.String" itemvalue="JUnit.T1S3_HelloFromEquinoxTest" />
       <item index="2" class="java.lang.String" itemvalue="JUnit.T2S3_HandrolledTest" />
       <item index="3" class="java.lang.String" itemvalue="JUnit.T1S8_RemoteRaw" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.T1S7_RemoteTarget" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -549,8 +640,8 @@
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1440" y="0" width="1276" height="1024" extended-state="6" />
-    <editor active="false" />
+    <frame x="-14" y="22" width="1445" height="873" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -563,9 +654,9 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299712" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31866342" sideWeight="0.73978496" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28008595" sideWeight="0.57509625" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25268817" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41591784" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -608,41 +699,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/TestProbeBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="0" selection-start="294" selection-end="294" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/TestProbeProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="17" selection-start="714" selection-end="714" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/DefaultRaw.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="17" selection-start="2486" selection-end="2486" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spice/pax-exam-container-rbc-client/src/main/java/org/ops4j/pax/exam/rbc/client/RemoteBundleContextClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="340" column="0" selection-start="10424" selection-end="10424" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S1_HelloWorldTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="0" selection-start="1870" selection-end="1870" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S2_HowToUseBundleContextTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="13" selection-start="962" selection-end="962" vertical-scroll-proportion="0.0">
@@ -657,33 +713,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S7_RemoteTarget.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="13" selection-start="1398" selection-end="1398" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S8_RemoteRaw.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="76" selection-start="1761" selection-end="1761" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/resources/log4j.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="23" selection-start="178" selection-end="178" vertical-scroll-proportion="0.0">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T2S3_HandrolledTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="30" selection-start="2964" selection-end="2964" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -708,21 +741,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/internal/Activator.java">
+    <entry file="file://$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/MyHandrolledTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="48" selection-start="1369" selection-end="1369" vertical-scroll-proportion="0.0">
+        <state line="39" column="5" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/MyHandrolledTest.java">
+    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/runner.args">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="0" selection-start="1030" selection-end="1030" vertical-scroll-proportion="0.31630972">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/runner.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="34" selection-start="34" selection-end="34" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S8_RemoteRaw.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="9" selection-start="2129" selection-end="2129" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="21" selection-start="2278" selection-end="2505" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T1S7_RemoteTarget.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="50" column="34" selection-start="1719" selection-end="1719" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/probe1/src/main/java/org/ops4j/pax/exam/samples/probe1/internal/Activator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="44" selection-start="1359" selection-end="1365" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/pax-exam-spi/src/main/java/org/ops4j/pax/exam/spi/container/DefaultRaw.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="93" column="5" selection-start="2802" selection-end="2802" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/pax-exam-tutorial/src/test/java/org/ops4j/pax/exam/tutorial1/T2S3_HandrolledTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="0" selection-start="1771" selection-end="1771" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="5" selection-start="49" selection-end="49" vertical-scroll-proportion="0.17142858">
+          <folding />
         </state>
       </provider>
     </entry>
