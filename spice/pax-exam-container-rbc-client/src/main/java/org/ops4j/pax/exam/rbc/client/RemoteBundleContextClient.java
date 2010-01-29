@@ -34,11 +34,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleException;
 import org.ops4j.io.StreamUtils;
-import org.ops4j.pax.exam.Constants;
+
+import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
-import org.ops4j.pax.exam.spi.container.TestContainer;
-import org.ops4j.pax.exam.spi.container.TestContainerException;
-import org.ops4j.pax.exam.spi.container.TimeoutException;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
@@ -48,7 +46,6 @@ import org.ops4j.pax.exam.spi.container.TimeoutException;
  * @since 0.3.0, December 15, 2008
  */
 public class RemoteBundleContextClient
-    implements TestContainer
 {
 
     /**
@@ -105,7 +102,6 @@ public class RemoteBundleContextClient
      * {@inheritDoc}
      */
     public <T> T getService( Class<T> serviceType, final String filter, final long timeout )
-        throws TestContainerException
     {
         return (T) Proxy.newProxyInstance(
             getClass().getClassLoader(),
@@ -138,11 +134,11 @@ public class RemoteBundleContextClient
                     }
                     catch( RemoteException e )
                     {
-                        throw new TestContainerException( "Remote exception", e );
+                        throw new RuntimeException( "Remote exception", e );
                     }
                     catch( Exception e )
                     {
-                        throw new TestContainerException( "Invocation exception", e );
+                        throw new RuntimeException( "Invocation exception", e );
                     }
                 }
             }
@@ -168,10 +164,10 @@ public class RemoteBundleContextClient
             return id;
         } catch( IOException e )
         {
-            throw new TestContainerException( e );
+            throw new RuntimeException( e );
         } catch( BundleException e )
         {
-            throw new TestContainerException( "Bundle cannot be installed", e );
+            throw new RuntimeException( "Bundle cannot be installed", e );
         }
     }
 
@@ -200,10 +196,10 @@ public class RemoteBundleContextClient
             }
         } catch( IOException e )
         {
-            throw new TestContainerException( e );
+            throw new RuntimeException( e );
         } catch( BundleException e )
         {
-            throw new TestContainerException( "Bundle cannot be uninstalled", e );
+            throw new RuntimeException( "Bundle cannot be uninstalled", e );
         }
 
     }
@@ -213,7 +209,6 @@ public class RemoteBundleContextClient
      */
     public void setBundleStartLevel( final long bundleId,
                                      final int startLevel )
-        throws TestContainerException
     {
         try
         {
@@ -221,18 +216,18 @@ public class RemoteBundleContextClient
         }
         catch( RemoteException e )
         {
-            throw new TestContainerException( "Remote exception", e );
+            throw new RuntimeException( "Remote exception", e );
         }
         catch( BundleException e )
         {
-            throw new TestContainerException( "Start level cannot be set", e );
+            throw new RuntimeException( "Start level cannot be set", e );
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public TestContainer start()
+    public void start()
     {
         try
         {
@@ -240,19 +235,18 @@ public class RemoteBundleContextClient
         }
         catch( RemoteException e )
         {
-            throw new TestContainerException( "Remote exception", e );
+            throw new RuntimeException( "Remote exception", e );
         }
         catch( BundleException e )
         {
-            throw new TestContainerException( "System bundle cannot be started", e );
+            throw new RuntimeException( "System bundle cannot be started", e );
         }
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public TestContainer stop()
+    public void stop()
     {
         try
         {
@@ -260,13 +254,12 @@ public class RemoteBundleContextClient
         }
         catch( RemoteException e )
         {
-            throw new TestContainerException( "Remote exception", e );
+            throw new RuntimeException( "Remote exception", e );
         }
         catch( BundleException e )
         {
-            throw new TestContainerException( "System bundle cannot be stopped", e );
+            throw new RuntimeException( "System bundle cannot be stopped", e );
         }
-        return this;
     }
 
     /**
@@ -275,7 +268,6 @@ public class RemoteBundleContextClient
     public void waitForState( final long bundleId,
                               final int state,
                               final long timeoutInMillis )
-        throws TimeoutException
     {
         try
         {
@@ -283,15 +275,15 @@ public class RemoteBundleContextClient
         }
         catch( org.ops4j.pax.exam.rbc.internal.TimeoutException e )
         {
-            throw new TimeoutException( e.getMessage() );
+            throw new RuntimeException( e.getMessage() );
         }
         catch( RemoteException e )
         {
-            throw new TestContainerException( "Remote exception", e );
+            throw new RuntimeException( "Remote exception", e );
         }
         catch( BundleException e )
         {
-            throw new TestContainerException( "Bundle cannot be found", e );
+            throw new RuntimeException( "Bundle cannot be found", e );
         }
     }
 
@@ -346,7 +338,7 @@ public class RemoteBundleContextClient
             }
             if( m_remoteBundleContext == null )
             {
-                throw new TestContainerException( "Cannot get the remote bundle context", reason );
+                throw new RuntimeException( "Cannot get the remote bundle context", reason );
             }
             LOG.info(
                 "Remote bundle context found after " + ( System.currentTimeMillis() - startedTrying ) + " millis"
