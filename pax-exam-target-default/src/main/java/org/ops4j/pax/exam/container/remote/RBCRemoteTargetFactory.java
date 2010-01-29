@@ -15,35 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.container.defaulttarget;
+package org.ops4j.pax.exam.container.remote;
 
-import java.io.InputStream;
-import org.ops4j.pax.exam.spi.container.TestContainerException;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.spi.container.TestTarget;
+import org.ops4j.pax.exam.spi.container.TestTargetFactory;
 
 /**
  * @author Toni Menzel
  * @since Jan 25, 2010
  */
-public class DefaultTarget implements TestTarget
+public class RBCRemoteTargetFactory implements TestTargetFactory
 {
 
     /**
-     * 
+     * {@inheritDoc}
      */
-    public DefaultTarget()
+    public TestTarget newInstance( final Option... options )
     {
-           
+        return new RBCRemoteTarget( options );
     }
 
-    public <T> T getService( Class<T> serviceType, String filter, long timeoutInMillis )
-        throws TestContainerException
-    {
-        return null; 
-    }
-
-    public long installBundle( InputStream stream )
-    {
-        return 0; 
-    }
 }

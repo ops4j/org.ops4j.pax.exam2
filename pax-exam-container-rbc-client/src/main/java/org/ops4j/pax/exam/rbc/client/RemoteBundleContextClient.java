@@ -95,7 +95,7 @@ public class RemoteBundleContextClient
     {
         return (T) Proxy.newProxyInstance(
             getClass().getClassLoader(),
-            new Class<?>[]{ serviceType},
+            new Class<?>[]{ serviceType },
             new InvocationHandler()
             {
                 /**
@@ -136,8 +136,6 @@ public class RemoteBundleContextClient
             ;
     }
 
-
-
     public long installBundle( InputStream stream )
     {
         // turn this into a local url because we don't want pass the stream any further.
@@ -154,6 +152,21 @@ public class RemoteBundleContextClient
         {
             throw new TestContainerException( "Bundle cannot be installed", e );
         }
+    }
+
+    public void uninstallBundle( long id )
+    {
+        try
+        {
+            getRemoteBundleContext().uninstallBundle( id );
+        } catch( IOException e )
+        {
+            throw new TestContainerException( e );
+        } catch( BundleException e )
+        {
+            throw new TestContainerException( "Bundle cannot be uninstalled", e );
+        }
+
     }
 
     /**

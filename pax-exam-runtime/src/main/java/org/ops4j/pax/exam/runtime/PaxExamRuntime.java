@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.runtime;
 
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.ops4j.pax.exam.spi.container.TestContainerFactory;
+import org.ops4j.pax.exam.spi.container.TestTargetFactory;
 
 /**
  * Pax Exam runtime.
@@ -45,6 +46,16 @@ public class PaxExamRuntime
     public static TestContainerFactory getTestContainerFactory()
     {
         return (TestContainerFactory) DiscoverSingleton.find( TestContainerFactory.class );
+    }
+
+    /**
+     * Discovers the test target. Discovery is performed via Appache Commons discovery mechanism.
+     *
+     * @return discovered test target
+     */
+    public static TestTargetFactory getTestTargetFactory()
+    {
+        return (TestTargetFactory) DiscoverSingleton.find( TestTargetFactory.class );
     }
 
 }

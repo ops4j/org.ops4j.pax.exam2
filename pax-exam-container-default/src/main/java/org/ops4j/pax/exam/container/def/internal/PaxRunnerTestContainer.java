@@ -18,11 +18,8 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,25 +28,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.ops4j.io.FileUtils;
-import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.CompositeCustomizer;
-
-import static org.ops4j.pax.exam.Constants.*;
-
 import org.ops4j.pax.exam.CoreOptions;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
-
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
-
-import static org.ops4j.pax.exam.OptionUtils.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
-
 import org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption;
-import org.ops4j.pax.exam.container.def.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.def.options.Scanner;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
+import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.Constants;
@@ -63,6 +48,11 @@ import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
+
+import static org.ops4j.pax.exam.Constants.*;
+import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.OptionUtils.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * {@link TestContainer} implementation using Pax Runner.
@@ -78,19 +68,9 @@ public class PaxRunnerTestContainer
     private static final Log LOG = LogFactory.getLog( PaxRunnerTestContainer.class );
 
     /**
-     * Number of ports to check for a free rmi communication port.
-     */
-    private static final int AMOUNT_OF_PORTS_TO_CHECK = 100;
-
-    /**
      * System bundle id.
      */
     private static final int SYSTEM_BUNDLE = 0;
-
-    /**
-     * Remote bundle context client.
-     */
-    private final RemoteBundleContextClient m_remoteBundleContextClient;
 
     /**
      * Java runner to be used to start up Pax Runner.
@@ -121,6 +101,11 @@ public class PaxRunnerTestContainer
     private boolean m_started = false;
 
     /**
+     * Underlying Test Target
+     */
+    private RBCRemoteTarget m_target;
+
+    /**
      * Constructor.
      *
      * @param javaRunner java runner to be used to start up Pax Runner
@@ -130,31 +115,14 @@ public class PaxRunnerTestContainer
     {
         m_javaRunner = javaRunner;
         m_startTimeout = getTestContainerStartTimeout( options );
-        m_remoteBundleContextClient =
-            new RemoteBundleContextClient( findFreeCommunicationPort(), getRMITimeout( options ) );
+
+        m_target = new RBCRemoteTarget( options );
+
         m_arguments = new ArgumentsBuilder( wrap( expand( combine( options, localOptions() ) ) ) );
 
         m_customizers = new CompositeCustomizer( m_arguments.getCustomizers() );
         m_store = StoreFactory.sharedLocalStore();
         m_cache = new HashMap<String, Handle>();
-    }
-
-    public <T> T getService( Class<T> serviceType, String filter, long timeoutInMillis )
-        throws TestContainerException
-    {
-        LOG.debug( "Lookup a [" + serviceType.getName() + "]" );
-        return m_remoteBundleContextClient.getService( serviceType, filter, timeoutInMillis );
-    }
-
-    public long installBundle( InputStream probe )
-        throws TestContainerException
-    {
-        LOG.debug( "Preparing and Installing bundle (from stream ).." );
-
-        long id = 0;
-        id = m_remoteBundleContextClient.installBundle( probe );
-        LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
-        return id;
     }
 
     /**
@@ -163,7 +131,7 @@ public class PaxRunnerTestContainer
     public void setBundleStartLevel( final long bundleId, final int startLevel )
         throws TestContainerException
     {
-        m_remoteBundleContextClient.setBundleStartLevel( bundleId, startLevel );
+        m_target.getClientRBC().setBundleStartLevel( bundleId, startLevel );
     }
 
     /**
@@ -226,9 +194,10 @@ public class PaxRunnerTestContainer
         {
             if( m_started )
             {
-                if( m_remoteBundleContextClient != null )
+                RemoteBundleContextClient remoteBundleContextClient = m_target.getClientRBC();
+                if( remoteBundleContextClient != null )
                 {
-                    m_remoteBundleContextClient.stop();
+                    remoteBundleContextClient.stop();
                 }
                 if( m_javaRunner != null )
                 {
@@ -250,7 +219,7 @@ public class PaxRunnerTestContainer
     public void waitForState( final long bundleId, final int state, final long timeoutInMillis )
         throws TimeoutException
     {
-        m_remoteBundleContextClient.waitForState( bundleId, state, timeoutInMillis );
+        m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
     }
 
     /**
@@ -270,7 +239,7 @@ public class PaxRunnerTestContainer
                 START_LEVEL_SYSTEM_BUNDLES
             ),
             // rmi communication port
-            systemProperty( Constants.RMI_PORT_PROPERTY ).value( m_remoteBundleContextClient.getRmiPort().toString() ),
+            systemProperty( Constants.RMI_PORT_PROPERTY ).value( m_target.getClientRBC().getRmiPort().toString() ),
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
             bootDelegationPackage( "sun.*" ),
             mavenBundle()
@@ -352,25 +321,6 @@ public class PaxRunnerTestContainer
     }
 
     /**
-     * Determine the rmi lookup timeout.<br/>
-     * Timeout is dermined by first looking for a {@link RBCLookupTimeoutOption} in the user options. If not specified a
-     * default is used.
-     *
-     * @param options user options
-     *
-     * @return rmi lookup timeout
-     */
-    private static long getRMITimeout( final Option... options )
-    {
-        final RBCLookupTimeoutOption[] timeoutOptions = filter( RBCLookupTimeoutOption.class, options );
-        if( timeoutOptions.length > 0 )
-        {
-            return timeoutOptions[ 0 ].getTimeout();
-        }
-        return getTestContainerStartTimeout( options );
-    }
-
-    /**
      * Determine the timeout while starting the osgi framework.<br/>
      * Timeout is dermined by first looking for a {@link TestContainerStartTimeoutOption} in the user options. If not
      * specified a default is used.
@@ -388,16 +338,6 @@ public class PaxRunnerTestContainer
             return timeoutOptions[ 0 ].getTimeout();
         }
         return CoreOptions.waitForFrameworkStartup().getTimeout();
-    }
-
-    /**
-     * Scanns ports for a free port to be used for RMI communication.
-     *
-     * @return found free port
-     */
-    public static Integer findFreeCommunicationPort()
-    {
-        return new FreePort( Registry.REGISTRY_PORT, Registry.REGISTRY_PORT + AMOUNT_OF_PORTS_TO_CHECK ).getPort();
     }
 
     @Override
@@ -432,5 +372,21 @@ public class PaxRunnerTestContainer
             LOG.error( "problem in preparing probe. ", e );
         }
         return null;
+    }
+
+    public <T> T getService( Class<T> serviceType, String filter, long timeoutInMillis )
+        throws TestContainerException
+    {
+        return m_target.getService( serviceType, filter, timeoutInMillis );
+    }
+
+    public long installBundle( InputStream stream )
+    {
+        return m_target.installBundle( stream );
+    }
+
+    public void uninstallBundle( long id )
+    {
+        m_target.uninstallBundle( id );
     }
 }

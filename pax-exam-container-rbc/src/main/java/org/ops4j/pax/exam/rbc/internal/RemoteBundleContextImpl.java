@@ -123,6 +123,20 @@ public class RemoteBundleContextImpl
         }
     }
 
+    public void uninstallBundle( long id )
+        throws BundleException
+    {
+        LOG.info( "Uninstall bundle [" + id + "] " );
+        try
+        {
+            m_bundleContext.getBundle( id ).uninstall();
+        }
+        catch( BundleException e )
+        {
+            LOG.error( "Problem uninstalling " + id, e );
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

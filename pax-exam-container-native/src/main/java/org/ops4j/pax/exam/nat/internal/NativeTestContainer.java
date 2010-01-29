@@ -144,6 +144,20 @@ public class NativeTestContainer implements TestContainer
         return -1;
     }
 
+    public void uninstallBundle( long id )
+    {
+        try
+        {
+            Bundle bundle = m_framework.getBundleContext().getBundle( id );
+            bundle.uninstall();
+            LOG.debug( "Uninstalled bundle " + id );
+
+        } catch( BundleException e )
+        {
+            e.printStackTrace();
+        }
+    }
+
     public void setBundleStartLevel( long bundleId, int startLevel )
         throws TestContainerException
     {
