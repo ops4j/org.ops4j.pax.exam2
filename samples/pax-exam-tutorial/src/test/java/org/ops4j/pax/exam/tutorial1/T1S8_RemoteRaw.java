@@ -44,15 +44,15 @@ public class T1S8_RemoteRaw
     {
         TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).newInstance(
             options(
-                waitForRBCFor( 2000 )
+                //waitForRBCFor( 2000 )
                 //location( "192.168.73.204", 8181 )
             )
         ).start();
-
+        System.out.println( "testTarget: " + testTarget.getClass().getName() );
         try
         {
             TestProbeBuilder probe = createProbe().addTest( MyCode.class );
-            testTarget.install( probe.build() );
+            testTarget.install( probe.getStream() );
 
             for( ProbeCall call : probe.getTests() )
             {
