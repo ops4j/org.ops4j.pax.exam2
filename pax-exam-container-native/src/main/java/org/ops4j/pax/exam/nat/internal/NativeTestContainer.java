@@ -71,7 +71,7 @@ public class NativeTestContainer implements TestContainer
         {
             if( option instanceof ProvisionOption )
             {
-                m_bundles.add( ( (ProvisionOption) ( (ProvisionOption) option ) ).getURL() );
+                m_bundles.add( ( (ProvisionOption) option ).getURL() );
             }
         }
 
@@ -82,17 +82,10 @@ public class NativeTestContainer implements TestContainer
         return new Option[]{
             bootDelegationPackage( "sun.*" ),
             mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
                 .groupId( "org.ops4j.pax.logging" )
                 .artifactId( "pax-logging-api" )
                 .version( "1.4" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-
             mavenBundle()
                 .groupId( "org.osgi" )
                 .artifactId( "org.osgi.compendium" )
@@ -222,7 +215,7 @@ public class NativeTestContainer implements TestContainer
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
             FileUtils.delete( new File( folder ) );
             p.put( "org.osgi.framework.storage", folder );
-            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=2.0.0.SNAPSHOT" );
+            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + Info.getPaxExamVersion() );
 
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
