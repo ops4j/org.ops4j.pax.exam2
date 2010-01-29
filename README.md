@@ -2,6 +2,12 @@ What is the Pax Exam Platform
 ================================
 Cooking the "Integrated Testing for Modular Applications" - dish.
 
+How to build
+----------------
+Usually maven2+ with central repo connection is enough (standard).
+However, currently there are some swissbox snapshots being used, so you may have to get swissbox from the svn repo before.
+( build yourself from https://scm.ops4j.org/repos/ops4j/projects/pax/swissbox or add maven repo: http://repository.ops4j.org/mvn-snapshots/ )
+
 Ingredients
 ----------------
  * 1 or more containers
