@@ -98,7 +98,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return store.load( store.store( inputStream ) );
     }
 
-    private String constructProbeTag( Properties p )
+    private void constructProbeTag( Properties p )
     {
         // construct out of added Tests
         StringBuilder sbKeyChain = new StringBuilder();
@@ -110,6 +110,5 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
             p.put( call.signature(), call.getInstruction() );
         }
         p.put( "PaxExam-Executable", sbKeyChain.toString() );
-        return sbKeyChain.toString();
     }
 }
