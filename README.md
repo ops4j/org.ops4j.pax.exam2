@@ -37,7 +37,7 @@ UI
 
 SPICE
 ----------------
-  * Tinybundles (?)
+  * Tinybundles
   * Maven Plugins
   * Ant Plugins
   * Bundle Grill
