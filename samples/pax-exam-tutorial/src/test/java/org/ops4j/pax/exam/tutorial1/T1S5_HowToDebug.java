@@ -41,7 +41,7 @@ public class T1S5_HowToDebug
 {
 
     @Configuration
-    public static Option[] configure( BundleContext bundleContext )
+    public static Option[] configure(  )
     {
         return options(
             // this just adds all what you write here to java vm argumenents of the (new) osgi process.

@@ -24,9 +24,12 @@ import org.osgi.framework.BundleContext;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
+import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
+import org.ops4j.pax.exam.container.remote.RBCRemoteContainerFactory;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
@@ -47,11 +50,12 @@ public class T1S3_HelloFromEquinoxTest
      */
 
     @Configuration
-    public static Option[] configure( BundleContext bundleContext )
+    public static Option[] configure( )
     {
         return options(
-            equinox(),
-            cleanCaches()
+            //executionPolicy().testContainer( PaxRunnerTestContainerFactory.class ),
+            equinox()
+            //cleanCaches()
         );
     }
 

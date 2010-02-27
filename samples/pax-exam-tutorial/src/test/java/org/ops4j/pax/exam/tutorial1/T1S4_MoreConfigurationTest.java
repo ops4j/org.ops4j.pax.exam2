@@ -57,7 +57,7 @@ public class T1S4_MoreConfigurationTest
      */
 
     @Configuration
-    public static Option[] configure( BundleContext bundleContext )
+    public static Option[] configure( )
     {
         return options(
             // install log service using pax runners profile abstraction (there are more profiles, like DS)
