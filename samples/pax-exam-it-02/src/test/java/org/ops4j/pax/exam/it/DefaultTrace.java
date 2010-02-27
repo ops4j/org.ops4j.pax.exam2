@@ -48,7 +48,7 @@ public abstract class DefaultTrace
         logger.warn( "******** This a warn from OSGi" );
         logger.error( "******** This a errory from OSGi" );
 
-        logger.info( "This is running inside Felix. With all configuration set up like you specified. " );
+        logger.info( "This is running inside OSGi. With all configuration set up like you specified. " );
         for( Bundle b : bundleContext.getBundles() )
         {
             System.out.println( "--> Bundle " + b.getBundleId() + " : " + b.getSymbolicName() + " : " + b.getState() );
