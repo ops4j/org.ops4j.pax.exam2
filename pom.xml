@@ -23,6 +23,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>pom</module>
+                                
                 <!-- Fundamentals. Mostly API -->
                 <module>core/pax-exam</module>
                 <module>core/pax-exam-runtime</module>
@@ -52,6 +54,8 @@
                 <module>extensions/maven-archetype-paxexam-junit</module>
 
                 <module>distributions/pax-exam-dist</module>
+                <module>distributions/pax-exam-uber</module>
+                                
             </modules>
         </profile>
 
