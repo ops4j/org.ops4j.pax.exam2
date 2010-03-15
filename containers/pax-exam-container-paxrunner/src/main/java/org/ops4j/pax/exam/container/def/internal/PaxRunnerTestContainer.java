@@ -231,18 +231,19 @@ public class PaxRunnerTestContainer
     {
         return new Option[]{
             // remote bundle context bundle
-            mavenBundle().groupId( "org.ops4j.pax.exam" ).artifactId( "pax-exam-container-rbc" ).version(
-                Info.getPaxExamVersion()
-            ).update(
-                Info.isPaxExamSnapshotVersion()
-            ).startLevel(
-                START_LEVEL_SYSTEM_BUNDLES
-            ),
+
             // rmi communication port
             systemProperty( Constants.RMI_PORT_PROPERTY ).value( m_target.getClientRBC().getRmiPort().toString() ),
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
             bootDelegationPackage( "sun.*" ),
-          
+
+            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
+            url( "link:classpath:META-INF/links/org.osgi.compendium.link" )
+
+            //url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ),
+        };
+/**
             mavenBundle()
                 .groupId( "org.ops4j.pax.logging" )
                 .artifactId( "pax-logging-api" )
@@ -256,7 +257,6 @@ public class PaxRunnerTestContainer
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
 
 
-
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-extender-service" )
@@ -264,6 +264,7 @@ public class PaxRunnerTestContainer
                 .update( Info.isPaxExamSnapshotVersion() )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES )
         };
+ **/
     }
 
     /**
@@ -375,8 +376,8 @@ public class PaxRunnerTestContainer
         return m_target.install( stream );
     }
 
-    public void cleanup( )
+    public void cleanup()
     {
-        m_target.cleanup( );
+        m_target.cleanup();
     }
 }

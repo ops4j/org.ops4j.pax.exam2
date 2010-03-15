@@ -318,15 +318,15 @@ public class CoreOptions
     }
 
     /**
-     * Creates a {@link RawUrlReference}.
+     * Creates a {@link UrlProvisionOption}.
      *
      * @param url url as a string
      *
      * @return url reference
      */
-    public static RawUrlReference url( final String url )
+    public static UrlProvisionOption url( final String url )
     {
-        return new RawUrlReference( url );
+        return new UrlProvisionOption( url );
     }
 
     /**
