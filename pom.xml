@@ -24,7 +24,7 @@
             </activation>
             <modules>
                 <module>pom</module>
-                                
+
                 <!-- Fundamentals. Mostly API -->
                 <module>core/pax-exam</module>
                 <module>core/pax-exam-runtime</module>
@@ -53,9 +53,15 @@
                 <module>extensions/maven-paxexam-plugin</module>
                 <module>extensions/maven-archetype-paxexam-junit</module>
 
+                <!-- Runtime Metadata Profiles for different Environments -->
+                <module>spice/pax-exam-link-mvn</module>
+                <module>spice/pax-exam-link-ivy</module>
+                <module>spice/pax-exam-link-assembly</module>
+
+                <!-- non maven publications -->
                 <module>distributions/pax-exam-dist</module>
                 <module>distributions/pax-exam-uber</module>
-                                
+
             </modules>
         </profile>
 
@@ -71,6 +77,8 @@
                 <module>samples/pax-exam-it-05</module>
                 <module>samples/pax-exam-it-06</module>
                 <module>samples/probe1</module>
+                <module>samples/uberjar-test</module>
+
             </modules>
         </profile>
     </profiles>
