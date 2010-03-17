@@ -55,7 +55,6 @@
 
                 <!-- Runtime Metadata Profiles for different Environments -->
                 <module>spice/pax-exam-link-mvn</module>
-                <module>spice/pax-exam-link-ivy</module>
                 <module>spice/pax-exam-link-assembly</module>
 
                 <!-- non maven publications -->
