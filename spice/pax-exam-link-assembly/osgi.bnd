@@ -1,0 +1,41 @@
+Bundle-SymbolicName:\
+  ${pom.artifactId}
+
+Bundle-Version>:\
+  ${pom.version}
+
+Private-Package:\
+  META-INF.links.*; -split-package:=merge-first,\
+
+Embed-StripVersion: true
+
+Embed-Dependency:\
+  *;scope=provided;inline=false
+
+Include-Resource:\
+  @target/dependency/pax-exam-junit.jar,\
+  @target/dependency/bndlib.jar,\
+  @target/dependency/log4j.jar,\
+  @target/dependency/pax-exam.jar,\
+  @target/dependency/ops4j-base-monitors.jar,\
+  @target/dependency/commons-discovery.jar,\
+  @target/dependency/ops4j-base-io.jar,\
+  @target/dependency/ops4j-base-store.jar,\
+  @target/dependency/pax-exam-runtime.jar,\
+  @target/dependency/pax-swissbox-bnd.jar,\
+  @target/dependency/commons-logging.jar,\
+  @target/dependency/pax-swissbox-bnd.jar,\
+  @target/dependency/ops4j-base-lang.jar,\
+  @target/dependency/pax-exam-extender.jar,\
+  @target/dependency/pax-exam-spi.jar,\
+  @target/dependency/pax-url-mvn.jar,\
+  @target/dependency/pax-url-classpath.jar,\
+  @target/dependency/pax-url-link.jar  
+
+-removeheaders:\
+  Export-Package,\
+  Include-Resource,\
+  Private-Package,\
+  Embed-Dependency,\
+  Embed-Transitive
+
