@@ -43,6 +43,16 @@
             <artifactId>pax-url-mvn</artifactId>
             <version>1.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.url</groupId>
+            <artifactId>pax-url-classpath</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.url</groupId>
+            <artifactId>pax-url-link</artifactId>
+            <version>1.1.2</version>
+        </dependency>
     </dependencies>
 
 </project>
