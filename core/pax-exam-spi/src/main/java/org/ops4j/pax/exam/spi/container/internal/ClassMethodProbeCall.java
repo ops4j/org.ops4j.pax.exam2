@@ -32,6 +32,7 @@ public class ClassMethodProbeCall implements ProbeCall
 
     public ClassMethodProbeCall( String sig, Class clazz, String method )
     {
+    	System.out.println("CALL sig=" + sig + " clazz=" + clazz + " method=" + method);
         m_clazz = clazz.getName();
         m_method = method;
         m_sig = sig;
@@ -43,6 +44,8 @@ public class ClassMethodProbeCall implements ProbeCall
         String parts[] = s.split( ";" );
         m_clazz = parts[ 0 ];
         m_method = parts[ 1 ];
+    	System.out.println("Parsed clazz=" + m_clazz + " method=" + m_method);
+
     }
 
     public String getInstruction()

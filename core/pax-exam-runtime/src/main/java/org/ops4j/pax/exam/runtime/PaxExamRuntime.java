@@ -48,7 +48,7 @@ public class PaxExamRuntime
      *
      * @return discovered test container
      */
-    public static TestContainerFactory getTestContainerFactory()
+	public static TestContainerFactory getTestContainerFactory()
     {
         LOG.info( "Pax Exam Runtime: looking for a " + TestContainerFactory.class.getName() );
 
