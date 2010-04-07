@@ -2,10 +2,11 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+     <parent>
         <groupId>org.ops4j.pax</groupId>
-        <artifactId>master</artifactId>
-        <version>3.1.0</version>
+        <artifactId>exam</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>pom/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ops4j.pax</groupId>
@@ -23,8 +24,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>pom</module>
-
                 <!-- Fundamentals. Mostly API -->
                 <module>core/pax-exam</module>
                 <module>core/pax-exam-runtime</module>
@@ -47,7 +46,7 @@
 
                 <!-- JUnit API and Launcher-->
                 <module>ui/pax-exam-junit</module>
-                <module>ui/pax-exam-testng</module>
+                <module>ui/pax-exam-junit4</module>
 
                 <!-- Maven plugin -->
                 <module>extensions/maven-paxexam-plugin</module>
