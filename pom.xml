@@ -16,7 +16,6 @@
 
     <name>OPS4J Pax Exam (Reactor POM)</name>
 
-
     <profiles>
         <profile>
             <id>release</id>
@@ -67,7 +66,6 @@
             <id>it</id>
             <modules>
                 <module>samples/pax-exam-tutorial</module>
-
                 <module>samples/pax-exam-it-01</module>
                 <module>samples/pax-exam-it-02</module>
                 <module>samples/pax-exam-it-03</module>
