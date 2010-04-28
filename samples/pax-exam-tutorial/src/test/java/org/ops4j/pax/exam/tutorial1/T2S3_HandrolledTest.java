@@ -24,9 +24,15 @@ import org.ops4j.pax.exam.spi.container.ProbeCall;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestProbeProvider;
 
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
-import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
+
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.rawPaxRunnerOption;
+
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.execute;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.fromURL;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.probe;
 
 /**
  * @author Toni Menzel
@@ -64,6 +70,8 @@ public class T2S3_HandrolledTest
             testTarget.stop();
         }
     }
+    
+    
 
 
 }

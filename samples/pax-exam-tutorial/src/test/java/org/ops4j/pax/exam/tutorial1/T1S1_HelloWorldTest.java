@@ -19,7 +19,12 @@ package org.ops4j.pax.exam.tutorial1;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+
+import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * This is the simpliest test possible.
@@ -36,6 +41,14 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 @RunWith( JUnit4TestRunner.class )
 public class T1S1_HelloWorldTest
 {
+
+    @Configuration
+    public static Option[] configure()
+    {
+        return options(
+            felix().version( "2.0.0" )
+        );
+    }
 
     /**
      * This will just print a line to the console.

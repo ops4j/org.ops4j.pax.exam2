@@ -21,11 +21,13 @@
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam</artifactId>
             <version>${pom.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-spi</artifactId>
             <version>${pom.version}</version>
+            <scope>provided</scope>            
         </dependency>
         <dependency>
             <groupId>commons-discovery</groupId>

@@ -22,16 +22,19 @@
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam</artifactId>
             <version>${pom.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-spi</artifactId>
             <version>${pom.version}</version>
+            <scope>provided</scope>            
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>4.2.0</version>
+            <scope>provided</scope>            
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>

@@ -19,15 +19,16 @@ package org.ops4j.pax.exam.tutorial1;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
-import org.ops4j.pax.exam.container.remote.RBCRemoteContainerFactory;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.ProbeCall;
 import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
 
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
-import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
+import static org.ops4j.pax.exam.CoreOptions.options;
+
+import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.waitForRBCFor;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.execute;
 
 /**
  * This demo shows how to not necessarily use the junit user interface but fully
@@ -64,5 +65,31 @@ public class T1S8_RemoteRaw
             testTarget.stop();
         }
     }
+    
+//    @Test
+//    public void testUsingReactor()
+//        throws Exception
+//    {
+//        ExamReactor reactor = new ExamReactor();
+//    	reactor.addConfiguration( options(
+//                logProfile(),
+//                rawPaxRunnerOption( "log", "debug" ),
+//                mavenBundle().groupId( "org.apache.felix" ).artifactId( "org.apache.felix.dependencymanager" ).version( "3.0.0-SNAPSHOT" )
+//         ));
+//    	
+//    	TestProbeBuilder probeBuilder = createProbe().addTest( MyCode.class );
+//		reactor.addProbe( probeBuilder );
+//    	
+//    	// now can do:
+//    	StagedExamReactor stagedReactor = reactor.stage();
+//    	
+//    	// invoking is fully decoupled from container status.
+//    	
+//    	// call all of them without knowing the calls: 
+//    	//ProbeCall[] calls = probeBuilder.getTests();
+//    	
+//    	//
+//    	stagedReactor.invoke( DefaultRaw.call ( MyCode.class,"testMe" ) );
+//    }
 
 }

@@ -214,9 +214,12 @@ public class NativeTestContainer implements TestContainer
             final Map<String, String> p = new HashMap<String, String>();
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
             FileUtils.delete( new File( folder ) );
-            p.put( "org.osgi.framework.storage", folder );
-            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + Info.getPaxExamVersion() );
+            // load default stuff
 
+            p.put( "org.osgi.framework.storage", folder );
+          //  System.setProperty( "org.osgi.vendor.framework", "org.ops4j.pax.exam" );
+
+            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + skipSnapshotFlag(Info.getPaxExamVersion()) );
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader( null );
@@ -251,6 +254,16 @@ public class NativeTestContainer implements TestContainer
             }
         }
         return this;
+    }
+
+    private String skipSnapshotFlag( String version )
+    {
+        int idx = version.indexOf( "-" );
+        if (idx >=0) {
+            return version.substring( 0,idx );
+        }else {
+            return version;
+        }
     }
 
     private FrameworkFactory getFrameworkFactory( String factoryClass )
