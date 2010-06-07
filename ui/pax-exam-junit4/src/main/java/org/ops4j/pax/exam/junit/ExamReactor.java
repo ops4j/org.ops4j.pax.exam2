@@ -25,40 +25,43 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
 
 /**
- * Reactor decouples {@link TestContainer} state from the observer. It is also
+ * Reactor decouples {@link org.ops4j.pax.exam.spi.container.TestContainer} state from the observer. It is also
  * in control to map probes to their configurations or vice versa. In essence,
  * this implements the Container re-start/re-use policy topic.
- * 
+ *
  * @author tonit
- * 
  */
-public class ExamReactor {
+public class ExamReactor
+{
 
-	private List<Option[]> m_configurations;
-	private List<TestProbeBuilder> m_probes;
+    private List<Option[]> m_configurations;
+    private List<TestProbeBuilder> m_probes;
 
-	public ExamReactor() {
-		m_configurations = new ArrayList<Option[]>();
-		m_probes = new ArrayList<TestProbeBuilder>();
-	}
-	
-	synchronized public void addConfiguration(Option[] options) {
-		m_configurations.add(options);
-	}
+    public ExamReactor()
+    {
+        m_configurations = new ArrayList<Option[]>();
+        m_probes = new ArrayList<TestProbeBuilder>();
+    }
 
-	synchronized public void addProbe(TestProbeBuilder addTest) {
-		m_probes.add(addTest);
-	}
+    synchronized public void addConfiguration( Option[] options )
+    {
+        m_configurations.add( options );
+    }
 
-	synchronized public StagedExamReactor stage(  ) {
-		// do some fancy stuff and create the staged reactor
-		
-		// 1. Cut out the framework options.
-		
-		// for now we don't care
-		
-		
-		return new EagerSingleStagedReactor( m_configurations,m_probes );
-	}
+    synchronized public void addProbe( TestProbeBuilder addTest )
+    {
+        m_probes.add( addTest );
+    }
+
+    synchronized public StagedExamReactor stage()
+    {
+        // do some fancy stuff and create the staged reactor
+
+        // 1. Cut out the framework options.
+
+        // for now we don't care
+
+        return new EagerSingleStagedReactor( m_configurations, m_probes );
+    }
 
 }
