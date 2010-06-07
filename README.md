@@ -2,6 +2,10 @@ What is the Pax Exam Platform
 ================================
 Cooking the "Integrated Testing for Modular Applications" - dish.
 
+Targeting best of breed platforms:
+- OSGi
+- Android
+
 How to build
 ----------------
 Usually maven2+ with central repo connection is enough (standard).
@@ -11,21 +15,22 @@ However, currently there are some swissbox snapshots being used, so you may have
 Ingredients
 ----------------
  * 1 or more containers
- * 1 or more UIs
+ * 1 or more Driver
  * Extra spice if you like
 
 Targets / Containers
 ----------------
-  * Pax Runner (container+target)
-  * Native (container+target)
-  * Remote (target)
+  * Android Remote Runner   
+  * OSGi Pax Runner (container+target)
+  * OSGi Native (container+target)
+  * OSGi Remote (target)
 
 Extender (Just chose if your target supports it)
 ----------------
   * Service (the one that directly runs the probe in the current container)
   * Ace bridges TestTarget and Ace Client
 
-UI
+Drivers ( former UI )
 ----------------
   * SPI (from core, you can use the bare api yourself of cause as a UI)
   * JUnit (the one we know from 1.x but with much more control over containers)
