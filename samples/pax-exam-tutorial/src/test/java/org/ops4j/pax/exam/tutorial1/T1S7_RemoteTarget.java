@@ -22,17 +22,13 @@ import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.remote.RBCRemoteContainerFactory;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.junit.options.ReUsePolicy;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
-import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 
 /**
-
  * Running a test on a remote device using an already installed rbc and a know connection
  *
  * @author Toni Menzel
@@ -42,29 +38,27 @@ import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 public class T1S7_RemoteTarget
 {
 
-
     /*
-     * Here you can configure most of exam.
-     * Annotate any method with @Configuration and be sure to set return type to Option[]
-     *
-     * Thats all. In this case, we just "tell" via fluent api, to use equinox.
-     *
-     */
-
+    * Here you can configure most of exam.
+    * Annotate any method with @Configuration and be sure to set return type to Option[]
+    *
+    * Thats all. In this case, we just "tell" via fluent api, to use equinox.
+    *
+    */
 
     @Configuration
     public static Option[] configure()
     {
         return options(
+
             // Just necessary if you have more than one container in your classpath
-            executionPolicy().testContainer( RBCRemoteContainerFactory.class ),
-            
+            //executionPolicy().testContainer( RBCRemoteContainerFactory.class ),
+
             waitForRBCFor( 2000 ),
             //-Dorg.ops4j.pax.exam.rbc.rmi.port=9191
             location( "localhost", 9191 )
         );
     }
-
 
     @Test
     public void helloRemote( BundleContext bundleContext )

@@ -51,6 +51,7 @@ public class T1S4_MoreConfigurationTest
      * You can configure all kinds of stuff.
      * You will learn about most of it on the project wiki.
      * Here's a typical example:
+     *
      * - add a log service to your runtime
      * - add custom bundles via the mvn handler
      * - add additional, non bundlized dependencies. (wrapping on the fly)
