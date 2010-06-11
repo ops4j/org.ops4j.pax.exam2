@@ -34,8 +34,8 @@ public class AllConfinedStagedReactor implements StagedExamReactor
 
     private static Log LOG = LogFactory.getLog( EagerSingleStagedReactor.class );
 
-    private List<Option[]> m_configs;
-    private List<TestProbeBuilder> m_probes;
+    final private List<Option[]> m_configs;
+    final private List<TestProbeBuilder> m_probes;
 
     /**
      * @param mConfigurations

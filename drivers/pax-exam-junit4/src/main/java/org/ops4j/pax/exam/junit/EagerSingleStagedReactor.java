@@ -40,7 +40,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
     private static Log LOG = LogFactory.getLog( EagerSingleStagedReactor.class );
 
-    private TestContainer m_target;
+    final private TestContainer m_target;
 
     /**
      * @param mConfigurations that are already "deflattened" and reflect single container instances

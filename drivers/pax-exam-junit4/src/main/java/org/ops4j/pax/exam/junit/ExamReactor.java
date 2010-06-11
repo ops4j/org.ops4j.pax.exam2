@@ -38,8 +38,8 @@ public class ExamReactor
 
     private static Log LOG = LogFactory.getLog( ExamReactor.class );
 
-    private List<Option[]> m_configurations;
-    private List<TestProbeBuilder> m_probes;
+    final private List<Option[]> m_configurations;
+    final private List<TestProbeBuilder> m_probes;
 
     public ExamReactor()
     {
