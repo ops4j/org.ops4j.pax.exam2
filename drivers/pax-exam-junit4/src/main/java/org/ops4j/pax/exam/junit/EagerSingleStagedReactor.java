@@ -52,8 +52,8 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
         if( mConfigurations.size() < 1 )
         {
-            m_targets.add( PaxExamRuntime.getTestContainerFactory().newInstance( new Option[0] ) );
-
+            // fill in a default config
+            mConfigurations.add( new Option[0] );
         }
         else
         {
@@ -89,6 +89,6 @@ public class EagerSingleStagedReactor implements StagedExamReactor
     public void tearDown()
     {
         m_target.stop();
-	}
+    }
 
 }
