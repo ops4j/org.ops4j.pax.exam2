@@ -15,14 +15,71 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.runtime.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.container.DefaultRaw;
+import org.ops4j.pax.exam.spi.container.ProbeCall;
+import org.ops4j.pax.exam.spi.container.TestContainer;
+import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
+
 /**
- * Created by IntelliJ IDEA.
- * User: tonit
- * Date: Jun 11, 2010
- * Time: 11:29:58 PM
- * To change this template use File | Settings | File Templates.
+ * This will use new containers for any test (hence confined)
  */
-public class AllConfinedStagedReactor
+public class AllConfinedStagedReactor implements StagedExamReactor
 {
 
+    private static Log LOG = LogFactory.getLog( EagerSingleStagedReactor.class );
+
+    private List<Option[]> m_configs;
+    private List<TestProbeBuilder> m_probes;
+
+    /**
+     * @param mConfigurations
+     * @param mProbes
+     */
+    public AllConfinedStagedReactor( List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
+    {
+        m_configs = mConfigurations;
+        m_probes = mProbes;
+
+        if( mConfigurations.size() < 1 )
+        {
+            // fill in a default config
+            mConfigurations.add( new Option[0] );
+        }
+    }
+
+    public void invoke( ProbeCall call )
+        throws Exception
+    {
+        LOG.debug( "Trying to invoke signature: " + call.signature() );
+        // create a container for each call:
+        for( Option[] option : m_configs )
+        {
+            TestContainer runtime = PaxExamRuntime.getTestContainerFactory().newInstance( option );
+            runtime.start();
+            try
+            {
+                for( TestProbeBuilder builder : m_probes )
+                {
+                    LOG.debug( "installing probe " + builder );
+                    runtime.install( builder.getStream() );
+                }
+                DefaultRaw.execute( runtime, call );
+
+            } finally
+            {
+                runtime.stop();
+            }
+        }
+    }
+
+    public void tearDown()
+    {
+
+    }
 }
