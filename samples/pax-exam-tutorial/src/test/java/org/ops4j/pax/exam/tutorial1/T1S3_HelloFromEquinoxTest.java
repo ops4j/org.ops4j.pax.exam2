@@ -22,10 +22,12 @@ import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * @author Toni Menzel (tonit)
@@ -48,8 +50,8 @@ public class T1S3_HelloFromEquinoxTest
     {
         return options(
             //executionPolicy().testContainer( PaxRunnerTestContainerFactory.class ),
-            equinox()
-            //cleanCaches()
+            equinox(),
+            cleanCaches()
         );
     }
 

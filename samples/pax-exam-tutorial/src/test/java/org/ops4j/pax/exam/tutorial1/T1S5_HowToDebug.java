@@ -27,7 +27,7 @@ import static org.ops4j.pax.exam.CoreOptions.*;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
+//import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -45,7 +45,7 @@ public class T1S5_HowToDebug
     {
         return options(
             // this just adds all what you write here to java vm argumenents of the (new) osgi process.
-            vmOption( "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006" ),
+            // vmOption( "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006" ),
             // this is necessary to let junit runner not timout the remote process before attaching debugger
             // setting timeout to 0 means wait as long as the remote service comes available.
             // starting with version 0.5.0 of PAx Exam this is no longer required as by default the framework tests

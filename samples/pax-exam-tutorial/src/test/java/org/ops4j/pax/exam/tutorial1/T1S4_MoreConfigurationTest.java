@@ -31,8 +31,6 @@ import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
-
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
@@ -62,7 +60,7 @@ public class T1S4_MoreConfigurationTest
     {
         return options(
             // install log service using pax runners profile abstraction (there are more profiles, like DS)
-            logProfile(),
+            //logProfile(),
             // this is how you set the default log level when using pax logging (logProfile)
             systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "INFO" ),
 

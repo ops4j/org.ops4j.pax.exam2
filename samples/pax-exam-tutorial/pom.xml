@@ -19,8 +19,6 @@
     <packaging>jar</packaging>
  
     <name>OPS4J Pax Exam - Tutorial</name>
-    <repositories>
-    </repositories>
 
     <dependencies>
         <!-- select UI -->
@@ -45,6 +43,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>2.0.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.1</version>
@@ -65,37 +70,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <!-- use pax exam maven plugin -->
-
-            <!--
-            Note: settings and dependencies for the final osgi runtime (TESTS) are just used in TestCases
-            that annotated with this:
-            @RunWith( MavenConfiguredJUnit4TestRunner.class )
-
-            All other testcases will use their own settings/provisioning inside @Configure Methods.
-            -->
-            <plugin>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>maven-paxexam-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-config</id>
-                        <goals>
-                            <goal>generate-config</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-
-                    <options>
-                        <platform>equinox</platform>
-                        <profiles>log</profiles>
-                    </options>
-
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
