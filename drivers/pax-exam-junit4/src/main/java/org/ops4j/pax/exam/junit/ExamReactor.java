@@ -20,6 +20,8 @@ package org.ops4j.pax.exam.junit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
@@ -33,6 +35,8 @@ import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
  */
 public class ExamReactor
 {
+
+    private static Log LOG = LogFactory.getLog( ExamReactor.class );
 
     private List<Option[]> m_configurations;
     private List<TestProbeBuilder> m_probes;
@@ -55,6 +59,7 @@ public class ExamReactor
 
     synchronized public StagedExamReactor stage()
     {
+        LOG.debug( "Staging reactor with probes: " + m_probes.toString() );
         // do some fancy stuff and create the staged reactor
 
         // 1. Cut out the framework options.

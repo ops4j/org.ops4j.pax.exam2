@@ -19,7 +19,8 @@ package org.ops4j.pax.exam.junit;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.runtime.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
@@ -31,53 +32,63 @@ import org.ops4j.pax.exam.spi.container.TestTarget;
 
 /**
  * One target only reactor implementation (simpliest and fastest)
- * 
+ *
  * @author tonit
- * 
  */
-public class EagerSingleStagedReactor implements StagedExamReactor {
+public class EagerSingleStagedReactor implements StagedExamReactor
+{
 
-	
-	private TestContainer m_target;
+    private static Log LOG = LogFactory.getLog( EagerSingleStagedReactor.class );
 
-	/**
-	 * 
-	 * @param mConfigurations that are already "deflattened" and reflect single container instances
-	 * @param mProbes
-	 */
-	public EagerSingleStagedReactor(List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes) {
-		List<TestContainer> m_targets = new ArrayList<TestContainer>();
-		
-		if (mConfigurations.size() < 1) {
-			m_targets.add(PaxExamRuntime.getTestContainerFactory().newInstance(new Option[0]));
+    private TestContainer m_target;
 
-		} else {
-			for (Option[] option : mConfigurations) {
-				m_targets.add(PaxExamRuntime.getTestContainerFactory().newInstance(option));
-			}
-		}
-		m_target = new CompositeTestContainer(m_targets);
-		m_target.start();
+    /**
+     * @param mConfigurations that are already "deflattened" and reflect single container instances
+     * @param mProbes
+     */
+    public EagerSingleStagedReactor( List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
+    {
+        List<TestContainer> m_targets = new ArrayList<TestContainer>();
 
-		for (TestProbeBuilder builder : mProbes) {
-			System.out.println("installing probe " + builder);
-			m_target.install(builder.getStream());
-		}
+        if( mConfigurations.size() < 1 )
+        {
+            m_targets.add( PaxExamRuntime.getTestContainerFactory().newInstance( new Option[0] ) );
 
-	}
+        }
+        else
+        {
+            for( Option[] option : mConfigurations )
+            {
+                m_targets.add( PaxExamRuntime.getTestContainerFactory().newInstance( option ) );
+            }
+        }
+        m_target = new CompositeTestContainer( m_targets );
+        m_target.start();
 
-	public void invoke(ProbeCall call) throws Exception {
-		System.out.println("Trying to invoke signature: " + call.signature());
+        for( TestProbeBuilder builder : mProbes )
+        {
+            LOG.debug( "installing probe " + builder );
+            m_target.install( builder.getStream() );
+        }
 
-		DefaultRaw.execute(findMatchingTargetInstance(call), call);
-	}
+    }
 
-	private TestTarget findMatchingTargetInstance(ProbeCall call) {
-		return m_target;
-	}
+    public void invoke( ProbeCall call )
+        throws Exception
+    {
+        LOG.debug( "Trying to invoke signature: " + call.signature() );
 
-	public void tearDown() {
-		m_target.stop();
+        DefaultRaw.execute( findMatchingTargetInstance( call ), call );
+    }
+
+    private TestTarget findMatchingTargetInstance( ProbeCall call )
+    {
+        return m_target;
+    }
+
+    public void tearDown()
+    {
+        m_target.stop();
 	}
 
 }

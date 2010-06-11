@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.rules.MethodRule;
@@ -40,6 +42,8 @@ import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
 
 public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
+    private static Log LOG = LogFactory.getLog( JUnit4TestRunner.class );
+    
 	private final StagedExamReactor m_reactor;
 	private Map<FrameworkMethod,ProbeCall> m_map;
 
@@ -65,7 +69,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 			Configuration conf = (Configuration) m.getAnnotation(Configuration.class);
 			if (conf != null) {
 				// consider as option, so prepare that one:
-				System.out.println("Add Configuration " + m.getName());
+				LOG.debug("Add Configuration " + m.getName());
 				reactor.addConfiguration((Option[]) m.invoke(testClassInstance));
 			}
 		}
@@ -74,7 +78,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 		TestProbeBuilder probe = createProbe();
 		probe.setAnchor(testClass);
 		for (FrameworkMethod s : getChildren()) {
-			System.out.println("Add Test " + s.getName());
+			LOG.debug("Add Test " + s.getName());
 			ProbeCall call = save(s,DefaultRaw.call(testClass, s.getName()));
 			probe.addTest(call);
 		}
