@@ -2,7 +2,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-     <parent>
+    <parent>
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
         <version>2.0.0-SNAPSHOT</version>
@@ -24,6 +24,8 @@
             </activation>
             <modules>
                 <!-- Fundamentals. Mostly API -->
+                <module>pom</module>
+                
                 <module>core/pax-exam</module>
                 <module>core/pax-exam-runtime</module>
 
@@ -45,9 +47,9 @@
 
                 <!-- Drivers. Use them to drive your case. -->
 
-                <!-- legacy -->
+                <!-- legacy
                 <module>drivers/pax-exam-junit</module>
-
+-->
                 <!-- Brand new JUnit4 Driver -->
                 <module>drivers/pax-exam-junit4</module>
 
@@ -62,6 +64,9 @@
                 <!-- non maven publications -->
                 <module>distributions/pax-exam-dist</module>
                 <module>distributions/pax-exam-uber</module>
+
+                <module>samples/testing-container-native</module>
+                <module>samples/testing-container-paxrunner</module>
 
             </modules>
         </profile>
