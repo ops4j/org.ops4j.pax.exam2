@@ -110,7 +110,7 @@ public class FileTailImpl implements FileTail
     protected File findParentOfTail( File folder )
         throws IOException
     {
-        logger.debug( "findParentOfTail " + folder.getAbsolutePath() );
+        logger.trace( "findParentOfTail " + folder.getAbsolutePath() );
         for( File f : folder.listFiles() )
         {
             if( !f.isHidden() && f.isDirectory() )
