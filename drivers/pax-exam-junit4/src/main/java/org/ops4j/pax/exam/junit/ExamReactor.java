@@ -65,6 +65,7 @@ public class ExamReactor
         // 1. Cut out the framework options.
 
         // for now we don't care
+       // return new AllConfinedStagedReactor( m_configurations, m_probes );
 
         return new EagerSingleStagedReactor( m_configurations, m_probes );
     }
