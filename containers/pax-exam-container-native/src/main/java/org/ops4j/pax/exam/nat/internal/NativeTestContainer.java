@@ -242,6 +242,7 @@ public class NativeTestContainer implements TestContainer
                 LOG.debug( "Started: " + b.getSymbolicName() );
             }
             Thread.currentThread().setContextClassLoader( parent );
+
         } catch( Exception e )
         {
             e.printStackTrace();
