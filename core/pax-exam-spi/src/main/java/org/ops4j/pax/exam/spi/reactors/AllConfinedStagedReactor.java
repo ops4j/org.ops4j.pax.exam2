@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.spi.reactors;
 
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.runtime.PaxExamRuntime;
+import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.pax.exam.spi.container.ProbeCall;
-import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.container.internal.PaxExamRuntime;
 
 /**
  * This will use new containers for any test (hence confined)
+ *
+ * TODO: Should be moved out of driver layer.
  */
 public class AllConfinedStagedReactor implements StagedExamReactor
 {

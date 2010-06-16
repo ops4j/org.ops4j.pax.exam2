@@ -27,7 +27,8 @@
                 <module>pom</module>
                 
                 <module>core/pax-exam</module>
-                <module>core/pax-exam-runtime</module>
+
+             <!--   <module>core/pax-exam-runtime</module> -->
 
                 <!-- Fundamental UI -->
                 <module>core/pax-exam-spi</module>

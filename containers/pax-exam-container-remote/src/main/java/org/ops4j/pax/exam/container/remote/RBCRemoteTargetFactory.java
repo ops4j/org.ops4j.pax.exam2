@@ -18,7 +18,7 @@
 package org.ops4j.pax.exam.container.remote;
 
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.spi.container.TestTarget;
+import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.spi.container.TestTargetFactory;
 
 /**

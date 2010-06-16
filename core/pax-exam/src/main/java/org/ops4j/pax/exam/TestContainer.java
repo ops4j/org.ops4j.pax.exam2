@@ -15,10 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container;
-
-import java.io.InputStream;
-import java.util.List;
+package org.ops4j.pax.exam;
 
 /**
  * Management of an OSGi framework that can be used as a integration test container.

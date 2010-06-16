@@ -15,41 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container;
+package org.ops4j.pax.exam;
+
+import org.ops4j.pax.exam.Option;
 
 /**
- * Denotes an exception occuring during using test container.
+ * {@link TestContainer} factory.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since 0.3.0, December 15, 2008
+ * @since 0.3.0, December 09, 2008
  */
-public class TestContainerException
-    extends RuntimeException
+public interface TestContainerFactory
 {
 
     /**
-     * {@inheritDoc}
+     * Creates a new {@link TestContainer}.
+     *
+     * @param options integration test options
+     *
+     * @return created test container
      */
-    public TestContainerException( final String message )
-    {
-        super( message );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public TestContainerException( final String message,
-                                   final Throwable cause )
-    {
-        super( message, cause );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public TestContainerException( final Throwable cause )
-    {
-        super( cause );
-    }
+    TestContainer newInstance( Option... options );
 
 }

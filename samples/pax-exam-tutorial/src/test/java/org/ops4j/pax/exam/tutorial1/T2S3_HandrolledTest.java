@@ -18,10 +18,10 @@
 package org.ops4j.pax.exam.tutorial1;
 
 import org.junit.Test;
+import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
-import org.ops4j.pax.exam.runtime.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.container.internal.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.ProbeCall;
-import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestProbeProvider;
 
 import static org.ops4j.pax.exam.CoreOptions.*;

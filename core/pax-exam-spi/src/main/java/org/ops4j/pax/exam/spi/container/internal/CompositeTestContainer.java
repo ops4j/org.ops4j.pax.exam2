@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.spi.container.internal;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
@@ -7,9 +7,9 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ops4j.pax.exam.spi.container.TestContainer;
-import org.ops4j.pax.exam.spi.container.TestContainerException;
-import org.ops4j.pax.exam.spi.container.TimeoutException;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TimeoutException;
 
 public class CompositeTestContainer implements TestContainer {
 
@@ -39,7 +39,8 @@ public class CompositeTestContainer implements TestContainer {
 		return this;
 	}
 
-	public void waitForState(long bundleId, int state, long timeoutInMillis) throws TimeoutException {
+	public void waitForState(long bundleId, int state, long timeoutInMillis) throws TimeoutException
+    {
 		for (TestContainer container : m_targets) {
 			container.waitForState(bundleId, state, timeoutInMillis);
 		}

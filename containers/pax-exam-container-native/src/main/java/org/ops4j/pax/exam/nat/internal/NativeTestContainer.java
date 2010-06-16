@@ -36,10 +36,10 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.spi.container.TestContainer;
-import org.ops4j.pax.exam.spi.container.TestContainerException;
-import org.ops4j.pax.exam.spi.container.TimeoutException;
+import org.ops4j.pax.exam.TestContainerException;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;

@@ -18,10 +18,10 @@
 package org.ops4j.pax.exam.container.remote;
 
 import java.io.InputStream;
-import org.ops4j.pax.exam.spi.container.TestContainer;
-import org.ops4j.pax.exam.spi.container.TestContainerException;
-import org.ops4j.pax.exam.spi.container.TestTarget;
-import org.ops4j.pax.exam.spi.container.TimeoutException;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestTarget;
+import org.ops4j.pax.exam.TimeoutException;
 
 /**
  * Graceful delegator to underlying target instance.

@@ -25,23 +25,24 @@ import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactor;
 
 /**
- * Reactor decouples {@link org.ops4j.pax.exam.spi.container.TestContainer} state from the observer. It is also
+ * Reactor decouples {@link org.ops4j.pax.exam.TestContainer} state from the observer. It is also
  * in control to map probes to their configurations or vice versa. In essence,
  * this implements the Container re-start/re-use policy topic.
  *
  * @author tonit
  */
-public class ExamReactor
+public class DefaultExamReactor implements ExxamReactor
 {
 
-    private static Log LOG = LogFactory.getLog( ExamReactor.class );
+    private static Log LOG = LogFactory.getLog( DefaultExamReactor.class );
 
     final private List<Option[]> m_configurations;
     final private List<TestProbeBuilder> m_probes;
 
-    public ExamReactor()
+    public DefaultExamReactor()
     {
         m_configurations = new ArrayList<Option[]>();
         m_probes = new ArrayList<TestProbeBuilder>();

@@ -18,8 +18,8 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.spi.container.TestContainer;
-import org.ops4j.pax.exam.spi.container.TestContainerFactory;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerFactory;
 
 /**
  * @author Toni Menzel

@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.spi.container.internal.ClassMethodProbeCall;
 import org.ops4j.pax.exam.spi.container.internal.TestProbeBuilderImpl;

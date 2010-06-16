@@ -15,23 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.spi.reactors;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.runtime.PaxExamRuntime;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.pax.exam.spi.container.ProbeCall;
-import org.ops4j.pax.exam.spi.container.TestContainer;
 import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
-import org.ops4j.pax.exam.spi.container.TestTarget;
+import org.ops4j.pax.exam.spi.container.internal.CompositeTestContainer;
+import org.ops4j.pax.exam.spi.container.internal.PaxExamRuntime;
 
 /**
  * One target only reactor implementation (simpliest and fastest)
+ *
+ * TODO: Should be moved out of driver layer.
  *
  * @author tonit
  */

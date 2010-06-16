@@ -54,6 +54,12 @@
 			<artifactId>pax-url-link</artifactId>
 			<version>1.1.2</version>
 		</dependency>
+
+          <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.4</version>
+        </dependency>
 	</dependencies>
 
 </project>

@@ -22,12 +22,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
-import org.ops4j.pax.exam.spi.container.TestContainerException;
-import org.ops4j.pax.exam.spi.container.TestTarget;
+import org.ops4j.pax.exam.TestTarget;
 
 import static org.ops4j.pax.exam.OptionUtils.*;
 

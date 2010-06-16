@@ -45,7 +45,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private static Log LOG = LogFactory.getLog( JUnit4TestRunner.class );
     
 	private final StagedExamReactor m_reactor;
-	private Map<FrameworkMethod,ProbeCall> m_map;
+	private final Map<FrameworkMethod,ProbeCall> m_map;
 
 	public JUnit4TestRunner(Class<?> klass) throws InitializationError {
 		super(klass);
@@ -59,7 +59,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 	}
 
 	private StagedExamReactor prepareReactor() throws Exception {
-		ExamReactor reactor = new ExamReactor();
+		ExxamReactor reactor = new DefaultExamReactor();
 		Class testClass = getTestClass().getJavaClass();
 
 		Object testClassInstance = testClass.newInstance();
