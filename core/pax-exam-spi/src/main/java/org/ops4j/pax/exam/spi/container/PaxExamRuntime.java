@@ -21,7 +21,7 @@ import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.spi.TestTargetFactory;
+import org.ops4j.pax.exam.TestTargetFactory;
 
 /**
  * Pax Exam runtime.
