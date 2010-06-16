@@ -32,11 +32,15 @@ import org.ops4j.pax.exam.spi.container.internal.TestProbeBuilderImpl;
 /**
  * @author Toni Menzel
  * @since Jan 11, 2010
+ *
+ * TODO: to be changed into service
  */
 public class DefaultRaw
 {
 
     private static int id = 0;
+    private static final String PAX_EXAM_EXECUTABLE_SIG = "PaxExam-Executable-SIG";
+    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
 
     public static TestProbeBuilder createProbe()
     {
@@ -45,7 +49,7 @@ public class DefaultRaw
 
     public static ProbeCall call( Class clazz, String method )
     {
-        return new ClassMethodProbeCall( "PaxExam-Executable-SIG" + ( id++ ), clazz, method );
+        return new ClassMethodProbeCall( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, method );
     }
 
     public static ProbeCall[] call( Class clazz )
@@ -53,7 +57,7 @@ public class DefaultRaw
         List<ProbeCall> calls = new ArrayList<ProbeCall>();
         for( String m : parseMethods( clazz ) )
         {
-            calls.add( new ClassMethodProbeCall( "PaxExam-Executable-SIG" + ( id++ ), clazz, m ) );
+            calls.add( new ClassMethodProbeCall( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, m ) );
         }
         return calls.toArray( new ProbeCall[calls.size()] );
     }
@@ -78,7 +82,7 @@ public class DefaultRaw
     public static void execute( TestTarget target, ProbeCall call )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-        target.getService( ProbeInvoker.class, "(Probe-Signature=" + call.signature() + ")", 0 ).call();
+        target.getService( ProbeInvoker.class, "(" + PROBE_SIGNATURE_KEY + "=" + call.signature() + ")", 0 ).call();
     }
 
     public static InputStream fromURL( String s )
