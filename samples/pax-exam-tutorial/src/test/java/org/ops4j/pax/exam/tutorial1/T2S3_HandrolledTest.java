@@ -20,9 +20,9 @@ package org.ops4j.pax.exam.tutorial1;
 import org.junit.Test;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
-import org.ops4j.pax.exam.spi.container.internal.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.container.ProbeCall;
-import org.ops4j.pax.exam.spi.container.TestProbeProvider;
+import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestProbeProvider;
+import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;

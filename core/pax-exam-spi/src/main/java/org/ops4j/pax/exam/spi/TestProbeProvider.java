@@ -15,26 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container;
+package org.ops4j.pax.exam.spi;
 
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestTarget;
+import java.io.InputStream;
 
 /**
- * If you don't need a full blown container but a target, chose this one.
- *
  * @author Toni Menzel
- * @since Jan 25, 2010
+ * @since Jan 29, 2010
  */
-public interface TestTargetFactory
+public interface TestProbeProvider
 {
 
-    /**
-     * Creates a new {@link TestTarget}.
-     *
-     * @param options integration test options
-     *
-     * @return created test target
-     */
-    TestTarget newInstance( Option... options );
+    ProbeCall[] getTests();
+
+    InputStream getStream();
+
 }

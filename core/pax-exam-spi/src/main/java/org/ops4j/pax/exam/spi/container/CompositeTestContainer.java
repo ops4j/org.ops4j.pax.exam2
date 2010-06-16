@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.spi.container.internal;
+package org.ops4j.pax.exam.spi.container;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;

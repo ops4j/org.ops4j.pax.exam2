@@ -15,19 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container;
+package org.ops4j.pax.exam.spi;
 
 import java.io.InputStream;
 
 /**
+ * A test probe is the client side, final representation of a test you want to trigger.
+ * It provides the probe itself and a list of tests you can invoke on it.
+ *
  * @author Toni Menzel
- * @since Jan 29, 2010
+ * @since Dec 2, 2009
  */
-public interface TestProbeProvider
+public interface TestProbe
 {
 
-    ProbeCall[] getTests();
-
-    InputStream getStream();
-
+    InputStream getProbe();
 }

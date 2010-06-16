@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container.internal;
+package org.ops4j.pax.exam.spi.probesupport;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.jar.JarOutputStream;
 import org.osgi.framework.Constants;
 import org.ops4j.lang.NullArgumentException;
+import org.ops4j.pax.exam.spi.container.DuplicateAwareJarOutputStream;
 import org.ops4j.pax.swissbox.bnd.BndUtils;
 
 /**

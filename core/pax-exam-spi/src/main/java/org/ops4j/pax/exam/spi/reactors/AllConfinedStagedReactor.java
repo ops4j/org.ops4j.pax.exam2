@@ -20,11 +20,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.spi.ProbeCall;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
-import org.ops4j.pax.exam.spi.container.ProbeCall;
-import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
-import org.ops4j.pax.exam.spi.container.internal.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 
 /**
  * This will use new containers for any test (hence confined)

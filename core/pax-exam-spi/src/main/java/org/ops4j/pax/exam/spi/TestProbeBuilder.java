@@ -1,6 +1,4 @@
-package org.ops4j.pax.exam.spi.container;
-
-import java.io.InputStream;
+package org.ops4j.pax.exam.spi;
 
 /**
  * @author Toni Menzel

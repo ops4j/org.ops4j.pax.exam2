@@ -33,10 +33,12 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.spi.ExxamReactor;
+import org.ops4j.pax.exam.spi.ProbeCall;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
-import org.ops4j.pax.exam.spi.container.ProbeCall;
-import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
 
@@ -45,7 +47,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private static Log LOG = LogFactory.getLog( JUnit4TestRunner.class );
     
 	private final StagedExamReactor m_reactor;
-	private final Map<FrameworkMethod,ProbeCall> m_map;
+	private final Map<FrameworkMethod, ProbeCall> m_map;
 
 	public JUnit4TestRunner(Class<?> klass) throws InitializationError {
 		super(klass);

@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
-import org.ops4j.pax.exam.spi.container.internal.ClassMethodProbeCall;
-import org.ops4j.pax.exam.spi.container.internal.TestProbeBuilderImpl;
+import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.TestProbeProvider;
+import org.ops4j.pax.exam.spi.probesupport.TestProbeBuilderImpl;
 
 /**
  * @author Toni Menzel

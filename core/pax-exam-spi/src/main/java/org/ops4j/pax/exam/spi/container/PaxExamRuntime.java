@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container.internal;
+package org.ops4j.pax.exam.spi.container;
 
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.spi.container.TestTargetFactory;
+import org.ops4j.pax.exam.spi.TestTargetFactory;
 
 /**
  * Pax Exam runtime.

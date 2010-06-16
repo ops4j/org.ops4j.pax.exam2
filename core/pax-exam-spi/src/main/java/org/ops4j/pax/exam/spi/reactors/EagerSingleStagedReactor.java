@@ -25,11 +25,11 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.container.CompositeTestContainer;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
-import org.ops4j.pax.exam.spi.container.ProbeCall;
-import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
-import org.ops4j.pax.exam.spi.container.internal.CompositeTestContainer;
-import org.ops4j.pax.exam.spi.container.internal.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 
 /**
  * One target only reactor implementation (simpliest and fastest)

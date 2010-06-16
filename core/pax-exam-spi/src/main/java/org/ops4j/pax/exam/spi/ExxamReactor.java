@@ -1,8 +1,8 @@
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.spi;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.container.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.TestProbeBuilder;
 
 /**
  * Created by IntelliJ IDEA.

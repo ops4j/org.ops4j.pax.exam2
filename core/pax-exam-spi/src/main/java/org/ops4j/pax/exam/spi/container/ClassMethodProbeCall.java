@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container.internal;
+package org.ops4j.pax.exam.spi.container;
 
-import org.ops4j.pax.exam.spi.container.ProbeCall;
+import org.ops4j.pax.exam.spi.ProbeCall;
 
 /**
  * @author Toni Menzel
