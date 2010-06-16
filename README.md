@@ -6,6 +6,11 @@ Targeting best of breed platforms:
 - OSGi
 - Android
 
+Distinglishing Components
+----------------
+pax-exam : common api that is also needed inside targets. (bundle)
+pax-exam-spi : brick of common logic. Only used in host VM.
+
 How to build
 ----------------
 Usually maven2+ with central repo connection is enough (standard).
