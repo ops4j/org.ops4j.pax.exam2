@@ -65,10 +65,6 @@
                 <!-- non maven publications -->
                 <module>distributions/pax-exam-dist</module>
                 <module>distributions/pax-exam-uber</module>
-
-                <module>samples/testing-container-native</module>
-                <module>samples/testing-container-paxrunner</module>
-
             </modules>
         </profile>
 
@@ -84,6 +80,8 @@
                 <module>samples/pax-exam-it-06</module>
                 <module>samples/probe1</module>
                 <module>samples/uberjar-test</module>
+  			   <module>samples/testing-container-native</module>
+               <module>samples/testing-container-paxrunner</module>
 
             </modules>
         </profile>
