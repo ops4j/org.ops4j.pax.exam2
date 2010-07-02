@@ -17,9 +17,6 @@
  */
 package org.ops4j.pax.exam;
 
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestTarget;
-
 /**
  * If you don't need a full blown container but a target, chose this one.
  *
