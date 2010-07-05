@@ -15,6 +15,7 @@
  */
 package com.okidokiteam.exxam.test;
 
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;

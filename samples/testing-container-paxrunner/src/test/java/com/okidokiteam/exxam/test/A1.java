@@ -15,9 +15,12 @@
  */
 package com.okidokiteam.exxam.test;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactor;
 
 /**
  * Simple test
@@ -26,9 +29,12 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 public class A1
 {
 
+    private static Log LOG = LogFactory.getLog( JUnit4TestRunner.class );
+
     @Test
     public void runTest1()
     {
+        LOG.debug( "inside" );
         System.out.println( "************ runTest1" );
     }
 
