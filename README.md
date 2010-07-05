@@ -25,10 +25,10 @@ Ingredients
 
 Targets / Containers
 ----------------
-  * Android Remote Runner   
-  * OSGi Pax Runner (container+target)
-  * OSGi Native (container+target)
-  * OSGi Remote (target)
+  * OSGi Pax Runner (container+target) OSS
+  * OSGi Native (container+target) OSS
+  * OSGi Remote (target) OSS
+  * Android Remote Runner Commercial
 
 Extender (Just chose if your target supports it)
 ----------------
@@ -47,7 +47,7 @@ Drivers ( former UI )
 
 SPICE
 ----------------
-  * Tinybundles
-  * Maven Plugins
-  * Ant Plugins
-  * Bundle Grill
+  * Tinybundles (OSS)
+  * Maven Plugins (OSS)
+  * Ant Plugins (OSS)
+  * BundleGrill (commercial)

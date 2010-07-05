@@ -20,13 +20,11 @@ package org.ops4j.test;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainer;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.junit.JUnitOptions.*;
 
 /**
  * @author Toni Menzel
@@ -40,7 +38,7 @@ public class SingleTest
     public Option[] config()
     {
         return options(
-            executionPolicy().testContainer( PaxRunnerTestContainerFactory.class )
+            //executionPolicy().testContainer( PaxRunnerTestContainerFactory.class )
         );
     }
 

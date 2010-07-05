@@ -29,6 +29,11 @@ public interface TestContainer extends TestTarget
 {
 
     /**
+     * @return Detailed Information about this containers configuration.
+     */
+    OptionDescription getOptionDescription();
+
+    /**
      * Sets the start level for a bundle.
      *
      * @param bundleId   bundle id

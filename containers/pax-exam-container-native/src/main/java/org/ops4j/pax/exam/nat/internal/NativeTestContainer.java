@@ -36,10 +36,12 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.spi.BuildingOptionDescription;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -58,19 +60,21 @@ public class NativeTestContainer implements TestContainer
     private Framework m_framework;
 
     private Stack<Long> m_installed;
+    private BuildingOptionDescription m_optionDescription;
 
     public NativeTestContainer( Option[] options )
     {
-        options = combine( localOptions(), options );
+        options = expand( combine( localOptions(), options ) );
         // install url handlers:
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-
+        m_optionDescription = new BuildingOptionDescription( options );
         // catch all bundles
         m_bundles = new ArrayList<String>();
         for( Option option : options )
         {
             if( option instanceof ProvisionOption )
             {
+                m_optionDescription.markAsUsed( option );
                 m_bundles.add( ( (ProvisionOption) option ).getURL() );
             }
         }
@@ -168,6 +172,11 @@ public class NativeTestContainer implements TestContainer
 
     }
 
+    public OptionDescription getOptionDescription()
+    {
+        return m_optionDescription;
+    }
+
     public void setBundleStartLevel( long bundleId, int startLevel )
         throws TestContainerException
     {
@@ -217,9 +226,9 @@ public class NativeTestContainer implements TestContainer
             // load default stuff
 
             p.put( "org.osgi.framework.storage", folder );
-          //  System.setProperty( "org.osgi.vendor.framework", "org.ops4j.pax.exam" );
+            //  System.setProperty( "org.osgi.vendor.framework", "org.ops4j.pax.exam" );
 
-            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + skipSnapshotFlag(Info.getPaxExamVersion()) );
+            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) );
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader( null );
@@ -260,9 +269,12 @@ public class NativeTestContainer implements TestContainer
     private String skipSnapshotFlag( String version )
     {
         int idx = version.indexOf( "-" );
-        if (idx >=0) {
-            return version.substring( 0,idx );
-        }else {
+        if( idx >= 0 )
+        {
+            return version.substring( 0, idx );
+        }
+        else
+        {
             return version;
         }
     }

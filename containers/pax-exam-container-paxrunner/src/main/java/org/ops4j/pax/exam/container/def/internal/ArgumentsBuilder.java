@@ -25,7 +25,10 @@ import java.util.Collection;
 import java.util.List;
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
+
 import static org.ops4j.pax.exam.OptionUtils.*;
+
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
 import org.ops4j.pax.exam.container.def.options.CleanCachesOption;
 import org.ops4j.pax.exam.container.def.options.ExcludeDefaultRepositoriesOption;
@@ -46,6 +49,7 @@ import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.spi.BuildingOptionDescription;
 
 /**
  * Utility methods for converting configuration options to Pax Runner arguments.
@@ -79,6 +83,8 @@ class ArgumentsBuilder
     private File m_workingFolder;
     private Customizer[] m_customizers;
 
+    private BuildingOptionDescription m_optionDescription;
+
     /**
      * Converts configuration options to Pax Runner arguments.
      *
@@ -86,40 +92,55 @@ class ArgumentsBuilder
      */
     ArgumentsBuilder( final Option... options )
     {
+        m_optionDescription = new BuildingOptionDescription( options );
+
         final List<String> arguments = new ArrayList<String>();
         m_customizers = filter( Customizer.class, options );
 
-        add( arguments, extractArguments( filter( MavenPluginGeneratedConfigOption.class, options ) ) );
-        add( arguments, extractArguments( filter( FrameworkOption.class, options ) ) );
-        add( arguments, extractArguments( filter( ProfileOption.class, options ) ) );
-        add( arguments, extractArguments( filter( BootDelegationOption.class, options ) ) );
-        add( arguments, extractArguments( filter( SystemPackageOption.class, options ) ) );
-        add( arguments, extractArguments( filter( ProvisionOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( MavenPluginGeneratedConfigOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( FrameworkOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( ProfileOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( BootDelegationOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( SystemPackageOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( ProvisionOption.class, options ) ) );
         add( arguments,
              extractArguments(
                  filter( RepositoryOptionImpl.class, options ),
                  filter( ExcludeDefaultRepositoriesOption.class, options )
              )
         );
-        add( arguments, extractArguments( filter( AutoWrapOption.class, options ) ) );
-        add( arguments, extractArguments( filter( CleanCachesOption.class, options ) ) );
-        add( arguments, extractArguments( filter( LocalRepositoryOption.class, options ) ) );
-        add( arguments, extractArguments( filter( FrameworkStartLevelOption.class, options ) ) );
-        add( arguments, extractArguments( filter( BundleStartLevelOption.class, options ) ) );
-        add( arguments, extractArguments( filter( WorkingDirectoryOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( AutoWrapOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( CleanCachesOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( LocalRepositoryOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( FrameworkStartLevelOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( BundleStartLevelOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( WorkingDirectoryOption.class, options ) ) );
 
-        add( arguments, extractArguments( filter( RawPaxRunnerOptionOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( RawPaxRunnerOptionOption.class, options ) ) );
         add( arguments,
              extractArguments(
-                 filter( SystemPropertyOption.class, options ),
-                 filter( VMOption.class, options )
+                 markingFilter( SystemPropertyOption.class, options ),
+                 markingFilter( VMOption.class, options )
              )
         );
-        add( arguments, extractArguments( filter( BootClasspathLibraryOption.class, options ) ) );
-        add( arguments, extractArguments( filter( DebugClassLoadingOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( BootClasspathLibraryOption.class, options ) ) );
+        add( arguments, extractArguments( markingFilter( DebugClassLoadingOption.class, options ) ) );
         add( arguments, defaultArguments() );
 
         m_parsedArgs = arguments.toArray( new String[arguments.size()] );
+    }
+
+    public <T extends Option> T[] markingFilter( final Class<T> optionType,
+                                           final Option... options )
+    {
+        T[] inner = filter( optionType, options );
+        m_optionDescription.markAsUsed( inner );
+        return inner;
+    }
+
+    public OptionDescription getOptionDescription()
+    {
+        return m_optionDescription;
     }
 
     /**

@@ -25,5 +25,5 @@ package org.ops4j.pax.exam;
  */
 public interface Option
 {
-
+    
 }

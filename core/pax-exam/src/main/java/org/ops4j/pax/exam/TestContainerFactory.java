@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam;
 
-import org.ops4j.pax.exam.Option;
-
 /**
  * {@link TestContainer} factory.
  *

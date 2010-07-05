@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
@@ -42,11 +43,13 @@ public class DefaultExamReactor implements ExxamReactor
 
     final private List<Option[]> m_configurations;
     final private List<TestProbeBuilder> m_probes;
+    final private TestContainerFactory m_factory;
 
-    public DefaultExamReactor()
+    public DefaultExamReactor( TestContainerFactory factory )
     {
         m_configurations = new ArrayList<Option[]>();
         m_probes = new ArrayList<TestProbeBuilder>();
+        m_factory = factory;
     }
 
     synchronized public void addConfiguration( Option[] options )
@@ -67,9 +70,9 @@ public class DefaultExamReactor implements ExxamReactor
         // 1. Cut out the framework options.
 
         // for now we don't care
-       // return new AllConfinedStagedReactor( m_configurations, m_probes );
+        // return new AllConfinedStagedReactor( m_configurations, m_probes );
 
-        return new EagerSingleStagedReactor( m_configurations, m_probes );
+        return new EagerSingleStagedReactor( m_factory, m_configurations, m_probes );
     }
 
 }

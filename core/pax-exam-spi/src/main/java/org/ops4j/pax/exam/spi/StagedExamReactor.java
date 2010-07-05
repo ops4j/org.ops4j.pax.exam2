@@ -1,5 +1,7 @@
 package org.ops4j.pax.exam.spi;
 
+import org.ops4j.pax.exam.OptionDescription;
+
 /**
  * Separates logical test invocations from underlying reactor strategy.
  */

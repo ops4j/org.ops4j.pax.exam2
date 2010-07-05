@@ -18,8 +18,12 @@ package org.ops4j.pax.exam.spi.reactors;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.spi.ProbeCall;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
@@ -34,19 +38,21 @@ import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 public class AllConfinedStagedReactor implements StagedExamReactor
 {
 
-    private static Log LOG = LogFactory.getLog( EagerSingleStagedReactor.class );
+    private static Logger LOG = LoggerFactory.getLogger( AllConfinedStagedReactor.class );
 
     final private List<Option[]> m_configs;
     final private List<TestProbeBuilder> m_probes;
+    final private TestContainerFactory m_factory;
 
     /**
      * @param mConfigurations
      * @param mProbes
      */
-    public AllConfinedStagedReactor( List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
+    public AllConfinedStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
     {
         m_configs = mConfigurations;
         m_probes = mProbes;
+        m_factory = factory;
 
         if( mConfigurations.size() < 1 )
         {
@@ -62,7 +68,8 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         // create a container for each call:
         for( Option[] option : m_configs )
         {
-            TestContainer runtime = PaxExamRuntime.getTestContainerFactory().newInstance( option );
+            TestContainer runtime = m_factory.newInstance( option );
+            print( runtime );
             runtime.start();
             try
             {
@@ -78,6 +85,29 @@ public class AllConfinedStagedReactor implements StagedExamReactor
                 runtime.stop();
             }
         }
+    }
+
+    public TestContainer print( final TestContainer container )
+    {
+        OptionDescription options = container.getOptionDescription();
+        if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
+        {
+            LOG.debug( "! Possible problem: No options discovered. " );
+
+        }
+        LOG.debug( "Option statistics: " );
+        for( Option s : options.getUsedOptions() )
+        {
+            LOG.debug( "+ : " + s );
+
+        }
+
+        for( Option s : options.getIgnoredOptions() )
+        {
+            LOG.debug( "- : " + s );
+
+        }
+        return container;
     }
 
     public void tearDown()

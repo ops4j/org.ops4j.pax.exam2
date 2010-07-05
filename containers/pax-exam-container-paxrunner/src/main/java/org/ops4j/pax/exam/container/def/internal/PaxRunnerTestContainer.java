@@ -32,6 +32,7 @@ import org.ops4j.pax.exam.CompositeCustomizer;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption;
@@ -123,6 +124,11 @@ public class PaxRunnerTestContainer
         m_customizers = new CompositeCustomizer( m_arguments.getCustomizers() );
         m_store = StoreFactory.sharedLocalStore();
         m_cache = new HashMap<String, Handle>();
+    }
+
+    public OptionDescription getOptionDescription()
+    {
+        return null; 
     }
 
     /**
