@@ -39,7 +39,7 @@ public class T2S3_HandrolledTest
     public void testPlan()
         throws Exception
     {
-        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).newInstance(
+        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).parse(
             options(
                 logProfile(),
                 rawPaxRunnerOption( "log", "debug" ),

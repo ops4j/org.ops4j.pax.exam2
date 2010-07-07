@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
+import org.ops4j.pax.exam.TestContainer;
 
 /**
  *
@@ -54,5 +55,10 @@ public class BuildingOptionDescription implements OptionDescription
     public Option[] getIgnoredOptions()
     {
         return m_unused.toArray( new Option[m_unused.size()] );
+    }
+
+    public TestContainer getContainer()
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

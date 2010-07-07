@@ -3,6 +3,8 @@ package org.ops4j.pax.exam;
 /**
  * Central component that is usually implemented by a TestContainer.
  * It sheds some light also for validators to find what options are being dropped.
+ *
+ * TODO rename option instance perhaps ? 
  */
 public interface OptionDescription
 {
@@ -16,6 +18,5 @@ public interface OptionDescription
      * @return All options that are not recognized and have been dropped.
      */
     Option[] getIgnoredOptions();
-
 
 }

@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.container.remote;
 
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 
@@ -31,9 +32,14 @@ public class RBCRemoteContainerFactory implements TestContainerFactory
     /**
      * {@inheritDoc}
      */
-    public TestContainer newInstance( final Option... options )
+    public OptionDescription[] parse( final Option... options )
     {
         return new RBCRemoteContainer( new RBCRemoteTarget( options ) );
+    }
+
+    public TestContainer createContainer( OptionDescription option )
+    {
+        return null; 
     }
 
 }

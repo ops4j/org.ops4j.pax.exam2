@@ -5,11 +5,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
@@ -17,37 +13,11 @@ import org.ops4j.pax.exam.TimeoutException;
 public class CompositeTestContainer implements TestContainer
 {
 
-    final private List<TestContainer> m_targets;
+    final private TestContainer[] m_targets;
 
-    public CompositeTestContainer( List<TestContainer> mTargets )
+    public CompositeTestContainer( TestContainer... mTargets )
     {
         m_targets = mTargets;
-    }
-
-    public OptionDescription getOptionDescription()
-    {
-        final List<Option> used = new ArrayList<Option>();
-        final List<Option> unused = new ArrayList<Option>();
-
-        for( TestContainer container : m_targets )
-        {
-            OptionDescription od = container.getOptionDescription();
-            used.addAll( Arrays.asList( od.getUsedOptions() ) );
-            unused.addAll( Arrays.asList( od.getIgnoredOptions() ) );
-        }
-        return new OptionDescription()
-        {
-
-            public Option[] getUsedOptions()
-            {
-                return used.toArray( new Option[used.size()] );
-            }
-
-            public Option[] getIgnoredOptions()
-            {
-                return unused.toArray( new Option[unused.size()] );
-            }
-        };
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )

@@ -17,19 +17,41 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 
 /**
+ * Stateful
+ *
  * @author Toni Menzel
  * @since Jan 7, 2010
  */
 public class NativeTestContainerFactory implements TestContainerFactory
 {
 
-    public TestContainer newInstance( Option... options )
+    final private Map<OptionDescription, TestContainer> m_registry = new HashMap<OptionDescription, TestContainer>();
+   
+    public OptionDescription[] parse( Option... options )
     {
-        return new NativeTestContainer(options);
+        // TODO add some splitter logic for separating framework options (which leads to bigger result arrays, not just single value
+        // fully prepare
+        NativeTestContainerParser parser = new NativeTestContainerParser( options );
+        ArrayList<String> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
+        TestContainer container = new NativeTestContainer( bundles );
+        OptionDescription descr = parser.getDescription();
+        m_registry.put( descr, container );
+        return new OptionDescription[]{
+            descr
+        };
+    }
+
+    public TestContainer createContainer( OptionDescription option )
+    {
+        return m_registry.get( option );
     }
 }

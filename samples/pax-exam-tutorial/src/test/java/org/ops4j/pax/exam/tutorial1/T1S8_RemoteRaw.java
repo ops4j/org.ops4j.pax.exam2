@@ -44,7 +44,7 @@ public class T1S8_RemoteRaw
     public void testPlan()
         throws Exception
     {
-        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).newInstance(
+        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).parse(
             options(
                 waitForRBCFor( 2000 )
                 //location( "192.168.73.204", 8181 )

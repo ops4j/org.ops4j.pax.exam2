@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.spi.ProbeCall;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.container.CompositeOptionDescription;
 import org.ops4j.pax.exam.spi.container.CompositeTestContainer;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 
@@ -42,7 +44,8 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
     private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
 
-    final private TestContainer m_target;
+    final private OptionDescription m_target;
+    private TestContainer m_targetContainer;
 
     /**
      * @param mConfigurations that are already "deflattened" and reflect single container instances
@@ -50,26 +53,27 @@ public class EagerSingleStagedReactor implements StagedExamReactor
      */
     public EagerSingleStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
     {
-        List<TestContainer> m_targets = new ArrayList<TestContainer>();
+        List<OptionDescription> m_targets = new ArrayList<OptionDescription>();
         if( mConfigurations.size() < 1 )
         {
             // fill in a default config
             mConfigurations.add( new Option[0] );
         }
-        else
+
+        for( Option[] option : mConfigurations )
         {
-            for( Option[] option : mConfigurations )
-            {
-                m_targets.add( factory.newInstance( option ) );
-            }
+            m_targets.addAll( Arrays.asList( factory.parse( option ) ) );
         }
-        m_target = new CompositeTestContainer( m_targets );
-        m_target.start();
+
+        m_target = new CompositeOptionDescription( m_targets );
+
+        m_targetContainer = null; // m_target.getContainer();
+        m_targetContainer.start();
 
         for( TestProbeBuilder builder : mProbes )
         {
             LOG.debug( "installing probe " + builder );
-            m_target.install( builder.getStream() );
+            m_targetContainer.install( builder.getStream() );
         }
     }
 
@@ -83,12 +87,12 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
     private TestContainer findMatchingTargetInstance( ProbeCall call )
     {
-        return m_target;
+        return m_targetContainer;
     }
 
     public TestContainer print( final TestContainer container )
     {
-        OptionDescription options = container.getOptionDescription();
+        OptionDescription options = null;//container.getOptionDescription();
         if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
         {
             LOG.debug( "! Possible problem: No options discovered. " );
@@ -111,7 +115,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
     public void tearDown()
     {
-        m_target.stop();
+        m_targetContainer.stop();
     }
 
 

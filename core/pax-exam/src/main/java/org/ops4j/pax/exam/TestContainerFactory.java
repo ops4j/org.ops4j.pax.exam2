@@ -20,6 +20,9 @@ package org.ops4j.pax.exam;
 /**
  * {@link TestContainer} factory.
  *
+ * Depending on the OptionDescription created by {@link #parse(Option...)} there is a contract with the {@link org.ops4j.pax.exam.OptionDescription}
+ * you can put into {@link #createContainer}.
+ *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
@@ -27,12 +30,20 @@ public interface TestContainerFactory
 {
 
     /**
-     * Creates a new {@link TestContainer}.
+     * Creates a one or more {@link OptionDescription}. Depending on the underlying implementation.
      *
      * @param options integration test options
      *
      * @return created test container
      */
-    TestContainer newInstance( Option... options );
+    OptionDescription[] parse( Option... options );
+
+    /**
+     * 
+     * @param option
+     * @return
+     */
+    TestContainer createContainer( OptionDescription option );
+
 
 }

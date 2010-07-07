@@ -17,9 +17,13 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 
 /**
@@ -32,12 +36,42 @@ public class PaxRunnerTestContainerFactory
     implements TestContainerFactory
 {
 
+    final private Map<OptionDescription, TestContainer> m_registry = new HashMap<OptionDescription, TestContainer>();
+
     /**
      * {@inheritDoc}
      */
-    public TestContainer newInstance( final Option... options )
+    public OptionDescription[] parse( final Option... options )
     {
-        return new PaxRunnerTestContainer( new DefaultJavaRunner( false ), options );
+        // Parser for the PaxRunnerTestContainer
+        ArgumentsBuilder argBuilder = new ArgumentsBuilder( 9999, options );
+
+        // constructor of PaxRunnerTestContainer should be as explicit as possible.
+        // So no Option[] and also no argBuilder in the end.
+
+        // TODO tbd: make this more explicit
+        
+        RBCRemoteTarget target = new RBCRemoteTarget( options);
+
+        TestContainer container = new PaxRunnerTestContainer( new DefaultJavaRunner( false ),
+                                                              argBuilder.getArguments(),
+                                                              argBuilder.getWorkingFolder(),
+                                                              argBuilder.getStartTimeout(),
+                                                              target,
+
+                                                              argBuilder.getCustomizers()
+        );
+
+        OptionDescription descr = argBuilder.getOptionDescription();
+        m_registry.put( descr, container );
+        return new OptionDescription[]{
+            descr
+        };
+    }
+
+    public TestContainer createContainer( OptionDescription option )
+    {
+        return m_registry.get( option );
     }
 
 }

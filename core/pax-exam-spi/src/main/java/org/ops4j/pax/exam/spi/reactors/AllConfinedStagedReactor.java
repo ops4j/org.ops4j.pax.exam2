@@ -16,8 +16,6 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
@@ -28,7 +26,6 @@ import org.ops4j.pax.exam.spi.ProbeCall;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
-import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 
 /**
  * This will use new containers for any test (hence confined)
@@ -68,28 +65,31 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         // create a container for each call:
         for( Option[] option : m_configs )
         {
-            TestContainer runtime = m_factory.newInstance( option );
-            print( runtime );
-            runtime.start();
-            try
+            OptionDescription[] runtimes = m_factory.parse( option );
+            for( OptionDescription s : runtimes )
             {
-                for( TestProbeBuilder builder : m_probes )
+                TestContainer runtime = null; //s.getContainer();
+                runtime.start();
+                try
                 {
-                    LOG.debug( "installing probe " + builder );
-                    runtime.install( builder.getStream() );
-                }
-                DefaultRaw.execute( runtime, call );
+                    for( TestProbeBuilder builder : m_probes )
+                    {
+                        LOG.debug( "installing probe " + builder );
+                        runtime.install( builder.getStream() );
+                    }
+                    DefaultRaw.execute( runtime, call );
 
-            } finally
-            {
-                runtime.stop();
+                } finally
+                {
+                    runtime.stop();
+                }
             }
+
         }
     }
 
-    public TestContainer print( final TestContainer container )
+    public OptionDescription print( final OptionDescription options )
     {
-        OptionDescription options = container.getOptionDescription();
         if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
         {
             LOG.debug( "! Possible problem: No options discovered. " );
@@ -107,7 +107,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
             LOG.debug( "- : " + s );
 
         }
-        return container;
+        return options;
     }
 
     public void tearDown()

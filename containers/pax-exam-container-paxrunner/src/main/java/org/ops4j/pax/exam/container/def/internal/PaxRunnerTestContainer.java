@@ -18,6 +18,7 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,11 +31,13 @@ import org.osgi.framework.Bundle;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.CompositeCustomizer;
 import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption;
 import org.ops4j.pax.exam.container.def.options.Scanner;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
@@ -79,11 +82,6 @@ public class PaxRunnerTestContainer
     private final DefaultJavaRunner m_javaRunner;
 
     /**
-     * Pax Runner arguments, out of options.
-     */
-    private final ArgumentsBuilder m_arguments;
-
-    /**
      * test container start timeout.
      */
     private final long m_startTimeout;
@@ -105,30 +103,31 @@ public class PaxRunnerTestContainer
      * Underlying Test Target
      */
     private RBCRemoteTarget m_target;
+    private File m_workingFolder;
+    private String[] m_paxRunnerCmdArgs;
 
     /**
      * Constructor.
      *
      * @param javaRunner java runner to be used to start up Pax Runner
-     * @param options    user startup options
      */
-    public PaxRunnerTestContainer( final DefaultJavaRunner javaRunner, final Option... options )
+    public PaxRunnerTestContainer( final DefaultJavaRunner javaRunner, String[] paxRunnerCmdArgs, File workingFolder, long startTimout, RBCRemoteTarget target, Customizer[] customizer )
     {
         m_javaRunner = javaRunner;
-        m_startTimeout = getTestContainerStartTimeout( options );
+        m_startTimeout = startTimout;
+        m_workingFolder = workingFolder;
+        m_paxRunnerCmdArgs = paxRunnerCmdArgs;
 
-        m_target = new RBCRemoteTarget( options );
+        m_target = target; //new RBCRemoteTarget( options );
 
-        m_arguments = new ArgumentsBuilder( wrap( expand( combine( options, localOptions() ) ) ) );
-
-        m_customizers = new CompositeCustomizer( m_arguments.getCustomizers() );
+        m_customizers = new CompositeCustomizer( customizer );
         m_store = StoreFactory.sharedLocalStore();
         m_cache = new HashMap<String, Handle>();
     }
 
     public OptionDescription getOptionDescription()
     {
-        return null; 
+        return null;
     }
 
     /**
@@ -148,7 +147,7 @@ public class PaxRunnerTestContainer
         LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
         /**
          */
-        m_semaphore = new TestContainerSemaphore( m_arguments.getWorkingFolder() );
+        m_semaphore = new TestContainerSemaphore( m_workingFolder );
         // this makes sure the system is ready to launch a new instance.
         // this could fail, based on what acquire actually checks.
         // this also creates some persistent mark that will be removed by m_semaphore.release()
@@ -156,7 +155,7 @@ public class PaxRunnerTestContainer
         {
             // here we can react.
             // Prompt user with the fact that there might be another instance running.
-            if( !FileUtils.delete( m_arguments.getWorkingFolder() ) )
+            if( !FileUtils.delete( m_workingFolder ) )
             {
                 throw new RuntimeException( "There might be another instance of Pax Exam running. Have a look at "
                                             + m_semaphore.getLockFile().getAbsolutePath()
@@ -166,7 +165,7 @@ public class PaxRunnerTestContainer
 
         long startedAt = System.currentTimeMillis();
         URLUtils.resetURLStreamHandlerFactory();
-        Run.start( m_javaRunner, m_arguments.getArguments() );
+        Run.start( m_javaRunner, m_paxRunnerCmdArgs );
         LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
                   + ( System.currentTimeMillis() - startedAt ) + " millis"
         );
@@ -184,7 +183,7 @@ public class PaxRunnerTestContainer
                                         + " millis"
             );
         }
-        m_customizers.customizeEnvironment( m_arguments.getWorkingFolder() );
+        m_customizers.customizeEnvironment( m_workingFolder );
 
         m_started = true;
         return this;
@@ -233,89 +232,6 @@ public class PaxRunnerTestContainer
      *
      * @return local options
      */
-    private Option[] localOptions()
-    {
-        return new Option[]{
-            // remote bundle context bundle
-
-            // rmi communication port
-            systemProperty( Constants.RMI_PORT_PROPERTY ).value( m_target.getClientRBC().getRmiPort().toString() ),
-            // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
-            bootDelegationPackage( "sun.*" ),
-
-            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
-            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
-            url( "link:classpath:META-INF/links/org.osgi.compendium.link" )
-
-            //url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ),
-        };
-/**
-            mavenBundle()
-                .groupId( "org.ops4j.pax.logging" )
-                .artifactId( "pax-logging-api" )
-                .version( "1.4" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-
-            mavenBundle()
-                .groupId( "org.osgi" )
-                .artifactId( "org.osgi.compendium" )
-                .version( "4.2.0" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-
-
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-extender-service" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
-        };
- **/
-    }
-
-    /**
-     * Wrap provision options that are not already scanner provision bundles with a {@link BundleScannerProvisionOption}
-     * in order to force update.
-     *
-     * @param options options to be wrapped (can be null or an empty array)
-     *
-     * @return eventual wrapped bundles
-     */
-    private Option[] wrap( final Option... options )
-    {
-        if( options != null && options.length > 0 )
-        {
-            // get provison options out of options
-            final ProvisionOption[] provisionOptions = filter( ProvisionOption.class, options );
-            if( provisionOptions != null && provisionOptions.length > 0 )
-            {
-                final List<Option> processed = new ArrayList<Option>();
-                for( final ProvisionOption provisionOption : provisionOptions )
-                {
-                    if( !( provisionOption instanceof Scanner ) )
-                    {
-                        processed.add( scanBundle( provisionOption ).start( provisionOption.shouldStart() ).startLevel(
-                            provisionOption.getStartLevel()
-                        ).update(
-                            provisionOption.shouldUpdate()
-                        )
-                        );
-                    }
-                    else
-                    {
-                        processed.add( provisionOption );
-                    }
-                }
-                // finally combine the processed provision options with the original options
-                // (where provison options are removed)
-                return combine( remove( ProvisionOption.class, options ),
-                                processed.toArray( new Option[processed.size()] )
-                );
-            }
-        }
-        // if there is nothing to process of there are no provision options just return the original options
-        return options;
-    }
 
     /**
      * Determine the timeout while starting the osgi framework.<br/>

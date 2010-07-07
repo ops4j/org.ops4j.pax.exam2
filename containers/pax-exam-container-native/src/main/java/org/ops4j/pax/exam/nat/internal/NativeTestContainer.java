@@ -58,50 +58,11 @@ public class NativeTestContainer implements TestContainer
     final private List<String> m_bundles;
 
     private Framework m_framework;
-
     private Stack<Long> m_installed;
-    private BuildingOptionDescription m_optionDescription;
 
-    public NativeTestContainer( Option[] options )
+    public NativeTestContainer( ArrayList<String> bundles )
     {
-        options = expand( combine( localOptions(), options ) );
-        // install url handlers:
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        m_optionDescription = new BuildingOptionDescription( options );
-        // catch all bundles
-        m_bundles = new ArrayList<String>();
-        for( Option option : options )
-        {
-            if( option instanceof ProvisionOption )
-            {
-                m_optionDescription.markAsUsed( option );
-                m_bundles.add( ( (ProvisionOption) option ).getURL() );
-            }
-        }
-
-    }
-
-    private Option[] localOptions()
-    {
-        return new Option[]{
-            bootDelegationPackage( "sun.*" ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.logging" )
-                .artifactId( "pax-logging-api" )
-                .version( "1.4" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.osgi" )
-                .artifactId( "org.osgi.compendium" )
-                .version( "4.2.0" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.exam" )
-                .artifactId( "pax-exam-extender-service" )
-                .version( Info.getPaxExamVersion() )
-                .update( Info.isPaxExamSnapshotVersion() )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
-        };
+        m_bundles = bundles;
     }
 
     public <T> T getService( Class<T> serviceType, String filter, long timeout )
@@ -168,13 +129,6 @@ public class NativeTestContainer implements TestContainer
                 }
             }
         }
-
-
-    }
-
-    public OptionDescription getOptionDescription()
-    {
-        return m_optionDescription;
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )

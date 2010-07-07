@@ -21,12 +21,15 @@ package org.ops4j.pax.exam.container.def.internal;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
 
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.OptionUtils.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
@@ -36,6 +39,7 @@ import org.ops4j.pax.exam.container.def.options.LocalRepositoryOption;
 import org.ops4j.pax.exam.container.def.options.ProfileOption;
 import org.ops4j.pax.exam.container.def.options.RawPaxRunnerOptionOption;
 import org.ops4j.pax.exam.container.def.options.RepositoryOptionImpl;
+import org.ops4j.pax.exam.container.def.options.Scanner;
 import org.ops4j.pax.exam.container.def.options.VMOption;
 import org.ops4j.pax.exam.container.def.options.WorkingDirectoryOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
@@ -49,6 +53,7 @@ import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.spi.BuildingOptionDescription;
 
 /**
@@ -83,6 +88,7 @@ class ArgumentsBuilder
     private File m_workingFolder;
     private Customizer[] m_customizers;
 
+    private int m_rmiPort;
     private BuildingOptionDescription m_optionDescription;
 
     /**
@@ -90,8 +96,13 @@ class ArgumentsBuilder
      *
      * @param options array of configuration options
      */
-    ArgumentsBuilder( final Option... options )
+    ArgumentsBuilder( int rmiPort, Option... options )
     {
+        // TODO toni change this
+        m_rmiPort = rmiPort;
+
+        options = wrap( expand( combine( options, localOptions() ) ) );
+
         m_optionDescription = new BuildingOptionDescription( options );
 
         final List<String> arguments = new ArrayList<String>();
@@ -130,8 +141,52 @@ class ArgumentsBuilder
         m_parsedArgs = arguments.toArray( new String[arguments.size()] );
     }
 
+    /**
+     * Wrap provision options that are not already scanner provision bundles with a {@link org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption}
+     * in order to force update.
+     *
+     * @param options options to be wrapped (can be null or an empty array)
+     *
+     * @return eventual wrapped bundles
+     */
+    private Option[] wrap( final Option... options )
+    {
+        if( options != null && options.length > 0 )
+        {
+            // get provison options out of options
+            final ProvisionOption[] provisionOptions = filter( ProvisionOption.class, options );
+            if( provisionOptions != null && provisionOptions.length > 0 )
+            {
+                final List<Option> processed = new ArrayList<Option>();
+                for( final ProvisionOption provisionOption : provisionOptions )
+                {
+                    if( !( provisionOption instanceof Scanner ) )
+                    {
+                        processed.add( scanBundle( provisionOption ).start( provisionOption.shouldStart() ).startLevel(
+                            provisionOption.getStartLevel()
+                        ).update(
+                            provisionOption.shouldUpdate()
+                        )
+                        );
+                    }
+                    else
+                    {
+                        processed.add( provisionOption );
+                    }
+                }
+                // finally combine the processed provision options with the original options
+                // (where provison options are removed)
+                return combine( remove( ProvisionOption.class, options ),
+                                processed.toArray( new Option[processed.size()] )
+                );
+            }
+        }
+        // if there is nothing to process of there are no provision options just return the original options
+        return options;
+    }
+
     public <T extends Option> T[] markingFilter( final Class<T> optionType,
-                                           final Option... options )
+                                                 final Option... options )
     {
         T[] inner = filter( optionType, options );
         m_optionDescription.markAsUsed( inner );
@@ -631,5 +686,30 @@ class ArgumentsBuilder
     public Customizer[] getCustomizers()
     {
         return m_customizers;
+    }
+
+    private Option[] localOptions()
+    {
+        return new Option[]{
+            // remote bundle context bundle
+
+            // rmi communication port
+
+            systemProperty( Constants.RMI_PORT_PROPERTY ).value( "" + m_rmiPort ),
+            // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
+            bootDelegationPackage( "sun.*" ),
+
+            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
+            url( "link:classpath:META-INF/links/org.osgi.compendium.link" )
+
+            //url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ),
+        };
+    }
+
+    public long getStartTimeout()
+    {
+        // TODO tbd
+        return 9999;  //To change body of created methods use File | Settings | File Templates.
     }
 }
