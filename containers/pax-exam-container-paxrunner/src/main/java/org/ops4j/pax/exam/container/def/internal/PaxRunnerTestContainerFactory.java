@@ -23,6 +23,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.container.remote.Parser;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 
@@ -50,8 +51,9 @@ public class PaxRunnerTestContainerFactory
         // So no Option[] and also no argBuilder in the end.
 
         // TODO tbd: make this more explicit
+        Parser p = new Parser( options);
         
-        RBCRemoteTarget target = new RBCRemoteTarget( options);
+        RBCRemoteTarget target = new RBCRemoteTarget(p.getHost(),p.getRMIPort(),p.getRMILookupTimpout() );
 
         TestContainer container = new PaxRunnerTestContainer( new DefaultJavaRunner( false ),
                                                               argBuilder.getArguments(),

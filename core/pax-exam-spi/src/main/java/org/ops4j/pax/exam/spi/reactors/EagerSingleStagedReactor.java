@@ -44,55 +44,58 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
     private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
 
-    final private OptionDescription m_target;
-    private TestContainer m_targetContainer;
+    private TestContainer[] m_targetContainer;
 
     /**
+     * @param factory         to be used to instantiate container(s).
      * @param mConfigurations that are already "deflattened" and reflect single container instances
      * @param mProbes
      */
     public EagerSingleStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
     {
-        List<OptionDescription> m_targets = new ArrayList<OptionDescription>();
         if( mConfigurations.size() < 1 )
         {
             // fill in a default config
             mConfigurations.add( new Option[0] );
         }
 
+        List<OptionDescription> m_targets = new ArrayList<OptionDescription>();
         for( Option[] option : mConfigurations )
         {
             m_targets.addAll( Arrays.asList( factory.parse( option ) ) );
         }
 
-        m_target = new CompositeOptionDescription( m_targets );
+        List<TestContainer> containers = new ArrayList<TestContainer>();
 
-        m_targetContainer = null; // m_target.getContainer();
-        m_targetContainer.start();
-
-        for( TestProbeBuilder builder : mProbes )
+        for( OptionDescription description : m_targets )
         {
-            LOG.debug( "installing probe " + builder );
-            m_targetContainer.install( builder.getStream() );
+            print( description );
+            TestContainer container = factory.createContainer( description );
+            containers.add( container );
+            container.start();
+
+            for( TestProbeBuilder builder : mProbes )
+            {
+                LOG.debug( "installing probe " + builder );
+                container.install( builder.getStream() );
+            }
         }
+        m_targetContainer = containers.toArray( new TestContainer[containers.size()] );
     }
 
     public void invoke( ProbeCall call )
         throws Exception
     {
         LOG.debug( "Trying to invoke signature: " + call.signature() );
+        for( TestContainer container : m_targetContainer )
+        {
 
-        DefaultRaw.execute( print( findMatchingTargetInstance( call ) ), call );
+            DefaultRaw.execute( container, call );
+        }
     }
 
-    private TestContainer findMatchingTargetInstance( ProbeCall call )
+    public void print( final OptionDescription options )
     {
-        return m_targetContainer;
-    }
-
-    public TestContainer print( final TestContainer container )
-    {
-        OptionDescription options = null;//container.getOptionDescription();
         if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
         {
             LOG.debug( "! Possible problem: No options discovered. " );
@@ -110,12 +113,14 @@ public class EagerSingleStagedReactor implements StagedExamReactor
             LOG.debug( "- : " + s );
 
         }
-        return container;
     }
 
     public void tearDown()
     {
-        m_targetContainer.stop();
+        for( TestContainer container : m_targetContainer )
+        {
+            container.stop();
+        }
     }
 
 

@@ -18,7 +18,9 @@
 package org.ops4j.pax.exam.tutorial1;
 
 import org.junit.Test;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
 import org.ops4j.pax.exam.spi.ProbeCall;
 import org.ops4j.pax.exam.spi.TestProbeProvider;
@@ -39,29 +41,33 @@ public class T2S3_HandrolledTest
     public void testPlan()
         throws Exception
     {
-        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).parse(
+        TestContainerFactory factory = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class );
+        OptionDescription[] testTargets = factory.parse(
             options(
                 logProfile(),
                 rawPaxRunnerOption( "log", "debug" ),
                 mavenBundle().groupId( "org.apache.felix" ).artifactId( "org.apache.felix.dependencymanager" ).version( "3.0.0-SNAPSHOT" )
             )
-        ).start();
+        );
 
-        try
+        for( OptionDescription description : testTargets )
         {
+
             // here we take a handrolled probe bundle
 
             TestProbeProvider probe = probe( fromURL( "file:samples/probe1/target/samples.probe1-2.0.0-SNAPSHOT.jar" ), "mytest" );
-
-            testTarget.install( probe.getStream() );
-
-            for( ProbeCall call : probe.getTests() )
+            TestContainer testContainer = factory.createContainer( description );
+            try
             {
-                execute( testTarget, call );
+                testContainer.install( probe.getStream() );
+                for( ProbeCall call : probe.getTests() )
+                {
+                    execute( testContainer, call );
+                }
+            } finally
+            {
+                testContainer.stop();
             }
-        } finally
-        {
-            testTarget.stop();
         }
     }
 

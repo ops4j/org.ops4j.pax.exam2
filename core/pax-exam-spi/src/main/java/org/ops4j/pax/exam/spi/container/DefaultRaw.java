@@ -35,7 +35,7 @@ import org.ops4j.pax.exam.spi.probesupport.TestProbeBuilderImpl;
  * @author Toni Menzel
  * @since Jan 11, 2010
  *
- * TODO: to be changed into service
+ *        TODO: to be changed into service
  */
 public class DefaultRaw
 {
@@ -68,7 +68,6 @@ public class DefaultRaw
      * parse test methods using reflection
      *
      * @param clazz
-     * @return
      */
     private static String[] parseMethods( Class clazz )
     {
@@ -84,6 +83,8 @@ public class DefaultRaw
     public static void execute( TestTarget target, ProbeCall call )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
+
+        assert ( target != null ) : "TestTarget must not be null.";
         target.getService( ProbeInvoker.class, "(" + PROBE_SIGNATURE_KEY + "=" + call.signature() + ")", 0 ).call();
     }
 
@@ -95,7 +96,7 @@ public class DefaultRaw
         } catch( IOException e )
         {
             throw new RuntimeException( e );
-}
+        }
     }
 
     public static TestProbeProvider probe( final InputStream is, final String... testsSignatures )

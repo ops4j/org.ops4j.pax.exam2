@@ -33,7 +33,8 @@ public class RBCRemoteTargetFactory implements TestTargetFactory
      */
     public TestTarget newInstance( final Option... options )
     {
-        return new RBCRemoteTarget( options );
+        Parser p = new Parser( options );
+        return new RBCRemoteTarget( p.getHost(), p.getRMIPort(), p.getRMILookupTimpout() );
     }
 
 }

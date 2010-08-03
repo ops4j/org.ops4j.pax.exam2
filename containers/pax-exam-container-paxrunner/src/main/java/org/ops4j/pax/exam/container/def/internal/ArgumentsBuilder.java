@@ -32,6 +32,7 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 import org.ops4j.pax.exam.OptionDescription;
+import org.ops4j.pax.exam.OptionParser;
 import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
 import org.ops4j.pax.exam.container.def.options.CleanCachesOption;
 import org.ops4j.pax.exam.container.def.options.ExcludeDefaultRepositoriesOption;
@@ -63,7 +64,7 @@ import org.ops4j.pax.exam.spi.BuildingOptionDescription;
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0 December 10, 2008
  */
-class ArgumentsBuilder
+class ArgumentsBuilder implements OptionParser
 {
 
     /**

@@ -18,7 +18,9 @@
 package org.ops4j.pax.exam.tutorial1;
 
 import org.junit.Test;
+import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.container.def.internal.PaxRunnerTestContainerFactory;
 import org.ops4j.pax.exam.spi.ProbeCall;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
@@ -44,28 +46,33 @@ public class T1S8_RemoteRaw
     public void testPlan()
         throws Exception
     {
-        TestContainer testTarget = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class ).parse(
+        TestContainerFactory factory = PaxExamRuntime.getTestContainerFactory( PaxRunnerTestContainerFactory.class );
+
+        // we know there can be only one container
+        OptionDescription testTarget = factory.parse(
             options(
                 waitForRBCFor( 2000 )
                 //location( "192.168.73.204", 8181 )
             )
-        ).start();
+        )[ 0 ];
 
+        TestContainer testContainer = factory.createContainer( testTarget );
         try
         {
+
             TestProbeBuilder probe = createProbe().addTest( MyCode.class );
-            testTarget.install( probe.getStream() );
+            testContainer.install( probe.getStream() );
 
             for( ProbeCall call : probe.getTests() )
             {
-                execute( testTarget, call );
+                execute( testContainer, call );
             }
         } finally
         {
-            testTarget.stop();
+            testContainer.stop();
         }
     }
-    
+
 //    @Test
 //    public void testUsingReactor()
 //        throws Exception

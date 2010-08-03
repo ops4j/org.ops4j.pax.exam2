@@ -30,7 +30,6 @@ import org.ops4j.pax.exam.spi.container.DefaultRaw;
 /**
  * This will use new containers for any test (hence confined)
  *
- * TODO: Should be moved out of driver layer.
  */
 public class AllConfinedStagedReactor implements StagedExamReactor
 {
@@ -51,10 +50,10 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         m_probes = mProbes;
         m_factory = factory;
 
-        if( mConfigurations.size() < 1 )
+        if( m_configs.size() < 1 )
         {
             // fill in a default config
-            mConfigurations.add( new Option[0] );
+            m_configs.add( new Option[0] );
         }
     }
 
@@ -68,7 +67,8 @@ public class AllConfinedStagedReactor implements StagedExamReactor
             OptionDescription[] runtimes = m_factory.parse( option );
             for( OptionDescription s : runtimes )
             {
-                TestContainer runtime = null; //s.getContainer();
+                print(s);
+                TestContainer runtime = m_factory.createContainer( s );
                 runtime.start();
                 try
                 {

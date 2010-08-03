@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
@@ -29,17 +31,25 @@ import org.ops4j.pax.exam.TestContainerFactory;
 public class RBCRemoteContainerFactory implements TestContainerFactory
 {
 
+    final private Map<OptionDescription, TestContainer> m_registry = new HashMap<OptionDescription, TestContainer>();
+
     /**
      * {@inheritDoc}
      */
     public OptionDescription[] parse( final Option... options )
     {
-        return new RBCRemoteContainer( new RBCRemoteTarget( options ) );
+        Parser p = new Parser( options );
+        OptionDescription descr = p.getOptionDescription();
+        TestContainer container = new RBCRemoteContainer( new RBCRemoteTarget( p.getHost(), p.getRMIPort(), p.getRMILookupTimpout() ) );
+        m_registry.put( descr, container );
+        return new OptionDescription[]{
+            descr
+        };
     }
 
     public TestContainer createContainer( OptionDescription option )
     {
-        return null; 
+        return m_registry.get( option );
     }
 
 }

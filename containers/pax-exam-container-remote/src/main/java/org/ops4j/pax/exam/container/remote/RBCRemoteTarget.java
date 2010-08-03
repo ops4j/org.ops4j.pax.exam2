@@ -47,13 +47,15 @@ public class RBCRemoteTarget implements TestTarget
     private static final Integer DEFAULTPORT = 1412;
 
     /**
-     * @param options user configuration
+     * @param host
+     * @param rmiPort
+     * @param rmiLookupTimeout
      */
-    public RBCRemoteTarget( Option[] options )
+    public RBCRemoteTarget( String host, Integer rmiPort, long rmiLookupTimeout )
 
     {
         m_remoteBundleContextClient =
-            new RemoteBundleContextClient( getHost( options ), getPort( options ), getRMITimeout( options ) );
+            new RemoteBundleContextClient( host, rmiPort, rmiLookupTimeout);//getHost( options ), getPort( options ), getRMITimeout( options ) );
     }
 
     /**
