@@ -46,9 +46,6 @@ public class BuildingOptionDescription implements OptionDescription
 
     public void markAsUsed(Option... options )
     {
-        for (Option o : options) {
-            LOG.debug("Marked " + o.getClass().getName() + " as used.");
-        }
         List<Option> list = Arrays.asList( options );
         m_unused.removeAll( list );
         m_used.addAll( list );
