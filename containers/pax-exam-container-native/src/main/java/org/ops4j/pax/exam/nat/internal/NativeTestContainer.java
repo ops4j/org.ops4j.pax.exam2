@@ -33,6 +33,8 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -54,7 +56,7 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 public class NativeTestContainer implements TestContainer
 {
 
-    private static final Log LOG = LogFactory.getLog( NativeTestContainer.class );
+    private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
     final private List<String> m_bundles;
 
     private Framework m_framework;
@@ -99,7 +101,7 @@ public class NativeTestContainer implements TestContainer
             }
             Bundle b = m_framework.getBundleContext().installBundle( "local", stream );
             m_installed.push( b.getBundleId() );
-            LOG.debug( "Installed bundle " + "local" + " as Bundle ID " + b.getBundleId() );
+            LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
 
             // stream.close();
             b.start();
@@ -197,6 +199,8 @@ public class NativeTestContainer implements TestContainer
             for( String bundle : m_bundles )
             {
                 Bundle b = context.installBundle( bundle );
+                LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
+                
             }
             m_framework.start();
             for( Bundle b : m_framework.getBundleContext().getBundles() )

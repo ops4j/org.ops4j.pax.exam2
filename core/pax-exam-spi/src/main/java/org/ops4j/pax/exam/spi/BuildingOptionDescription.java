@@ -18,6 +18,8 @@ package org.ops4j.pax.exam.spi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
@@ -27,12 +29,14 @@ import org.ops4j.pax.exam.TestContainer;
  */
 public class BuildingOptionDescription implements OptionDescription
 {
+    private static Logger LOG = LoggerFactory.getLogger( BuildingOptionDescription.class );
 
     private List<Option> m_unused;
     private List<Option> m_used;
 
     public BuildingOptionDescription( Option[] allOptions )
     {
+        LOG.debug("new OptionDescrption with " + allOptions.length + " entries.");
         m_unused = new ArrayList<Option>( allOptions.length );
         m_unused.addAll(Arrays.asList( allOptions ) );
         
@@ -42,6 +46,9 @@ public class BuildingOptionDescription implements OptionDescription
 
     public void markAsUsed(Option... options )
     {
+        for (Option o : options) {
+            LOG.debug("Marked " + o.getClass().getName() + " as used.");
+        }
         List<Option> list = Arrays.asList( options );
         m_unused.removeAll( list );
         m_used.addAll( list );
@@ -55,10 +62,5 @@ public class BuildingOptionDescription implements OptionDescription
     public Option[] getIgnoredOptions()
     {
         return m_unused.toArray( new Option[m_unused.size()] );
-    }
-
-    public TestContainer getContainer()
-    {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -16,11 +16,16 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.spi.BuildingOptionDescription;
 
+import static org.ops4j.pax.exam.Constants.*;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
@@ -29,11 +34,17 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 public class NativeTestContainerParser
 {
 
+    private static Logger LOG = LoggerFactory.getLogger( NativeTestContainerParser.class );
+
     final private ArrayList<String> m_bundles = new ArrayList<String>();
     final private BuildingOptionDescription m_desc;
 
     public NativeTestContainerParser( Option[] options )
     {
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+        
+        options = expand( combine( localOptions(), options ) );
+        
         m_desc = new BuildingOptionDescription( options );
         ProvisionOption[] bundleOptions = filter( ProvisionOption.class, options );
         for( ProvisionOption opt : bundleOptions )
@@ -62,6 +73,29 @@ public class NativeTestContainerParser
             {
                 return m_desc.getIgnoredOptions();
             }
+        };
+    }
+
+      private Option[] localOptions()
+    {
+        return new Option[]{
+            bootDelegationPackage( "sun.*" ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.logging" )
+                .artifactId( "pax-logging-api" )
+                .version( "1.4" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.osgi" )
+                .artifactId( "org.osgi.compendium" )
+                .version( "4.2.0" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            mavenBundle()
+                .groupId( "org.ops4j.pax.exam" )
+                .artifactId( "pax-exam-extender-service" )
+                .version( Info.getPaxExamVersion() )
+                .update( Info.isPaxExamSnapshotVersion() )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
         };
     }
 }
