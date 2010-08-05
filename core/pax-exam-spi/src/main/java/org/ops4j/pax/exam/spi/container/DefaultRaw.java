@@ -21,9 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.spi.ProbeCall;
@@ -39,6 +42,8 @@ import org.ops4j.pax.exam.spi.probesupport.TestProbeBuilderImpl;
  */
 public class DefaultRaw
 {
+
+    private static Logger LOG = LoggerFactory.getLogger( DefaultRaw.class );
 
     private static int id = 0;
     private static final String PAX_EXAM_EXECUTABLE_SIG = "PaxExam-Executable-SIG";
@@ -75,7 +80,14 @@ public class DefaultRaw
 
         for( Method m : clazz.getDeclaredMethods() )
         {
-            calls.add( m.getName() );
+            if( Modifier.isPublic( m.getModifiers() ) )
+            {
+                calls.add( m.getName() );
+            }
+            else
+            {
+                LOG.debug( "Skipping " + clazz.getName() + " Method " + m.getName() + " (not public)" );
+            }
         }
         return calls.toArray( new String[calls.size()] );
     }
