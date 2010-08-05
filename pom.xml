@@ -19,9 +19,7 @@
     <profiles>
         <profile>
             <id>release</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            
             <modules>
                 <!-- Fundamentals. Mostly API -->
                 <module>pom</module>
@@ -66,6 +64,32 @@
                 <!-- non maven publications -->
                 <module>distributions/pax-exam-dist</module>
                 <module>distributions/pax-exam-uber</module>
+
+            </modules>
+        </profile>
+        <profile>
+            <id>exxam2m1</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <!-- Fundamentals. Mostly API -->
+                <module>pom</module>
+                <module>core/pax-exam</module>
+                <module>core/pax-exam-spi</module>
+
+                <module>core/pax-exam-extender</module>
+                <module>core/pax-exam-extender-service</module>
+
+                <!-- Some containers -->
+                <module>containers/pax-exam-container-native</module>
+
+                <!-- Perhaps.. but most likely not in m1 -->
+                <!--<module>drivers/pax-exam-junit4</module> -->
+
+                <!-- Runtime Metadata Profiles for different Environments -->
+                <module>spice/pax-exam-link-mvn</module>
+                <module>spice/pax-exam-link-assembly</module>
 
             </modules>
         </profile>
