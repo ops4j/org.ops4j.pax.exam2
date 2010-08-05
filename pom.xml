@@ -19,7 +19,7 @@
     <profiles>
         <profile>
             <id>release</id>
-            
+
             <modules>
                 <!-- Fundamentals. Mostly API -->
                 <module>pom</module>
@@ -81,15 +81,15 @@
                 <module>core/pax-exam-extender</module>
                 <module>core/pax-exam-extender-service</module>
 
-                <!-- Some containers -->
                 <module>containers/pax-exam-container-native</module>
 
                 <!-- Perhaps.. but most likely not in m1 -->
                 <!--<module>drivers/pax-exam-junit4</module> -->
 
-                <!-- Runtime Metadata Profiles for different Environments -->
                 <module>spice/pax-exam-link-mvn</module>
                 <module>spice/pax-exam-link-assembly</module>
+                <module>samples/milestone-noui-native</module>
+                
 
             </modules>
         </profile>
@@ -101,7 +101,6 @@
                 <module>samples/pax-exam-it-01</module>
                 <module>samples/probe1</module>
                 <module>samples/uberjar-test</module>
-                <module>samples/testing-container-native</module>
                 <module>samples/testing-container-paxrunner</module>
             </modules>
         </profile>

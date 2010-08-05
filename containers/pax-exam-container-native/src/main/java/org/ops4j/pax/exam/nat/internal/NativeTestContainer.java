@@ -148,18 +148,25 @@ public class NativeTestContainer implements TestContainer
     public TestContainer stop()
         throws TimeoutException
     {
-        try
-        {
-            LOG.debug( "Framework goes down.." );
-            m_framework.stop();
-            m_framework.waitForStop( 1000 );
-
-        } catch( BundleException e )
-        {
-            e.printStackTrace();
-        } catch( InterruptedException e )
+        if( m_framework != null )
         {
 
+            try
+            {
+                LOG.debug( "Framework goes down.." );
+                m_framework.stop();
+                m_framework.waitForStop( 1000 );
+
+
+            } catch( BundleException e )
+            {
+                e.printStackTrace();
+            } catch( InterruptedException e )
+            {
+
+            }
+        }else {
+            throw new IllegalStateException( "Framework does not exist. Called start() before ? ");
         }
         return this;
     }
@@ -200,7 +207,7 @@ public class NativeTestContainer implements TestContainer
             {
                 Bundle b = context.installBundle( bundle );
                 LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
-                
+
             }
             m_framework.start();
             for( Bundle b : m_framework.getBundleContext().getBundles() )

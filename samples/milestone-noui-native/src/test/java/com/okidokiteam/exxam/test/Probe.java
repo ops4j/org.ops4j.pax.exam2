@@ -15,33 +15,18 @@
  */
 package com.okidokiteam.exxam.test;
 
-import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-
 /**
- * Simple test
+ * Created by IntelliJ IDEA.
+ * User: tonit
+ * Date: Aug 5, 2010
+ * Time: 3:11:27 AM
+ * To change this template use File | Settings | File Templates.
  */
-@RunWith( JUnit4TestRunner.class )
-public class A1
+public class Probe
 {
 
-    @Test
-    public void runTest1()
+    public void foo()
     {
-        System.out.println( "************ runTest1" );
-    }
-
-    @Test
-    public void runTest2()
-    {
-        System.out.println( "************ runTest2" );
-    }
-
-    @Test
-    public void runTest3()
-    {
-        System.out.println( "************ runTest3" );
+        System.out.println( "++++ PEAK ++++" );
     }
 }

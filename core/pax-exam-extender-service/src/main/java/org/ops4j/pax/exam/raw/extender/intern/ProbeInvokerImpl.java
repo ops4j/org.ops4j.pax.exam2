@@ -51,6 +51,7 @@ public class ProbeInvokerImpl implements ProbeInvoker
         int encountered = 0;
         for( final Method testMethod : testClass.getMethods() )
         {
+            System.out.println( "Checking on class " + m_clazz + " method " + testMethod.getName() );
             if( testMethod.getName().equals( m_method ) )
             {
                 injectContextAndInvoke( testClass.newInstance(), testMethod );
