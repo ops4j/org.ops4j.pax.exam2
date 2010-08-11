@@ -11,6 +11,25 @@ Distinglishing Components
 pax-exam : common api that is also needed inside targets. (bundle)
 pax-exam-spi : brick of common logic. Only used in host VM.
 
+Exam2 embraces a MVC pattern.
+----------------
+When you hear Model-View-Controller, you think about web applications. This is a design pattern where you place different concerns into different parts of your system and try not to mix them too much. For an interactive application, if you keep the part that stores data (Model) separated from the logic (Controller) and use another piece to display and interact with the user (View), then it’s easier to change the system and adapt it over time to new features.
+
+Exam2 needed a way to allow you to use various unit testing frameworks and tools to drive its core functionality.
+The idea was that if we gave you the Controller and the Model, then you can craft any View you wanted.
+
+Model:
+- options
+- primitive operations on Options
+Controller:
+- pax-exam-spi
+
+View: (former UI or driver components)
+
+- pax-exam-junit4
+- pax-exam-testng
+
+
 How to build
 ----------------
 Usually maven2+ with central repo connection is enough (standard).
