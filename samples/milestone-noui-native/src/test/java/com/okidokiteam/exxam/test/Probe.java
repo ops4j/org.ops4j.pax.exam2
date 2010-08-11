@@ -25,7 +25,7 @@ package com.okidokiteam.exxam.test;
 public class Probe
 {
 
-    public void foo()
+    private void foo()
     {
         System.out.println( "++++ PEAK ++++" );
     }

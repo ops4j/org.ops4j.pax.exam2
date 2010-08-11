@@ -53,6 +53,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor
      */
     public EagerSingleStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
     {
+        OptionPrinter printer = new OptionPrinter();
         if( mConfigurations.size() < 1 )
         {
             // fill in a default config
@@ -69,8 +70,9 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
         for( OptionDescription description : m_targets )
         {
-            print( description );
             TestContainer container = factory.createContainer( description );
+            printer.print( this.getClass().getName(), description, container.getClass() );
+
             containers.add( container );
             container.start();
 
@@ -91,27 +93,6 @@ public class EagerSingleStagedReactor implements StagedExamReactor
         {
 
             DefaultRaw.execute( container, call );
-        }
-    }
-
-    public void print( final OptionDescription options )
-    {
-        if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
-        {
-            LOG.debug( "! Possible problem: No options discovered. " );
-
-        }
-        LOG.debug( "Option statistics: " );
-        for( Option s : options.getUsedOptions() )
-        {
-            LOG.debug( "+ : " + s );
-
-        }
-
-        for( Option s : options.getIgnoredOptions() )
-        {
-            LOG.debug( "- : " + s );
-
         }
     }
 

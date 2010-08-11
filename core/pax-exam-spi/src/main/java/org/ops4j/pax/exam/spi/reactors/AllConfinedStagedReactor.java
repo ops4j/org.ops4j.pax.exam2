@@ -29,7 +29,6 @@ import org.ops4j.pax.exam.spi.container.DefaultRaw;
 
 /**
  * This will use new containers for any test (hence confined)
- *
  */
 public class AllConfinedStagedReactor implements StagedExamReactor
 {
@@ -60,6 +59,8 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     public void invoke( ProbeCall call )
         throws Exception
     {
+        OptionPrinter printer = new OptionPrinter();
+
         LOG.debug( "Trying to invoke signature: " + call.signature() );
         // create a container for each call:
         for( Option[] option : m_configs )
@@ -67,8 +68,9 @@ public class AllConfinedStagedReactor implements StagedExamReactor
             OptionDescription[] runtimes = m_factory.parse( option );
             for( OptionDescription s : runtimes )
             {
-                print(s);
                 TestContainer runtime = m_factory.createContainer( s );
+
+                printer.print( getClass().getName(), s, runtime.getClass());
                 runtime.start();
                 try
                 {
@@ -86,28 +88,6 @@ public class AllConfinedStagedReactor implements StagedExamReactor
             }
 
         }
-    }
-
-    public OptionDescription print( final OptionDescription options )
-    {
-        if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
-        {
-            LOG.debug( "! Possible problem: No options discovered. " );
-
-        }
-        LOG.debug( "Option statistics: " );
-        for( Option s : options.getUsedOptions() )
-        {
-            LOG.debug( "+ : " + s );
-
-        }
-
-        for( Option s : options.getIgnoredOptions() )
-        {
-            LOG.debug( "- : " + s );
-
-        }
-        return options;
     }
 
     public void tearDown()
