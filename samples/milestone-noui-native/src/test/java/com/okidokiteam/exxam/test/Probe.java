@@ -17,7 +17,6 @@ package com.okidokiteam.exxam.test;
 
 import org.osgi.framework.BundleContext;
 
-import static org.easymock.EasyMock.*;
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
