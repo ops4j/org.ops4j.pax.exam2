@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.libraryoptions;
+package org.ops4j.pax.exam.options;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerFactory;

@@ -28,6 +28,9 @@ import org.ops4j.pax.exam.TestContainerFactory;
 /**
  * Stateful
  *
+ * If would be really cool if this native runner would accept more than one osgi fw in classpath. Though this might not work due to dangerous cp
+ * issues.
+ *
  * @author Toni Menzel
  * @since Jan 7, 2010
  */
@@ -35,15 +38,18 @@ public class NativeTestContainerFactory implements TestContainerFactory
 {
 
     final private Map<OptionDescription, TestContainer> m_registry = new HashMap<OptionDescription, TestContainer>();
-   
+
     public OptionDescription[] parse( Option... options )
     {
         // TODO add some splitter logic for separating framework options (which leads to bigger result arrays, not just single value
         // fully prepare
+        // find implementations:
+
         NativeTestContainerParser parser = new NativeTestContainerParser( options );
         ArrayList<String> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
         TestContainer container = new NativeTestContainer( bundles );
         OptionDescription descr = parser.getDescription();
+
         m_registry.put( descr, container );
         return new OptionDescription[]{
             descr

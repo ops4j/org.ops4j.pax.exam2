@@ -16,7 +16,6 @@
 package org.ops4j.pax.exam;
 
 import org.ops4j.pax.exam.libraryoptions.EasyMockBundlesOption;
-import org.ops4j.pax.exam.libraryoptions.ExecutionPolicyOption;
 import org.ops4j.pax.exam.libraryoptions.JMockBundlesOption;
 import org.ops4j.pax.exam.libraryoptions.JUnitBundlesOption;
 import org.ops4j.pax.exam.libraryoptions.MockitoBundlesOption;
@@ -75,12 +74,6 @@ public class LibraryOptions
         return new JMockBundlesOption();
     }
 
-    /**
-     * @return a ExecutionPolicyOption
-     */
-    public static ExecutionPolicyOption executionPolicy()
-    {
-        return new ExecutionPolicyOption();
-    }
+   
 
 }

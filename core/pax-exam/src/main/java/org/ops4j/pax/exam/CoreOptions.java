@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.ops4j.lang.NullArgumentException.*;
 import static org.ops4j.pax.exam.OptionUtils.*;
+
+import org.ops4j.pax.exam.options.ExecutionPolicyOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
@@ -40,7 +42,6 @@ import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.OptionalCompositeOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.options.RawUrlReference;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
@@ -766,6 +767,14 @@ public class CoreOptions
     public static TestContainerStartTimeoutOption waitForFrameworkStartup()
     {
         return waitForFrameworkStartupFor( Constants.WAIT_5_MINUTES );
+    }
+
+     /**
+     * @return a ExecutionPolicyOption
+     */
+    public static ExecutionPolicyOption executionPolicy()
+    {
+        return new ExecutionPolicyOption();
     }
 
 }
