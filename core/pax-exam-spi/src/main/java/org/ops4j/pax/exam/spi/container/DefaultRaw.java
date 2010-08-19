@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
-import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.TestProbeProvider;
 import org.ops4j.pax.exam.spi.probesupport.TestProbeBuilderImpl;
@@ -55,19 +55,19 @@ public class DefaultRaw
         return new TestProbeBuilderImpl();
     }
 
-    public static ProbeCall call( Class clazz, String method )
+    public static TestAddress call( Class clazz, String method )
     {
-        return new ClassMethodProbeCall( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, method );
+        return new ClassMethodTestAddress( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, method );
     }
 
-    public static ProbeCall[] call( Class clazz )
+    public static TestAddress[] call( Class clazz )
     {
-        List<ProbeCall> calls = new ArrayList<ProbeCall>();
+        List<TestAddress> calls = new ArrayList<TestAddress>();
         for( String m : parseMethods( clazz ) )
         {
-            calls.add( new ClassMethodProbeCall( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, m ) );
+            calls.add( new ClassMethodTestAddress( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, m ) );
         }
-        return calls.toArray( new ProbeCall[calls.size()] );
+        return calls.toArray( new TestAddress[calls.size()] );
     }
 
     /**
@@ -93,7 +93,7 @@ public class DefaultRaw
         return calls.toArray( new String[calls.size()] );
     }
 
-    public static void execute( TestTarget target, ProbeCall call )
+    public static void execute( TestTarget target, TestAddress call )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
 
@@ -117,12 +117,12 @@ public class DefaultRaw
         return new TestProbeProvider()
         {
 
-            public ProbeCall[] getTests()
+            public TestAddress[] getTests()
             {
-                List<ProbeCall> calls = new ArrayList<ProbeCall>();
+                List<TestAddress> calls = new ArrayList<TestAddress>();
                 for( final String test : testsSignatures )
                 {
-                    calls.add( new ProbeCall()
+                    calls.add( new TestAddress()
                     {
                         public String getInstruction()
                         {
@@ -136,7 +136,7 @@ public class DefaultRaw
                     }
                     );
                 }
-                return calls.toArray( new ProbeCall[calls.size()] );
+                return calls.toArray( new TestAddress[calls.size()] );
             }
 
             public InputStream getStream()

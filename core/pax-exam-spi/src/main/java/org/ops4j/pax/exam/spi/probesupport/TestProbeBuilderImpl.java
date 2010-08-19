@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.store.Store;
@@ -38,13 +38,13 @@ import org.ops4j.store.StoreFactory;
 public class TestProbeBuilderImpl implements TestProbeBuilder
 {
 
-    private List<ProbeCall> m_probeCalls = new ArrayList<ProbeCall>();
+    private List<TestAddress> m_probeCalls = new ArrayList<TestAddress>();
 
     private Class m_anchor;
 
-    public TestProbeBuilder addTest( ProbeCall... calls )
+    public TestProbeBuilder addTest( TestAddress... calls )
     {
-        for( ProbeCall call : calls )
+        for( TestAddress call : calls )
         {
             m_probeCalls.add( call );
         }
@@ -68,9 +68,9 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return this;
     }
 
-    public ProbeCall[] getTests()
+    public TestAddress[] getTests()
     {
-        return m_probeCalls.toArray( new ProbeCall[m_probeCalls.size()] );
+        return m_probeCalls.toArray( new TestAddress[m_probeCalls.size()] );
     }
 
     public InputStream getStream()
@@ -103,7 +103,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         // construct out of added Tests
         StringBuilder sbKeyChain = new StringBuilder();
 
-        for( ProbeCall call : m_probeCalls )
+        for( TestAddress call : m_probeCalls )
         {
             sbKeyChain.append( call.signature() );
             sbKeyChain.append( "," );

@@ -18,15 +18,13 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>standard</id>
 
             <modules>
-                <!-- Fundamentals. Mostly API -->
                 <module>pom</module>
 
+                <!-- Fundamentals. Mostly API -->
                 <module>core/pax-exam</module>
-
-                <!--   <module>core/pax-exam-runtime</module> -->
 
                 <!-- Fundamental UI -->
                 <module>core/pax-exam-spi</module>
@@ -44,19 +42,12 @@
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
 
-                <!-- Drivers. Use them to drive your case. -->
-
-                <!-- legacy
-                <module>drivers/pax-exam-junit</module>
--->
                 <!-- Brand new JUnit4 Driver -->
                 <module>drivers/pax-exam-junit4</module>
 
                 <!-- Maven plugin -->
                 <module>extensions/maven-paxexam-plugin</module>
-                <!--
-                <module>extensions/maven-archetype-paxexam-junit</module>
-                -->
+
                 <!-- Runtime Metadata Profiles for different Environments -->
                 <module>spice/pax-exam-link-mvn</module>
                 <module>spice/pax-exam-link-assembly</module>
@@ -88,7 +79,7 @@
                 <module>spice/pax-exam-link-mvn</module>
                 <module>spice/pax-exam-link-assembly</module>
                 <module>samples/milestone-noui-native</module>
-                
+
 
             </modules>
         </profile>

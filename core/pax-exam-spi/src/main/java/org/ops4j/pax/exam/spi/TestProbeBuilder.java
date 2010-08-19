@@ -7,7 +7,7 @@ package org.ops4j.pax.exam.spi;
 public interface TestProbeBuilder extends TestProbeProvider
 {
 
-    TestProbeBuilder addTest( ProbeCall... calls );
+    TestProbeBuilder addTest( TestAddress... calls );
 
     TestProbeBuilder addTest( Class... clazz );
     

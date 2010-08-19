@@ -26,7 +26,7 @@ import java.io.InputStream;
 public interface TestProbeProvider
 {
 
-    ProbeCall[] getTests();
+    TestAddress[] getTests();
 
     InputStream getStream();
 

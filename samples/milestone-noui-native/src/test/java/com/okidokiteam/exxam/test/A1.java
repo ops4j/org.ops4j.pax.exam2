@@ -22,13 +22,12 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainerFactory;
 import org.ops4j.pax.exam.spi.ExxamReactor;
-import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 
-import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.LibraryOptions.*;
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
@@ -63,7 +62,7 @@ public class A1
                 TestProbeBuilder probe = createProbe().addTest( Probe.class );
                 testContainer.install( probe.getStream() );
 
-                for( ProbeCall call : probe.getTests() )
+                for( TestAddress call : probe.getTests() )
                 {
                     // this is a shortcut for getting the proper Service (ServiceInvoker currently) and calls the "invoke" with that call (handle)
                     execute( testContainer, call );
@@ -93,9 +92,9 @@ public class A1
          * Once this is done, calliing "stage()" gives you the possibility to invoke tests directly.
          *
          * Note that you don't interact with any TestContainer or how many you actually create.
-         * You just iterate over all your previously added tests and invoke them using the "handles" (ProbeCall)
+         * You just iterate over all your previously added tests and invoke them using the "handles" (TestAddress)
          *
-         * Whatr is a ProbeCall ?
+         * Whatr is a TestAddress ?
          * Its a handle to invoke a particular test method.
          * It is up to the ProbeBuilder to make meaningful handles so they can be found and executed.
          * TODO: Guess this needs more explanation, as its a quite powerful concept that also lets you control testclass initialization and "what to actually call on that class".
@@ -112,7 +111,7 @@ public class A1
         StagedExamReactor stagedReactor = reactor.stage();
         try
         {
-            for( ProbeCall call : probe.getTests() )
+            for( TestAddress call : probe.getTests() )
             {
                 stagedReactor.invoke( call );
             }

@@ -26,11 +26,9 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
-import org.ops4j.pax.exam.spi.container.CompositeOptionDescription;
-import org.ops4j.pax.exam.spi.container.CompositeTestContainer;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 
 /**
@@ -85,7 +83,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor
         m_targetContainer = containers.toArray( new TestContainer[containers.size()] );
     }
 
-    public void invoke( ProbeCall call )
+    public void invoke( TestAddress call )
         throws Exception
     {
         LOG.debug( "Trying to invoke signature: " + call.signature() );

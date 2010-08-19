@@ -17,20 +17,20 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
-import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestAddress;
 
 /**
  * @author Toni Menzel
  * @since Jan 11, 2010
  */
-public class ClassMethodProbeCall implements ProbeCall
+public class ClassMethodTestAddress implements TestAddress
 {
 
     final private String m_clazz;
     final private String m_method;
     private String m_sig;
 
-    public ClassMethodProbeCall( String sig, Class clazz, String method )
+    public ClassMethodTestAddress( String sig, Class clazz, String method )
     {
     	System.out.println("CALL sig=" + sig + " clazz=" + clazz + " method=" + method);
         m_clazz = clazz.getName();
@@ -38,7 +38,7 @@ public class ClassMethodProbeCall implements ProbeCall
         m_sig = sig;
     }
 
-    public ClassMethodProbeCall( String s )
+    public ClassMethodTestAddress( String s )
     {
         // parse:
         String parts[] = s.split( ";" );

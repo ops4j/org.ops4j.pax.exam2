@@ -22,7 +22,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
@@ -56,7 +56,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         }
     }
 
-    public void invoke( ProbeCall call )
+    public void invoke( TestAddress call )
         throws Exception
     {
         OptionPrinter printer = new OptionPrinter();

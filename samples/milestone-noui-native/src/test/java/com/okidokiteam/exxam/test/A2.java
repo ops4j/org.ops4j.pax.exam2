@@ -21,12 +21,14 @@ import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.options.ReUsePolicy;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.LibraryOptions.*;
+import static org.ops4j.pax.exam.options.ReUsePolicy.*;
 
 /**
  * Simple Test Rack that uses the JUnit4 UI
@@ -38,7 +40,11 @@ public class A2
     @Configuration
     public Option[] config()
     {
-        return options( junitBundles(), easyMockBundles() );
+        return options(
+            junitBundles(),
+            easyMockBundles(),
+            executionPolicy().reuseContainer( ALWAYS )
+        );
     }
 
     @Test

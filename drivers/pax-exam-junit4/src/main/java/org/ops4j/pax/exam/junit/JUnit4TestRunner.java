@@ -34,7 +34,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.spi.ExxamReactor;
-import org.ops4j.pax.exam.spi.ProbeCall;
+import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
@@ -49,13 +49,13 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     private static Log LOG = LogFactory.getLog( JUnit4TestRunner.class );
 
     private final StagedExamReactor m_reactor;
-    private final Map<FrameworkMethod, ProbeCall> m_map;
+    private final Map<FrameworkMethod, TestAddress> m_map;
 
     public JUnit4TestRunner( Class<?> klass )
         throws InitializationError
     {
         super( klass );
-        m_map = new HashMap<FrameworkMethod, ProbeCall>();
+        m_map = new HashMap<FrameworkMethod, TestAddress>();
         try
         {
             m_reactor = prepareReactor();
@@ -92,7 +92,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         for( FrameworkMethod s : getChildren() )
         {
             LOG.debug( "Add Test " + s.getName() );
-            ProbeCall call = save( s, DefaultRaw.call( testClass, s.getName() ) );
+            TestAddress call = save( s, DefaultRaw.call( testClass, s.getName() ) );
             probe.addTest( call );
         }
         reactor.addProbe( probe );
@@ -105,7 +105,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         return new DefaultExamReactor( PaxExamRuntime.getTestContainerFactory() );
     }
 
-    private ProbeCall save( FrameworkMethod fwMethod, ProbeCall call )
+    private TestAddress save( FrameworkMethod fwMethod, TestAddress call )
     {
         m_map.put( fwMethod, call );
         return call;
@@ -129,7 +129,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
     }
 
-    protected ProbeCall findMatchingCall( FrameworkMethod method, Object test )
+    protected TestAddress findMatchingCall( FrameworkMethod method, Object test )
     {
         return m_map.get( method );
     }

@@ -18,10 +18,12 @@
 package org.ops4j.pax.exam.spi;
 
 /**
+ * This references a test. Use it to call a test on TestContainers.
+ *
  * @author Toni Menzel
  * @since Jan 11, 2010
  */
-public interface ProbeCall
+public interface TestAddress
 {
 
     String getInstruction();
