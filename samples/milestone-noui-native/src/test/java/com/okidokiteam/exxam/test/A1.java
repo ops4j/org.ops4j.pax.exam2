@@ -28,6 +28,7 @@ import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 
+import static org.ops4j.pax.exam.LibraryOptions.*;
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 /**
@@ -49,7 +50,7 @@ public class A1
         throws Exception
     {
         TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{ };
+        Option[] options = new Option[]{ junitBundles(), easyMockBundles()};
 
         // the parse will split all single containers into dedicated OptionDescription(s)
         for( OptionDescription testTarget : factory.parse( options ) )
@@ -81,7 +82,7 @@ public class A1
         throws Exception
     {
         TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{ };
+        Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
 
         /**
          * In this example we don't split and control containers ourselves, we use ExxamRactor.
@@ -112,6 +113,7 @@ public class A1
         {
             for( ProbeCall call : probe.getTests() )
             {
+                stagedReactor.invoke( call );
                 stagedReactor.invoke( call );
             }
 

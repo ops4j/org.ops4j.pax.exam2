@@ -15,6 +15,12 @@
  */
 package com.okidokiteam.exxam.test;
 
+import org.osgi.framework.BundleContext;
+
+import static org.easymock.EasyMock.*;
+import static org.hamcrest.core.Is.*;
+import static org.junit.Assert.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: tonit
@@ -25,8 +31,15 @@ package com.okidokiteam.exxam.test;
 public class Probe
 {
 
-    private void foo()
+    public void withoutBC()
     {
         System.out.println( "++++ PEAK ++++" );
+    }
+
+    public void withBC( BundleContext ctx )
+    {
+        System.out.println( "++++ PEAK ++++" );
+        // assertThat( ctx, is( notNull() ) );
+        assertTrue( ctx != null );
     }
 }
