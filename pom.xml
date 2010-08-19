@@ -83,8 +83,7 @@
 
                 <module>containers/pax-exam-container-native</module>
 
-                <!-- Perhaps.. but most likely not in m1 -->
-                <!--<module>drivers/pax-exam-junit4</module> -->
+                <module>drivers/pax-exam-junit4</module>
 
                 <module>spice/pax-exam-link-mvn</module>
                 <module>spice/pax-exam-link-assembly</module>
