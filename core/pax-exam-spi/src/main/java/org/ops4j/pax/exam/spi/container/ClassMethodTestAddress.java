@@ -32,8 +32,7 @@ public class ClassMethodTestAddress implements TestAddress
 
     public ClassMethodTestAddress( String sig, Class clazz, String method )
     {
-    	System.out.println("CALL sig=" + sig + " clazz=" + clazz + " method=" + method);
-        m_clazz = clazz.getName();
+    	m_clazz = clazz.getName();
         m_method = method;
         m_sig = sig;
     }
