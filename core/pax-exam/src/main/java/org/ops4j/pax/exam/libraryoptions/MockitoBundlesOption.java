@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit.options;
+package org.ops4j.pax.exam.libraryoptions;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -25,28 +25,31 @@ import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
 
 /**
- * This provides JMock Support for Pax Exam.
- * By default we supply version 2.5.1. Version can be changed.
+ * Option specifying Mockito bundles (osgi-fyed mockito).
+ * See: http://code.google.com/p/mockito/
+ * By default uses the mockito-all delivery wrapped up on the fly as a bundle.
+ *
+ * Version: 1.7. Can be changed.
  *
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since Mar 15, 2009
+ * @since Mar 14, 2009
  */
-public class JMockBundlesOption
-    extends AbstractDelegateProvisionOption<JMockBundlesOption>
+public class MockitoBundlesOption
+    extends AbstractDelegateProvisionOption<MockitoBundlesOption>
 {
 
     /**
-     * You'll get a wrapped artifact of jmock version 2.5.1 by default.
+     * Constructor.
      */
-    public JMockBundlesOption()
+    public MockitoBundlesOption()
     {
         super(
             wrappedBundle(
                 maven()
-                    .groupId( "org.jmock" )
-                    .artifactId( "jmock" )
-                    .version( "2.5.1" )
+                    .groupId( "org.mockito" )
+                    .artifactId( "mockito-all" )
+                    .version( "1.7" )
             )
         );
         noUpdate();
@@ -54,18 +57,18 @@ public class JMockBundlesOption
     }
 
     /**
-     * Sets the JMock version.
+     * Sets the Mockito version.
      *
-     * @param version JMock version.
+     * @param version Mockito version.
      *
      * @return itself, for fluent api usage
      */
-    public JMockBundlesOption version( final String version )
+    public MockitoBundlesOption version( final String version )
     {
         ( (MavenArtifactUrlReference) ( (WrappedUrlProvisionOption) getDelegate() ).getUrlReference() ).version(
             version
         );
-        return itself();
+        return this;
     }
 
     /**
@@ -75,7 +78,7 @@ public class JMockBundlesOption
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "JMockBundlesOption" );
+        sb.append( "MockitoBundlesOption" );
         sb.append( "{url=" ).append( getURL() );
         sb.append( '}' );
         return sb.toString();
@@ -84,7 +87,7 @@ public class JMockBundlesOption
     /**
      * {@inheritDoc}
      */
-    protected JMockBundlesOption itself()
+    protected MockitoBundlesOption itself()
     {
         return this;
     }

@@ -1,5 +1,6 @@
 /*
- * Copyright 2008 Alin Dreghiciu.
+ * Copyright 2009 Toni Menzel.
+ * Copyright 2009 Alin Dreghiciu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,50 +16,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit.options;
+package org.ops4j.pax.exam.libraryoptions;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import org.ops4j.pax.exam.options.AbstractDelegateProvisionOption;
-import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
+import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
+import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
 
 /**
- * Option specifying Easymock bundles (osgi-fyed easymock).
- * By default uses easymock bundle published by SpringSource, version 2.3.0 (can be changed).
+ * This provides JMock Support for Pax Exam.
+ * By default we supply version 2.5.1. Version can be changed.
  *
+ * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since 0.3.0, December 09, 2008
+ * @since Mar 15, 2009
  */
-public class EasyMockBundlesOption
-    extends AbstractDelegateProvisionOption<EasyMockBundlesOption>
+public class JMockBundlesOption
+    extends AbstractDelegateProvisionOption<JMockBundlesOption>
 {
 
     /**
-     * Constructor.
+     * You'll get a wrapped artifact of jmock version 2.5.1 by default.
      */
-    public EasyMockBundlesOption()
+    public JMockBundlesOption()
     {
         super(
-            mavenBundle()
-                .groupId( "org.easymock" )
-                .artifactId( "com.springsource.org.easymock" )
-                .version( "2.3.0" )
+            wrappedBundle(
+                maven()
+                    .groupId( "org.jmock" )
+                    .artifactId( "jmock" )
+                    .version( "2.5.1" )
+            )
         );
         noUpdate();
         startLevel( START_LEVEL_SYSTEM_BUNDLES );
     }
 
     /**
-     * Sets the easymock version.
+     * Sets the JMock version.
      *
-     * @param version easymock version.
+     * @param version JMock version.
      *
      * @return itself, for fluent api usage
      */
-    public EasyMockBundlesOption version( final String version )
+    public JMockBundlesOption version( final String version )
     {
-        ( (MavenArtifactProvisionOption) getDelegate() ).version( version );
-        return this;
+        ( (MavenArtifactUrlReference) ( (WrappedUrlProvisionOption) getDelegate() ).getUrlReference() ).version(
+            version
+        );
+        return itself();
     }
 
     /**
@@ -68,7 +75,7 @@ public class EasyMockBundlesOption
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "EasyMockBundlesOption" );
+        sb.append( "JMockBundlesOption" );
         sb.append( "{url=" ).append( getURL() );
         sb.append( '}' );
         return sb.toString();
@@ -77,7 +84,7 @@ public class EasyMockBundlesOption
     /**
      * {@inheritDoc}
      */
-    protected EasyMockBundlesOption itself()
+    protected JMockBundlesOption itself()
     {
         return this;
     }

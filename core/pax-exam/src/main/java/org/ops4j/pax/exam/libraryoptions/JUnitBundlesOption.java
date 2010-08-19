@@ -1,6 +1,5 @@
 /*
- * Copyright 2009 Toni Menzel.
- * Copyright 2009 Alin Dreghiciu.
+ * Copyright 2008 Alin Dreghiciu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,58 +15,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit.options;
+package org.ops4j.pax.exam.libraryoptions;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import org.ops4j.pax.exam.options.AbstractDelegateProvisionOption;
-import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
-import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
+import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 
 /**
- * Option specifying Mockito bundles (osgi-fyed mockito).
- * See: http://code.google.com/p/mockito/
- * By default uses the mockito-all delivery wrapped up on the fly as a bundle.
+ * Option specifying junit bundles (osgi-fyed JUnit).
+ * By default uses junit bundle published by SpringSource, version 4.4.0 (can be changed).
  *
- * Version: 1.7. Can be changed.
- *
- * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since Mar 14, 2009
+ * @since 0.3.0, December 09, 2008
  */
-public class MockitoBundlesOption
-    extends AbstractDelegateProvisionOption<MockitoBundlesOption>
+public class JUnitBundlesOption
+    extends AbstractDelegateProvisionOption<JUnitBundlesOption>
 {
 
     /**
      * Constructor.
      */
-    public MockitoBundlesOption()
+    public JUnitBundlesOption()
     {
         super(
-            wrappedBundle(
-                maven()
-                    .groupId( "org.mockito" )
-                    .artifactId( "mockito-all" )
-                    .version( "1.7" )
-            )
+            mavenBundle()
+                .groupId( "org.junit" )
+                .artifactId( "com.springsource.org.junit" )
+                .version( "4.4.0" )
         );
         noUpdate();
         startLevel( START_LEVEL_SYSTEM_BUNDLES );
     }
 
     /**
-     * Sets the Mockito version.
+     * Sets the junit version.
      *
-     * @param version Mockito version.
+     * @param version junit version.
      *
      * @return itself, for fluent api usage
      */
-    public MockitoBundlesOption version( final String version )
+    public JUnitBundlesOption version( final String version )
     {
-        ( (MavenArtifactUrlReference) ( (WrappedUrlProvisionOption) getDelegate() ).getUrlReference() ).version(
-            version
-        );
+        ( (MavenArtifactProvisionOption) getDelegate() ).version( version );
         return this;
     }
 
@@ -78,7 +68,7 @@ public class MockitoBundlesOption
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "MockitoBundlesOption" );
+        sb.append( "JUnitBundlesOption" );
         sb.append( "{url=" ).append( getURL() );
         sb.append( '}' );
         return sb.toString();
@@ -87,7 +77,7 @@ public class MockitoBundlesOption
     /**
      * {@inheritDoc}
      */
-    protected MockitoBundlesOption itself()
+    protected JUnitBundlesOption itself()
     {
         return this;
     }

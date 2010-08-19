@@ -15,12 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit.options;
+package org.ops4j.pax.exam.libraryoptions;
 
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.runtime.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.container.TestContainerFactory;
-
+import org.ops4j.pax.exam.TestContainerFactory;
 /**
  * @author Toni Menzel
  * @since Jan 26, 2010
@@ -34,7 +32,7 @@ public class ExecutionPolicyOption implements Option
     public ExecutionPolicyOption()
     {
         m_reUsePolicy = ReUsePolicy.NEVER; // pax exam 1.x compatibility
-        m_select = PaxExamRuntime.getTestContainerFactory();
+        // m_select = PaxExamRuntime.getTestContainerFactory();
     }
 
     public ExecutionPolicyOption testContainer( Class<? extends TestContainerFactory> factory )

@@ -15,47 +15,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit.options;
+package org.ops4j.pax.exam.libraryoptions;
 
 import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
+
 import org.ops4j.pax.exam.options.AbstractDelegateProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 
 /**
- * Option specifying junit bundles (osgi-fyed JUnit).
- * By default uses junit bundle published by SpringSource, version 4.4.0 (can be changed).
+ * Option specifying Easymock bundles (osgi-fyed easymock).
+ * By default uses easymock bundle published by SpringSource, version 2.3.0 (can be changed).
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
-public class JUnitBundlesOption
-    extends AbstractDelegateProvisionOption<JUnitBundlesOption>
+public class EasyMockBundlesOption
+    extends AbstractDelegateProvisionOption<EasyMockBundlesOption>
 {
 
     /**
      * Constructor.
      */
-    public JUnitBundlesOption()
+    public EasyMockBundlesOption()
     {
         super(
             mavenBundle()
-                .groupId( "org.junit" )
-                .artifactId( "com.springsource.org.junit" )
-                .version( "4.4.0" )
+                .groupId( "org.easymock" )
+                .artifactId( "com.springsource.org.easymock" )
+                .version( "2.3.0" )
         );
         noUpdate();
         startLevel( START_LEVEL_SYSTEM_BUNDLES );
     }
 
     /**
-     * Sets the junit version.
+     * Sets the easymock version.
      *
-     * @param version junit version.
+     * @param version easymock version.
      *
      * @return itself, for fluent api usage
      */
-    public JUnitBundlesOption version( final String version )
+    public EasyMockBundlesOption version( final String version )
     {
         ( (MavenArtifactProvisionOption) getDelegate() ).version( version );
         return this;
@@ -68,7 +69,7 @@ public class JUnitBundlesOption
     public String toString()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "JUnitBundlesOption" );
+        sb.append( "EasyMockBundlesOption" );
         sb.append( "{url=" ).append( getURL() );
         sb.append( '}' );
         return sb.toString();
@@ -77,7 +78,7 @@ public class JUnitBundlesOption
     /**
      * {@inheritDoc}
      */
-    protected JUnitBundlesOption itself()
+    protected EasyMockBundlesOption itself()
     {
         return this;
     }
