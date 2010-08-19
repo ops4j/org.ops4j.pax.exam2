@@ -19,14 +19,13 @@ import org.osgi.framework.BundleContext;
 
 import static org.easymock.EasyMock.*;
 import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: tonit
- * Date: Aug 5, 2010
- * Time: 3:11:27 AM
- * To change this template use File | Settings | File Templates.
+ * External TestProbe.
+ * Assemble yourself using:
+ * createProbe().addTest( Probe.class )
  */
 public class Probe
 {
@@ -38,8 +37,13 @@ public class Probe
 
     public void withBC( BundleContext ctx )
     {
-        System.out.println( "++++ PEAK ++++" );
-        // assertThat( ctx, is( notNull() ) );
-        assertTrue( ctx != null );
+        assertThat( ctx, is( notNullValue() ) );
+        System.out.println( "BundleContext of bundle injected: " + ctx.getBundle().getSymbolicName() );
+
+    }
+
+    private void neverCall()
+    {
+        fail( "Don't call me !" );
     }
 }
