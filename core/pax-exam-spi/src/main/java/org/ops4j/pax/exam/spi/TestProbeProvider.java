@@ -20,6 +20,8 @@ package org.ops4j.pax.exam.spi;
 import java.io.InputStream;
 
 /**
+ * High Level Access to the Probe (bundle) as well as its {@link TestAddress}es you can invoke.
+ *
  * @author Toni Menzel
  * @since Jan 29, 2010
  */
