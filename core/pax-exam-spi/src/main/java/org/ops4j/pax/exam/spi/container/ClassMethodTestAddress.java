@@ -38,16 +38,6 @@ public class ClassMethodTestAddress implements TestAddress
         m_sig = sig;
     }
 
-    public ClassMethodTestAddress( String s )
-    {
-        // parse:
-        String parts[] = s.split( ";" );
-        m_clazz = parts[ 0 ];
-        m_method = parts[ 1 ];
-    	System.out.println("Parsed clazz=" + m_clazz + " method=" + m_method);
-
-    }
-
     public String getInstruction()
     {
         return m_clazz + ";" + m_method;
