@@ -22,11 +22,7 @@ import org.ops4j.pax.exam.libraryoptions.JUnitBundlesOption;
 import org.ops4j.pax.exam.libraryoptions.MockitoBundlesOption;
 
 /**
- * Created by IntelliJ IDEA.
- * User: tonit
- * Date: Aug 19, 2010
- * Time: 12:23:49 PM
- * To change this template use File | Settings | File Templates.
+ * Convenience for built in libraries
  */
 public class LibraryOptions
 {
