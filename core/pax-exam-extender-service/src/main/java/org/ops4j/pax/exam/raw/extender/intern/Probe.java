@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.raw.extender.intern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Dictionary;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -29,6 +31,7 @@ import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 public class Probe
 {
 
+    private Logger LOG = LoggerFactory.getLogger( Probe.class );
     private final String m_service;
     private final ProbeInvoker m_impl;
     private final Dictionary m_dict;
@@ -42,6 +45,8 @@ public class Probe
 
     public ServiceRegistration register( BundleContext ctx )
     {
+
+       
         return ctx.registerService( m_service, m_impl, m_dict );
     }
 }
