@@ -83,7 +83,7 @@ public class NativeTestContainerParser
             mavenBundle()
                 .groupId( "org.ops4j.pax.logging" )
                 .artifactId( "pax-logging-api" )
-                .version( "1.4" )
+                .version( "1.5.0" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             mavenBundle()
                 .groupId( "org.osgi" )
