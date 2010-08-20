@@ -22,6 +22,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.swissbox.extender.ManifestEntry;
 
@@ -31,8 +33,9 @@ import org.ops4j.pax.swissbox.extender.ManifestEntry;
  */
 public class Parser
 {
+    final private Logger LOG = LoggerFactory.getLogger( Probe.class );
 
-    private Probe[] m_probes;
+    final private Probe[] m_probes;
 
     public Parser( BundleContext ctx, String sigs, List<ManifestEntry> manifestEntries )
     {
@@ -59,6 +62,7 @@ public class Parser
     {
         // should be a service really
         // turn this expression into a service detail later
+        LOG.debug( "Registering Probe Service with signature=\"" + sig + "\" and expression=\"" + expr + "\"" );
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put( "Probe-Signature", sig );
         return new Probe( ProbeInvoker.class.getName(), new ProbeInvokerImpl( expr, ctx ), props );
