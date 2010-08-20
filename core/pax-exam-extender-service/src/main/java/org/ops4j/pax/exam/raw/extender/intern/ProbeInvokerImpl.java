@@ -23,22 +23,24 @@ import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 
 /**
+ *
+ * Turns a instruction into a service call.
+ * Currently used with encoded instructions from org.ops4j.pax.exam.spi.container.ClassMethodTestAddress
+ *
  * @author Toni Menzel
  * @since Dec 4, 2009
  */
 public class ProbeInvokerImpl implements ProbeInvoker
 {
 
-    private String m_expression;
     private BundleContext m_ctx;
     private String m_clazz;
     private String m_method;
 
-    public ProbeInvokerImpl( String expr, BundleContext bundleContext )
+    public ProbeInvokerImpl( String encodedInstruction, BundleContext bundleContext )
     {
-        m_expression = expr;
         // parse class and method out of expression:
-        String[] parts = expr.split( ";" );
+        String[] parts = encodedInstruction.split( ";" );
         m_clazz = parts[ 0 ];
         m_method = parts[ 1 ];
         m_ctx = bundleContext;

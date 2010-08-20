@@ -37,6 +37,11 @@ public class ClassMethodTestAddress implements TestAddress
         m_sig = sig;
     }
 
+    /**
+     * This instruction must be parsable on the target system. So beware changing this.
+     * Current know parser: org.ops4j.pax.exam.raw.extender.intern.ProbeInvokerImpl
+     * @return
+     */
     public String getInstruction()
     {
         return m_clazz + ";" + m_method;
