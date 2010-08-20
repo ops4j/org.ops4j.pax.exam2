@@ -17,16 +17,12 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 import org.apache.commons.discovery.tools.DiscoverSingleton;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.ops4j.io.FileUtils;
+import org.ops4j.pax.exam.Info;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TimeoutException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -35,19 +31,10 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.io.FileUtils;
-import org.ops4j.pax.exam.Info;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
-import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TimeoutException;
-import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.spi.BuildingOptionDescription;
 
-import static org.ops4j.pax.exam.Constants.*;
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
+import java.io.File;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * @author Toni Menzel
@@ -70,23 +57,33 @@ public class NativeTestContainer implements TestContainer
     public <T> T getService( Class<T> serviceType, String filter, long timeout )
         throws TestContainerException
     {
-        try
-        {
-            ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences( serviceType.getName(), filter );
-            if( reference == null )
-            {
-                return null;
-            }
+        T service = null;
+        long start = System.currentTimeMillis();
 
-            for( ServiceReference ref : reference )
-            {
-                return ( (T) m_framework.getBundleContext().getService( ref ) );
-            }
+        LOG.debug( "Aquiring Service " + serviceType.getName() + " " + ( filter != null ? filter : "" ) );
 
-        } catch( Exception e )
+        do
         {
-            e.printStackTrace();
-        }
+            try
+            {
+                ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences( serviceType.getName(), filter );
+                if( reference != null )
+                {
+
+                    for( ServiceReference ref : reference )
+                    {
+                        return ( (T) m_framework.getBundleContext().getService( ref ) );
+                    }
+                }
+
+            } catch( Exception e )
+            {
+                LOG.error( "Some problem during looking up service. " + e );
+            }
+        } while( ( System.currentTimeMillis() ) < start + timeout );
+
+        LOG.debug( "Not found a matching Service " + serviceType.getName() + " for Filter:" + ( filter != null ? filter : "" ) );
+
         return null;
     }
 
@@ -165,8 +162,10 @@ public class NativeTestContainer implements TestContainer
             {
 
             }
-        }else {
-            throw new IllegalStateException( "Framework does not exist. Called start() before ? ");
+        }
+        else
+        {
+            throw new IllegalStateException( "Framework does not exist. Called start() before ? " );
         }
         return this;
     }
@@ -185,6 +184,7 @@ public class NativeTestContainer implements TestContainer
         {
             final Map<String, String> p = new HashMap<String, String>();
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
+            LOG.debug( "Cache folder set to " + folder );
             FileUtils.delete( new File( folder ) );
             // load default stuff
 
