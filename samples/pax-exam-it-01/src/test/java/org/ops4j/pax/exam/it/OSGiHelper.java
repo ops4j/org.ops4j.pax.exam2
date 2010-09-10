@@ -441,11 +441,7 @@ public class OSGiHelper
         }
         ServiceReference[] refs = getServiceReferences( itf, filter );
         long begin = System.currentTimeMillis();
-        if( refs.length != 0 )
-        {
-            return;
-        }
-        else
+        if( refs.length == 0 )
         {
             while( refs.length == 0 )
             {
