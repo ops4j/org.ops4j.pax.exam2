@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.ops4j.pax</groupId>
+        <groupId>com.okidokiteam</groupId>
         <artifactId>master</artifactId>
-        <version>3.1.0</version>
+        <version>1.0.0-alpha-1</version>
     </parent>
 
     <groupId>org.ops4j.pax</groupId>
@@ -26,16 +26,6 @@
         <dependency.swissbox.version>1.3.0-SNAPSHOT</dependency.swissbox.version>
         <dependency.base.version>1.2.1</dependency.base.version>
     </properties>
-
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.2</version>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <build>
         <plugins>
@@ -160,6 +150,7 @@
                 <artifactId>pax-runner-no-jcl</artifactId>
                 <version>${dependency.runner.version}</version>
             </dependency>
+            <!--
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
@@ -179,15 +170,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>1.6.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>2.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
