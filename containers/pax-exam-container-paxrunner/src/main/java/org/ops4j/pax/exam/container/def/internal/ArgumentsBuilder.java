@@ -21,7 +21,6 @@ package org.ops4j.pax.exam.container.def.internal;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.ops4j.pax.exam.Customizer;
