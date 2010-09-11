@@ -76,8 +76,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         Method[] methods = testClass.getDeclaredMethods();
         for( Method m : methods )
         {
-
-            Configuration conf = (Configuration) m.getAnnotation( Configuration.class );
+            Configuration conf = m.getAnnotation( Configuration.class );
             if( conf != null )
             {
                 // consider as option, so prepare that one:

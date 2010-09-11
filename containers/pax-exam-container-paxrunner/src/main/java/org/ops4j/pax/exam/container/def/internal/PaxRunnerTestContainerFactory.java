@@ -45,15 +45,11 @@ public class PaxRunnerTestContainerFactory
     public OptionDescription[] parse( final Option... options )
     {
         // Parser for the PaxRunnerTestContainer
-        ArgumentsBuilder argBuilder = new ArgumentsBuilder( 9999, options );
+        RBCRemoteTarget target = createRemoteTarget(options);
+        ArgumentsBuilder argBuilder = new ArgumentsBuilder( target.getClientRBC().getRmiPort(), options );
 
         // constructor of PaxRunnerTestContainer should be as explicit as possible.
         // So no Option[] and also no argBuilder in the end.
-
-        // TODO tbd: make this more explicit
-        Parser p = new Parser( options);
-        
-        RBCRemoteTarget target = new RBCRemoteTarget(p.getHost(),p.getRMIPort(),p.getRMILookupTimpout() );
 
         TestContainer container = new PaxRunnerTestContainer( new DefaultJavaRunner( false ),
                                                               argBuilder.getArguments(),
@@ -69,6 +65,12 @@ public class PaxRunnerTestContainerFactory
         return new OptionDescription[]{
             descr
         };
+    }
+
+    private RBCRemoteTarget createRemoteTarget(Option[] options) {
+        Parser p = new Parser( options);
+
+        return new RBCRemoteTarget(p.getHost(),p.getRMIPort(),p.getRMILookupTimpout() );
     }
 
     public TestContainer createContainer( OptionDescription option )

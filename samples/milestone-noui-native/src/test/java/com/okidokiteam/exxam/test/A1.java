@@ -20,16 +20,17 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.nat.internal.NativeTestContainerFactory;
 import org.ops4j.pax.exam.spi.ExxamReactor;
-import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.TestAddress;
 import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 
-import static org.ops4j.pax.exam.LibraryOptions.*;
-import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
+import static org.ops4j.pax.exam.LibraryOptions.easyMockBundles;
+import static org.ops4j.pax.exam.LibraryOptions.junitBundles;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.execute;
 
 /**
  * Simple test
@@ -37,7 +38,7 @@ import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 public class A1 {
 
     private TestContainerFactory getFactory() {
-        return PaxExamRuntime.getTestContainerFactory(NativeTestContainerFactory.class);
+        return PaxExamRuntime.getTestContainerFactory();
     }
 
     /**
@@ -49,7 +50,7 @@ public class A1 {
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{junitBundles(), easyMockBundles()};
 
-        // the parse will split all single containers into dedicated OptionDescription(s)
+// the parse will split all single containers into dedicated OptionDescription(s)
         for (OptionDescription testTarget : factory.parse(options)) {
             TestContainer testContainer = factory.createContainer(testTarget);
             try {
@@ -76,23 +77,23 @@ public class A1 {
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{junitBundles(), easyMockBundles()};
 
-        /**
-         * In this example we don't split and control containers ourselves, we use ExxamRactor.
-         * This can be fed with
-         * - probes (addProbe)
-         * - options (addConfiguration)
-         * Once this is done, calliing "stage()" gives you the possibility to invoke tests directly.
-         *
-         * Note that you don't interact with any TestContainer or how many you actually create.
-         * You just iterate over all your previously added tests and invoke them using the "handles" (TestAddress)
-         *
-         * Whatr is a TestAddress ?
-         * Its a handle to invoke a particular test method.
-         * It is up to the ProbeBuilder to make meaningful handles so they can be found and executed.
-         * TODO: Guess this needs more explanation, as its a quite powerful concept that also lets you control testclass initialization and "what to actually call on that class".
-         *
-         *
-         */
+/**
+ * In this example we don't split and control containers ourselves, we use ExxamRactor.
+ * This can be fed with
+ * - probes (addProbe)
+ * - options (addConfiguration)
+ * Once this is done, calliing "stage()" gives you the possibility to invoke tests directly.
+ *
+ * Note that you don't interact with any TestContainer or how many you actually create.
+ * You just iterate over all your previously added tests and invoke them using the "handles" (TestAddress)
+ *
+ * Whatr is a TestAddress ?
+ * Its a handle to invoke a particular test method.
+ * It is up to the ProbeBuilder to make meaningful handles so they can be found and executed.
+ * TODO: Guess this needs more explanation, as its a quite powerful concept that also lets you control testclass initialization and "what to actually call on that class".
+ *
+ *
+ */
         ExxamReactor reactor = new DefaultExamReactor(factory);
 
         TestProbeBuilder probe = createProbe().addTest(Probe.class);

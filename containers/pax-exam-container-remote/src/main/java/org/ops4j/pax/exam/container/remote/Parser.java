@@ -20,6 +20,8 @@ import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 import org.ops4j.pax.exam.spi.BuildingOptionDescription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.ops4j.pax.exam.OptionUtils.*;
 
@@ -29,9 +31,13 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 public class Parser
 {
 
+    private static Logger LOG = LoggerFactory.getLogger(Parser.class);
     private BuildingOptionDescription m_optionDescription;
-    private String m_host;
-    private Integer m_port;
+
+    private String m_host = RBCPortOption.DEFAULTHOST;
+
+    private Integer m_port = RBCPortOption.DEFAULTPORT;
+
     private long m_timeout;
 
     public Parser( Option[] options )
@@ -39,8 +45,6 @@ public class Parser
         m_optionDescription = new BuildingOptionDescription( options );
         extractArguments( markingFilter( RBCPortOption.class, options ) );
         extractArguments( markingFilter( RBCLookupTimeoutOption.class, options ) );
-
-
     }
 
     private void extractArguments( RBCLookupTimeoutOption[] options )

@@ -42,9 +42,6 @@ public class RBCRemoteTarget implements TestTarget
 
     private RemoteBundleContextClient m_remoteBundleContextClient;
 
-    private static final int AMOUNT_OF_PORTS_TO_CHECK = 100;
-
-    private static final Integer DEFAULTPORT = 1412;
 
     /**
      * @param host
@@ -54,6 +51,7 @@ public class RBCRemoteTarget implements TestTarget
     public RBCRemoteTarget( String host, Integer rmiPort, long rmiLookupTimeout )
 
     {
+        LOG.info( "RBCRemoteTarget > Host: " + host + ",rmiPort: " + rmiPort + ",rmiLookupTimeout: " + rmiLookupTimeout );
         m_remoteBundleContextClient =
             new RemoteBundleContextClient( host, rmiPort, rmiLookupTimeout);//getHost( options ), getPort( options ), getRMITimeout( options ) );
     }
@@ -94,50 +92,7 @@ public class RBCRemoteTarget implements TestTarget
         m_remoteBundleContextClient.cleanup();
     }
 
-    private Integer getPort( Option[] options )
-    {
-        final RBCPortOption[] ports = filter( RBCPortOption.class, options );
-        if( ports.length > 0 )
-        {
-            return ports[ 0 ].getPort();
-        }
-        else
-        {
-            return DEFAULTPORT;
-        }
-    }
 
-    private String getHost( Option[] options )
-    {
-        final RBCPortOption[] ports = filter( RBCPortOption.class, options );
-        if( ports.length > 0 )
-        {
-            return ports[ 0 ].getHost();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /**
-     * Determine the rmi lookup timeout.<br/>
-     * Timeout is dermined by first looking for a {@link RBCLookupTimeoutOption} in the user options. If not specified a
-     * default is used.
-     *
-     * @param options user options
-     *
-     * @return rmi lookup timeout
-     */
-    private static long getRMITimeout( final Option... options )
-    {
-        final RBCLookupTimeoutOption[] timeoutOptions = filter( RBCLookupTimeoutOption.class, options );
-        if( timeoutOptions.length > 0 )
-        {
-            return timeoutOptions[ 0 ].getTimeout();
-        }
-        return getTestContainerStartTimeout( options );
-    }
 
     /**
      * Determine the timeout while starting the osgi framework.<br/>

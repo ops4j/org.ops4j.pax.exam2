@@ -34,6 +34,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.startlevel.StartLevel;
 
 import static org.ops4j.lang.NullArgumentException.*;
+import org.ops4j.pax.exam.TimeoutException;
 
 /**
  * {@link RemoteBundleContext} implementaton.
@@ -178,7 +179,6 @@ public class RemoteBundleContextImpl
     public void waitForState( final long bundleId,
                               final int state,
                               final long timeoutInMillis )
-        throws TimeoutException
     {
         final Bundle bundle = m_bundleContext.getBundle( bundleId );
         if( timeoutInMillis == NO_WAIT && bundle.getState() < state )

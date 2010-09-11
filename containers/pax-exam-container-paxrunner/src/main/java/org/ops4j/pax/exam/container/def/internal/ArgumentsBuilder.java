@@ -702,9 +702,9 @@ class ArgumentsBuilder implements OptionParser
 
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
-            url( "link:classpath:META-INF/links/org.osgi.compendium.link" )
+            url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
 
-            //url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )
         };
     }
 

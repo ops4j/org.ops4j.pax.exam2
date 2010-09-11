@@ -18,10 +18,10 @@
 package org.ops4j.pax.exam.spi.container;
 
 import org.apache.commons.discovery.tools.DiscoverSingleton;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestTargetFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Pax Exam runtime.
@@ -30,16 +30,14 @@ import org.ops4j.pax.exam.TestTargetFactory;
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
  */
-public class PaxExamRuntime
-{
+public class PaxExamRuntime {
 
-    private static final Log LOG = LogFactory.getLog( PaxExamRuntime.class );
+    private static final Logger LOG = LoggerFactory.getLogger(PaxExamRuntime.class);
 
     /**
      * Utility class. Ment to be used via the static factory methods.
      */
-    private PaxExamRuntime()
-    {
+    private PaxExamRuntime() {
         // utility class
     }
 
@@ -48,11 +46,11 @@ public class PaxExamRuntime
      *
      * @return discovered test container
      */
-	public static TestContainerFactory getTestContainerFactory()
-    {
-        LOG.info( "Pax Exam Runtime: looking for a " + TestContainerFactory.class.getName() );
-
-        return (TestContainerFactory) DiscoverSingleton.find( TestContainerFactory.class );
+    public static TestContainerFactory getTestContainerFactory() {
+        LOG.info("Pax Exam Runtime: looking for a " + TestContainerFactory.class.getName());
+        TestContainerFactory factory = (TestContainerFactory) DiscoverSingleton.find(TestContainerFactory.class);
+        LOG.info("Found TestContainerFactory: " + ((factory != null) ? factory.getClass().getName() : "<NONE>"));
+        return factory;
     }
 
     /**
@@ -60,20 +58,15 @@ public class PaxExamRuntime
      *
      * @param select the exact implementation if you dont want to rely on commons util discovery or
      *               change different containers in a single project.
-     *
      * @return discovered test container
      */
-    public static TestContainerFactory getTestContainerFactory( Class<? extends TestContainerFactory> select )
-    {
-        try
-        {
+    public static TestContainerFactory getTestContainerFactory(Class<? extends TestContainerFactory> select) {
+        try {
             return select.newInstance();
-        } catch( InstantiationException e )
-        {
-            throw new IllegalArgumentException( "Class  " + select + "is not a valid Test Container Factory.", e );
-        } catch( IllegalAccessException e )
-        {
-            throw new IllegalArgumentException( "Class  " + select + "is not a valid Test Container Factory.", e );
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException("Class  " + select + "is not a valid Test Container Factory.", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Class  " + select + "is not a valid Test Container Factory.", e);
         }
     }
 
@@ -82,11 +75,10 @@ public class PaxExamRuntime
      *
      * @return discovered test target
      */
-    public static TestTargetFactory getTestTargetFactory()
-    {
-        LOG.info( "Pax Exam Runtime: looking for a " + TestTargetFactory.class.getName() );
+    public static TestTargetFactory getTestTargetFactory() {
+        LOG.info("Pax Exam Runtime: looking for a " + TestTargetFactory.class.getName());
 
-        return (TestTargetFactory) DiscoverSingleton.find( TestTargetFactory.class );
+        return (TestTargetFactory) DiscoverSingleton.find(TestTargetFactory.class);
     }
 
 }

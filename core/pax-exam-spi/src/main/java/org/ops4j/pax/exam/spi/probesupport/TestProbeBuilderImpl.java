@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import org.ops4j.pax.exam.spi.TestAddress;
@@ -44,11 +45,8 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
 
     public TestProbeBuilder addTest( TestAddress... calls )
     {
-        for( TestAddress call : calls )
-        {
-            m_probeCalls.add( call );
-        }
-
+        m_probeCalls.addAll(Arrays.asList(calls));
+    
         return this;
     }
 

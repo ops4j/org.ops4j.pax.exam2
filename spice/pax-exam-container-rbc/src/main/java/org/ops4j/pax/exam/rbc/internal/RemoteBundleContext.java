@@ -17,22 +17,23 @@
  */
 package org.ops4j.pax.exam.rbc.internal;
 
+import org.ops4j.pax.exam.TimeoutException;
+import org.osgi.framework.BundleException;
+
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import org.osgi.framework.BundleException;
 
 /**
  * Remote BundleContext like access.
- *
+ * <p/>
  * TODO: this is probably somwhat too fluffy (too shaky interface) - improve here
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 10, 2008
  */
 public interface RemoteBundleContext
-    extends Remote
-{
+        extends Remote {
 
     /**
      * Timeout specifing that there should be no waiting.
@@ -51,88 +52,79 @@ public interface RemoteBundleContext
      * @param methodParamTypes method parameters types
      * @param timeoutInMillis  timeout for looking up the service
      * @param actualParams     actual parameters (must match the given method params)
-     *
      * @return remote call rsult
-     *
      * @throws NoSuchServiceException    - If a service of the specified type cannot be located
      * @throws NoSuchMethodException     - If the given method cannot be found
      * @throws IllegalAccessException    - Specified method cannot be accessed
      * @throws InvocationTargetException - Wraps an eventual exception occured during method invocation
      * @throws RemoteException           - Remote communication related exception (mandatory by RMI)
      */
-    Object remoteCall( Class<?> serviceType,
-                       String methodName,
-                       Class<?>[] methodParamTypes,
-                       String filter,
-                       long timeoutInMillis,
-                       Object... actualParams )
-        throws
-        RemoteException,
-        NoSuchServiceException,
-        NoSuchMethodException,
-        IllegalAccessException,
-        InvocationTargetException;
+    Object remoteCall(Class<?> serviceType,
+                      String methodName,
+                      Class<?>[] methodParamTypes,
+                      String filter,
+                      long timeoutInMillis,
+                      Object... actualParams)
+            throws
+            RemoteException,
+            NoSuchServiceException,
+            NoSuchMethodException,
+            IllegalAccessException,
+            InvocationTargetException;
 
     /**
      * Installs a bundle remotly.
      *
      * @param bundleUrl url of the bundle to be installed. The url must be accessible from the remote OSGi container.
-     *
      * @return bundle id of the installed bundle
-     *
      * @throws RemoteException - Remote communication related exception (mandatory by RMI)
      * @throws BundleException - Re-thrown from installing the bundle
      */
-    long installBundle( String bundleUrl )
-        throws RemoteException, BundleException;
+    long installBundle(String bundleUrl)
+            throws RemoteException, BundleException;
 
     /**
      * Installs a bundle remotly given the bundle content.
      *
      * @param bundleLocation bundle location
      * @param bundle         bundle content as a byte array
-     *
      * @return bundle id of the installed bundle
-     *
      * @throws RemoteException - Remote communication related exception (mandatory by RMI)
      * @throws BundleException - Re-thrown from installing the bundle
      */
-    long installBundle( String bundleLocation, byte[] bundle )
-        throws RemoteException, BundleException;
+    long installBundle(String bundleLocation, byte[] bundle)
+            throws RemoteException, BundleException;
 
     /**
      * Starts a bundle.
      *
      * @param bundleId id of the bundle to be started
-     *
      * @throws RemoteException - Remote communication related exception (mandatory by RMI)
      * @throws BundleException - Re-thrown from starting the bundle
      */
-    void startBundle( long bundleId )
-        throws RemoteException, BundleException;
+    void startBundle(long bundleId)
+            throws RemoteException, BundleException;
 
     /**
      * Stops a bundle.
      *
      * @param bundleId id of the bundle to be stopped
-     *
      * @throws RemoteException - Remote communication related exception (mandatory by RMI)
      * @throws BundleException - Re-thrown from stopping the bundle
      */
-    void stopBundle( long bundleId )
-        throws RemoteException, BundleException;
+    void stopBundle(long bundleId)
+            throws RemoteException, BundleException;
 
     /**
      * Sets bundle start level.
      *
      * @param bundleId   id of the bundle to which the start level should be set
      * @param startLevel bundle start level
-     *
      * @throws RemoteException - Remote communication related exception (mandatory by RMI)
      * @throws BundleException - If bundle level cannot be set
      */
-    void setBundleStartLevel( long bundleId, int startLevel )
-        throws RemoteException, BundleException;
+    void setBundleStartLevel(long bundleId, int startLevel)
+            throws RemoteException, BundleException;
 
     /**
      * Waits for a bundle to be in a certain state and returns.
@@ -140,20 +132,18 @@ public interface RemoteBundleContext
      * @param bundleId        bundle id
      * @param state           expected state
      * @param timeoutInMillis max time to wait for state
-     *
      * @throws RemoteException  - Remote communication related exception (mandatory by RMI)
      * @throws BundleException  - If bundle cannot be found
-     * @throws TimeoutException - if timeout occured and expected state has not being reached
+     * @throws org.ops4j.pax.exam.TimeoutException - if timeout occured and expected state has not being reached
      */
-    void waitForState( long bundleId, int state, long timeoutInMillis )
-        throws RemoteException, BundleException, TimeoutException;
+    void waitForState(long bundleId, int state, long timeoutInMillis)
+            throws RemoteException, BundleException, TimeoutException;
 
     /**
      * @param id of bundle to uninstall
-     *
      * @throws RemoteException - Remote communication related exception (mandatory by RMI)
      * @throws BundleException - If bundle cannot be found
      */
-    void uninstallBundle( long id )
-        throws RemoteException, BundleException;
+    void uninstallBundle(long id)
+            throws RemoteException, BundleException;
 }

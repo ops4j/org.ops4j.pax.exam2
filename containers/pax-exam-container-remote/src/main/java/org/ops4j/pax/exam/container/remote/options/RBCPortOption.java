@@ -23,25 +23,34 @@ import org.ops4j.pax.exam.Option;
  * @author Toni Menzel
  * @since Jan 25, 2010
  */
-public class RBCPortOption implements Option
-{
+public class RBCPortOption implements Option {
+    public static final Integer DEFAULTPORT = 1412;
+    public static final String DEFAULTHOST = "localhost";
 
     private Integer m_port;
     private String m_host;
 
-    public RBCPortOption( String host, Integer port )
-    {
+    public RBCPortOption(String host, Integer port) {
+        assert host != null : "Host should never be null.";
+        assert port != null : "Port should never be null.";
+
         m_host = host;
         m_port = port;
     }
 
-    public String getHost()
-    {
+    public RBCPortOption(String host) {
+        this(host, DEFAULTPORT);
+    }
+
+    public RBCPortOption(Integer port) {
+        this(DEFAULTHOST, port);
+    }
+
+    public String getHost() {
         return m_host;
     }
 
-    public Integer getPort()
-    {
+    public Integer getPort() {
         return m_port;
     }
 }

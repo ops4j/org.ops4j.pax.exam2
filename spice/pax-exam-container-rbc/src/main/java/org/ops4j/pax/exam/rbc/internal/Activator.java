@@ -108,7 +108,7 @@ public class Activator
         LOG.debug( "Unbinding " + RemoteBundleContext.class.getSimpleName() );
         m_registry.unbind( RemoteBundleContext.class.getName() );
         UnicastRemoteObject.unexportObject( m_remoteBundleContext, true );
-        UnicastRemoteObject.unexportObject( m_registry, true );
+       // UnicastRemoteObject.unexportObject( m_registry, true );
         m_registry = null;
         m_remoteBundleContext = null;
         // this is necessary, unfortunately.. RMI wouldn' stop otherwise

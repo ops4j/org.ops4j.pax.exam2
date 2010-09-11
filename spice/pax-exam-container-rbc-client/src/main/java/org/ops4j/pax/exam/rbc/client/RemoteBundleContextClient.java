@@ -30,13 +30,14 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Stack;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.osgi.framework.BundleException;
 import org.ops4j.io.StreamUtils;
 
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
@@ -45,13 +46,12 @@ import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 15, 2008
  */
-public class RemoteBundleContextClient
-{
+public class RemoteBundleContextClient {
 
     /**
      * JCL logger.
      */
-    private static final Log LOG = LogFactory.getLog( RemoteBundleContextClient.class );
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteBundleContextClient.class);
 
     /**
      * RMI communication port.
@@ -77,10 +77,12 @@ public class RemoteBundleContextClient
      * @param rmiPort          RMI communication port (cannot be null)
      * @param rmiLookupTimeout timeout for looking up the remote bundle context via RMI (cannot be null)
      */
-    public RemoteBundleContextClient( final String host,
-                                      final Integer rmiPort,
-                                      final long rmiLookupTimeout )
-    {
+    public RemoteBundleContextClient(final String host,
+                                     final Integer rmiPort,
+                                     final long rmiLookupTimeout) {
+        assert (host != null) : "Host should not be null";
+        assert (rmiPort != null) : "rmiPort should not be null";
+
         m_rmiPort = rmiPort;
         m_host = host;
         m_rmiLookupTimeout = rmiLookupTimeout;
@@ -92,114 +94,90 @@ public class RemoteBundleContextClient
      * @param rmiPort          RMI communication port (cannot be null)
      * @param rmiLookupTimeout timeout for looking up the remote bundle context via RMI (cannot be null)
      */
-    public RemoteBundleContextClient( final Integer rmiPort,
-                                      final long rmiLookupTimeout )
-    {
-        this( null, rmiPort, rmiLookupTimeout );
+    public RemoteBundleContextClient(final Integer rmiPort,
+                                     final long rmiLookupTimeout) {
+        this(null, rmiPort, rmiLookupTimeout);
     }
 
     /**
      * {@inheritDoc}
      */
-    public <T> T getService( Class<T> serviceType, final String filter, final long timeout )
-    {
+    public <T> T getService(Class<T> serviceType, final String filter, final long timeout) {
         return (T) Proxy.newProxyInstance(
-            getClass().getClassLoader(),
-            new Class<?>[]{ serviceType },
-            new InvocationHandler()
-            {
-                /**
-                 * {@inheritDoc}
-                 * Delegates the call to remote bundle context.
-                 */
-                public Object invoke( final Object proxy,
-                                      final Method method,
-                                      final Object[] params )
-                    throws Throwable
-                {
-                    try
-                    {
-                        return getRemoteBundleContext().remoteCall(
-                            method.getDeclaringClass(),
-                            method.getName(),
-                            method.getParameterTypes(),
-                            filter,
-                            timeout,
-                            params
-                        );
-                    }
-                    catch( InvocationTargetException e )
-                    {
-                        throw e.getCause();
-                    }
-                    catch( RemoteException e )
-                    {
-                        throw new RuntimeException( "Remote exception", e );
-                    }
-                    catch( Exception e )
-                    {
-                        throw new RuntimeException( "Invocation exception", e );
+                getClass().getClassLoader(),
+                new Class<?>[]{serviceType},
+                new InvocationHandler() {
+                    /**
+                     * {@inheritDoc}
+                     * Delegates the call to remote bundle context.
+                     */
+                    public Object invoke(final Object proxy,
+                                         final Method method,
+                                         final Object[] params)
+                            throws Throwable {
+                        try {
+                            return getRemoteBundleContext().remoteCall(
+                                    method.getDeclaringClass(),
+                                    method.getName(),
+                                    method.getParameterTypes(),
+                                    filter,
+                                    timeout,
+                                    params
+                            );
+                        } catch (InvocationTargetException e) {
+                            throw e.getCause();
+                        } catch (RemoteException e) {
+                            throw new RuntimeException("Remote exception", e);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Invocation exception", e);
+                        }
                     }
                 }
-            }
         )
-            ;
+                ;
     }
 
-    public long install( InputStream stream )
-    {
+    public long install(InputStream stream) {
         // turn this into a local url because we don't want pass the stream any further.
-        try
-        {
+        try {
             //URI location = m_store.getLocation( m_store.store( stream ) );
             // pack as bytecode
-            byte[] packed = pack( stream );
-            if( m_installed == null )
-            {
+            byte[] packed = pack(stream);
+            if (m_installed == null) {
                 m_installed = new Stack<Long>();
             }
-            long id = getRemoteBundleContext().installBundle( "no", packed );
-            m_installed.push( id );
-            getRemoteBundleContext().startBundle( id );
+            long id = getRemoteBundleContext().installBundle("no", packed);
+            m_installed.push(id);
+            getRemoteBundleContext().startBundle(id);
             return id;
-        } catch( IOException e )
-        {
-            throw new RuntimeException( e );
-        } catch( BundleException e )
-        {
-            throw new RuntimeException( "Bundle cannot be installed", e );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (BundleException e) {
+            throw new RuntimeException("Bundle cannot be installed", e);
         }
     }
 
-    private byte[] pack( InputStream stream )
-    {
-        LOG.info( "Packing probe into memory for true RMI. Hopefully things will fill in.." );
+    private byte[] pack(InputStream stream) {
+        LOG.info("Packing probe into memory for true RMI. Hopefully things will fill in..");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try
-        {
-            StreamUtils.copyStream( stream, out, true );
-        } catch( IOException e )
-        {
+        try {
+            StreamUtils.copyStream(stream, out, true);
+        } catch (IOException e) {
 
         }
         return out.toByteArray();
     }
 
-    public void cleanup()
-    {
-        try
-        {
-            while( ( !m_installed.isEmpty() ) )
-            {
+    public void cleanup() {
+        try {
+            while ((!m_installed.isEmpty())) {
                 Long id = m_installed.pop();
-                getRemoteBundleContext().uninstallBundle( id );
+                getRemoteBundleContext().uninstallBundle(id);
             }
-        } catch( IOException e )
-        {
-            throw new RuntimeException( e );
-        } catch( BundleException e )
-        {
-            throw new RuntimeException( "Bundle cannot be uninstalled", e );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (BundleException e) {
+            throw new RuntimeException("Bundle cannot be uninstalled", e);
         }
 
     }
@@ -207,83 +185,55 @@ public class RemoteBundleContextClient
     /**
      * {@inheritDoc}
      */
-    public void setBundleStartLevel( final long bundleId,
-                                     final int startLevel )
-    {
-        try
-        {
-            getRemoteBundleContext().setBundleStartLevel( bundleId, startLevel );
-        }
-        catch( RemoteException e )
-        {
-            throw new RuntimeException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new RuntimeException( "Start level cannot be set", e );
+    public void setBundleStartLevel(final long bundleId,
+                                    final int startLevel) {
+        try {
+            getRemoteBundleContext().setBundleStartLevel(bundleId, startLevel);
+        } catch (RemoteException e) {
+            throw new RuntimeException("Remote exception", e);
+        } catch (BundleException e) {
+            throw new RuntimeException("Start level cannot be set", e);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void start()
-    {
-        try
-        {
-            getRemoteBundleContext().startBundle( 0 );
-        }
-        catch( RemoteException e )
-        {
-            throw new RuntimeException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new RuntimeException( "System bundle cannot be started", e );
+    public void start() {
+        try {
+            getRemoteBundleContext().startBundle(0);
+        } catch (RemoteException e) {
+            throw new RuntimeException("Remote exception", e);
+        } catch (BundleException e) {
+            throw new RuntimeException("System bundle cannot be started", e);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void stop()
-    {
-        try
-        {
-            getRemoteBundleContext().stopBundle( 0 );
-        }
-        catch( RemoteException e )
-        {
-            throw new RuntimeException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new RuntimeException( "System bundle cannot be stopped", e );
+    public void stop() {
+        try {
+            getRemoteBundleContext().stopBundle(0);
+            // TODO trear down rbc registry if we created it before:
+
+        } catch (RemoteException e) {
+            throw new RuntimeException("Remote exception", e);
+        } catch (BundleException e) {
+            throw new RuntimeException("System bundle cannot be stopped", e);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void waitForState( final long bundleId,
-                              final int state,
-                              final long timeoutInMillis )
-    {
-        try
-        {
-            getRemoteBundleContext().waitForState( bundleId, state, timeoutInMillis );
-        }
-        catch( org.ops4j.pax.exam.rbc.internal.TimeoutException e )
-        {
-            throw new RuntimeException( e.getMessage() );
-        }
-        catch( RemoteException e )
-        {
-            throw new RuntimeException( "Remote exception", e );
-        }
-        catch( BundleException e )
-        {
-            throw new RuntimeException( "Bundle cannot be found", e );
+    public void waitForState(final long bundleId,
+                             final int state,
+                             final long timeoutInMillis) {
+        try {
+            getRemoteBundleContext().waitForState(bundleId, state, timeoutInMillis);
+        } catch (Exception e) {
+            throw new RuntimeException("Remote exception", e);
         }
     }
 
@@ -292,68 +242,63 @@ public class RemoteBundleContextClient
      *
      * @return remote bundle context
      */
-    private RemoteBundleContext getRemoteBundleContext()
-    {
-        if( m_remoteBundleContext == null )
-        {
+    private RemoteBundleContext getRemoteBundleContext() {
+        if (m_remoteBundleContext == null) {
             long startedTrying = System.currentTimeMillis();
             //!! Absolutely necesary for RMI class loading to work
             // TODO maybe use ContextClassLoaderUtils.doWithClassLoader
-            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+            LOG.info("Waiting for remote bundle context.. on " + m_host + ":" + m_rmiPort + " timout: " + m_rmiLookupTimeout);
+            // TODO create registry here
             Throwable reason = null;
-            try
-            {
-                Registry registry;
-                if( m_host == null )
-                {
-                    registry = LocateRegistry.getRegistry( m_rmiPort );
-                }
-                else
-                {
-                    registry = LocateRegistry.getRegistry( m_host, m_rmiPort );
-                }
+            Registry registry = null;
 
-                do
-                {
-                    try
-                    {
-                        m_remoteBundleContext = (RemoteBundleContext) registry.lookup( RemoteBundleContext.class.getName() );
-                    }
-                    catch( ConnectException e )
-                    {
-                        reason = e;
-                    }
-                    catch( NotBoundException e )
-                    {
-                        reason = e;
+
+            try {
+                do {
+                    if (registry == null) {
+                        try {
+                            if (m_host == null) {
+                                registry = LocateRegistry.getRegistry(m_rmiPort);
+                            } else {
+                                registry = LocateRegistry.getRegistry(m_host, m_rmiPort);
+                            }
+                        } catch (Exception e) {
+                            LOG.warn("Registry not available", e);
+                        }
+                    } else {
+                        try {
+                            m_remoteBundleContext = (RemoteBundleContext) registry.lookup(RemoteBundleContext.class.getName());
+                        } catch (ConnectException e) {
+                            reason = e;
+                        } catch (NotBoundException e) {
+                            reason = e;
+                        }
                     }
                 }
-                while( m_remoteBundleContext == null
-                       && ( m_rmiLookupTimeout == Constants.WAIT_FOREVER
-                            || System.currentTimeMillis() < startedTrying + m_rmiLookupTimeout ) );
-            }
-            catch( RemoteException e )
-            {
+                while (m_remoteBundleContext == null
+                        && (m_rmiLookupTimeout == Constants.WAIT_FOREVER
+                        || System.currentTimeMillis() < startedTrying + m_rmiLookupTimeout));
+            } catch (RemoteException e) {
                 reason = e;
             }
-            if( m_remoteBundleContext == null )
-            {
-                throw new RuntimeException( "Cannot get the remote bundle context", reason );
+            if (m_remoteBundleContext == null) {
+                throw new RuntimeException("Cannot get the remote bundle context", reason);
             }
             LOG.info(
-                "Remote bundle context found after " + ( System.currentTimeMillis() - startedTrying ) + " millis"
+                    "Remote bundle context found after " + (System.currentTimeMillis() - startedTrying) + " millis"
             );
         }
         return m_remoteBundleContext;
     }
+
 
     /**
      * Getter.
      *
      * @return rmi port
      */
-    public Integer getRmiPort()
-    {
+    public Integer getRmiPort() {
         return m_rmiPort;
     }
 

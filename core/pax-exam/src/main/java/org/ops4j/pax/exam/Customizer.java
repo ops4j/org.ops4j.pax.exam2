@@ -38,7 +38,6 @@ public abstract class Customizer implements Option
      */
     public void customizeEnvironment( File workingFolder )
     {
-        return;
     }
 
     /**

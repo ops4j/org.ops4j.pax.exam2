@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam;
 
-import org.ops4j.pax.exam.TestContainerException;
-
 /**
  * Denotes an exception occuring during using test container that appears due to a timeout.
  *
