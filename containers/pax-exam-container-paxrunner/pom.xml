@@ -59,10 +59,7 @@
             <groupId>org.ops4j.pax.runner</groupId>
             <artifactId>pax-runner-no-jcl</artifactId>
         </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
+       
         <!--
         <dependency>
           <groupId>org.ops4j.pax.url</groupId>
