@@ -74,6 +74,11 @@
                 <module>core/pax-exam-extender-service</module>
 
                 <module>containers/pax-exam-container-native</module>
+                
+                <module>containers/pax-exam-container-remote</module>
+                <module>containers/pax-exam-container-paxrunner</module>
+                <module>spice/pax-exam-container-rbc</module>
+                <module>spice/pax-exam-container-rbc-client</module>
 
                 <module>drivers/pax-exam-junit4</module>
 
