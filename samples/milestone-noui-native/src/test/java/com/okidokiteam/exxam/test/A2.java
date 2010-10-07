@@ -28,6 +28,7 @@ import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.LibraryOptions.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 import static org.ops4j.pax.exam.options.ReUsePolicy.*;
 
 /**
@@ -43,7 +44,8 @@ public class A2
         return options(
             junitBundles(),
             easyMockBundles(),
-            executionPolicy().reuseContainer( ALWAYS )
+            executionPolicy().reuseContainer( ALWAYS ),
+            cleanCaches()
         );
     }
 
