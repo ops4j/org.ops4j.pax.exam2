@@ -14,4 +14,6 @@ public interface TestProbeBuilder extends TestProbeProvider
     TestProbeBuilder setAnchor( Class anchor );
 
     TestProbeBuilder setHeader( String key, String value );
+
+    TestProbeBuilder ignorePackageOf( Class... classes );
 }

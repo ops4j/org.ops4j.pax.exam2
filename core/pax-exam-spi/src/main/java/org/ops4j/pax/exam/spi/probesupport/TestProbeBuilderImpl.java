@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
@@ -43,6 +45,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
 
     private Class m_anchor;
     private Properties m_extraProperties;
+    private Set<String> m_ignorePackages = new HashSet<String>();
 
     public TestProbeBuilderImpl( Properties p )
     {
@@ -78,6 +81,19 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return this;
     }
 
+    // when your testclass contains clutter in non-test methods,
+    // bnd generates too many impports.
+    // This makes packages optional.
+    public TestProbeBuilder ignorePackageOf( Class... classes )
+    {
+        for( Class c : classes )
+        {
+            m_ignorePackages.add( c.getPackage().getName() );
+        }
+
+        return this;
+    }
+
     public TestAddress[] getTests()
     {
         return m_probeCalls.toArray( new TestAddress[ m_probeCalls.size() ] );
@@ -86,6 +102,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
     public InputStream getStream()
     {
         constructProbeTag( m_extraProperties );
+        addIgnores( m_extraProperties );
         try
         {
             String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
@@ -96,6 +113,20 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         {
             throw new RuntimeException( e );
         }
+    }
+
+    private void addIgnores( Properties extraProperties )
+    {
+        StringBuilder sb = new StringBuilder();
+        for( String p : m_ignorePackages )
+        {
+            if( sb.length() > 0 )
+            {
+                sb.append( "," );
+            }
+            sb.append( p );
+        }
+        extraProperties.put( "Ignore-Package", sb.toString() );
     }
 
     private InputStream sink( InputStream inputStream )
