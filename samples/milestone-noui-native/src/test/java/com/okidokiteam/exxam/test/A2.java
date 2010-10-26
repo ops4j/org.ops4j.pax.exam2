@@ -56,7 +56,7 @@ public class A2
             .setHeader( "Bundle-SymbolicName", "ItsAMario" );
     }
 
-    //@Test
+    @Test
     public void withoutBC()
     {
         System.out.println( "++++ PEAK ++++" );

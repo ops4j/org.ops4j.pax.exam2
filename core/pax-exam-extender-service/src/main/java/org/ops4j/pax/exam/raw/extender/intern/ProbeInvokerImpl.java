@@ -23,7 +23,6 @@ import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 
 /**
- *
  * Turns a instruction into a service call.
  * Currently used with encoded instructions from org.ops4j.pax.exam.spi.container.ClassMethodTestAddress
  *
@@ -50,7 +49,18 @@ public class ProbeInvokerImpl implements ProbeInvoker
         throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
         final Class testClass = m_ctx.getBundle().loadClass( m_clazz );
-        int encountered = 0;
+
+        if( !( findAndInvoke( testClass ) || findAndInvoke( testClass, BundleContext.class ) ) )
+        {
+            throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
+        }
+
+        //iteratingSearcher( testClass, encountered );
+    }
+
+    private void iteratingSearcher( Class testClass, int encountered )
+        throws IllegalAccessException, InvocationTargetException, InstantiationException
+    {
         for( final Method testMethod : testClass.getMethods() )
         {
             if( testMethod.getName().equals( m_method ) )
@@ -63,6 +73,27 @@ public class ProbeInvokerImpl implements ProbeInvoker
         {
             throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
         }
+    }
+
+    private boolean findAndInvoke( Class testClass, Class<?>... params )
+        throws IllegalAccessException, InvocationTargetException, InstantiationException
+    {
+        try
+        {
+            Method meth = testClass.getMethod( m_method, params );
+            if( meth != null )
+            {
+                injectContextAndInvoke( testClass.newInstance(), meth );
+                return true;
+            }
+        } catch( NoSuchMethodException e )
+        {
+            //
+        } catch( NoClassDefFoundError e )
+        {
+            //
+        }
+        return false;
     }
 
     /**
@@ -101,8 +132,7 @@ public class ProbeInvokerImpl implements ProbeInvoker
             }
             cleanup = true;
             //runAfters( testInstance );
-        }
-        finally
+        } finally
         {
             if( !cleanup )
             {
