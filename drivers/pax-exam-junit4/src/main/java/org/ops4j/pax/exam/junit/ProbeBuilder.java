@@ -1,12 +1,15 @@
 package org.ops4j.pax.exam.junit;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * Created by IntelliJ IDEA.
- * User: tonit
- * Date: 10/26/10
- * Time: 12:50 PM
- * To change this template use File | Settings | File Templates.
+ *
  */
+@Retention( RetentionPolicy.RUNTIME )
+@Target( { ElementType.METHOD } )
 public @interface ProbeBuilder
 {
 

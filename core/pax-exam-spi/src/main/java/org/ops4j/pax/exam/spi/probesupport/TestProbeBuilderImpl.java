@@ -74,7 +74,8 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
 
     public TestProbeBuilder setHeader( String key, String value )
     {
-        return null;
+        m_extraProperties.put( key, value );
+        return this;
     }
 
     public TestAddress[] getTests()

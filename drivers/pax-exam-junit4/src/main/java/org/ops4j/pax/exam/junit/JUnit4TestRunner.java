@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.spi.ExxamReactor;
@@ -102,6 +104,9 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         Properties extraProperties = new Properties();
 
         TestProbeBuilder probe = createProbe( extraProperties );
+        // overwrite with possible user settings:
+        probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
+
         probe.setAnchor( testClass );
         for( FrameworkMethod s : getChildren() )
         {
@@ -112,6 +117,41 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         reactor.addProbe( probe );
         // finally stage it
         return stage( reactor, testClass );
+    }
+
+    private TestProbeBuilder overwriteWithUserDefinition( Class testClass, Object instance, TestProbeBuilder probe )
+        throws ExamConfigurationException
+    {
+        Method[] methods = testClass.getDeclaredMethods();
+        for( Method m : methods )
+        {
+            LOG.debug( "Trying.." + m.getName() );
+            ProbeBuilder conf = m.getAnnotation( ProbeBuilder.class );
+            if( conf != null )
+            {
+                // consider as option, so prepare that one:
+                LOG.debug( "User defined probe hook found: " + m.getName() );
+                TestProbeBuilder probeBuilder;
+                try
+                {
+                    probeBuilder = (TestProbeBuilder) m.invoke( instance, probe );
+                } catch( Exception e )
+                {
+                    throw new ExamConfigurationException( "Invoking custom probe hook " + m.getName() + " failed", e );
+                }
+                if( probeBuilder != null )
+                {
+                    return probe;
+                }
+                else
+                {
+                    throw new ExamConfigurationException( "Invoking custom probe hook " + m.getName() + " succeeded but returned null" );
+                }
+
+            }
+        }
+        LOG.debug( "No User defined probe hook found" );
+        return probe;
     }
 
     private StagedExamReactor stage( ExxamReactor reactor, Class testClass )

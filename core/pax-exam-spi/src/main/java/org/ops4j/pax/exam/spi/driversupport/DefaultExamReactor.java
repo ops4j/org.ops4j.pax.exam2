@@ -34,7 +34,7 @@ import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactor;
 /**
  * Reactor decouples {@link org.ops4j.pax.exam.TestContainer} state from the observer. It is also
  * in control to map probes to their configurations or vice versa. In essence,
- * this implements the Container re-start/re-use policy topic.
+ * this implements the Container re-start/re-use policy topic by collecting relevant tests and configurations and passing them to a (user selected factory (see stage()).
  *
  * @author tonit
  */

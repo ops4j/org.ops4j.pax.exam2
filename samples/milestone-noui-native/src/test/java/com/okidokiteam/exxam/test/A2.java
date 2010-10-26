@@ -52,15 +52,15 @@ public class A2
             easyMockBundles(),
             cleanCaches()
         );
-    }
+    } 
 
     @ProbeBuilder
     public TestProbeBuilder customizeProbe( TestProbeBuilder overwrite )
     {
-        return overwrite.setHeader( "Symbolic-BundleName", "ItsAMario" );
+        return overwrite.setHeader( "Bundle-SymbolicName", "ItsAMario" );
     }
 
-    @Test
+    //@Test
     public void withoutBC()
     {
         System.out.println( "++++ PEAK ++++" );
