@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.spi;
+package org.ops4j.pax.exam;
 
 /**
  * @author Toni Menzel
@@ -10,6 +10,8 @@ public interface TestProbeBuilder extends TestProbeProvider
     TestProbeBuilder addTest( TestAddress... calls );
 
     TestProbeBuilder addTest( Class... clazz );
-    
+
     TestProbeBuilder setAnchor( Class anchor );
+
+    TestProbeBuilder setHeader( String key, String value );
 }

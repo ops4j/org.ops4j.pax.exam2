@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,16 +34,27 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.spi.ExxamReactor;
-import org.ops4j.pax.exam.spi.TestAddress;
+import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
 
+/**
+ * This is the default Test Runner using Exxam plumbing API.
+ * Its also the blueprint for custom, much more specific runners.
+ * This will make a single probe bundling in all @Tests in this class.
+ *
+ * This uses the whole test class as a single unit of tests with the following valid annotaions:
+ * - @Configuration -> Configuration 1:N. Multiple configurations will result into multiple invokations of the same test.
+ * - @ProbeBuilder -> Customize the probe creation.
+ * - @Test -> Single tests to be invoked. Note that in @Configuration you can specify the invokation strategy.
+ */
 public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 {
 
@@ -73,6 +85,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         Class testClass = getTestClass().getJavaClass();
 
         Object testClassInstance = testClass.newInstance();
+
         Method[] methods = testClass.getDeclaredMethods();
         for( Method m : methods )
         {
@@ -86,7 +99,9 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         }
 
         // add the tests to run as well:
-        TestProbeBuilder probe = createProbe();
+        Properties extraProperties = new Properties();
+
+        TestProbeBuilder probe = createProbe( extraProperties );
         probe.setAnchor( testClass );
         for( FrameworkMethod s : getChildren() )
         {
@@ -96,7 +111,15 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         }
         reactor.addProbe( probe );
         // finally stage it
-        return reactor.stage();
+        return stage( reactor, testClass );
+    }
+
+    private StagedExamReactor stage( ExxamReactor reactor, Class testClass )
+        throws InstantiationException, IllegalAccessException
+    {
+        ExamReactorStrategy strategy = (ExamReactorStrategy) testClass.getAnnotation( ExamReactorStrategy.class );
+        StagedExamReactorFactory fact = strategy.value()[ 0 ].newInstance();
+        return reactor.stage( fact );
     }
 
     private DefaultExamReactor getReactor()

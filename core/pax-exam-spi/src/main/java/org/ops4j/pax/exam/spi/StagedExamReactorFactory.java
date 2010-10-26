@@ -17,6 +17,13 @@
  */
 package org.ops4j.pax.exam.spi;
 
-public interface StagingPolicy {
+import java.util.List;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.TestProbeBuilder;
 
+public interface StagedExamReactorFactory
+{
+
+    StagedExamReactor create( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes );
 }

@@ -20,11 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
+import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.spi.TestAddress;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 
 /**

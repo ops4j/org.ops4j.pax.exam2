@@ -19,9 +19,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.ProbeBuilder;
 import org.ops4j.pax.exam.options.ReUsePolicy;
+import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
@@ -35,18 +40,24 @@ import static org.ops4j.pax.exam.options.ReUsePolicy.*;
  * Simple Test Rack that uses the JUnit4 UI
  */
 @RunWith( JUnit4TestRunner.class )
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class A2
 {
 
-    @Configuration
+    @Configuration()
     public Option[] config()
     {
         return options(
             junitBundles(),
             easyMockBundles(),
-            executionPolicy().reuseContainer( ALWAYS ),
             cleanCaches()
         );
+    }
+
+    @ProbeBuilder
+    public TestProbeBuilder customizeProbe( TestProbeBuilder overwrite )
+    {
+        return overwrite.setHeader( "Symbolic-BundleName", "ItsAMario" );
     }
 
     @Test

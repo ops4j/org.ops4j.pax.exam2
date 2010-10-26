@@ -24,9 +24,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactor;
 
 /**
@@ -62,17 +64,10 @@ public class DefaultExamReactor implements ExxamReactor
         m_probes.add( addTest );
     }
 
-    synchronized public StagedExamReactor stage()
+    synchronized public StagedExamReactor stage( StagedExamReactorFactory factory )
     {
-        LOG.debug( "Staging reactor with probes: " + m_probes.toString() );
-        // do some fancy stuff and create the staged reactor
-
-        // 1. Cut out the framework options.
-
-        // for now we don't care
-        // return new AllConfinedStagedReactor( m_configurations, m_probes );
-
-        return new EagerSingleStagedReactor( m_factory, m_configurations, m_probes );
+        LOG.debug( "Staging reactor with probes: " + m_probes.toString() + " using strategy: " + factory );
+        return factory.create( m_factory, m_configurations, m_probes );
     }
 
 }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi;
+package org.ops4j.pax.exam;
 
 /**
  * This references a test. Use it to call a test on TestContainers.

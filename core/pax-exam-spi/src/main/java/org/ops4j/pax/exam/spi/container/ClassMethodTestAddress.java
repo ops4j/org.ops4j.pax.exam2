@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
-import org.ops4j.pax.exam.spi.TestAddress;
+import org.ops4j.pax.exam.TestAddress;
 
 /**
  * @author Toni Menzel

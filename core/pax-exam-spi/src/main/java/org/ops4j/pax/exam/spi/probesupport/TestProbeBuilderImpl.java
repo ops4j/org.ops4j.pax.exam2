@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import org.ops4j.pax.exam.spi.TestAddress;
-import org.ops4j.pax.exam.spi.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
@@ -42,11 +42,17 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
     private List<TestAddress> m_probeCalls = new ArrayList<TestAddress>();
 
     private Class m_anchor;
+    private Properties m_extraProperties;
+
+    public TestProbeBuilderImpl( Properties p )
+    {
+        m_extraProperties = p;
+    }
 
     public TestProbeBuilder addTest( TestAddress... calls )
     {
-        m_probeCalls.addAll(Arrays.asList(calls));
-    
+        m_probeCalls.addAll( Arrays.asList( calls ) );
+
         return this;
     }
 
@@ -66,22 +72,24 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return this;
     }
 
+    public TestProbeBuilder setHeader( String key, String value )
+    {
+        return null;
+    }
+
     public TestAddress[] getTests()
     {
-        return m_probeCalls.toArray( new TestAddress[m_probeCalls.size()] );
+        return m_probeCalls.toArray( new TestAddress[ m_probeCalls.size() ] );
     }
 
     public InputStream getStream()
     {
-
-        Properties p = new Properties();
-        constructProbeTag( p );
-
+        constructProbeTag( m_extraProperties );
         try
         {
             String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
             File base = new FileTailImpl( new File( "." ), tail ).getParentOfTail();
-            return sink( new BundleBuilder( p, new ResourceWriter( base ) ).build() );
+            return sink( new BundleBuilder( m_extraProperties, new ResourceWriter( base ) ).build() );
 
         } catch( IOException e )
         {

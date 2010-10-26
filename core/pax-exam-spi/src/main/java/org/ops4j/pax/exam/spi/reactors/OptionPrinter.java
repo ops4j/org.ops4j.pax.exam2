@@ -27,13 +27,13 @@ import org.ops4j.pax.exam.TestContainer;
 public class OptionPrinter
 {
 
-    private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
+    private static Logger LOG = LoggerFactory.getLogger( OptionPrinter.class );
 
     public void print( String contextText, final OptionDescription options, Class<? extends TestContainer> containerClazz )
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n**[OPTIONS Report] : ").append(contextText);
-        sb.append("\nContainer used: ").append(containerClazz.getName());
+        sb.append( "\n**[OPTIONS Report] : " ).append( contextText );
+        sb.append( "\nContainer used: " ).append( containerClazz.getName() );
         if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
         {
             sb.append( "\nPossible problem: No options discovered. " );
@@ -45,7 +45,7 @@ public class OptionPrinter
             sb.append( "\nOptions Included :" );
             for( Option s : options.getUsedOptions() )
             {
-                sb.append("\n          ").append(s);
+                sb.append( "\n          " ).append( s );
 
             }
         }
@@ -61,7 +61,7 @@ public class OptionPrinter
 
             for( Option s : options.getIgnoredOptions() )
             {
-                sb.append("\n          ").append(s);
+                sb.append( "\n          " ).append( s );
 
             }
         }
