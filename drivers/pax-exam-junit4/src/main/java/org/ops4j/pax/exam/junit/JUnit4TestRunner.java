@@ -44,6 +44,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
 
@@ -158,7 +159,17 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         throws InstantiationException, IllegalAccessException
     {
         ExamReactorStrategy strategy = (ExamReactorStrategy) testClass.getAnnotation( ExamReactorStrategy.class );
-        StagedExamReactorFactory fact = strategy.value()[ 0 ].newInstance();
+
+        StagedExamReactorFactory fact;
+        if( strategy != null )
+        {
+            fact = strategy.value()[ 0 ].newInstance();
+        }
+        else
+        {
+            // default:
+            fact = new AllConfinedStagedReactorFactory();
+        }
         return reactor.stage( fact );
     }
 
