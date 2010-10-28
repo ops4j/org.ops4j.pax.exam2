@@ -27,7 +27,6 @@ import java.util.jar.JarOutputStream;
 import org.osgi.framework.Constants;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.exam.spi.container.DuplicateAwareJarOutputStream;
-import org.ops4j.pax.swissbox.bnd.BndUtils;
 
 /**
  * Responsible for creating the on-the fly bundle.
@@ -41,22 +40,21 @@ public class BundleBuilder
 
     private ResourceLocator m_resourceLocator;
 
-    private Properties m_refs;
+    private Properties[] m_props;
 
     /**
      * Constructor.
      *
-     * @param ref             name of test class
      * @param resourceLocator locator that gathers all resources that have to be inside the test probe
+     * @param p               properties to be merged.
      */
-    public BundleBuilder( final Properties ref,
-                          final ResourceLocator resourceLocator )
+    public BundleBuilder( final ResourceLocator resourceLocator, Properties... p )
     {
-        NullArgumentException.validateNotNull( ref, "ref" );
+
         NullArgumentException.validateNotNull( resourceLocator, "resourceLocator" );
 
         m_resourceLocator = resourceLocator;
-        m_refs = ref;
+        m_props = p;
 
     }
 
@@ -84,19 +82,15 @@ public class BundleBuilder
                         jos = new DuplicateAwareJarOutputStream( pout );
                         m_resourceLocator.write( jos );
                         jos.close();
-                    }
-
-                    catch( IOException e )
+                    } catch( IOException e )
                     {
                         //throw new RuntimeException( e );
-                    }
-                    finally
+                    } finally
                     {
                         try
                         {
                             pout.close();
-                        }
-                        catch( Exception e )
+                        } catch( Exception e )
                         {
                             //  throw new TestExecutionException( "Cannot close builder stream ??", e );
                         }
@@ -104,17 +98,13 @@ public class BundleBuilder
                 }
             }.start();
 
-            // TODO set args on BndUtils
-            if( m_refs.getProperty( Constants.BUNDLE_SYMBOLICNAME ) == null )
-            {
-                m_refs.setProperty( Constants.BUNDLE_SYMBOLICNAME, "BuiltByDirUrlHandler" );
-            }
-            InputStream result = BndUtils.createBundle( fis, m_refs, m_resourceLocator.toString() );
+            //      m_refs.setProperty( Constants.BUNDLE_SYMBOLICNAME, "BuiltByDirUrlHandler" );
+
+            InputStream result = BndWrapper.createBundle( fis, m_resourceLocator.toString(), m_props );
             fis.close();
             pout.close();
             return result;
-        }
-        catch( IOException e )
+        } catch( IOException e )
         {
             throw new RuntimeException( e );
         }

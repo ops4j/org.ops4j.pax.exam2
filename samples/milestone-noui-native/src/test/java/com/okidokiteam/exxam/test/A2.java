@@ -21,21 +21,22 @@ import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.LibraryOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * Simple Test Rack that uses the JUnit4 UI
  */
 @RunWith( JUnit4TestRunner.class )
-//@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class A2
 {
 
@@ -44,16 +45,15 @@ public class A2
     {
         return options(
             junitBundles(),
-            easyMockBundles(),
-            cleanCaches()
+            easyMockBundles()
         );
     }
 
     @ProbeBuilder
     public TestProbeBuilder customizeProbe( TestProbeBuilder overwrite )
     {
-        return overwrite
-            .setHeader( "Bundle-SymbolicName", "ItsAMario" );
+        return overwrite;
+           // .setHeader( "Bundle-SymbolicName", "ItsAMario" );
     }
 
     @Test

@@ -52,7 +52,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         if( m_configs.size() < 1 )
         {
             // fill in a default config
-            m_configs.add( new Option[0] );
+            m_configs.add( new Option[ 0 ] );
         }
     }
 
@@ -70,8 +70,10 @@ public class AllConfinedStagedReactor implements StagedExamReactor
             {
                 TestContainer runtime = m_factory.createContainer( s );
 
-                printer.print( getClass().getName(), s, runtime.getClass());
+                printer.print( getClass().getName(), s, runtime.getClass() );
+                LOG.debug( "Reactor starting the selected TestContainer: " + runtime + " .. " );
                 runtime.start();
+                LOG.debug( "Test Container is ready." );
                 try
                 {
                     for( TestProbeBuilder builder : m_probes )

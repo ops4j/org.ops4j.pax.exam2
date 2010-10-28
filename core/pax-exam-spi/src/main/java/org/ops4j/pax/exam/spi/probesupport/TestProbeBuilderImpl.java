@@ -102,12 +102,14 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
     public InputStream getStream()
     {
         constructProbeTag( m_extraProperties );
-        addIgnores( m_extraProperties );
+
+        Properties p = createExtraIgnores();
+
         try
         {
             String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
             File base = new FileTailImpl( new File( "." ), tail ).getParentOfTail();
-            return sink( new BundleBuilder( m_extraProperties, new ResourceWriter( base ) ).build() );
+            return sink( new BundleBuilder( new ResourceWriter( base ), m_extraProperties, p ).build() );
 
         } catch( IOException e )
         {
@@ -115,8 +117,9 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         }
     }
 
-    private void addIgnores( Properties extraProperties )
+    private Properties createExtraIgnores()
     {
+        Properties extraProperties = new Properties();
         StringBuilder sb = new StringBuilder();
         for( String p : m_ignorePackages )
         {
@@ -127,6 +130,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
             sb.append( p );
         }
         extraProperties.put( "Ignore-Package", sb.toString() );
+        return extraProperties;
     }
 
     private InputStream sink( InputStream inputStream )

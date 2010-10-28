@@ -104,6 +104,9 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         // add the tests to run as well:
         Properties extraProperties = new Properties();
 
+        // TODO remove ignore flagged methods:
+
+
         TestProbeBuilder probe = createProbe( extraProperties );
         // overwrite with possible user settings:
         probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );

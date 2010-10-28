@@ -33,11 +33,10 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-bnd</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <groupId>biz.aQute</groupId>
+            <artifactId>bndlib</artifactId>
+            <version>0.0.313</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>

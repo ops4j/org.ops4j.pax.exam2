@@ -115,4 +115,9 @@ public class ResourceWriter implements ResourceLocator
         target.putNextEntry( new JarEntry( name ) );
         StreamUtils.copyStream( fileIn, target, false );
     }
+
+    public String toString()
+    {
+        return "" + this.getClass().getName() + "";
+    }
 }
