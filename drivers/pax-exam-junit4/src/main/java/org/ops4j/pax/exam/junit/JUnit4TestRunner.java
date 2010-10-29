@@ -47,6 +47,7 @@ import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
 
@@ -72,7 +73,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         throws InitializationError
     {
         super( klass );
-        LOG.info( "-- Pax Exam Junit4 Driver init." );
+        LOG.info( "-- Pax Exam Junit4 Driver init for " + klass.getName() );
         m_map = new HashMap<FrameworkMethod, TestAddress>();
         try
         {
@@ -84,7 +85,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         }
     }
 
-    private StagedExamReactor prepareReactor()
+    private synchronized StagedExamReactor prepareReactor()
         throws Exception
     {
         ExxamReactor reactor = getReactor();
@@ -173,7 +174,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         else
         {
             // default:
-            fact = new AllConfinedStagedReactorFactory();
+            fact = new EagerSingleStagedReactorFactory();
         }
         return reactor.stage( fact );
     }
@@ -192,7 +193,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
     // overwrite call chain
 
-    protected Statement methodInvoker( final FrameworkMethod method, final Object test )
+    protected synchronized Statement methodInvoker( final FrameworkMethod method, final Object test )
     {
         return new Statement()
         {
@@ -215,31 +216,8 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
     protected void validateTestMethods( List<Throwable> errors )
     {
+        super.validateTestMethods( errors );
     }
 
-    protected Statement methodBlock( FrameworkMethod method )
-    {
-
-        Object test;
-        try
-        {
-            test = new ReflectiveCallable()
-            {
-                @Override
-                protected Object runReflectiveCall()
-                    throws Throwable
-                {
-                    return createTest();
-                }
-            }.run();
-        } catch( Throwable e )
-        {
-            return new Fail( e );
-        }
-
-        Statement statement = methodInvoker( method, test );
-
-        return statement;
-    }
 
 }
