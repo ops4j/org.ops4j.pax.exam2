@@ -58,7 +58,7 @@ public class DefaultRaw
     public static TestProbeBuilder createProbe( Properties p )
         throws IOException
     {
-        Store<InputStream> store = StoreFactory.anonymousStore();
+        Store<InputStream> store = StoreFactory.defaultStore();
         return new TestProbeBuilderImpl( p, store );
     }
 

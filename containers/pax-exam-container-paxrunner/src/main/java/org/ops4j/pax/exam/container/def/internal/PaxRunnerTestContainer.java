@@ -121,7 +121,7 @@ public class PaxRunnerTestContainer
         m_target = target; //new RBCRemoteTarget( options );
 
         m_customizers = new CompositeCustomizer( customizer );
-        m_store = StoreFactory.sharedLocalStore();
+        m_store = StoreFactory.defaultStore();
         m_cache = new HashMap<String, Handle>();
     }
 
