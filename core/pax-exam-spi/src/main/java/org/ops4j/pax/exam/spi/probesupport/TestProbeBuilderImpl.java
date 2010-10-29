@@ -26,13 +26,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
-import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
-import org.ops4j.store.StoreFactory;
 
 /**
  * Default implementation allows you to dynamically create a probe from current classpath.
