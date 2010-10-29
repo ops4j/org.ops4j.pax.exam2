@@ -34,6 +34,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
@@ -61,7 +63,7 @@ import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
 public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 {
 
-    private static Log LOG = LogFactory.getLog( JUnit4TestRunner.class );
+    private static Logger LOG = LoggerFactory.getLogger( JUnit4TestRunner.class );
 
     private final StagedExamReactor m_reactor;
     private final Map<FrameworkMethod, TestAddress> m_map;
@@ -70,6 +72,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         throws InitializationError
     {
         super( klass );
+        LOG.info( "-- Pax Exam Junit4 Driver init." );
         m_map = new HashMap<FrameworkMethod, TestAddress>();
         try
         {
@@ -105,7 +108,6 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         Properties extraProperties = new Properties();
 
         // TODO remove ignore flagged methods:
-
 
         TestProbeBuilder probe = createProbe( extraProperties );
         // overwrite with possible user settings:
@@ -183,6 +185,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
     private TestAddress save( FrameworkMethod fwMethod, TestAddress call )
     {
+        LOG.info( "Assign " + fwMethod.getName() + " to Address: " + call.signature() );
         m_map.put( fwMethod, call );
         return call;
     }
@@ -208,16 +211,6 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     protected TestAddress findMatchingCall( FrameworkMethod method, Object test )
     {
         return m_map.get( method );
-    }
-
-    @Override
-    protected List<MethodRule> rules( Object test )
-    {
-        List<MethodRule> rules = new ArrayList<MethodRule>();
-        rules.add( new ExamRule( test ) );
-        rules.addAll( super.rules( test ) );
-
-        return rules;
     }
 
     protected void validateTestMethods( List<Throwable> errors )

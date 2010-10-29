@@ -19,18 +19,14 @@ package org.ops4j.pax.exam.spi.driversupport;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactor;
 
 /**
  * Reactor decouples {@link org.ops4j.pax.exam.TestContainer} state from the observer. It is also
@@ -42,7 +38,7 @@ import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactor;
 public class DefaultExamReactor implements ExxamReactor
 {
 
-    private static Log LOG = LogFactory.getLog( DefaultExamReactor.class );
+    private static Logger LOG = LoggerFactory.getLogger( DefaultExamReactor.class );
 
     final private List<Option[]> m_configurations;
     final private List<TestProbeProvider> m_probes;
@@ -67,8 +63,21 @@ public class DefaultExamReactor implements ExxamReactor
 
     synchronized public StagedExamReactor stage( StagedExamReactorFactory factory )
     {
-        LOG.debug( "Staging reactor with probes: " + m_probes.toString() + " using strategy: " + factory );
+        LOG.info( "Staging reactor with probes: " + m_probes.size() + " using strategy: " + factory );
+        //printMassiveInformation();
         return factory.create( m_factory, m_configurations, m_probes );
+    }
+
+    private void printMassiveInformation()
+    {
+        if( LOG.isInfoEnabled() )
+        {
+            for( TestProbeProvider p : m_probes )
+            {
+                LOG.info( p.toString() );
+            }
+
+        }
     }
 
 }

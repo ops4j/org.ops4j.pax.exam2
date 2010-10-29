@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.test;
-
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+package com.okidokiteam.exxam.test.plumbing;
 
 /**
- * Simple Test Rack that uses the JUnit4 UI
+ * Created by IntelliJ IDEA.
+ * User: tonit
+ * Date: Aug 20, 2010
+ * Time: 4:33:31 PM
+ * To change this template use File | Settings | File Templates.
  */
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class A2_A extends A2
-{
-
-
+public class Probe2 {
+     public void myOwnClass()
+    {
+        System.out.println( "++++ PEAK ++++" );
+    }
 }

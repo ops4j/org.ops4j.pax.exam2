@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.test;
+package com.okidokiteam.exxam.test.plumbing;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.Option;
@@ -21,7 +21,6 @@ import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
@@ -44,42 +43,9 @@ public class A1
     }
 
     /**
-     * Very low level.
-     * @throws Exception problems?
-     */
-    @Test
-    public void minimalPlanBareLowLevel()
-        throws Exception
-    {
-        TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
-
-// the parse will split all single containers into dedicated OptionDescription(s)
-        for( OptionDescription testTarget : factory.parse( options ) )
-        {
-            TestContainer testContainer = factory.createContainer( testTarget );
-            try
-            {
-                testContainer.start();
-                TestProbeProvider probe = createProbe().addTest( Probe.class ).build();
-                testContainer.install( probe.getStream() );
-
-                for( TestAddress call : probe.getTests() )
-                {
-                    // this is a shortcut for getting the proper Service (ServiceInvoker currently) and calls the "invoke" with that call (handle)
-                    execute( testContainer, call );
-                }
-            } finally
-            {
-                testContainer.stop();
-            }
-        }
-    }
-
-    /**
      * Low level but reactor support.
      */
-    @Test
+    // @Test
     public void minimalPlanUsingReactor()
         throws Exception
     {
@@ -121,6 +87,40 @@ public class A1
         } finally
         {
             stagedReactor.tearDown();
+        }
+    }
+
+    /**
+     * Very low level.
+     *
+     * @throws Exception problems?
+     */
+    @Test
+    public void minimalPlanBareLowLevel()
+        throws Exception
+    {
+        TestContainerFactory factory = getFactory();
+        Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
+
+// the parse will split all single containers into dedicated OptionDescription(s)
+        for( OptionDescription testTarget : factory.parse( options ) )
+        {
+            TestContainer testContainer = factory.createContainer( testTarget );
+            try
+            {
+                testContainer.start();
+                TestProbeProvider probe = createProbe().addTest( Probe.class ).build();
+                testContainer.install( probe.getStream() );
+
+                for( TestAddress call : probe.getTests() )
+                {
+                    // this is a shortcut for getting the proper Service (ServiceInvoker currently) and calls the "invoke" with that call (handle)
+                    execute( testContainer, call );
+                }
+            } finally
+            {
+                testContainer.stop();
+            }
         }
     }
 

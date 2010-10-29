@@ -31,7 +31,7 @@ public interface TestTarget
      * @param filter          filter (osgi)
      * @param timeoutInMillis timout of request. Zero means: no timeout.
      *
-     * @return service (or at least client proxy) of service. Or Null if lookup failed.
+     * @return service (or at least client proxy) of service. If the lookup failed, an exception must be thrown. THus, this never returns null.
      *
      * @throws TestContainerException in case a container problem occured.
      */

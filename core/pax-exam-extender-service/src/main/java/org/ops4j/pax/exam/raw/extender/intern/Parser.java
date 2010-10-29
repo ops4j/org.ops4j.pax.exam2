@@ -39,6 +39,7 @@ public class Parser {
         List<Probe> probes = new ArrayList<Probe>();
 
         // read signatures
+        LOG.debug( "Parsing signatures: " + sigs );
         signatures.addAll(Arrays.asList(sigs.split(",")));
 
         for (ManifestEntry manifestEntry : manifestEntries) {

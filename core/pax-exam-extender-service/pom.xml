@@ -44,7 +44,8 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency> 
+        <!-- Version must match the Pax Logging exported API. Otherwise things will not work -->
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.5.0</version>

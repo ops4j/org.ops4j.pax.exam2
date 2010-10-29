@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.test;
+package com.okidokiteam.exxam.test.porcelain;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
@@ -39,6 +39,8 @@ import static org.ops4j.pax.exam.LibraryOptions.*;
 @RunWith( JUnit4TestRunner.class )
 public class A2
 {
+
+    private static Logger LOG = LoggerFactory.getLogger( A2.class );
 
     @Configuration()
     public Option[] config()
@@ -59,10 +61,10 @@ public class A2
     @Test
     public void withoutBC()
     {
-        System.out.println( "++++ PEAK ++++" );
+        LOG.info( "++++ PEAK from " + this.getClass().getName() );
     }
 
-    @Test
+    // @Test
     public void withBC( BundleContext ctx )
     {
         for( Bundle b : ctx.getBundles() )

@@ -13,18 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.test;
+package com.okidokiteam.exxam.test.plumbing;
+
+import org.osgi.framework.BundleContext;
+
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsNull.*;
+import static org.junit.Assert.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: tonit
- * Date: Aug 20, 2010
- * Time: 4:33:31 PM
- * To change this template use File | Settings | File Templates.
+ * External TestProbe.
+ * Assemble yourself using:
+ * createProbe().addTest( Probe.class )
  */
-public class Probe2 {
-     public void myOwnClass()
+public class Probe
+{
+
+    public void withoutBC()
     {
         System.out.println( "++++ PEAK ++++" );
+    }
+
+    public void withBC( BundleContext ctx )
+    {
+        assertThat( ctx, is( notNullValue() ) );
+        System.out.println( "BundleContext of bundle injected: " + ctx.getBundle().getSymbolicName() );
+
+    }
+
+    private void neverCall()
+    {
+        fail( "Don't call me !" );
     }
 }

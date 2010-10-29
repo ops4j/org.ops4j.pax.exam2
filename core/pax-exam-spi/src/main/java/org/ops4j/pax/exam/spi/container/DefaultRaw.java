@@ -49,9 +49,11 @@ public class DefaultRaw
 
     private static Logger LOG = LoggerFactory.getLogger( DefaultRaw.class );
 
-    private static int id = 0;
+    
     private static final String PAX_EXAM_EXECUTABLE_SIG = "PaxExam-Executable-SIG";
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
+    private static final int TIMEOUT_IN_MILLIS = 2000;
+    private static int ID = 0;
 
     public static TestProbeBuilder createProbe( Properties p )
         throws IOException
@@ -69,7 +71,7 @@ public class DefaultRaw
 
     public static TestAddress call( Class clazz, String method )
     {
-        return new ClassMethodTestAddress( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, method );
+        return new ClassMethodTestAddress( getNextCallID(), clazz, method );
     }
 
     public static TestAddress[] call( Class clazz )
@@ -77,7 +79,7 @@ public class DefaultRaw
         List<TestAddress> calls = new ArrayList<TestAddress>();
         for( String m : parseMethods( clazz ) )
         {
-            calls.add( new ClassMethodTestAddress( PAX_EXAM_EXECUTABLE_SIG + ( id++ ), clazz, m ) );
+            calls.add( new ClassMethodTestAddress( getNextCallID(), clazz, m ) );
         }
         return calls.toArray( new TestAddress[ calls.size() ] );
     }
@@ -108,20 +110,12 @@ public class DefaultRaw
     public static void execute( TestTarget target, TestAddress address )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-
         assert ( target != null ) : "TestTarget must not be null.";
         assert ( address != null ) : "TestAddress must not be null.";
 
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.signature() + ")";
-        ProbeInvoker service = target.getService( ProbeInvoker.class, filterExpression, 0 );
-        if( service != null )
-        {
-            service.call();
-        }
-        else
-        {
-            throw new IllegalStateException( "ProbeInvoker with service filter: " + filterExpression + " not available." );
-        }
+        ProbeInvoker service = target.getService( ProbeInvoker.class, filterExpression, TIMEOUT_IN_MILLIS );
+        service.call();
     }
 
     public static InputStream fromURL( String s )
@@ -169,4 +163,8 @@ public class DefaultRaw
         };
     }
 
+    private static String getNextCallID()
+    {
+        return PAX_EXAM_EXECUTABLE_SIG + ( ID++ );
+    }
 }

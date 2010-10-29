@@ -57,9 +57,8 @@ public class PaxExamRuntime
     public static TestContainerFactory getTestContainerFactory()
     {
         sanityCheck( PaxExamRuntime.class.getClassLoader() );
-        LOG.info( "Pax Exam Runtime: looking for a " + TestContainerFactory.class.getName() );
         TestContainerFactory factory = (TestContainerFactory) DiscoverSingleton.find( TestContainerFactory.class );
-        LOG.info( "Found TestContainerFactory: " + ( ( factory != null ) ? factory.getClass().getName() : "<NONE>" ) );
+        LOG.debug( "Found TestContainerFactory: " + ( ( factory != null ) ? factory.getClass().getName() : "<NONE>" ) );
         return factory;
     }
 

@@ -62,7 +62,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     {
         OptionPrinter printer = new OptionPrinter();
 
-        LOG.debug( "Trying to invoke signature: " + call.signature() );
+        LOG.info( "Trying to invoke signature: " + call.signature() );
         // create a container for each call:
         for( Option[] option : m_configs )
         {
@@ -79,7 +79,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
                 {
                     for( TestProbeProvider builder : m_probes )
                     {
-                        LOG.debug( "installing probe " + builder );
+                        LOG.info( "installing probe " + builder );
                         runtime.install( builder.getStream() );
                     }
                     DefaultRaw.execute( runtime, call );

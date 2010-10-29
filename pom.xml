@@ -60,6 +60,16 @@
             </modules>
         </profile>
         <profile>
+            <!-- Just build the embedded "bundles" that are being installed dynamically. Others are covered by the IDE builder -->
+            <id>remotes</id>
+            <modules>
+                <module>core/pax-exam</module>
+                <module>core/pax-exam-extender</module>
+                <module>core/pax-exam-extender-service</module>
+                <module>spice/pax-exam-container-rbc</module>
+            </modules>
+        </profile>
+        <profile>
             <id>exxam2m1</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -74,7 +84,7 @@
                 <module>core/pax-exam-extender-service</module>
 
                 <module>containers/pax-exam-container-native</module>
-                
+
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
                 <module>spice/pax-exam-container-rbc</module>
