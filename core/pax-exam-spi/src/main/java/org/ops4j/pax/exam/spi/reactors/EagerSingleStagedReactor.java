@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,9 +26,11 @@ import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 
@@ -49,7 +52,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor
      * @param mConfigurations that are already "deflattened" and reflect single container instances
      * @param mProbes
      */
-    public EagerSingleStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
+    public EagerSingleStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeProvider> mProbes )
     {
         OptionPrinter printer = new OptionPrinter();
         if( mConfigurations.size() < 1 )
@@ -74,10 +77,16 @@ public class EagerSingleStagedReactor implements StagedExamReactor
             containers.add( container );
             container.start();
 
-            for( TestProbeBuilder builder : mProbes )
+            for( TestProbeProvider builder : mProbes )
             {
                 LOG.debug( "installing probe " + builder );
-                container.install( builder.getStream() );
+                try
+                {
+                    container.install( builder.getStream() );
+                } catch( IOException e )
+                {
+                    throw new TestContainerException( "Unable to build the probe.",e );
+                }
             }
         }
         m_targetContainer = containers.toArray( new TestContainer[containers.size()] );

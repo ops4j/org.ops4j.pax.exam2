@@ -18,20 +18,19 @@ package com.okidokiteam.exxam.test;
 import org.junit.Test;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
+import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
-import static org.ops4j.pax.exam.LibraryOptions.easyMockBundles;
-import static org.ops4j.pax.exam.LibraryOptions.junitBundles;
-import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
-import static org.ops4j.pax.exam.spi.container.DefaultRaw.execute;
+import static org.ops4j.pax.exam.LibraryOptions.*;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 /**
  * Simple test
@@ -46,6 +45,7 @@ public class A1
 
     /**
      * Very low level.
+     * @throws Exception problems?
      */
     @Test
     public void minimalPlanBareLowLevel()
@@ -61,7 +61,7 @@ public class A1
             try
             {
                 testContainer.start();
-                TestProbeBuilder probe = createProbe().addTest( Probe.class );
+                TestProbeProvider probe = createProbe().addTest( Probe.class ).build();
                 testContainer.install( probe.getStream() );
 
                 for( TestAddress call : probe.getTests() )
@@ -105,7 +105,7 @@ public class A1
  */
         ExxamReactor reactor = new DefaultExamReactor( factory );
 
-        TestProbeBuilder probe = createProbe().addTest( Probe.class );
+        TestProbeProvider probe = createProbe().addTest( Probe.class ).build();
 
         reactor.addProbe( probe );
         reactor.addConfiguration( options );
@@ -141,7 +141,7 @@ public class A1
             try
             {
                 testContainer.start();
-                TestProbeBuilder probe = createProbe().addTest( Probe.class ).addTest( Probe2.class );
+                TestProbeProvider probe = createProbe().addTest( Probe.class ).addTest( Probe2.class ).build();
 
                 testContainer.install( probe.getStream() );
 

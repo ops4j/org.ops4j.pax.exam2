@@ -2,6 +2,7 @@ package org.ops4j.pax.exam.spi;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 
 /**
  * Part of the Plumbing Level API.
@@ -26,9 +27,9 @@ public interface ExxamReactor
     /**
      * Add the probe that contribute to desired container(s) you will get after calling {@link #stage(StagedExamReactorFactory)}.
      *
-     * @param addTest builder that will (in the end) create a probe to be installed in the target container.
+     * @param addTest provider that will (in the end) create a probe to be installed in the target container.
      */
-    void addProbe( TestProbeBuilder addTest );
+    void addProbe( TestProbeProvider addTest );
 
     /**
      * Last thing you call on the reactor usually. This gives you a unmodifiable Reactor version.

@@ -1,5 +1,6 @@
 package org.ops4j.pax.exam.spi.probesupport;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -7,6 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import org.objectweb.asm.ClassAdapter;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.lang.NullArgumentException;
 
@@ -17,6 +25,7 @@ import org.ops4j.lang.NullArgumentException;
 public class ResourceWriter implements ResourceLocator
 {
 
+    private final Logger LOG = LoggerFactory.getLogger( ResourceWriter.class );
     private final File m_base;
     private final FilenameFilter m_filter;
 
@@ -112,12 +121,49 @@ public class ResourceWriter implements ResourceLocator
     void write( String name, InputStream fileIn, JarOutputStream target )
         throws IOException
     {
+        // TODO link ASM transformation for classes here.
+        if( name.endsWith( ".class" ) )
+        {
+            fileIn = transform( fileIn );
+        }
         target.putNextEntry( new JarEntry( name ) );
         StreamUtils.copyStream( fileIn, target, false );
     }
 
+    private InputStream transform( InputStream inputStream )
+        throws IOException
+    {
+        ClassReader cr = new ClassReader( inputStream );
+        ClassWriter cw = new ClassWriter( cr, 0 );
+        ClassVisitor transformer = new EvilTypeRemover( cw );
+        cr.accept( transformer, 0 );
+        return new ByteArrayInputStream( cw.toByteArray() );
+    }
+
     public String toString()
     {
-        return "" + this.getClass().getName() + "";
+        return "PaxExamProbe";
+    }
+
+    private class EvilTypeRemover extends ClassAdapter
+    {
+
+        public EvilTypeRemover( ClassVisitor classVisitor )
+        {
+            super( classVisitor );
+        }
+
+        public MethodVisitor visitMethod( int i, String s, String s1, String s2, String[] strings )
+        {
+            if( s1.equals( "()[Lorg/ops4j/pax/exam/Option;" ) )
+            {
+                LOG.info( "Successfully removed configuration method \"" + s + "\" from test plan." );
+                return null;
+            }
+            else
+            {
+                return super.visitMethod( i, s, s1, s2, strings );
+            }
+        }
     }
 }

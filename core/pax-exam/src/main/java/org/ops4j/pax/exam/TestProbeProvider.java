@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -30,6 +32,7 @@ public interface TestProbeProvider
 
     TestAddress[] getTests();
 
-    InputStream getStream();
+    InputStream getStream()
+        throws IOException;
 
 }

@@ -49,5 +49,10 @@ public interface TestTarget
      * Do the cleanup operation as good as possible.
      * Like rewinding all installed probes.
      */
-    void cleanup(  );
+    void cleanup();
+
+    /**
+     * Options used.
+     */
+    //Option[] configuration();
 }

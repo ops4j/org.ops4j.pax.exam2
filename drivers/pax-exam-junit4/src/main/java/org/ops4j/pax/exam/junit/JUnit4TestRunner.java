@@ -89,7 +89,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
         Object testClassInstance = testClass.newInstance();
 
-        Method[] methods = testClass.getDeclaredMethods();
+        Method[] methods = testClass.getMethods();
         for( Method m : methods )
         {
             Configuration conf = m.getAnnotation( Configuration.class );
@@ -118,7 +118,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
             TestAddress call = save( s, DefaultRaw.call( testClass, s.getName() ) );
             probe.addTest( call );
         }
-        reactor.addProbe( probe );
+        reactor.addProbe( probe.build() );
         // finally stage it
         return stage( reactor, testClass );
     }
@@ -126,7 +126,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     private TestProbeBuilder overwriteWithUserDefinition( Class testClass, Object instance, TestProbeBuilder probe )
         throws ExamConfigurationException
     {
-        Method[] methods = testClass.getDeclaredMethods();
+        Method[] methods = testClass.getMethods();
         for( Method m : methods )
         {
             LOG.debug( "Trying.." + m.getName() );

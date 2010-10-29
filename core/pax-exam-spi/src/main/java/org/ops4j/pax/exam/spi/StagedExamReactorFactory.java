@@ -21,9 +21,10 @@ import java.util.List;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 
 public interface StagedExamReactorFactory
 {
 
-    StagedExamReactor create( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes );
+    StagedExamReactor create( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeProvider> mProbes );
 }

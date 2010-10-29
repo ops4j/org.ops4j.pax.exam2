@@ -19,6 +19,7 @@ import java.util.List;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 
@@ -28,7 +29,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 public class EagerSingleStagedReactorFactory implements StagedExamReactorFactory
 {
 
-    public StagedExamReactor create( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
+    public StagedExamReactor create( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeProvider> mProbes )
     {
         return new EagerSingleStagedReactor( factory, mConfigurations, mProbes );
     }

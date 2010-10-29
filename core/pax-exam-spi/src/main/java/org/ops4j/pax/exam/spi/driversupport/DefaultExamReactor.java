@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
@@ -44,13 +45,13 @@ public class DefaultExamReactor implements ExxamReactor
     private static Log LOG = LogFactory.getLog( DefaultExamReactor.class );
 
     final private List<Option[]> m_configurations;
-    final private List<TestProbeBuilder> m_probes;
+    final private List<TestProbeProvider> m_probes;
     final private TestContainerFactory m_factory;
 
     public DefaultExamReactor( TestContainerFactory factory )
     {
         m_configurations = new ArrayList<Option[]>();
-        m_probes = new ArrayList<TestProbeBuilder>();
+        m_probes = new ArrayList<TestProbeProvider>();
         m_factory = factory;
     }
 
@@ -59,7 +60,7 @@ public class DefaultExamReactor implements ExxamReactor
         m_configurations.add( options );
     }
 
-    synchronized public void addProbe( TestProbeBuilder addTest )
+    synchronized public void addProbe( TestProbeProvider addTest )
     {
         m_probes.add( addTest );
     }

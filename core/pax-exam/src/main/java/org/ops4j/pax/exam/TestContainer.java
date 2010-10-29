@@ -42,6 +42,7 @@ public interface TestContainer extends TestTarget
      * Starts the test container.
      *
      * @throws TimeoutException - if timeout occured and the test container cannot be started
+     * @return this for fluent api
      */
     TestContainer start()
         throws TimeoutException;
@@ -50,6 +51,7 @@ public interface TestContainer extends TestTarget
      * Stops the test container.
      *
      * @throws TimeoutException - if timeout occured and the test container cannot be stopped
+     * @return this for fluent api
      */
     TestContainer stop()
         throws TimeoutException;

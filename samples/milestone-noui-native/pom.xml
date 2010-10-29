@@ -28,12 +28,14 @@
             <version>2.0.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-native</artifactId>
             <version>2.0.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+       
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
@@ -47,7 +49,7 @@
             <version>3.0.4</version>
             <scope>test</scope>
         </dependency>
-<!--
+        <!--
         <dependency>
             <groupId>org.eclipse.osgi</groupId>
             <artifactId>org.eclipse.osgi</artifactId>
@@ -63,22 +65,15 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>0.9.24</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>0.9.24</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
         </dependency>
         <!--
         <dependency>

@@ -35,6 +35,8 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 import org.ops4j.pax.exam.spi.probesupport.TestProbeBuilderImpl;
+import org.ops4j.store.Store;
+import org.ops4j.store.StoreFactory;
 
 /**
  * @author Toni Menzel
@@ -52,11 +54,14 @@ public class DefaultRaw
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
 
     public static TestProbeBuilder createProbe( Properties p )
+        throws IOException
     {
-        return new TestProbeBuilderImpl(p);
+        Store<InputStream> store = StoreFactory.anonymousStore();
+        return new TestProbeBuilderImpl( p, store );
     }
 
     public static TestProbeBuilder createProbe()
+        throws IOException
     {
         Properties p = new Properties();
         return createProbe( p );

@@ -24,6 +24,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 
@@ -36,14 +37,14 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     private static Logger LOG = LoggerFactory.getLogger( AllConfinedStagedReactor.class );
 
     final private List<Option[]> m_configs;
-    final private List<TestProbeBuilder> m_probes;
+    final private List<TestProbeProvider> m_probes;
     final private TestContainerFactory m_factory;
 
     /**
      * @param mConfigurations
      * @param mProbes
      */
-    public AllConfinedStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeBuilder> mProbes )
+    public AllConfinedStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeProvider> mProbes )
     {
         m_configs = mConfigurations;
         m_probes = mProbes;
@@ -76,7 +77,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
                 LOG.debug( "Test Container is ready." );
                 try
                 {
-                    for( TestProbeBuilder builder : m_probes )
+                    for( TestProbeProvider builder : m_probes )
                     {
                         LOG.debug( "installing probe " + builder );
                         runtime.install( builder.getStream() );

@@ -17,6 +17,7 @@ package com.okidokiteam.exxam.test;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -36,7 +37,6 @@ import static org.ops4j.pax.exam.LibraryOptions.*;
  * Simple Test Rack that uses the JUnit4 UI
  */
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class A2
 {
 
@@ -53,7 +53,7 @@ public class A2
     public TestProbeBuilder customizeProbe( TestProbeBuilder overwrite )
     {
         return overwrite;
-           // .setHeader( "Bundle-SymbolicName", "ItsAMario" );
+        // .setHeader( "Bundle-SymbolicName", "ItsAMario" );
     }
 
     @Test
@@ -65,6 +65,14 @@ public class A2
     @Test
     public void withBC( BundleContext ctx )
     {
+        for( Bundle b : ctx.getBundles() )
+        {
+            System.out.println( "  ++ Bundle " + b.getSymbolicName() );
+            System.out.println( "Imports: " + b.getHeaders().get( "Import-Package" ) );
+            System.out.println( "Exports: " + b.getHeaders().get( "Export-Package" ) );
+            //System.out.println( "Dynamic-ImportPackage: " + b.getHeaders().get( "Dynamic-ImportPackage" ) );
+
+        }
         assertThat( ctx, is( notNullValue() ) );
         System.out.println( "BundleContext of bundle injected: " + ctx.getBundle().getSymbolicName() );
 

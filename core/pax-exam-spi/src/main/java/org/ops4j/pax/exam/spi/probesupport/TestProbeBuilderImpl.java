@@ -28,7 +28,9 @@ import java.util.Properties;
 import java.util.Set;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
+import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
@@ -44,11 +46,14 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
     private List<TestAddress> m_probeCalls = new ArrayList<TestAddress>();
 
     private Class m_anchor;
-    private Properties m_extraProperties;
-    private Set<String> m_ignorePackages = new HashSet<String>();
+    private final Properties m_extraProperties;
+    private final Set<String> m_ignorePackages = new HashSet<String>();
+    private final Store<InputStream> m_store;
 
-    public TestProbeBuilderImpl( Properties p )
+    public TestProbeBuilderImpl( Properties p, Store<InputStream> store )
+        throws IOException
     {
+        m_store = store;
         m_extraProperties = p;
     }
 
@@ -94,27 +99,32 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return this;
     }
 
-    public TestAddress[] getTests()
-    {
-        return m_probeCalls.toArray( new TestAddress[ m_probeCalls.size() ] );
-    }
-
-    public InputStream getStream()
+    public TestProbeProvider build()
     {
         constructProbeTag( m_extraProperties );
-
         Properties p = createExtraIgnores();
 
         try
         {
             String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
             File base = new FileTailImpl( new File( "." ), tail ).getParentOfTail();
-            return sink( new BundleBuilder( new ResourceWriter( base ), m_extraProperties, p ).build() );
+            BundleBuilder bundleBuilder = new BundleBuilder( new ResourceWriter( base ), m_extraProperties, p );
+
+            return new DefaultTestProbeProvider(
+                getTests(),
+                m_store,
+                m_store.store( bundleBuilder.build() )
+            );
 
         } catch( IOException e )
         {
             throw new RuntimeException( e );
         }
+    }
+
+    private TestAddress[] getTests()
+    {
+        return m_probeCalls.toArray( new TestAddress[ m_probeCalls.size() ] );
     }
 
     private Properties createExtraIgnores()
@@ -131,13 +141,6 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         }
         extraProperties.put( "Ignore-Package", sb.toString() );
         return extraProperties;
-    }
-
-    private InputStream sink( InputStream inputStream )
-        throws IOException
-    {
-        Store<InputStream> store = StoreFactory.anonymousStore();
-        return store.load( store.store( inputStream ) );
     }
 
     private void constructProbeTag( Properties p )
