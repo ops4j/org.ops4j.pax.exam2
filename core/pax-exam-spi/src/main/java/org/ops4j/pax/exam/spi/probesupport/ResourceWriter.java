@@ -142,7 +142,8 @@ public class ResourceWriter implements ResourceLocator
 
     public String toString()
     {
-        return "PaxExamProbe";
+        return super.toString();
+        // return "PaxExamProbe";
     }
 
     private class EvilTypeRemover extends ClassAdapter
