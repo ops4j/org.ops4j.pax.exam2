@@ -84,7 +84,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder
         return this;
     }
 
-    // when your testclass contains clutter in non-test methods,
+    // when your testclass contains clutter in non-regression methods,
     // bnd generates too many impports.
     // This makes packages optional.
     public TestProbeBuilder ignorePackageOf( Class... classes )

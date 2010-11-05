@@ -85,7 +85,7 @@ public class DefaultRaw
     }
 
     /**
-     * parse test methods using reflection
+     * parse regression methods using reflection
      *
      * @param clazz
      */

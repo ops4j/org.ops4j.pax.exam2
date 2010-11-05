@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.test.plumbing;
+package com.okidokiteam.exxam.regression.plumbing;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.Option;
@@ -24,17 +24,19 @@ import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 
 import static org.ops4j.pax.exam.LibraryOptions.*;
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 /**
- * Simple test
+ * Simple regression
  */
-public class A1
+public class BareAPITest
 {
 
     private TestContainerFactory getFactory()
@@ -43,60 +45,12 @@ public class A1
     }
 
     /**
-     * Low level but reactor support.
-     */
-    // @Test
-    public void minimalPlanUsingReactor()
-        throws Exception
-    {
-        TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
-
-/**
- * In this example we don't split and control containers ourselves, we use ExxamRactor.
- * This can be fed with
- * - probes (addProbe)
- * - options (addConfiguration)
- * Once this is done, calliing "stage()" gives you the possibility to invoke tests directly.
- *
- * Note that you don't interact with any TestContainer or how many you actually create.
- * You just iterate over all your previously added tests and invoke them using the "handles" (TestAddress)
- *
- * Whatr is a TestAddress ?
- * Its a handle to invoke a particular test method.
- * It is up to the ProbeBuilder to make meaningful handles so they can be found and executed.
- * TODO: Guess this needs more explanation, as its a quite powerful concept that also lets you control testclass initialization and "what to actually call on that class".
- *
- *
- */
-        ExxamReactor reactor = new DefaultExamReactor( factory );
-
-        TestProbeProvider probe = createProbe().addTest( Probe.class ).build();
-
-        reactor.addProbe( probe );
-        reactor.addConfiguration( options );
-
-        StagedExamReactor stagedReactor = reactor.stage( new AllConfinedStagedReactorFactory() );
-        try
-        {
-            for( TestAddress call : probe.getTests() )
-            {
-                stagedReactor.invoke( call );
-            }
-
-        } finally
-        {
-            stagedReactor.tearDown();
-        }
-    }
-
-    /**
      * Very low level.
      *
      * @throws Exception problems?
      */
     @Test
-    public void minimalPlanBareLowLevel()
+    public void bareRunTest()
         throws Exception
     {
         TestContainerFactory factory = getFactory();
@@ -124,11 +78,8 @@ public class A1
         }
     }
 
-    /**
-     * Very low level.
-     */
     @Test
-    public void moreThanOneProbe()
+    public void bareRunMoreThanOneProbeTest()
         throws Exception
     {
         TestContainerFactory factory = getFactory();
@@ -156,6 +107,5 @@ public class A1
             }
         }
     }
-
 
 }

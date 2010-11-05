@@ -18,7 +18,7 @@
 package org.ops4j.pax.exam.options;
 
 /**
- * Timeout while waiting for test container to start.
+ * Timeout while waiting for regression container to start.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 23, 2009

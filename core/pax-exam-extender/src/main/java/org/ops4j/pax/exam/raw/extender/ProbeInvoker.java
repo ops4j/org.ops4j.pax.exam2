@@ -27,13 +27,13 @@ public interface ProbeInvoker
 {
 
     /**
-     * Executes the test method.
+     * Executes the regression method.
      *
-     * @throws ClassNotFoundException - If the test class cannot be loaded
-     * @throws InstantiationException - If an instance of the test class cannot be created
-     * @throws IllegalAccessException - Re-thrown from reflective invokation of test method
+     * @throws ClassNotFoundException - If the regression class cannot be loaded
+     * @throws InstantiationException - If an instance of the regression class cannot be created
+     * @throws IllegalAccessException - Re-thrown from reflective invokation of regression method
      * @throws java.lang.reflect.InvocationTargetException
-     *                                - Re-thrown from reflective invokation of test method
+     *                                - Re-thrown from reflective invokation of regression method
      */
     void call( )
         throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException;

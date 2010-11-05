@@ -69,7 +69,7 @@ public class JunitAnnotationsTest
     }
 
     /**
-     * An ignored test that should not be run.
+     * An ignored regression that should not be run.
      */
     @Test
     @Ignore
@@ -81,11 +81,11 @@ public class JunitAnnotationsTest
     @Test( expected = RuntimeException.class )
     public void expected()
     {
-        throw new RuntimeException( "This exception should not fail the test" );
+        throw new RuntimeException( "This exception should not fail the regression" );
     }
 
     /**
-     * test that before methods had been run.
+     * regression that before methods had been run.
      */
     @Test
     public void beforesHadRun()

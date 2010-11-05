@@ -29,9 +29,9 @@ public interface TestTargetFactory
     /**
      * Creates a new {@link TestTarget}.
      *
-     * @param options integration test options
+     * @param options integration regression options
      *
-     * @return created test target
+     * @return created regression target
      */
     TestTarget newInstance( Option... options );
 }

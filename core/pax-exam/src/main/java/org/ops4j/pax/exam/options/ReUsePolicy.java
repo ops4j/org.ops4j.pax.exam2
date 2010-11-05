@@ -25,7 +25,7 @@ public enum ReUsePolicy
 {
 
     NEVER, // the pax exam 1.x behaviour
-    TEST,  // new test container per test class
+    TEST,  // new regression container per regression class
     ALWAYS // just create one container (-connection) for the entire JUnit Run
 
 }

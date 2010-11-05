@@ -56,8 +56,8 @@ import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
  * Its also the blueprint for custom, much more specific runners.
  * This will make a single probe bundling in all @Tests in this class.
  *
- * This uses the whole test class as a single unit of tests with the following valid annotaions:
- * - @Configuration -> Configuration 1:N. Multiple configurations will result into multiple invokations of the same test.
+ * This uses the whole regression class as a single unit of tests with the following valid annotaions:
+ * - @Configuration -> Configuration 1:N. Multiple configurations will result into multiple invokations of the same regression.
  * - @ProbeBuilder -> Customize the probe creation.
  * - @Test -> Single tests to be invoked. Note that in @Configuration you can specify the invokation strategy.
  */

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.test.plumbing;
+package com.okidokiteam.exxam.regression.plumbing;
 
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.hamcrest.core.Is.*;
-import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 
 /**
@@ -29,16 +29,16 @@ import static org.junit.Assert.*;
 public class Probe
 {
 
-    public void withoutBC()
+    private static Logger LOG = LoggerFactory.getLogger( Probe.class );
+
+    public void withoutBCTest()
     {
-        System.out.println( "++++ PEAK ++++" );
+        LOG.info( "INSIDE OSGI " + Probe.class.getName() + " Method withoutBCTest" );
     }
 
-    public void withBC( BundleContext ctx )
+    public void withBCTest( BundleContext ctx )
     {
-        assertThat( ctx, is( notNullValue() ) );
-        System.out.println( "BundleContext of bundle injected: " + ctx.getBundle().getSymbolicName() );
-
+        LOG.info( "INSIDE OSGI " + Probe.class.getName() + " Method withBCTest Context: " + ctx );
     }
 
     private void neverCall()

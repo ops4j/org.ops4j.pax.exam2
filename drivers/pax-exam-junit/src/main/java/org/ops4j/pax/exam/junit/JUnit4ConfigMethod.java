@@ -30,11 +30,11 @@ public interface JUnit4ConfigMethod
 {
 
     /**
-     * Returns true if the configuration method matches (applies) to the test method about to be run.
+     * Returns true if the configuration method matches (applies) to the regression method about to be run.
      *
-     * @param testMethod test method that is about to be run
+     * @param testMethod regression method that is about to be run
      *
-     * @return tru, if the configuration method applies to the test method
+     * @return tru, if the configuration method applies to the regression method
      */
     boolean matches( Method testMethod );
 

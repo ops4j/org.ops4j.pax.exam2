@@ -35,7 +35,7 @@ public class BootClasspathLibraryOptionTest
 {
 
     /**
-     * Pax Exam test options that adds servlet api to boot classpath before the framework.
+     * Pax Exam regression options that adds servlet api to boot classpath before the framework.
      *
      * @return integration tests options
      */
@@ -51,7 +51,7 @@ public class BootClasspathLibraryOptionTest
     }
 
     /**
-     * Pax Exam test options that adds servlet api to boot classpath after the framework (default).
+     * Pax Exam regression options that adds servlet api to boot classpath after the framework (default).
      *
      * @return integration tests options
      */

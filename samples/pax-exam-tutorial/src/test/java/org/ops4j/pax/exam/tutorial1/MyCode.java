@@ -21,7 +21,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
- * This class can be a minimal pax exam test using pax exam raw api.
+ * This class can be a minimal pax exam regression using pax exam raw api.
  *
  * @author Toni Menzel
  * @since Dec 2, 2009

@@ -26,9 +26,9 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
- * This is the simpliest test possible.
+ * This is the simpliest regression possible.
  *
- * It uses all default options (which means felix as platform, no additional bundles but exam itself and your test)
+ * It uses all default options (which means felix as platform, no additional bundles but exam itself and your regression)
  *
  * To get Pax Exam running with minimal code, this class shows whats neeeded.
  * Additionally you just need the required jars/dependencies from pax exam in your classpath.
@@ -51,10 +51,10 @@ public class T1S1_HelloWorldTest
 
     /**
      * This will just print a line to the console.
-     * Actually what really happens is your test being packed into a bundle, a new java process
+     * Actually what really happens is your regression being packed into a bundle, a new java process
      * is being spawned, an osgi framework (felix by default) is being downloaded via maven,
-     * all of that is being started, your test is being called at the very end via RMI (we have two processes!).
-     * After all is done, the remote process (the one with the osgi framework and your running test)
+     * all of that is being started, your regression is being called at the very end via RMI (we have two processes!).
+     * After all is done, the remote process (the one with the osgi framework and your running regression)
      * is being shut down gracefully.
      */
     @Test

@@ -48,7 +48,7 @@ public class JUnit4MethodRoadie
     }
 
     /**
-     * Do not run the before and afters are they are run in the container by the moment the test is run.
+     * Do not run the before and afters are they are run in the container by the moment the regression is run.
      *
      * {@inheritDoc}
      */
@@ -61,7 +61,7 @@ public class JUnit4MethodRoadie
         }
         catch( Exception e )
         {
-            throw new RuntimeException( "test should never throw an exception to this level" );
+            throw new RuntimeException( "regression should never throw an exception to this level" );
         }
     }
 

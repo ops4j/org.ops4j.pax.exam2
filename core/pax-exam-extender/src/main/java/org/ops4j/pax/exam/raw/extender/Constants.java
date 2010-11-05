@@ -35,10 +35,10 @@ public class Constants
     /**
      * Test class name service attribute.
      */
-    public static final String TEST_CASE_ATTRIBUTE = "org.ops4j.pax.exam.test.class";
+    public static final String TEST_CASE_ATTRIBUTE = "org.ops4j.pax.exam.regression.class";
     /**
      * Test method name service attribute.
      */
-    public static final String TEST_METHOD_ATTRIBUTE = "org.ops4j.pax.exam.test.method";
+    public static final String TEST_METHOD_ATTRIBUTE = "org.ops4j.pax.exam.regression.method";
 
 }

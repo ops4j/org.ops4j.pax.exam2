@@ -45,7 +45,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
      */
     private static final Log LOG = LogFactory.getLog( TestBundleObserver.class );
     /**
-     * Holder for test runner registrations per bundle.
+     * Holder for regression runner registrations per bundle.
      */
     private final Map<Bundle, Registration> m_registrations;
 
@@ -59,7 +59,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
 
     /**
      * {@inheritDoc}
-     * Registers specified test case as a service.
+     * Registers specified regression case as a service.
      */
     public void addingEntries( final Bundle bundle,
                                final List<ManifestEntry> manifestEntries )
@@ -89,7 +89,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
 
     /**
      * {@inheritDoc}
-     * Unregisters prior registered test for the service.
+     * Unregisters prior registered regression for the service.
      */
     public void removingEntries( final Bundle bundle,
                                  final List<ManifestEntry> manifestEntries )

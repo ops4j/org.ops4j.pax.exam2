@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.test.porcelain;
+package com.okidokiteam.exxam.regression.plumbing;
 
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple Test Rack that uses the JUnit4 UI
+ * Another Probe.
  */
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
-public class A2_B extends A2
+public class Probe2
 {
 
+    private static Logger LOG = LoggerFactory.getLogger( Probe.class );
+
+    public void myOwnClass()
+    {
+        LOG.info( "INSIDE OSGI " + Probe2.class.getName() + " Method withoutBCTest" );
+    }
 }

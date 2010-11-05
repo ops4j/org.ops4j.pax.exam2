@@ -29,7 +29,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 
 /**
- * This will use new containers for any test (hence confined)
+ * This will use new containers for any regression (hence confined)
  */
 public class AllConfinedStagedReactor implements StagedExamReactor
 {

@@ -24,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
 
 /**
- * Finds resources of the current module under test just by given top-level parent (whatever that is)
- * and name of the class under test using a narrowing approach.
+ * Finds resources of the current module under regression just by given top-level parent (whatever that is)
+ * and name of the class under regression using a narrowing approach.
  *
  * @author Toni Menzel (tonit)
  * @since May 30, 2008

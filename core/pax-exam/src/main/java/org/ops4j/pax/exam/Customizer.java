@@ -31,7 +31,7 @@ public abstract class Customizer implements Option
     /**
      * Callback method that can  contain steps to finally change/set up the working environment.
      * It is being called just before the OSGi platform of choice boots.
-     * An exception at this point will make exam stop and not running the test. (actually, the test will fail)
+     * An exception at this point will make exam stop and not running the regression. (actually, the regression will fail)
      *
      * @param workingFolder final workingfolder (new File(".")) of your osgi setup. Be careful there,
      *                      the platform may not start if you (for example) delete things in there.
@@ -41,7 +41,7 @@ public abstract class Customizer implements Option
     }
 
     /**
-     * Callback that allow to customize the ready built test probe.
+     * Callback that allow to customize the ready built regression probe.
      * Examples are:
      * - need to obfuscate bytecode
      * - need to add checksums

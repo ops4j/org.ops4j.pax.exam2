@@ -29,7 +29,7 @@ import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.container.remote.RBCRemoteTargetOptions.*;
 
 /**
- * Running a test on a remote device using an already installed rbc and a know connection
+ * Running a regression on a remote device using an already installed rbc and a know connection
  *
  * @author Toni Menzel
  * @since Jan 26, 2010

@@ -57,7 +57,7 @@ public class DefaultConfigMethod
      * Constructor.
      *
      * @param configMethod   configuration method (cannot be null)
-     * @param configInstance instance of the class containing the test method.
+     * @param configInstance instance of the class containing the regression method.
      *                       If null then the method is supposed to be static.
      *
      * @throws IllegalArgumentException - If method is null
@@ -72,11 +72,11 @@ public class DefaultConfigMethod
     }
 
     /**
-     * Matches a test method name against this configuration method.
+     * Matches a regression method name against this configuration method.
      *
-     * @param method test method name (cannot be null or empty)
+     * @param method regression method name (cannot be null or empty)
      *
-     * @return true if the test method name matches the configuration method, false otherwise
+     * @return true if the regression method name matches the configuration method, false otherwise
      *
      * @throws IllegalArgumentException - If method name is null or empty
      */

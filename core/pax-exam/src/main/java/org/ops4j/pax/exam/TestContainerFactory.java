@@ -33,9 +33,9 @@ public interface TestContainerFactory
      * Creates a one or more {@link OptionDescription}. Depending on the underlying implementation.
      * This is more an Option[] splitter.
      * 
-     * @param options integration test options
+     * @param options integration regression options
      *
-     * @return created test container
+     * @return created regression container
      */
     OptionDescription[] parse( Option... options );
 

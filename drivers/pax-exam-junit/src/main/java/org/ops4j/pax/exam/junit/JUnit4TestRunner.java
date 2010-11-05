@@ -68,7 +68,7 @@ import org.ops4j.pax.exam.spi.container.TestContainerFactory;
  * The class is basically a copy of {@link org.junit.internal.runners.JUnit4ClassRunner} addapted to Pax Exam, keeping
  * as much as possible the original implementation.
  * It was not possible to just extend and override the JUnit4ClassRunner due to internal list fTestMethods that is a
- * list of Methods, and we have to keep extra info about the test methods and Method is a final class.
+ * list of Methods, and we have to keep extra info about the regression methods and Method is a final class.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 16, 2008
@@ -146,7 +146,7 @@ public class JUnit4TestRunner
      *
      * @return collection of configuration methods (cannot be null but can be empty)
      *
-     * @throws Exception - If test instance cannot be created
+     * @throws Exception - If regression instance cannot be created
      *                   - Re-thrown while finding the configuration methods
      */
     protected Collection<JUnit4ConfigMethod> getConfigurationMethods()
@@ -371,7 +371,7 @@ public class JUnit4TestRunner
              .startLevel( START_LEVEL_SYSTEM_BUNDLES )
              **/
         );
-        // add options based on available configuration options from the test itself
+        // add options based on available configuration options from the regression itself
         for( JUnit4ConfigMethod configMethod : configMethods )
         {
             if( configMethod.matches( methodName ) )

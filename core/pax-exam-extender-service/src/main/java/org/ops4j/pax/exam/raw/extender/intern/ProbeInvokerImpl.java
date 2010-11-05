@@ -52,7 +52,7 @@ public class ProbeInvokerImpl implements ProbeInvoker
 
         if( !( findAndInvoke( testClass ) || findAndInvoke( testClass, BundleContext.class ) ) )
         {
-            throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
+            throw new RuntimeException( " regression " + m_method + " not found in regression class " + testClass.getName() );
         }
 
         //iteratingSearcher( testClass, encountered );
@@ -71,7 +71,7 @@ public class ProbeInvokerImpl implements ProbeInvoker
         }
         if( encountered == 0 )
         {
-            throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
+            throw new RuntimeException( " regression " + m_method + " not found in regression class " + testClass.getName() );
         }
     }
 
@@ -97,14 +97,14 @@ public class ProbeInvokerImpl implements ProbeInvoker
     }
 
     /**
-     * Invokes the bundle context (if possible and required) and executes the test method.
+     * Invokes the bundle context (if possible and required) and executes the regression method.
      *
      * TODO this is a trimmed down minimal version that does not support any junit before/afters or
      * self made injection.
      * The only thing you get here is a parameter injection for BundleContext types.
      *
-     * @param testInstance an instance of the test class
-     * @param testMethod   test method
+     * @param testInstance an instance of the regression class
+     * @param testMethod   regression method
      *
      * @throws IllegalAccessException    - Re-thrown from reflection invokation
      * @throws InvocationTargetException - Re-thrown from reflection invokation

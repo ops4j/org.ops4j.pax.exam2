@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 /**
  * Annotation that marks methods belonging into a certain context (those methods marked with {@link org.junit.Test}).
  * For example, you can have multiple configuration (see {$link org.ops4j.pax.exam.junit.Configuration}) but they belong
- * to different contexts. So you annate both of them with this annotation. Then you annote the actual test method with
+ * to different contexts. So you annate both of them with this annotation. Then you annote the actual regression method with
  * exactly the same annotation.
- * This approach makes configuration+test method coupling independent from nameing of methods (different from AppliesTo Annotation).
+ * This approach makes configuration+regression method coupling independent from nameing of methods (different from AppliesTo Annotation).
  *
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, January 9, 2009
@@ -41,7 +41,7 @@ public @interface RequiresConfiguration
      * A string that is matched against any other context marker.
      * By default (value not specified) the value is an empty string.
      * So if you skip the annotation completely it still glues together all methods.
-     * (in this case you should not have clashing methods in your test class like multiple configurations).
+     * (in this case you should not have clashing methods in your regression class like multiple configurations).
      *
      * @return an arbitrary named string referencing this context.
      */

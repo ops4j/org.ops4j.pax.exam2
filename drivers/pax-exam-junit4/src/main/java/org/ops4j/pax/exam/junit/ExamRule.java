@@ -9,7 +9,7 @@ public class ExamRule implements MethodRule {
 	public ExamRule(Object test) {
 		String name = test.getClass().getName();
 		System.out.println("NEW Exam Context for " + name);
-		// we can stage all test containers upfront here !
+		// we can stage all regression containers upfront here !
 		
 		
 

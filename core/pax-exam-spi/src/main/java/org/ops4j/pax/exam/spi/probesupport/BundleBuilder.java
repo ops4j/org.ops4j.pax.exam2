@@ -45,7 +45,7 @@ public class BundleBuilder
     /**
      * Constructor.
      *
-     * @param resourceLocator locator that gathers all resources that have to be inside the test probe
+     * @param resourceLocator locator that gathers all resources that have to be inside the regression probe
      * @param p               properties to be merged.
      */
     public BundleBuilder( final ResourceLocator resourceLocator, Properties... p )

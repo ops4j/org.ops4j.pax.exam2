@@ -32,8 +32,8 @@ public interface JUnit4ConfigMethods
     /**
      * Returns configuration methods determined by this strategy.
      *
-     * @param testClass    the test class
-     * @param testInstance an instance of the test class
+     * @param testClass    the regression class
+     * @param testInstance an instance of the regression class
      *
      * @return configuration options (cannot be null, but can be empty)
      *

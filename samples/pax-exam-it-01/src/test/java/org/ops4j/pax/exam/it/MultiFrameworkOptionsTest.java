@@ -39,8 +39,8 @@ public class MultiFrameworkOptionsTest
 {
 
     /**
-     * Pax Exam test options that specify to run the test on all frameworks.
-     * Valid for all test methods.
+     * Pax Exam regression options that specify to run the regression on all frameworks.
+     * Valid for all regression methods.
      *
      * @return test options
      */

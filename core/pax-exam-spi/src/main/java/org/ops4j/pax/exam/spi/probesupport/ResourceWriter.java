@@ -158,7 +158,7 @@ public class ResourceWriter implements ResourceLocator
         {
             if( s1.equals( "()[Lorg/ops4j/pax/exam/Option;" ) )
             {
-                LOG.info( "Successfully removed configuration method \"" + s + "\" from test plan." );
+                LOG.info( "Successfully removed configuration method \"" + s + "\" from regression plan." );
                 return null;
             }
             else

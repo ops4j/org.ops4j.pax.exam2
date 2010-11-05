@@ -18,7 +18,7 @@
 package org.ops4j.pax.exam;
 
 /**
- * Denotes an exception occuring during using test container that appears due to a timeout.
+ * Denotes an exception occuring during using regression container that appears due to a timeout.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April, 23, 2009

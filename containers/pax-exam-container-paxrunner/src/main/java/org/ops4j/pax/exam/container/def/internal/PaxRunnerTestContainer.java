@@ -82,7 +82,7 @@ public class PaxRunnerTestContainer
     private final DefaultJavaRunner m_javaRunner;
 
     /**
-     * test container start timeout.
+     * regression container start timeout.
      */
     private final long m_startTimeout;
 
@@ -144,7 +144,7 @@ public class PaxRunnerTestContainer
      */
     public TestContainer start()
     {
-        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
+        LOG.info( "Starting up the regression container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
         /**
          */
         m_semaphore = new TestContainerSemaphore( m_workingFolder );
@@ -170,7 +170,7 @@ public class PaxRunnerTestContainer
                   + ( System.currentTimeMillis() - startedAt ) + " millis"
         );
 
-        LOG.info( "Wait for test container to finish its initialization "
+        LOG.info( "Wait for regression container to finish its initialization "
                   + ( m_startTimeout == WAIT_FOREVER ? "without timing out" : "for " + m_startTimeout + " millis" )
         );
         try
@@ -194,7 +194,7 @@ public class PaxRunnerTestContainer
      */
     public TestContainer stop()
     {
-        LOG.info( "Shutting down the test container (Pax Runner)" );
+        LOG.info( "Shutting down the regression container (Pax Runner)" );
         try
         {
             if( m_started )

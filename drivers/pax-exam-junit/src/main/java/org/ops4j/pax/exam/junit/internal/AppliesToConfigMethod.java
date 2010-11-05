@@ -48,7 +48,7 @@ public class AppliesToConfigMethod
      */
     private final Object m_configInstance;
     /**
-     * Array of regular expression that are matched against test method name (cannot be null or empty).
+     * Array of regular expression that are matched against regression method name (cannot be null or empty).
      */
     private final String[] m_patterns;
     /**
@@ -60,7 +60,7 @@ public class AppliesToConfigMethod
      * Constructor.
      *
      * @param configMethod   configuration method (cannot be null)
-     * @param configInstance instance of the class containing the test method.
+     * @param configInstance instance of the class containing the regression method.
      *                       If null then the method is supposed to be static.
      *
      * @throws IllegalArgumentException - If method is null
@@ -85,11 +85,11 @@ public class AppliesToConfigMethod
     }
 
     /**
-     * Matches a test method name against this configuration method.
+     * Matches a regression method name against this configuration method.
      *
-     * @param method test method name (cannot be null or empty)
+     * @param method regression method name (cannot be null or empty)
      *
-     * @return true if the test method name matches the configuration method, false otherwise
+     * @return true if the regression method name matches the configuration method, false otherwise
      *
      * @throws IllegalArgumentException - If method name is null or empty
      */

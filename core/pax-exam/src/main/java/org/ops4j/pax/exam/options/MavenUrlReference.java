@@ -96,7 +96,7 @@ public interface MavenUrlReference
     MavenUrlReference version( VersionResolver resolver );
 
     /**
-     * Version will be discovered from the dependencies of Maven project that includes the test.
+     * Version will be discovered from the dependencies of Maven project that includes the regression.
      *
      * @return itself, for fluent api usage
      */

@@ -50,9 +50,9 @@ public class PaxExamRuntime
     }
 
     /**
-     * Discovers the test container. Discovery is performed via Appache Commons discovery mechanism.
+     * Discovers the regression container. Discovery is performed via Appache Commons discovery mechanism.
      *
-     * @return discovered test container
+     * @return discovered regression container
      */
     public static TestContainerFactory getTestContainerFactory()
     {
@@ -107,7 +107,7 @@ public class PaxExamRuntime
      * @param select the exact implementation if you dont want to rely on commons util discovery or
      *               change different containers in a single project.
      *
-     * @return discovered test container
+     * @return discovered regression container
      */
     public static TestContainerFactory getTestContainerFactory( Class<? extends TestContainerFactory> select )
     {
@@ -124,9 +124,9 @@ public class PaxExamRuntime
     }
 
     /**
-     * Discovers the test target. Discovery is performed via Appache Commons discovery mechanism.
+     * Discovers the regression target. Discovery is performed via Appache Commons discovery mechanism.
      *
-     * @return discovered test target
+     * @return discovered regression target
      */
     public static TestTargetFactory getTestTargetFactory()
     {

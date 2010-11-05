@@ -32,7 +32,7 @@ public interface Constants
     static final int START_LEVEL_SYSTEM_BUNDLES = 1;
 
     /**
-     * The start level at which Pax Exam test bundle is to be started.
+     * The start level at which Pax Exam regression bundle is to be started.
      */
     static final int START_LEVEL_TEST_BUNDLE = 2;
 

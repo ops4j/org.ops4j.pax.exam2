@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation specifying to which method names the configuration applies. The value of configuration is an array of
- * regular expressions that are matched against test method names (those methods marked with {@link org.junit.Test}).
- * A configuration method can match multiple test methods, case when the options will be merged.
+ * regular expressions that are matched against regression method names (those methods marked with {@link org.junit.Test}).
+ * A configuration method can match multiple regression methods, case when the options will be merged.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 17, 2008
@@ -36,8 +36,8 @@ public @interface AppliesTo
 {
 
     /**
-     * Array of regular expressions that are matched agains test methods names.
-     * By default (value not specified) matches all test methods (".*").
+     * Array of regular expressions that are matched agains regression methods names.
+     * By default (value not specified) matches all regression methods (".*").
      *
      * @return array of regular expressions
      */

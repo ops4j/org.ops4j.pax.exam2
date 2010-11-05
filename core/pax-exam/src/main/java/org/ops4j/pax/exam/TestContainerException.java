@@ -18,7 +18,7 @@
 package org.ops4j.pax.exam;
 
 /**
- * Denotes an exception occuring during using test container.
+ * Denotes an exception occuring during using regression container.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 15, 2008

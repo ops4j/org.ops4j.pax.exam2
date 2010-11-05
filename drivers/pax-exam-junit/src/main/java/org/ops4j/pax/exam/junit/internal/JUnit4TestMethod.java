@@ -42,7 +42,7 @@ import static org.ops4j.lang.NullArgumentException.*;
 import static org.ops4j.pax.exam.Constants.*;
 
 /**
- * A {@link TestMethod} that upon invokation starts a {@link TestContainer} and executes the test in the test container.
+ * A {@link TestMethod} that upon invokation starts a {@link TestContainer} and executes the regression in the regression container.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0 December 16, 2008
@@ -92,7 +92,7 @@ public class JUnit4TestMethod
     private final Option[] m_options;
 
     /**
-     * Configuration method name (test method name and eventual the framework and framework version)
+     * Configuration method name (regression method name and eventual the framework and framework version)
      */
     private final String m_name;
 
@@ -107,9 +107,9 @@ public class JUnit4TestMethod
      * Constructor.
      *
      * @param containerFactory container to run this
-     * @param testMethod       test method (cannot be null)
-     * @param testClass        test class (cannot be null)
-     * @param frameworkOption  framework option (on which framework the test method should be run) (can be null = default
+     * @param testMethod       regression method (cannot be null)
+     * @param testClass        regression class (cannot be null)
+     * @param frameworkOption  framework option (on which framework the regression method should be run) (can be null = default
      *                         framework)
      * @param userOptions      user options (can be null)
      */
@@ -140,7 +140,7 @@ public class JUnit4TestMethod
     }
 
     /**
-     * {@inheritDoc} Starts the test container, installs the test bundle and executes the test within the container.
+     * {@inheritDoc} Starts the regression container, installs the regression bundle and executes the regression within the container.
      */
     @Override
     public void invoke( Object test )
@@ -149,18 +149,18 @@ public class JUnit4TestMethod
         Info.showLogo();
 
         final String fullTestName = m_name + "(" + m_testMethod.getDeclaringClass().getName() + ")";
-        LOG.info( "Starting test " + fullTestName );
+        LOG.info( "Starting regression " + fullTestName );
 
         int executionState = NOT_STARTED;
         TestContainer container = null;
         try
         {
-            LOG.trace( "Start test container" );
+            LOG.trace( "Start regression container" );
             container = m_containerFactory.newInstance( m_options );
             container.start();
             executionState = CONTAINER_STARTED;
 
-            LOG.trace( "Install and start test bundle" );
+            LOG.trace( "Install and start regression bundle" );
             final long bundleId = container.install( m_probe.getStream() );
             executionState = PROBE_INSTALLED;
 
@@ -173,7 +173,7 @@ public class JUnit4TestMethod
             {
                 for( ProbeCall call : m_probe.getTests() )
                 {
-                    LOG.info( "Starting test " + call.getInstruction() );
+                    LOG.info( "Starting regression " + call.getInstruction() );
                     execute( container, call );
                     LOG.info( "Test " + fullTestName + " ended succesfully" );
 
@@ -206,7 +206,7 @@ public class JUnit4TestMethod
                 {
                     if( executionState >= SUCCESFUL )
                     {
-                        // throw catched exception if the test already was successful
+                        // throw catched exception if the regression already was successful
                         // noinspection ThrowFromFinallyBlock
                         throw ignore;
                     }
@@ -214,7 +214,7 @@ public class JUnit4TestMethod
                     {
                         // Do not throw an exception that could occur during stopping the container in case that an
                         // exception was already being thrown
-                        LOG.error( "Cannot stop the test container: " + ignore.getMessage() );
+                        LOG.error( "Cannot stop the regression container: " + ignore.getMessage() );
                     }
                 }
             }
@@ -242,9 +242,9 @@ public class JUnit4TestMethod
     }
 
     /**
-     * Computes the test method name out of test method name, framework and framework version.
+     * Computes the regression method name out of regression method name, framework and framework version.
      *
-     * @param testMethodName  test method name
+     * @param testMethodName  regression method name
      * @param frameworkOption framework option
      *
      * @return test method name

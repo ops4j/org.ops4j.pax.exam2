@@ -18,7 +18,7 @@
 package org.ops4j.pax.exam;
 
 /**
- * This references a test. Use it to call a test on TestContainers.
+ * This references a regression. Use it to call a regression on TestContainers.
  *
  * @author Toni Menzel
  * @since Jan 11, 2010
@@ -27,14 +27,14 @@ public interface TestAddress
 {
 
     /**
-     * Identifier of a single addressable test.
+     * Identifier of a single addressable regression.
      *
      * @return a signature. Never Null.
      */
     public String signature();
 
     /**
-     * This contains encoded instruction (if required) in order to instantiate, configure and invoke a test.
+     * This contains encoded instruction (if required) in order to instantiate, configure and invoke a regression.
      *
      * For example:
      * Foo;myTest could encode the fact that you need to instantiate Foo and invoke myTest.

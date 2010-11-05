@@ -18,8 +18,8 @@
 package org.ops4j.pax.exam;
 
 /**
- * Management of an OSGi framework that can be used as a integration test container.
- * Each container is also a test target.
+ * Management of an OSGi framework that can be used as a integration regression container.
+ * Each container is also a regression target.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
@@ -39,18 +39,18 @@ public interface TestContainer extends TestTarget
         throws TestContainerException;
 
     /**
-     * Starts the test container.
+     * Starts the regression container.
      *
-     * @throws TimeoutException - if timeout occured and the test container cannot be started
+     * @throws TimeoutException - if timeout occured and the regression container cannot be started
      * @return this for fluent api
      */
     TestContainer start()
         throws TimeoutException;
 
     /**
-     * Stops the test container.
+     * Stops the regression container.
      *
-     * @throws TimeoutException - if timeout occured and the test container cannot be stopped
+     * @throws TimeoutException - if timeout occured and the regression container cannot be stopped
      * @return this for fluent api
      */
     TestContainer stop()
