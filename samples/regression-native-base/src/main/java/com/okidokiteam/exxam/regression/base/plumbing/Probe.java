@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.regression.plumbing;
+package com.okidokiteam.exxam.regression.base.plumbing;
 
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;

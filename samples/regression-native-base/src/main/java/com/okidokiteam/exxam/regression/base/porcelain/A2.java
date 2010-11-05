@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.regression.porcelain;
+package com.okidokiteam.exxam.regression.base.porcelain;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

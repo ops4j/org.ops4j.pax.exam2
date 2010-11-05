@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.regression.plumbing;
+package com.okidokiteam.exxam.regression.base.plumbing;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.Option;
@@ -22,13 +22,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
-import org.ops4j.pax.exam.spi.ExxamReactor;
-import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 
 import static org.ops4j.pax.exam.LibraryOptions.*;
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;

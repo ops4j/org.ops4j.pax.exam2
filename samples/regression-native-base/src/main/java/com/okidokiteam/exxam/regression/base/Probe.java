@@ -13,21 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.regression.plumbing;
+package com.okidokiteam.exxam.regression.base;
 
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.*;
+
 /**
- * Another Probe.
+ * External TestProbe.
+ * Assemble yourself using:
+ * createProbe().addTest( Probe.class )
  */
-public class Probe2
+public class Probe
 {
 
     private static Logger LOG = LoggerFactory.getLogger( Probe.class );
 
-    public void myOwnClass()
+    public void withoutBCTest()
     {
-        LOG.info( "INSIDE OSGI " + Probe2.class.getName() + " Method withoutBCTest" );
+        LOG.info( "INSIDE OSGI " + Probe.class.getName() + " Method withoutBCTest" );
+    }
+
+    public void withBCTest( BundleContext ctx )
+    {
+        LOG.info( "INSIDE OSGI " + Probe.class.getName() + " Method withBCTest Context: " + ctx );
+    }
+
+    private void neverCall()
+    {
+        fail( "Don't call me !" );
     }
 }

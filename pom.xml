@@ -94,7 +94,10 @@
 
                 <module>spice/pax-exam-link-mvn</module>
                 <module>spice/pax-exam-link-assembly</module>
-                <module>samples/milestone-noui-native</module>
+
+                <module>samples/regression-native-base</module>
+                <module>samples/regression-native-felix</module>
+
             </modules>
         </profile>
 
@@ -106,6 +109,7 @@
                 <module>samples/probe1</module>
                 <module>samples/uberjar-test</module>
                 <module>samples/testing-container-paxrunner</module>
+                                
             </modules>
         </profile>
     </profiles>

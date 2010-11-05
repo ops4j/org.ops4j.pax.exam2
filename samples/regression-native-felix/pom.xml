@@ -14,11 +14,11 @@
     </parent>
 
     <groupId>org.ops4j.pax.exam</groupId>
-    <artifactId>milestone-noui-native</artifactId>
+    <artifactId>regression-native-felix</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam Regression - No UI Native</name>
+    <name>OPS4J Pax Exam Regression - Native Felix</name>
 
     <dependencies>
         <!-- Resource Management -->
@@ -35,7 +35,7 @@
             <version>2.0.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-       
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
@@ -49,14 +49,7 @@
             <version>3.0.4</version>
             <scope>test</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.osgi</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.6.0.v20100517</version>
-            <scope>regression</scope>
-        </dependency>
-        -->
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -75,14 +68,13 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.1</version>
         </dependency>
-        <!--
+
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1</version>
-            <scope>regression</scope>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>regression-native-base</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
-        -->
+
     </dependencies>
 
 </project>
