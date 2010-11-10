@@ -96,7 +96,9 @@
                 <module>spice/pax-exam-link-assembly</module>
 
                 <module>samples/regression-native-base</module>
+
                 <module>samples/regression-native-felix</module>
+                <module>samples/regression-native-equinox</module>
                 <module>samples/regression-paxrunner</module>
 
 
