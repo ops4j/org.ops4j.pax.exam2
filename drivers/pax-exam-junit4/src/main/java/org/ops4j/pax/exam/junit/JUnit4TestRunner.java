@@ -68,14 +68,21 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
     private static Logger LOG = LoggerFactory.getLogger( JUnit4TestRunner.class );
 
-    private final StagedExamReactor m_reactor;
-    private final Map<FrameworkMethod, TestAddress> m_map;
+    private StagedExamReactor m_reactor;
+    private Map<FrameworkMethod, TestAddress> m_map;
 
     public JUnit4TestRunner( Class<?> klass )
         throws InitializationError
     {
         super( klass );
-        LOG.info( "-- Pax Exam Junit4 Driver init for " + klass.getName() );
+
+
+    }
+
+    @Override
+    public void run( RunNotifier notifier )
+    {
+
         m_map = new HashMap<FrameworkMethod, TestAddress>();
         try
         {
@@ -83,9 +90,15 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         } catch( Exception e )
         {
             e.printStackTrace();
-            throw new InitializationError( e );
+            throw new RuntimeException( e );
         }
-
+        try
+        {
+            super.run( notifier );
+        } finally
+        {
+            m_reactor.tearDown();
+        }
     }
 
     private synchronized StagedExamReactor prepareReactor()
@@ -207,37 +220,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
             {
                 // usually we just need the signature here.
                 m_reactor.invoke( findMatchingCall( method, test ) );
-               LOG.info( "Invokations still in list: " + m_map.keySet().size() );
-               //
+                LOG.info( "Invokations still in list: " + m_map.keySet().size() );
+                //
             }
         };
 
-    }
-
-    @Override
-    protected Statement classBlock( RunNotifier notifier )
-    {
-
-        Statement statement = super.classBlock( notifier );
-        LOG.info( "-------------- Just ended classBlock:" + m_reactor + " notifier: " + notifier );
-        return statement;
-    }
-
-    @Override
-    public void run( RunNotifier notifier )
-    {
-
-        super.run( notifier );    //To change body of overridden methods use File | Settings | File Templates.
-        LOG.info( "-------------- Just ended:" + m_reactor + " notifier: " + notifier );
-        //m_reactor.tearDown();
-
-    }
-
-    @Override
-    protected Statement withAfterClasses( Statement statement )
-    {
-
-        return super.withAfterClasses( statement );
     }
 
     protected TestAddress findMatchingCall( FrameworkMethod method, Object test )

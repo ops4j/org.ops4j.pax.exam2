@@ -28,6 +28,7 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
@@ -39,7 +40,7 @@ import static org.ops4j.pax.exam.LibraryOptions.*;
  * Simple Test Rack that uses the JUnit4 UI
  */
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
 public class A2
 {
 

@@ -58,6 +58,9 @@ public class NativeTestContainer implements TestContainer
     public <T> T getService( Class<T> serviceType, String filter, long timeout )
         throws TestContainerException
     {
+        assert m_framework != null : "Framework should be up";
+        assert serviceType != null : "serviceType not be null";
+
         long start = System.currentTimeMillis();
 
         LOG.info( "Aquiring Service " + serviceType.getName() + " " + ( filter != null ? filter : "" ) );
@@ -79,7 +82,7 @@ public class NativeTestContainer implements TestContainer
                 Thread.sleep( 200 );
             } catch( Exception e )
             {
-                LOG.error( "Some problem during looking up service. " + e );
+                LOG.error( "Some problem during looking up service from framework: " + m_framework, e );
             }
             // wait a bit
         } while( ( System.currentTimeMillis() ) < start + timeout );
@@ -106,7 +109,7 @@ public class NativeTestContainer implements TestContainer
 
         } catch( Exception e )
         {
-            LOG.error( "Some problem during looking up service. " + e );
+            LOG.error( "Some problem during looking up alternative service. ", e );
         }
     }
 
@@ -177,6 +180,7 @@ public class NativeTestContainer implements TestContainer
                 LOG.debug( "Framework goes down.." );
                 m_framework.stop();
                 m_framework.waitForStop( 1000 );
+                m_framework = null;
 
             } catch( BundleException e )
             {
@@ -238,6 +242,7 @@ public class NativeTestContainer implements TestContainer
                 b.start();
                 LOG.debug( "Started: " + b.getSymbolicName() );
             }
+            
             Thread.currentThread().setContextClassLoader( parent );
 
         } catch( Exception e )
@@ -265,23 +270,6 @@ public class NativeTestContainer implements TestContainer
         {
             return version;
         }
-    }
-
-    private FrameworkFactory getFrameworkFactory( String factoryClass )
-        throws ClassNotFoundException
-
-    {
-        return null;//return (FrameworkFactory) Class.forName( factoryClass );
-    }
-
-    private String getFelixFactory()
-    {
-        return "org.apache.felix.framework.FrameworkFactory";
-    }
-
-    private String getEquinoxFactory()
-    {
-        return "org.eclipse.osgi.launch.EquinoxFactory";
     }
 
 

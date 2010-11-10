@@ -26,7 +26,7 @@ import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
  * Simple Test Rack that uses the JUnit4 UI
  */
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
 public class A2_B extends A2
 {
 
