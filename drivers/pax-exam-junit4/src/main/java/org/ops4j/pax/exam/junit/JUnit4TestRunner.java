@@ -18,19 +18,11 @@
 package org.ops4j.pax.exam.junit;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.statements.Fail;
-import org.junit.rules.MethodRule;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -41,17 +33,17 @@ import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.spi.ExxamReactor;
-import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.ExxamReactor;
+import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 
-import static org.ops4j.pax.exam.spi.container.DefaultRaw.createProbe;
+import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 /**
  * This is the default Test Runner using Exxam plumbing API.
@@ -87,14 +79,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         try
         {
             m_reactor = prepareReactor();
+
+            super.run( notifier );
         } catch( Exception e )
         {
-            e.printStackTrace();
-            throw new RuntimeException( e );
-        }
-        try
-        {
-            super.run( notifier );
+            throw new TestContainerException( "Problem interacting with reactor.", e );
         } finally
         {
             m_reactor.tearDown();
