@@ -70,7 +70,7 @@
             </modules>
         </profile>
         <profile>
-            <id>exxam2m1</id>
+            <id>exxam1</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -95,13 +95,11 @@
                 <module>spice/pax-exam-link-mvn</module>
                 <module>spice/pax-exam-link-assembly</module>
 
-                <module>samples/regression-native-base</module>
+                <module>it-regression/regression-native-base</module>
 
-                <module>samples/regression-native-felix</module>
-                <module>samples/regression-native-equinox</module>
-                <module>samples/regression-paxrunner</module>
-
-
+                <module>it-regression/regression-native-felix</module>
+                <module>it-regression/regression-native-equinox</module>
+                <module>it-regression/regression-paxrunner</module>
             </modules>
         </profile>
 
@@ -113,7 +111,7 @@
                 <module>samples/probe1</module>
                 <module>samples/uberjar-test</module>
                 <module>samples/testing-container-paxrunner</module>
-                                
+
             </modules>
         </profile>
     </profiles>

@@ -18,16 +18,15 @@ package com.okidokiteam.exxam.regression.felix.porcelain;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 
 /**
  * Simple Test Rack that uses the JUnit4 UI
  */
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
-public class A2_B extends A2
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+public class A2_A extends A2
 {
+
 
 }
