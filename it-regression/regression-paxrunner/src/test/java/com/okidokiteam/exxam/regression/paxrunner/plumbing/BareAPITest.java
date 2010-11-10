@@ -17,7 +17,6 @@ package com.okidokiteam.exxam.regression.paxrunner.plumbing;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -28,7 +27,7 @@ import static org.ops4j.pax.exam.LibraryOptions.*;
 import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
 
 /**
- * Simple regression
+ *
  */
 public class BareAPITest
 {
@@ -50,10 +49,9 @@ public class BareAPITest
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
 
-// the parse will split all single containers into dedicated OptionDescription(s)
-        for( OptionDescription testTarget : factory.parse( options ) )
+// the parse will split all single containers
+        for( TestContainer testContainer : factory.parse( options ) )
         {
-            TestContainer testContainer = factory.createContainer( testTarget );
             try
             {
                 testContainer.start();
@@ -79,10 +77,9 @@ public class BareAPITest
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
 
-        // the parse will split all single containers into dedicated OptionDescription(s)
-        for( OptionDescription testTarget : factory.parse( options ) )
+        // the parse will split all single containers
+        for( TestContainer testContainer : factory.parse( options ) )
         {
-            TestContainer testContainer = factory.createContainer( testTarget );
             try
             {
                 testContainer.start();
@@ -101,5 +98,4 @@ public class BareAPITest
             }
         }
     }
-
 }

@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.container.remote;
 
 import java.io.InputStream;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestTarget;
@@ -55,11 +54,6 @@ public class RBCRemoteContainer implements TestContainer
     public void cleanup( )
     {
         m_target.cleanup( );
-    }
-
-    public OptionDescription getOptionDescription()
-    {
-        throw new UnsupportedOperationException();
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )

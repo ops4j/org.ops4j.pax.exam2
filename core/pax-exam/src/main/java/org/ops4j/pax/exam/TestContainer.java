@@ -19,7 +19,10 @@ package org.ops4j.pax.exam;
 
 /**
  * Management of an OSGi framework that can be used as a integration regression container.
- * Each container is also a regression target.
+ * Each container is also a test target.
+ *
+ * When constucting TestContainers, it is good practice to not put the parsing part (from Option[]) into the implementation.
+ * Instead, make the native container construction really simple and tied to the underlying container.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
@@ -27,6 +30,7 @@ package org.ops4j.pax.exam;
  */
 public interface TestContainer extends TestTarget
 {
+
     /**
      * Sets the start level for a bundle.
      *
@@ -41,8 +45,9 @@ public interface TestContainer extends TestTarget
     /**
      * Starts the regression container.
      *
-     * @throws TimeoutException - if timeout occured and the regression container cannot be started
      * @return this for fluent api
+     *
+     * @throws TimeoutException - if timeout occured and the regression container cannot be started
      */
     TestContainer start()
         throws TimeoutException;
@@ -50,8 +55,9 @@ public interface TestContainer extends TestTarget
     /**
      * Stops the regression container.
      *
-     * @throws TimeoutException - if timeout occured and the regression container cannot be stopped
      * @return this for fluent api
+     *
+     * @throws TimeoutException - if timeout occured and the regression container cannot be stopped
      */
     TestContainer stop()
         throws TimeoutException;

@@ -47,7 +47,18 @@ public class A2
     {
         return options(
             junitBundles(),
-            easyMockBundles()
+            easyMockBundles(),
+            felix()
+        );
+    }
+
+     @Configuration()
+    public Option[] config2()
+    {
+        return options(
+            junitBundles(),
+            easyMockBundles(),
+            equinox()
         );
     }
 

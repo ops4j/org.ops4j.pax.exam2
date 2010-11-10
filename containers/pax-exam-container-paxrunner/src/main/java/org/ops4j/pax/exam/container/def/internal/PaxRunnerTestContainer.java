@@ -21,9 +21,7 @@ package org.ops4j.pax.exam.container.def.internal;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,18 +32,12 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestTarget;
-import org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption;
-import org.ops4j.pax.exam.container.def.options.Scanner;
-import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
-import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
-import org.ops4j.pax.exam.rbc.Constants;
-import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.TimeoutException;
+import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
+import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
+import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.runner.Run;
 import org.ops4j.pax.runner.handler.internal.URLUtils;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
@@ -54,9 +46,7 @@ import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
 import static org.ops4j.pax.exam.Constants.*;
-import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.OptionUtils.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * {@link TestContainer} implementation using Pax Runner.
@@ -123,11 +113,6 @@ public class PaxRunnerTestContainer
         m_customizers = new CompositeCustomizer( customizer );
         m_store = StoreFactory.defaultStore();
         m_cache = new HashMap<String, Handle>();
-    }
-
-    public OptionDescription getOptionDescription()
-    {
-        return null;
     }
 
     /**

@@ -25,13 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
-
-import org.ops4j.pax.exam.OptionDescription;
-import org.ops4j.pax.exam.OptionParser;
 import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
 import org.ops4j.pax.exam.container.def.options.CleanCachesOption;
 import org.ops4j.pax.exam.container.def.options.ExcludeDefaultRepositoriesOption;
@@ -54,7 +47,10 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.rbc.Constants;
-import org.ops4j.pax.exam.spi.BuildingOptionDescription;
+
+import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.OptionUtils.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * Utility methods for converting configuration options to Pax Runner arguments.
@@ -63,7 +59,7 @@ import org.ops4j.pax.exam.spi.BuildingOptionDescription;
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0 December 10, 2008
  */
-class ArgumentsBuilder implements OptionParser
+class ArgumentsBuilder
 {
 
     /**
@@ -89,7 +85,6 @@ class ArgumentsBuilder implements OptionParser
     private Customizer[] m_customizers;
 
     private int m_rmiPort;
-    private BuildingOptionDescription m_optionDescription;
 
     /**
      * Converts configuration options to Pax Runner arguments.
@@ -102,8 +97,6 @@ class ArgumentsBuilder implements OptionParser
         m_rmiPort = rmiPort;
 
         options = wrap( expand( combine( options, localOptions() ) ) );
-
-        m_optionDescription = new BuildingOptionDescription( options );
 
         final List<String> arguments = new ArrayList<String>();
         m_customizers = filter( Customizer.class, options );
@@ -138,7 +131,7 @@ class ArgumentsBuilder implements OptionParser
         add( arguments, extractArguments( markingFilter( DebugClassLoadingOption.class, options ) ) );
         add( arguments, defaultArguments() );
 
-        m_parsedArgs = arguments.toArray( new String[arguments.size()] );
+        m_parsedArgs = arguments.toArray( new String[ arguments.size() ] );
     }
 
     /**
@@ -177,7 +170,7 @@ class ArgumentsBuilder implements OptionParser
                 // finally combine the processed provision options with the original options
                 // (where provison options are removed)
                 return combine( remove( ProvisionOption.class, options ),
-                                processed.toArray( new Option[processed.size()] )
+                                processed.toArray( new Option[ processed.size() ] )
                 );
             }
         }
@@ -188,14 +181,7 @@ class ArgumentsBuilder implements OptionParser
     public <T extends Option> T[] markingFilter( final Class<T> optionType,
                                                  final Option... options )
     {
-        T[] inner = filter( optionType, options );
-        m_optionDescription.markAsUsed( inner );
-        return inner;
-    }
-
-    public OptionDescription getOptionDescription()
-    {
-        return m_optionDescription;
+        return filter( optionType, options );
     }
 
     /**

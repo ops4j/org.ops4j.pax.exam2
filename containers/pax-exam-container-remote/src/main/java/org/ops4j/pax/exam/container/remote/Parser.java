@@ -15,13 +15,11 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
-import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
-import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
-import org.ops4j.pax.exam.spi.BuildingOptionDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
+import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 
 import static org.ops4j.pax.exam.OptionUtils.*;
 
@@ -31,8 +29,7 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 public class Parser
 {
 
-    private static Logger LOG = LoggerFactory.getLogger(Parser.class);
-    private BuildingOptionDescription m_optionDescription;
+    private static Logger LOG = LoggerFactory.getLogger( Parser.class );
 
     private String m_host = RBCPortOption.DEFAULTHOST;
 
@@ -42,7 +39,6 @@ public class Parser
 
     public Parser( Option[] options )
     {
-        m_optionDescription = new BuildingOptionDescription( options );
         extractArguments( markingFilter( RBCPortOption.class, options ) );
         extractArguments( markingFilter( RBCLookupTimeoutOption.class, options ) );
     }
@@ -67,14 +63,7 @@ public class Parser
     public <T extends Option> T[] markingFilter( final Class<T> optionType,
                                                  final Option... options )
     {
-        T[] inner = filter( optionType, options );
-        m_optionDescription.markAsUsed( inner );
-        return inner;
-    }
-
-    public OptionDescription getOptionDescription()
-    {
-        return m_optionDescription;
+        return filter( optionType, options );
     }
 
     public String getHost()

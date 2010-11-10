@@ -17,7 +17,6 @@ package com.okidokiteam.exxam.regression.base;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -50,10 +49,9 @@ public class BareAPITest
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
 
-// the parse will split all single containers into dedicated OptionDescription(s)
-        for( OptionDescription testTarget : factory.parse( options ) )
+// the parse will split all single containers
+        for( TestContainer testContainer : factory.parse( options ) )
         {
-            TestContainer testContainer = factory.createContainer( testTarget );
             try
             {
                 testContainer.start();
@@ -79,10 +77,9 @@ public class BareAPITest
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
 
-        // the parse will split all single containers into dedicated OptionDescription(s)
-        for( OptionDescription testTarget : factory.parse( options ) )
+        // the parse will split all single containers
+        for( TestContainer testContainer : factory.parse( options ) )
         {
-            TestContainer testContainer = factory.createContainer( testTarget );
             try
             {
                 testContainer.start();

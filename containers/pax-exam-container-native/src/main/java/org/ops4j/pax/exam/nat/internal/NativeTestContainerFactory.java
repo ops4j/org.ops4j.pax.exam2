@@ -18,11 +18,9 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 
 /**
@@ -37,27 +35,16 @@ import org.ops4j.pax.exam.TestContainerFactory;
 public class NativeTestContainerFactory implements TestContainerFactory
 {
 
-    final private Map<OptionDescription, TestContainer> m_registry = new HashMap<OptionDescription, TestContainer>();
-
-    public OptionDescription[] parse( Option... options )
+    public TestContainer[] parse( Option... options )
+        throws TestContainerException
     {
         // TODO add some splitter logic for separating framework options (which leads to bigger result arrays, not just single value
-        // fully prepare
-        // find implementations:
-
         NativeTestContainerParser parser = new NativeTestContainerParser( options );
         ArrayList<String> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
-        TestContainer container = new NativeTestContainer( bundles );
-        OptionDescription descr = parser.getDescription();
 
-        m_registry.put( descr, container );
-        return new OptionDescription[]{
-            descr
+        return new TestContainer[]{
+
+            new NativeTestContainer( bundles )
         };
-    }
-
-    public TestContainer createContainer( OptionDescription option )
-    {
-        return m_registry.get( option );
     }
 }

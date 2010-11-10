@@ -18,7 +18,6 @@ package org.ops4j.pax.exam.spi.reactors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestContainer;
 
 /**
@@ -29,21 +28,21 @@ public class OptionPrinter
 
     private static Logger LOG = LoggerFactory.getLogger( OptionPrinter.class );
 
-    public void print( String contextText, final OptionDescription options, Class<? extends TestContainer> containerClazz )
+    public void print( String contextText, Option[] ignored, Option[] used , Class<? extends TestContainer> containerClazz )
     {
         StringBuilder sb = new StringBuilder();
         sb.append( "\n**[OPTIONS Report] : " ).append( contextText );
         sb.append( "\nContainer used: " ).append( containerClazz.getName() );
-        if( options.getIgnoredOptions().length + options.getUsedOptions().length == 0 )
+        if( ignored.length + used.length == 0 )
         {
             sb.append( "\nPossible problem: No options discovered. " );
 
         }
-        if( options.getIgnoredOptions().length > 0 )
+        if( ignored.length > 0 )
         {
 
             sb.append( "\nOptions Included :" );
-            for( Option s : options.getUsedOptions() )
+            for( Option s : used )
             {
                 sb.append( "\n          " ).append( s );
 
@@ -54,12 +53,12 @@ public class OptionPrinter
             sb.append( "\nPossible problem: No included options discovered. " );
         }
 
-        if( options.getIgnoredOptions().length > 0 )
+        if( ignored.length > 0 )
         {
 
             sb.append( "\nOptions not included :" );
 
-            for( Option s : options.getIgnoredOptions() )
+            for( Option s : ignored )
             {
                 sb.append( "\n          " ).append( s );
 

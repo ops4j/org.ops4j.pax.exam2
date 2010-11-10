@@ -19,11 +19,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
@@ -41,8 +39,9 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     final private TestContainerFactory m_factory;
 
     /**
-     * @param mConfigurations
-     * @param mProbes
+     * @param factory         to be used
+     * @param mConfigurations to be used
+     * @param mProbes         probes to be installed
      */
     public AllConfinedStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeProvider> mProbes )
     {
@@ -60,18 +59,13 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     public void invoke( TestAddress call )
         throws Exception
     {
-        OptionPrinter printer = new OptionPrinter();
-
         LOG.info( "Trying to invoke signature: " + call.signature() );
         // create a container for each call:
         for( Option[] option : m_configs )
         {
-            OptionDescription[] runtimes = m_factory.parse( option );
-            for( OptionDescription s : runtimes )
+            TestContainer[] runtimes = m_factory.parse( option );
+            for( TestContainer runtime : runtimes )
             {
-                TestContainer runtime = m_factory.createContainer( s );
-
-                printer.print( getClass().getName(), s, runtime.getClass() );
                 LOG.debug( "Reactor starting the selected TestContainer: " + runtime + " .. " );
                 runtime.start();
                 LOG.debug( "Test Container is ready." );

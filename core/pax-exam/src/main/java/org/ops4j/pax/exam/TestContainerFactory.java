@@ -1,5 +1,6 @@
 /*
  * Copyright 2008 Alin Dreghiciu.
+ * Copyright 2008-2010 Toni Menzel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +21,7 @@ package org.ops4j.pax.exam;
 /**
  * {@link TestContainer} factory.
  *
- * Depending on the OptionDescription created by {@link #parse(Option...)} there is a contract with the {@link org.ops4j.pax.exam.OptionDescription}
- * you can put into {@link #createContainer}.
- *
+ * @author Toni Menzel (toni@okidokiteam.com)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
@@ -30,21 +29,18 @@ public interface TestContainerFactory
 {
 
     /**
-     * Creates a one or more {@link OptionDescription}. Depending on the underlying implementation.
-     * This is more an Option[] splitter.
-     * 
+     * Creates a one or more {@link TestContainer}. Depending on the underlying implementation.
+     *
+     * This step is also told to fail if there are incompatible options being passed in.
+     *
      * @param options integration regression options
      *
      * @return created regression container
+     *
+     * @throws TestContainerException fail if incompatible options are being passed in.
      */
-    OptionDescription[] parse( Option... options );
-
-    /**
-     * 
-     * @param option
-     * @return
-     */
-    TestContainer createContainer( OptionDescription option );
+    TestContainer[] parse( Option... options )
+        throws TestContainerException;
 
 
 }

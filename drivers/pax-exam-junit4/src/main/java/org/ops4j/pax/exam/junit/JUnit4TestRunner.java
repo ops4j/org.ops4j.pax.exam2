@@ -116,7 +116,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
             if( conf != null )
             {
                 // consider as option, so prepare that one:
-                LOG.debug( "Add Configuration " + m.getName() );
+                LOG.info( "Add Configuration " + m.getName() );
                 reactor.addConfiguration( (Option[]) m.invoke( testClassInstance ) );
             }
         }

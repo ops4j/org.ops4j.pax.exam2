@@ -17,12 +17,9 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
-import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.container.remote.Parser;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
@@ -37,12 +34,11 @@ public class PaxRunnerTestContainerFactory
     implements TestContainerFactory
 {
 
-    final private Map<OptionDescription, TestContainer> m_registry = new HashMap<OptionDescription, TestContainer>();
 
     /**
      * {@inheritDoc}
      */
-    public OptionDescription[] parse( final Option... options )
+    public TestContainer[] parse( final Option... options )
     {
         // Parser for the PaxRunnerTestContainer
         RBCRemoteTarget target = createRemoteTarget(options);
@@ -60,10 +56,8 @@ public class PaxRunnerTestContainerFactory
                                                               argBuilder.getCustomizers()
         );
 
-        OptionDescription descr = argBuilder.getOptionDescription();
-        m_registry.put( descr, container );
-        return new OptionDescription[]{
-            descr
+        return new TestContainer[]{
+            container
         };
     }
 
@@ -71,11 +65,6 @@ public class PaxRunnerTestContainerFactory
         Parser p = new Parser( options);
 
         return new RBCRemoteTarget(p.getHost(),p.getRMIPort(),p.getRMILookupTimpout() );
-    }
-
-    public TestContainer createContainer( OptionDescription option )
-    {
-        return m_registry.get( option );
     }
 
 }

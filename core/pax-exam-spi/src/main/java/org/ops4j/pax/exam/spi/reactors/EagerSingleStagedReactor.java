@@ -24,12 +24,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionDescription;
+import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.container.DefaultRaw;
@@ -61,7 +59,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor
             mConfigurations.add( new Option[0] );
         }
 
-        List<OptionDescription> m_targets = new ArrayList<OptionDescription>();
+        List<TestContainer> m_targets = new ArrayList<TestContainer>();
         for( Option[] option : mConfigurations )
         {
             m_targets.addAll( Arrays.asList( factory.parse( option ) ) );
@@ -69,11 +67,8 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
-        for( OptionDescription description : m_targets )
+        for( TestContainer container : m_targets )
         {
-            TestContainer container = factory.createContainer( description );
-            printer.print( this.getClass().getName(), description, container.getClass() );
-
             containers.add( container );
             container.start();
 
