@@ -105,7 +105,7 @@ public class RemoteBundleContextImpl
                                final byte[] bundle )
         throws BundleException
     {
-        LOG.info( "Install bundle [" + bundleLocation + "] from byte array" );
+        LOG.info( "Install bundle [ location=" + bundleLocation + "] from byte array" );
         final ByteArrayInputStream inp = new ByteArrayInputStream( bundle );
         try
         {
