@@ -95,6 +95,6 @@ public class AllConfinedStagedReactor implements StagedExamReactor
 
     public void tearDown()
     {
-
+        // does not do anything.
     }
 }

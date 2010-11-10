@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.rules.MethodRule;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -83,6 +85,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
             e.printStackTrace();
             throw new InitializationError( e );
         }
+
     }
 
     private synchronized StagedExamReactor prepareReactor()
@@ -204,20 +207,47 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
             {
                 // usually we just need the signature here.
                 m_reactor.invoke( findMatchingCall( method, test ) );
+               LOG.info( "Invokations still in list: " + m_map.keySet().size() );
+               //
             }
         };
 
     }
 
+    @Override
+    protected Statement classBlock( RunNotifier notifier )
+    {
+
+        Statement statement = super.classBlock( notifier );
+        LOG.info( "-------------- Just ended classBlock:" + m_reactor + " notifier: " + notifier );
+        return statement;
+    }
+
+    @Override
+    public void run( RunNotifier notifier )
+    {
+
+        super.run( notifier );    //To change body of overridden methods use File | Settings | File Templates.
+        LOG.info( "-------------- Just ended:" + m_reactor + " notifier: " + notifier );
+        //m_reactor.tearDown();
+
+    }
+
+    @Override
+    protected Statement withAfterClasses( Statement statement )
+    {
+
+        return super.withAfterClasses( statement );
+    }
+
     protected TestAddress findMatchingCall( FrameworkMethod method, Object test )
     {
-        return m_map.get( method );
+        return m_map.remove( method );
     }
 
-    protected void validateTestMethods( List<Throwable> errors )
+    @Override
+    protected void validatePublicVoidNoArgMethods( Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors )
     {
-        super.validateTestMethods( errors );
+
     }
-
-
 }

@@ -24,8 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
@@ -37,6 +39,7 @@ import static org.ops4j.pax.exam.LibraryOptions.*;
  * Simple Test Rack that uses the JUnit4 UI
  */
 @RunWith( JUnit4TestRunner.class )
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class A2
 {
 
@@ -64,7 +67,7 @@ public class A2
         LOG.info( "++++ PEAK from " + this.getClass().getName() );
     }
 
-    // @Test
+    @Test
     public void withBC( BundleContext ctx )
     {
         for( Bundle b : ctx.getBundles() )

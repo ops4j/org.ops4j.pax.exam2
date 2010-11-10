@@ -168,6 +168,7 @@ public class NativeTestContainer implements TestContainer
     public TestContainer stop()
         throws TimeoutException
     {
+//        if (1==1) throw new RuntimeException( "stop has been called." );
         if( m_framework != null )
         {
 
@@ -176,7 +177,6 @@ public class NativeTestContainer implements TestContainer
                 LOG.debug( "Framework goes down.." );
                 m_framework.stop();
                 m_framework.waitForStop( 1000 );
-
 
             } catch( BundleException e )
             {

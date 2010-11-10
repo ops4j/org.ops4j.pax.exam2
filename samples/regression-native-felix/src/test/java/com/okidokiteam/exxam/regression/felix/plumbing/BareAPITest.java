@@ -15,7 +15,11 @@
  */
 package com.okidokiteam.exxam.regression.felix.plumbing;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
+import org.junit.rules.TestWatchman;
+import org.junit.runners.model.FrameworkMethod;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionDescription;
 import org.ops4j.pax.exam.TestAddress;
@@ -32,6 +36,22 @@ import static org.ops4j.pax.exam.spi.container.DefaultRaw.*;
  */
 public class BareAPITest
 {
+
+    @Rule
+    public MethodRule watchman = new TestWatchman() {
+
+        @Override
+        public void finished( FrameworkMethod method )
+        {
+            System.out.println("Finished..." + method.getName());
+        }
+
+        public void starting(FrameworkMethod method) {
+
+            System.out.println("{} being run..." + method.getName());
+        }
+      };
+    
 
     private TestContainerFactory getFactory()
     {
