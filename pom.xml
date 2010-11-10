@@ -97,6 +97,8 @@
 
                 <module>samples/regression-native-base</module>
                 <module>samples/regression-native-felix</module>
+                <module>samples/regression-paxrunner</module>
+
 
             </modules>
         </profile>
