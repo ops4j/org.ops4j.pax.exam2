@@ -52,7 +52,6 @@ public class EagerSingleStagedReactor implements StagedExamReactor
      */
     public EagerSingleStagedReactor( TestContainerFactory factory, List<Option[]> mConfigurations, List<TestProbeProvider> mProbes )
     {
-        OptionPrinter printer = new OptionPrinter();
         if( mConfigurations.size() < 1 )
         {
             // fill in a default config
@@ -74,7 +73,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor
 
             for( TestProbeProvider builder : mProbes )
             {
-                LOG.debug( "installing probe " + builder );
+                LOG.info( "installing probe " + builder );
                 try
                 {
                     container.install( builder.getStream() );
