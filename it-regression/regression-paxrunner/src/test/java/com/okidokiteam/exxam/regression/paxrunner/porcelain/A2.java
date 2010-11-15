@@ -32,6 +32,7 @@ import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.LibraryOptions.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * Simple Test Rack that uses the JUnit4 UI
@@ -48,17 +49,20 @@ public class A2
         return options(
             junitBundles(),
             easyMockBundles(),
-            felix()
+            felix(),
+            logProfile()
+            
         );
     }
 
-     @Configuration()
+    @Configuration()
     public Option[] config2()
     {
         return options(
             junitBundles(),
             easyMockBundles(),
-            equinox()
+            equinox(),
+            logProfile()
         );
     }
 
@@ -78,11 +82,12 @@ public class A2
     @Test
     public void withBC( BundleContext ctx )
     {
+        assertEquals( "org.apache.felix.framework", ctx.getBundle(0 ).getSymbolicName());
         for( Bundle b : ctx.getBundles() )
         {
-            System.out.println( "  ++ Bundle " + b.getSymbolicName() );
-            System.out.println( "Imports: " + b.getHeaders().get( "Import-Package" ) );
-            System.out.println( "Exports: " + b.getHeaders().get( "Export-Package" ) );
+             LOG.info( "  ++ Bundle " + b.getSymbolicName() );
+             LOG.info( "Imports: " + b.getHeaders().get( "Import-Package" ) );
+             LOG.info( "Exports: " + b.getHeaders().get( "Export-Package" ) );
             //System.out.println( "Dynamic-ImportPackage: " + b.getHeaders().get( "Dynamic-ImportPackage" ) );
 
         }

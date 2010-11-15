@@ -46,28 +46,37 @@ public class ReactorAPITest
     public void reactorRunAllConfinedTest()
         throws Exception
     {
-        reactorRun( new AllConfinedStagedReactorFactory() );
+        //reactorRun( new AllConfinedStagedReactorFactory(),
+        //            new Option[]{ junitBundles(), easyMockBundles() }
+        //);
+
+        reactorRun( new EagerSingleStagedReactorFactory(),
+                    new Option[]{ junitBundles(), easyMockBundles() },
+                    new Option[]{ junitBundles(), easyMockBundles() }
+        );
     }
 
-    @Test
+    //@Test
     public void reactorRunEagerTest()
         throws Exception
     {
-        reactorRun( new EagerSingleStagedReactorFactory() );
+        reactorRun( new EagerSingleStagedReactorFactory(), new Option[]{ junitBundles(), easyMockBundles() } );
+        reactorRun( new EagerSingleStagedReactorFactory(), new Option[]{ junitBundles(), easyMockBundles() } );
     }
 
-    public void reactorRun( StagedExamReactorFactory strategy )
+    public void reactorRun( StagedExamReactorFactory strategy, Option[]... options )
         throws Exception
     {
         TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
-
         ExxamReactor reactor = new DefaultExamReactor( factory );
 
         TestProbeProvider probe = createProbe().addTest( Probe.class ).build();
 
         reactor.addProbe( probe );
-        reactor.addConfiguration( options );
+        for( Option[] option : options )
+        {
+            reactor.addConfiguration( option );
+        }
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
         try

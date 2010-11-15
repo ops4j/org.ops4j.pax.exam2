@@ -31,7 +31,7 @@ public class Probe
 
     private static Logger LOG = LoggerFactory.getLogger( Probe.class );
 
-    public void withoutBCTest()
+    private void withoutBCTest()
     {
         LOG.info( "INSIDE OSGI " + Probe.class.getName() + " Method withoutBCTest" );
     }
