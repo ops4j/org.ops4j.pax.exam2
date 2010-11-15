@@ -150,28 +150,7 @@
                 <groupId>org.ops4j.pax.runner</groupId>
                 <artifactId>pax-runner-no-jcl</artifactId>
                 <version>${dependency.runner.version}</version>
-            </dependency>
-            <!--
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>avalon-framework</groupId>
-                        <artifactId>avalon-framework</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>logkit</groupId>
-                        <artifactId>logkit</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>servlet-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            -->
+            </dependency>       
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -229,18 +208,10 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:tonit/exxam.git</connection>
-        <developerConnection>scm:git:git@github.com:tonit/exxam.git</developerConnection>
-        <url>git@github.com:tonit/exxam.git</url>
+        <connection>scm:git@github.com:ops4j/org.ops4j.pax.exam2.git</connection>
+        <developerConnection>scm:git@github.com:ops4j/org.ops4j.pax.exam2.git</developerConnection>
+        <url>git@github.com:ops4j/org.ops4j.pax.exam2.git</url>
     </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>okidokiteam.snapshots</id>
-            <name>Nexus Snapshot Repo</name>
-            <url>http://okidokiteam.com:/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </distributionManagement>
 
     <developers>
         <developer>
