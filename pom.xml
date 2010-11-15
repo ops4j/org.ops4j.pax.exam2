@@ -4,10 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.okidokiteam</groupId>
+        <groupId>org.ops4j</groupId>
         <artifactId>master</artifactId>
-        <version>1.0.0-alpha-1</version>
-        <relativePath>pom/pom.xml</relativePath>
+        <version>1.0.8</version>
     </parent>
 
     <groupId>org.ops4j.pax</groupId>
