@@ -97,10 +97,8 @@
 
                 <module>it-regression/regression-native-felix</module>
                 <module>it-regression/regression-native-equinox</module>
-                <!--
-                
                 <module>it-regression/regression-paxrunner</module>
-                -->
+                
             </modules>
         </profile>
 
