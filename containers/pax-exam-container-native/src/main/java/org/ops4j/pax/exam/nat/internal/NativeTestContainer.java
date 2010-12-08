@@ -210,7 +210,11 @@ public class NativeTestContainer implements TestContainer
         try
         {
             final Map<String, String> p = new HashMap<String, String>();
-            String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
+            String folder = System.getProperty( "org.osgi.framework.storage" );
+            if ( folder == null ) 
+            {
+                folder = System.getProperty( "user.home" ) + File.separator + "osgi";
+            }
             LOG.debug( "Cache folder set to " + folder );
             FileUtils.delete( new File( folder ) );
             // load default stuff
