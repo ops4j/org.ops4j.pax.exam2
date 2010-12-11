@@ -81,8 +81,8 @@ public class RemoteBundleContextClient
                                       final Integer rmiPort,
                                       final long rmiLookupTimeout )
     {
-        assert ( host != null ) : "Host should not be null";
-        assert ( rmiPort != null ) : "rmiPort should not be null";
+        assert host != null : "Host should not be null";
+        assert rmiPort != null : "rmiPort should not be null";
 
         m_rmiPort = rmiPort;
         m_host = host;
@@ -189,7 +189,7 @@ public class RemoteBundleContextClient
     {
         try
         {
-            while( ( !m_installed.isEmpty() ) )
+            while( !m_installed.isEmpty() )
             {
                 Long id = m_installed.pop();
                 getRemoteBundleContext().uninstallBundle( id );
