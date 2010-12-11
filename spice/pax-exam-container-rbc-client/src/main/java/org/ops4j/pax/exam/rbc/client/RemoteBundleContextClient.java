@@ -31,15 +31,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Stack;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import org.ops4j.io.StreamUtils;
-
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
+import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.jkernel.Bundle;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
