@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,19 @@ public class NativeTestContainerParser
         for( SystemPropertyOption opt : systemProperties )
         {
             m_properties.put( opt.getKey(), opt.getValue() );
+        }
+        BootDelegationOption[] bootDelegations = filter( BootDelegationOption.class, options );
+        StringBuilder sb = new StringBuilder();
+        for ( BootDelegationOption opt : bootDelegations )
+        {
+            if ( sb.length() > 0 )
+            {
+                sb.append(",");
+            }
+            sb.append( opt.getPackage() );
+        }
+        if ( sb.length() > 0 ) {
+            m_properties.put( "org.osgi.framework.bootdelegation" , sb.toString() );
         }
     }
 
