@@ -49,10 +49,12 @@ public class NativeTestContainer implements TestContainer
 
     private Framework m_framework;
     private Stack<Long> m_installed;
+    private Map<String, String> m_properties;
 
-    public NativeTestContainer( ArrayList<String> bundles )
+    public NativeTestContainer(ArrayList<String> bundles, Map<String, String> properties)
     {
         m_bundles = bundles;
+        m_properties = properties;
     }
 
     public <T> T getService( Class<T> serviceType, String filter, long timeout )
@@ -209,8 +211,12 @@ public class NativeTestContainer implements TestContainer
         ClassLoader parent = null;
         try
         {
-            final Map<String, String> p = new HashMap<String, String>();
-            String folder = System.getProperty( "org.osgi.framework.storage" );
+            final Map<String, String> p = new HashMap<String, String>( m_properties );
+            String folder = p.get( "org.osgi.framework.storage" );
+            if ( folder == null )
+            {
+                folder = System.getProperty( "org.osgi.framework.storage" );
+            }
             if ( folder == null ) 
             {
                 folder = System.getProperty( "user.home" ) + File.separator + "osgi";
