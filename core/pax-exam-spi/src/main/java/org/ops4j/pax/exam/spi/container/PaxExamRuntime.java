@@ -71,7 +71,7 @@ public class PaxExamRuntime
         {
             List<URL> factories = new ArrayList<URL>();
 
-            Enumeration<URL> systemResources = cl.getSystemResources( "META-INF/services/org.ops4j.pax.exam.TestContainerFactory" );
+            Enumeration<URL> systemResources = cl.getResources( "META-INF/services/org.ops4j.pax.exam.TestContainerFactory" );
             while( systemResources.hasMoreElements() )
             {
                 factories.add( systemResources.nextElement() );

@@ -46,13 +46,15 @@ public class NativeTestContainer implements TestContainer
 
     private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
     final private List<String> m_bundles;
+    final private Map<String, String> m_properties;
 
     private Framework m_framework;
     private Stack<Long> m_installed;
 
-    public NativeTestContainer( ArrayList<String> bundles )
+    public NativeTestContainer( List<String> bundles, Map<String, String> props )
     {
         m_bundles = bundles;
+        m_properties = props;
     }
 
     public <T> T getService( Class<T> serviceType, String filter, long timeout )
@@ -209,7 +211,7 @@ public class NativeTestContainer implements TestContainer
         ClassLoader parent = null;
         try
         {
-            final Map<String, String> p = new HashMap<String, String>();
+            final Map<String, String> p = new HashMap<String, String>(m_properties);
             String folder = System.getProperty( "user.home" ) + File.separator + "osgi";
             LOG.debug( "Cache folder set to " + folder );
             FileUtils.delete( new File( folder ) );
@@ -218,7 +220,14 @@ public class NativeTestContainer implements TestContainer
             p.put( "org.osgi.framework.storage", folder );
             //  System.setProperty( "org.osgi.vendor.framework", "org.ops4j.pax.exam" );
 
-            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam.raw.extender;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) );
+            String extra = p.get( "org.osgi.framework.system.packages.extra" );
+            if( extra != null && extra.length() > 0 ) {
+                extra += ",";
+            } else {
+                extra = "";
+            }
+            extra += "org.ops4j.pax.exam.raw.extender;version=" + skipSnapshotFlag( Info.getPaxExamVersion() );
+            p.put( "org.osgi.framework.system.packages.extra", extra );
             // TODO fix ContextClassLoaderUtils.doWithClassLoader() and replace logic with it.
             parent = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader( null );
@@ -243,8 +252,6 @@ public class NativeTestContainer implements TestContainer
                 LOG.debug( "Started: " + b.getSymbolicName() );
             }
             
-            Thread.currentThread().setContextClassLoader( parent );
-
         } catch( Exception e )
         {
             e.printStackTrace();

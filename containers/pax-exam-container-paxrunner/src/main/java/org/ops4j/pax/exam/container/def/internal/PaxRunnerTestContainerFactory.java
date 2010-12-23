@@ -18,10 +18,12 @@
 package org.ops4j.pax.exam.container.def.internal;
 
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.container.remote.Parser;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
+import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 
 /**
@@ -40,6 +42,29 @@ public class PaxRunnerTestContainerFactory
      */
     public TestContainer[] parse( final Option... options )
     {
+        final FrameworkOption[] frameworkOptions = OptionUtils.filter(FrameworkOption.class, options);
+        final Option[] filteredOptions = OptionUtils.remove( FrameworkOption.class, options );
+
+        if( frameworkOptions.length == 0 )
+        {
+            return new TestContainer[] {
+                    createContainer( filteredOptions )
+            };
+        }
+        else
+        {
+            TestContainer[] containers = new TestContainer[ frameworkOptions.length ];
+            for( int i = 0; i < containers.length; i++ )
+            {
+                Option[] opts = OptionUtils.combine( filteredOptions, frameworkOptions[ i ] );
+                containers[i] = createContainer( opts );
+            }
+            return containers;
+        }
+    }
+
+    private TestContainer createContainer( final Option... options )
+    {
         // Parser for the PaxRunnerTestContainer
         RBCRemoteTarget target = createRemoteTarget(options);
         ArgumentsBuilder argBuilder = new ArgumentsBuilder( target.getClientRBC().getRmiPort(), options );
@@ -52,18 +77,14 @@ public class PaxRunnerTestContainerFactory
                                                               argBuilder.getWorkingFolder(),
                                                               argBuilder.getStartTimeout(),
                                                               target,
-
                                                               argBuilder.getCustomizers()
         );
 
-        return new TestContainer[]{
-            container
-        };
+        return container;
     }
 
     private RBCRemoteTarget createRemoteTarget(Option[] options) {
         Parser p = new Parser( options);
-
         return new RBCRemoteTarget(p.getHost(),p.getRMIPort(),p.getRMILookupTimpout() );
     }
 

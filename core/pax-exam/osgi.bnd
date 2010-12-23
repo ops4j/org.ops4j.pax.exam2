@@ -9,7 +9,8 @@ Import-Package:\
   
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}",\
-  ${bundle.namespace}.options; version="${pom.version}"
+  ${bundle.namespace}.options; version="${pom.version}",\
+  ${bundle.namespace}.libraryoptions; version="${pom.version}"
 
 Embed-Dependency:\
   *; scope=compile|runtime; type=!pom

@@ -17,8 +17,12 @@
  */
 package org.ops4j.pax.exam.raw.extender.intern;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import org.ops4j.pax.exam.Inject;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.raw.extender.ProbeInvoker;
 
@@ -114,7 +118,7 @@ public class ProbeInvokerImpl implements ProbeInvoker
         throws IllegalAccessException, InvocationTargetException
     {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
-        //injectFieldInstances( testInstance.getClass(), testInstance );
+        injectFieldInstances( testInstance.getClass(), testInstance );
         boolean cleanup = false;
         try
         {
@@ -146,4 +150,82 @@ public class ProbeInvokerImpl implements ProbeInvoker
             }
         }
     }
+
+    /**
+     * Injects instances into fields found in testInstance and its superclases.
+     *
+     * @param clazz
+     * @param inst
+     */
+    private void injectFieldInstances( Class clazz, Object inst )
+        throws IllegalAccessException
+    {
+        if( clazz.getSuperclass() != null )
+        {
+            injectFieldInstances( clazz.getSuperclass(), inst );
+        }
+        for( Field field : clazz.getDeclaredFields() )
+        {
+            setIfMatching( inst, field, m_ctx );
+        }
+    }
+
+    /**
+     * @param testInstance object instance where you found field
+     * @param field        field that is going to be set
+     * @param o            target value of field
+     */
+    private void setIfMatching( Object testInstance, Field field, Object o )
+        throws IllegalAccessException
+    {
+        if( isInjectionField( field ) && isMatchingType( field, o.getClass() ) )
+        {
+            field.setAccessible( true );
+            field.set( testInstance, o );
+        }
+    }
+
+    /**
+     * Just checks if type of field is a assignable from clazz.
+     *
+     * @param field
+     * @param clazz
+     */
+    private boolean isMatchingType( Field field, Class clazz )
+    {
+        boolean result =  field.getType().isAssignableFrom( clazz );
+        return result;
+    }
+
+    /**
+     * Tests if the given field has the {@link @Inject} annotation.
+     * Due to some osgi quirks, currently direct getAnnotation( Inject.class ) does not work..:(
+     *
+     * @param field field to be tested
+     *
+     * @return trze if it has the Inject annotation. Otherwise false.
+     */
+    public boolean isInjectionField( Field field )
+    {
+        // Usually, this should be enough.
+        if( field.getAnnotation( Inject.class ) != null )
+        {
+            return true;
+        }
+        else
+        {
+            // the above one fails in some cases currently (returns null) while annotation is there.
+            // So this is a fallback:
+            for( Annotation annot : field.getAnnotations() )
+            {
+                if( annot.annotationType().getName().equals( Inject.class.getName() ) )
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 }

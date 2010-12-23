@@ -18,10 +18,15 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.options.FrameworkOption;
 
 /**
  * Stateful
@@ -38,13 +43,33 @@ public class NativeTestContainerFactory implements TestContainerFactory
     public TestContainer[] parse( Option... options )
         throws TestContainerException
     {
-        // TODO add some splitter logic for separating framework options (which leads to bigger result arrays, not just single value
-        NativeTestContainerParser parser = new NativeTestContainerParser( options );
-        ArrayList<String> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
+        final FrameworkOption[] frameworkOptions = OptionUtils.filter(FrameworkOption.class, options);
+        final Option[] filteredOptions = OptionUtils.remove( FrameworkOption.class, options );
 
-        return new TestContainer[]{
-
-            new NativeTestContainer( bundles )
-        };
+        if( frameworkOptions.length == 0 )
+        {
+            return new TestContainer[] {
+                    createContainer( filteredOptions )
+            };
+        }
+        else
+        {
+            TestContainer[] containers = new TestContainer[ frameworkOptions.length ];
+            for( int i = 0; i < containers.length; i++ )
+            {
+                Option[] opts = OptionUtils.combine( filteredOptions, frameworkOptions[ i ] );
+                containers[i] = createContainer( opts );
+            }
+            return containers;
+        }
     }
+
+    private TestContainer createContainer( Option[] options )
+    {
+        NativeTestContainerParser parser = new NativeTestContainerParser( options );
+        List<String> bundles = parser.getBundles();
+        Map<String, String> props = parser.getProperties();
+        return new NativeTestContainer( bundles, props );
+    }
+
 }

@@ -16,6 +16,14 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.ops4j.pax.exam.options.BootDelegationOption;
+import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
+import org.ops4j.pax.exam.options.SystemPackageOption;
+import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Info;
@@ -34,7 +42,9 @@ public class NativeTestContainerParser
 
     private static Logger LOG = LoggerFactory.getLogger( NativeTestContainerParser.class );
 
-    final private ArrayList<String> m_bundles = new ArrayList<String>();
+    final private List<String> m_bundles = new ArrayList<String>();
+
+    final private Map<String, String> m_properties = new HashMap<String, String>();
 
     public NativeTestContainerParser( Option[] options )
     {
@@ -47,27 +57,70 @@ public class NativeTestContainerParser
         {
             m_bundles.add( opt.getURL() );
         }
+        SystemPropertyOption[] systemOptions = filter( SystemPropertyOption.class, options );
+        for( SystemPropertyOption opt : systemOptions )
+        {
+            m_properties.put(opt.getKey(), opt.getValue());
+        }
+        SystemPackageOption[] packageOptions = filter( SystemPackageOption.class, options );
+        for( SystemPackageOption opt : packageOptions )
+        {
+            String p = m_properties.get( "org.osgi.framework.system.packages" );
+            if( p == null || p.length() == 0 )
+            {
+                p = opt.getPackage();
+            }
+            else
+            {
+                p = p + "," + opt.getPackage();
+            }
+            m_properties.put( "org.osgi.framework.system.packages", p );
+        }
+        BootDelegationOption[] bootDelegationOptions = filter( BootDelegationOption.class, options );
+        for( BootDelegationOption opt : bootDelegationOptions )
+        {
+            String p = m_properties.get( "org.osgi.framework.bootdelegation" );
+            if( p == null || p.length() == 0 )
+            {
+                p = opt.getPackage();
+            }
+            else
+            {
+                p = p + "," + opt.getPackage();
+            }
+            m_properties.put( "org.osgi.framework.bootdelegation", p );
+        }
+        FrameworkStartLevelOption[] startLevelOptions = filter( FrameworkStartLevelOption.class, options );
+        for( FrameworkStartLevelOption opt : startLevelOptions )
+        {
+            m_properties.put( "org.osgi.framework.startlevel.beginning", Integer.toString( opt.getStartLevel() ) );
+        }
     }
 
-    public ArrayList<String> getBundles()
+    public List<String> getBundles()
     {
         return m_bundles;
     }
 
-      private Option[] localOptions()
+    public Map<String, String> getProperties()
+    {
+        return m_properties;
+    }
+
+    private Option[] localOptions()
     {
         return new Option[]{
-            bootDelegationPackage( "sun.*" ),
-            mavenBundle()
-                .groupId( "org.ops4j.pax.logging" )
-                .artifactId( "pax-logging-api" )
-                .version( "1.5.0" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            mavenBundle()
-                .groupId( "org.osgi" )
-                .artifactId( "org.osgi.compendium" )
-                .version( "4.2.0" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+//            bootDelegationPackage( "sun.*" ),
+//            mavenBundle()
+//                .groupId( "org.ops4j.pax.logging" )
+//                .artifactId( "pax-logging-api" )
+//                .version( "1.5.0" )
+//                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+//            mavenBundle()
+//                .groupId( "org.osgi" )
+//                .artifactId( "org.osgi.compendium" )
+//                .version( "4.2.0" )
+//                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-extender-service" )
