@@ -31,15 +31,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Stack;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import org.ops4j.io.StreamUtils;
-
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
+import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.jkernel.Bundle;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
@@ -84,8 +81,8 @@ public class RemoteBundleContextClient
                                       final Integer rmiPort,
                                       final long rmiLookupTimeout )
     {
-        assert ( host != null ) : "Host should not be null";
-        assert ( rmiPort != null ) : "rmiPort should not be null";
+        assert host != null : "Host should not be null";
+        assert rmiPort != null : "rmiPort should not be null";
 
         m_rmiPort = rmiPort;
         m_host = host;
@@ -192,7 +189,7 @@ public class RemoteBundleContextClient
     {
         try
         {
-            while( ( !m_installed.isEmpty() ) )
+            while( !m_installed.isEmpty() )
             {
                 Long id = m_installed.pop();
                 getRemoteBundleContext().uninstallBundle( id );
