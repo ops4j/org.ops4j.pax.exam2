@@ -16,6 +16,11 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.ops4j.pax.exam.options.BootDelegationOption;
+import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Info;
@@ -35,6 +40,7 @@ public class NativeTestContainerParser
     private static Logger LOG = LoggerFactory.getLogger( NativeTestContainerParser.class );
 
     final private ArrayList<String> m_bundles = new ArrayList<String>();
+    final private Map<String, String> m_properties = new HashMap<String, String>();
 
     public NativeTestContainerParser( Option[] options )
     {
@@ -47,6 +53,25 @@ public class NativeTestContainerParser
         {
             m_bundles.add( opt.getURL() );
         }
+
+        SystemPropertyOption[] systemProperties = filter( SystemPropertyOption.class, options );
+        for( SystemPropertyOption opt : systemProperties )
+        {
+            m_properties.put( opt.getKey(), opt.getValue() );
+        }
+        BootDelegationOption[] bootDelegations = filter( BootDelegationOption.class, options );
+        StringBuilder sb = new StringBuilder();
+        for ( BootDelegationOption opt : bootDelegations )
+        {
+            if ( sb.length() > 0 )
+            {
+                sb.append(",");
+            }
+            sb.append( opt.getPackage() );
+        }
+        if ( sb.length() > 0 ) {
+            m_properties.put( "org.osgi.framework.bootdelegation" , sb.toString() );
+        }
     }
 
     public ArrayList<String> getBundles()
@@ -54,7 +79,12 @@ public class NativeTestContainerParser
         return m_bundles;
     }
 
-      private Option[] localOptions()
+    public Map<String, String> getSystemProperties()
+    {
+        return m_properties;
+    }
+
+    private Option[] localOptions()
     {
         return new Option[]{
             bootDelegationPackage( "sun.*" ),

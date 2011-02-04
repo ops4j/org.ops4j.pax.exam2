@@ -18,6 +18,8 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import java.util.ArrayList;
+import java.util.Map;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -41,10 +43,11 @@ public class NativeTestContainerFactory implements TestContainerFactory
         // TODO add some splitter logic for separating framework options (which leads to bigger result arrays, not just single value
         NativeTestContainerParser parser = new NativeTestContainerParser( options );
         ArrayList<String> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
-
+        Map<String, String> properties = parser.getSystemProperties();
+        
         return new TestContainer[]{
 
-            new NativeTestContainer( bundles )
+            new NativeTestContainer( bundles, properties)
         };
     }
 }
