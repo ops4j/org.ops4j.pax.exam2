@@ -180,8 +180,8 @@ public class RemoteBundleContextImpl
                               final int state,
                               final long timeoutInMillis )
     {
-        final Bundle bundle = m_bundleContext.getBundle( bundleId );
-        if( timeoutInMillis == NO_WAIT && bundle.getState() < state )
+        Bundle bundle = m_bundleContext.getBundle( bundleId );
+        if( timeoutInMillis == NO_WAIT && (bundle == null || bundle.getState() < state ))
         {
             throw new TimeoutException(
                 "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle.getState() )
@@ -191,20 +191,24 @@ public class RemoteBundleContextImpl
         long startedTrying = System.currentTimeMillis();
         do
         {
-            try
-            {
-                Thread.sleep( 50 );
-            }
-            catch( InterruptedException e )
-            {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
-        while( bundle.getState() < state
+           bundle = m_bundleContext.getBundle( bundleId );
+           try
+           {
+               Thread.sleep( 50 );
+           }
+           catch( InterruptedException e )
+           {
+               Thread.currentThread().interrupt();
+               break;
+           }
+       }
+        while( (bundle == null || bundle.getState() < state)
                && ( timeoutInMillis == WAIT_FOREVER
                     || System.currentTimeMillis() < startedTrying + timeoutInMillis ) );
-        if( bundle.getState() < state )
+        // bundle != null && bundle.getState() >= state
+        // or
+        // timeoutInMillis != WAIT_FOREVER && System.currentTimeMillis() >= startedTrying + timeoutInMillis
+        if( bundle == null || bundle.getState() < state )
         {
             throw new TimeoutException(
                 "Timeout passed and bundle has state '" + bundleStateToString( bundle.getState() )
