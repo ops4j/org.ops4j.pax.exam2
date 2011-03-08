@@ -80,6 +80,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
 
                 } finally
                 {
+                    runtime.cleanup();
                     runtime.stop();
                 }
             }
