@@ -1,18 +1,1 @@
-Bundle-Version>:\
-  ${pom.version}
-
-Bundle-SymbolicName:\
-  ${bundle.symbolicName}
-
-Import-Package:\
-  org.apache.commons.logging;resolution:=optional
-  
-Export-Package:\
-  ${bundle.namespace}; version="${pom.version}",\
-  ${bundle.namespace}.options; version="${pom.version}"
-
-Embed-Dependency:\
-  *; scope=compile|runtime; type=!pom
-
-Embed-Transitive:\
-  true
+Bundle-Version>:\  ${pom.version}Bundle-SymbolicName:\  ${bundle.symbolicName}Import-Package:\  org.apache.commons.logging;resolution:=optional  Export-Package:\  ${bundle.namespace}; version="${pom.version}",\  ${bundle.namespace}.options; version="${pom.version}"Embed-Dependency:\  *; scope=compile|runtime; type=!pomIgnore-Package:\ org.slf4j.impl Embed-Transitive:\  true
