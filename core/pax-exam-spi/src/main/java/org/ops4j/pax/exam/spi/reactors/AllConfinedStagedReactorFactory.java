@@ -31,8 +31,8 @@ import org.ops4j.pax.exam.spi.container.PlumbingContext;
 public class AllConfinedStagedReactorFactory implements StagedExamReactorFactory
 {
 
-    public StagedExamReactor create( PlumbingContext ctx, List<TestContainer> containers, List<TestProbeProvider> mProbes )
+    public StagedExamReactor create( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
-        return new AllConfinedStagedReactor( ctx, containers, mProbes );
+        return new AllConfinedStagedReactor( containers, mProbes );
     }
 }

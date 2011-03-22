@@ -27,5 +27,5 @@ import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
 public interface StagedExamReactorFactory
 {
-    StagedExamReactor create( PlumbingContext ctx, List<TestContainer> factory, List<TestProbeProvider> mProbes );
+    StagedExamReactor create( List<TestContainer> factory, List<TestProbeProvider> mProbes );
 }

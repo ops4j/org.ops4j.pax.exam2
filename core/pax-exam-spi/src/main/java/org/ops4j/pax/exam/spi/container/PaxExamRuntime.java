@@ -121,7 +121,7 @@ public class PaxExamRuntime {
      */
     public static TestTargetFactory getTestTargetFactory()
     {
-        LOG.info( "Pax Exam Runtime: looking for a " + TestTargetFactory.class.getName() );
-        return ServiceLoader.load( TestTargetFactory.class ).iterator().next();    }
+        return ServiceLoader.load( TestTargetFactory.class ).iterator().next();
+    }
 
 }

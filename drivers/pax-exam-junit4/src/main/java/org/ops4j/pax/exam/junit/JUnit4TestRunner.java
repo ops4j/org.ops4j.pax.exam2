@@ -62,10 +62,6 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     final private StagedExamReactor m_reactor;
     final private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
     final private Map<FrameworkMethod, TestAddress> m__childs = new HashMap<FrameworkMethod, TestAddress>();
-        
-
-    // TODO: to be removed:
-    final private PlumbingContext ctx = new PlumbingContext();
 
     public JUnit4TestRunner( Class<?> klass )
         throws Exception
@@ -119,10 +115,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                 }
             };
 
-            m__childs.put(method,address);
-            childs.add( method);
+            m__childs.put( method, address );
+            childs.add( method );
         }
-        
+
         return childs;
     }
 
@@ -164,7 +160,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         throws IOException, ExamConfigurationException
     {
         Properties extraProperties = new Properties();
-        TestProbeBuilder probe = ctx.createProbe( extraProperties );
+        TestProbeBuilder probe = new PlumbingContext().createProbe( extraProperties );
         probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
 
         probe.setAnchor( testClass );
@@ -193,7 +189,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
     private DefaultExamReactor getReactor()
     {
-        return new DefaultExamReactor( ctx, PaxExamRuntime.getTestContainerFactory() );
+        return new DefaultExamReactor( PaxExamRuntime.getTestContainerFactory() );
     }
 
     protected synchronized Statement methodInvoker( final FrameworkMethod method, final Object test )
@@ -205,7 +201,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                 throws Throwable
             {
                 TestAddress address = m__childs.get( method );
-                LOG.info( "Invoke " + method.getName() + " @ " +  address);
+                LOG.info( "Invoke " + method.getName() + " @ " + address );
                 m_reactor.invoke( address );
             }
         };

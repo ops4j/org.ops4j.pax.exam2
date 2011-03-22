@@ -18,21 +18,16 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
 import org.ops4j.pax.exam.spi.probesupport.DefaultTestAddress;
 
 /**
@@ -45,17 +40,15 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
 
     final private List<TestContainer> m_targetContainer;
-    final private PlumbingContext m_ctx;
-    private HashMap<TestAddress,TestContainer> m_map;
+    final private HashMap<TestAddress, TestContainer> m_map;
 
     /**
-     * @param ctx     to be used underneath
-     * @param mProbes to be installed
+     * @param containers to be used
+     * @param mProbes    to be installed on all probes
      */
-    public EagerSingleStagedReactor( PlumbingContext ctx, List<TestContainer> containers, List<TestProbeProvider> mProbes )
+    public EagerSingleStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
-        m_ctx = ctx;
-        m_map = new HashMap<TestAddress,TestContainer>();
+        m_map = new HashMap<TestAddress, TestContainer>();
         m_targetContainer = containers;
 
         for( TestContainer container : containers ) {
@@ -74,7 +67,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
                 for( TestAddress a : builder.getTests() ) {
                     // we need to create a new, because "a" exists for each test container
                     // this new address makes the test (reachable via getTargets() ) reachable directly.
-                    m_map.put( new DefaultTestAddress( a,container.toString() ),container);
+                    m_map.put( new DefaultTestAddress( a, container.toString() ), container );
                 }
             }
         }
@@ -83,8 +76,13 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     public void invoke( TestAddress address )
         throws Exception
     {
-        LOG.info( "Invoke " + address );
-        m_map.get( address ).call( address );
+        assert ( address != null ) : "TestAddress must not be null.";
+
+        TestContainer testContainer = m_map.get( address );
+        if( testContainer == null ) {
+            throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
+        }
+        testContainer.call( address );
     }
 
     public Set<TestAddress> getTargets()

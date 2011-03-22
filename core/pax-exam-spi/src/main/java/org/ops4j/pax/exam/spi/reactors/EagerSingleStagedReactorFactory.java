@@ -30,8 +30,8 @@ import org.ops4j.pax.exam.spi.container.PlumbingContext;
 public class EagerSingleStagedReactorFactory implements StagedExamReactorFactory
 {
 
-    public StagedExamReactor create( PlumbingContext ctx, List<TestContainer> containers, List<TestProbeProvider> mProbes )
+    public StagedExamReactor create( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
-        return new EagerSingleStagedReactor( ctx, containers, mProbes );
+        return new EagerSingleStagedReactor( containers, mProbes );
     }
 }

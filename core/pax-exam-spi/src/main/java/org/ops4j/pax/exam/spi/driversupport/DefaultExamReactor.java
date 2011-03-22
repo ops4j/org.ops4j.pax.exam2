@@ -45,11 +45,9 @@ public class DefaultExamReactor implements ExxamReactor {
     final private List<Option[]> m_configurations;
     final private List<TestProbeProvider> m_probes;
     final private TestContainerFactory m_factory;
-    final private PlumbingContext m_ctx;
 
-    public DefaultExamReactor( PlumbingContext ctx, TestContainerFactory factory )
+    public DefaultExamReactor( TestContainerFactory factory )
     {
-        m_ctx = ctx;
         m_configurations = new ArrayList<Option[]>();
         m_probes = new ArrayList<TestProbeProvider>();
         m_factory = factory;
@@ -74,7 +72,7 @@ public class DefaultExamReactor implements ExxamReactor {
             containers.addAll( Arrays.asList( m_factory.parse( options ) ) );
         }
 
-        return factory.create( m_ctx, containers, m_probes );
+        return factory.create( containers, m_probes );
     }
 
     private void printMassiveInformation()

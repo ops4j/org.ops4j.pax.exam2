@@ -66,10 +66,9 @@ public class ReactorAPITest
         throws Exception
     {
         TestContainerFactory factory = getFactory();
-        PlumbingContext ctx = new PlumbingContext();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
 
-        ExxamReactor reactor = new DefaultExamReactor( ctx, factory );
+        ExxamReactor reactor = new DefaultExamReactor( factory );
 
         TestProbeProvider probe = makeProbe();
 

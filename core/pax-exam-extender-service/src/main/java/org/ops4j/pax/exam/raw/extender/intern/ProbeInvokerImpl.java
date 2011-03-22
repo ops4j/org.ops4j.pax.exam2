@@ -31,7 +31,6 @@ import org.ops4j.pax.exam.ProbeInvoker;
  */
 public class ProbeInvokerImpl implements ProbeInvoker
 {
-
     private BundleContext m_ctx;
     private String m_clazz;
     private String m_method;

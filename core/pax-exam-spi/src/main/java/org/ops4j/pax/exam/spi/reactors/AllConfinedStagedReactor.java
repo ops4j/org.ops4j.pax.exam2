@@ -15,19 +15,15 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
 import org.ops4j.pax.exam.spi.probesupport.DefaultTestAddress;
 
 /**
@@ -38,24 +34,18 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
     private static Logger LOG = LoggerFactory.getLogger( AllConfinedStagedReactor.class );
 
     final private List<TestProbeProvider> m_probes;
-    final private List<TestContainer> m_containers;
-    final private PlumbingContext m_ctx;
-    private HashMap<TestAddress, TestContainer> m_map;
+    final private HashMap<TestAddress, TestContainer> m_map;
 
     /**
-     * @param ctx        context to be used underneath
-     * @param containers to be used
      * @param containers to be used
      * @param mProbes    probes to be installed
      */
-    public AllConfinedStagedReactor( PlumbingContext ctx, List<TestContainer> containers, List<TestProbeProvider> mProbes )
+    public AllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
         m_probes = mProbes;
-        m_ctx = ctx;
-        m_containers = containers;
         m_map = new HashMap<TestAddress, TestContainer>();
         // todo: don't do this here.
-        for( TestContainer container : m_containers ) {
+        for( TestContainer container : containers ) {
             for( TestProbeProvider builder : m_probes ) {
                 for( TestAddress a : builder.getTests() ) {
                     m_map.put( new DefaultTestAddress( a, container.toString() ), container );
@@ -71,6 +61,9 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
         assert ( address != null ) : "TestAddress must not be null.";
         // you can directly invoke:
         TestContainer container = m_map.get( address );
+        if (container == null) {
+            throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
+        }
         container.start();
         try {
             for( TestProbeProvider builder : m_probes ) {
