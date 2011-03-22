@@ -18,12 +18,8 @@
 package org.ops4j.pax.exam.spi;
 
 import java.util.List;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
 public interface StagedExamReactorFactory
 {

@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;

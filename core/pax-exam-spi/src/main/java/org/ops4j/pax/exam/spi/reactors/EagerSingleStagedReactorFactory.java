@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Okidokiteam
+ * Copyright (C) 2010 Toni Menzel
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,10 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.util.List;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
 /**
  *

@@ -29,7 +29,6 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
 /**
  * Reactor decouples {@link org.ops4j.pax.exam.TestContainer} state from the observer. It is also
