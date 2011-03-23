@@ -11,7 +11,7 @@ public class RMIRegistryTest {
 
     private static final Integer DEFAULTPORT = 1214;
 
-    @Test
+    //@Test
     public void testRepititveLaunch()
     {
         int old = new RMIRegistry( DEFAULTPORT, DEFAULTPORT + 1, DEFAULTPORT + 99 ).selectGracefully().getPort();

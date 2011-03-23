@@ -45,9 +45,13 @@ public class PaxRunnerTestContainerFactory
     private static final int DEFAULTPORT = 21412;
 
     public PaxRunnerTestContainerFactory()
-        throws Exception
+
     {
-        m_rmiRegistry = new RMIRegistry( DEFAULTPORT, DEFAULTPORT + 1, DEFAULTPORT + 99 ).selectGracefully();
+        try {
+            m_rmiRegistry = new RMIRegistry( DEFAULTPORT, DEFAULTPORT + 1, DEFAULTPORT + 99 ).selectGracefully();
+        } catch( Exception e ) {
+            throw new IllegalStateException( "Problem with binding a registry. Not good.", e );
+        }
     }
 
     /**

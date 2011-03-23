@@ -30,7 +30,6 @@ public class MutliFrameworkTest {
             junitBundles(),
             equinox(),
             felix(),
-
             logProfile()
         );
     }

@@ -68,10 +68,10 @@ public class PaxRunnerTestContainer
      * Underlying Test Target
      */
     private RBCRemoteTarget m_target;
-    private StoppableJavaRunner m_javaRunner;
-    private String m_host;
-    private int m_port;
-    private Option[] m_options;
+    final private StoppableJavaRunner m_javaRunner;
+    final private String m_host;
+    final private int m_port;
+    final private Option[] m_options;
     final private String m_frameworkName;
 
     /**

@@ -19,7 +19,6 @@ package org.ops4j.pax.exam.container.def.internal;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import org.slf4j.Logger;
@@ -65,12 +64,12 @@ public class RMIRegistry {
      */
     public synchronized RMIRegistry selectGracefully()
     {
-        if( ( m_port = select( m_defaultPort ) ) == UNSELECTED ) {
+        //if( ( m_port = select( m_defaultPort ) ) == UNSELECTED ) {
             FreePort alternativePort = new FreePort( m_altMin, m_altTo );
             if( ( m_port = select( alternativePort.getPort() ) ) == UNSELECTED ) {
                 throw new IllegalStateException( "No port found for RMI at all. Thats.. not. good. at. all." );
             }
-        }
+        //}
 
         return this;
     }
@@ -86,8 +85,13 @@ public class RMIRegistry {
      */
     private Integer select( int port )
     {
-        if( reuseRegistry( port ) || createNewRegistry( port ) ) {
-            LOG.info( "Registry on " + port );
+        if( reuseRegistry( port ) ) {
+            LOG.info( "Reuse Registry on " + port );
+            return port;
+
+        }
+        else if( createNewRegistry( port ) ) {
+            LOG.info( "Created Registry on " + port );
             return port;
         }
         // fail
@@ -99,11 +103,10 @@ public class RMIRegistry {
     {
         try {
             Registry registry = LocateRegistry.createRegistry( port );
-            LOG.info( "Try new Registry on " + port );
 
             return verifyRegistry( registry );
 
-        } catch( RemoteException e ) {
+        } catch( Exception e ) {
             //
         }
 
@@ -117,8 +120,8 @@ public class RMIRegistry {
             reg = LocateRegistry.getRegistry( port );
             return verifyRegistry( reg );
 
-        } catch( RemoteException e ) {
-            //
+        } catch( Exception e ) {
+            // exception? then its not a fine registry.
         }
         return false;
 

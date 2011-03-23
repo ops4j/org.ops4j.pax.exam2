@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 
@@ -83,7 +84,8 @@ public class Activator
                         LOG.debug( "Trying to find registry on [host=" + host + " port=" + port + "]" );
                         m_registry = LocateRegistry.getRegistry( getHost(), getPort() );
 
-                        Integer objectPort = findFree( 21412, 21499 );
+                        Integer objectPort = new FreePort(22412,22412+100).getPort();
+
 
                         LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
 
@@ -153,38 +155,5 @@ public class Activator
     {
         return System.getProperty( Constants.RMI_NAME_PROPERTY );
 
-    }
-
-    private int findFree( int from, int to )
-    {
-        for( int i = from; i <= to; i++ ) {
-            if( isFree( i ) ) {
-                return i;
-            }
-        }
-        throw new RuntimeException( "No free port in range " + from + ":" + to );
-    }
-
-    /**
-     * Checks a given port for availability (by creating a temporary socket)
-     *
-     * Package visibility to enable overwriting in test.
-     *
-     * @param port Port to check
-     *
-     * @return true if its free, otherwise false.
-     */
-    boolean isFree( int port )
-    {
-        try {
-            ServerSocket sock = new ServerSocket( port );
-            sock.close();
-            // is free:
-            return true;
-            // We rely on an exception thrown to determine availability or not availability.
-        } catch( Exception e ) {
-            // not free.
-            return false;
-        }
     }
 }
