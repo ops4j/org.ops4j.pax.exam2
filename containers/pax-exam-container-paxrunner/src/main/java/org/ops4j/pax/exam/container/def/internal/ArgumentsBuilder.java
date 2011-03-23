@@ -618,7 +618,7 @@ class ArgumentsBuilder {
     public long getStartTimeout()
     {
         // TODO tbd
-        return 9999;  //To change body of created methods use File | Settings | File Templates.
+        return 60*1000;
     }
 
 

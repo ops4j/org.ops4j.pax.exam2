@@ -53,6 +53,8 @@ public class RemoteBundleContextClient {
     // TODO duplicate
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
 
+    private transient RemoteBundleContext m_remoteBundleContext = null;
+
     /**
      * JCL logger.
      */
@@ -238,41 +240,41 @@ public class RemoteBundleContextClient {
      *
      * @return remote bundle context
      */
-    private RemoteBundleContext getRemoteBundleContext()
+    private synchronized RemoteBundleContext getRemoteBundleContext()
     {
-        RemoteBundleContext m_remoteBundleContext = null;
-
-        LOG.info( "Force Aquire Remote Bundle Context:" );
-        //!! Absolutely necesary for RMI class loading to work
-        // TODO maybe use ContextClassLoaderUtils.doWithClassLoader
-        Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-        LOG.info( "Waiting for remote bundle context.. on " + m_registry + " name: " + m_name + " timout: " + m_rmiLookupTimeout );
-        // TODO create registry here
-        Throwable reason = null;
-        long startedTrying = System.currentTimeMillis();
-
-        try {
-            do {
-                try {
-                    Registry reg = LocateRegistry.getRegistry( m_registry );
-                    m_remoteBundleContext = (RemoteBundleContext) reg.lookup( m_name );
-                } catch( ConnectException e ) {
-                    reason = e;
-                } catch( NotBoundException e ) {
-                    reason = e;
-                }
-
-            }
-            while( m_remoteBundleContext == null && ( m_rmiLookupTimeout == Constants.WAIT_FOREVER || System.currentTimeMillis() < startedTrying + m_rmiLookupTimeout ) );
-        } catch( RemoteException e ) {
-
-            //throw new RuntimeException( "Cannot get the remote bundle context", e );
-        }
         if( m_remoteBundleContext == null ) {
-            throw new RuntimeException( "Cannot get the remote bundle context", reason );
-        }
-        LOG.info( "Remote bundle context found after " + ( System.currentTimeMillis() - startedTrying ) + " millis" );
 
+            LOG.info( "TFetching Remote Bundle Context:" );
+            //!! Absolutely necesary for RMI class loading to work
+            // TODO maybe use ContextClassLoaderUtils.doWithClassLoader
+            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+            LOG.info( "Waiting for remote bundle context.. on " + m_registry + " name: " + m_name + " timout: " + m_rmiLookupTimeout );
+            // TODO create registry here
+            Throwable reason = null;
+            long startedTrying = System.currentTimeMillis();
+
+            try {
+                do {
+                    try {
+                        Registry reg = LocateRegistry.getRegistry( m_registry );
+                        m_remoteBundleContext = (RemoteBundleContext) reg.lookup( m_name );
+                    } catch( ConnectException e ) {
+                        reason = e;
+                    } catch( NotBoundException e ) {
+                        reason = e;
+                    }
+
+                }
+                while( m_remoteBundleContext == null && ( m_rmiLookupTimeout == Constants.WAIT_FOREVER || System.currentTimeMillis() < startedTrying + m_rmiLookupTimeout ) );
+            } catch( RemoteException e ) {
+
+                //throw new RuntimeException( "Cannot get the remote bundle context", e );
+            }
+            if( m_remoteBundleContext == null ) {
+                throw new RuntimeException( "Cannot get the remote bundle context", reason );
+            }
+            LOG.info( "Remote bundle context found after " + ( System.currentTimeMillis() - startedTrying ) + " millis" );
+        }
         return m_remoteBundleContext;
 
     }
