@@ -57,7 +57,7 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                                 retry = true;
                             }
                             else {
-                                LOG.info( "Exception that does not cause Retry: " + ex.getMessage() + " in RBC." + method.getName() );
+                                LOG.warn( "Exception that does not cause Retry: " + ex.getClass().getName() + " in RBC." + method.getName(), ex );
                                 // just escape
                                 throw new Exception( lastError );
                             }
