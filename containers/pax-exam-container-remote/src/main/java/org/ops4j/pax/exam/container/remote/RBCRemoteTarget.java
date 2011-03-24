@@ -31,6 +31,8 @@ import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.TestTarget;
+import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
+import org.ops4j.pax.exam.rbc.client.intern.RetryRemoteBundleContextClient;
 
 import static org.ops4j.pax.exam.OptionUtils.*;
 
@@ -54,7 +56,7 @@ public class RBCRemoteTarget implements TestTarget
     public RBCRemoteTarget( String name, Integer registry, long rmiLookupTimeout )
 
     {
-        m_remoteBundleContextClient = new RemoteBundleContextClient( name, registry, rmiLookupTimeout);
+        m_remoteBundleContextClient = new RetryRemoteBundleContextClient(new RemoteBundleContextClientImpl( name, registry, rmiLookupTimeout),10);
     }
 
     /**
