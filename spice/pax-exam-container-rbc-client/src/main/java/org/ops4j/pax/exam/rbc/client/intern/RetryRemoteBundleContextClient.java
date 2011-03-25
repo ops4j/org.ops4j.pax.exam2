@@ -45,15 +45,14 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                         try {
                             LOG.info( "Call RBC." + method.getName() + " (retries: " + triedTimes + ")" );
                             triedTimes++;
-                            if( retry ) { Thread.sleep( 300 ); }
+                            if( retry ) { Thread.sleep( 500 ); }
                             ret = method.invoke( client, objects );
                             retry = false;
                         } catch( Exception ex ) {
                             lastError = ex;
 
-                            if( ex instanceof NoSuchObjectException ) {
-                                LOG.info( "Catched NoSuchObjectException in RBC." + method.getName() );
-
+                            if( ex instanceof NoSuchObjectException  || ex instanceof InvocationTargetException) {
+                                LOG.info( "Catched " + ex.getClass().getName() + " in RBC." + method.getName() );
                                 retry = true;
                             }
                             else {
