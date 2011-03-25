@@ -120,8 +120,14 @@ public class PaxRunnerTestContainer
 
             long startedAt = System.currentTimeMillis();
             URLUtils.resetURLStreamHandlerFactory();
+            String[] arguments = argBuilder.getArguments();
 
-            Run.start( m_javaRunner, argBuilder.getArguments() );
+            LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
+            for( String s : arguments ) {
+                LOG.info( "#   " + s );
+            }
+
+            Run.start( m_javaRunner, arguments );
             LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
                       + ( System.currentTimeMillis() - startedAt ) + " millis"
             );
