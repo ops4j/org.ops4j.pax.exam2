@@ -17,11 +17,10 @@
  */
 package org.ops4j.pax.exam.rbc.internal;
 
-import java.net.ServerSocket;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.RemoteStub;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Callable;
 import org.apache.commons.logging.Log;
@@ -61,21 +60,52 @@ public class Activator
      * java.rmi.NoSuchObjectException: no such object in table
      */
     private RemoteBundleContext m_remoteBundleContext;
+    private Thread m_registerRBCThread;
 
     /**
      * {@inheritDoc}
      */
-    public void start( final BundleContext bundleContext )
+    public synchronized void start( final BundleContext bundleContext )
         throws Exception
     {
         //!! Absolutely necessary for RMIClassLoading to work
-        ContextClassLoaderUtils.doWithClassLoader(
-            null, // getClass().getClassLoader()
-            new Callable<Object>() {
-                public Object call()
-                    throws Exception
+        m_registerRBCThread = new Thread( new Runnable() {
+
+            public void run()
+            {
+                int retries = 0;
+                int maxretries = 10;
+                boolean valid = false;
+                do {
+                    retries++;
+                    valid = register( bundleContext );
+                    if( !valid ) {
+                        try {
+                            LOG.info( "RBC bind stuff failed before. Will retry again perhaps." );
+                            Thread.sleep( 500 );
+                        } catch( InterruptedException e ) {
+                            e.printStackTrace();
+                        }
+                    }
+                } while( !Thread.currentThread().isInterrupted() && !valid && retries < maxretries );
+            }
+        }
+        );
+        m_registerRBCThread.start();
+
+    }
+
+    private boolean register( final BundleContext bundleContext )
+    {
+        try {
+            ContextClassLoaderUtils.doWithClassLoader(
+                null, // getClass().getClassLoader()
+                new Callable<Object>()
+
                 {
-                    try {
+                    public Object call()
+                        throws Exception
+                    {
                         // try to find port from property
                         int port = getPort();
                         String host = getHost();
@@ -84,31 +114,41 @@ public class Activator
                         LOG.debug( "Trying to find registry on [host=" + host + " port=" + port + "]" );
                         m_registry = LocateRegistry.getRegistry( getHost(), getPort() );
 
-                        Integer objectPort = new FreePort(22412,22412+100).getPort();
-
-
-                        LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
-
-                        Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), objectPort );
-
-                        m_registry.rebind( getName(), remoteStub );
+                        bindRBC( m_registry, name, bundleContext );
                         LOG.info( "(++) Container with name " + name + " has added its RBC" );
 
-                    } catch( Exception e ) {
-                        throw new BundleException( "Cannot setup RMI registry", e );
+                        return null;
                     }
-                    return null;
                 }
-            }
-        );
+
+            );
+            return true;
+        } catch( Exception e ) {
+            LOG.warn( "Registration of RBC failed: ", e );
+        }
+        return false;
+    }
+
+    private void bindRBC( Registry registry, String name, BundleContext bundleContext )
+        throws RemoteException, BundleException
+    {
+        Integer objectPort = new FreePort( 22412, 22412 + 100 ).getPort();
+
+        LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
+
+        Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), objectPort );
+
+        registry.rebind( getName(), remoteStub );
     }
 
     /**
      * {@inheritDoc}
      */
-    public void stop( BundleContext bundleContext )
+    public synchronized void stop( BundleContext bundleContext )
         throws Exception
     {
+        m_registerRBCThread.interrupt();
+
         String name = getName();
         LOG.debug( "Unbinding " + name + " (class: " + RemoteBundleContext.class.getSimpleName() );
 
