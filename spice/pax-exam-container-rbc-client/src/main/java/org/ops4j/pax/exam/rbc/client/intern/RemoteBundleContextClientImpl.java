@@ -44,10 +44,11 @@ import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
  *
  */
 public class RemoteBundleContextClientImpl implements RemoteBundleContextClient {
- // TODO duplicate
+
+    // TODO duplicate
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
 
-    private transient RemoteBundleContext m_remoteBundleContext = null;
+    private RemoteBundleContext m_remoteBundleContext = null;
 
     /**
      * JCL logger.
@@ -71,12 +72,13 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     /**
      * Constructor.
      *
+     * @param name             of container
      * @param registry         RMI registry to look at
      * @param rmiLookupTimeout timeout for looking up the remote bundle context via RMI (cannot be null)
      */
     public RemoteBundleContextClientImpl( final String name,
-                                      final Integer registry,
-                                      final long rmiLookupTimeout )
+                                          final Integer registry,
+                                          final long rmiLookupTimeout )
     {
         assert registry != null : "registry should not be null";
 
@@ -89,7 +91,8 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     /**
      * {@inheritDoc}
      */
-    private <T> T getService( Class<T> serviceType, final String filter, final long timeout )
+    @SuppressWarnings( "unchecked" )
+    private <T> T getService( final Class<T> serviceType, final String filter, final long timeout )
     {
         return (T) Proxy.newProxyInstance(
             getClass().getClassLoader(),
