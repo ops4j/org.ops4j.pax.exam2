@@ -45,10 +45,12 @@ import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 public class Activator
     implements BundleActivator {
 
-    /**
-     * JCL logger.
-     */
     private static final Log LOG = LogFactory.getLog( Activator.class );
+
+    private static final int MAXRETRYCOUNT = 14;
+    private static final String MSG_RETRY = "RBC bind stuff failed before. Will retry again perhaps.";
+    private static final int PORT_RBC_FROM = 22412;
+    private static final int PORT_RBC_TO = PORT_RBC_FROM + 100;
 
     /**
      * RMI registry.
@@ -74,20 +76,19 @@ public class Activator
             public void run()
             {
                 int retries = 0;
-                int maxretries = 10;
                 boolean valid = false;
                 do {
                     retries++;
                     valid = register( bundleContext );
                     if( !valid ) {
                         try {
-                            LOG.info( "RBC bind stuff failed before. Will retry again perhaps." );
+                            LOG.info( MSG_RETRY );
                             Thread.sleep( 500 );
                         } catch( InterruptedException e ) {
                             e.printStackTrace();
                         }
                     }
-                } while( !Thread.currentThread().isInterrupted() && !valid && retries < maxretries );
+                } while( !Thread.currentThread().isInterrupted() && !valid && retries < MAXRETRYCOUNT );
             }
         }
         );
@@ -132,12 +133,9 @@ public class Activator
     private void bindRBC( Registry registry, String name, BundleContext bundleContext )
         throws RemoteException, BundleException
     {
-        Integer objectPort = new FreePort( 22412, 22412 + 100 ).getPort();
-
+        Integer objectPort = new FreePort( PORT_RBC_FROM, PORT_RBC_TO ).getPort();
         LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
-
         Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), objectPort );
-
         registry.rebind( getName(), remoteStub );
     }
 
@@ -148,18 +146,13 @@ public class Activator
         throws Exception
     {
         m_registerRBCThread.interrupt();
-
         String name = getName();
-        LOG.debug( "Unbinding " + name + " (class: " + RemoteBundleContext.class.getSimpleName() );
-
         m_registry.unbind( name );
         UnicastRemoteObject.unexportObject( m_remoteBundleContext, true );
 
         // UnicastRemoteObject.unexportObject( m_registry, true );
         m_registry = null;
         m_remoteBundleContext = null;
-        // this is necessary, unfortunately.. RMI wouldn' stop otherwise
-        // System.gc();
         LOG.info( "(--) Container with name " + name + " has removed its RBC" );
     }
 
