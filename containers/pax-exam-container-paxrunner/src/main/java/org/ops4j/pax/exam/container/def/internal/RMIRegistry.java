@@ -41,6 +41,7 @@ public class RMIRegistry {
     private Integer m_port = UNSELECTED;
     private Integer m_altMin;
     private Integer m_altTo;
+    private static final int TREASURE = 30;
 
     public RMIRegistry( Integer defaultPort, Integer alternativeRangeFrom, Integer alternativeRangeTo )
 
@@ -65,13 +66,31 @@ public class RMIRegistry {
     public synchronized RMIRegistry selectGracefully()
     {
         //if( ( m_port = select( m_defaultPort ) ) == UNSELECTED ) {
-            FreePort alternativePort = new FreePort( m_altMin, m_altTo );
-            if( ( m_port = select( alternativePort.getPort() ) ) == UNSELECTED ) {
-                throw new IllegalStateException( "No port found for RMI at all. Thats.. not. good. at. all." );
-            }
+        int alternativePort = new FreePort( m_altMin, m_altTo ).getPort();
+        if( ( m_port = select( alternativePort ) ) == UNSELECTED ) {
+            throw new IllegalStateException( "No port found for RMI at all. Even though " + alternativePort + " should have worked. Thats.. not. good. at. all." );
+        }
+        printTakenStatus();
         //}
 
         return this;
+    }
+
+    private void printTakenStatus()
+    {
+
+        int in_use = ( m_port - m_altMin ) + 1; // the one we just took
+        int max = m_altTo - m_altMin;
+        String info = "Currently " + in_use + " out of " + max + " ports are in use. Port range is from " + m_altMin + " up to " + m_altTo;
+
+        if( in_use + TREASURE > max ) {
+            LOG.warn( "--------------" );
+            LOG.warn( "BEWARE !!! " + info );
+            LOG.warn( "--------------" );
+        }
+        else {
+            LOG.info( info );
+        }
     }
 
     /**
