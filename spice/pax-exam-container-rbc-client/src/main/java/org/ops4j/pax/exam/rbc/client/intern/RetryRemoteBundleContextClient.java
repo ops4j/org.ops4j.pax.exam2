@@ -36,6 +36,7 @@ import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 public class RetryRemoteBundleContextClient implements RemoteBundleContextClient {
 
     private static final Logger LOG = LoggerFactory.getLogger( RetryRemoteBundleContextClient.class );
+    private static final int RETRY_WAIT = 500;
 
     final private RemoteBundleContextClient m_proxy;
 
@@ -62,7 +63,7 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                         try {
                             LOG.info( "Call RBC." + method.getName() + " (retries: " + triedTimes + ")" );
                             triedTimes++;
-                            if( retry ) { Thread.sleep( 500 ); }
+                            if( retry ) { Thread.sleep( RETRY_WAIT ); }
                             ret = method.invoke( client, objects );
                             retry = false;
                         } catch( Exception ex ) {
