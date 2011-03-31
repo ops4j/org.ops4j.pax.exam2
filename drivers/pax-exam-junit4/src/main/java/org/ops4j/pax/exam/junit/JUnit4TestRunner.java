@@ -36,6 +36,7 @@ import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
@@ -132,10 +133,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private synchronized StagedExamReactor prepareReactor()
         throws Exception
     {
-        ExxamReactor reactor = getReactor();
 
         Class testClass = getTestClass().getJavaClass();
         Object testClassInstance = testClass.newInstance();
+        ExxamReactor reactor = getReactor( testClass );
 
         addConfigurationsToReactor( reactor, testClass, testClassInstance );
         addTestsToReactor( reactor, testClass, testClassInstance );
@@ -187,9 +188,26 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         return fact;
     }
 
-    private DefaultExamReactor getReactor()
+    private DefaultExamReactor getReactor( Class testClass )
+        throws InstantiationException, IllegalAccessException
     {
-        return new DefaultExamReactor( PaxExamRuntime.getTestContainerFactory() );
+        return new DefaultExamReactor( getExamFactory(testClass) );
+    }
+
+    private TestContainerFactory getExamFactory(Class testClass)
+        throws IllegalAccessException, InstantiationException
+    {
+         ExamFactory f = (ExamFactory) testClass.getAnnotation( ExamFactory.class );
+
+        TestContainerFactory fact;
+        if( f != null ) {
+            fact = f.value().newInstance();
+        }
+        else {
+            // default:
+            fact = PaxExamRuntime.getTestContainerFactory();
+        }
+        return fact;
     }
 
     protected synchronized Statement methodInvoker( final FrameworkMethod method, final Object test )
