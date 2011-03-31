@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.spi.driversupport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
+
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
  * Reactor decouples {@link org.ops4j.pax.exam.TestContainer} state from the observer. It is also
@@ -67,21 +70,15 @@ public class DefaultExamReactor implements ExxamReactor {
         LOG.info( "Staging reactor with probes: " + m_probes.size() + " using strategy: " + factory );
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
+        if( m_configurations.isEmpty() ) {
+            LOG.info( "No configuration given. Setting an empty one." );
+            m_configurations.add( options() );
+        }
         for( Option[] options : m_configurations ) {
             containers.addAll( Arrays.asList( m_factory.parse( options ) ) );
         }
 
         return factory.create( containers, m_probes );
-    }
-
-    private void printMassiveInformation()
-    {
-        if( LOG.isInfoEnabled() ) {
-            for( TestProbeProvider p : m_probes ) {
-                LOG.info( p.toString() );
-            }
-
-        }
     }
 
 }
