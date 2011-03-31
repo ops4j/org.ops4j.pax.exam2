@@ -51,7 +51,10 @@ public class A2 {
             junitBundles(),
             easyMockBundles(),
             felix(),
-            logProfile()
+            //logProfile(),
+            rawPaxRunnerOption( "log","trace" ),
+            rawPaxRunnerOption( "repositories","http://windmill.com" ),
+            bundle( "mvn:foo/bar/1.0" )
 
         );
     }
@@ -62,19 +65,19 @@ public class A2 {
         LOG.info( "++++ PEAK from " + this.getClass().getName() );
     }
 
-    @Test
+    //@Test
     public void secondTest()
     {
         LOG.info( "++++ PEAK from " + this.getClass().getName() );
     }
 
-     @Test
+     //@Test
     public void thirdTest()
     {
         LOG.info( "++++ PEAK from " + this.getClass().getName() );
     }
 
-    @Test
+    //@Test
     public void thisIsFelix( BundleContext ctx )
     {
         assertEquals( "org.apache.felix.framework", ctx.getBundle( 0 ).getSymbolicName() );

@@ -15,6 +15,7 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,12 @@ public class NativeTestContainerParser
     public NativeTestContainerParser( Option[] options )
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        
+        try {
+       // new URL("aether:foo/bar");
+        new URL("mvn:foo/bar");
+        }catch(Exception e) {
+            throw new RuntimeException( e );
+        }
         options = expand( combine( localOptions(), options ) );
         
         ProvisionOption[] bundleOptions = filter( ProvisionOption.class, options );

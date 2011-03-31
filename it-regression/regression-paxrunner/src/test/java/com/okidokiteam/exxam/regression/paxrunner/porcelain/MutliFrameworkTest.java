@@ -30,7 +30,8 @@ public class MutliFrameworkTest {
             junitBundles(),
             equinox(),
             felix(),
-            logProfile()
+            logProfile(),
+            rawPaxRunnerOption( "log","trace" )
         );
     }
 

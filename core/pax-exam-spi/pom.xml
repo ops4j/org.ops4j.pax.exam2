@@ -35,10 +35,6 @@
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-mvn</artifactId>
-        </dependency>
          <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-aether</artifactId>
