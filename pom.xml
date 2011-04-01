@@ -27,7 +27,10 @@
                 <module>core/pax-exam-spi</module>
                 <module>core/pax-exam-extender-service</module>
                 <module>containers/pax-exam-container-native</module>
+
+                <module>drivers/pax-exam-swoosh</module>
                 <module>drivers/pax-exam-junit4</module>
+
                 <module>spice/pax-exam-link-mvn</module>
                 <module>spice/pax-exam-link-assembly</module>
 
