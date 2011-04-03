@@ -18,6 +18,7 @@ package org.ops4j.pax.exam.nat.internal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ops4j.pax.exam.options.BootDelegationOption;
@@ -40,7 +41,7 @@ public class NativeTestContainerParser
 
     private static Logger LOG = LoggerFactory.getLogger( NativeTestContainerParser.class );
 
-    final private ArrayList<String> m_bundles = new ArrayList<String>();
+    final private List<ProvisionOption> m_bundles = new ArrayList<ProvisionOption>();
     final private Map<String, String> m_properties = new HashMap<String, String>();
 
     public NativeTestContainerParser( Option[] options )
@@ -57,7 +58,7 @@ public class NativeTestContainerParser
         ProvisionOption[] bundleOptions = filter( ProvisionOption.class, options );
         for( ProvisionOption opt : bundleOptions )
         {
-            m_bundles.add( opt.getURL() );
+            m_bundles.add( opt  );
         }
 
         SystemPropertyOption[] systemProperties = filter( SystemPropertyOption.class, options );
@@ -80,7 +81,7 @@ public class NativeTestContainerParser
         }
     }
 
-    public ArrayList<String> getBundles()
+    public List<ProvisionOption> getBundles()
     {
         return m_bundles;
     }
@@ -98,12 +99,14 @@ public class NativeTestContainerParser
                 .groupId( "org.ops4j.pax.logging" )
                 .artifactId( "pax-logging-api" )
                 .version( "1.5.0" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+             ,
             mavenBundle()
                 .groupId( "org.osgi" )
                 .artifactId( "org.osgi.compendium" )
                 .version( "4.2.0" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+            ,
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-extender-service" )

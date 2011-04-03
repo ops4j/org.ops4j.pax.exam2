@@ -30,6 +30,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.options.ProvisionOption;
 
 /**
  * Stateful
@@ -48,7 +49,7 @@ public class NativeTestContainerFactory implements TestContainerFactory {
         throws TestContainerException
     {
         NativeTestContainerParser parser = new NativeTestContainerParser( options );
-        ArrayList<String> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
+        List<ProvisionOption> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
         Map<String, String> properties = parser.getSystemProperties();
 
         Iterator<FrameworkFactory> factories = ServiceLoader.load( FrameworkFactory.class ).iterator();
