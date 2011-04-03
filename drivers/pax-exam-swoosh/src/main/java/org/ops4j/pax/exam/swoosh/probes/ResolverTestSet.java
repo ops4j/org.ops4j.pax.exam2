@@ -21,14 +21,14 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
- * 
+ *
  */
 public class ResolverTestSet {
 
-    
     public void resolveAll( BundleContext ctx )
     {
         for( Bundle b : ctx.getBundles() ) {
+            System.out.println( "b: " + b.getSymbolicName() );
             // test funky things
         }
     }

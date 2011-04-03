@@ -17,6 +17,9 @@
  */
 package org.ops4j.pax.exam.swoosh;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -27,6 +30,7 @@ import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static junit.framework.Assert.*;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
  * Fully functional alternative Pax Exam Driver.
@@ -42,12 +46,14 @@ import static junit.framework.Assert.*;
  */
 public class Player {
 
+    private static Logger LOG = LoggerFactory.getLogger( Player.class );
+
     final private TestContainerFactory m_factory;
-    final private Parts[] m_parts;
+    final private Option[] m_parts;
 
     private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
 
-    public Player( TestContainerFactory containerFactory, Parts... parts )
+    public Player( TestContainerFactory containerFactory, Option... parts )
     {
         m_factory = containerFactory;
         m_parts = parts;
@@ -55,7 +61,7 @@ public class Player {
 
     public Player( TestContainerFactory containerFactory )
     {
-        this( containerFactory, new Parts[ 0 ] );
+        this( containerFactory, new Option[ 0 ] );
     }
 
     public Player()
@@ -63,7 +69,7 @@ public class Player {
         this( PaxExamRuntime.getTestContainerFactory() );
     }
 
-    public Player with( Parts... parts )
+    public Player with( Option... parts )
     {
         return new Player( m_factory, parts );
     }
@@ -72,10 +78,7 @@ public class Player {
         throws Exception
     {
         DefaultExamReactor reactor = new DefaultExamReactor( m_factory );
-
-        for( Parts part : m_parts ) {
-            reactor.addConfiguration( part.parts() );
-        }
+        reactor.addConfiguration( m_parts );
 
         for( TestProbeProvider p : providers ) {
             reactor.addProbe( p );
@@ -87,6 +90,7 @@ public class Player {
             try {
                 stage.invoke( target );
             } catch( Exception e ) {
+                LOG.error( "Full Stacktrace for AssertionFailure: ",e );
                 fail( e.getCause().getMessage() );
             }
         }

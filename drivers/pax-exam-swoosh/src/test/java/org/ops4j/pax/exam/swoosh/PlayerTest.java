@@ -3,6 +3,8 @@ package org.ops4j.pax.exam.swoosh;
 import org.junit.Test;
 import org.ops4j.pax.exam.nat.internal.NativeTestContainerFactory;
 
+import static org.ops4j.pax.exam.CoreOptions.*;
+
 /**
  * An entire test harness in a tweet.
  */
