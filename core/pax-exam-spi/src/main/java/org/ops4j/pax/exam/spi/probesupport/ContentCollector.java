@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Toni Menzel.
+ * Copyright 2009 Toni Menzel.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -18,16 +18,22 @@
 package org.ops4j.pax.exam.spi.probesupport;
 
 import java.io.IOException;
-import java.util.jar.JarOutputStream;
+import java.net.URL;
+import java.util.Map;
 
 /**
  * @author Toni Menzel (tonit)
- * @since Dec 10, 2008
+ * @since Mar 7, 2009
  */
-public interface ResourceLocator
-{
+public interface ContentCollector {
 
-    // TODO add JavaDoc
-    void write( JarOutputStream jos )
+    /**
+     * Puts resources into given map.
+     *
+     * @param map to be filled.
+     *
+     * @throws java.io.IOException problems
+     */
+    void collect( Map<String, URL> map )
         throws IOException;
 }

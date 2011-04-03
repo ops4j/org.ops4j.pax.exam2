@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
-import org.ops4j.pax.exam.spi.probesupport.TestProbeBuilderImpl;
+import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 

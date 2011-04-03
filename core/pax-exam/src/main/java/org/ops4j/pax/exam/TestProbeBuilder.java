@@ -31,8 +31,6 @@ public interface TestProbeBuilder
 
      List<TestAddress> addTests( Class clazz, Method... m );
 
-    TestProbeBuilder setAnchor( Class anchor );
-
     TestProbeBuilder setHeader( String key, String value );
 
     TestProbeBuilder ignorePackageOf( Class... classes );

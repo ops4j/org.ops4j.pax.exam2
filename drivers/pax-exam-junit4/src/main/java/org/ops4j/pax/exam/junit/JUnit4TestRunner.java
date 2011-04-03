@@ -164,7 +164,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         TestProbeBuilder probe = new PlumbingContext().createProbe( extraProperties );
         probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
 
-        probe.setAnchor( testClass );
+        //probe.setAnchor( testClass );
         for( FrameworkMethod s : super.getChildren() ) {
             // record the method -> adress matching
             m_map.put( probe.addTest( testClass, s.getMethod() ), s );

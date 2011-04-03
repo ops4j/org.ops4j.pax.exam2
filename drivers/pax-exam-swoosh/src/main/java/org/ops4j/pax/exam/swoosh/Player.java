@@ -22,6 +22,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
+import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
@@ -46,16 +47,20 @@ public class Player {
 
     private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
 
-    public Player( TestContainerFactory containerFactory )
-    {
-        m_factory = containerFactory;
-        m_parts = new Parts[ 0 ];
-    }
-
     public Player( TestContainerFactory containerFactory, Parts... parts )
     {
         m_factory = containerFactory;
         m_parts = parts;
+    }
+
+    public Player( TestContainerFactory containerFactory )
+    {
+        this( containerFactory, new Parts[ 0 ] );
+    }
+
+    public Player()
+    {
+        this( PaxExamRuntime.getTestContainerFactory() );
     }
 
     public Player with( Parts... parts )

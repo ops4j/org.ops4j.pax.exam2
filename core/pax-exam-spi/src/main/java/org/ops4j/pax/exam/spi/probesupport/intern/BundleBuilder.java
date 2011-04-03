@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.probesupport;
+package org.ops4j.pax.exam.spi.probesupport.intern;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +24,9 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Properties;
 import java.util.jar.JarOutputStream;
-import org.osgi.framework.Constants;
 import org.ops4j.lang.NullArgumentException;
 import org.ops4j.pax.exam.spi.container.DuplicateAwareJarOutputStream;
+import org.ops4j.pax.exam.spi.probesupport.ResourceWriter;
 
 /**
  * Responsible for creating the on-the fly bundle.
@@ -38,22 +38,22 @@ import org.ops4j.pax.exam.spi.container.DuplicateAwareJarOutputStream;
 public class BundleBuilder
 {
 
-    private ResourceLocator m_resourceLocator;
+    private ResourceWriter m_resourceWriter;
 
     private Properties[] m_props;
 
     /**
      * Constructor.
      *
-     * @param resourceLocator locator that gathers all resources that have to be inside the regression probe
+     * @param resourceWriter locator that gathers all resources that have to be inside the regression probe
      * @param p               properties to be merged.
      */
-    public BundleBuilder( final ResourceLocator resourceLocator, Properties... p )
+    public BundleBuilder( final ResourceWriter resourceWriter, Properties... p )
     {
 
-        NullArgumentException.validateNotNull( resourceLocator, "resourceLocator" );
+        NullArgumentException.validateNotNull( resourceWriter, "resourceWriter" );
 
-        m_resourceLocator = resourceLocator;
+        m_resourceWriter = resourceWriter;
         m_props = p;
 
     }
@@ -80,7 +80,7 @@ public class BundleBuilder
                     try
                     {
                         jos = new DuplicateAwareJarOutputStream( pout );
-                        m_resourceLocator.write( jos );
+                        m_resourceWriter.write( jos );
                         jos.close();
                     } catch( IOException e )
                     {
@@ -100,7 +100,7 @@ public class BundleBuilder
 
             //      m_refs.setProperty( Constants.BUNDLE_SYMBOLICNAME, "BuiltByDirUrlHandler" );
 
-            InputStream result = BndWrapper.createBundle( fis, m_resourceLocator.toString(), m_props );
+            InputStream result = BndWrapper.createBundle( fis, m_resourceWriter.toString(), m_props );
             fis.close();
             pout.close();
             return result;

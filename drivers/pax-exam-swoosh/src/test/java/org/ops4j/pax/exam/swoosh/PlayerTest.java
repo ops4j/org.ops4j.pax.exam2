@@ -12,6 +12,6 @@ public class PlayerTest {
     public void play()
         throws Exception
     {
-        new Player( new NativeTestContainerFactory() ).with( new PaxLoggingParts( "1.6.1" ) ).play( new BundleCheck().allResolved() );
+        new Player().with( new PaxLoggingParts( "1.6.1" ) ).play( new BundleCheck().allResolved() );
     }
 }

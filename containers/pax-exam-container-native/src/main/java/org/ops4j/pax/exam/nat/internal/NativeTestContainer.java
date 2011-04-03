@@ -229,7 +229,7 @@ public class NativeTestContainer implements TestContainer {
 
             parent = Thread.currentThread().getContextClassLoader();
             //Thread.currentThread().setContextClassLoader( null );
-            
+
             m_framework = m_frameworkFactory.newFramework( p );
             m_framework.init();
             installAndStartBundles( m_framework.getBundleContext() );

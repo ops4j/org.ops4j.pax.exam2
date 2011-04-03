@@ -28,7 +28,7 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.probesupport.DefaultTestAddress;
+import org.ops4j.pax.exam.spi.probesupport.intern.DefaultTestAddress;
 
 /**
  * One target only reactor implementation (simpliest and fastest)

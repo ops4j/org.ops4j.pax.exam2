@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.probesupport;
+package org.ops4j.pax.exam.spi.probesupport.intern;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +32,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
+import org.ops4j.pax.exam.spi.probesupport.ContentCollector;
 import org.ops4j.store.Store;
 
 /**
@@ -49,7 +51,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     private Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new HashMap<TestAddress, TestInstantiationInstruction>();
 
-    private Class m_anchor;
+    private final List<Class> m_anchors;
     private final Properties m_extraProperties;
     private final Set<String> m_ignorePackages = new HashSet<String>();
     private final Store<InputStream> m_store;
@@ -57,30 +59,31 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     public TestProbeBuilderImpl( Properties p, Store<InputStream> store )
         throws IOException
     {
+        m_anchors = new ArrayList<Class>();
         m_store = store;
         m_extraProperties = p;
     }
 
     public TestAddress addTest( Class clazz, Method m )
     {
-        DefaultTestAddress address = new DefaultTestAddress( m.getName());
+        DefaultTestAddress address = new DefaultTestAddress( m.getName() );
         m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + m.getName() ) );
-        setAnchor( clazz );
+        addAnchor( clazz );
         return address;
     }
 
     public List<TestAddress> addTests( Class clazz, Method... methods )
     {
         List<TestAddress> list = new ArrayList<TestAddress>();
-        for (Method method : methods) {
-            list.add(addTest(clazz,method));
+        for( Method method : methods ) {
+            list.add( addTest( clazz, method ) );
         }
-        return list; 
+        return list;
     }
 
-    public TestProbeBuilder setAnchor( Class clazz )
+    public TestProbeBuilder addAnchor( Class clazz )
     {
-        m_anchor = clazz;
+        m_anchors.add( clazz );
         return this;
     }
 
@@ -104,13 +107,18 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     public TestProbeProvider build()
     {
+        if( m_anchors.size() == 0 ) {
+            throw new TestContainerException( "No tests added to setup!" );
+        }
+
         constructProbeTag( m_extraProperties );
         Properties p = createExtraIgnores();
 
         try {
-            String tail = m_anchor.getName().replace( ".", "/" ) + ".class";
-            File base = new FileTailImpl( new File( "." ), tail ).getParentOfTail();
-            BundleBuilder bundleBuilder = new BundleBuilder( new ResourceWriter( base ), m_extraProperties, p );
+
+            ContentCollector collector = selectCollector( new File( "." ) );
+
+            BundleBuilder bundleBuilder = new BundleBuilder( new DefaultResourceWriter( collector ), m_extraProperties, p );
 
             return new DefaultTestProbeProvider(
                 getTests(),
@@ -121,6 +129,31 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         } catch( IOException e ) {
             throw new RuntimeException( e );
         }
+    }
+
+    private ContentCollector selectCollector( File dir )
+        throws IOException
+    {
+        validateTopLevelDir( dir );
+
+        ContentCollector collector = null;
+
+        File root = new ClassSourceFolder( dir ).find( m_anchors.get( 0 ) );
+        if( root != null ) {
+            collector = new CollectFromBase( root );
+        }
+        else {
+            collector = new CollectFromItems( m_anchors );
+        }
+        return collector;
+    }
+
+    private void validateTopLevelDir( File f )
+    {
+        if( !f.exists() || !f.canRead() || !f.isDirectory() ) {
+            throw new IllegalArgumentException( "topLevelDir " + f.getAbsolutePath() + " is not a readable folder" );
+        }
+        LOG.debug( "Top level dir " + f + " has been verified." );
     }
 
     private TestAddress[] getTests()
