@@ -27,9 +27,9 @@ import java.util.List;
 public interface TestProbeBuilder
 {
 
-    TestAddress addTest( Class clazz, Method m );
+    TestAddress addTest( Class clazz, String methodName );
 
-     List<TestAddress> addTests( Class clazz, Method... m );
+    List<TestAddress> addTests( Class clazz, Method... m );
 
     TestProbeBuilder setHeader( String key, String value );
 

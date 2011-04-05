@@ -167,7 +167,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         //probe.setAnchor( testClass );
         for( FrameworkMethod s : super.getChildren() ) {
             // record the method -> adress matching
-            m_map.put( probe.addTest( testClass, s.getMethod() ), s );
+            m_map.put( probe.addTest( testClass, s.getMethod().getName() ), s );
         }
         reactor.addProbe( probe.build() );
     }

@@ -24,12 +24,20 @@ import java.lang.reflect.InvocationTargetException;
  * @author Toni Menzel
  * @since Jan 22, 2010
  */
-public interface TestTarget
-{
-   // <T> T getService( Class<T> serviceType, String filter, long timeoutInMillis ) throws TestContainerException;
+public interface TestTarget {
 
-    void call( TestAddress address )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException;
+   
+
+    /**
+     *
+     * @param address the target to be called.
+     * @param args optional arguments that the target might accept. Superfluous arguments are being dropped.
+     * @throws ClassNotFoundException Problems
+     * @throws InvocationTargetException Problems
+     * @throws InstantiationException Problems
+     * @throws IllegalAccessException Problems
+     */
+    void call( TestAddress address, Object... args ) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException;
 
     /**
      * @param stream stream the content
@@ -43,5 +51,17 @@ public interface TestTarget
      * Like rewinding all installed probes.
      */
     void cleanup();
+
+    /**
+     * Waits for a bundle to be in a certain state and returns.
+     *
+     * @param bundleId        bundle id
+     * @param state           expected state
+     * @param timeoutInMillis max time to wait for state
+     *
+     * @throws TimeoutException - if timeout occured and expected state has not being reached
+     */
+    void waitForState( long bundleId, int state, long timeoutInMillis )
+        throws TimeoutException;
 
 }

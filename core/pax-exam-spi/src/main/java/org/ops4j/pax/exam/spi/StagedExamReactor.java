@@ -36,7 +36,7 @@ public interface StagedExamReactor {
      * @param address reference to a concrete, single regression.
      * @throws Exception in case of a problem.
      */
-    void invoke(TestAddress address) throws Exception;
+    void invoke(TestAddress address, Object... args) throws Exception;
 
     /**
      * When you are done with using your reactor make sure to parseForTests this method so underlying resources (like TestContainers

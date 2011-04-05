@@ -74,9 +74,8 @@ public interface RemoteBundleContextClient {
      */
     public void waitForState( final long bundleId,
                               final int state,
-                              final long timeoutInMillis )
-        throws BundleException, RemoteException;
+                              final long timeoutInMillis );
 
-    public void call( TestAddress address )
+    public void call( TestAddress address , Object... args)
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException;
 }

@@ -119,14 +119,13 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
     }
 
     public void waitForState( long bundleId, int state, long timeoutInMillis )
-        throws BundleException, RemoteException
     {
         m_proxy.waitForState( bundleId, state, timeoutInMillis );
     }
 
-    public void call( TestAddress address )
+    public void call( TestAddress address, Object... args )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
-        m_proxy.call( address );
+        m_proxy.call( address, args );
     }
 }

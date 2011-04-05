@@ -181,13 +181,9 @@ public class PaxRunnerTestContainer
     public void waitForState( final long bundleId, final int state, final long timeoutInMillis )
         throws TimeoutException
     {
-        try {
-            m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
-        } catch( BundleException e ) {
-            LOG.error( "Bundle Exception", e );
-        } catch( RemoteException e ) {
-            throw new TimeoutException( "Remote Exception while waitForState", e );
-        }
+
+        m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
+
     }
 
     /**
@@ -196,10 +192,10 @@ public class PaxRunnerTestContainer
      * @return local options
      */
 
-    public void call( TestAddress address )
+    public void call( TestAddress address, Object... args )
         throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
     {
-        m_target.call( address );
+        m_target.call( address, args );
     }
 
     public long install( InputStream stream )

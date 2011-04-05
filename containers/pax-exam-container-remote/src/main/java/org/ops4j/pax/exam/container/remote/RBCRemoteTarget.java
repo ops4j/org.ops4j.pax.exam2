@@ -26,6 +26,7 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
@@ -69,12 +70,13 @@ public class RBCRemoteTarget implements TestTarget
         return m_remoteBundleContextClient;
     }
 
-    public void call( TestAddress address )
+    public void call( TestAddress address,Object... args )
         throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
     {
         LOG.debug( "call [" + address + "]" );
-        m_remoteBundleContextClient.call( address );
+        m_remoteBundleContextClient.call( address ,args );
     }
+
 
     public long install( InputStream probe )
         throws TestContainerException
@@ -95,7 +97,11 @@ public class RBCRemoteTarget implements TestTarget
         m_remoteBundleContextClient.cleanup();
     }
 
-
+    public void waitForState( long bundleId, int state, long timeoutInMillis )
+        throws TimeoutException
+    {
+        m_remoteBundleContextClient.waitForState(bundleId,state,timeoutInMillis);
+    }
 
     /**
      * Determine the timeout while starting the osgi framework.<br/>

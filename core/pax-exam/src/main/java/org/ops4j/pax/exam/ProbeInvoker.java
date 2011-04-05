@@ -23,11 +23,12 @@ import java.lang.reflect.InvocationTargetException;
  * @author Toni Menzel
  * @since Dec 4, 2009
  */
-public interface ProbeInvoker
-{
+public interface ProbeInvoker {
 
     /**
      * Executes the regression method.
+     *
+     * @param args Arguments to the called address.
      *
      * @throws ClassNotFoundException - If the regression class cannot be loaded
      * @throws InstantiationException - If an instance of the regression class cannot be created
@@ -35,6 +36,6 @@ public interface ProbeInvoker
      * @throws java.lang.reflect.InvocationTargetException
      *                                - Re-thrown from reflective invokation of regression method
      */
-    void call( )
+    void call( Object... args )
         throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException;
 }

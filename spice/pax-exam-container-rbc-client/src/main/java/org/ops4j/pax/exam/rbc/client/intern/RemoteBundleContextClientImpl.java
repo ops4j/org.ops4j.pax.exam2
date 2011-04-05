@@ -227,9 +227,15 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     public void waitForState( final long bundleId,
                               final int state,
                               final long timeoutInMillis )
-        throws BundleException, RemoteException
+
     {
-        getRemoteBundleContext().waitForState( bundleId, state, timeoutInMillis );
+        try {
+            getRemoteBundleContext().waitForState( bundleId, state, timeoutInMillis );
+        } catch( RemoteException e ) {
+            throw new RuntimeException( "waitForState", e );
+        } catch( BundleException e ) {
+            throw new RuntimeException( "waitForState", e );
+        }
     }
 
     /**
@@ -276,12 +282,12 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     }
 
-    public void call( TestAddress address )
+    public void call( TestAddress address, Object... obj )
         throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
         ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, 5000 );
-        service.call();
+        service.call( obj );
     }
 
     public String getName()

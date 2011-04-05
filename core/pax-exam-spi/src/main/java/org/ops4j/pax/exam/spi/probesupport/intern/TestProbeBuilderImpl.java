@@ -64,10 +64,10 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         m_extraProperties = p;
     }
 
-    public TestAddress addTest( Class clazz, Method m )
+    public TestAddress addTest( Class clazz, String m )
     {
-        DefaultTestAddress address = new DefaultTestAddress( m.getName() );
-        m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + m.getName() ) );
+        DefaultTestAddress address = new DefaultTestAddress( m );
+        m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + m ) );
         addAnchor( clazz );
         return address;
     }
@@ -76,7 +76,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     {
         List<TestAddress> list = new ArrayList<TestAddress>();
         for( Method method : methods ) {
-            list.add( addTest( clazz, method ) );
+            list.add( addTest( clazz, method.getName() ) );
         }
         return list;
     }

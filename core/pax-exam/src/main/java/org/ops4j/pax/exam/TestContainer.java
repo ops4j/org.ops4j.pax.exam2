@@ -61,15 +61,5 @@ public interface TestContainer extends TestTarget {
     TestContainer stop()
         throws TimeoutException;
 
-    /**
-     * Waits for a bundle to be in a certain state and returns.
-     *
-     * @param bundleId        bundle id
-     * @param state           expected state
-     * @param timeoutInMillis max time to wait for state
-     *
-     * @throws TimeoutException - if timeout occured and expected state has not being reached
-     */
-    void waitForState( long bundleId, int state, long timeoutInMillis )
-        throws TimeoutException;
+
 }
