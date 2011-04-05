@@ -17,17 +17,27 @@
  */
 package org.ops4j.pax.exam.swoosh;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
+import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.store.Store;
+import org.ops4j.store.StoreFactory;
 
 import static junit.framework.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -46,42 +56,63 @@ import static org.ops4j.pax.exam.CoreOptions.*;
  */
 public class Player {
 
-    private static Logger LOG = LoggerFactory.getLogger( Player.class );
-
+    private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
     final private TestContainerFactory m_factory;
     final private Option[] m_parts;
-
-    final private AbstractProbe m_tests;
-
-    private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
+    final private List<ParameterizedAddress> m_list = new ArrayList<ParameterizedAddress>();
+    final private TestProbeBuilder m_builder;
 
     public Player( TestContainerFactory containerFactory, Option... parts )
+        throws IOException
     {
+        Store<InputStream> store = StoreFactory.defaultStore();
+        Properties p = new Properties();
         m_factory = containerFactory;
         m_parts = parts;
-        m_tests = new AbstractProbe();
+        m_builder = new TestProbeBuilderImpl( p, store );
+
     }
 
     public Player( TestContainerFactory containerFactory )
+        throws IOException
     {
         this( containerFactory, new Option[ 0 ] );
     }
 
     public Player()
+        throws IOException
     {
         this( PaxExamRuntime.getTestContainerFactory() );
     }
 
     public Player with( Option... parts )
+        throws IOException
     {
         return new Player( m_factory, parts );
     }
 
-    public Player test( Class c, Object... args )
+    public Player test( Class clazz, Object... args )
         throws Exception
     {
-        m_tests.add( c, args );
+        m_list.add( new ParameterizedAddress( m_builder.addTest( clazz, "probe" ), args ) );
         return this;
+    }
+
+    private TestProbeProvider augmentAddresses()
+    {
+        return new TestProbeProvider() {
+
+            public TestAddress[] getTests()
+            {
+                return m_list.toArray( new TestAddress[ m_list.size() ] );
+            }
+
+            public InputStream getStream()
+                throws IOException
+            {
+                return m_builder.build().getStream();
+            }
+        };
     }
 
     public void play()
@@ -89,7 +120,8 @@ public class Player {
     {
         DefaultExamReactor reactor = new DefaultExamReactor( m_factory );
         reactor.addConfiguration( m_parts );
-        reactor.addProbe( m_tests );
+        //  reactor.addProbe( m_tests );
+        reactor.addProbe( augmentAddresses() );
 
         StagedExamReactor stage = reactor.stage( DEFAULT_STRATEGY );
 
