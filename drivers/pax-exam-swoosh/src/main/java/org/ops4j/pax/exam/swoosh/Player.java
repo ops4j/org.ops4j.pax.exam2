@@ -77,19 +77,19 @@ public class Player {
         return new Player( m_factory, parts );
     }
 
-    public Player test( Class c, Object... args)
+    public Player test( Class c, Object... args )
         throws Exception
     {
-        m_tests.add( c,args );
+        m_tests.add( c, args );
         return this;
     }
 
-     public void play( )
+    public void play()
         throws Exception
     {
         DefaultExamReactor reactor = new DefaultExamReactor( m_factory );
         reactor.addConfiguration( m_parts );
-        reactor.addProbe(m_tests );
+        reactor.addProbe( m_tests );
 
         StagedExamReactor stage = reactor.stage( DEFAULT_STRATEGY );
 
@@ -97,13 +97,25 @@ public class Player {
             try {
 
                 // find stored args:
-                Object[] args = ( (ParameterizedAddress) (target.root()) ).arguments();
+                Object[] args = ( (ParameterizedAddress) ( target.root() ) ).arguments();
                 stage.invoke( target, args );
 
             } catch( Exception e ) {
-                LOG.error( "Full Stacktrace for AssertionFailure: ", e );
-                fail( e.getCause().getMessage() );
+                Throwable t = unwind( e );
+                fail( t.getMessage() );
             }
+        }
+    }
+
+    private Throwable unwind( Throwable e )
+    {
+
+        Throwable t = e.getCause();
+        if( t != null ) {
+            return unwind( t );
+        }
+        else {
+            return e;
         }
     }
 }

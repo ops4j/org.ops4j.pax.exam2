@@ -1,8 +1,10 @@
 package org.ops4j.pax.exam.swoosh;
 
+import junit.framework.AssertionFailedError;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
+import org.osgi.service.wireadmin.WireAdmin;
 import org.ops4j.pax.exam.swoosh.probes.WaitForService;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -20,6 +22,20 @@ public class PlayerTest {
             options(
                 mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.1" ),
                 mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" )
+            )
+        ).test( WaitForService.class, LogService.class.getName() ).play();
+
+    }
+
+    @Test( expected = AssertionFailedError.class )
+    public void missing()
+        throws Exception
+    {
+        new Player().with(
+            options(
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.1" ),
+                equinox(),
+                felix()
             )
         ).test( WaitForService.class, LogService.class.getName() ).play();
 

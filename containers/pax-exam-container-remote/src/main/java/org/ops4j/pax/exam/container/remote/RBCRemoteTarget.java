@@ -57,7 +57,9 @@ public class RBCRemoteTarget implements TestTarget
     public RBCRemoteTarget( String name, Integer registry, long rmiLookupTimeout )
 
     {
-        m_remoteBundleContextClient = new RetryRemoteBundleContextClient(new RemoteBundleContextClientImpl( name, registry, rmiLookupTimeout),10);
+        //m_remoteBundleContextClient = new RetryRemoteBundleContextClient(new RemoteBundleContextClientImpl( name, registry, rmiLookupTimeout),10);
+        m_remoteBundleContextClient = new RemoteBundleContextClientImpl( name, registry, rmiLookupTimeout);
+
     }
 
     /**
@@ -71,7 +73,6 @@ public class RBCRemoteTarget implements TestTarget
     }
 
     public void call( TestAddress address,Object... args )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
     {
         LOG.debug( "call [" + address + "]" );
         m_remoteBundleContextClient.call( address ,args );

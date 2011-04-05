@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * Turns a instruction into a service call.
@@ -46,19 +47,21 @@ public class ProbeInvokerImpl implements ProbeInvoker {
     }
 
     public void call( Object... args )
-        throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
-        final Class testClass = m_ctx.getBundle().loadClass( m_clazz );
-
-        // add bundlecontext to array index:
+        Class testClass;
+        try {
+            testClass = m_ctx.getBundle().loadClass( m_clazz );
+        } catch( ClassNotFoundException e ) {
+            throw new TestContainerException( e );
+        }
 
         if( !( findAndInvoke( testClass, args ) ) ) {
-            throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
+            throw new TestContainerException( " Test " + m_method + " not found in test class " + testClass.getName() );
         }
     }
 
     private boolean findAndInvoke( Class testClass, Object... params )
-        throws IllegalAccessException, InvocationTargetException, InstantiationException
+
     {
         try {
             // find matching method 
@@ -71,7 +74,11 @@ public class ProbeInvokerImpl implements ProbeInvoker {
             }
 
         } catch( NoClassDefFoundError e ) {
-            //
+            throw new TestContainerException( e );            
+        } catch( InstantiationException e ) {
+            throw new TestContainerException( e );
+        } catch( IllegalAccessException e ) {
+            throw new TestContainerException( e );
         }
         return false;
     }
@@ -87,11 +94,10 @@ public class ProbeInvokerImpl implements ProbeInvoker {
      * @param testMethod   regression method
      * @param params
      *
-     * @throws IllegalAccessException    - Re-thrown from reflection invokation
-     * @throws InvocationTargetException - Re-thrown from reflection invokation
+     * @throws TestContainerException    - Re-thrown from reflection invokation
      */
     private void injectContextAndInvoke( final Object testInstance, final Method testMethod, Object[] params )
-        throws IllegalAccessException, InvocationTargetException
+        throws TestContainerException
     {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
         //injectFieldInstances( testInstance.getClass(), testInstance );
@@ -104,12 +110,17 @@ public class ProbeInvokerImpl implements ProbeInvoker {
             else {
                 params = injectHook( testMethod, params );
                 testMethod.invoke( testInstance, params );
-
             }
 
             cleanup = true;
             //runAfters( testInstance );
-        } finally {
+        } catch(InvocationTargetException e) {
+            throw new TestContainerException( e );
+
+        } catch(IllegalAccessException e) {
+            throw new TestContainerException( e );
+        }
+        finally {
             if( !cleanup ) {
                 try {
                     //runAfters( testInstance );

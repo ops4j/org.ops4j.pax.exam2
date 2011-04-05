@@ -69,14 +69,14 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                         } catch( Exception ex ) {
                             lastError = ex;
 
-                            if( ex instanceof NoSuchObjectException  || ex instanceof InvocationTargetException) {
+                            if( ex instanceof NoSuchObjectException) {
                                 LOG.info( "Catched " + ex.getClass().getName() + " in RBC." + method.getName() );
                                 retry = true;
                             }
                             else {
                                 LOG.warn( "Exception that does not cause Retry: " + ex.getClass().getName() + " in RBC." + method.getName(), ex );
                                 // just escape
-                                throw new Exception( lastError );
+                                throw lastError;
                             }
                         }
                     } while( retry && m_maxRetry > triedTimes );
@@ -124,7 +124,6 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
     }
 
     public void call( TestAddress address, Object... args )
-        throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
         m_proxy.call( address, args );
     }

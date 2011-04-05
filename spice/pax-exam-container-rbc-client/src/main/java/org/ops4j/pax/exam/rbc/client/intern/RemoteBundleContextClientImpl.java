@@ -283,7 +283,6 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     }
 
     public void call( TestAddress address, Object... obj )
-        throws InvocationTargetException, ClassNotFoundException, IllegalAccessException, InstantiationException
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
         ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, 5000 );

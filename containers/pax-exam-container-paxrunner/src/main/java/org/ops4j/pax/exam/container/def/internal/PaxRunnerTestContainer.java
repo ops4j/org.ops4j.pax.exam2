@@ -193,7 +193,6 @@ public class PaxRunnerTestContainer
      */
 
     public void call( TestAddress address, Object... args )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
     {
         m_target.call( address, args );
     }
