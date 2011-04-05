@@ -4,7 +4,6 @@ import junit.framework.AssertionFailedError;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
-import org.osgi.service.wireadmin.WireAdmin;
 import org.ops4j.pax.exam.swoosh.probes.WaitForService;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -13,6 +12,15 @@ import static org.ops4j.pax.exam.CoreOptions.*;
  * An entire test harness in a tweet.
  */
 public class PlayerTest {
+
+
+    @Test
+    public void minimal()
+        throws Exception
+    {
+        new Player().play();
+
+    }
 
     @Test
     public void play1()
