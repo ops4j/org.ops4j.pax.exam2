@@ -17,29 +17,9 @@
  */
 package org.ops4j.pax.exam.rbc.client;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.rmi.ConnectException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.Stack;
-import java.util.UUID;
-
-import org.ops4j.io.StreamUtils;
-import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
-import org.osgi.framework.BundleException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
