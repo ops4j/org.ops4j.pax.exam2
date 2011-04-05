@@ -20,6 +20,8 @@ package org.ops4j.pax.exam.swoosh;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -34,19 +36,33 @@ public class AbstractProbe implements TestProbeProvider {
 
     private TestProbeBuilderImpl m_builder;
     private TestProbeProvider m_built;
+    private List<ParameterizedAddress> m_list = new ArrayList<ParameterizedAddress>();
+
+    public static AbstractProbe TEST = new AbstractProbe();
 
     public AbstractProbe()
-        throws IOException
     {
-        Store<InputStream> store = StoreFactory.defaultStore();
-        Properties p = new Properties();
-        m_builder = new TestProbeBuilderImpl( p, store );
+        try {
+            Store<InputStream> store = StoreFactory.defaultStore();
+            Properties p = new Properties();
+            m_builder = new TestProbeBuilderImpl( p, store );
+        } catch( IOException e ) {
+            //
+            throw new RuntimeException( "problem" );
+        }
+    }
+
+    public AbstractProbe add( Class c, Object... args )
+        throws NoSuchMethodException
+    {
+        addTest( c, "probe", args );
+        return this;
     }
 
     public TestAddress[] getTests()
     {
         build();
-        return m_built.getTests();
+        return m_list.toArray( new TestAddress[ m_list.size() ] );
     }
 
     public InputStream getStream()
@@ -61,8 +77,9 @@ public class AbstractProbe implements TestProbeProvider {
         if( m_built == null ) { m_built = m_builder.build(); }
     }
 
-    protected void addTest( Class<?> clazz, Method m )
+    protected void addTest( Class<?> clazz, String m, Object... args )
     {
-        m_builder.addTest( clazz, m );
+        m_list.add( new ParameterizedAddress( m_builder.addTest( clazz, m ), args ) );
     }
+
 }

@@ -19,14 +19,30 @@ package org.ops4j.pax.exam.swoosh.probes;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.exam.Inject;
 
 /**
  *
  */
 public class ResolverTestSet {
 
+   
     public void resolveAll( BundleContext ctx )
     {
+        for( Bundle b : ctx.getBundles() ) {
+            System.out.println( "b: " + b.getSymbolicName() );
+            // test funky things
+        }
+    }
+
+    /**
+     *
+     * @param ctx
+     * @param servicename
+     */
+    public void serviceFind( BundleContext ctx, String servicename )
+    {
+        System.out.println("Service: " + servicename);
         for( Bundle b : ctx.getBundles() ) {
             System.out.println( "b: " + b.getSymbolicName() );
             // test funky things

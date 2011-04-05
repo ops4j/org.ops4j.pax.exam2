@@ -51,12 +51,15 @@ public class Player {
     final private TestContainerFactory m_factory;
     final private Option[] m_parts;
 
+    final private AbstractProbe m_tests;
+
     private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
 
     public Player( TestContainerFactory containerFactory, Option... parts )
     {
         m_factory = containerFactory;
         m_parts = parts;
+        m_tests = new AbstractProbe();
     }
 
     public Player( TestContainerFactory containerFactory )
@@ -74,23 +77,31 @@ public class Player {
         return new Player( m_factory, parts );
     }
 
-    public void play( TestProbeProvider... providers )
+    public Player test( Class c, Object... args)
+        throws Exception
+    {
+        m_tests.add( c,args );
+        return this;
+    }
+
+     public void play( )
         throws Exception
     {
         DefaultExamReactor reactor = new DefaultExamReactor( m_factory );
         reactor.addConfiguration( m_parts );
-
-        for( TestProbeProvider p : providers ) {
-            reactor.addProbe( p );
-        }
+        reactor.addProbe(m_tests );
 
         StagedExamReactor stage = reactor.stage( DEFAULT_STRATEGY );
 
         for( TestAddress target : stage.getTargets() ) {
             try {
-                stage.invoke( target );
+
+                // find stored args:
+                Object[] args = ( (ParameterizedAddress) (target.root()) ).arguments();
+                stage.invoke( target, args );
+
             } catch( Exception e ) {
-                LOG.error( "Full Stacktrace for AssertionFailure: ",e );
+                LOG.error( "Full Stacktrace for AssertionFailure: ", e );
                 fail( e.getCause().getMessage() );
             }
         }
