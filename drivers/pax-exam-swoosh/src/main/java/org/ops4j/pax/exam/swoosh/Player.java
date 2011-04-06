@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
@@ -133,21 +134,9 @@ public class Player {
                 stage.invoke( target, args );
 
             } catch( Exception e ) {
-                Throwable t = unwind( e );
+                Throwable t = ExceptionHelper.unwind( e );
                 fail( t.getMessage() );
             }
-        }
-    }
-
-    private Throwable unwind( Throwable e )
-    {
-
-        Throwable t = e.getCause();
-        if( t != null ) {
-            return unwind( t );
-        }
-        else {
-            return e;
         }
     }
 }
