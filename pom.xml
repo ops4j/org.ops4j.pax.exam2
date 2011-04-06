@@ -42,10 +42,12 @@
 
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
-                 <module>it-regression/regression-lesson1-plumbing</module>
+                <module>it-regression/regression-lesson1-plumbing</module>
+                <module>it-regression/regression-lesson2-porcelain</module>
+
             </modules>
         </profile>
-          <profile>
+        <profile>
             <id>regression</id>
             <modules>
                 <module>pom</module>
