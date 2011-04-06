@@ -70,12 +70,13 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                         } catch( Exception ex ) {
                             lastError = ex;
                             Throwable cause = ExceptionHelper.unwind( ex );
-                            if( cause instanceof NoSuchObjectException ) {
-                                LOG.warn( "### Catched " + cause.getClass().getName() + " in RBC." + method.getName() );
+                            boolean contain = ExceptionHelper.hasThrowable( ex, NoSuchObjectException.class );
+                            if( contain ) {
+                                LOG.warn( "Catched (rooted) " + cause.getClass().getName() + " in RBC." + method.getName() );
                                 retry = true;
                             }
                             else {
-                                LOG.warn( "Exception that does not cause Retry: " + cause.getClass().getName() + " in RBC." + method.getName(), cause );
+                                LOG.warn( "Exception that does not cause Retry : (rooted) " + cause.getClass().getName() + " in RBC." + method.getName(), cause );
                                 // just escape
                                 throw lastError;
                             }
