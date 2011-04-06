@@ -61,7 +61,8 @@ public class Activator
      * !Note: this must be here otherwise JVM will garbage collect it and this will result in an
      * java.rmi.NoSuchObjectException: no such object in table
      */
-    private RemoteBundleContext m_remoteBundleContext;
+    private volatile RemoteBundleContext m_remoteBundleContext;
+    
     private Thread m_registerRBCThread;
 
     /**
