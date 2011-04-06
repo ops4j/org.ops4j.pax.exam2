@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 
@@ -134,9 +133,10 @@ public class Activator
     private void bindRBC( Registry registry, String name, BundleContext bundleContext )
         throws RemoteException, BundleException
     {
-        Integer objectPort = new FreePort( PORT_RBC_FROM, PORT_RBC_TO ).getPort();
-        LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
-        Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), objectPort );
+       // Integer objectPort = new FreePort( PORT_RBC_FROM, PORT_RBC_TO ).getPort();
+        LOG.info( "(Using automatic Port!) Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
+        Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), 0 );
+        
         registry.rebind( getName(), remoteStub );
     }
 
