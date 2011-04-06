@@ -27,6 +27,7 @@ import java.rmi.RemoteException;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 
@@ -68,13 +69,13 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                             retry = false;
                         } catch( Exception ex ) {
                             lastError = ex;
-
-                            if( ex instanceof NoSuchObjectException) {
-                                LOG.info( "Catched " + ex.getClass().getName() + " in RBC." + method.getName() );
+                            Throwable cause = ExceptionHelper.unwind( ex );
+                            if( cause instanceof NoSuchObjectException ) {
+                                LOG.warn( "### Catched " + cause.getClass().getName() + " in RBC." + method.getName() );
                                 retry = true;
                             }
                             else {
-                                LOG.warn( "Exception that does not cause Retry: " + ex.getClass().getName() + " in RBC." + method.getName(), ex );
+                                LOG.warn( "Exception that does not cause Retry: " + cause.getClass().getName() + " in RBC." + method.getName(), cause );
                                 // just escape
                                 throw lastError;
                             }
