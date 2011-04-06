@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
-        <version>2.0.0-M2-SNAPSHOT</version>
+        <version>2.0.0-RC2-SNAPSHOT</version>
         <relativePath>../../pom/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-extender-service</artifactId>
-    <version>2.0.0-M2-SNAPSHOT</version>
+    <version>2.0.0-RC2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>OPS4J Pax Exam - Extender Service</name>
@@ -41,8 +41,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>

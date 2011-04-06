@@ -68,10 +68,10 @@ public class PaxRunnerTestContainer
      * Underlying Test Target
      */
     private RBCRemoteTarget m_target;
-    private StoppableJavaRunner m_javaRunner;
-    private String m_host;
-    private int m_port;
-    private Option[] m_options;
+    final private StoppableJavaRunner m_javaRunner;
+    final private String m_host;
+    final private int m_port;
+    final private Option[] m_options;
     final private String m_frameworkName;
 
     /**
@@ -120,8 +120,14 @@ public class PaxRunnerTestContainer
 
             long startedAt = System.currentTimeMillis();
             URLUtils.resetURLStreamHandlerFactory();
+            String[] arguments = argBuilder.getArguments();
 
-            Run.start( m_javaRunner, argBuilder.getArguments() );
+            LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
+            for( String s : arguments ) {
+                LOG.info( "#   " + s );
+            }
+
+            Run.start( m_javaRunner, arguments );
             LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
                       + ( System.currentTimeMillis() - startedAt ) + " millis"
             );
@@ -175,13 +181,9 @@ public class PaxRunnerTestContainer
     public void waitForState( final long bundleId, final int state, final long timeoutInMillis )
         throws TimeoutException
     {
-        try {
-            m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
-        } catch( BundleException e ) {
-            LOG.error( "Bundle Exception", e );
-        } catch( RemoteException e ) {
-            throw new TimeoutException( "Remote Exception while waitForState", e );
-        }
+
+        m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
+
     }
 
     /**
@@ -190,10 +192,9 @@ public class PaxRunnerTestContainer
      * @return local options
      */
 
-    public void call( TestAddress address )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
+    public void call( TestAddress address, Object... args )
     {
-        m_target.call( address );
+        m_target.call( address, args );
     }
 
     public long install( InputStream stream )

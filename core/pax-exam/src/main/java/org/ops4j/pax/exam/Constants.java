@@ -23,18 +23,22 @@ package org.ops4j.pax.exam;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 22, 2009
  */
-public interface Constants
-{
+public interface Constants {
 
     /**
      * The start level at which Pax Exam system bundles are to be started.
      */
-    static final int START_LEVEL_SYSTEM_BUNDLES = 1;
+    static final int START_LEVEL_SYSTEM_BUNDLES = 2;
 
     /**
-     * The start level at which Pax Exam regression bundle is to be started.
+     * The start level at which Pax Exam test bundle is to be started.
      */
-    static final int START_LEVEL_TEST_BUNDLE = 2;
+    static final int START_LEVEL_DEFAULT_PROVISION = 3;
+
+    /**
+     * The start level at which Pax Exam test bundle is to be started. This is also the startlevel, the test container reaches in start.
+     */
+    static final int START_LEVEL_TEST_BUNDLE = 5;
 
     /**
      * Timeout specifing that there should be no waiting.

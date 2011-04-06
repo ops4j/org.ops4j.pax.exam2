@@ -17,24 +17,19 @@
  */
 package org.ops4j.pax.exam;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * @author Toni Menzel
  * @since Dec 4, 2009
  */
-public interface ProbeInvoker
-{
+public interface ProbeInvoker {
 
     /**
      * Executes the regression method.
      *
-     * @throws ClassNotFoundException - If the regression class cannot be loaded
-     * @throws InstantiationException - If an instance of the regression class cannot be created
-     * @throws IllegalAccessException - Re-thrown from reflective invokation of regression method
-     * @throws java.lang.reflect.InvocationTargetException
-     *                                - Re-thrown from reflective invokation of regression method
+     * @param args Arguments to the called address.
+     *
+     * @throws TestContainerException - Something to care about..
      */
-    void call( )
-        throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException;
+    void call( Object... args )
+        throws TestContainerException;
 }

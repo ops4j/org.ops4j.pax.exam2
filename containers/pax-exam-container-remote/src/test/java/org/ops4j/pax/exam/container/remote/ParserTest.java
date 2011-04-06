@@ -28,22 +28,24 @@ import static org.junit.Assert.assertThat;
  */
 public class ParserTest {
 
-    @Test(expected = AssertionError.class)
-    public void testDefaults() {
+    @Test( expected = AssertionError.class )
+    public void testDefaults()
+    {
         Option[] options = CoreOptions.options();
-        new Parser(options);
+        new Parser( options );
     }
 
     @Test
-    public void testParsing() {
+    public void testParsing()
+    {
         Option[] options = CoreOptions.options(
-                RBCRemoteTargetOptions.location("bee", 1234)
+            RBCRemoteTargetOptions.location( "bee", 1234 )
         );
 
-        Parser parser = new Parser(options);
+        Parser parser = new Parser( options );
 
-        assertThat(parser.getHost(), is("bee"));
-        assertThat(parser.getRMIPort(), is(1234));
+        assertThat( parser.getHost(), is( "bee" ) );
+        assertThat( parser.getRMIPort(), is( 1234 ) );
 
     }
 }

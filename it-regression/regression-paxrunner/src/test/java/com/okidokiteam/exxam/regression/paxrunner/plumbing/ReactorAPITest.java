@@ -80,7 +80,6 @@ public class ReactorAPITest
         {
             for( TestAddress call : stagedReactor.getTargets() )
             {
-                System.out.println("----------------- HERE's to the crazy ones");
                 stagedReactor.invoke( call );
             }
 

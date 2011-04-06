@@ -26,11 +26,14 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.TestTarget;
+import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
+import org.ops4j.pax.exam.rbc.client.intern.RetryRemoteBundleContextClient;
 
 import static org.ops4j.pax.exam.OptionUtils.*;
 
@@ -54,7 +57,9 @@ public class RBCRemoteTarget implements TestTarget
     public RBCRemoteTarget( String name, Integer registry, long rmiLookupTimeout )
 
     {
-        m_remoteBundleContextClient = new RemoteBundleContextClient( name, registry, rmiLookupTimeout);
+        m_remoteBundleContextClient = new RetryRemoteBundleContextClient(new RemoteBundleContextClientImpl( name, registry, rmiLookupTimeout),10);
+        //m_remoteBundleContextClient = new RemoteBundleContextClientImpl( name, registry, rmiLookupTimeout);
+
     }
 
     /**
@@ -67,12 +72,12 @@ public class RBCRemoteTarget implements TestTarget
         return m_remoteBundleContextClient;
     }
 
-    public void call( TestAddress address )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
+    public void call( TestAddress address,Object... args )
     {
         LOG.debug( "call [" + address + "]" );
-        m_remoteBundleContextClient.call( address );
+        m_remoteBundleContextClient.call( address ,args );
     }
+
 
     public long install( InputStream probe )
         throws TestContainerException
@@ -93,7 +98,11 @@ public class RBCRemoteTarget implements TestTarget
         m_remoteBundleContextClient.cleanup();
     }
 
-
+    public void waitForState( long bundleId, int state, long timeoutInMillis )
+        throws TimeoutException
+    {
+        m_remoteBundleContextClient.waitForState(bundleId,state,timeoutInMillis);
+    }
 
     /**
      * Determine the timeout while starting the osgi framework.<br/>

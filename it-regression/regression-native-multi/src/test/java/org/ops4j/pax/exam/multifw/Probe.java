@@ -14,16 +14,13 @@ import static org.junit.Assert.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Probe {
- private static Logger LOG = LoggerFactory.getLogger( Probe.class );
 
     public void withoutBCTest()
     {
-        LOG.info( "INSIDE OSGI " + Probe.class.getName() + " Method withoutBCTest" );
     }
 
     public void withBCTest( BundleContext ctx )
     {
-        LOG.info( "INSIDE OSGI " + Probe.class.getName() + " Method withBCTest Context: " + ctx );
     }
 
     private void neverCall()

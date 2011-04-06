@@ -30,6 +30,7 @@ import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
 import static org.ops4j.pax.exam.LibraryOptions.*;
+import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 
 /**
  *
@@ -49,7 +50,7 @@ public class BareAPITest {
         TestProbeProvider p = makeProbe();
 
         // the parse will split all single containers
-        for( TestContainer testContainer : PaxExamRuntime.getTestContainerFactory().parse( options ) ) {
+        for( TestContainer testContainer : getTestContainerFactory().parse( options ) ) {
             try {
                 testContainer.start();
                 testContainer.install( p.getStream() );
@@ -101,7 +102,10 @@ public class BareAPITest {
         throws IOException
     {
         TestProbeBuilder probe = new PlumbingContext().createProbe();
-        probe.addTests( SingleTestProbe.class, getAllMethods( SingleTestProbe.class ) );
+        probe.addTests( 
+            SingleTestProbe.class,
+            getAllMethods( SingleTestProbe.class )
+        );
         return probe.build();
     }
 

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.spi.probesupport.TestProbeBuilderImpl;
+import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 

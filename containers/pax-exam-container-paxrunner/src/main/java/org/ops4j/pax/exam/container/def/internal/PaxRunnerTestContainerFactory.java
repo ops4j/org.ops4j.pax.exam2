@@ -41,13 +41,13 @@ public class PaxRunnerTestContainerFactory
     implements TestContainerFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainerFactory.class );
-    private static final int PORT = 21412;
     private RMIRegistry m_rmiRegistry;
+    private static final int DEFAULTPORT = 21412;
 
     public PaxRunnerTestContainerFactory()
-        throws Exception
+
     {
-        m_rmiRegistry = new RMIRegistry( PORT ).register();
+            m_rmiRegistry = new RMIRegistry( DEFAULTPORT, DEFAULTPORT + 1, DEFAULTPORT + 99 ).selectGracefully();
     }
 
     /**
@@ -100,7 +100,7 @@ public class PaxRunnerTestContainerFactory
             //,
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
             bootDelegationPackage( "sun.*" ),
-
+            
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
             url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),

@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +31,18 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.osgi.service.startlevel.StartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
+import org.ops4j.pax.exam.options.ProvisionOption;
 
 /**
  * @author Toni Menzel
@@ -60,12 +62,12 @@ public class NativeTestContainer implements TestContainer {
     private Stack<Long> m_installed;
 
     final private Map<String, String> m_properties;
-    final private List<String> m_bundles;
+    final private List<ProvisionOption> m_bundles;
     final private FrameworkFactory m_frameworkFactory;
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
     private static final long TIMEOUT_IN_MILLIS = 5000;
 
-    public NativeTestContainer( FrameworkFactory frameworkFactory , ArrayList<String> bundles, Map<String, String> properties )
+    public NativeTestContainer( FrameworkFactory frameworkFactory, List<ProvisionOption> bundles, Map<String, String> properties )
     {
         m_bundles = bundles;
         m_properties = properties;
@@ -121,12 +123,12 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    public void call( TestAddress address )
+    public void call( TestAddress address, Object... args )
         throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
         ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, TIMEOUT_IN_MILLIS );
-        service.call();
+        service.call(args);
     }
 
     public long install( InputStream stream )
@@ -229,9 +231,10 @@ public class NativeTestContainer implements TestContainer {
 
             parent = Thread.currentThread().getContextClassLoader();
             //Thread.currentThread().setContextClassLoader( null );
-            
+
             m_framework = m_frameworkFactory.newFramework( p );
             m_framework.init();
+
             installAndStartBundles( m_framework.getBundleContext() );
 
             Thread.currentThread().setContextClassLoader( parent );
@@ -249,14 +252,35 @@ public class NativeTestContainer implements TestContainer {
     private void installAndStartBundles( BundleContext context )
         throws BundleException
     {
-        for( String bundle : m_bundles ) {
-            LOG.info( "Install " + bundle );
-            Bundle b = context.installBundle( bundle );
-        }
+
         m_framework.start();
-        for( Bundle b : m_framework.getBundleContext().getBundles() ) {
+
+        StartLevel sl;
+        while( ( sl = (StartLevel) context.getService( context.getServiceReference( StartLevel.class.getName() ) ) ) == null ) {
+            System.out.println( "Find SL.." );
+        }
+
+        if( sl == null ) {
+            throw new TestContainerException( "No Startlevel Service ?" );
+        }
+        for( ProvisionOption bundle : m_bundles ) {
+            Bundle b = null;
+            LOG.info( "Install " + bundle );
+            b = context.installBundle( bundle.getURL() );
+            sl.setBundleStartLevel( b, getStartLevel( bundle ) );
             b.start();
         }
+        sl.setStartLevel( Constants.START_LEVEL_TEST_BUNDLE );
+
+    }
+
+    private int getStartLevel( ProvisionOption bundle )
+    {
+        Integer start = bundle.getStartLevel();
+        if( start == null ) {
+            start = Constants.START_LEVEL_DEFAULT_PROVISION;
+        }
+        return start;
     }
 
     private String skipSnapshotFlag( String version )

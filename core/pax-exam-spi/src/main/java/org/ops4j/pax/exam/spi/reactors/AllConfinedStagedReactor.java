@@ -24,7 +24,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.probesupport.DefaultTestAddress;
+import org.ops4j.pax.exam.spi.probesupport.intern.DefaultTestAddress;
 
 /**
  * This will use new containers for any regression (hence confined)
@@ -55,7 +55,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
 
     }
 
-    public void invoke( TestAddress address )
+    public void invoke( TestAddress address, Object... args )
         throws Exception
     {
         assert ( address != null ) : "TestAddress must not be null.";
@@ -71,7 +71,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
                 container.install( builder.getStream() );
             }
             LOG.info( "___________Invoke " + address + " against container: " + container );
-            container.call( address );
+            container.call( address, args );
 
         } finally {
             container.stop();

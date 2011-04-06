@@ -145,7 +145,9 @@ public class CoreOptions
             felix().version( "2.0.0" ),
             felix().version( "2.0.1" ),
             felix().version( "3.0.8" ),
-            felix().version( "3.0.9" )
+            felix().version( "3.0.9" ),
+            felix().version( "3.2.0" )
+
         );
     }
 
@@ -175,7 +177,9 @@ public class CoreOptions
             equinox().version( "3.4.1" ),
             equinox().version( "3.4.2" ),
             equinox().version( "3.5.0" ),
-            equinox().version( "3.5.1" )
+            equinox().version( "3.5.1" ),
+            equinox().version( "3.6.2" )
+
         );
     }
 
@@ -213,7 +217,8 @@ public class CoreOptions
             knopflerfish().version( "2.3.1" ),
             knopflerfish().version( "2.3.2" ),
             knopflerfish().version( "2.3.3" ),
-            knopflerfish().version( "3.0.0" )
+            knopflerfish().version( "3.0.0" ),
+            knopflerfish().version( "3.1.0" )
         );
     }
 

@@ -17,11 +17,10 @@
  */
 package org.ops4j.pax.exam.rbc.internal;
 
-import java.net.ServerSocket;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.RemoteStub;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Callable;
 import org.apache.commons.logging.Log;
@@ -29,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 
@@ -45,10 +45,12 @@ import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 public class Activator
     implements BundleActivator {
 
-    /**
-     * JCL logger.
-     */
     private static final Log LOG = LogFactory.getLog( Activator.class );
+
+    private static final int MAXRETRYCOUNT = 14;
+    private static final String MSG_RETRY = "RBC bind stuff failed before. Will retry again perhaps.";
+    private static final int PORT_RBC_FROM = 22412;
+    private static final int PORT_RBC_TO = PORT_RBC_FROM + 100;
 
     /**
      * RMI registry.
@@ -59,22 +61,53 @@ public class Activator
      * !Note: this must be here otherwise JVM will garbage collect it and this will result in an
      * java.rmi.NoSuchObjectException: no such object in table
      */
-    private RemoteBundleContext m_remoteBundleContext;
+    private volatile RemoteBundleContext m_remoteBundleContext;
+    
+    private Thread m_registerRBCThread;
 
     /**
      * {@inheritDoc}
      */
-    public void start( final BundleContext bundleContext )
+    public synchronized void start( final BundleContext bundleContext )
         throws Exception
     {
         //!! Absolutely necessary for RMIClassLoading to work
-        ContextClassLoaderUtils.doWithClassLoader(
-            null, // getClass().getClassLoader()
-            new Callable<Object>() {
-                public Object call()
-                    throws Exception
+        m_registerRBCThread = new Thread( new Runnable() {
+
+            public void run()
+            {
+                int retries = 0;
+                boolean valid = false;
+                do {
+                    retries++;
+                    valid = register( bundleContext );
+                    if( !valid ) {
+                        try {
+                            LOG.info( MSG_RETRY );
+                            Thread.sleep( 500 );
+                        } catch( InterruptedException e ) {
+                            e.printStackTrace();
+                        }
+                    }
+                } while( !Thread.currentThread().isInterrupted() && !valid && retries < MAXRETRYCOUNT );
+            }
+        }
+        );
+        m_registerRBCThread.start();
+
+    }
+
+    private boolean register( final BundleContext bundleContext )
+    {
+        try {
+            ContextClassLoaderUtils.doWithClassLoader(
+                null, // getClass().getClassLoader()
+                new Callable<Object>()
+
                 {
-                    try {
+                    public Object call()
+                        throws Exception
+                    {
                         // try to find port from property
                         int port = getPort();
                         String host = getHost();
@@ -83,41 +116,44 @@ public class Activator
                         LOG.debug( "Trying to find registry on [host=" + host + " port=" + port + "]" );
                         m_registry = LocateRegistry.getRegistry( getHost(), getPort() );
 
-                        Integer objectPort = findFree( 21412, 21499 );
-
-                        LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
-
-                        Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), objectPort );
-
-                        m_registry.rebind( getName(), remoteStub );
+                        bindRBC( m_registry, name, bundleContext );
                         LOG.info( "(++) Container with name " + name + " has added its RBC" );
 
-                    } catch( Exception e ) {
-                        throw new BundleException( "Cannot setup RMI registry", e );
+                        return null;
                     }
-                    return null;
                 }
-            }
-        );
+
+            );
+            return true;
+        } catch( Exception e ) {
+            LOG.warn( "Registration of RBC failed: ", e );
+        }
+        return false;
+    }
+
+    private void bindRBC( Registry registry, String name, BundleContext bundleContext )
+        throws RemoteException, BundleException
+    {
+        Integer objectPort = new FreePort( PORT_RBC_FROM, PORT_RBC_TO ).getPort();
+        LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
+        Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), objectPort );
+        registry.rebind( getName(), remoteStub );
     }
 
     /**
      * {@inheritDoc}
      */
-    public void stop( BundleContext bundleContext )
+    public synchronized void stop( BundleContext bundleContext )
         throws Exception
     {
+        m_registerRBCThread.interrupt();
         String name = getName();
-        LOG.debug( "Unbinding " + name + " (class: " + RemoteBundleContext.class.getSimpleName() );
-
         m_registry.unbind( name );
         UnicastRemoteObject.unexportObject( m_remoteBundleContext, true );
 
         // UnicastRemoteObject.unexportObject( m_registry, true );
         m_registry = null;
         m_remoteBundleContext = null;
-        // this is necessary, unfortunately.. RMI wouldn' stop otherwise
-        // System.gc();
         LOG.info( "(--) Container with name " + name + " has removed its RBC" );
     }
 
@@ -153,38 +189,5 @@ public class Activator
     {
         return System.getProperty( Constants.RMI_NAME_PROPERTY );
 
-    }
-
-    private int findFree( int from, int to )
-    {
-        for( int i = from; i <= to; i++ ) {
-            if( isFree( i ) ) {
-                return i;
-            }
-        }
-        throw new RuntimeException( "No free port in range " + from + ":" + to );
-    }
-
-    /**
-     * Checks a given port for availability (by creating a temporary socket)
-     *
-     * Package visibility to enable overwriting in test.
-     *
-     * @param port Port to check
-     *
-     * @return true if its free, otherwise false.
-     */
-    boolean isFree( int port )
-    {
-        try {
-            ServerSocket sock = new ServerSocket( port );
-            sock.close();
-            // is free:
-            return true;
-            // We rely on an exception thrown to determine availability or not availability.
-        } catch( Exception e ) {
-            // not free.
-            return false;
-        }
     }
 }

@@ -17,10 +17,12 @@
  */
 package org.ops4j.pax.exam.raw.extender.intern;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * Turns a instruction into a service call.
@@ -29,8 +31,8 @@ import org.ops4j.pax.exam.ProbeInvoker;
  * @author Toni Menzel
  * @since Dec 4, 2009
  */
-public class ProbeInvokerImpl implements ProbeInvoker
-{
+public class ProbeInvokerImpl implements ProbeInvoker {
+
     private BundleContext m_ctx;
     private String m_clazz;
     private String m_method;
@@ -44,53 +46,39 @@ public class ProbeInvokerImpl implements ProbeInvoker
         m_ctx = bundleContext;
     }
 
-    public void call()
-        throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException
+    public void call( Object... args )
     {
-        final Class testClass = m_ctx.getBundle().loadClass( m_clazz );
-
-        if( !( findAndInvoke( testClass ) || findAndInvoke( testClass, BundleContext.class ) ) )
-        {
-            throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
+        Class testClass;
+        try {
+            testClass = m_ctx.getBundle().loadClass( m_clazz );
+        } catch( ClassNotFoundException e ) {
+            throw new TestContainerException( e );
         }
 
-        //iteratingSearcher( testClass, encountered );
-    }
-
-    private void iteratingSearcher( Class testClass, int encountered )
-        throws IllegalAccessException, InvocationTargetException, InstantiationException
-    {
-        for( final Method testMethod : testClass.getMethods() )
-        {
-            if( testMethod.getName().equals( m_method ) )
-            {
-                injectContextAndInvoke( testClass.newInstance(), testMethod );
-                encountered++;
-            }
-        }
-        if( encountered == 0 )
-        {
-            throw new RuntimeException( " test " + m_method + " not found in test class " + testClass.getName() );
+        if( !( findAndInvoke( testClass, args ) ) ) {
+            throw new TestContainerException( " Test " + m_method + " not found in test class " + testClass.getName() );
         }
     }
 
-    private boolean findAndInvoke( Class testClass, Class<?>... params )
-        throws IllegalAccessException, InvocationTargetException, InstantiationException
+    private boolean findAndInvoke( Class testClass, Object... params )
+
     {
-        try
-        {
-            Method meth = testClass.getMethod( m_method, params );
-            if( meth != null )
-            {
-                injectContextAndInvoke( testClass.newInstance(), meth );
-                return true;
+        try {
+            // find matching method 
+            for( Method m : testClass.getMethods() ) {
+                if( m.getName().equals( m_method ) ) {
+                    // we assume its correct:
+                    injectContextAndInvoke( testClass.newInstance(), m, params );
+                    return true;
+                }
             }
-        } catch( NoSuchMethodException e )
-        {
-            //
-        } catch( NoClassDefFoundError e )
-        {
-            //
+
+        } catch( NoClassDefFoundError e ) {
+            throw new TestContainerException( e );            
+        } catch( InstantiationException e ) {
+            throw new TestContainerException( e );
+        } catch( IllegalAccessException e ) {
+            throw new TestContainerException( e );
         }
         return false;
     }
@@ -104,45 +92,88 @@ public class ProbeInvokerImpl implements ProbeInvoker
      *
      * @param testInstance an instance of the regression class
      * @param testMethod   regression method
+     * @param params
      *
-     * @throws IllegalAccessException    - Re-thrown from reflection invokation
-     * @throws InvocationTargetException - Re-thrown from reflection invokation
+     * @throws TestContainerException    - Re-thrown from reflection invokation
      */
-    private void injectContextAndInvoke( final Object testInstance,
-                                         final Method testMethod )
-        throws IllegalAccessException, InvocationTargetException
+    private void injectContextAndInvoke( final Object testInstance, final Method testMethod, Object[] params )
+        throws TestContainerException
     {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
         //injectFieldInstances( testInstance.getClass(), testInstance );
         boolean cleanup = false;
-        try
-        {
+        try {
             //runBefores( testInstance );
-            // if there is only one param and is of type BundleContext we inject it, otherwise just call
-            // this means that if there are actual params the call will fail, but that is okay as it will be reported back
-            if( paramTypes.length == 1
-                && paramTypes[ 0 ].isAssignableFrom( BundleContext.class ) )
-            {
-                testMethod.invoke( testInstance, m_ctx );
-            }
-            else
-            {
+            if( paramTypes.length == 0 ) {
                 testMethod.invoke( testInstance );
             }
+            else {
+                params = injectHook( testMethod, params );
+                testMethod.invoke( testInstance, params );
+            }
+
             cleanup = true;
             //runAfters( testInstance );
-        } finally
-        {
-            if( !cleanup )
-            {
-                try
-                {
+        } catch(InvocationTargetException e) {
+            throw new TestContainerException( e );
+
+        } catch(IllegalAccessException e) {
+            throw new TestContainerException( e );
+        }
+        finally {
+            if( !cleanup ) {
+                try {
                     //runAfters( testInstance );
-                } catch( Throwable throwable )
-                {
+                } catch( Throwable throwable ) {
                     //LOG.warn( "Got the exception when calling the runAfters. [Exception]: " + throwable );
                 }
             }
         }
+    }
+
+    /**
+     * This method practcally makes sure the method that is going to be invoked has the right types and instances injected as parameters.
+     *
+     * The following rules apply:
+     * You either have no arguments.
+     * You have arguments, then BundleContext must be your first.
+     * Parameters with @Inject Annotation must come next.
+     * All remaining arguments are set the params values.
+     *
+     * @param testMethod method in question
+     * @param params     derived from caller. Addditional injections may apply
+     *
+     * @return filled parameters ready for method invokation
+     */
+    private Object[] injectHook( Method testMethod, Object[] params )
+    {
+        // skip all injections
+        Class<?>[] paramTypes = testMethod.getParameterTypes();
+        Object[] ret = new Object[ paramTypes.length ];
+        Annotation[][] paramAnnotations = testMethod.getParameterAnnotations();
+        int paramCursor = 0;
+
+        for( int i = 0; i < ret.length; i++ ) {
+            if( i == 0 ) {
+                ret[ 0 ] = m_ctx;
+            }
+            else {
+                if( paramAnnotations[ i ].length > 0 ) {
+                    // skip
+                    throw new RuntimeException( "Parameter " + i + " on " + testMethod.getName() + " has Annotation. Not supported until Pax Exam 2.1" );
+                }
+                else {
+                    if( params.length > paramCursor ) {
+                        ret[ i ] = params[ paramCursor++ ];
+                    }
+                    else {
+                        // set default to null
+                        ret[ i ] = null;
+                    }
+                }
+            }
+        }
+
+        return ret;
     }
 }

@@ -22,32 +22,6 @@ public class PaxRunnerTestContainerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainerTest.class );
 
-    // @Test
-    public void testLifecycleWithRBC()
-        throws Exception
-    {
-        Long timeout = 20000L;
-
-        StoppableJavaRunner runner = mock( StoppableJavaRunner.class );
-
-        RemoteBundleContextClient client = mock( RemoteBundleContextClient.class );
-
-        RMIRegistry rmiRegistry = new RMIRegistry( 10000 );
-        TestContainer testContainer = new PaxRunnerTestContainer( runner, rmiRegistry.getHost(),rmiRegistry.getPort(),new Option[]{ } );
-
-        // START PHASE
-        testContainer.start();
-        verify( runner ).exec( Matchers.<String[]>anyVararg(), Matchers.<String[]>anyVararg(), anyString(), Matchers.<String[]>anyVararg(), anyString(), any( File.class ) );
-        verify( client ).waitForState( PaxRunnerTestContainer.SYSTEM_BUNDLE, Bundle.ACTIVE, timeout );
-
-        // STOP PHASE
-        testContainer.stop();
-        verify( client ).stop();
-        verify( runner ).shutdown();
-
-
-    }
-
     /**
      * This involves the entire underlying Pax Runner + RBC Stack, So we just hope that goes through.
      *
