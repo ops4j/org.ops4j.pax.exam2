@@ -42,6 +42,7 @@
 
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
+                 <module>it-regression/regression-lesson1-plumbing</module>
             </modules>
         </profile>
           <profile>
