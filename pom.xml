@@ -35,7 +35,9 @@
                 <module>spice/pax-exam-container-rbc</module>
                 <module>spice/pax-exam-container-rbc-client</module>
                 <module>containers/pax-exam-container-remote</module>
+                <module>containers/pax-exam-container-abstract</module>
                 <module>containers/pax-exam-container-paxrunner</module>
+				<module>containers/pax-exam-container-externalframework</module>
 
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
