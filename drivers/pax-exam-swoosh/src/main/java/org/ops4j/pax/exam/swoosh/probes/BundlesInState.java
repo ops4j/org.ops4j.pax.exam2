@@ -25,20 +25,25 @@ import org.ops4j.pax.exam.TestContainerException;
 /**
  * Simple pre-build test to be used with Pax Exam Player.
  *
- * This Counts all bundles and compares it to the given integer value parameter.
- * The parameter "assume" is mandatory.
+ * This checks the current state of all bundles for a certain state range.
+ * The desiredMaxBundleState argument may be ommited. In this case it will be set to desiredMinBundleState.
  */
-public class CountBundles {
+public class BundlesInState {
 
     @SuppressWarnings( "unused" )
-    public void probe( BundleContext ctx, Integer assume )
+    public void probe( BundleContext ctx, Integer desiredMinBundleState, Integer desiredMaxBundleState )
         throws InterruptedException, InvalidSyntaxException
     {
-        if( assume == null ) { throw new TestContainerException( "Argument assume (integer) is mandatory." ); }
+        if( desiredMinBundleState == null ) { throw new TestContainerException( "Argument desiredBundleState (integer) is mandatory." ); }
+        if( desiredMaxBundleState == null ) {
+            desiredMaxBundleState = desiredMinBundleState;
+        }
 
-        int bundles = ctx.getBundles().length;
-        if( bundles != assume ) {
-            throw new TestContainerException( "Assumed " + assume + " bundles. But have " + bundles );
+        for( Bundle b : ctx.getBundles() ) {
+            final Integer state = b.getState();
+            if( state < desiredMinBundleState || state > desiredMaxBundleState ) {
+                throw new TestContainerException( "Bundle " + b.getBundleId() + "(" + b.getSymbolicName() + ") State: " + state + " is not between state: " + desiredMinBundleState + ":" + desiredMaxBundleState );
+            }
         }
     }
 }
