@@ -22,12 +22,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -41,7 +38,6 @@ import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
 import static junit.framework.Assert.*;
-import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
  * Fully functional alternative Pax Exam Driver.
