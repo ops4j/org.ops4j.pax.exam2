@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Toni Menzel
@@ -26,18 +25,13 @@ import java.lang.reflect.InvocationTargetException;
  */
 public interface TestTarget {
 
-   
-
     /**
      *
      * @param address the target to be called.
-     * @param args optional arguments that the target might accept. Superfluous arguments are being dropped.
-     * @throws ClassNotFoundException Problems
-     * @throws InvocationTargetException Problems
-     * @throws InstantiationException Problems
-     * @throws IllegalAccessException Problems
+     * @throws TestContainerException exception
+
      */
-    void call( TestAddress address, Object... args ) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException;
+    void call( TestAddress address ) throws TestContainerException;
 
     /**
      * @param stream stream the content

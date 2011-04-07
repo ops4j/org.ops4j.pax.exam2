@@ -282,11 +282,11 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     }
 
-    public void call( TestAddress address, Object... obj )
+    public void call( TestAddress address )
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
         ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, 5000 );
-        service.call( obj );
+        service.call( address.arguments() );
     }
 
     public String getName()

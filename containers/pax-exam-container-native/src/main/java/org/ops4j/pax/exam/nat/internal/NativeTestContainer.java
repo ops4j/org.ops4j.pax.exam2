@@ -121,12 +121,11 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    public void call( TestAddress address, Object... args )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
+    public void call( TestAddress address )
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
         ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, TIMEOUT_IN_MILLIS );
-        service.call( args );
+        service.call( address.arguments() );
     }
 
     public synchronized long install( InputStream stream )

@@ -120,14 +120,12 @@ public class Player {
         //  reactor.addProbe( m_tests );
         reactor.addProbe( augmentAddresses() );
 
-        StagedExamReactor stage = reactor.stage( DEFAULT_STRATEGY );
+        StagedExamReactor stagedReactor = reactor.stage( DEFAULT_STRATEGY );
 
-        for( TestAddress target : stage.getTargets() ) {
+        for( TestAddress target : stagedReactor.getTargets() ) {
             try {
-
                 // find stored args:
-                Object[] args = target.root().arguments();
-                stage.invoke( target, args );
+                stagedReactor.invoke( target );
 
             } catch( Exception e ) {
                 Throwable t = ExceptionHelper.unwind( e );

@@ -56,5 +56,5 @@ public interface RemoteBundleContextClient {
                               final int state,
                               final long timeoutInMillis );
 
-    public void call( TestAddress address , Object... args);
+    public void call( TestAddress address );
 }

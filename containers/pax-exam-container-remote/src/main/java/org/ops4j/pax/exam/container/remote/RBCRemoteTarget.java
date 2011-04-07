@@ -72,10 +72,10 @@ public class RBCRemoteTarget implements TestTarget
         return m_remoteBundleContextClient;
     }
 
-    public void call( TestAddress address,Object... args )
+    public void call( TestAddress address )
     {
         LOG.debug( "call [" + address + "]" );
-        m_remoteBundleContextClient.call( address ,args );
+        m_remoteBundleContextClient.call( address );
     }
 
 

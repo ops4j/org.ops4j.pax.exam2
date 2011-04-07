@@ -192,9 +192,9 @@ public class PaxRunnerTestContainer
      * @return local options
      */
 
-    public void call( TestAddress address, Object... args )
+    public void call( TestAddress address )
     {
-        m_target.call( address, args );
+        m_target.call( address );
     }
 
     public long install( InputStream stream )

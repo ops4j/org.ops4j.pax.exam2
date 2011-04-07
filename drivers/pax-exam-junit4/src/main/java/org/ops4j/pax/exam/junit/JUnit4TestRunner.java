@@ -254,7 +254,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
                 LOG.info( "Invoke " + method.getName() + " @ " + address + " Arguments: " + args.toString() );
                 try {
-                    m_reactor.invoke( address, args );
+                    m_reactor.invoke( address );
                 } catch( Exception e ) {
                     Throwable t = ExceptionHelper.unwind( e );
                     fail( t.getMessage() );

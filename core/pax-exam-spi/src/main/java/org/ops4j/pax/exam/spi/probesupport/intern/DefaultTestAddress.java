@@ -44,10 +44,12 @@ public class DefaultTestAddress implements TestAddress {
         m_sig = calculate();
         if (parent != null) {
             m_caption = parent.caption() + ":" + caption;
+            m_args = parent.arguments();
         }else {
             m_caption = caption;
+            m_args = args;
         }
-        m_args = args;
+
         m_root = calculateRoot( parent );
         LOG.info( "NEW ADDRESS= " + m_sig + " parent=" + parent + " root=" + m_root + " args=" + args.toString());
     }

@@ -125,8 +125,8 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
         m_proxy.waitForState( bundleId, state, timeoutInMillis );
     }
 
-    public void call( TestAddress address, Object... args )
+    public void call( TestAddress address )
     {
-        m_proxy.call( address, args );
+        m_proxy.call( address );
     }
 }

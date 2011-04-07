@@ -55,7 +55,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
 
     }
 
-    public void invoke( TestAddress address, Object... args )
+    public void invoke( TestAddress address )
         throws Exception
     {
         assert ( address != null ) : "TestAddress must not be null.";
@@ -71,7 +71,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
                 container.install( builder.getStream() );
             }
             LOG.info( "___________Invoke " + address + " against container: " + container );
-            container.call( address, args );
+            container.call( address );
 
         } finally {
             container.stop();
