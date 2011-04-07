@@ -32,13 +32,14 @@ public class DefaultTestAddress implements TestAddress {
     final private String m_sig;
     final private TestAddress m_root;
     final private String m_caption;
+    final private Object[] m_args;
 
-    public DefaultTestAddress(String caption)
+    public DefaultTestAddress(String caption, Object... args )
     {
-        this( null, caption );
+        this( null, caption, args );
     }
 
-    public DefaultTestAddress( final TestAddress parent, String caption )
+    public DefaultTestAddress( final TestAddress parent, String caption, Object... args )
     {
         m_sig = calculate();
         if (parent != null) {
@@ -46,9 +47,9 @@ public class DefaultTestAddress implements TestAddress {
         }else {
             m_caption = caption;
         }
-        
+        m_args = args;
         m_root = calculateRoot( parent );
-        LOG.info( "NEW ADDRESS= " + m_sig + " parent=" + parent + " root=" + m_root);
+        LOG.info( "NEW ADDRESS= " + m_sig + " parent=" + parent + " root=" + m_root + " args=" + args.toString());
     }
 
     private String calculate()
@@ -95,6 +96,11 @@ public class DefaultTestAddress implements TestAddress {
     public TestAddress root()
     {
         return m_root;
+    }
+
+    public Object[] arguments()
+    {
+        return m_args;
     }
 
     @Override

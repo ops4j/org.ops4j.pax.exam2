@@ -48,9 +48,9 @@ import org.ops4j.store.Store;
 public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     private static Logger LOG = LoggerFactory.getLogger( TestProbeBuilderImpl.class );
+    private static final String DEFAULT_PROBE_METHOD_NAME = "probe";
 
-    private Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new HashMap<TestAddress, TestInstantiationInstruction>();
-
+    private final Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new HashMap<TestAddress, TestInstantiationInstruction>();
     private final List<Class> m_anchors;
     private final Properties m_extraProperties;
     private final Set<String> m_ignorePackages = new HashSet<String>();
@@ -64,12 +64,17 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         m_extraProperties = p;
     }
 
-    public TestAddress addTest( Class clazz, String m )
+    public TestAddress addTest( Class clazz, String methodName, Object... args  )
     {
-        DefaultTestAddress address = new DefaultTestAddress( m );
-        m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + m ) );
+        TestAddress address =  new DefaultTestAddress( clazz.getSimpleName() + "." + methodName ,args );
+        m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
         addAnchor( clazz );
         return address;
+    }
+
+    public TestAddress addTest( Class clazz, Object... args  )
+    {
+        return addTest( clazz, DEFAULT_PROBE_METHOD_NAME, args );
     }
 
     public List<TestAddress> addTests( Class clazz, Method... methods )
@@ -139,8 +144,9 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         ContentCollector collector = null;
 
         File root = new ClassSourceFolder( dir ).find( m_anchors.get( 0 ) );
+
         if( root != null ) {
-            collector = new CollectFromBase( root );
+            collector = new CompositeCollector( new CollectFromBase( root ), new CollectFromItems( m_anchors ) );
         }
         else {
             collector = new CollectFromItems( m_anchors );

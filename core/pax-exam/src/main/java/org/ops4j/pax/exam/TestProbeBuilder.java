@@ -24,10 +24,19 @@ import java.util.List;
  * @author Toni Menzel
  * @since Dec 2, 2009
  */
-public interface TestProbeBuilder
-{
+public interface TestProbeBuilder {
 
-    TestAddress addTest( Class clazz, String methodName );
+    TestAddress addTest( Class clazz, String methodName, Object... args );
+
+    /**
+     * Method name will be "probe". This is for convinience.
+     *
+     * @param clazz Of probe
+     *
+     * @param args
+     * @return adress for later use.
+     */
+    TestAddress addTest( Class clazz, Object... args );
 
     List<TestAddress> addTests( Class clazz, Method... m );
 

@@ -56,7 +56,7 @@ public class Player {
     private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
     final private TestContainerFactory m_factory;
     final private Option[] m_parts;
-    final private List<ParameterizedAddress> m_list = new ArrayList<ParameterizedAddress>();
+    final private List<TestAddress> m_list = new ArrayList<TestAddress>();
     final private TestProbeBuilder m_builder;
 
     public Player( TestContainerFactory containerFactory, Option... parts )
@@ -91,7 +91,7 @@ public class Player {
     public Player test( Class clazz, Object... args )
         throws Exception
     {
-        m_list.add( new ParameterizedAddress( m_builder.addTest( clazz, "probe" ), args ) );
+        m_list.add( m_builder.addTest( clazz,args ) );
         return this;
     }
 
@@ -126,7 +126,7 @@ public class Player {
             try {
 
                 // find stored args:
-                Object[] args = ( (ParameterizedAddress) ( target.root() ) ).arguments();
+                Object[] args = target.root().arguments();
                 stage.invoke( target, args );
 
             } catch( Exception e ) {

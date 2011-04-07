@@ -37,5 +37,7 @@ public interface TestAddress {
 
     public TestAddress root();
 
+    public Object[] arguments();
+
 
 }

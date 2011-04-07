@@ -21,11 +21,12 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -33,6 +34,7 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamConfigurationException;
+import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
@@ -45,6 +47,8 @@ import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.PlumbingContext;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+
+import static org.junit.Assert.*;
 
 /**
  * This is the default Test Runner using Exxam plumbing API.
@@ -90,9 +94,16 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     @Override
     protected List<FrameworkMethod> getChildren()
     {
-        List<FrameworkMethod> childs = new ArrayList<FrameworkMethod>();
+        if( m__childs.isEmpty() ) {
+            fillChildren();
+        }
+        return Arrays.asList( m__childs.keySet().toArray( new FrameworkMethod[ m__childs.size() ] ) );
+    }
 
-        for( final TestAddress address : m_reactor.getTargets() ) {
+    private void fillChildren()
+    {
+        Set<TestAddress> targets = m_reactor.getTargets();
+        for( final TestAddress address : targets ) {
             FrameworkMethod frameworkMethod = m_map.get( address.root() );
 
             // now, someone later may refer to that artificial FrameworkMethod. We need to be able to tell the address.
@@ -117,10 +128,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             };
 
             m__childs.put( method, address );
-            childs.add( method );
         }
-
-        return childs;
     }
 
     @Override
@@ -167,9 +175,31 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         //probe.setAnchor( testClass );
         for( FrameworkMethod s : super.getChildren() ) {
             // record the method -> adress matching
-            m_map.put( probe.addTest( testClass, s.getMethod().getName() ), s );
+            TestAddress address = delegateTest( testClassInstance, probe, s );
+            if( address == null ) {
+                address = probe.addTest( testClass, s.getMethod().getName() );
+            }
+            m_map.put( address, s );
         }
         reactor.addProbe( probe.build() );
+    }
+
+    private TestAddress delegateTest( Object testClassInstance, TestProbeBuilder probe, FrameworkMethod s )
+    {
+        try {
+            Class<?>[] types = s.getMethod().getParameterTypes();
+            if( types.length == 1 && types[ 0 ].isAssignableFrom( TestProbeBuilder.class ) ) {
+                // its a delegate:
+                // invoke:
+                return (TestAddress) s.getMethod().invoke( testClassInstance, probe );
+
+            }
+            else {
+                return null;
+            }
+        } catch( Exception e ) {
+            throw new TestContainerException( "Problem delegating to test.", e );
+        }
     }
 
     private StagedExamReactorFactory getFactory( Class testClass )
@@ -191,13 +221,13 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private DefaultExamReactor getReactor( Class testClass )
         throws InstantiationException, IllegalAccessException
     {
-        return new DefaultExamReactor( getExamFactory(testClass) );
+        return new DefaultExamReactor( getExamFactory( testClass ) );
     }
 
-    private TestContainerFactory getExamFactory(Class testClass)
+    private TestContainerFactory getExamFactory( Class testClass )
         throws IllegalAccessException, InstantiationException
     {
-         ExamFactory f = (ExamFactory) testClass.getAnnotation( ExamFactory.class );
+        ExamFactory f = (ExamFactory) testClass.getAnnotation( ExamFactory.class );
 
         TestContainerFactory fact;
         if( f != null ) {
@@ -219,8 +249,16 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                 throws Throwable
             {
                 TestAddress address = m__childs.get( method );
-                LOG.info( "Invoke " + method.getName() + " @ " + address );
-                m_reactor.invoke( address );
+                TestAddress root = address.root();
+                Object[] args = root.arguments();
+
+                LOG.info( "Invoke " + method.getName() + " @ " + address + " Arguments: " + args.toString() );
+                try {
+                    m_reactor.invoke( address, args );
+                } catch( Exception e ) {
+                    Throwable t = ExceptionHelper.unwind( e );
+                    fail( t.getMessage() );
+                }
             }
         };
 

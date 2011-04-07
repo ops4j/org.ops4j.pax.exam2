@@ -4,8 +4,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.swoosh.probes.CountBundles;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
@@ -36,8 +39,14 @@ public class JUnitMultiFwTest {
     }
 
     @Test
-    public void without( )
+    public void without()
     {
-        System.out.println("------- HERE!");
+        System.out.println( "------- HERE!" );
+    }
+
+    @Test
+    public TestAddress prebuilt( TestProbeBuilder builder )
+    {
+        return builder.addTest( CountBundles.class, 5 );
     }
 }
