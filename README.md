@@ -1,72 +1,47 @@
-What is the Pax Exam Platform
+Pax Exam 2
 ================================
-Cooking the "Integrated Testing for Modular Applications" - dish.
 
-Targeting best of breed platforms:
-- OSGi
-- Android
+Thanks for looking into Pax Exam 2.
+This is the official source repository of the OPS4J Pax Exam 2 project.
+Its licensed under the Apache Software License 2.0 by the OPS4J.org community.
 
-Distinglishing Components
-----------------
-pax-exam : common api that is also needed inside targets. (bundle)
-pax-exam-spi : brick of common logic. Only used in host VM.
+You may want to have a look at the Pax Exam 2 Learning project for more help and introductionary content:
 
-Exam2 embraces a MVC pattern.
-----------------
-When you hear Model-View-Controller, you think about web applications. This is a design pattern where you place different concerns into different parts of your system and try not to mix them too much. For an interactive application, if you keep the part that stores data (Model) separated from the logic (Controller) and use another piece to display and interact with the user (View), then it’s easier to change the system and adapt it over time to new features.
+* https://github.com/tonit/Learn-PaxExam
 
-Exam2 needed a way to allow you to use various unit testing frameworks and tools to drive its core functionality.
-The idea was that if we gave you the Controller and the Model, then you can craft any View you wanted.
+Or check it out directly:
 
-Model:
-- options
-- primitive operations on Options
-Controller:
-- pax-exam-spi
-
-View: (former UI or driver components)
-
-- pax-exam-junit4
-- pax-exam-testng
+    git clone git://github.com/tonit/Learn-PaxExam.git
 
 
-How to build
-----------------
-Usually maven2+ with central repo connection is enough (standard).
-However, currently there are some swissbox snapshots being used, so you may have to get swissbox from the svn repo before.
-( build yourself from https://scm.ops4j.org/repos/ops4j/projects/pax/swissbox or add maven repo: http://repository.ops4j.org/mvn-snapshots/ )
+## Build
 
-Ingredients
-----------------
- * 1 or more containers
- * 1 or more Driver
- * Extra spice if you like
+You'll need a machine with Java 5+ and Apache Maven 3 installed.
 
-Targets / Containers
-----------------
-  * OSGi Pax Runner (container+target) OSS
-  * OSGi Native (container+target) OSS
-  * OSGi Remote (target) OSS
-  * Android Remote Runner Commercial
+Checkout:
 
-Extender (Just chose if your target supports it)
-----------------
-  * Service (the one that directly runs the probe in the current container)
-  * Ace bridges TestTarget and Ace Client
+    git clone git://github.com/ops4j/org.ops4j.pax.exam2.git
 
-Drivers ( former UI )
-----------------
-  * SPI (from core, you can use the bare api yourself of cause as a UI)
-  * JUnit (the one we know from 1.x but with much more control over containers)
-  * Web (a small application that let you do on-device tests)
-     -- Graphical can be a web app to drive on-device testing by:
-        - picking a set of prebuild tests
-        - picking a remote container
-        - run tests interactively
+Run Build:
 
-SPICE
-----------------
-  * Tinybundles (OSS)
-  * Maven Plugins (OSS)
-  * Ant Plugins (OSS)
-  * BundleGrill (commercial)
+    mvn clean install
+
+
+## Releases
+
+Releases go to Maven Central.
+
+The current release of Pax Exam is 2.0.0-RC2.
+
+## Continuus Integration Builds
+
+We have a continuus integration build set up here:
+
+* http://ci.okidokiteam.com/hudson/job/org.ops4j.pax.exam2/
+
+Artifacts are being published to:
+
+* https://oss.sonatype.org/content/repositories/ops4j-snapshots
+
+
+The OPS4J Team.
