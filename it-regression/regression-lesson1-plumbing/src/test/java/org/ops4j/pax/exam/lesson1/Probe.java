@@ -24,6 +24,19 @@ import org.osgi.framework.BundleContext;
  * You don't have access to the manifest at this point.
  *
  * Everything that you use (classes) must be exported by othher bundles in your setup.
+ * Its import to understand that this class will be put into a bundle, possibly transfered to another JVM (depending on which TestContainer you pick), and executed remotly.
+ * Consider this, specially regarding Exceptions, Parameters etc.
+ *
+ * A Probe must also have a public no argument constructor, like the one you get by default (no -constructor specified).
+ *
+ * Tests that are being add later must have public visibility.
+ *
+ * Parameters:
+ * They have a special meaning.
+ * You can have:
+ * - no argument
+ * - BundleContext, which you will get from the OSGi Runtime
+ * - BundlContext + more parameters: those are being passed in at "call" time. Specially useful when writing tests that are being re-used. This gives you some flexibility.
  */
 public class Probe {
 
@@ -40,5 +53,11 @@ public class Probe {
         for( Bundle b : ctx.getBundles() ) {
             System.out.println( "Bundle : " + b.getSymbolicName() );
         }
+    }
+
+    @SuppressWarnings( "unused" )
+    public void probe3( BundleContext ctx, String parameter )
+    {
+        System.out.println( "Parameter: " + parameter );
     }
 }

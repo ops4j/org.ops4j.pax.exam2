@@ -109,17 +109,21 @@ public class LessonTest {
      * Here's how you make a probe. As mentioned in {@link Probe} its a bundle that is computed on the fly.
      * You - as a user - just add "tests", and invoke "build() at the very end. You will end up with something ({@link TestProbeProvider})
      * where you get the physicall bundle ({@link org.ops4j.pax.exam.TestProbeProvider#getStream()}) from.
+     *
+     * @return the Probe, really do used.
+     *
+     * @throws java.io.IOException Problems
      */
     private TestProbeProvider makeProbe()
         throws IOException
     {
         TestProbeBuilder probe = new PlumbingContext().createProbe();
-        probe.addTest(
-            Probe.class, "probe1"
-        );
-        probe.addTest(
-            Probe.class, "probe2"
-        );
+        probe.addTest( Probe.class, "probe1" );
+
+        probe.addTest( Probe.class, "probe2" );
+
+        // passing parameters.
+        probe.addTest( Probe.class, "probe3", "Parameter" );
 
         return probe.build();
     }

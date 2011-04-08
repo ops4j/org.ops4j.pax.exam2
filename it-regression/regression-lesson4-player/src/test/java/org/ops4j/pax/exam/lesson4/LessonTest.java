@@ -23,7 +23,16 @@ import org.ops4j.pax.exam.swoosh.probes.WaitForService;
 import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
- * TBD
+ * This is the latest face of Pax Exam. Its mostly written to:
+ * 1. Show how simple it is to use the API from Lesson 1 and 2 to create a small layer on top that is very simple to use and also quite small (look at {@link Player} class.
+ * 2. Have a very comprehensive way to run pre-built tests.
+ *
+ * You see pretty much the essence of Pax Exam packed into a very small space:
+ * - add Options
+ * - add Tests/Probe
+ * .. and you are ready to "play" (see  {@link org.ops4j.pax.exam.swoosh.Player#play()}
+ *
+ * This can be used anywwhere, not only in JUnit tests.
  */
 public class LessonTest {
 

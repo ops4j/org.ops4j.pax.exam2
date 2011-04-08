@@ -47,8 +47,6 @@ import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
  * You feed the Reactor with the TestContainerFactory, Configuration (Options!) and Probes.
  * The {@link ExxamReactor#stage(org.ops4j.pax.exam.spi.StagedExamReactorFactory)} gives you access to launching the tests.
  * You don't see (and care) when a container is started and stopped.
- *
- * 
  */
 public class LessonTest {
 
@@ -83,6 +81,10 @@ public class LessonTest {
      * Here's how you make a probe. As mentioned in {@link Probe} its a bundle that is computed on the fly.
      * You - as a user - just add "tests", and invoke "build() at the very end. You will end up with something ({@link TestProbeProvider})
      * where you get the physicall bundle ({@link org.ops4j.pax.exam.TestProbeProvider#getStream()}) from.
+     *
+     * @return Ready to use probe
+     *
+     * @throws java.io.IOException creating probe can fail.
      */
     private TestProbeProvider makeProbe()
         throws IOException
