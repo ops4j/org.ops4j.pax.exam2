@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.swoosh.probes.CountBundles;
 import org.ops4j.pax.exam.swoosh.probes.WaitForService;
 
@@ -15,8 +16,8 @@ import static org.ops4j.pax.exam.CoreOptions.*;
  */
 public class PlayerTest {
 
-    @Test
-    public void minimal()
+    @Test( expected = TestContainerException.class )
+    public void noTestAdded()
         throws Exception
     {
         new Player().play();

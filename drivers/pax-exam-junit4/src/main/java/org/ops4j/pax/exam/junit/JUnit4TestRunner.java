@@ -213,7 +213,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         }
         else {
             // default:
-            fact = new AllConfinedStagedReactorFactory();//new EagerSingleStagedReactorFactory();
+            fact = new AllConfinedStagedReactorFactory();
         }
         return fact;
     }
@@ -224,6 +224,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         return new DefaultExamReactor( getExamFactory( testClass ) );
     }
 
+    @SuppressWarnings( "unchecked" )
     private TestContainerFactory getExamFactory( Class testClass )
         throws IllegalAccessException, InstantiationException
     {

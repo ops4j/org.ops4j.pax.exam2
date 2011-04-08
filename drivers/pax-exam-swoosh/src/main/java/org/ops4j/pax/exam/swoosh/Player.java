@@ -19,15 +19,12 @@ package org.ops4j.pax.exam.swoosh;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
@@ -56,7 +53,6 @@ public class Player {
     private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
     final private TestContainerFactory m_factory;
     final private Option[] m_parts;
-    final private List<TestAddress> m_list = new ArrayList<TestAddress>();
     final private TestProbeBuilder m_builder;
 
     public Player( TestContainerFactory containerFactory, Option... parts )
@@ -67,7 +63,6 @@ public class Player {
         m_factory = containerFactory;
         m_parts = parts;
         m_builder = new TestProbeBuilderImpl( p, store );
-
     }
 
     public Player( TestContainerFactory containerFactory )
@@ -91,42 +86,26 @@ public class Player {
     public Player test( Class clazz, Object... args )
         throws Exception
     {
-        m_list.add( m_builder.addTest( clazz,args ) );
+        m_builder.addTest( clazz, args );
         return this;
     }
 
-    private TestProbeProvider augmentAddresses()
+    public void play()
     {
-        return new TestProbeProvider() {
-
-            public TestAddress[] getTests()
-            {
-                return m_list.toArray( new TestAddress[ m_list.size() ] );
-            }
-
-            public InputStream getStream()
-                throws IOException
-            {
-                return m_builder.build().getStream();
-            }
-        };
+        play( DEFAULT_STRATEGY );
     }
 
-    public void play()
-        throws Exception
+    public void play( StagedExamReactorFactory strategy )
     {
         DefaultExamReactor reactor = new DefaultExamReactor( m_factory );
         reactor.addConfiguration( m_parts );
-        //  reactor.addProbe( m_tests );
-        reactor.addProbe( augmentAddresses() );
+        reactor.addProbe( m_builder.build() );
 
-        StagedExamReactor stagedReactor = reactor.stage( DEFAULT_STRATEGY );
+        StagedExamReactor stagedReactor = reactor.stage( strategy );
 
         for( TestAddress target : stagedReactor.getTargets() ) {
             try {
-                // find stored args:
                 stagedReactor.invoke( target );
-
             } catch( Exception e ) {
                 Throwable t = ExceptionHelper.unwind( e );
                 fail( t.getMessage() );

@@ -84,12 +84,6 @@ public class PaxRunnerTestContainerFactory
         return frameworks;
     }
 
-    public void shutdown()
-    {
-        System.gc();
-
-    }
-
     private Option[] setDefaultOptions()
     {
         return new Option[]{

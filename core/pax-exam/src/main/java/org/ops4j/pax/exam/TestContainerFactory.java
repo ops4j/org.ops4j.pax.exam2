@@ -1,6 +1,6 @@
 /*
  * Copyright 2008 Alin Dreghiciu.
- * Copyright 2008-2010 Toni Menzel.
+ * Copyright 2008-2011 Toni Menzel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,5 @@ public interface TestContainerFactory
      * @throws TestContainerException fail if incompatible options are being passed in.
      */
     TestContainer[] parse( Option... options )  throws TestContainerException;
-
-    void shutdown();
-
 
 }

@@ -146,7 +146,7 @@ public class RemoteBundleContextImpl
         throws BundleException
     {
         m_bundleContext.getBundle( bundleId ).stop();
-       
+
     }
 
     /**
@@ -190,9 +190,7 @@ public class RemoteBundleContextImpl
         while( ( bundle == null || bundle.getState() < state )
                && ( timeoutInMillis == WAIT_FOREVER
                     || System.currentTimeMillis() < startedTrying + timeoutInMillis ) );
-        // bundle != null && bundle.getState() >= state
-        // or
-        // timeoutInMillis != WAIT_FOREVER && System.currentTimeMillis() >= startedTrying + timeoutInMillis
+
         if( bundle == null || bundle.getState() < state ) {
             throw new TimeoutException(
                 "Timeout passed and bundle has state '" + bundleStateToString( bundle.getState() )
@@ -205,6 +203,7 @@ public class RemoteBundleContextImpl
      * Lookup a service in the service registry.
      *
      * @param serviceType     service class
+     * @param filter
      * @param timeoutInMillis number of milliseconds to wait for service before failing
      *                        TODO timeout is not used!
      *
@@ -212,6 +211,7 @@ public class RemoteBundleContextImpl
      *
      * @throws NoSuchServiceException - If service cannot be found in the service registry
      */
+    @SuppressWarnings( "unchecked" )
     private <T> T getService( final Class<T> serviceType,
                               String filter,
                               final long timeoutInMillis )
@@ -222,8 +222,8 @@ public class RemoteBundleContextImpl
         do {
             try {
                 ServiceReference[] reference = m_bundleContext.getServiceReferences( serviceType.getName(), filter );
-                if( reference != null && reference.length > 0) {
-                        return ( (T) m_bundleContext.getService( reference[0] ) );
+                if( reference != null && reference.length > 0 ) {
+                    return ( (T) m_bundleContext.getService( reference[ 0 ] ) );
                 }
                 Thread.sleep( 200 );
             } catch( Exception e ) {
