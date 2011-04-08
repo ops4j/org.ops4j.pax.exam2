@@ -43,13 +43,6 @@
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
 
-                <!-- Doc Content -->
-                <module>it-regression/regression-lesson1-plumbing</module>
-                <module>it-regression/regression-lesson2-porcelain</module>
-                <module>it-regression/regression-lesson3-junit</module>
-                <module>it-regression/regression-lesson4-player</module>
-
-
             </modules>
         </profile>
         <profile>
