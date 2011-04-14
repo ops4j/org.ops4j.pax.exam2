@@ -27,9 +27,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.startlevel.StartLevel;
 
@@ -46,7 +47,8 @@ import org.ops4j.pax.exam.TimeoutException;
  * @since 0.1.0, June 10, 2008
  */
 public class RemoteBundleContextImpl
-    implements RemoteBundleContext, Serializable {
+    implements RemoteBundleContext, Serializable, BundleListener
+{
 
     /**
      * JCL Logger.
@@ -170,16 +172,30 @@ public class RemoteBundleContextImpl
                               final int state,
                               final long timeoutInMillis )
     {
+        if (LOG.isDebugEnabled()) {
+            this.m_bundleContext.addBundleListener(this);
+        }
         Bundle bundle = m_bundleContext.getBundle( bundleId );
         if( timeoutInMillis == NO_WAIT && ( bundle == null || bundle.getState() < state ) ) {
+            if (LOG.isDebugEnabled()) {
+                this.m_bundleContext.removeBundleListener(this);
+            }
             throw new TimeoutException(
                 "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle.getState() )
                 + "' not '" + bundleStateToString( state ) + "' as expected"
             );
         }
         long startedTrying = System.currentTimeMillis();
+        int lastBundle = -1;
         do {
             bundle = m_bundleContext.getBundle( bundleId );
+            // if state is good, break.
+            if (bundle != null && bundle.getState() >= state)
+                break;
+            
+            if (LOG.isDebugEnabled()) {
+                lastBundle = showstate(lastBundle, bundleId);
+            }
             try {
                 Thread.sleep( 50 );
             } catch( InterruptedException e ) {
@@ -193,12 +209,39 @@ public class RemoteBundleContextImpl
         // bundle != null && bundle.getState() >= state
         // or
         // timeoutInMillis != WAIT_FOREVER && System.currentTimeMillis() >= startedTrying + timeoutInMillis
+        if (LOG.isDebugEnabled()) {
+            this.m_bundleContext.removeBundleListener(this);
+        }
         if( bundle == null || bundle.getState() < state ) {
             throw new TimeoutException(
                 "Timeout passed and bundle has state '" + bundleStateToString( bundle.getState() )
                 + "' not '" + bundleStateToString( state ) + "' as expected"
             );
         }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("== OSGi Framework is started");
+            showstate(-1, bundleId);
+        }
+    }
+
+    private int showstate(int lastBundle, long bundleId) {
+        Bundle[] bundles = m_bundleContext.getBundles();
+        int i = lastBundle+1;
+        if (i < 0)
+            i = 0;
+        for (; i < bundles.length; i++) {
+            Bundle b = bundles[i];
+            showBundle(b);
+        }
+        if (lastBundle != bundles.length-1)
+            LOG.debug("Wait "+bundleId);
+        lastBundle = bundles.length-1;
+        return lastBundle;
+    }
+
+    private void showBundle(Bundle b) {
+        LOG.debug(""+b.getBundleId()+" "+b.getSymbolicName()+" "+bundleStateToString(b.getState())+" "+b.getVersion());
     }
 
     /**
@@ -295,6 +338,10 @@ public class RemoteBundleContextImpl
             default:
                 return "unknown (" + bundleState + ")";
         }
+    }
+
+    public void bundleChanged(BundleEvent event) {
+        showBundle(event.getBundle());
     }
 
 
