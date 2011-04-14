@@ -24,6 +24,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
@@ -36,6 +38,7 @@ import org.ops4j.pax.exam.container.def.options.RepositoryOptionImpl;
 import org.ops4j.pax.exam.container.def.options.Scanner;
 import org.ops4j.pax.exam.container.def.options.VMOption;
 import org.ops4j.pax.exam.container.def.options.WorkingDirectoryOption;
+import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
@@ -47,6 +50,7 @@ import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -182,6 +186,43 @@ public class Util {
         }
         
         return filtered.get( 0 );
+    }
+    
+    /**
+     * Determine the rmi lookup timeout.<br/>
+     * Timeout is dermined by first looking for a {@link RBCLookupTimeoutOption} in the user options. If not specified a
+     * default is used.
+     * 
+     * @param options user options
+     * @return rmi lookup timeout
+     */
+    public static long getRMITimeout( final Option... options )
+    {
+        final RBCLookupTimeoutOption[] timeoutOptions = filter( RBCLookupTimeoutOption.class, options );
+        if ( timeoutOptions.length > 0 )
+        {
+            return timeoutOptions[0].getTimeout();
+        }
+        return getTestContainerStartTimeout( options );
+    }
+    
+    /**
+     * Determine the timeout while starting the osgi framework.<br/>
+     * Timeout is dermined by first looking for a {@link TestContainerStartTimeoutOption} in the user options. If not
+     * specified a default is used.
+     * 
+     * @param options user options
+     * @return rmi lookup timeout
+     */
+    public static long getTestContainerStartTimeout( final Option... options )
+    {
+        final TestContainerStartTimeoutOption[] timeoutOptions =
+            filter( TestContainerStartTimeoutOption.class, options );
+        if ( timeoutOptions.length > 0 )
+        {
+            return timeoutOptions[0].getTimeout();
+        }
+        return CoreOptions.waitForFrameworkStartup().getTimeout();
     }
     
 }

@@ -40,4 +40,6 @@ public interface OptionParser {
 
 	public abstract WorkingDirectoryOption getWorkingDirOption();
 
+	public abstract long getRMITimeout();
+
 }

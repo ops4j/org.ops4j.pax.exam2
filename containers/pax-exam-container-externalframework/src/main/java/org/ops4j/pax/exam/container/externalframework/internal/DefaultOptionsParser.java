@@ -37,11 +37,11 @@ import java.util.TreeMap;
 
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.def.options.FeaturesScannerProvisionOption;
 import org.ops4j.pax.exam.container.def.options.FileScannerProvisionOption;
 import org.ops4j.pax.exam.container.def.options.RawPaxRunnerOptionOption;
 import org.ops4j.pax.exam.container.def.options.VMOption;
 import org.ops4j.pax.exam.container.def.options.WorkingDirectoryOption;
+import org.ops4j.pax.exam.container.def.util.Util;
 import org.ops4j.pax.exam.options.AbstractDelegateProvisionOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
@@ -105,6 +105,9 @@ public class DefaultOptionsParser implements OptionParser
 	private String autoInstallProperty;
 
 	private WorkingDirectoryOption workingDirOption;
+	
+	long m_RMItimeOut;
+	
 
 	
 	
@@ -148,6 +151,7 @@ public class DefaultOptionsParser implements OptionParser
         
 
         m_parsedArgs = arguments.toArray( new String[arguments.size()] );
+        m_RMItimeOut = Util.getRMITimeout(options);
     }
 
     /* (non-Javadoc)
@@ -448,8 +452,7 @@ public class DefaultOptionsParser implements OptionParser
     		ProvisionOption<?>[] bundles, Integer defaultStartlevel ) throws MalformedURLException, PlatformException
     {
     	TreeMap<Integer, Map<String, NamedUrlProvition>> references = new TreeMap<Integer, Map<String, NamedUrlProvition>>();
-        FeaturesServiceImpl featuresServiceImpl = null;
-    	for( ProvisionOption<?> reference : bundles )
+        for( ProvisionOption<?> reference : bundles )
         {
             Integer sl = reference.getStartLevel();
         	if (sl == null)
@@ -467,41 +470,8 @@ public class DefaultOptionsParser implements OptionParser
             	UrlReference urlRef = ((FileScannerProvisionOption)reference).getUrlReference();
             	add(bundleDir, references, new UrlProvisionOption(urlRef),sl);
             }
-            if (reference instanceof FeaturesScannerProvisionOption) {
-            	if (featuresServiceImpl == null)
-            		featuresServiceImpl = new FeaturesServiceImpl();
-            	try {
-					featuresServiceImpl.addReference((FeaturesScannerProvisionOption) reference);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
         }
-    	if (featuresServiceImpl != null) {
-    		try {
-				Map<String, String> featureProperties = featuresServiceImpl.install(bundleDir, references, defaultStartlevel);
-				if (featureProperties != null) {
-					HashSet<String> keysToAdd =new HashSet<String>();
-					for (String key : featureProperties.keySet()) {
-						if (this.mConfig.contains(key)) continue;
-						mConfig.put(key, featureProperties.get(key));
-						keysToAdd.add(key);
-					}
-					for (String key : keysToAdd) {
-						String value = featureProperties.get(key);
-						value = Helper.substVars(value, key, new HashMap<String, String>(), mConfig);
-						mConfig.put(key, value);
-						StringBuilder sb = new StringBuilder();
-						sb.append( "-D" ).append( key ).append( "=" ).append( value );
-	                    vmOptionsRet.add(sb.toString());
-					}
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
+    	
     	for(Integer k : references.keySet()) {
     		Map<String, NamedUrlProvition> list = references.get(k);
             final StringBuilder install = new StringBuilder()
@@ -584,6 +554,10 @@ public class DefaultOptionsParser implements OptionParser
 	 */
 	public WorkingDirectoryOption getWorkingDirOption() {
 		return workingDirOption;
+	}
+
+	public long getRMITimeout() {
+		return m_RMItimeOut;
 	}
 
 }

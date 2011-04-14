@@ -25,6 +25,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.runner.platform.JavaRunner;
 import org.ops4j.pax.runner.platform.PlatformException;
@@ -33,6 +34,10 @@ import org.ops4j.pax.exam.container.externalframework.internal.DefaultOptionsPar
 import org.ops4j.pax.exam.container.externalframework.internal.Download;
 
 public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFrameworkConfigurationOption<?>> extends FrameworkOption implements CompositeOption {
+    public static final String JAVA_RUNNER = "org.apache.karaf.testing.javarunner";
+    public static final String JAVA_RUNNER_DEFAULT = "org.ops4j.pax.runner.platform.DefaultJavaRunner";
+    public static final String JAVA_RUNNER_IN_PROCESS = "org.ops4j.pax.runner.platform.InProcessJavaRunner";
+
 	private static final String DEFAULT = "default";
 
 	protected UrlReference configuration = null;
@@ -103,7 +108,7 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
 	protected abstract String getMainClass();
 
 	
-	public OptionParser parseOption(Option[] options) {
+	public OptionParser parseOption(String host, int port, Option[] options) {
 		return new DefaultOptionsParser(this, getAutoInstallProperty(), getAutoStartProperty(), options);
 	}
 	
@@ -161,8 +166,6 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
         
         try {
             container = new DefaultPlexusContainer();
-            container.initialize();
-            container.start();
             ArchiverManager am;
             am = (ArchiverManager) container.lookup(ArchiverManager.ROLE);
             UnArchiver ua = am.getUnArchiver(f);
@@ -256,4 +259,12 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
     
     public abstract String getAutoInstallProperty();
     public abstract String getAutoStartProperty();
+    
+    public static String getVersion(MavenUrlReference ref) {
+        String[] parts = ref.getURL().split("/");
+        if (parts.length >= 3) {
+            return parts[2];
+        }
+        throw new RuntimeException("Cannot find version from "+ref.getURL());
+    }
 }

@@ -18,36 +18,28 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
-import java.io.File;
+import static org.ops4j.pax.exam.Constants.WAIT_FOREVER;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.OptionUtils.filter;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+
+import org.ops4j.pax.exam.CompositeCustomizer;
+import org.ops4j.pax.exam.Info;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.container.def.AbstractTestContainer;
+import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.rbc.Constants;
+import org.ops4j.pax.runner.Run;
+import org.ops4j.pax.runner.handler.internal.URLUtils;
+import org.ops4j.pax.runner.platform.StoppableJavaRunner;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.CompositeCustomizer;
-import org.ops4j.pax.exam.Info;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TimeoutException;
-import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
-import org.ops4j.pax.exam.options.FrameworkOption;
-import org.ops4j.pax.exam.rbc.Constants;
-import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
-import org.ops4j.pax.runner.Run;
-import org.ops4j.pax.runner.handler.internal.URLUtils;
-import org.ops4j.pax.runner.platform.StoppableJavaRunner;
-
-import static org.ops4j.pax.exam.Constants.*;
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * {@link TestContainer} implementation using Pax Runner.
@@ -56,22 +48,16 @@ import static org.ops4j.pax.exam.OptionUtils.*;
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
  */
-public class PaxRunnerTestContainer
+public class PaxRunnerTestContainer extends AbstractTestContainer
     implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainer.class );
-    public static final int SYSTEM_BUNDLE = 0;
-
-    private boolean m_started = false;
+    
 
     /**
      * Underlying Test Target
      */
-    private RBCRemoteTarget m_target;
     final private StoppableJavaRunner m_javaRunner;
-    final private String m_host;
-    final private int m_port;
-    final private Option[] m_options;
     final private String m_frameworkName;
 
     /**
@@ -84,25 +70,15 @@ public class PaxRunnerTestContainer
                                    int port,
                                    Option[] options )
     {
+    	super(host, port, options);
         LOG.info( "New PaxRunnerTestContainer " );
 
         m_javaRunner = javaRunner;
-        m_options = options;
-        m_host = host;
-        m_port = port;
+       
         // find the framework name:
         FrameworkOption[] frameworkOptions = filter( FrameworkOption.class, options );
         // expect it to be exactly one:
         m_frameworkName = frameworkOptions[ 0 ].getName();
-    }
-
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
-    public void setBundleStartLevel( final long bundleId, final int startLevel )
-        throws TestContainerException
-    {
-        m_target.getClientRBC().setBundleStartLevel( bundleId, startLevel );
     }
 
     /**
@@ -116,7 +92,7 @@ public class PaxRunnerTestContainer
             String name = UUID.randomUUID().toString();
             Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
             ArgumentsBuilder argBuilder = new ArgumentsBuilder( m_host, m_port, args );
-            m_target = new RBCRemoteTarget( name, m_port, argBuilder.getStartTimeout() );
+            initRBCRemote( name, argBuilder.getStartTimeout() );
 
             long startedAt = System.currentTimeMillis();
             URLUtils.resetURLStreamHandlerFactory();
@@ -140,72 +116,18 @@ public class PaxRunnerTestContainer
 
             m_started = true;
         } catch( IOException e ) {
-            throw new RuntimeException( "Problem starting container" );
-        }
+            throw new RuntimeException( "Problem starting container", e );
+        } catch (BundleException e) {
+        	throw new RuntimeException( "Problem starting container", e );
+		}
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public TestContainer stop()
-    {
-        LOG.info( "Shutting down the test container (Pax Runner)" );
-        try {
-            if( m_started ) {
-                cleanup();
-                RemoteBundleContextClient remoteBundleContextClient = m_target.getClientRBC();
-                if( remoteBundleContextClient != null ) {
-                    remoteBundleContextClient.stop();
-
-                }
-                if( m_javaRunner != null ) {
-                    m_javaRunner.shutdown();
-                }
-
-            }
-            else {
-                throw new RuntimeException( "Container never came up" );
-            }
-        } finally {
-
-            m_started = false;
-            m_target = null;
-        }
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void waitForState( final long bundleId, final int state, final long timeoutInMillis )
-        throws TimeoutException
-    {
-
-        m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
-
-    }
-
-    /**
-     * Return the options required by this container implementation.
-     *
-     * @return local options
-     */
-
-    public void call( TestAddress address, Object... args )
-    {
-        m_target.call( address, args );
-    }
-
-    public long install( InputStream stream )
-    {
-        return m_target.install( stream );
-    }
-
-    public void cleanup()
-    {
-        // unwind installed bundles basically.
-        m_target.cleanup();
+    @Override
+    protected void stopProcess() {
+         if( m_javaRunner != null ) {
+             m_javaRunner.shutdown();
+         }
     }
 
     @Override

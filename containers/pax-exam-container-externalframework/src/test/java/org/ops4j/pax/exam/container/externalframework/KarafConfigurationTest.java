@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.container.externalframework;
 
 import java.util.Arrays;
 
-import static org.ops4j.pax.exam.container.externalframework.options.ExternalFrameworkOptions.*;
 
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -187,7 +186,7 @@ public class KarafConfigurationTest  {
         		new KarafFrameworkConfigurationOption("start2").
         			addConfiguration(
         					url,
-        					"apache-karaf-"+getVersion(url)).
+        					"apache-karaf-"+KarafFrameworkConfigurationOption.getVersion(url)).
         			home().
                 	systemBundleId(31).
         			defaultConf(),

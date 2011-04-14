@@ -1,6 +1,7 @@
 package org.ops4j.pax.exam.container.def.internal;
 
 import org.junit.Test;
+import org.ops4j.pax.exam.container.def.util.RMIRegistry;
 
 import static junit.framework.Assert.*;
 

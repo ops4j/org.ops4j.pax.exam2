@@ -18,7 +18,6 @@
  */
 package org.ops4j.pax.exam.container.externalframework;
 
-import static org.ops4j.pax.exam.container.externalframework.options.ExternalFrameworkOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.waitForFrameworkStartupFor;
@@ -67,7 +66,7 @@ public class MainStart2Test  {
         			home(home).
         			systemBundleId(7).
                     defaultConf(),
-                systemProperty(JAVA_RUNNER).value(JAVA_RUNNER_DEFAULT),
+                systemProperty(KarafFrameworkConfigurationOption.JAVA_RUNNER).value(KarafFrameworkConfigurationOption.JAVA_RUNNER_DEFAULT),
                 systemProperty("karaf.auto.start.2").value( "\""+fileMVNbundle+"|unused\""),
         		systemProperty("karaf.auto.start.5").value( "\""+mvnUrl+"|unused\""),
         		systemProperty("fileMVNbundle").value( fileMVNbundle),

@@ -17,20 +17,12 @@
  */
 package org.ops4j.pax.exam.container.externalframework.internal;
 
-import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
 import static org.ops4j.pax.exam.Constants.WAIT_FOREVER;
-import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.OptionUtils.expand;
-import static org.ops4j.pax.exam.OptionUtils.filter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.rmi.RemoteException;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -40,30 +32,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.ops4j.io.FileUtils;
-import org.ops4j.pax.exam.CompositeCustomizer;
-import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
-import org.ops4j.pax.exam.container.def.util.RMIRegistry;
-import org.ops4j.pax.exam.container.def.util.TestContainerSemaphore;
-import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
-import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
-import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
+import org.ops4j.pax.exam.container.def.AbstractTestContainer;
+import org.ops4j.pax.exam.container.externalframework.options.ExternalFrameworkConfigurationOption;
+import org.ops4j.pax.exam.container.externalframework.options.OptionParser;
 import org.ops4j.pax.exam.rbc.Constants;
-import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
+import org.ops4j.pax.runner.osgi.RunnerStandeloneFramework;
+import org.ops4j.pax.runner.osgi.felix.StandeloneFramework;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 import org.ops4j.pax.runner.platform.JavaRunner;
 import org.ops4j.pax.runner.platform.PlatformException;
 import org.ops4j.pax.runner.platform.StoppableJavaRunner;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
-import org.ops4j.pax.exam.container.externalframework.options.ExternalFrameworkConfigurationOption;
-import org.ops4j.pax.exam.container.externalframework.options.OptionParser;
 
 /**
  * {@link TestContainer} implementation using url connector with pax runner, start a karaf configuration or other.
@@ -71,16 +54,11 @@ import org.ops4j.pax.exam.container.externalframework.options.OptionParser;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
-class ExternalFrameworkTestContainer
+class ExternalFrameworkTestContainer extends AbstractTestContainer
     implements TestContainer
 {
 
     private static final Log LOG = LogFactory.getLog( ExternalFrameworkTestContainer.class );
-
-    /**
-     * Remote bundle context client.
-     */
-    private RBCRemoteTarget m_target;
 
     /**
      * Java runner to be used to start up Pax Runner.
@@ -95,23 +73,10 @@ class ExternalFrameworkTestContainer
     /**
      * test container start timeout.
      */
-    private final long m_startTimeout;
+    private long m_startTimeout;
 
-    private  CompositeCustomizer m_customizers;
-    
-    
-    /**
-     *
-     */
-    private TestContainerSemaphore m_semaphore;
 
-    private boolean m_started = false;
-
-	private Option[] m_options;
-
-	private RMIRegistry m_rmiRegistry;
-
-	private ExternalFrameworkConfigurationOption<?> m_config;
+    private ExternalFrameworkConfigurationOption<?> m_config;
 
     /**
      * Constructor.
@@ -120,95 +85,61 @@ class ExternalFrameworkTestContainer
      * @param javaRunner java runner to be used to start up Pax Runner
      * @param options user startup options
      */
-    ExternalFrameworkTestContainer(RMIRegistry rmiRegistry, 
+    ExternalFrameworkTestContainer(String host,
+    		int port, 
     		ExternalFrameworkConfigurationOption<?> config, final Option... options )
     {
        
-    	LOG.info( "New ExternalTestContainer " );
-    	m_startTimeout = getTestContainerStartTimeout( options );
-        m_options = options;
-        m_rmiRegistry = rmiRegistry;
-        m_config = config;
-    }
-
-    /**
-     * {@inheritDoc} Delegates to {@link RemoteBundleContextClient}.
-     */
-    public void setBundleStartLevel( final long bundleId, final int startLevel )
-        throws TestContainerException
-    {
-        m_target.getClientRBC().setBundleStartLevel( bundleId, startLevel );
+    	super(host, port, options );
+    	LOG.info( "New ExternalFrameworkTestContainer " );
+    	m_config = config;
     }
 
     /**
      * {@inheritDoc}
-     * @return 
+     * @return a TestContainer this;
      */
     public TestContainer start()
     {
-        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
+        LOG.info( "Starting up the test container (External Osgi framework)" );
         try {
 	        String name = UUID.randomUUID().toString();
 	        Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
+	        m_arguments = m_config.parseOption(m_host, m_port, args);
 	        
-			m_target =
-	        	new RBCRemoteTarget( name, m_rmiRegistry.getPort(), getRMITimeout( args ) );
-	        m_options = expand( 
-	        		combine( 
-	        		combine(m_options, 
-	        				systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) ), 
-	        				localOptions() ) );
+			initRBCRemote( name, m_arguments.getRMITimeout() );
 	        
-	        /**
-	         */
-	        m_arguments = m_config.parseOption(m_options);
-	        
-	        m_customizers = new CompositeCustomizer( m_arguments.getCustomizers() );
-	        
-	        m_semaphore = new TestContainerSemaphore( m_arguments.getWorkingFolder() );
-	        // this makes sure the system is ready to launch a new instance.
-	        // this could fail, based on what acquire actually checks.
-	        // this also creates some persistent mark that will be removed by m_semaphore.release()
-	        if ( !m_semaphore.acquire() )
-	        {
-	            // here we can react.
-	            // Prompt user with the fact that there might be another instance running.
-	            if ( !FileUtils.delete( m_arguments.getWorkingFolder() ) )
-	            {
-	                throw new RuntimeException( "There might be another instance of Pax Exam running. Have a look at "
-	                    + m_semaphore.getLockFile().getAbsolutePath() );
-	            }
-	        }
-	        
-	
-		     // customize environment
-		     m_customizers.customizeEnvironment( m_arguments.getWorkingFolder() );
-	
-	      //add url handler to mvn: handler.
-	        StandoloneOsgiFramework framework = new StandoloneOsgiFramework(m_arguments.getConfig());
-			framework.start();
-	        
+        	//start url handlers like mvn:, dir: ...
+    	    startURLHandler();
 	        m_arguments.addBundleOption(60, m_options);
-			
+            //start osgi framework
 	        startOsgiFramework();
 	
 	        LOG.info( "Wait for test container to finish its initialization "
 	            + ( m_startTimeout == WAIT_FOREVER ? "without timing out" : "for " + m_startTimeout + " millis" ) );
-	        try
-	        {
-	            waitForState( m_arguments.getExternalConfigurationOption().getSystemBundleId(), Bundle.ACTIVE, m_startTimeout );
-	        }
-	        catch ( TimeoutException e )
-	        {
-	            throw new TimeoutException( "Test container did not initialize in the expected time of " + m_startTimeout
-	                + " millis" );
-	        }
-	        m_started = true;
+	      
+            waitForState( m_config.getSystemBundleId(), Bundle.ACTIVE, m_startTimeout );
+            m_started = true;
+        }
+        catch ( TimeoutException e )
+        {
+            throw new TimeoutException( "Test container did not initialize in the expected time of " + m_startTimeout
+                + " millis" );
         } catch( Throwable e ) {
             throw new RuntimeException( "Problem starting container", e );
         }
         return this;
     }
+    
+    private void startURLHandler() throws BundleException {
+		RunnerStandeloneFramework runnerStandeloneFramework = new RunnerStandeloneFramework(m_arguments.getConfig());
+		
+    	 StandeloneFramework osgiFramework = new StandeloneFramework(
+    		runnerStandeloneFramework.getOptionResolver());
+		 osgiFramework.start();
+		 runnerStandeloneFramework.start(osgiFramework);
+		
+	}
 
     private void startOsgiFramework() {
     	m_javaRunner = getJavaRunner();
@@ -225,7 +156,7 @@ class ExternalFrameworkTestContainer
                     		m_arguments.getVmOptions(), 
                     		arguments, 
                     		m_arguments.getConfig());
-                    LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
+                    LOG.info( "Test container ( "+m_config.getName() +") started in "
                              + ( System.currentTimeMillis() - startedAt ) + " millis" );
                 } catch (PlatformException ex) {
                     Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
@@ -268,108 +199,12 @@ class ExternalFrameworkTestContainer
         return javaRunner;
 	}
 
-    /**
-     * {@inheritDoc}
-	 * @return 
-     */
-    public TestContainer stop()
-    {
-    	LOG.info( "Shutting down the test container (Pax Runner)" );
-        try {
-            if( m_started ) {
-                cleanup();
-                RemoteBundleContextClient remoteBundleContextClient = m_target.getClientRBC();
-                if( remoteBundleContextClient != null ) {
-                    remoteBundleContextClient.stop();
-
-                }
-                if( m_javaRunner != null && m_javaRunner instanceof StoppableJavaRunner) {
-                	((StoppableJavaRunner) m_javaRunner).shutdown();
-                }
-
-            }
-            else {
-                throw new RuntimeException( "Container never came up" );
-            }
-        } finally {
-
-            m_started = false;
-            m_target = null;
+	@Override
+	protected void stopProcess() {
+		if( m_javaRunner != null && m_javaRunner instanceof StoppableJavaRunner) {
+        	((StoppableJavaRunner) m_javaRunner).shutdown();
         }
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void waitForState( final long bundleId, final int state, final long timeoutInMillis )
-        throws TimeoutException
-    {
-        try {
-            m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
-        } catch( BundleException e ) {
-            LOG.error( "Bundle Exception", e );
-        } catch( RemoteException e ) {
-            throw new TimeoutException( "Remote Exception while waitForState", e );
-        }
-    }
-
-    /**
-     * Return the options required by this container implementation.
-     *
-     * @return local options
-     */
-    private Option[] localOptions()
-    {
-        return new Option[] {
-        // remote bundle context bundle
-            mavenBundle().groupId( "org.ops4j.pax.exam" ).artifactId( "pax-exam-container-rbc" ).version(
-                                                                                                          Info.getPaxExamVersion() ).update(
-                                                                                                                                             Info.isPaxExamSnapshotVersion() ).startLevel(
-                                                                                                                                                                                           START_LEVEL_SYSTEM_BUNDLES ),
-            // rmi communication port
-            systemProperty( Constants.RMI_PORT_PROPERTY ).value( Integer.toString(m_rmiRegistry.getPort()) ),
-            // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
-            bootDelegationPackage( "sun.*" ) };
-    }
-
-    
-    /**
-     * Determine the rmi lookup timeout.<br/>
-     * Timeout is dermined by first looking for a {@link RBCLookupTimeoutOption} in the user options. If not specified a
-     * default is used.
-     * 
-     * @param options user options
-     * @return rmi lookup timeout
-     */
-    private static long getRMITimeout( final Option... options )
-    {
-        final RBCLookupTimeoutOption[] timeoutOptions = filter( RBCLookupTimeoutOption.class, options );
-        if ( timeoutOptions.length > 0 )
-        {
-            return timeoutOptions[0].getTimeout();
-        }
-        return getTestContainerStartTimeout( options );
-    }
-
-    /**
-     * Determine the timeout while starting the osgi framework.<br/>
-     * Timeout is dermined by first looking for a {@link TestContainerStartTimeoutOption} in the user options. If not
-     * specified a default is used.
-     * 
-     * @param options user options
-     * @return rmi lookup timeout
-     */
-    private static long getTestContainerStartTimeout( final Option... options )
-    {
-        final TestContainerStartTimeoutOption[] timeoutOptions =
-            filter( TestContainerStartTimeoutOption.class, options );
-        if ( timeoutOptions.length > 0 )
-        {
-            return timeoutOptions[0].getTimeout();
-        }
-        return CoreOptions.waitForFrameworkStartup().getTimeout();
-    }
+	}
 
     @Override
     public String toString()
@@ -416,22 +251,5 @@ class ExternalFrameworkTestContainer
         }
         return path;
     }
-
-    
-
-	public void call(TestAddress address) throws ClassNotFoundException,
-			InvocationTargetException, InstantiationException,
-			IllegalAccessException {
-		m_target.call( address );
-	}
-
-	public long install(InputStream stream) {
-		return m_target.install( stream );
-	}
-
-	public void cleanup() {
-        // unwind installed bundles basically.
-        m_target.cleanup();
-	}
 
 }
