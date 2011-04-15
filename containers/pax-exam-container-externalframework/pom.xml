@@ -155,61 +155,51 @@
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-aether</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-assembly</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-cache</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-classpath</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-dir</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-link</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-mvn</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-obr</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-war</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
         <dependency>
         	<groupId>org.ops4j.pax.url</groupId>
         	<artifactId>pax-url-wrap</artifactId>
         	<version>${pax.url.version}</version>
-        	<scope>test</scope>
         </dependency>
     </dependencies>
 
