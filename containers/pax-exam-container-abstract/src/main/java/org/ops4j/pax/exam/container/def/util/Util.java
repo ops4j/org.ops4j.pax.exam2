@@ -18,43 +18,19 @@
  */
 package org.ops4j.pax.exam.container.def.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import static org.ops4j.pax.exam.OptionUtils.filter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
-import org.ops4j.pax.exam.container.def.options.CleanCachesOption;
-import org.ops4j.pax.exam.container.def.options.ExcludeDefaultRepositoriesOption;
-import org.ops4j.pax.exam.container.def.options.LocalRepositoryOption;
-import org.ops4j.pax.exam.container.def.options.ProfileOption;
-import org.ops4j.pax.exam.container.def.options.RawPaxRunnerOptionOption;
-import org.ops4j.pax.exam.container.def.options.RepositoryOptionImpl;
-import org.ops4j.pax.exam.container.def.options.Scanner;
 import org.ops4j.pax.exam.container.def.options.VMOption;
-import org.ops4j.pax.exam.container.def.options.WorkingDirectoryOption;
 import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
-import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
-import org.ops4j.pax.exam.options.BootDelegationOption;
-import org.ops4j.pax.exam.options.BundleStartLevelOption;
-import org.ops4j.pax.exam.options.CustomFrameworkOption;
-import org.ops4j.pax.exam.options.DebugClassLoadingOption;
-import org.ops4j.pax.exam.options.FrameworkOption;
-import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
-import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
-import org.ops4j.pax.exam.rbc.Constants;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Utility methods for converting configuration options to Pax Runner arguments.
@@ -103,10 +79,10 @@ public class Util {
      *
      * @return converted Pax Runner collection of arguments
      */
-    public static Collection<String> extractArguments( final ProvisionOption[] bundles )
+    public static Collection<String> extractArguments( final ProvisionOption<?>[] bundles )
     {
         final List<String> arguments = new ArrayList<String>();
-        for( ProvisionOption bundle : bundles ) {
+        for( ProvisionOption<?> bundle : bundles ) {
             arguments.add( bundle.getURL() );
         }
         return arguments;

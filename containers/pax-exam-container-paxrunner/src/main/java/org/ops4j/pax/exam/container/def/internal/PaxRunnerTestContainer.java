@@ -18,13 +18,9 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
-import static org.ops4j.pax.exam.Constants.WAIT_FOREVER;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.OptionUtils.filter;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import org.ops4j.pax.exam.CompositeCustomizer;
 import org.ops4j.pax.exam.Info;
@@ -32,12 +28,9 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.container.def.AbstractTestContainer;
 import org.ops4j.pax.exam.options.FrameworkOption;
-import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.runner.Run;
 import org.ops4j.pax.runner.handler.internal.URLUtils;
 import org.ops4j.pax.runner.platform.StoppableJavaRunner;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +53,9 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
     final private StoppableJavaRunner m_javaRunner;
     final private String m_frameworkName;
 
+
+	private ArgumentsBuilder argBuilder;
+
     /**
      * Constructor.
      *
@@ -80,47 +76,51 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
         // expect it to be exactly one:
         m_frameworkName = frameworkOptions[ 0 ].getName();
     }
+    
+    protected String getInfo() {
+		return "Pax Runner " + Info.getPaxRunnerVersion() ;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public TestContainer start()
-    {
-        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
+    @Override
+    protected void customizer() {
+    	new CompositeCustomizer( argBuilder.getCustomizers() ).customizeEnvironment( argBuilder.getWorkingFolder() );
+    }
+    
+    @Override
+    protected long getRMITimeout() {
+    	return argBuilder.getStartTimeout();
+    }
+    
+    @Override
+    protected long getSystemBundleId() {
+    	return SYSTEM_BUNDLE;
+    }
+    
+    @Override
+    protected long getStartTimeout() {
+    	return argBuilder.getStartTimeout();
+    }
+    
+    @Override
+    protected void parseOption(String m_host, int m_port, Option[] args) throws IOException {
+    	argBuilder = new ArgumentsBuilder( m_host, m_port, args );
+    }
+    
+    @Override
+    protected void startProcess() throws Exception {
+    	long startedAt = System.currentTimeMillis();
+        URLUtils.resetURLStreamHandlerFactory();
+        String[] arguments = argBuilder.getArguments();
 
-        try {
-            String name = UUID.randomUUID().toString();
-            Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
-            ArgumentsBuilder argBuilder = new ArgumentsBuilder( m_host, m_port, args );
-            initRBCRemote( name, argBuilder.getStartTimeout() );
+        LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
+        for( String s : arguments ) {
+            LOG.info( "#   " + s );
+        }
 
-            long startedAt = System.currentTimeMillis();
-            URLUtils.resetURLStreamHandlerFactory();
-            String[] arguments = argBuilder.getArguments();
-
-            LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
-            for( String s : arguments ) {
-                LOG.info( "#   " + s );
-            }
-
-            Run.start( m_javaRunner, arguments );
-            LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
-                      + ( System.currentTimeMillis() - startedAt ) + " millis"
-            );
-
-            LOG.info( "Wait for test container to finish its initialization " + ( argBuilder.getStartTimeout() == WAIT_FOREVER ? "without timing out" : "for " + argBuilder.getStartTimeout() + " millis" ) );
-
-            waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, argBuilder.getStartTimeout() );
-
-            new CompositeCustomizer( argBuilder.getCustomizers() ).customizeEnvironment( argBuilder.getWorkingFolder() );
-
-            m_started = true;
-        } catch( IOException e ) {
-            throw new RuntimeException( "Problem starting container", e );
-        } catch (BundleException e) {
-        	throw new RuntimeException( "Problem starting container", e );
-		}
-        return this;
+        Run.start( m_javaRunner, arguments );
+        LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
+                  + ( System.currentTimeMillis() - startedAt ) + " millis"
+        );
     }
 
     @Override

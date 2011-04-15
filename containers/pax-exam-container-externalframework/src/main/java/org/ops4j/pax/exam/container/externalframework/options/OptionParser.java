@@ -42,4 +42,6 @@ public interface OptionParser {
 
 	public abstract long getRMITimeout();
 
+	public abstract long getStartTimeout();
+
 }

@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
@@ -70,7 +71,8 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                         } catch( Exception ex ) {
                             lastError = ex;
                             Throwable cause = ExceptionHelper.unwind( ex );
-                            boolean contain = ExceptionHelper.hasThrowable( ex, NoSuchObjectException.class );
+                            boolean contain = ExceptionHelper.hasThrowable( ex, NoSuchObjectException.class ) ||
+                            				  ExceptionHelper.hasThrowable( ex, NotBoundException.class );
                             if( contain ) {
                                 LOG.warn( "Catched (rooted) " + cause.getClass().getName() + " in RBC." + method.getName() );
                                 retry = true;

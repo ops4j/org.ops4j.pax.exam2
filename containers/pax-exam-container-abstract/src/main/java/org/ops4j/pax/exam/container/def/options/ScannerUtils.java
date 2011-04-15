@@ -44,7 +44,7 @@ class ScannerUtils
      *
      * @return common scanner options (cannot be null)
      */
-    static String getOptions( final ProvisionOption provision )
+    static String getOptions( final ProvisionOption<?> provision )
     {
         final StringBuilder options = new StringBuilder();
         if( provision.shouldUpdate() )

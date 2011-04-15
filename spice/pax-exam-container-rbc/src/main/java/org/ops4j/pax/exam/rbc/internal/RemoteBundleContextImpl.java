@@ -180,6 +180,11 @@ public class RemoteBundleContextImpl
             if (LOG.isDebugEnabled()) {
                 this.m_bundleContext.removeBundleListener(this);
             }
+            if (bundle == null)
+            	 throw new TimeoutException(
+                         "There is no waiting timeout set and bundle is not found '" 
+                         + "' expected state is '" + bundleStateToString( state ) + "'"
+                     );
             throw new TimeoutException(
                 "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle.getState() )
                 + "' not '" + bundleStateToString( state ) + "' as expected"

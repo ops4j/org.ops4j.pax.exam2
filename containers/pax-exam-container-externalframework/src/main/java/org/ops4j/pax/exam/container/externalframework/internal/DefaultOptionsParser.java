@@ -107,6 +107,8 @@ public class DefaultOptionsParser implements OptionParser
 	private WorkingDirectoryOption workingDirOption;
 	
 	long m_RMItimeOut;
+
+	private long m_startTimeOut;
 	
 
 	
@@ -152,6 +154,7 @@ public class DefaultOptionsParser implements OptionParser
 
         m_parsedArgs = arguments.toArray( new String[arguments.size()] );
         m_RMItimeOut = Util.getRMITimeout(options);
+        m_startTimeOut = Util.getTestContainerStartTimeout(options);
     }
 
     /* (non-Javadoc)
@@ -558,6 +561,10 @@ public class DefaultOptionsParser implements OptionParser
 
 	public long getRMITimeout() {
 		return m_RMItimeOut;
+	}
+	
+	public long getStartTimeout() {
+		return m_startTimeOut;
 	}
 
 }

@@ -17,14 +17,10 @@
  */
 package org.ops4j.pax.exam.container.externalframework.internal;
 
-import static org.ops4j.pax.exam.Constants.WAIT_FOREVER;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.OptionUtils.combine;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,18 +30,15 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.container.def.AbstractTestContainer;
 import org.ops4j.pax.exam.container.externalframework.options.ExternalFrameworkConfigurationOption;
 import org.ops4j.pax.exam.container.externalframework.options.OptionParser;
-import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.runner.osgi.RunnerStandeloneFramework;
 import org.ops4j.pax.runner.osgi.felix.StandeloneFramework;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 import org.ops4j.pax.runner.platform.JavaRunner;
 import org.ops4j.pax.runner.platform.PlatformException;
 import org.ops4j.pax.runner.platform.StoppableJavaRunner;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
 /**
@@ -70,12 +63,6 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
      */
     private  OptionParser m_arguments;
 
-    /**
-     * test container start timeout.
-     */
-    private long m_startTimeout;
-
-
     private ExternalFrameworkConfigurationOption<?> m_config;
 
     /**
@@ -94,42 +81,40 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
     	LOG.info( "New ExternalFrameworkTestContainer " );
     	m_config = config;
     }
-
-    /**
-     * {@inheritDoc}
-     * @return a TestContainer this;
-     */
-    public TestContainer start()
-    {
-        LOG.info( "Starting up the test container (External Osgi framework)" );
-        try {
-	        String name = UUID.randomUUID().toString();
-	        Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
-	        m_arguments = m_config.parseOption(m_host, m_port, args);
-	        
-			initRBCRemote( name, m_arguments.getRMITimeout() );
-	        
-        	//start url handlers like mvn:, dir: ...
-    	    startURLHandler();
-	        m_arguments.addBundleOption(60, m_options);
-            //start osgi framework
-	        startOsgiFramework();
-	
-	        LOG.info( "Wait for test container to finish its initialization "
-	            + ( m_startTimeout == WAIT_FOREVER ? "without timing out" : "for " + m_startTimeout + " millis" ) );
-	      
-            waitForState( m_config.getSystemBundleId(), Bundle.ACTIVE, m_startTimeout );
-            m_started = true;
-        }
-        catch ( TimeoutException e )
-        {
-            throw new TimeoutException( "Test container did not initialize in the expected time of " + m_startTimeout
-                + " millis" );
-        } catch( Throwable e ) {
-            throw new RuntimeException( "Problem starting container", e );
-        }
-        return this;
+    
+    @Override
+    protected String getInfo() {
+    	return "External Osgi framework "+m_config.getName();
     }
+    
+    @Override
+    protected void parseOption(String m_host2, int m_port2, Option[] args) {
+    	 m_arguments = m_config.parseOption(m_host, m_port, args);
+    }
+    
+    @Override
+    protected long getRMITimeout() {
+    	return m_arguments.getRMITimeout();
+    }
+    
+    @Override
+    protected long getSystemBundleId() {
+    	return m_config.getSystemBundleId();
+    }
+    
+    @Override
+    protected long getStartTimeout() {
+    	return m_arguments.getStartTimeout();
+    }
+
+	protected void startProcess() throws BundleException,
+			MalformedURLException, PlatformException {
+		//start url handlers like mvn:, dir: ...
+		startURLHandler();
+		m_arguments.addBundleOption(60, m_options);
+		//start osgi framework
+		startOsgiFramework();
+	}
     
     private void startURLHandler() throws BundleException {
 		RunnerStandeloneFramework runnerStandeloneFramework = new RunnerStandeloneFramework(m_arguments.getConfig());
@@ -143,38 +128,32 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
 
     private void startOsgiFramework() {
     	m_javaRunner = getJavaRunner();
-        Runnable run = new Runnable() {
-            public void run() {
-                String[] arguments = m_arguments.getArguments();
-                
-				try {
-                    long startedAt = System.currentTimeMillis();
-                    m_config.run(
-                    		m_arguments.getJavaHome(), 
-                    		m_arguments.getWorkingFolder(), 
-                    		m_javaRunner, 
-                    		m_arguments.getVmOptions(), 
-                    		arguments, 
-                    		m_arguments.getConfig());
-                    LOG.info( "Test container ( "+m_config.getName() +") started in "
-                             + ( System.currentTimeMillis() - startedAt ) + " millis" );
-                } catch (PlatformException ex) {
-                    Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
-                    throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
-                } catch (NoSuchArchiverException ex) {
-                    Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
-                    throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
-                } catch (ArchiverException ex) {
-                    Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
-                    throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
-                    throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
-                }
-            }
-        };
-        Thread t = new Thread(run,"Run process");
-        t.start();
+        String[] arguments = m_arguments.getArguments();
+        
+		try {
+            long startedAt = System.currentTimeMillis();
+            m_config.run(
+            		m_arguments.getJavaHome(), 
+            		m_arguments.getWorkingFolder(), 
+            		m_javaRunner, 
+            		m_arguments.getVmOptions(), 
+            		arguments, 
+            		m_arguments.getConfig());
+            LOG.info( "Test container ( "+m_config.getName() +") started in "
+                     + ( System.currentTimeMillis() - startedAt ) + " millis" );
+        } catch (PlatformException ex) {
+            Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
+        } catch (NoSuchArchiverException ex) {
+            Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
+        } catch (ArchiverException ex) {
+            Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
+        }
 	}
 
 	protected JavaRunner getJavaRunner() {

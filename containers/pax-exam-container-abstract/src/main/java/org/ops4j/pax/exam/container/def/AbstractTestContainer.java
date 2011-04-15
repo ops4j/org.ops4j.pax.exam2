@@ -18,20 +18,23 @@
  */
 package org.ops4j.pax.exam.container.def;
 
-import static org.ops4j.pax.exam.OptionUtils.filter;
+import static org.ops4j.pax.exam.Constants.WAIT_FOREVER;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
-import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
-import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
-import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
+import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +86,39 @@ public abstract class AbstractTestContainer
         m_target.getClientRBC().setBundleStartLevel( bundleId, startLevel );
     }
 
-    
+    /**
+     * {@inheritDoc}
+     * @return a TestContainer this;
+     */
+    public TestContainer start()
+    {
+    	LOG.info( "Starting up the test container ("+getInfo()+ " )" );
+    	try {
+	        String name = UUID.randomUUID().toString();
+	        Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
+	        parseOption(m_host, m_port, args);
+	        
+			initRBCRemote( name, getRMITimeout() );
+	        
+        	startProcess();
+	
+	        LOG.info( "Wait for test container to finish its initialization "
+	            + ( getStartTimeout() == WAIT_FOREVER ? "without timing out" : "for " + getStartTimeout() + " millis" ) );
+	     
+            waitForState( getSystemBundleId(), getSystemBundleState(), getStartTimeout() );
+            
+            customizer();
+            m_started = true;
+        }
+        catch ( TimeoutException e )
+        {
+            throw new TimeoutException( "Test container did not initialize in the expected time of " + getStartTimeout()
+                + " millis" );
+        } catch( Throwable e ) {
+            throw new RuntimeException( "Problem starting container", e );
+        }
+        return this;
+    }
 
     /**
      * {@inheritDoc}
@@ -116,6 +151,27 @@ public abstract class AbstractTestContainer
     protected void initRBCRemote(String name, long timeout) {
     	 m_target = new RBCRemoteTarget( name, m_port, timeout );
     }
+
+	protected int getSystemBundleState() {
+		return Bundle.ACTIVE;
+	}
+	
+	protected abstract String getInfo() ;
+	
+    
+	protected void customizer() {
+		// do nothing by default
+	}
+
+	protected abstract long getSystemBundleId();;
+
+	protected abstract long getStartTimeout();
+
+	protected abstract void startProcess() throws Exception;
+
+	protected abstract long getRMITimeout();
+
+	protected abstract void parseOption(String m_host2, int m_port2, Option[] args) throws IOException;
 
 	protected abstract void stopProcess();
 

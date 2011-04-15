@@ -1,7 +1,8 @@
 /*
  * Copyright 2009 Alin Dreghiciu.
  * Copyright 2011 Toni Menzel.
- *
+ * Copyright 2011 Stephane Chomat.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +29,7 @@ import org.ops4j.pax.exam.rbc.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.OptionUtils.*;
+import static org.ops4j.pax.exam.Constants.*;
 
 /**
  * Factory for {@link PaxRunnerTestContainer}.
@@ -70,23 +72,21 @@ public abstract class AbstractTestContainerFactory
         System.gc();
 
     }
-
+    // overide add RMI_PORT_PROPERTY and add start level
     protected Option[] setDefaultOptions()
     {
         return new Option[]{
             // remote bundle context bundle
 
-            // TODO? rmi communication port
-           
+            // rmi communication port
+            systemProperty(Constants.RMI_PORT_PROPERTY).value(Integer.toString(m_rmiRegistry.getPort())),
             //,
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
             bootDelegationPackage( "sun.*" ),
             
-            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
-            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
-            url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
-
-            url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )
+            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel(START_LEVEL_SYSTEM_BUNDLES),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel(START_LEVEL_SYSTEM_BUNDLES)
+            
         };
     }
 

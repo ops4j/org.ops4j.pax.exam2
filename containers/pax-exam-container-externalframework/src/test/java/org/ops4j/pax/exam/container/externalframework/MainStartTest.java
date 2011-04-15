@@ -18,7 +18,7 @@
  */
 package org.ops4j.pax.exam.container.externalframework;
 
-import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.waitForFrameworkStartupFor;
 
@@ -35,6 +35,7 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.ops4j.pax.exam.container.def.ContainersOptions;
 import org.ops4j.pax.exam.container.externalframework.options.KarafFrameworkConfigurationOption;
 
 /**
@@ -46,9 +47,6 @@ import org.ops4j.pax.exam.container.externalframework.options.KarafFrameworkConf
 @RunWith(JUnit4TestRunner.class)
 public class MainStartTest  {
 	
-	 @Inject
-	 protected BundleContext bundleContext;
-	 
 	private static String mvnUrl = "mvn:org.osgi/org.osgi.compendium/4.2.0";
 	
 	private static File home;
@@ -60,22 +58,26 @@ public class MainStartTest  {
 		File basedir = new File(MainStartTest.class.getClassLoader().getResource("foo").getPath()).getParentFile();
         home = new File(basedir, "test-karaf-home");
         fileMVNbundle = new File(home, "bundles/pax-url-mvn.jar").toURI().toURL().toExternalForm();
-		
+        final String fileJunitMVNbundle = new File(home, "bundles/junit.jar").toURI().toURL().toExternalForm();
+        
 		return options(
         		new KarafFrameworkConfigurationOption().
         			home(home).
-        			systemBundleId(7).
+        			systemBundleId(2+4).
                     defaultConf(),
                 systemProperty(KarafFrameworkConfigurationOption.JAVA_RUNNER).value(KarafFrameworkConfigurationOption.JAVA_RUNNER_DEFAULT),
                 
-                systemProperty("karaf.auto.start.2").value( "\""+fileMVNbundle+"|unused\""),
-        		systemProperty("karaf.auto.start.3").value( "\""+mvnUrl+"|unused\""),
+                systemProperty("karaf.auto.start.1").value( "\""+fileMVNbundle+"|unused\""),
+        		systemProperty("karaf.auto.start.4").value( "\""+mvnUrl+"|unused\""),
         		systemProperty("fileMVNbundle").value( fileMVNbundle),
         		systemProperty("mvnUrl").value( fileMVNbundle),
         		
+        		url(fileJunitMVNbundle).startLevel(2),
+        		ContainersOptions.loggingApi(2),
+        		
         		// wait for ever
                 new TestContainerStartTimeoutOption(Long.MAX_VALUE),
-                //vmOption( "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008" ),
+                //ContainersOptions.vmOption( "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008" ),
             		 
              waitForFrameworkStartupFor(60000)
         );
@@ -88,7 +90,7 @@ public class MainStartTest  {
 	 * @throws Exception cannot start karaf.
 	 */
 	@Test
-    public void testAutoStart() throws Exception {
+    public void testAutoStart(BundleContext bundleContext) throws Exception {
 		Thread.sleep(1000);
 		Bundle[] bundles = bundleContext.getBundles();
 		Assert.assertTrue(bundles.length>=3);
@@ -97,10 +99,10 @@ public class MainStartTest  {
 			System.out.println(" - "+b.getLocation());
 		}
         fileMVNbundle = System.getProperty("fileMVNbundle");
-        Assert.assertEquals(fileMVNbundle, bundles[6].getLocation());
-		Assert.assertEquals(mvnUrl, bundles[7].getLocation());
+        Assert.assertEquals(fileMVNbundle, bundles[1].getLocation());
+		Assert.assertEquals(mvnUrl, bundles[6].getLocation());
+		Assert.assertEquals(Bundle.ACTIVE, bundles[1].getState());
 		Assert.assertEquals(Bundle.ACTIVE, bundles[6].getState());
-		Assert.assertEquals(Bundle.ACTIVE, bundles[7].getState());
 	}
 	
 }
