@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.container.def.internal;
+package org.ops4j.pax.exam.container.def.util;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
