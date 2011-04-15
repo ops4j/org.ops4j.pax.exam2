@@ -28,10 +28,9 @@ import org.ops4j.pax.swissbox.extender.RegexKeyManifestFilter;
  * @author Toni Menzel
  * @since Dec 5, 2009
  */
-public class Activator implements BundleActivator
-{
+public class Activator implements BundleActivator {
 
-   /**
+    /**
      * Bundle watcher of web.xml.
      */
     private BundleWatcher<ManifestEntry> m_probeWatcher;

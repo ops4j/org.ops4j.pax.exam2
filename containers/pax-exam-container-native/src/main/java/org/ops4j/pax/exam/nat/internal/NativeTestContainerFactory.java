@@ -61,9 +61,4 @@ public class NativeTestContainerFactory implements TestContainerFactory {
         }
         return containers.toArray( new TestContainer[containers.size()] );
     }
-
-    public void shutdown()
-    {
-        
-    }
 }

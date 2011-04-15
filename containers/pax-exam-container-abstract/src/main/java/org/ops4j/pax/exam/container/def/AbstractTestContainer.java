@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
+ * @author Stephane Chomat
  * @since 0.3.0, December 09, 2008
  */
 public abstract class AbstractTestContainer
@@ -167,12 +168,30 @@ public abstract class AbstractTestContainer
 
 	protected abstract long getStartTimeout();
 
-	protected abstract void startProcess() throws Exception;
+	/**
+     * start the process
+     */
+    protected abstract void startProcess() throws Exception;
 
+    /**
+     * 
+     * @return the timeout for the rbc client
+     */
 	protected abstract long getRMITimeout();
 
-	protected abstract void parseOption(String m_host2, int m_port2, Option[] args) throws IOException;
+	/**
+	 * Parse the option and set some fields.
+	 * @param host the host
+	 * @param port the port
+	 * @param args the options
+	 * 
+	 * @throws IOException if need like bad configuration
+	 */
+	protected abstract void parseOption(String host, int port, Option[] args) throws IOException;
 
+	/**
+	 * stop the process
+	 */
 	protected abstract void stopProcess();
 
     /**
@@ -187,21 +206,24 @@ public abstract class AbstractTestContainer
     }
 
     /**
-     * Return the options required by this container implementation.
-     *
-     * @return local options
+     * {@inheritDoc}
      */
-
-    public void call( TestAddress address, Object... args )
+    public void call( TestAddress address )
     {
-        m_target.call( address, args );
+        m_target.call( address );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public long install( InputStream stream )
     {
         return m_target.install( stream );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void cleanup()
     {
         // unwind installed bundles basically.

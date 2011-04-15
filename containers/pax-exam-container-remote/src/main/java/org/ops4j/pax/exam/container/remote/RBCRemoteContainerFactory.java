@@ -39,9 +39,4 @@ public class RBCRemoteContainerFactory implements TestContainerFactory
             container
         };
     }
-
-    public void shutdown()
-    {
-        
-    }
 }

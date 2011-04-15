@@ -42,10 +42,9 @@ public class RBCRemoteContainer implements TestContainer
         m_target = target;
     }
 
-    public void call( TestAddress address, Object... args )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
+    public void call( TestAddress address )
     {
-        m_target.call( address, args );
+        m_target.call( address );
     }
 
     public long install( InputStream stream )

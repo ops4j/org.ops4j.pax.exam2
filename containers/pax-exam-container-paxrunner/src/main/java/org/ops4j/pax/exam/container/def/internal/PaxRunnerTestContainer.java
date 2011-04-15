@@ -22,6 +22,12 @@ import static org.ops4j.pax.exam.OptionUtils.filter;
 
 import java.io.IOException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
+import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.CompositeCustomizer;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -100,12 +106,11 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
     protected long getStartTimeout() {
     	return argBuilder.getStartTimeout();
     }
-    
     @Override
     protected void parseOption(String m_host, int m_port, Option[] args) throws IOException {
     	argBuilder = new ArgumentsBuilder( m_host, m_port, args );
-    }
-    
+	}
+		
     @Override
     protected void startProcess() throws Exception {
     	long startedAt = System.currentTimeMillis();

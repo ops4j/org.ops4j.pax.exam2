@@ -56,16 +56,16 @@ public class NativeTestContainer implements TestContainer {
         return "NativeContainer:" + m_frameworkFactory.toString();
     }
 
-    private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
-    private Framework m_framework;
+    final private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
 
-    private Stack<Long> m_installed;
+    final private Stack<Long> m_installed = new Stack<Long>();
 
+    volatile Framework m_framework;
     final private Map<String, String> m_properties;
     final private List<ProvisionOption> m_bundles;
     final private FrameworkFactory m_frameworkFactory;
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
-    private static final long TIMEOUT_IN_MILLIS = 5000;
+    private static final long TIMEOUT_IN_MILLIS = 10000;
 
     public NativeTestContainer( FrameworkFactory frameworkFactory, List<ProvisionOption> bundles, Map<String, String> properties )
     {
@@ -74,24 +74,22 @@ public class NativeTestContainer implements TestContainer {
         m_frameworkFactory = frameworkFactory;
     }
 
+    @SuppressWarnings( "unchecked" )
     private <T> T getService( Class<T> serviceType, String filter, long timeout )
         throws TestContainerException
     {
         assert m_framework != null : "Framework should be up";
         assert serviceType != null : "serviceType not be null";
 
-        long start = System.currentTimeMillis();
+        final Long start = System.currentTimeMillis();
 
         LOG.info( "Aquiring Service " + serviceType.getName() + " " + ( filter != null ? filter : "" ) );
 
         do {
             try {
                 ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences( serviceType.getName(), filter );
-                if( reference != null ) {
-
-                    for( ServiceReference ref : reference ) {
-                        return ( (T) m_framework.getBundleContext().getService( ref ) );
-                    }
+                if( reference != null && reference.length > 0 ) {
+                    return ( (T) m_framework.getBundleContext().getService( reference[ 0 ] ) );
                 }
 
                 Thread.sleep( 200 );
@@ -123,24 +121,20 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    public void call( TestAddress address, Object... args )
-        throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
+    public void call( TestAddress address )
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
         ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, TIMEOUT_IN_MILLIS );
-        service.call(args);
+        service.call( address.arguments() );
     }
 
-    public long install( InputStream stream )
+    public synchronized long install( InputStream stream )
     {
         try {
-            if( m_installed == null ) {
-                m_installed = new Stack<Long>();
-            }
             Bundle b = m_framework.getBundleContext().installBundle( "local", stream );
             m_installed.push( b.getBundleId() );
             LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
-
+            setBundleStartLevel( b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE );
             // stream.close();
             b.start();
             return b.getBundleId();
@@ -150,18 +144,16 @@ public class NativeTestContainer implements TestContainer {
         return -1;
     }
 
-    public void cleanup()
+    public synchronized void cleanup()
     {
-        if( m_installed != null ) {
-            while( ( !m_installed.isEmpty() ) ) {
-                try {
-                    Long id = m_installed.pop();
-                    Bundle bundle = m_framework.getBundleContext().getBundle( id );
-                    bundle.uninstall();
-                    LOG.debug( "Uninstalled bundle " + id );
-                } catch( BundleException e ) {
-                    e.printStackTrace();
-                }
+        while( ( !m_installed.isEmpty() ) ) {
+            try {
+                Long id = m_installed.pop();
+                Bundle bundle = m_framework.getBundleContext().getBundle( id );
+                bundle.uninstall();
+                LOG.debug( "Uninstalled bundle " + id );
+            } catch( BundleException e ) {
+                e.printStackTrace();
             }
         }
     }
@@ -169,11 +161,8 @@ public class NativeTestContainer implements TestContainer {
     public void setBundleStartLevel( long bundleId, int startLevel )
         throws TestContainerException
     {
-        try {
-            m_framework.getBundleContext().getBundle( bundleId ).start( startLevel );
-        } catch( BundleException e ) {
-            e.printStackTrace();
-        }
+        StartLevel sl = getStartLevelService( m_framework.getBundleContext() );
+        sl.setBundleStartLevel( m_framework.getBundleContext().getBundle( bundleId ), startLevel );
     }
 
     public TestContainer stop()
@@ -255,23 +244,34 @@ public class NativeTestContainer implements TestContainer {
 
         m_framework.start();
 
+        StartLevel sl = getStartLevelService( context );
+
+        for( ProvisionOption bundle : m_bundles ) {
+            Bundle b = null;
+            b = context.installBundle( bundle.getURL() );
+            int startLevel = getStartLevel( bundle );
+            sl.setBundleStartLevel( b, startLevel );
+            b.start();
+            LOG.info( "+ Install (start@" + startLevel + ") " + bundle );
+
+        }
+        LOG.info( "++++ Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE );
+        sl.setStartLevel( Constants.START_LEVEL_TEST_BUNDLE );
+
+      
+
+    }
+
+    private StartLevel getStartLevelService( BundleContext context )
+    {
         StartLevel sl;
         while( ( sl = (StartLevel) context.getService( context.getServiceReference( StartLevel.class.getName() ) ) ) == null ) {
             System.out.println( "Find SL.." );
         }
-
         if( sl == null ) {
             throw new TestContainerException( "No Startlevel Service ?" );
         }
-        for( ProvisionOption bundle : m_bundles ) {
-            Bundle b = null;
-            LOG.info( "Install " + bundle );
-            b = context.installBundle( bundle.getURL() );
-            sl.setBundleStartLevel( b, getStartLevel( bundle ) );
-            b.start();
-        }
-        sl.setStartLevel( Constants.START_LEVEL_TEST_BUNDLE );
-
+        return sl;
     }
 
     private int getStartLevel( ProvisionOption bundle )

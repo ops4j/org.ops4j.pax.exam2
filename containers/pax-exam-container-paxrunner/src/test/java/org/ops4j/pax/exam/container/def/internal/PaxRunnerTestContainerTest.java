@@ -3,17 +3,9 @@ package org.ops4j.pax.exam.container.def.internal;
 import java.io.File;
 import java.io.IOException;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.Customizer;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
-import org.ops4j.pax.runner.platform.StoppableJavaRunner;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for PaxRunnerTestContainer

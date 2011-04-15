@@ -50,12 +50,7 @@ public class A2 {
         return options(
             junitBundles(),
             easyMockBundles(),
-            felix(),
-            //logProfile(),
-            rawPaxRunnerOption( "log","trace" ),
-            rawPaxRunnerOption( "repositories","http://windmill.com" ),
-            bundle( "mvn:foo/bar/1.0" )
-
+            felix()
         );
     }
 

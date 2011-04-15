@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class Probe {
 
-    public void withoutBCTest()
+    public void probe()
     {
     }
 

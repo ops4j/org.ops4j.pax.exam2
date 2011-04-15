@@ -18,8 +18,6 @@
 package org.ops4j.pax.exam.container.remote;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.rmi.registry.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.CoreOptions;
@@ -27,8 +25,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
-import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
-import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.TestTarget;
@@ -72,10 +68,10 @@ public class RBCRemoteTarget implements TestTarget
         return m_remoteBundleContextClient;
     }
 
-    public void call( TestAddress address,Object... args )
+    public void call( TestAddress address )
     {
         LOG.debug( "call [" + address + "]" );
-        m_remoteBundleContextClient.call( address ,args );
+        m_remoteBundleContextClient.call( address );
     }
 
 

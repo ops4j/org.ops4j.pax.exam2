@@ -73,7 +73,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
         }
     }
 
-    public void invoke( TestAddress address, Object... args )
+    public void invoke( TestAddress address )
         throws Exception
     {
         assert ( address != null ) : "TestAddress must not be null.";
@@ -82,7 +82,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
         if( testContainer == null ) {
             throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
         }
-        testContainer.call( address, args );
+        testContainer.call( address );
     }
 
     public Set<TestAddress> getTargets()
