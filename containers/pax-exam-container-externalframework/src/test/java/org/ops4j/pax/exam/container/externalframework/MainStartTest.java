@@ -63,12 +63,11 @@ public class MainStartTest  {
 		return options(
         		new KarafFrameworkConfigurationOption().
         			home(home).
-        			systemBundleId(2+4).
+        			systemBundleId(1+4).
                     defaultConf(),
                 systemProperty(KarafFrameworkConfigurationOption.JAVA_RUNNER).value(KarafFrameworkConfigurationOption.JAVA_RUNNER_DEFAULT),
                 
                 systemProperty("karaf.auto.start.1").value( "\""+fileMVNbundle+"|unused\""),
-        		systemProperty("karaf.auto.start.4").value( "\""+mvnUrl+"|unused\""),
         		systemProperty("fileMVNbundle").value( fileMVNbundle),
         		systemProperty("mvnUrl").value( fileMVNbundle),
         		
@@ -76,7 +75,7 @@ public class MainStartTest  {
         		ContainersOptions.loggingApi(2),
         		
         		// wait for ever
-                new TestContainerStartTimeoutOption(Long.MAX_VALUE),
+                new TestContainerStartTimeoutOption(60000),
                 //ContainersOptions.vmOption( "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008" ),
             		 
              waitForFrameworkStartupFor(60000)
@@ -100,9 +99,7 @@ public class MainStartTest  {
 		}
         fileMVNbundle = System.getProperty("fileMVNbundle");
         Assert.assertEquals(fileMVNbundle, bundles[1].getLocation());
-		Assert.assertEquals(mvnUrl, bundles[6].getLocation());
 		Assert.assertEquals(Bundle.ACTIVE, bundles[1].getState());
-		Assert.assertEquals(Bundle.ACTIVE, bundles[6].getState());
 	}
 	
 }
