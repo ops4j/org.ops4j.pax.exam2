@@ -15,30 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.swoosh.probes;
+package org.ops4j.pax.exam.player.probes;
 
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.util.tracker.ServiceTracker;
 import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * Simple pre-build test to be used with Pax Exam Player.
  *
- * This Counts all bundles and compares it to the given integer value parameter.
- * The parameter "assume" is mandatory.
+ * Takes an Interface Name as argument and tries to aquire that service in certain timespan.
+ * 
  */
-public class CountBundles {
+public class WaitForService {
 
     @SuppressWarnings( "unused" )
-    public void probe( BundleContext ctx, Integer assume )
+    public void probe( BundleContext ctx, String servicename, Integer wait )
         throws InterruptedException, InvalidSyntaxException
     {
-        if( assume == null ) { throw new TestContainerException( "Argument assume (integer) is mandatory." ); }
+        if( wait == null ) { wait = 1000; }
+        ServiceTracker tracker = new ServiceTracker( ctx, servicename, null );
+        tracker.open( true );
+        long start = System.currentTimeMillis();
 
-        int bundles = ctx.getBundles().length;
-        if( bundles != assume ) {
-            throw new TestContainerException( "Assumed " + assume + " bundles. But have " + bundles );
+        while( ( ( tracker.getTrackingCount() ) == 0 ) && ( start + wait > System.currentTimeMillis() ) ) {
+            Thread.sleep( 100 );
+        }
+        int c = tracker.getTrackingCount();
+        tracker.close();
+        if( c == 0 ) {
+            throw new TestContainerException( "Service " + servicename + " has not been available in time." );
         }
     }
 }

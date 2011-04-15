@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.swoosh;
+package org.ops4j.pax.exam.player;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.options.CompositeOption;

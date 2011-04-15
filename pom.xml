@@ -28,7 +28,7 @@
                 <module>core/pax-exam-extender-service</module>
                 <module>containers/pax-exam-container-native</module>
 
-                <module>drivers/pax-exam-swoosh</module>
+                <module>drivers/pax-exam-player</module>
                 <module>drivers/pax-exam-junit4</module>
 
                 <module>core/pax-exam-link-mvn</module>

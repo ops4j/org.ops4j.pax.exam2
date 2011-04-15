@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.swoosh;
+package org.ops4j.pax.exam.player;
 
 import junit.framework.AssertionFailedError;
 import org.junit.Test;
@@ -6,8 +6,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.swoosh.probes.CountBundles;
-import org.ops4j.pax.exam.swoosh.probes.WaitForService;
+import org.ops4j.pax.exam.player.probes.CountBundles;
+import org.ops4j.pax.exam.player.probes.WaitForService;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 
