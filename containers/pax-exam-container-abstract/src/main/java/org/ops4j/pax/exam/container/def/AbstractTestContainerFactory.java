@@ -72,7 +72,7 @@ public abstract class AbstractTestContainerFactory
         System.gc();
 
     }
-    // overide add RMI_PORT_PROPERTY and add start level
+    
     protected Option[] setDefaultOptions()
     {
         return new Option[]{

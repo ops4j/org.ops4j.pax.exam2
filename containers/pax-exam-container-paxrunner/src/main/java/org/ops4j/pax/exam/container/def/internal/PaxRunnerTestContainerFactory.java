@@ -19,6 +19,7 @@
 package org.ops4j.pax.exam.container.def.internal;
 
 import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.OptionUtils.filter;
 import static org.ops4j.pax.exam.OptionUtils.remove;
@@ -65,6 +66,16 @@ public class PaxRunnerTestContainerFactory
             frameworks = new FrameworkOption[]{ felix() };
         }
         return frameworks;
+    }
+    
+    @Override
+    protected Option[] setDefaultOptions() {
+    	return combine(super.setDefaultOptions(), 
+    			url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
+    		    url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )		
+    	);
+    	
+    	
     }
 
 }
