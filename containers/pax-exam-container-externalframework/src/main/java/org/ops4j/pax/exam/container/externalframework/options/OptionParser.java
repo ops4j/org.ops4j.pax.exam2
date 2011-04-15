@@ -8,8 +8,6 @@ import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.def.options.WorkingDirectoryOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
-import org.ops4j.pax.runner.platform.Configuration;
-import org.ops4j.pax.runner.platform.PlatformException;
 
 public interface OptionParser {
 
@@ -19,7 +17,7 @@ public interface OptionParser {
 	public abstract String[] getArguments();
 
 	public abstract void addBundleOption(int sl, Option[] options)
-			throws MalformedURLException, PlatformException;
+			throws MalformedURLException;
 
 	public abstract File getWorkingFolder();
 

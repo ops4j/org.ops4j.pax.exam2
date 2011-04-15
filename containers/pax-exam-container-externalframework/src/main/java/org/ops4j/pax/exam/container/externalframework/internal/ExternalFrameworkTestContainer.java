@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.container.externalframework.internal;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,14 +32,11 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.container.def.AbstractTestContainer;
-import org.ops4j.pax.exam.container.externalframework.internal.runnerosgi.RunnerStandeloneFramework;
-import org.ops4j.pax.exam.container.externalframework.internal.runnerosgi.StandeloneFramework;
+import org.ops4j.pax.exam.container.externalframework.internal.javarunner.DefaultJavaRunner;
+import org.ops4j.pax.exam.container.externalframework.internal.javarunner.JavaRunner;
+import org.ops4j.pax.exam.container.externalframework.internal.javarunner.StoppableJavaRunner;
 import org.ops4j.pax.exam.container.externalframework.options.ExternalFrameworkConfigurationOption;
 import org.ops4j.pax.exam.container.externalframework.options.OptionParser;
-import org.ops4j.pax.runner.platform.DefaultJavaRunner;
-import org.ops4j.pax.runner.platform.JavaRunner;
-import org.ops4j.pax.runner.platform.PlatformException;
-import org.ops4j.pax.runner.platform.StoppableJavaRunner;
 import org.osgi.framework.BundleException;
 
 /**
@@ -108,7 +106,7 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
     }
 
 	protected void startProcess() throws BundleException,
-			MalformedURLException, PlatformException {
+			MalformedURLException {
 		//start url handlers like mvn:, dir: ...
 		startURLHandler();
 		m_arguments.addBundleOption(60, m_options);
@@ -117,13 +115,13 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
 	}
     
     private void startURLHandler() throws BundleException {
-		RunnerStandeloneFramework runnerStandeloneFramework = new RunnerStandeloneFramework(m_arguments.getConfig());
-		
-    	 StandeloneFramework osgiFramework = new StandeloneFramework(
-    		runnerStandeloneFramework.getOptionResolver());
-		 osgiFramework.start();
-		 runnerStandeloneFramework.start(osgiFramework);
-		
+    	System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+		try {
+		   // new URL("aether:foo/bar");
+			new URL("mvn:foo/bar");
+		}catch(Exception e) {
+		    throw new RuntimeException( e );
+		}
 	}
 
     private void startOsgiFramework() {
@@ -141,9 +139,6 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
             		m_arguments.getConfig());
             LOG.info( "Test container ( "+m_config.getName() +") started in "
                      + ( System.currentTimeMillis() - startedAt ) + " millis" );
-        } catch (PlatformException ex) {
-            Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
-            throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
         } catch (NoSuchArchiverException ex) {
             Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
@@ -153,7 +148,10 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
         } catch (IOException ex) {
             Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
-        }
+        } catch (Exception ex) {
+            Logger.getLogger(ExternalFrameworkTestContainer.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("Cannot run "+ExternalFrameworkTestContainer.toString(m_arguments.getJavaHome(), m_arguments.getWorkingFolder(), m_arguments.getVmOptions(), arguments, m_arguments.getConfig()), ex);
+        } 
 	}
 
 	protected JavaRunner getJavaRunner() {

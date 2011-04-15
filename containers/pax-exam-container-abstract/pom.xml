@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
-        <version>2.0.0-RC4-SNAPSHOT</version>
+        <version>2.0.0-RC5-SNAPSHOT</version>
         <relativePath>../../pom/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-abstract</artifactId>
-    <version>2.0.0-RC4-SNAPSHOT</version>
+    <version>2.0.0-RC5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam - TestContainer Abstract</name>
@@ -26,98 +26,30 @@
         </resources>
     </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-remote</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-rbc-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-net</artifactId>
-        </dependency>
-          <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
-         <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-link-mvn</artifactId>
-            <version>${project.version}</version>
-             <scope>test</scope>
-        </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.exam</groupId>
-         	<artifactId>pax-exam-junit4</artifactId>
-         	<version>${project.version}</version>
-         	<type>jar</type>
-         	<scope>compile</scope>
-         </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.scanner</groupId>
-         	<artifactId>pax-scanner-all</artifactId>
-         	<version>${dependency.paxscanner.version}</version>
-         	<scope>compile</scope>
-         </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.scanner</groupId>
-         	<artifactId>pax-scanner-pom</artifactId>
-         	<version>1.1.0</version>
-         	<scope>compile</scope>
-         </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.scanner</groupId>
-         	<artifactId>pax-scanner-bundle</artifactId>
-         	<version>1.1.0</version>
-         	<scope>compile</scope>
-         </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.scanner</groupId>
-         	<artifactId>pax-scanner-common</artifactId>
-         	<version>1.1.0</version>
-         	<scope>compile</scope>
-         </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.scanner</groupId>
-         	<artifactId>pax-scanner-file</artifactId>
-         	<version>1.1.0</version>
-         	<scope>compile</scope>
-         </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.scanner</groupId>
-         	<artifactId>pax-scanner-composite</artifactId>
-         	<version>1.1.0</version>
-         	<scope>compile</scope>
-         </dependency>
-         <dependency>
-         	<groupId>org.ops4j.pax.scanner</groupId>
-         	<artifactId>pax-scanner-features</artifactId>
-         	<version>1.1.0</version>
-         	<scope>compile</scope>
-         </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-container-remote</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ops4j.pax.scanner</groupId>
+			<artifactId>pax-scanner-all</artifactId>
+			<version>${dependency.paxscanner.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.scanner</groupId>
+			<artifactId>pax-scanner-features</artifactId>
+			<version>${dependency.paxscanner.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 
 </project>

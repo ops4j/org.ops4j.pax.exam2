@@ -8,8 +8,8 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ops4j.pax.runner.platform.PlatformException;
-import org.ops4j.pax.runner.platform.internal.StreamUtils;
+import org.ops4j.io.StreamUtils;
+import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * 
@@ -50,7 +50,7 @@ public class Download
                            final boolean checkAttributes,
                            final boolean failOnValidation,
                            final boolean downloadFeeback)
-        throws PlatformException
+        
     {
         LOGGER.debug( "Downloading [" + url + "]" );
         String protocol = url.getProtocol();
@@ -82,7 +82,7 @@ public class Download
             name = path.substring(path.lastIndexOf("/"));
         }
         if (name == null) {
-            throw new PlatformException("Cannot compute the name form "+url);
+            throw new TestContainerException("Cannot compute the name form "+url);
         }
         File destination = new File( workDir, name );
 
@@ -96,36 +96,15 @@ public class Download
                 LOGGER.debug( "Creating new file at destination: " + destination.getAbsolutePath() );
                 destination.getParentFile().mkdirs();
                 destination.createNewFile();
-                FileOutputStream os = null;
-                try
-                {
-                    os = new FileOutputStream( destination );
-                    StreamUtils.ProgressBar progressBar = null;
-                    if ( LOGGER.isInfoEnabled() )
-                    {
-                        if ( downloadFeeback )
-                        {
-                            progressBar = new StreamUtils.FineGrainedProgressBar( name );
-                        }
-                        else
-                        {
-                            progressBar = new StreamUtils.CoarseGrainedProgressBar( name );
-                        }
-                    }
-                    StreamUtils.streamCopy( url, os.getChannel(), progressBar );
-                    LOGGER.debug( "Succesfully downloaded to [" + destination + "]" );
-                }
-                finally
-                {
-                    if ( os != null )
-                    {
-                        os.close();
-                    }
-                }
+                FileOutputStream os = new FileOutputStream( destination );
+                
+                StreamUtils.copyStream(url.openStream(), os, true );
+                LOGGER.debug( "Succesfully downloaded to [" + destination + "]" );
+               
             }
             catch ( IOException e )
             {
-                throw new PlatformException( "[" + url + "] could not be downloaded", e );
+                throw new TestContainerException( "[" + url + "] could not be downloaded", e );
             }
         }
         

@@ -37,6 +37,7 @@ import java.util.TreeMap;
 
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.def.options.FileScannerProvisionOption;
 import org.ops4j.pax.exam.container.def.options.RawPaxRunnerOptionOption;
 import org.ops4j.pax.exam.container.def.options.VMOption;
@@ -55,7 +56,6 @@ import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
-import org.ops4j.pax.runner.platform.PlatformException;
 import org.ops4j.pax.exam.container.externalframework.options.ExternalFrameworkConfigurationOption;
 import org.ops4j.pax.exam.container.externalframework.options.OptionParser;
 
@@ -295,7 +295,7 @@ public class DefaultOptionsParser implements OptionParser
     /* (non-Javadoc)
 	 * @see org.osp4j.pax.exam.container.externalframework.internal.OptionParser#addBundleOption(int, org.ops4j.pax.exam.Option[])
 	 */
-    public void addBundleOption(int sl, Option[] options) throws MalformedURLException, PlatformException {
+    public void addBundleOption(int sl, Option[] options) throws MalformedURLException {
     	appendBundles(getWorkingFolder(), filter( ProvisionOption.class, options ), sl);
     }
 
@@ -337,7 +337,7 @@ public class DefaultOptionsParser implements OptionParser
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (PlatformException e) {
+			} catch (TestContainerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -452,7 +452,7 @@ public class DefaultOptionsParser implements OptionParser
      *                                        if one of the bundles does not have a file
      */
     private void appendBundles( File bundleDir, 
-    		ProvisionOption<?>[] bundles, Integer defaultStartlevel ) throws MalformedURLException, PlatformException
+    		ProvisionOption<?>[] bundles, Integer defaultStartlevel ) throws MalformedURLException
     {
     	TreeMap<Integer, Map<String, NamedUrlProvition>> references = new TreeMap<Integer, Map<String, NamedUrlProvition>>();
         for( ProvisionOption<?> reference : bundles )
@@ -519,7 +519,7 @@ public class DefaultOptionsParser implements OptionParser
 	
 	
 	static void add(File bundleDir, TreeMap<Integer, Map<String, NamedUrlProvition>> references,
-			ProvisionOption<?> reference, Integer sl) throws MalformedURLException, PlatformException {
+			ProvisionOption<?> reference, Integer sl) throws MalformedURLException {
 		Map<String, NamedUrlProvition> list = references.get(sl);
 		if (list == null) {
 			list = new HashMap<String, NamedUrlProvition>();

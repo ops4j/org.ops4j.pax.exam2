@@ -21,17 +21,17 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.options.UrlReference;
-import org.ops4j.pax.runner.platform.JavaRunner;
-import org.ops4j.pax.runner.platform.PlatformException;
-import org.ops4j.pax.runner.platform.internal.StreamUtils;
 import org.ops4j.pax.exam.container.externalframework.internal.DefaultOptionsParser;
 import org.ops4j.pax.exam.container.externalframework.internal.Download;
+import org.ops4j.pax.exam.container.externalframework.internal.javarunner.JavaRunner;
 
 public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFrameworkConfigurationOption<?>> extends FrameworkOption implements CompositeOption {
     public static final String JAVA_RUNNER = "org.apache.karaf.testing.javarunner";
@@ -142,7 +142,7 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
 			JavaRunner runner,
 			String[] vmOptions,
 			String[] programOptions,
-			Properties config) throws PlatformException, NoSuchArchiverException, ArchiverException, IOException {
+			Properties config) throws Exception {
 		
 		File osgiFrameworkHomeDir = getOsgiFrameworkHomeDir(config);
         File f = getFile(configuration, workDir);
@@ -161,7 +161,7 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
 		return getOsgiFrameworkHomeDir(config);
 	}
 	
-	protected void extractTo(File f, File tempDir, File osgiFrameworkHome) throws PlatformException  {
+	protected void extractTo(File f, File tempDir, File osgiFrameworkHome)   {
         PlexusContainer container = null;
         
         try {
@@ -175,25 +175,25 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
             File tempPathFile = new File(tempDir, pathInArchive);
             deleteDir(tempPathFile);
             if (tempPathFile.exists())
-                throw new PlatformException("Cannot delete "+tempPathFile.getAbsolutePath());
+                throw new TestContainerException("Cannot delete "+tempPathFile.getAbsolutePath());
             deleteDir(osgiFrameworkHome);
             if (osgiFrameworkHome.exists())
-                throw new PlatformException("Cannot delete "+osgiFrameworkHome.getAbsolutePath());
+                throw new TestContainerException("Cannot delete "+osgiFrameworkHome.getAbsolutePath());
             ua.extract();
             osgiFrameworkHome.getParentFile().mkdirs();
             if (!tempPathFile.exists())
-                throw new PlatformException("Cannot extract into "+tempPathFile.getAbsolutePath());
+                throw new TestContainerException("Cannot extract into "+tempPathFile.getAbsolutePath());
             if (osgiFrameworkHome.exists())
-                throw new PlatformException("Cannot delete "+osgiFrameworkHome.getAbsolutePath());
+                throw new TestContainerException("Cannot delete "+osgiFrameworkHome.getAbsolutePath());
             tempPathFile.renameTo(osgiFrameworkHome);
             if (!osgiFrameworkHome.exists())
-                throw new PlatformException("Cannot rename dir to "+osgiFrameworkHome.getAbsolutePath());
-        } catch (PlatformException ex) {
+                throw new TestContainerException("Cannot rename dir to "+osgiFrameworkHome.getAbsolutePath());
+        } catch (TestContainerException ex) {
             Logger.getLogger(ExternalFrameworkConfigurationOption.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
         } catch (Exception ex) {
             Logger.getLogger(ExternalFrameworkConfigurationOption.class.getName()).log(Level.SEVERE, null, ex);
-            throw new PlatformException("Impossible to extract "+f+" to "+osgiFrameworkHome, ex);
+            throw new TestContainerException("Impossible to extract "+f+" to "+osgiFrameworkHome, ex);
         } finally {
             if (container != null)
                 container.dispose();
@@ -254,7 +254,7 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
     	if (oldFile.exists())
             throw new IOException("Cannot delete "+oldFile.getAbsolutePath());
         FileOutputStream out = new FileOutputStream(oldFile);
-    	StreamUtils.streamCopy( in, out.getChannel(), null );
+    	StreamUtils.copyStream( in, out, true );
     }
     
     public abstract String getAutoInstallProperty();
