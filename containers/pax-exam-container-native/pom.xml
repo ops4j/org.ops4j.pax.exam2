@@ -6,7 +6,7 @@
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
         <version>2.0.0-RC4-SNAPSHOT</version>
-        <relativePath>../../pom/pom.xml</relativePath>        
+        <relativePath>../../pom/pom.xml</relativePath>
     </parent>
 
     <groupId>org.ops4j.pax.exam</groupId>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>            
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
