@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.player.probes;
+package org.ops4j.pax.exam.testforge;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -23,11 +23,14 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.ops4j.pax.exam.TestContainerException;
 
 /**
- * 
+ * Simple pre-build test to be used with Pax Exam Player.
+ *
+ * This checks the current state of all bundles for a certain state range.
+ * The desiredMaxBundleState argument may be ommited. In this case it will be set to desiredMinBundleState.
  */
-public class BundleStartLevels {
-    
- @SuppressWarnings( "unused" )
+public class BundlesInState {
+
+    @SuppressWarnings( "unused" )
     public void probe( BundleContext ctx, Integer desiredMinBundleState, Integer desiredMaxBundleState )
         throws InterruptedException, InvalidSyntaxException
     {

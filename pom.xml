@@ -27,7 +27,7 @@
                 <module>core/pax-exam-spi</module>
                 <module>core/pax-exam-extender-service</module>
                 <module>containers/pax-exam-container-native</module>
-
+                <module>forge/pax-exam-testforge</module>
                 <module>drivers/pax-exam-player</module>
                 <module>drivers/pax-exam-junit4</module>
 

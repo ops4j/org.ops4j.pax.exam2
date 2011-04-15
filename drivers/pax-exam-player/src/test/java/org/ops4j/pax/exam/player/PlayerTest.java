@@ -6,8 +6,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.player.probes.CountBundles;
-import org.ops4j.pax.exam.player.probes.WaitForService;
+import org.ops4j.pax.exam.testforge.CountBundles;
+import org.ops4j.pax.exam.testforge.WaitForService;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 
