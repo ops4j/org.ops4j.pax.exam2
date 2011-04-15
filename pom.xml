@@ -31,12 +31,11 @@
                 <module>drivers/pax-exam-swoosh</module>
                 <module>drivers/pax-exam-junit4</module>
 
-                <module>spice/pax-exam-link-mvn</module>
-                <module>spice/pax-exam-link-assembly</module>
+                <module>core/pax-exam-link-mvn</module>
+                <module>core/pax-exam-link-assembly</module>
 
-
-                <module>spice/pax-exam-container-rbc</module>
-                <module>spice/pax-exam-container-rbc-client</module>
+                <module>core/pax-exam-container-rbc</module>
+                <module>core/pax-exam-container-rbc-client</module>
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
 

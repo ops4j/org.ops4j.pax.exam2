@@ -19,12 +19,9 @@ package org.ops4j.pax.exam.rbc.client.intern;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
-import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExceptionHelper;
