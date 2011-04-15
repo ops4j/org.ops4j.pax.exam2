@@ -8,7 +8,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.swoosh.probes.CountBundles;
+import org.ops4j.pax.exam.testforge.CountBundles;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
