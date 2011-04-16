@@ -21,6 +21,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
@@ -224,6 +225,11 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
         fileset.setUseDefaultExcludes( false );
         fileset.addInclude("**");
         fileSetManager.delete(fileset);
+    }
+    
+    public void deleteFile(File osgiHomeDir, String pathInOsgiFramework ) {
+    	File feature = new File(osgiHomeDir, pathInOsgiFramework);
+		FileUtils.delete(feature);
     }
     
     /**
