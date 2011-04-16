@@ -61,12 +61,42 @@ public class ContainersOptions
         // utility class
     }
     
+    /**
+     * Must exist in the classpath of this test a resource 'META-INF/links/org.osgi.compendium.link'
+     * 
+     * @param sl the start level, a number geater than 0.
+     * @return a Option.
+     */
     public static Option compendium(int sl) {
     	return url( "link:classpath:META-INF/links/org.osgi.compendium.link" ).startLevel(sl);
     }
     
+    /**
+     * Must exist in the classpath of this test a resource 'META-INF/links/org.ops4j.pax.logging.api.link'
+     * 
+     * @param sl the start level, a number geater than 0.
+     * @return a Option.
+     */
     public static Option loggingApi(int sl) {
     	return url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ).startLevel(sl);
+    }
+    /**
+     * Must exist in the classpath of this test a resource 'META-INF/links/pax-logging-service.link'
+     * 
+     * @param sl the start level, a number geater than 0.
+     * @return a Option.
+     */
+    public static Option paxLoggingService(int sl) {
+    	return url( "link:classpath:META-INF/links/pax-logging-service.link" ).startLevel(sl);
+    }
+    
+    /**
+     * Must exist in the classpath of this test a resource 'META-INF/links/org.junit.link'
+     * @param sl the start level, a number geater than 0.
+     * @return a Option.
+     */
+    public static Option junit(int sl) {
+    	return url( "link:classpath:META-INF/links/org.junit.link").startLevel(sl);
     }
 
     /**
