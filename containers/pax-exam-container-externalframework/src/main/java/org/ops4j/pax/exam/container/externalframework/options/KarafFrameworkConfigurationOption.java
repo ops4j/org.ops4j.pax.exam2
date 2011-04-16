@@ -21,12 +21,18 @@ public class KarafFrameworkConfigurationOption extends ExternalFrameworkConfigur
 		super();
 	}
     
-    public KarafFrameworkConfigurationOption home(String karafHome, String karafBase, String karafData) {
+    public KarafFrameworkConfigurationOption home(String karafHome, String karafBase, String karafData, boolean startRemoteShell) {
     	add(systemProperty("karaf.home").value(karafHome));
 		add(systemProperty("karaf.base").value(karafBase));
 		add(systemProperty("karaf.data").value(karafData));
+		add(systemProperty("karaf.startRemoteShell").value(Boolean.toString(startRemoteShell)));
 		return this;
 	}
+    
+    public KarafFrameworkConfigurationOption home(String karafHome, String karafBase, String karafData) {
+    	home(karafHome, karafBase, karafData, true);
+    	return this;
+    }
 	
 	public KarafFrameworkConfigurationOption home(String karafHome) {
 		return home(karafHome, karafHome);
@@ -65,8 +71,9 @@ public class KarafFrameworkConfigurationOption extends ExternalFrameworkConfigur
 		add(systemProperty("java.endorsed.dirs").value("${java.home}/jre/lib/endorsed"+File.pathSeparator+"${java.home}/lib/endorsed"+File.pathSeparator+"${karaf.home}/lib/endorsed"));
 		add(systemProperty("java.ext.dirs").value("${java.home}/jre/lib/ext"+File.pathSeparator+"${java.home}/lib/ext"+File.pathSeparator+"${karaf.home}/lib/ext"));
 		add(systemProperty("karaf.instances").value("${karaf.home}/instances"));
-		add(systemProperty("java.util.logging.config.file").value("${karaf.base}/etc/java.util.logging.properties"));
+		//add(systemProperty("java.util.logging.config.file").value("${karaf.base}/etc/java.util.logging.properties"));
 		add(systemProperty("karaf.maven.convert").value("false"));
+		add(systemProperty("karaf.lock").value("false"));
 		add(systemProperty("karaf.lock").value("false"));
         return this;
 	}
