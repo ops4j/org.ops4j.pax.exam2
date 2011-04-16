@@ -77,6 +77,15 @@ public class Download
         } else if ("file:".equals(protocol)) {
             String path = url.getPath();
             name = path.substring(path.lastIndexOf("/"));
+        } else if ("link:".equals(protocol)) {
+            String path = url.getPath();
+            name = path.substring(path.lastIndexOf("/"));
+            if (name.endsWith(".link")) {
+            	name = name.substring(0, name.length()-5);
+            }
+            if (!name.endsWith(".jar")) {
+            	name = name +".jar";
+            }
         } else {
         	String path = url.getPath();
             name = path.substring(path.lastIndexOf("/"));
