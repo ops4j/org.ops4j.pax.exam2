@@ -36,7 +36,7 @@ public class PlayerTest {
     public void count()
         throws Exception
     {
-        new Player().test( CountBundles.class, 4 ).play();
+        new Player().test( CountBundles.class, 5 ).play();
 
     }
 
@@ -44,7 +44,7 @@ public class PlayerTest {
     public void twoTests()
         throws Exception
     {
-        new Player().test( WaitForService.class, ProbeInvoker.class.getName(), 5000 ).test( CountBundles.class, 4 ).play();
+        new Player().test( WaitForService.class, ProbeInvoker.class.getName(), 5000 ).test( CountBundles.class, 5 ).play();
 
     }
 
