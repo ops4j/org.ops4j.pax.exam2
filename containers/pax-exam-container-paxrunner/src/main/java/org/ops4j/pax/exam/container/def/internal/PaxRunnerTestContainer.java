@@ -58,15 +58,15 @@ public class PaxRunnerTestContainer
 
     private boolean m_started = false;
 
-    /**
-     * Underlying Test Target
-     */
-    private RBCRemoteTarget m_target;
     final private StoppableJavaRunner m_javaRunner;
     final private String m_host;
     final private int m_port;
     final private Option[] m_options;
     final private String m_frameworkName;
+    /**
+     * Underlying Test Target
+     */
+    private RBCRemoteTarget m_target;
 
     /**
      * Constructor.
@@ -74,20 +74,15 @@ public class PaxRunnerTestContainer
      * @param javaRunner java runner to be used to start up Pax Runner
      */
     public PaxRunnerTestContainer( final StoppableJavaRunner javaRunner,
-                                   String host,
-                                   int port,
-                                   Option[] options )
+                                   final String host,
+                                   final int port,
+                                   final Option[] options )
     {
-        LOG.info( "New PaxRunnerTestContainer " );
-
         m_javaRunner = javaRunner;
         m_options = options;
         m_host = host;
         m_port = port;
-        // find the framework name:
-        FrameworkOption[] frameworkOptions = filter( FrameworkOption.class, options );
-        // expect it to be exactly one:
-        m_frameworkName = frameworkOptions[ 0 ].getName();
+        m_frameworkName = filter( FrameworkOption.class, options )[ 0 ].getName();
     }
 
     /**
@@ -102,13 +97,12 @@ public class PaxRunnerTestContainer
     /**
      * {@inheritDoc}
      */
-    public TestContainer start()
+    public synchronized TestContainer start()
     {
-        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
-
         try {
-            String name = UUID.randomUUID().toString();
+            String name = getUUID();
             Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
+
             ArgumentsBuilder argBuilder = new ArgumentsBuilder( m_host, m_port, args );
             m_target = new RBCRemoteTarget( name, m_port, argBuilder.getStartTimeout() );
 
@@ -116,10 +110,7 @@ public class PaxRunnerTestContainer
             URLUtils.resetURLStreamHandlerFactory();
             String[] arguments = argBuilder.getArguments();
 
-            LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
-            for( String s : arguments ) {
-                LOG.info( "#   " + s );
-            }
+            printExtraBeforeStart( arguments );
 
             Run.start( m_javaRunner, arguments );
             LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
@@ -139,10 +130,21 @@ public class PaxRunnerTestContainer
         return this;
     }
 
+    private String getUUID() {return UUID.randomUUID().toString();}
+
+    private void printExtraBeforeStart( String[] arguments )
+    {
+        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
+        LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
+        for( String s : arguments ) {
+            LOG.info( "#   " + s );
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
-    public TestContainer stop()
+    public synchronized TestContainer stop()
     {
         LOG.info( "Shutting down the test container (Pax Runner)" );
         try {
@@ -172,7 +174,7 @@ public class PaxRunnerTestContainer
     /**
      * {@inheritDoc}
      */
-    public void waitForState( final long bundleId, final int state, final long timeoutInMillis )
+    public synchronized void waitForState( final long bundleId, final int state, final long timeoutInMillis )
         throws TimeoutException
     {
 
@@ -186,17 +188,17 @@ public class PaxRunnerTestContainer
      * @return local options
      */
 
-    public void call( TestAddress address )
+    public synchronized void call( TestAddress address )
     {
         m_target.call( address );
     }
 
-    public long install( InputStream stream )
+    public synchronized long install( InputStream stream )
     {
         return m_target.install( stream );
     }
 
-    public void cleanup()
+    public synchronized void cleanup()
     {
         // unwind installed bundles basically.
         m_target.cleanup();
