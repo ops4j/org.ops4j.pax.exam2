@@ -221,9 +221,6 @@ public class NativeTestContainer implements TestContainer {
             parent = Thread.currentThread().getContextClassLoader();
             //Thread.currentThread().setContextClassLoader( null );
 
-            //See bug FELIX-2921 for felix 3.2.0
-            System.setProperty("dollar","$");
-            
             m_framework = m_frameworkFactory.newFramework( p );
             m_framework.init();
 
