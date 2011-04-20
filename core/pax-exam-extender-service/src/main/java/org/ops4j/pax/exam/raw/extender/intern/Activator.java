@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.raw.extender.intern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.ops4j.pax.swissbox.extender.BundleManifestScanner;
@@ -30,6 +32,8 @@ import org.ops4j.pax.swissbox.extender.RegexKeyManifestFilter;
  */
 public class Activator implements BundleActivator {
 
+    private static final Log LOG = LogFactory.getLog( Activator.class );
+    
     /**
      * Bundle watcher of web.xml.
      */
@@ -41,16 +45,18 @@ public class Activator implements BundleActivator {
     public void start( BundleContext bundleContext )
         throws Exception
     {
+        BundleManifestScanner scanner = new BundleManifestScanner(
+            new RegexKeyManifestFilter(
+                "PaxExam-.*"
+            )
+        );
         m_probeWatcher = new BundleWatcher<ManifestEntry>(
             bundleContext,
-            new BundleManifestScanner(
-                new RegexKeyManifestFilter(
-                    "PaxExam-.*"
-                )
-            ),
+            scanner,
             new TestBundleObserver()
         );
         m_probeWatcher.start();
+        LOG.info("start probe watcher");
     }
 
     /**
@@ -60,5 +66,6 @@ public class Activator implements BundleActivator {
         throws Exception
     {
         m_probeWatcher.stop();
+        LOG.info("stop probe watcher");
     }
 }
