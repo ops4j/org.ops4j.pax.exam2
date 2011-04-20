@@ -112,6 +112,9 @@ public class RemoteBundleContextImpl
         final ByteArrayInputStream inp = new ByteArrayInputStream( bundle );
         try {
             return m_bundleContext.installBundle( bundleLocation, inp ).getBundleId();
+        } catch( BundleException e ) {
+            LOG.error( "Problem installing " + bundleLocation, e );
+            throw e;
         } finally {
             try {
                 inp.close();
@@ -129,6 +132,7 @@ public class RemoteBundleContextImpl
             m_bundleContext.getBundle( id ).uninstall();
         } catch( BundleException e ) {
             LOG.error( "Problem uninstalling " + id, e );
+            throw e;
         }
     }
 
@@ -308,8 +312,13 @@ public class RemoteBundleContextImpl
             return;
         }
 
-        // Start bundle
-        bundle.start();
+        try {
+            // Start bundle
+            bundle.start();
+        } catch (BundleException e) {
+            LOG.error( "Some problem during starting bundle: "+ bundle.getSymbolicName(), e );
+            throw e; 
+        }
 
         bundleState = bundle.getState();
         if( bundleState != Bundle.ACTIVE ) {
