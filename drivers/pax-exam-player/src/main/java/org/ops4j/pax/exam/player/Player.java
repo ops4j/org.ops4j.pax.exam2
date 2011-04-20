@@ -20,6 +20,8 @@ package org.ops4j.pax.exam.player;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
@@ -107,7 +109,10 @@ public class Player {
             try {
                 stagedReactor.invoke( target );
             } catch( Exception e ) {
+                LogFactory.getLog(Player.class).error("Error: "+e.getMessage(), e);
                 Throwable t = ExceptionHelper.unwind( e );
+                if (t.getMessage() == null)
+                    throw new Error("Unknow message", t);
                 fail( t.getMessage() );
             }
         }

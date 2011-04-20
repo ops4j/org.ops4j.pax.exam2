@@ -257,7 +257,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                 try {
                     m_reactor.invoke( address );
                 } catch( Exception e ) {
+                    LOG.error("Error: "+e.getMessage(), e);
                     Throwable t = ExceptionHelper.unwind( e );
+                    if (t.getMessage() == null)
+                        throw new Error("Unknow message", t);
                     fail( t.getMessage() );
                 }
             }
