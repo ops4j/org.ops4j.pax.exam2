@@ -59,9 +59,9 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
      * @param javaRunner java runner to be used to start up Pax Runner
      */
     public PaxRunnerTestContainer( final StoppableJavaRunner javaRunner,
-                                   String host,
-                                   int port,
-                                   Option[] options )
+                                   final String host,
+                                   final int port,
+                                   final Option[] options )
     {
     	super(host, port, options);
         m_javaRunner = javaRunner;
