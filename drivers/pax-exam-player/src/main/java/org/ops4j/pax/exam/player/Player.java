@@ -32,7 +32,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
@@ -52,7 +52,7 @@ import static junit.framework.Assert.*;
  */
 public class Player {
 
-    private static final StagedExamReactorFactory DEFAULT_STRATEGY = new AllConfinedStagedReactorFactory();
+    private static final StagedExamReactorFactory DEFAULT_STRATEGY = new EagerSingleStagedReactorFactory();
     final private TestContainerFactory m_factory;
     final private Option[] m_parts;
     final private TestProbeBuilder m_builder;

@@ -76,7 +76,6 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
     {
        
     	super(host, port, options );
-    	LOG.info( "New ExternalFrameworkTestContainer " );
     	m_config = config;
     }
     
@@ -107,7 +106,7 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
 
 	protected void startProcess() throws BundleException,
 			MalformedURLException {
-		//start url handlers like mvn:, dir: ...
+	    //start url handlers like mvn:, dir: ...
 		startURLHandler();
 		m_arguments.addBundleOption(60, m_options);
 		//start osgi framework
@@ -127,7 +126,7 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
     private void startOsgiFramework() {
     	m_javaRunner = getJavaRunner();
         String[] arguments = m_arguments.getArguments();
-        
+        printExtraBeforeStart(arguments);
 		try {
             long startedAt = System.currentTimeMillis();
             m_config.run(

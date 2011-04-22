@@ -22,12 +22,6 @@ import static org.ops4j.pax.exam.OptionUtils.filter;
 
 import java.io.IOException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.UUID;
-import org.osgi.framework.Bundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.CompositeCustomizer;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -53,12 +47,9 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
     private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainer.class );
     
 
-    /**
-     * Underlying Test Target
-     */
     final private StoppableJavaRunner m_javaRunner;
     final private String m_frameworkName;
-
+   
 
 	private ArgumentsBuilder argBuilder;
 
@@ -73,14 +64,8 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
                                    Option[] options )
     {
     	super(host, port, options);
-        LOG.info( "New PaxRunnerTestContainer " );
-
         m_javaRunner = javaRunner;
-       
-        // find the framework name:
-        FrameworkOption[] frameworkOptions = filter( FrameworkOption.class, options );
-        // expect it to be exactly one:
-        m_frameworkName = frameworkOptions[ 0 ].getName();
+        m_frameworkName = filter( FrameworkOption.class, options )[ 0 ].getName();
     }
     
     protected String getInfo() {
@@ -106,6 +91,16 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
     protected long getStartTimeout() {
     	return argBuilder.getStartTimeout();
     }
+
+    protected void printExtraBeforeStart( String[] arguments )
+    {
+        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
+        LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
+        for( String s : arguments ) {
+            LOG.info( "#   " + s );
+        }
+    }
+
     @Override
     protected void parseOption(String m_host, int m_port, Option[] args) throws IOException {
     	argBuilder = new ArgumentsBuilder( m_host, m_port, args );
@@ -117,10 +112,7 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
         URLUtils.resetURLStreamHandlerFactory();
         String[] arguments = argBuilder.getArguments();
 
-        LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
-        for( String s : arguments ) {
-            LOG.info( "#   " + s );
-        }
+        printExtraBeforeStart( arguments );
 
         Run.start( m_javaRunner, arguments );
         LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "

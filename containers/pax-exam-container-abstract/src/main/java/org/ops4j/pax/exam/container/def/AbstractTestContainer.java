@@ -91,11 +91,10 @@ public abstract class AbstractTestContainer
      * {@inheritDoc}
      * @return a TestContainer this;
      */
-    public TestContainer start()
+    public synchronized TestContainer start()
     {
-    	LOG.info( "Starting up the test container ("+getInfo()+ " )" );
     	try {
-	        String name = UUID.randomUUID().toString();
+	        String name = getUUID();
 	        Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
 	        parseOption(m_host, m_port, args);
 	        
@@ -124,7 +123,7 @@ public abstract class AbstractTestContainer
     /**
      * {@inheritDoc}
      */
-    public TestContainer stop()
+    public synchronized TestContainer stop()
     {
         LOG.info( "Shutting down the test container (Pax Runner)" );
         try {
@@ -197,7 +196,7 @@ public abstract class AbstractTestContainer
     /**
      * {@inheritDoc}
      */
-    public void waitForState( final long bundleId, final int state, final long timeoutInMillis )
+    public synchronized void waitForState( final long bundleId, final int state, final long timeoutInMillis )
         throws TimeoutException
     {
 
@@ -208,7 +207,7 @@ public abstract class AbstractTestContainer
     /**
      * {@inheritDoc}
      */
-    public void call( TestAddress address )
+    public synchronized void call( TestAddress address )
     {
         m_target.call( address );
     }
@@ -216,7 +215,7 @@ public abstract class AbstractTestContainer
     /**
      * {@inheritDoc}
      */
-    public long install( InputStream stream )
+    public synchronized long install( InputStream stream )
     {
         return m_target.install( stream );
     }
@@ -224,9 +223,20 @@ public abstract class AbstractTestContainer
     /**
      * {@inheritDoc}
      */
-    public void cleanup()
+    public synchronized void cleanup()
     {
         // unwind installed bundles basically.
         m_target.cleanup();
+    }
+    
+    protected String getUUID() {return UUID.randomUUID().toString();}
+    
+    protected void printExtraBeforeStart( String[] arguments )
+    {
+        LOG.info( "Starting up the test container ("+getInfo()+ " )" );
+        LOG.info( "Arguments: ( " + arguments.length + ")" );
+        for( String s : arguments ) {
+            LOG.info( "#   " + s );
+        }
     }
 }
