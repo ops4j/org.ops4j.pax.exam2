@@ -121,7 +121,7 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    public void call( TestAddress address )
+    public synchronized void call( TestAddress address )
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
         ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, TIMEOUT_IN_MILLIS );

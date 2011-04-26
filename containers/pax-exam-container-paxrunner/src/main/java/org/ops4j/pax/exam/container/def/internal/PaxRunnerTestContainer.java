@@ -72,6 +72,9 @@ public class PaxRunnerTestContainer
      * Constructor.
      *
      * @param javaRunner java runner to be used to start up Pax Runner
+     * @param host       RMI Hostname for this container.
+     * @param port       RMI Port to be used (Registry must exist)
+     * @param options    Options to be parsed.
      */
     public PaxRunnerTestContainer( final StoppableJavaRunner javaRunner,
                                    final String host,
@@ -149,7 +152,7 @@ public class PaxRunnerTestContainer
         LOG.info( "Shutting down the test container (Pax Runner)" );
         try {
             if( m_started ) {
-                cleanup();
+                m_target.stop();
                 RemoteBundleContextClient remoteBundleContextClient = m_target.getClientRBC();
                 if( remoteBundleContextClient != null ) {
                     remoteBundleContextClient.stop();
@@ -174,7 +177,7 @@ public class PaxRunnerTestContainer
     /**
      * {@inheritDoc}
      */
-    public synchronized void waitForState( final long bundleId, final int state, final long timeoutInMillis )
+    private void waitForState( final long bundleId, final int state, final long timeoutInMillis )
         throws TimeoutException
     {
 
@@ -196,12 +199,6 @@ public class PaxRunnerTestContainer
     public synchronized long install( InputStream stream )
     {
         return m_target.install( stream );
-    }
-
-    public synchronized void cleanup()
-    {
-        // unwind installed bundles basically.
-        m_target.cleanup();
     }
 
     @Override

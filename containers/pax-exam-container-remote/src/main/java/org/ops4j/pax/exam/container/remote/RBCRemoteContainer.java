@@ -18,11 +18,8 @@
 package org.ops4j.pax.exam.container.remote;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.TimeoutException;
 
 /**
@@ -35,9 +32,9 @@ import org.ops4j.pax.exam.TimeoutException;
 public class RBCRemoteContainer implements TestContainer
 {
 
-    final private TestTarget m_target;
+    final private TestContainer m_target;
 
-    public RBCRemoteContainer( TestTarget target )
+    public RBCRemoteContainer( final TestContainer target )
     {
         m_target = target;
     }
@@ -52,17 +49,6 @@ public class RBCRemoteContainer implements TestContainer
         return m_target.install( stream );
     }
 
-    public void cleanup( )
-    {
-        m_target.cleanup( );
-    }
-
-    public void setBundleStartLevel( long bundleId, int startLevel )
-        throws TestContainerException
-    {
-        // do nothing
-    }
-
     public TestContainer start()
         throws TimeoutException
     {
@@ -73,16 +59,6 @@ public class RBCRemoteContainer implements TestContainer
     public TestContainer stop()
         throws TimeoutException
     {
-        // implicit cleanup
-        cleanup();
         return this;
     }
-
-    public void waitForState( long bundleId, int state, long timeoutInMillis )
-        throws TimeoutException
-    {
-        // do nothing
-    }
-
-
 }

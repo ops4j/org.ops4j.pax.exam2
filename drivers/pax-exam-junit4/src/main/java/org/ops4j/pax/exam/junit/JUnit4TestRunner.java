@@ -1,5 +1,5 @@
 /*
- * Copyright 2010,2011 Toni Menzel.
+ * Copyright 2010 - 2011 Toni Menzel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,6 +202,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private StagedExamReactorFactory getFactory( Class testClass )
         throws InstantiationException, IllegalAccessException
     {
@@ -251,9 +252,8 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             {
                 TestAddress address = m__childs.get( method );
                 TestAddress root = address.root();
-                Object[] args = root.arguments();
 
-                LOG.info( "Invoke " + method.getName() + " @ " + address + " Arguments: " + args.toString() );
+                LOG.info( "Invoke " + method.getName() + " @ " + address + " Arguments: " + root.arguments() );
                 try {
                     m_reactor.invoke( address );
                 } catch( Exception e ) {

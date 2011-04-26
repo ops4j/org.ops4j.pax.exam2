@@ -30,6 +30,7 @@ import org.ops4j.pax.swissbox.extender.RegexKeyManifestFilter;
  */
 public class Activator implements BundleActivator {
 
+    private static final String PAX_EXAM_HEADER_PREFIX = "PaxExam-.*";
     /**
      * Bundle watcher of web.xml.
      */
@@ -45,7 +46,7 @@ public class Activator implements BundleActivator {
             bundleContext,
             new BundleManifestScanner(
                 new RegexKeyManifestFilter(
-                    "PaxExam-.*"
+                    PAX_EXAM_HEADER_PREFIX
                 )
             ),
             new TestBundleObserver()

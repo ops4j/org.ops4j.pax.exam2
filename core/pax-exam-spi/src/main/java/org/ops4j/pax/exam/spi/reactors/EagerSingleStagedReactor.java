@@ -92,16 +92,8 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
 
     public void tearDown()
     {
-        // Unwind first
-        for( TestContainer container : m_targetContainer ) {
-            container.cleanup();
-        }
-
-        // Then stop
         for( TestContainer container : m_targetContainer ) {
             container.stop();
         }
     }
-
-
 }

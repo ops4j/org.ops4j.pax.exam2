@@ -1,5 +1,6 @@
 /*
  * Copyright 2008 Alin Dreghiciu.
+ * Copyright 2009-2011 Toni Menzel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +18,8 @@
  */
 package org.ops4j.pax.exam;
 
+import java.io.InputStream;
+
 /**
  * Management of an OSGi framework that can be used as a integration regression container.
  * Each container is also a test target.
@@ -28,18 +31,7 @@ package org.ops4j.pax.exam;
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
  */
-public interface TestContainer extends TestTarget {
-
-    /**
-     * Sets the start level for a bundle.
-     *
-     * @param bundleId   bundle id
-     * @param startLevel start level
-     *
-     * @throws TestContainerException if startlevel cannot be set
-     */
-    void setBundleStartLevel( long bundleId, int startLevel )
-        throws TestContainerException;
+public interface TestContainer {
 
     /**
      * Starts the regression container.
@@ -52,6 +44,21 @@ public interface TestContainer extends TestTarget {
         throws TimeoutException;
 
     /**
+     * @param stream stream the content
+     *
+     * @return Bundle ID
+     */
+    long install( InputStream stream );
+
+    /**
+     * @param address the target to be called.
+     *
+     * @throws TestContainerException exception
+     */
+    void call( TestAddress address )
+        throws TestContainerException;
+
+    /**
      * Stops the regression container. Implementations should take care of calling cleanup() internally, too.
      *
      * @return this for fluent api
@@ -60,6 +67,5 @@ public interface TestContainer extends TestTarget {
      */
     TestContainer stop()
         throws TimeoutException;
-
 
 }

@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.TestTargetFactory;
 
 /**
  * Pax Exam runtime.
@@ -113,15 +112,4 @@ public class PaxExamRuntime {
             throw new IllegalArgumentException( "Class  " + select + "is not a valid Test Container Factory.", e );
         }
     }
-
-    /**
-     * Discovers the regression target. Discovery is performed via ServiceLoader mechanism.
-     *
-     * @return discovered regression target
-     */
-    public static TestTargetFactory getTestTargetFactory()
-    {
-        return ServiceLoader.load( TestTargetFactory.class ).iterator().next();
-    }
-
 }

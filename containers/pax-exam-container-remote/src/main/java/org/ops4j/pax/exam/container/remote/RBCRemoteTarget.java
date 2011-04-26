@@ -23,21 +23,24 @@ import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
-import org.ops4j.pax.exam.TestTarget;
 import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
 import org.ops4j.pax.exam.rbc.client.intern.RetryRemoteBundleContextClient;
 
 import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
+ *
+ * TODO Needs JavaDoc
+ * 
  * @author Toni Menzel
  * @since Jan 25, 2010
  */
-public class RBCRemoteTarget implements TestTarget
+public class RBCRemoteTarget implements TestContainer
 {
 
     private static final Log LOG = LogFactory.getLog( RBCRemoteTarget.class );
@@ -74,6 +77,11 @@ public class RBCRemoteTarget implements TestTarget
         m_remoteBundleContextClient.call( address );
     }
 
+    public TestContainer start()
+        throws TimeoutException
+    {
+        return this;
+    }
 
     public long install( InputStream probe )
         throws TestContainerException
@@ -86,18 +94,12 @@ public class RBCRemoteTarget implements TestTarget
         return id;
     }
 
-    public void cleanup()
-        throws TestContainerException
-    {
-        LOG.debug( "Cleaning up.. " );
-
-        m_remoteBundleContextClient.cleanup();
-    }
-
-    public void waitForState( long bundleId, int state, long timeoutInMillis )
+    public TestContainer stop()
         throws TimeoutException
     {
-        m_remoteBundleContextClient.waitForState(bundleId,state,timeoutInMillis);
+        m_remoteBundleContextClient.cleanup();
+
+        return this;
     }
 
     /**

@@ -18,7 +18,6 @@ package org.ops4j.pax.exam.container.remote;
 import org.junit.Test;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
