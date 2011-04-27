@@ -17,22 +17,20 @@ import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.container.externalframework.internal.DefaultOptionsParser;
+import org.ops4j.pax.exam.container.externalframework.internal.Download;
+import org.ops4j.pax.exam.container.externalframework.internal.javarunner.JavaRunner;
 import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.options.UrlReference;
-import org.ops4j.pax.exam.container.externalframework.internal.DefaultOptionsParser;
-import org.ops4j.pax.exam.container.externalframework.internal.Download;
-import org.ops4j.pax.exam.container.externalframework.internal.javarunner.JavaRunner;
 
 public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFrameworkConfigurationOption<?>> extends FrameworkOption implements CompositeOption {
     public static final String JAVA_RUNNER = "org.apache.karaf.testing.javarunner";

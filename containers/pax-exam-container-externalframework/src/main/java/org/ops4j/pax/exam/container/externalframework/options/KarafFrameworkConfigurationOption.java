@@ -47,17 +47,17 @@ public class KarafFrameworkConfigurationOption extends ExternalFrameworkConfigur
 	}
 	
     public KarafFrameworkConfigurationOption home() {
-		return home(getKarafHome());
+		return home(getDefaultKarafHome());
 	}
 
-    static String getKarafHome() {
+    private static String getDefaultKarafHome() {
         String ret = null;
         ret = System.getProperty("karaf.home");
         if (ret != null)
             return ret;
         File target = new File("target");
         if (target.exists()) {
-            target = new File(target, "karaf");
+            target = new File(target, "karaf-"+System.currentTimeMillis());
             target.mkdir();
             return target.getAbsolutePath();
         }
@@ -73,7 +73,6 @@ public class KarafFrameworkConfigurationOption extends ExternalFrameworkConfigur
 		add(systemProperty("karaf.instances").value("${karaf.home}/instances"));
 		//add(systemProperty("java.util.logging.config.file").value("${karaf.base}/etc/java.util.logging.properties"));
 		add(systemProperty("karaf.maven.convert").value("false"));
-		add(systemProperty("karaf.lock").value("false"));
 		add(systemProperty("karaf.lock").value("false"));
         return this;
 	}

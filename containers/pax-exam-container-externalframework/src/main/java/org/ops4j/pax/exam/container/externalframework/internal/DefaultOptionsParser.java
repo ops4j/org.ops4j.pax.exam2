@@ -47,7 +47,6 @@ import org.ops4j.pax.exam.options.AbstractDelegateProvisionOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
-import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
@@ -69,13 +68,6 @@ import org.ops4j.pax.exam.container.externalframework.options.OverrideOption;
  * @since 0.3.0 December 10, 2008
  */
 public class DefaultOptionsParser implements OptionParser {
-
-    /**
-     * Controls if one of the options set a Args Option manually. Otherwise,
-     * defaultArguments will include a --noArgs flag to prevent unintentional
-     * runner.args files being picked up by paxrunner.
-     */
-    private boolean argsSetManually = false;
 
     /**
      * Pax Runner compatible arguments parsed from input.
@@ -150,9 +142,16 @@ public class DefaultOptionsParser implements OptionParser {
                 filterOne(false, true, BundleStartLevelOption.class, options));
 
         extractArguments(filter(BootClasspathLibraryOption.class, options));
-        add(arguments,
-                extractArguments(filter(DebugClassLoadingOption.class, options)));
-        add(arguments, defaultArguments());
+        String folder = System.getProperty("org.ops4j.pax.exam.container.externalframework.workingdirectory");
+        if (folder == null) {
+            folder = System.getProperty("java.io.tmpdir")
+                + "/paxexam_external_" + System.getProperty("user.name");
+        } else {
+            if (folder.endsWith("-SNAPSHOT")) {
+                folder.replace("-SNAPSHOT", "-"+System.currentTimeMillis());
+            }
+        }
+        createWorkingDirectory(folder);
 
         m_parsedArgs = arguments.toArray(new String[arguments.size()]);
         m_RMItimeOut = Util.getRMITimeout(options);
@@ -211,43 +210,8 @@ public class DefaultOptionsParser implements OptionParser {
     }
 
     /**
-     * Adds an argumentto a list of arguments by skipping null or empty
-     * arguments.
-     * 
-     * @param arguments
-     *            list to which the arguments should be added
-     * @param argument
-     *            argument to be added (can be null or empty)
-     */
-    private void add(final List<String> arguments, final String argument) {
-        if (argument != null && argument.trim().length() > 0) {
-            arguments.add(argument);
-        }
-    }
-
-    /**
-     * Returns a collection of default Pax Runner arguments.
-     * 
-     * @return collection of default arguments
-     */
-    private Collection<String> defaultArguments() {
-        final List<String> arguments = new ArrayList<String>();
-        arguments.add("--noConsole");
-        arguments.add("--noDownloadFeedback");
-        if (!argsSetManually) {
-            arguments.add("--noArgs");
-        }
-        String folder = System.getProperty("java.io.tmpdir")
-                + "/paxexam_runner_" + System.getProperty("user.name");
-
-        arguments.add("--workingDirectory="
-                + createWorkingDirectory(folder).getAbsolutePath());
-        return arguments;
-    }
-
-    /**
      * Converts system properties and vm options into corresponding arguments
-     * (--vmOptions).
+     * ().
      * 
      * @param systemProperties
      *            system property options
@@ -375,24 +339,6 @@ public class DefaultOptionsParser implements OptionParser {
     }
 
     /**
-     * Converts debug class loading option into corresponding argument
-     * (--debugClassLoading).
-     * 
-     * @param debugClassLoadingOptions
-     *            debug class loading options
-     * 
-     * @return converted Pax Runner argument
-     */
-    private String extractArguments(
-            final DebugClassLoadingOption[] debugClassLoadingOptions) {
-        if (debugClassLoadingOptions.length > 0) {
-            return "--debugClassLoading";
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Creates by default a working directory as
      * ${java.io.tmpdir}/paxexam_runner_${user.name}. Unless
      * manualWorkingDirectory is set.
@@ -402,15 +348,15 @@ public class DefaultOptionsParser implements OptionParser {
      * @return created working directory
      */
     private File createWorkingDirectory(String workingDirectoryOption) {
-        final File workDir = new File(workingDirectoryOption);
-        // create if not existent:
-        if (!workDir.exists()) {
-            workDir.mkdirs();
-        }
         if (m_workingFolder == null) {
+            final File workDir = new File(workingDirectoryOption);
+            // create if not existent:
+            if (!workDir.exists()) {
+                workDir.mkdirs();
+            }
             m_workingFolder = workDir;
         }
-        return workDir;
+        return m_workingFolder;
     }
 
     /*
