@@ -26,9 +26,14 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
  */
 public class LocalAllConfinedStagedReactorFactory implements StagedExamReactorFactory
 {
+    ClassLoader m_loader;
+    
+    public LocalAllConfinedStagedReactorFactory(ClassLoader loader) {
+        m_loader = loader;
+    }
 
     public StagedExamReactor create( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
-        return new LocalAllConfinedStagedReactor( containers, mProbes );
+        return new LocalAllConfinedStagedReactor( m_loader, containers, mProbes );
     }
 }

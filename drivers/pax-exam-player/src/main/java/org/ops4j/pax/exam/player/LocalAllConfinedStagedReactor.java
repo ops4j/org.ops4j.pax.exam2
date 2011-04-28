@@ -36,12 +36,15 @@ public class LocalAllConfinedStagedReactor implements StagedExamReactor {
     final private List<TestProbeProvider> m_probes;
     final private HashMap<TestAddress, TestContainer> m_map;
 
+    private ClassLoader m_loader;
+
     /**
      * @param containers to be used
      * @param mProbes    probes to be installed
      */
-    public LocalAllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
+    public LocalAllConfinedStagedReactor( ClassLoader loader, List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
+        m_loader = loader;
         m_probes = mProbes;
         m_map = new HashMap<TestAddress, TestContainer>();
         // todo: don't do this here.
@@ -69,7 +72,7 @@ public class LocalAllConfinedStagedReactor implements StagedExamReactor {
         String clazz = caption.substring(0, i);
         String method = caption.substring(i+1);
         LocalProbeInvokerImpl probe = 
-            new LocalProbeInvokerImpl(this.getClass().getClassLoader(), clazz, method, container);
+            new LocalProbeInvokerImpl(m_loader, clazz, method, container);
         container.start();
         try {
             
