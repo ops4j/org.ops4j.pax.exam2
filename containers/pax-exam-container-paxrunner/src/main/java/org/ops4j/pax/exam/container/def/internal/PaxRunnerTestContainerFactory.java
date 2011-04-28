@@ -18,6 +18,7 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
+import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.OptionUtils.combine;
@@ -70,7 +71,9 @@ public class PaxRunnerTestContainerFactory
     
     @Override
     protected Option[] setDefaultOptions() {
-    	return combine(super.setDefaultOptions(), 
+    	return combine(super.setDefaultOptions(),
+    	        // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
+    	        bootDelegationPackage( "sun.*" ),
     			url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
     		    url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )		
     	);
