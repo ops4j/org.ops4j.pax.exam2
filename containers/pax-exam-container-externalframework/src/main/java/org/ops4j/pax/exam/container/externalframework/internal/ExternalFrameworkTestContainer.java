@@ -185,7 +185,7 @@ class ExternalFrameworkTestContainer extends AbstractTestContainer
     @Override
     public String toString()
     {
-        return "PaxRunnerTestContainer{}";
+        return "ExternalTestContainer{}";
     }
 
     static private String toString(String javaHome, File workingFolder, String[] vmOptions, String[] arguments, Properties config) {
