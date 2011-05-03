@@ -31,7 +31,11 @@ Run Build:
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 2.0.0-RC2.
+The current release of Pax Exam is 2.0.0-RC4.
+
+## Issue Tracking
+
+* <http://github.com/ops4j/org.ops4j.pax.exam2/issues>
 
 ## Continuus Integration Builds
 
