@@ -64,14 +64,14 @@ public class NativeTestContainer implements TestContainer {
     final private FrameworkFactory m_frameworkFactory;
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
     private static final long TIMEOUT_IN_MILLIS = 10000;
-    private long timeout;
+    private long m_timeout;
 
     public NativeTestContainer(FrameworkFactory frameworkFactory, List<ProvisionOption> bundles, Map<String, String> properties) {
         m_bundles = bundles;
         m_properties = properties;
         m_frameworkFactory = frameworkFactory;
         String s = m_properties.get("pax-exam.framework.shutdown.timeout");
-        timeout = s != null ? Long.valueOf(s) : TIMEOUT_IN_MILLIS;
+        m_timeout = s != null ? Long.valueOf(s) : TIMEOUT_IN_MILLIS;
     }
 
     @SuppressWarnings("unchecked")
@@ -121,7 +121,7 @@ public class NativeTestContainer implements TestContainer {
 
     public void call(TestAddress address) {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
-        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression, timeout);
+        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression, m_timeout);
         service.call(address.arguments());
     }
 
@@ -167,7 +167,7 @@ public class NativeTestContainer implements TestContainer {
                 LOG.debug("Framework goes down..");
                 cleanup();
                 m_framework.stop();
-                m_framework.waitForStop(1000);
+                m_framework.waitForStop(m_timeout);
                 m_framework = null;
 
             } catch (BundleException e) {
@@ -257,7 +257,7 @@ public class NativeTestContainer implements TestContainer {
             }
         });
         try {
-            latch.await(timeout, TimeUnit.MILLISECONDS);
+            latch.await(m_timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
