@@ -20,15 +20,14 @@ package org.ops4j.pax.exam.nat.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.ServiceReference;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import org.osgi.framework.*;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.service.startlevel.StartLevel;
@@ -51,12 +50,11 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 public class NativeTestContainer implements TestContainer {
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "NativeContainer:" + m_frameworkFactory.toString();
     }
 
-    final private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
+    final private static Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
 
     final private Stack<Long> m_installed = new Stack<Long>();
 
@@ -66,243 +64,243 @@ public class NativeTestContainer implements TestContainer {
     final private FrameworkFactory m_frameworkFactory;
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
     private static final long TIMEOUT_IN_MILLIS = 10000;
+    private long m_timeout;
 
-    public NativeTestContainer( FrameworkFactory frameworkFactory, List<ProvisionOption> bundles, Map<String, String> properties )
-    {
+    public NativeTestContainer(FrameworkFactory frameworkFactory, List<ProvisionOption> bundles, Map<String, String> properties) {
         m_bundles = bundles;
         m_properties = properties;
         m_frameworkFactory = frameworkFactory;
+        String s = m_properties.get("pax-exam.framework.shutdown.timeout");
+        m_timeout = s != null ? Long.valueOf(s) : TIMEOUT_IN_MILLIS;
     }
 
-    @SuppressWarnings( "unchecked" )
-    private <T> T getService( Class<T> serviceType, String filter, long timeout )
-        throws TestContainerException
-    {
+    @SuppressWarnings("unchecked")
+    private <T> T getService(Class<T> serviceType, String filter, long timeout)
+            throws TestContainerException {
         assert m_framework != null : "Framework should be up";
         assert serviceType != null : "serviceType not be null";
 
         final Long start = System.currentTimeMillis();
 
-        LOG.info( "Aquiring Service " + serviceType.getName() + " " + ( filter != null ? filter : "" ) );
+        LOG.info("Aquiring Service " + serviceType.getName() + " " + (filter != null ? filter : ""));
 
         do {
             try {
-                ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences( serviceType.getName(), filter );
-                if( reference != null && reference.length > 0 ) {
-                    return ( (T) m_framework.getBundleContext().getService( reference[ 0 ] ) );
+                ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences(serviceType.getName(), filter);
+                if (reference != null && reference.length > 0) {
+                    return ((T) m_framework.getBundleContext().getService(reference[0]));
                 }
 
-                Thread.sleep( 200 );
-            } catch( Exception e ) {
-                LOG.error( "Some problem during looking up service from framework: " + m_framework, e );
+                Thread.sleep(200);
+            } catch (Exception e) {
+                LOG.error("Some problem during looking up service from framework: " + m_framework, e);
             }
             // wait a bit
-        } while( ( System.currentTimeMillis() ) < start + timeout );
-        printAvailableAlternatives( serviceType );
+        } while ((System.currentTimeMillis()) < start + timeout);
+        printAvailableAlternatives(serviceType);
 
-        throw new TestContainerException( "Not found a matching Service " + serviceType.getName() + " for Filter:" + ( filter != null ? filter : "" ) );
+        throw new TestContainerException("Not found a matching Service " + serviceType.getName() + " for Filter:" + (filter != null ? filter : ""));
 
     }
 
-    private <T> void printAvailableAlternatives( Class<T> serviceType )
-    {
+    private <T> void printAvailableAlternatives(Class<T> serviceType) {
         try {
-            ServiceReference[] reference = m_framework.getBundleContext().getAllServiceReferences( serviceType.getName(), null );
-            if( reference != null ) {
-                LOG.warn( "Test Endpoints: " + reference.length );
+            ServiceReference[] reference = m_framework.getBundleContext().getAllServiceReferences(serviceType.getName(), null);
+            if (reference != null) {
+                LOG.warn("Test Endpoints: " + reference.length);
 
-                for( ServiceReference ref : reference ) {
-                    LOG.warn( "Endpoint: " + ref );
+                for (ServiceReference ref : reference) {
+                    LOG.warn("Endpoint: " + ref);
                 }
             }
 
-        } catch( Exception e ) {
-            LOG.error( "Some problem during looking up alternative service. ", e );
+        } catch (Exception e) {
+            LOG.error("Some problem during looking up alternative service. ", e);
         }
     }
 
-    public void call( TestAddress address )
-    {
+    public void call(TestAddress address) {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
-        ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, TIMEOUT_IN_MILLIS );
-        service.call( address.arguments() );
+        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression, m_timeout);
+        service.call(address.arguments());
     }
 
-    public synchronized long install( InputStream stream )
-    {
+    public synchronized long install(InputStream stream) {
         try {
-            Bundle b = m_framework.getBundleContext().installBundle( "local", stream );
-            m_installed.push( b.getBundleId() );
-            LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
-            setBundleStartLevel( b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE );
+            Bundle b = m_framework.getBundleContext().installBundle("local", stream);
+            m_installed.push(b.getBundleId());
+            LOG.debug("Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId());
+            setBundleStartLevel(b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE);
             // stream.close();
             b.start();
             return b.getBundleId();
-        } catch( BundleException e ) {
+        } catch (BundleException e) {
             e.printStackTrace();
         }
         return -1;
     }
 
-    public synchronized void cleanup()
-    {
-        while( ( !m_installed.isEmpty() ) ) {
+    public synchronized void cleanup() {
+        while ((!m_installed.isEmpty())) {
             try {
                 Long id = m_installed.pop();
-                Bundle bundle = m_framework.getBundleContext().getBundle( id );
+                Bundle bundle = m_framework.getBundleContext().getBundle(id);
                 bundle.uninstall();
-                LOG.debug( "Uninstalled bundle " + id );
-            } catch( BundleException e ) {
+                LOG.debug("Uninstalled bundle " + id);
+            } catch (BundleException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void setBundleStartLevel( long bundleId, int startLevel )
-        throws TestContainerException
-    {
-        StartLevel sl = getStartLevelService( m_framework.getBundleContext() );
-        sl.setBundleStartLevel( m_framework.getBundleContext().getBundle( bundleId ), startLevel );
+    public void setBundleStartLevel(long bundleId, int startLevel)
+            throws TestContainerException {
+        StartLevel sl = getStartLevelService(m_framework.getBundleContext());
+        sl.setBundleStartLevel(m_framework.getBundleContext().getBundle(bundleId), startLevel);
     }
 
-    public TestContainer stop()
-    {
+    public TestContainer stop() {
 //        if (1==1) throw new RuntimeException( "stop has been called." );
-        if( m_framework != null ) {
+        if (m_framework != null) {
 
             try {
-                LOG.debug( "Framework goes down.." );
+                LOG.debug("Framework goes down..");
                 cleanup();
                 m_framework.stop();
-                m_framework.waitForStop( 1000 );
+                m_framework.waitForStop(m_timeout);
                 m_framework = null;
 
-            } catch( BundleException e ) {
-                LOG.warn( "Problem during stopping fw.", e );
-            } catch( InterruptedException e ) {
-                LOG.warn( "InterruptedException during stopping fw.", e );
+            } catch (BundleException e) {
+                LOG.warn("Problem during stopping fw.", e);
+            } catch (InterruptedException e) {
+                LOG.warn("InterruptedException during stopping fw.", e);
             }
-        }
-        else {
-            LOG.warn( "Framework does not exist. Called start() before ? " );
+        } else {
+            LOG.warn("Framework does not exist. Called start() before ? ");
         }
         return this;
     }
 
-    public void waitForState( long bundleId, int state, long timeoutInMillis )
-        throws TimeoutException
-    {
+    public void waitForState(long bundleId, int state, long timeoutInMillis)
+            throws TimeoutException {
         // look for a certain state in fw
     }
 
     public TestContainer start()
-        throws TestContainerException
-    {
+            throws TestContainerException {
         ClassLoader parent = null;
         try {
-            final Map<String, String> p = new HashMap<String, String>( m_properties );
-            String folder = p.get( "org.osgi.framework.storage" );
-            if( folder == null ) {
-                folder = System.getProperty( "org.osgi.framework.storage" );
+            final Map<String, String> p = new HashMap<String, String>(m_properties);
+            String folder = p.get("org.osgi.framework.storage");
+            if (folder == null) {
+                folder = System.getProperty("org.osgi.framework.storage");
             }
-            if( folder == null ) {
+            if (folder == null) {
                 //folder = System.getProperty( "user.home" ) + File.separator + "osgi";
                 folder = getCache();
             }
-            LOG.debug( "Cache folder set to " + folder );
-            FileUtils.delete( new File( folder ) );
+            LOG.debug("Cache folder set to " + folder);
+            FileUtils.delete(new File(folder));
             // load default stuff
 
-            p.put( "org.osgi.framework.storage", folder );
+            p.put("org.osgi.framework.storage", folder);
             //  System.setProperty( "org.osgi.vendor.framework", "org.ops4j.pax.exam" );
 
-            p.put( "org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) );
+            p.put("org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam;version=" + skipSnapshotFlag(Info.getPaxExamVersion()));
 
             parent = Thread.currentThread().getContextClassLoader();
             //Thread.currentThread().setContextClassLoader( null );
 
-            m_framework = m_frameworkFactory.newFramework( p );
+            m_framework = m_frameworkFactory.newFramework(p);
             m_framework.init();
 
-            installAndStartBundles( m_framework.getBundleContext() );
+            installAndStartBundles(m_framework.getBundleContext());
 
-            Thread.currentThread().setContextClassLoader( parent );
+            Thread.currentThread().setContextClassLoader(parent);
 
-        } catch( Exception e ) {
-            throw new TestContainerException( "Problem starting test container.", e );
+        } catch (Exception e) {
+            throw new TestContainerException("Problem starting test container.", e);
         } finally {
-            if( parent != null ) {
-                Thread.currentThread().setContextClassLoader( parent );
+            if (parent != null) {
+                Thread.currentThread().setContextClassLoader(parent);
             }
         }
         return this;
     }
 
-    private void installAndStartBundles( BundleContext context )
-        throws BundleException
-    {
+    private void installAndStartBundles(BundleContext context)
+            throws BundleException {
 
         m_framework.start();
 
-        StartLevel sl = getStartLevelService( context );
+        StartLevel sl = getStartLevelService(context);
 
-        for( ProvisionOption bundle : m_bundles ) {
+        for (ProvisionOption bundle : m_bundles) {
             Bundle b = null;
-            b = context.installBundle( bundle.getURL() );
-            int startLevel = getStartLevel( bundle );
-            sl.setBundleStartLevel( b, startLevel );
+            b = context.installBundle(bundle.getURL());
+            int startLevel = getStartLevel(bundle);
+            sl.setBundleStartLevel(b, startLevel);
             b.start();
-            LOG.info( "+ Install (start@" + startLevel + ") " + bundle );
+            LOG.info("+ Install (start@" + startLevel + ") " + bundle);
 
         }
-        LOG.info( "++++ Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE );
-        sl.setStartLevel( Constants.START_LEVEL_TEST_BUNDLE );
+        LOG.info("++++ Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE);
+        sl.setStartLevel(Constants.START_LEVEL_TEST_BUNDLE);
+        // Work around for FELIX-2942
+        final CountDownLatch latch = new CountDownLatch(1);
+        context.addFrameworkListener(new FrameworkListener() {
+            public void frameworkEvent(FrameworkEvent frameworkEvent) {
+                switch (frameworkEvent.getType()) {
+                    case FrameworkEvent.STARTLEVEL_CHANGED:
+                        latch.countDown();
+                }
+            }
+        });
+        try {
+            latch.await(m_timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-      
 
     }
 
-    private StartLevel getStartLevelService( BundleContext context )
-    {
+    private StartLevel getStartLevelService(BundleContext context) {
         StartLevel sl;
-        while( ( sl = (StartLevel) context.getService( context.getServiceReference( StartLevel.class.getName() ) ) ) == null ) {
-            System.out.println( "Find SL.." );
+        while ((sl = (StartLevel) context.getService(context.getServiceReference(StartLevel.class.getName()))) == null) {
+            System.out.println("Find SL..");
         }
-        if( sl == null ) {
-            throw new TestContainerException( "No Startlevel Service ?" );
+        if (sl == null) {
+            throw new TestContainerException("No Startlevel Service ?");
         }
         return sl;
     }
 
-    private int getStartLevel( ProvisionOption bundle )
-    {
+    private int getStartLevel(ProvisionOption bundle) {
         Integer start = bundle.getStartLevel();
-        if( start == null ) {
+        if (start == null) {
             start = Constants.START_LEVEL_DEFAULT_PROVISION;
         }
         return start;
     }
 
-    private String skipSnapshotFlag( String version )
-    {
-        int idx = version.indexOf( "-" );
-        if( idx >= 0 ) {
-            return version.substring( 0, idx );
-        }
-        else {
+    private String skipSnapshotFlag(String version) {
+        int idx = version.indexOf("-");
+        if (idx >= 0) {
+            return version.substring(0, idx);
+        } else {
             return version;
         }
     }
 
     private String getCache()
-        throws IOException
-    {
-        File base = new File( "target" );
+            throws IOException {
+        File base = new File("target");
         base.mkdir();
-        File f = File.createTempFile( "examtest", ".dir", base );
+        File f = File.createTempFile("examtest", ".dir", base);
         f.delete();
         f.mkdirs();
-        LOG.info( "Caching" + " to " + f.getAbsolutePath() );
+        LOG.info("Caching" + " to " + f.getAbsolutePath());
         return f.getAbsolutePath();
     }
 
