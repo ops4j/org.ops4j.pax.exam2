@@ -19,7 +19,7 @@ public class LocalPlayerTest {
                 mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.1" ),
                 mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" )
             )
-        ).test( getClass(), LogService.class.getName() ).play(new LocalAllConfinedStagedReactorFactory());
+        ).test( getClass(), LogService.class.getName() ).play(new LocalAllConfinedStagedReactorFactory(this.getClass().getClassLoader()));
     }
 
     public void probe( TestContainer ctx, String s )

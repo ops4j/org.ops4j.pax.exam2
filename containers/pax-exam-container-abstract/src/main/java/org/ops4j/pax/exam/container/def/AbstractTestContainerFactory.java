@@ -76,13 +76,8 @@ public abstract class AbstractTestContainerFactory
     protected Option[] setDefaultOptions()
     {
         return new Option[]{
-            // remote bundle context bundle
-
             // rmi communication port
             systemProperty(Constants.RMI_PORT_PROPERTY).value(Integer.toString(m_rmiRegistry.getPort())),
-            //,
-            // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
-            bootDelegationPackage( "sun.*" ),
             
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel(START_LEVEL_SYSTEM_BUNDLES),
             url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel(START_LEVEL_SYSTEM_BUNDLES)
