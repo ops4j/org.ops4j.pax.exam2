@@ -22,7 +22,9 @@
     <repositories>
 	    <repository>
 		    <id>pax-runner.repository.sonatype.org</id>
-		    <releases>true</releases>
+		    <releases>
+		    	<enabled>true</enabled>
+		    </releases>
 		    <url>https://repository.sonatype.org/content/groups/pax-runner/</url>
 	    </repository>
     </repositories>
