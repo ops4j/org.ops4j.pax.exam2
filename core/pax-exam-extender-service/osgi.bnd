@@ -12,7 +12,10 @@ Export-Package:
 -exportcontents: org.ops4j.pax.exam.raw.extender;version="${pom.version}",org.ops4j.pax.exam;version="${pom.version}",\
  org.ops4j.pax.exam.options;version="${pom.version}"
 
-Import-Package: org.ops4j.pax.exam,!org.slf4j.impl,*
+Import-Package: org.ops4j.pax.exam,\
+ org.apache.commons.logging; version="[1.0.4,2.0.0)"; resolution:=optional,\
+ org.slf4j; resolution:=optional,\
+ !org.slf4j.impl,*
 
 Private-Package:\
   ${bundle.namespace}.*

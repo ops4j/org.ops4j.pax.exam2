@@ -47,6 +47,6 @@ public class JUnitMultiFwTest {
     @Test
     public TestAddress prebuilt( TestProbeBuilder builder )
     {
-        return builder.addTest( CountBundles.class, 5 );
+        return builder.addTest( CountBundles.class, 6 );
     }
 }

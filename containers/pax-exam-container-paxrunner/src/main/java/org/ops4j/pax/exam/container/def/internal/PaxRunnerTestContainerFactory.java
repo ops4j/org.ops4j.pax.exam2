@@ -18,18 +18,20 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
-import java.util.ArrayList;
+import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
+import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.OptionUtils.filter;
+import static org.ops4j.pax.exam.OptionUtils.remove;
+
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.container.def.AbstractTestContainerFactory;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Factory for {@link PaxRunnerTestContainer}.
@@ -38,41 +40,24 @@ import static org.ops4j.pax.exam.OptionUtils.*;
  * @since 2.0, March 09, 2011
  */
 public class PaxRunnerTestContainerFactory
-    implements TestContainerFactory {
+    extends AbstractTestContainerFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainerFactory.class );
-    private RMIRegistry m_rmiRegistry;
-    private static final int DEFAULTPORT = 21412;
-
-    public PaxRunnerTestContainerFactory()
-
-    {
-            m_rmiRegistry = new RMIRegistry( DEFAULTPORT, DEFAULTPORT + 1, DEFAULTPORT + 99 ).selectGracefully();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public TestContainer[] parse( Option... options )
-    {
-
-        options = expand( combine( options, setDefaultOptions() ) );
+    @Override
+    protected void createTestContainers(List<TestContainer> containers,
+            Option... options) {
         FrameworkOption[] frameworks = getFrameworks( options );
         options = remove( FrameworkOption.class, options );
 
-        List<TestContainer> containers = new ArrayList<TestContainer>();
-        for( FrameworkOption framework : frameworks ) {
-            containers.add(
-                new PaxRunnerTestContainer(
-                    new DefaultJavaRunner( false ),
-                    m_rmiRegistry.getHost(),
-                    m_rmiRegistry.getPort(),
-                    combine( options, framework )
-                )
-            );
-        }
-
-        return containers.toArray( new TestContainer[ containers.size() ] );
+         for( FrameworkOption framework : frameworks ) {
+             containers.add(
+                 new PaxRunnerTestContainer(
+                     new DefaultJavaRunner( false ),
+                     m_rmiRegistry.getHost(),
+                     m_rmiRegistry.getPort(),
+                     combine( options, framework )
+                 )
+             );
+         }
     }
 
     private FrameworkOption[] getFrameworks( Option[] options )
@@ -83,25 +68,16 @@ public class PaxRunnerTestContainerFactory
         }
         return frameworks;
     }
-
-    private Option[] setDefaultOptions()
-    {
-        return new Option[]{
-            // remote bundle context bundle
-
-            // rmi communication port
-
-            //,
-            // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
-            bootDelegationPackage( "sun.*" ),
-            
-            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
-            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
-            url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
-
-            url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )
-        };
+    
+    @Override
+    protected Option[] setDefaultOptions() {
+    	return combine(super.setDefaultOptions(),
+    	        // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
+    	        bootDelegationPackage( "sun.*" ),
+    			url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
+    		    url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )		
+    	);
+    	
+    	
     }
-
-
 }

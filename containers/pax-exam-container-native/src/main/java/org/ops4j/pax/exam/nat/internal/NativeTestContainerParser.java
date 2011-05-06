@@ -103,6 +103,12 @@ public class NativeTestContainerParser
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES )
             ,
             mavenBundle()
+                .groupId( "org.ops4j.pax.logging" )
+                .artifactId( "pax-logging-api" )
+                .version( "1.6.1" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES )
+            ,
+            mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-extender-service" )
                 .version( Info.getPaxExamVersion() )

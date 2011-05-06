@@ -10,7 +10,7 @@
 
     <groupId>org.ops4j.pax</groupId>
     <artifactId>exam-reactor</artifactId>
-    <version>2.0.0-RC5-SNAPSHOT</version>
+    <version>2.1.0-M2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OPS4J Pax Exam (Reactor POM)</name>
@@ -37,7 +37,9 @@
                 <module>core/pax-exam-container-rbc</module>
                 <module>core/pax-exam-container-rbc-client</module>
                 <module>containers/pax-exam-container-remote</module>
+                <module>containers/pax-exam-container-abstract</module>
                 <module>containers/pax-exam-container-paxrunner</module>
+				<module>containers/pax-exam-container-externalframework</module>
 
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
