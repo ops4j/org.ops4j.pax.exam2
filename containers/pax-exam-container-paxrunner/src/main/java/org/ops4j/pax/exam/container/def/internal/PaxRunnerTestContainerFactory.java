@@ -31,7 +31,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.container.def.AbstractTestContainerFactory;
 import org.ops4j.pax.exam.options.FrameworkOption;
-import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 
 /**
  * Factory for {@link PaxRunnerTestContainer}.
@@ -42,16 +41,18 @@ import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 public class PaxRunnerTestContainerFactory
     extends AbstractTestContainerFactory {
 
+	private static final boolean BLOCKING_RUNNER_INTERNALLY = true;
+
     @Override
     protected void createTestContainers(List<TestContainer> containers,
             Option... options) {
         FrameworkOption[] frameworks = getFrameworks( options );
         options = remove( FrameworkOption.class, options );
 
-         for( FrameworkOption framework : frameworks ) {
+        for( FrameworkOption framework : frameworks ) {
              containers.add(
                  new PaxRunnerTestContainer(
-                     new DefaultJavaRunner( false ),
+                     new AsyncJavaRunner( new ExamRunner( BLOCKING_RUNNER_INTERNALLY ) ),
                      m_rmiRegistry.getHost(),
                      m_rmiRegistry.getPort(),
                      combine( options, framework )
@@ -77,7 +78,5 @@ public class PaxRunnerTestContainerFactory
     			url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
     		    url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )		
     	);
-    	
-    	
     }
 }

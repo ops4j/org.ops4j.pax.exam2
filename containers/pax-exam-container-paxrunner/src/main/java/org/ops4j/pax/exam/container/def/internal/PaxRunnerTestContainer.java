@@ -93,17 +93,21 @@ public class PaxRunnerTestContainer extends AbstractTestContainer
     }
 
     protected void printExtraBeforeStart( String[] arguments )
-    {
-        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
-        LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
-        for( String s : arguments ) {
-            LOG.info( "#   " + s );
-        }
-    }
+	{
+		LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
+		LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
+		for( String s : arguments ) {
+			LOG.info( "#   " + s );
+		}
+	}
 
+    private ArgumentsBuilder getArgumentBuilder(Option[] args) throws IOException {
+        return new ArgumentsBuilder( m_host, m_port, args );
+    }
+    
     @Override
     protected void parseOption(String m_host, int m_port, Option[] args) throws IOException {
-    	argBuilder = new ArgumentsBuilder( m_host, m_port, args );
+    	argBuilder = getArgumentBuilder( args );
 	}
 		
     @Override

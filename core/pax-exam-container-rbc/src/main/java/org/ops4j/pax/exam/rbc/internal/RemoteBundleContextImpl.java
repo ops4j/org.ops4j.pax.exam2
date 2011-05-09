@@ -184,13 +184,8 @@ public class RemoteBundleContextImpl
             if (LOG.isDebugEnabled()) {
                 this.m_bundleContext.removeBundleListener(this);
             }
-            if (bundle == null)
-            	 throw new TimeoutException(
-                         "There is no waiting timeout set and bundle is not found '" 
-                         + "' expected state is '" + bundleStateToString( state ) + "'"
-                     );
             throw new TimeoutException(
-                "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle.getState() )
+                "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle )
                 + "' not '" + bundleStateToString( state ) + "' as expected"
             );
         }
@@ -334,10 +329,22 @@ public class RemoteBundleContextImpl
     /**
      * Coverts a bundle state to its string form.
      *
-     * @param bundleState bundle state
+     * @param bundle bundle
      *
      * @return bundle state as string
      */
+    private static String bundleStateToString( Bundle bundle )
+    {
+        if( bundle == null )
+        {
+            return "not installed";
+        }
+        else
+        {
+            return bundleStateToString( bundle.getState() );
+        }
+    }
+
     private static String bundleStateToString( int bundleState )
     {
         switch( bundleState ) {
