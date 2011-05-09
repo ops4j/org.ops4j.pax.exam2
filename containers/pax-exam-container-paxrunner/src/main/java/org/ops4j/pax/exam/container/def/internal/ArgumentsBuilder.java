@@ -99,7 +99,7 @@ class ArgumentsBuilder {
         options = combine( options,systemProperty( Constants.RMI_HOST_PROPERTY ).value( host) );
         options = combine( options,systemProperty( Constants.RMI_PORT_PROPERTY ).value( "" + rmiPort) );
 
-
+        add( arguments, extractArguments( markingFilter( RawPaxRunnerOptionOption.class, options ) ) );
         add( arguments, extractArguments( markingFilter( MavenPluginGeneratedConfigOption.class, options ) ) );
 
         add( arguments, extractArguments( markingFilter( FrameworkOption.class, options ) ) );
@@ -120,7 +120,6 @@ class ArgumentsBuilder {
         add( arguments, extractArguments( markingFilter( BundleStartLevelOption.class, options ) ) );
         add( arguments, extractArguments( markingFilter( WorkingDirectoryOption.class, options ) ) );
 
-        add( arguments, extractArguments( markingFilter( RawPaxRunnerOptionOption.class, options ) ) );
         add( arguments,
              extractArguments(
                  markingFilter( SystemPropertyOption.class, options ),
@@ -219,6 +218,7 @@ class ArgumentsBuilder {
      * Returns a collection of default Pax Runner arguments.
      *
      * @return collection of default arguments
+     * @throws java.io.IOException problems 
      */
     private Collection<String> defaultArguments()
         throws IOException

@@ -23,6 +23,7 @@ import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.rawPaxRunnerOption;
 
 /**
  *
@@ -31,7 +32,10 @@ public class RunnerTest {
 
     @Test
     public void testStart() {
-        Option[] opts = options();
+        Option[] opts = options(
+                rawPaxRunnerOption("platform=eq"),
+                rawPaxRunnerOption("--noDownloadFeedback=false")
+        );
         final TestContainer container = PaxExamRuntime.getTestContainerFactory().parse(opts)[0];
         container.start();
     }
