@@ -170,9 +170,9 @@ public class RemoteBundleContextImpl
                               final long timeoutInMillis )
     {
         Bundle bundle = m_bundleContext.getBundle( bundleId );
-        if( timeoutInMillis == NO_WAIT && ( bundle == null || bundle.getState() < state ) ) {
+        if( bundle == null || (timeoutInMillis == NO_WAIT && ( bundle == null || bundle.getState() < state ) ) ) {
             throw new TimeoutException(
-                "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle.getState() )
+                "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle )
                 + "' not '" + bundleStateToString( state ) + "' as expected"
             );
         }
@@ -272,10 +272,22 @@ public class RemoteBundleContextImpl
     /**
      * Coverts a bundle state to its string form.
      *
-     * @param bundleState bundle state
+     * @param bundle bundle
      *
      * @return bundle state as string
      */
+    private static String bundleStateToString( Bundle bundle )
+    {
+        if( bundle == null )
+        {
+            return "not installed";
+        }
+        else
+        {
+            return bundleStateToString( bundle.getState() );
+        }
+    }
+
     private static String bundleStateToString( int bundleState )
     {
         switch( bundleState ) {
