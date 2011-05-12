@@ -40,9 +40,9 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 public class PaxRunnerTestContainerFactory
     implements TestContainerFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainerFactory.class );
     private RMIRegistry m_rmiRegistry;
     private static final int DEFAULTPORT = 21412;
+    private static final boolean BLOCKING_RUNNER_INTERNALLY = true;
 
     public PaxRunnerTestContainerFactory()
 
@@ -64,7 +64,7 @@ public class PaxRunnerTestContainerFactory
         for( FrameworkOption framework : frameworks ) {
             containers.add(
                 new PaxRunnerTestContainer(
-                    new DefaultJavaRunner( false ),
+                    new AsyncJavaRunner( new ExamRunner( BLOCKING_RUNNER_INTERNALLY ) ),
                     m_rmiRegistry.getHost(),
                     m_rmiRegistry.getPort(),
                     combine( options, framework )
@@ -87,11 +87,6 @@ public class PaxRunnerTestContainerFactory
     private Option[] setDefaultOptions()
     {
         return new Option[]{
-            // remote bundle context bundle
-
-            // rmi communication port
-
-            //,
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
             bootDelegationPackage( "sun.*" ),
             

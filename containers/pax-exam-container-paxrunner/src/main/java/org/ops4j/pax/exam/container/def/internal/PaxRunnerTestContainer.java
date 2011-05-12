@@ -21,6 +21,8 @@ package org.ops4j.pax.exam.container.def.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
+
+import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,9 +106,9 @@ public class PaxRunnerTestContainer
     {
         try {
             String name = getUUID();
-            Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
+            Option[] args = combine( m_options, addRMINameProperty(name));
 
-            ArgumentsBuilder argBuilder = new ArgumentsBuilder( m_host, m_port, args );
+            ArgumentsBuilder argBuilder = getArgumentBuilder(args);
             m_target = new RBCRemoteTarget( name, m_port, argBuilder.getStartTimeout() );
 
             long startedAt = System.currentTimeMillis();
@@ -133,7 +135,18 @@ public class PaxRunnerTestContainer
         return this;
     }
 
-    private String getUUID() {return UUID.randomUUID().toString();}
+    private ArgumentsBuilder getArgumentBuilder(Option[] args) throws IOException {
+        return new ArgumentsBuilder( m_host, m_port, args );
+    }
+
+    protected SystemPropertyOption addRMINameProperty(String name) {
+        return systemProperty( Constants.RMI_NAME_PROPERTY ).value( name );
+    }
+
+    private String getUUID() {
+        // TODO make it a system service (when JSR330 hits)
+        return UUID.randomUUID().toString();
+    }
 
     private void printExtraBeforeStart( String[] arguments )
     {
