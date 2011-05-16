@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 
@@ -60,6 +62,18 @@ public class PaxExamRuntime {
         TestContainerFactory factory = ServiceLoader.load( TestContainerFactory.class ).iterator().next();
         LOG.debug( "Found TestContainerFactory: " + ( ( factory != null ) ? factory.getClass().getName() : "<NONE>" ) );
         return factory;
+    }
+
+    /**
+     * Convenience factory when just dealing with one container (intentionally).
+     * Note, this will break if there is not exaclty one container available and parsed from options.
+     * If there are more containers, just the first (whatever comes first) will be picked.
+     *
+     * @param option to be parsed.
+     * @return exactly one Test Container.
+     */
+    public static TestContainer createContainer( Option[] option ) {
+        return getTestContainerFactory().parse( option )[0];
     }
 
     /**
