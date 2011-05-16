@@ -29,7 +29,9 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.LibraryOptions.*;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 
 /**
@@ -37,14 +39,16 @@ import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
  */
 public class BareAPITest {
 
-    @Test
+    //@Test
     public void bareRunTest()
         throws Exception
     {
         Option[] options = new Option[]{
             junitBundles(),
-            easyMockBundles()
-
+            easyMockBundles(),
+            systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" ),
+            //mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" ),
+            rawPaxRunnerOption("envo","mike=blue,foo=bar")
         };
 
         TestProbeProvider p = makeProbe();
@@ -62,16 +66,15 @@ public class BareAPITest {
             }
         }
     }
-
-
-
+    
     @Test
     public void singleStepTest()
         throws Exception
     {
         Option[] options = new Option[]{
             junitBundles(),
-            easyMockBundles()
+            easyMockBundles(),
+            systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" )
         };
 
         TestProbeProvider p = makeProbe();

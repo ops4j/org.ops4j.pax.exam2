@@ -23,11 +23,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Callable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 
@@ -44,7 +44,7 @@ import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 public class Activator
     implements BundleActivator {
 
-    private static final Log LOG = LogFactory.getLog( Activator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Activator.class );
 
     private static final int MAXRETRYCOUNT = 14;
     private static final String MSG_RETRY = "RBC bind stuff failed before. Will retry again perhaps.";
@@ -82,7 +82,7 @@ public class Activator
                     valid = register( bundleContext );
                     if( !valid ) {
                         try {
-                            LOG.info( MSG_RETRY );
+                            LOG.debug( MSG_RETRY );
                             Thread.sleep( 500 );
                         } catch( InterruptedException e ) {
                             e.printStackTrace();
@@ -116,7 +116,7 @@ public class Activator
                         m_registry = LocateRegistry.getRegistry( getHost(), getPort() );
 
                         bindRBC( m_registry, name, bundleContext );
-                        LOG.info( "(++) Container with name " + name + " has added its RBC" );
+                        LOG.debug( "Container with name " + name + " has added its RBC" );
 
                         return null;
                     }
@@ -133,10 +133,8 @@ public class Activator
     private void bindRBC( Registry registry, String name, BundleContext bundleContext )
         throws RemoteException, BundleException
     {
-       // Integer objectPort = new FreePort( PORT_RBC_FROM, PORT_RBC_TO ).getPort();
-        LOG.info( "(Using automatic Port!) Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
+        LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
         Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), 0 );
-        
         registry.rebind( getName(), remoteStub );
     }
 
@@ -154,7 +152,7 @@ public class Activator
         // UnicastRemoteObject.unexportObject( m_registry, true );
         m_registry = null;
         m_remoteBundleContext = null;
-        LOG.info( "(--) Container with name " + name + " has removed its RBC" );
+        LOG.debug( "Container with name " + name + " has removed its RBC" );
     }
 
     /**

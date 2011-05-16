@@ -58,6 +58,7 @@
         <dependency>
             <groupId>org.ops4j.pax.runner</groupId>
             <artifactId>pax-runner-no-jcl</artifactId>
+            <scope>provided</scope>
         </dependency>
           <dependency>
             <groupId>junit</groupId>

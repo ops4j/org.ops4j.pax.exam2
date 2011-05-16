@@ -32,9 +32,6 @@ import org.ops4j.store.Store;
  */
 public class DefaultTestProbeProvider implements TestProbeProvider
 {
-
-    private static Logger LOG = LoggerFactory.getLogger( DefaultTestProbeProvider.class );
-
     private TestAddress[] m_tests;
     private Handle m_probe;
     private Store<InputStream> m_store;

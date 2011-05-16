@@ -59,7 +59,7 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                     int triedTimes = 0;
                     do {
                         try {
-                            LOG.info( "Call RBC." + method.getName() + " (retries: " + triedTimes + ")" );
+                            LOG.debug( "Call RBC." + method.getName() + " (retries: " + triedTimes + ")" );
                             triedTimes++;
                             if( retry ) { Thread.sleep( RETRY_WAIT ); }
                             ret = method.invoke( client, objects );
@@ -73,7 +73,7 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                                 retry = true;
                             }
                             else {
-                                LOG.warn( "Exception that does not cause Retry : (rooted) " + cause.getClass().getName() + " in RBC." + method.getName(), cause );
+                                LOG.debug( "Exception that does not cause Retry : (rooted) " + cause.getClass().getName() + " in RBC." + method.getName(), cause );
                                 // just escape
                                 throw lastError;
                             }
@@ -84,7 +84,7 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                     if( ( retry ) && ( lastError != null ) ) {
                         throw new Exception( lastError );
                     }
-                    LOG.info( "Return RBC." + method.getName() + " with: " + ret );
+                    LOG.debug( "Return RBC." + method.getName() + " with: " + ret );
 
                     return ret;
                 }

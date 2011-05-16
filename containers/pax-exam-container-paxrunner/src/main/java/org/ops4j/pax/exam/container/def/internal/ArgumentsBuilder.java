@@ -226,6 +226,8 @@ class ArgumentsBuilder {
         final List<String> arguments = new ArrayList<String>();
         arguments.add( "--noConsole" );
         arguments.add( "--noDownloadFeedback" );
+        arguments.add( "--log=warn" );
+
         if( !argsSetManually ) {
             arguments.add( "--noArgs" );
         }

@@ -23,14 +23,14 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.Dictionary;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.startlevel.StartLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.ops4j.lang.NullArgumentException.*;
 
@@ -50,7 +50,7 @@ public class RemoteBundleContextImpl
     /**
      * JCL Logger.
      */
-    private static final Log LOG = LogFactory.getLog( RemoteBundleContextImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RemoteBundleContextImpl.class );
     /**
      * Bundle context (cannot be null).
      */
@@ -80,7 +80,7 @@ public class RemoteBundleContextImpl
                               final Object... actualParams )
         throws NoSuchServiceException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
-        LOG.info( "Remote call of [" + serviceType.getName() + "." + methodName + "]" );
+        LOG.trace( "Remote call of [" + serviceType.getName() + "." + methodName + "]" );
 
         return serviceType.getMethod( methodName, methodParams ).invoke(
             getService( serviceType, filter, timeoutInMillis ),
@@ -94,7 +94,7 @@ public class RemoteBundleContextImpl
     public long installBundle( final String bundleUrl )
         throws BundleException
     {
-        LOG.info( "Install bundle from URL [" + bundleUrl + "]" );
+        LOG.trace( "Install bundle from URL [" + bundleUrl + "]" );
         return m_bundleContext.installBundle( bundleUrl ).getBundleId();
     }
 
@@ -105,7 +105,7 @@ public class RemoteBundleContextImpl
                                final byte[] bundle )
         throws BundleException
     {
-        LOG.info( "Install bundle [ location=" + bundleLocation + "] from byte array" );
+        LOG.trace( "Install bundle [ location=" + bundleLocation + "] from byte array" );
         final ByteArrayInputStream inp = new ByteArrayInputStream( bundle );
         try {
             return m_bundleContext.installBundle( bundleLocation, inp ).getBundleId();
@@ -121,7 +121,7 @@ public class RemoteBundleContextImpl
     public void uninstallBundle( long id )
         throws BundleException
     {
-        LOG.info( "Uninstall bundle [" + id + "] " );
+        LOG.trace( "Uninstall bundle [" + id + "] " );
         try {
             m_bundleContext.getBundle( id ).uninstall();
         } catch( BundleException e ) {
@@ -216,7 +216,7 @@ public class RemoteBundleContextImpl
                               final long timeoutInMillis )
         throws NoSuchServiceException
     {
-        LOG.info( "Look up service [" + serviceType.getName() + "] filter [" + filter + "], timeout in " + timeoutInMillis + " millis" );
+        LOG.trace( "Look up service [" + serviceType.getName() + "] filter [" + filter + "], timeout in " + timeoutInMillis + " millis" );
         long start = System.currentTimeMillis();
         do {
             try {

@@ -150,7 +150,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     private byte[] pack( InputStream stream )
     {
-        LOG.info( "Packing probe into memory for true RMI. Hopefully things will fill in.." );
+        LOG.debug( "Packing probe into memory for true RMI. Hopefully things will fill in.." );
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             StreamUtils.copyStream( stream, out, true );
@@ -247,11 +247,10 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     {
         if( m_remoteBundleContext == null ) {
 
-            LOG.info( "TFetching Remote Bundle Context:" );
             //!! Absolutely necesary for RMI class loading to work
             // TODO maybe use ContextClassLoaderUtils.doWithClassLoader
             Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-            LOG.info( "Waiting for remote bundle context.. on " + m_registry + " name: " + m_name + " timout: " + m_rmiLookupTimeout );
+            LOG.debug( "Waiting for remote bundle context.. on " + m_registry + " name: " + m_name + " timout: " + m_rmiLookupTimeout );
             // TODO create registry here
             Throwable reason = null;
             long startedTrying = System.currentTimeMillis();
@@ -276,7 +275,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             if( m_remoteBundleContext == null ) {
                 throw new RuntimeException( "Cannot get the remote bundle context", reason );
             }
-            LOG.info( "Remote bundle context found after " + ( System.currentTimeMillis() - startedTrying ) + " millis" );
+            LOG.debug( "Remote bundle context found after " + ( System.currentTimeMillis() - startedTrying ) + " millis" );
         }
         return m_remoteBundleContext;
 

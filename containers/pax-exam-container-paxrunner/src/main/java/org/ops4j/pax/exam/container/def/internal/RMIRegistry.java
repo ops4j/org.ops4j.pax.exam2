@@ -89,7 +89,7 @@ public class RMIRegistry {
             LOG.warn( "--------------" );
         }
         else {
-            LOG.info( info );
+            LOG.debug( info );
         }
     }
 
@@ -105,12 +105,12 @@ public class RMIRegistry {
     private Integer select( int port )
     {
         if( reuseRegistry( port ) ) {
-            LOG.info( "Reuse Registry on " + port );
+            LOG.debug( "Reuse Registry on " + port );
             return port;
 
         }
         else if( createNewRegistry( port ) ) {
-            LOG.info( "Created Registry on " + port );
+            LOG.debug( "Created Registry on " + port );
             return port;
         }
         // fail

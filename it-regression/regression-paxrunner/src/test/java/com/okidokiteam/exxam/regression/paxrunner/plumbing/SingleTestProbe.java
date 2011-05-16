@@ -33,6 +33,7 @@ public class SingleTestProbe
     public void withoutBCTest()
     {
         LOG.info( "INSIDE OSGI " + SingleTestProbe.class.getName() + " Method withoutBCTest" );
+        LOG.info( "Environment: " + System.getenv( "foo" ) );
     }
 
     private void neverCall()

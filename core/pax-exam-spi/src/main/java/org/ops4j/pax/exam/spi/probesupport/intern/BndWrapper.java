@@ -119,9 +119,9 @@ public class BndWrapper
                 try
                 {
                     jar.write( pout );
-                } catch( IOException e )
+                } catch( Exception e )
                 {
-                    LOG.warn( "Bundle cannot be generated" );
+                    LOG.error( "Bundle cannot be generated" );
                 } finally
                 {
                     try
@@ -154,12 +154,15 @@ public class BndWrapper
         final String importPackage = analyzer.getProperty( Analyzer.IMPORT_PACKAGE );
         if( importPackage == null || importPackage.trim().length() == 0 )
         {
-            analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "*;resolution:=optional" );
+            //analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "*;resolution:=optional" );
+           analyzer.setProperty( Analyzer.DYNAMICIMPORT_PACKAGE, "*" );
         }
         final String exportPackage = analyzer.getProperty( Analyzer.EXPORT_PACKAGE );
         if( exportPackage == null || exportPackage.trim().length() == 0 )
         {
-            analyzer.setProperty( Analyzer.EXPORT_PACKAGE, analyzer.calculateExportsFromContents( jar ) );
+            // Never export from probe.
+            analyzer.setProperty( Analyzer.EXPORT_PACKAGE, "" );
+            // was  analyzer.calculateExportsFromContents( jar )
         }
         final String localSymbolicName = analyzer.getProperty( Analyzer.BUNDLE_SYMBOLICNAME, symbolicName );
         analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, generateSymbolicName( localSymbolicName ) );

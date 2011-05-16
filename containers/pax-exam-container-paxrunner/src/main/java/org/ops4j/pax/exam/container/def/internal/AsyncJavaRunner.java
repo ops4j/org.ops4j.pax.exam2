@@ -33,12 +33,18 @@ public class AsyncJavaRunner implements StoppableJavaRunner {
         m_delegateRunner = delegate;
     }
 
-    public synchronized void exec(final String[] strings, final String[] strings1, final String s, final String[] strings2, final String s1, final File file) throws PlatformException {
+    public void exec( String[] strings, String[] strings1, String s, String[] strings2, String s1, File file )
+        throws PlatformException
+    {
+        exec( strings,strings1,s,strings2,s1,file, new String[0] );
+    }
+
+    public synchronized void exec(final String[] strings, final String[] strings1, final String s, final String[] strings2, final String s1, final File file, final String[] env) throws PlatformException {
         new Thread("AsyncJavaRunner") {
             @Override
             public void run() {
                 try {
-                    m_delegateRunner.exec(strings, strings1, s, strings2, s1, file);
+                    m_delegateRunner.exec(strings, strings1, s, strings2, s1, file, env);
                 } catch (PlatformException e) {
                     throw new RuntimeException(e);
                 }

@@ -42,6 +42,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 public class PaxExamRuntime {
 
     private static final Logger LOG = LoggerFactory.getLogger( PaxExamRuntime.class );
+    private static final String TESTCONTAINER_FACTORY = "META-INF/services/org.ops4j.pax.exam.TestContainerFactory";
 
     /**
      * Utility class. Ment to be used via the static factory methods.
@@ -84,7 +85,7 @@ public class PaxExamRuntime {
         try {
             List<URL> factories = new ArrayList<URL>();
 
-            Enumeration<URL> systemResources = ClassLoader.getSystemResources( "META-INF/services/org.ops4j.pax.exam.TestContainerFactory" );
+            Enumeration<URL> systemResources = ClassLoader.getSystemResources( TESTCONTAINER_FACTORY );
             while( systemResources.hasMoreElements() ) {
                 factories.add( systemResources.nextElement() );
             }

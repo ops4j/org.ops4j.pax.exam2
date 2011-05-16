@@ -24,10 +24,11 @@ import org.slf4j.LoggerFactory;
 public class Probe2
 {
 
-    private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
+    //private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
 
     public void myOwnClass()
     {
-        LOG.info( "INSIDE OSGI " + Probe2.class.getName() + " Method withoutBCTest" );
+        System.out.println("Hello");
+       // LOG.info( "INSIDE OSGI " + Probe2.class.getName() + " Method withoutBCTest" );
     }
 }

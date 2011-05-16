@@ -118,11 +118,9 @@ public class PaxRunnerTestContainer
             printExtraBeforeStart( arguments );
 
             Run.start( m_javaRunner, arguments );
-            LOG.info( "Test container (Pax Runner " + Info.getPaxRunnerVersion() + ") started in "
-                      + ( System.currentTimeMillis() - startedAt ) + " millis"
-            );
+            LOG.info( "Test Container started in " + ( System.currentTimeMillis() - startedAt ) + " millis" );
 
-            LOG.info( "Wait for test container to finish its initialization " + ( argBuilder.getStartTimeout() == WAIT_FOREVER ? "without timing out" : "for " + argBuilder.getStartTimeout() + " millis" ) );
+            LOG.debug( "Wait for test container to finish its initialization " + ( argBuilder.getStartTimeout() == WAIT_FOREVER ? "without timing out" : "for " + argBuilder.getStartTimeout() + " millis" ) );
 
             waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, argBuilder.getStartTimeout() );
 
@@ -150,10 +148,10 @@ public class PaxRunnerTestContainer
 
     private void printExtraBeforeStart( String[] arguments )
     {
-        LOG.info( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
-        LOG.info( "Pax Runner Arguments: ( " + arguments.length + ")" );
+        LOG.debug( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
+        LOG.debug( "Pax Runner Arguments: ( " + arguments.length + ")" );
         for( String s : arguments ) {
-            LOG.info( "#   " + s );
+            LOG.debug( "#   " + s );
         }
     }
 

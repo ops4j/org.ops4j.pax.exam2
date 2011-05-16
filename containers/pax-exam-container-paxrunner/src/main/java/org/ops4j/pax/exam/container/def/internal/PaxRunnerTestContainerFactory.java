@@ -20,8 +20,6 @@ package org.ops4j.pax.exam.container.def.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -64,7 +62,7 @@ public class PaxRunnerTestContainerFactory
         for( FrameworkOption framework : frameworks ) {
             containers.add(
                 new PaxRunnerTestContainer(
-                    new AsyncJavaRunner( new ExamRunner( BLOCKING_RUNNER_INTERNALLY ) ),
+                    new AsyncJavaRunner( new DefaultJavaRunner( BLOCKING_RUNNER_INTERNALLY ) ),
                     m_rmiRegistry.getHost(),
                     m_rmiRegistry.getPort(),
                     combine( options, framework )
@@ -89,11 +87,9 @@ public class PaxRunnerTestContainerFactory
         return new Option[]{
             // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
             bootDelegationPackage( "sun.*" ),
-            
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
             url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
-
             url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )
         };
     }
