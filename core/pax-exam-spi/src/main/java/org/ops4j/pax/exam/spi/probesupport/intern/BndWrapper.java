@@ -154,7 +154,9 @@ public class BndWrapper
         final String importPackage = analyzer.getProperty( Analyzer.IMPORT_PACKAGE );
         if( importPackage == null || importPackage.trim().length() == 0 )
         {
-            //analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "*;resolution:=optional" );
+        	//analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "*;resolution:=optional" );
+            //analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "org.hamcrest;resolution:=optional,org.hamcrest.core;resolution:=optional,org.junit;resolution:=optional,org.junit.runner;resolution:=optional,org.ops4j.pax.exam;resolution:=optional,org.ops4j.pax.exam.container.def;resolution:=optional,org.ops4j.pax.exam.container.def.options;resolution:=optional,org.ops4j.pax.exam.junit;resolution:=optional,org.ops4j.pax.exam.libraryoptions;resolution:=optional,org.ops4j.pax.exam.options;resolution:=optional,org.ops4j.pax.exam.spi;resolution:=optional,org.ops4j.pax.exam.spi.container;resolution:=optional,org.ops4j.pax.exam.spi.driversupport;resolution:=optional,org.ops4j.pax.exam.spi.reactors;resolution:=optional,org.osgi.framework;resolution:=optional,org.slf4j,org.slf4j.impl;resolution:=optional" );
+            //org.hamcrest;resolution:=optional,org.hamcrest.core;resolution:=optional,org.junit;resolution:=optional,org.junit.runner;resolution:=optional,org.ops4j.pax.exam;resolution:=optional,org.ops4j.pax.exam.container.def;resolution:=optional,org.ops4j.pax.exam.container.def.options;resolution:=optional,org.ops4j.pax.exam.junit;resolution:=optional,org.ops4j.pax.exam.libraryoptions;resolution:=optional,org.ops4j.pax.exam.options;resolution:=optional,org.ops4j.pax.exam.spi;resolution:=optional,org.ops4j.pax.exam.spi.container;resolution:=optional,org.ops4j.pax.exam.spi.driversupport;resolution:=optional,org.ops4j.pax.exam.spi.reactors;resolution:=optional,org.osgi.framework;resolution:=optional,org.slf4j
            analyzer.setProperty( Analyzer.DYNAMICIMPORT_PACKAGE, "*" );
         }
         final String exportPackage = analyzer.getProperty( Analyzer.EXPORT_PACKAGE );

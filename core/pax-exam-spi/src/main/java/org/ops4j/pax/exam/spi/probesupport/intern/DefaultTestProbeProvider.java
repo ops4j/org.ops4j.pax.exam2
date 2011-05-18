@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.store.Handle;
@@ -44,9 +42,7 @@ public class DefaultTestProbeProvider implements TestProbeProvider
         m_probe = probe;
 
         // Prepare text info
-
         m_formattedInfo = constuctInfo();
-
     }
 
     public TestAddress[] getTests()

@@ -51,12 +51,12 @@ public class DefaultTestAddress implements TestAddress {
         }
 
         m_root = calculateRoot( parent );
-        LOG.info( "NEW ADDRESS= " + m_sig + " parent=" + parent + " root=" + m_root + " args=" + args.toString());
+        LOG.debug( "NEW ADDRESS= " + m_sig + " parent=" + parent + " root=" + m_root + " args=" + args.toString());
     }
 
     private String calculate()
     {
-        // just a temporary provider. ID should be given from a passed in context.
+        // TODO just a temporary provider. ID should be given from a passed in context.
         return "PaxExam-" + UUID.randomUUID().toString();
     }
 
