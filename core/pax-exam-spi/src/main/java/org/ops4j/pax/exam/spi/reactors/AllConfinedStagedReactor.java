@@ -18,8 +18,6 @@ package org.ops4j.pax.exam.spi.reactors;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -30,8 +28,6 @@ import org.ops4j.pax.exam.spi.probesupport.intern.DefaultTestAddress;
  * This will use new containers for any regression (hence confined)
  */
 public class AllConfinedStagedReactor implements StagedExamReactor {
-
-    private static Logger LOG = LoggerFactory.getLogger( AllConfinedStagedReactor.class );
 
     final private List<TestProbeProvider> m_probes;
     final private HashMap<TestAddress, TestContainer> m_map;
@@ -67,15 +63,11 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
         container.start();
         try {
             for( TestProbeProvider builder : m_probes ) {
-                LOG.info( "installing probe " + builder );
                 container.install( builder.getStream() );
             }
-            LOG.info( "___________Invoke " + address + " against container: " + container );
             container.call( address );
-
         } finally {
             container.stop();
-
         }
 
     }
