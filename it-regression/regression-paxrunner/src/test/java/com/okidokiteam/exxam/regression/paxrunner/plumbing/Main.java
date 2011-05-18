@@ -36,14 +36,14 @@ public class Main {
     {
         TestContainer container = PaxExamRuntime.createContainer( options(
             systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" ),
-            mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "pax-tinybundles-core" ).version( "1.0.0-SNAPSHOT" ),
+          //  mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "pax-tinybundles-core" ).version( "1.0.0-SNAPSHOT" ),
             profile( "gogo" )
         )
         );
         container.start();
 
         //container.install( bundle( withBnd() ).add( Probe2.class ).set( "Bundle-Activator", Probe2.class.getName() ).build() );
-/**
+
         TestProbeBuilder probe = new PlumbingContext().createProbe();
         probe.addTest( Main.class, "test" );
         TestProbeProvider p = probe.build();
@@ -53,17 +53,17 @@ public class Main {
         for( TestAddress t : p.getTests() ) {
             container.call( t );
         }
- **/
+ 
     }
 
     public void test( BundleContext ctx )
         throws IOException, BundleException, InterruptedException
     {
-        log.trace( "I AM A LOG MESSAGE" );
-        log.debug( "I AM A LOG MESSAGE" );
-        log.info( "I AM A LOG MESSAGE" );
-        log.warn( "I AM A LOG MESSAGE" );
-        log.error( "I AM A LOG MESSAGE" );
+        log.trace( "I AM A TRACE MESSAGE" );
+        log.debug( "I AM A DEBUG MESSAGE" );
+        log.info( "I AM AN INFO MESSAGE" );
+        log.warn( "I AM A WARN MESSAGE" );
+        log.error( "I AM AN ERROR MESSAGE" );
 
     }
 

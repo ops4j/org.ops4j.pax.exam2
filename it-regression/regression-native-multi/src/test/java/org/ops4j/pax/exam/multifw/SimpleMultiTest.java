@@ -28,7 +28,7 @@ public class SimpleMultiTest {
         Option[] options = new Option[]{
             junitBundles(),
             easyMockBundles()
-        };
+        };	
 
         TestProbeProvider p = makeProbe();
 
