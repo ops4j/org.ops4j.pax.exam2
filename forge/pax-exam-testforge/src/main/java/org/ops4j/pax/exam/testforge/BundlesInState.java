@@ -42,7 +42,7 @@ public class BundlesInState {
         for( Bundle b : ctx.getBundles() ) {
             final Integer state = b.getState();
             if( state < desiredMinBundleState || state > desiredMaxBundleState ) {
-                throw new TestContainerException( "Bundle " + b.getBundleId() + "(" + b.getSymbolicName() + ") State: " + state + " is not between state: " + desiredMinBundleState + ":" + desiredMaxBundleState );
+                throw new TestContainerException( "Bundle " + b.getBundleId() + " (" + b.getSymbolicName() + ") State: " + state + " is not between state: " + desiredMinBundleState + ":" + desiredMaxBundleState );
             }
         }
     }
