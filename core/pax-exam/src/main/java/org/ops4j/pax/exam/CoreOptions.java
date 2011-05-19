@@ -17,20 +17,23 @@
  */
 package org.ops4j.pax.exam;
 
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
+import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
+import static org.ops4j.pax.exam.OptionUtils.expand;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import static org.ops4j.lang.NullArgumentException.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
 
-import org.ops4j.pax.exam.options.ExecutionPolicyOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
 import org.ops4j.pax.exam.options.CustomFrameworkOption;
+import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.EquinoxFrameworkOption;
 import org.ops4j.pax.exam.options.FelixFrameworkOption;
@@ -48,7 +51,6 @@ import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
-import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
@@ -774,14 +776,6 @@ public class CoreOptions
     public static TestContainerStartTimeoutOption waitForFrameworkStartup()
     {
         return waitForFrameworkStartupFor( Constants.WAIT_5_MINUTES );
-    }
-
-     /**
-     * @return a ExecutionPolicyOption
-     */
-    public static ExecutionPolicyOption executionPolicy()
-    {
-        return new ExecutionPolicyOption();
     }
 
 }
