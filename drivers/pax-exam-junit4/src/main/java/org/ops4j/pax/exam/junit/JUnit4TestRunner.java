@@ -47,6 +47,7 @@ import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.container.PlumbingContext;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 
 import static org.junit.Assert.*;
 
@@ -214,7 +215,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         }
         else {
             // default:
-            fact = new AllConfinedStagedReactorFactory();
+            fact = new EagerSingleStagedReactorFactory();
         }
         return fact;
     }
@@ -253,11 +254,12 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                 TestAddress address = m__childs.get( method );
                 TestAddress root = address.root();
 
-                LOG.info( "Invoke " + method.getName() + " @ " + address + " Arguments: " + root.arguments() );
+                LOG.debug( "Invoke " + method.getName() + " @ " + address + " Arguments: " + root.arguments() );
                 try {
                     m_reactor.invoke( address );
                 } catch( Exception e ) {
                     Throwable t = ExceptionHelper.unwind( e );
+                    LOG.error("Exception" ,e);
                     fail( t.getMessage() );
                 }
             }
