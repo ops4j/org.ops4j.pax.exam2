@@ -70,10 +70,11 @@ class ArgumentsBuilder {
 
     /**
      * Converts configuration options to Pax Runner arguments.
+     * @param selectedFramework 
      *
      * @param options array of configuration options
      */
-    ArgumentsBuilder( ExamSystem system )
+    ArgumentsBuilder( ExamSystem system, FrameworkOption selectedFramework )
         throws IOException
     {
         m_paxrunneArguments = new ArrayList<String>();
@@ -82,7 +83,7 @@ class ArgumentsBuilder {
         
         add( m_paxrunneArguments, extractArguments( system.getOptions( MavenPluginGeneratedConfigOption.class ) ) );
 
-        add( m_paxrunneArguments, extractArguments( system.getOptions( FrameworkOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments(selectedFramework ) );
         add( m_paxrunneArguments, extractArguments( system.getOptions( ProfileOption.class ) ) );
         add( m_paxrunneArguments, extractArguments( system.getOptions( BootDelegationOption.class ) ) );
         add( m_paxrunneArguments, extractArguments( system.getOptions( SystemPackageOption.class ) ) );
@@ -115,13 +116,15 @@ class ArgumentsBuilder {
     }
     
     /**
+     * @param m_selectedFramework 
+     * @param m_frameworkName 
      * @return Pax Runner arguments
      * @throws IOException 
      */
-    public static String[] build ( ExamSystem system ) throws IOException
+    public static String[] build ( ExamSystem system, FrameworkOption selectedFramework ) throws IOException
     {
     	// add UUID
-    	return new ArgumentsBuilder(system).get();
+    	return new ArgumentsBuilder(system,selectedFramework).get();
     }
 
     /**
@@ -214,29 +217,24 @@ class ArgumentsBuilder {
      *
      * @throws IllegalArgumentException - If there are more then one framework options
      */
-    private Collection<String> extractArguments( final FrameworkOption[] frameworks )
+    private Collection<String> extractArguments( final FrameworkOption framework )
     {
         final List<String> arguments = new ArrayList<String>();
-        if( frameworks.length > 1 ) {
-            
-            throw new IllegalArgumentException( "Configuration cannot contain more then one platform" );
-        }
-        if( frameworks.length > 0 ) {
-            if( frameworks[ 0 ] instanceof CustomFrameworkOption ) {
-                String basePlatform = ( (CustomFrameworkOption) frameworks[ 0 ] ).getBasePlatform();
+            if( framework instanceof CustomFrameworkOption ) {
+                String basePlatform = ( (CustomFrameworkOption) framework ).getBasePlatform();
                 if( basePlatform != null && basePlatform.trim().length() > 0 ) {
                     arguments.add( "--platform=" + basePlatform );
                 }
-                arguments.add( "--definitionURL=" + ( (CustomFrameworkOption) frameworks[ 0 ] ).getDefinitionURL() );
+                arguments.add( "--definitionURL=" + ( (CustomFrameworkOption) framework ).getDefinitionURL() );
             }
             else {
-                arguments.add( "--platform=" + frameworks[ 0 ].getName() );
-                final String version = frameworks[ 0 ].getVersion();
+                arguments.add( "--platform=" + framework.getName() );
+                final String version = framework.getVersion();
                 if( version != null && version.trim().length() > 0 ) {
                     arguments.add( "--version=" + version );
                 }
             }
-        }
+        
         return arguments;
     }
 

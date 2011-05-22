@@ -46,22 +46,20 @@ public class DefaultExamSystem implements ExamSystem {
 	}
 
 	public ExamSystem subsystem(Option[] options) throws IOException {
-		ExamSystem sys = new DefaultExamSystem(combine(options, options));
+		ExamSystem sys = new DefaultExamSystem(combine(m_options, options));
 		m_subsystems.add(sys);
 		return sys;
 	}
 
 	private DefaultExamSystem(Option[] options) throws IOException {
 		m_options = expand(combine(localOptions(), options));
-		m_tempDirectory = new File(System.getProperty("java.io.tmpdir")
-				+ "/paxexam_tmp/");
+		m_tempDirectory = new File(System.getProperty("java.io.tmpdir") + "/paxexam_tmp/");
 		m_tempDirectory.mkdirs();
 
 		m_tempStack = new Stack<File>();
 		m_subsystems = new Stack<ExamSystem>();
 
-		m_configDirectory = new File(System.getProperty("user.home")
-				+ "/.pax/exam/");
+		m_configDirectory = new File(System.getProperty("user.home") + "/.pax/exam/");
 		m_configDirectory.mkdirs();
 		m_store = new TemporaryStore(new File(m_tempDirectory, "/tb"), false);
 	}
@@ -119,7 +117,7 @@ public class DefaultExamSystem implements ExamSystem {
 	 * @return a relative indication of how to deal with timeouts.
 	 */
 	public RelativeTimeout getTimeout() {
-		return RelativeTimeout.TIMEOUT_DEFAULT;
+		return RelativeTimeout.TIMEOUT_NOTIMEOUT;
 	}
 
 	/**

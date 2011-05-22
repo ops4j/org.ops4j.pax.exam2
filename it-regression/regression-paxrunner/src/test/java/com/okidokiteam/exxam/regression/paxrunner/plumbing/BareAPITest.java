@@ -41,14 +41,16 @@ import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
  */
 public class BareAPITest {
 
-    //@Test
+    @Test
     public void bareRunTest()
         throws Exception
     {
         Option[] options = new Option[]{
+        		felix(),
+        		equinox(),
             junitBundles(),
             easyMockBundles(),
-            systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" ),
+            systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "DEBUG" ),
             //mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" ),
             rawPaxRunnerOption("envo","mike=blue,foo=bar")
         };
@@ -64,20 +66,22 @@ public class BareAPITest {
                 for( TestAddress test : p.getTests() ) {
                     testContainer.call( test );
                 }
+            }catch(Exception e) {
+            	e.printStackTrace();
             } finally {
                 testContainer.stop();
             }
         }
     }
     
-    @Test
+    //@Test
     public void singleStepTest()
         throws Exception
     {
         Option[] options = new Option[]{
             junitBundles(),
             easyMockBundles(),
-            systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" )
+            systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "DEBUG" )
         };
         ExamSystem system = createSystem( options );
         TestProbeProvider p = makeProbe(system);
@@ -97,7 +101,9 @@ public class BareAPITest {
                     testContainer.call( test );
                 }
             }
-        } finally {
+        }catch(Exception e) {
+        	e.printStackTrace();
+        }finally {
             for( TestContainer testContainer : containers ) {
                 testContainer.stop();
             }

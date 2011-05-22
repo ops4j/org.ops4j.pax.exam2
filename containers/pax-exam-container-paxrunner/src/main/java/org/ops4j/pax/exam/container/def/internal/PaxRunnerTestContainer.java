@@ -30,6 +30,7 @@ import org.ops4j.pax.exam.CompositeCustomizer;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -66,7 +67,7 @@ public class PaxRunnerTestContainer
     final private StoppableJavaRunner m_javaRunner;
     final private RMIRegistry m_reg;
     final private ExamSystem m_system;
-    final private String m_frameworkName;
+    final private FrameworkOption m_selectedFramework;
     /**
      * Underlying Test Target
      */
@@ -90,7 +91,7 @@ public class PaxRunnerTestContainer
         m_javaRunner = javaRunner;
         m_system = system;
         m_reg = registry;
-        m_frameworkName = selectedFramework.getName();
+        m_selectedFramework = selectedFramework;
     }
 
     /**
@@ -114,23 +115,24 @@ public class PaxRunnerTestContainer
             		options(
 	            		systemProperty( Constants.RMI_HOST_PROPERTY ).value( m_reg.getHost() ),
 						systemProperty( Constants.RMI_PORT_PROPERTY ).value( "" + m_reg.getPort() ),
-						systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ))
+						systemProperty( Constants.RMI_NAME_PROPERTY ).value( name )
+						)
 					);
-            m_target = new RBCRemoteTarget( name, m_reg.getPort() ,subsystem.getTimeout().getValue() );
+            m_target = new RBCRemoteTarget( name, m_reg.getPort() ,subsystem.getTimeout() );
 
             long startedAt = System.currentTimeMillis();
             URLUtils.resetURLStreamHandlerFactory();
             
-            String[] arguments = ArgumentsBuilder.build(subsystem);
+            String[] arguments = ArgumentsBuilder.build(subsystem,m_selectedFramework);
             printExtraBeforeStart( arguments );
 
             Run.start( m_javaRunner, arguments );
             LOG.info( "Test Container started in " + ( System.currentTimeMillis() - startedAt ) + " millis" );
-            LOG.debug( "Wait for test container to finish its initialization " + ( m_system.getTimeout()  ) );
-            waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, m_system.getTimeout().getValue() );
+            LOG.info( "Wait for test container to finish its initialization " + ( m_system.getTimeout()  ) );
+            waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, m_system.getTimeout() );
 
             //new CompositeCustomizer( argBuilder.getCustomizers() ).customizeEnvironment( argBuilder.getWorkingFolder() );
-
+            LOG.info("Wait done..");
             m_started = true;
         } catch( IOException e ) {
             throw new RuntimeException( "Problem starting container" );
@@ -148,7 +150,7 @@ public class PaxRunnerTestContainer
         LOG.debug( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );
         LOG.debug( "Pax Runner Arguments: ( " + arguments.length + ")" );
         for( String s : arguments ) {
-            LOG.debug( "#   " + s );
+            LOG.info( "#   " + s );
         }
     }
 
@@ -185,11 +187,11 @@ public class PaxRunnerTestContainer
     /**
      * {@inheritDoc}
      */
-    private void waitForState( final long bundleId, final int state, final long timeoutInMillis )
+    private void waitForState( final long bundleId, final int state, final RelativeTimeout timeout )
         throws TimeoutException
     {
 
-        m_target.getClientRBC().waitForState( bundleId, state, timeoutInMillis );
+        m_target.getClientRBC().waitForState( bundleId, state, timeout );
 
     }
 
@@ -212,6 +214,6 @@ public class PaxRunnerTestContainer
     @Override
     public String toString()
     {
-        return "PaxRunnerTestContainer{" + m_frameworkName + "}";
+        return "PaxRunnerTestContainer{" + m_selectedFramework.getName() + "}";
     }
 }

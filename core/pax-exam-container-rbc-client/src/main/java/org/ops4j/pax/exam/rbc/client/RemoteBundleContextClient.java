@@ -18,6 +18,8 @@
 package org.ops4j.pax.exam.rbc.client;
 
 import java.io.InputStream;
+
+import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 
@@ -54,7 +56,7 @@ public interface RemoteBundleContextClient {
      */
     public void waitForState( final long bundleId,
                               final int state,
-                              final long timeoutInMillis );
+                              final RelativeTimeout timeout );
 
     public void call( TestAddress address );
 }
