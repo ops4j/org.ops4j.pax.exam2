@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
-import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 
@@ -30,13 +30,12 @@ public class RBCRemoteContainerFactory implements TestContainerFactory
 
     /**
      * {@inheritDoc}
+     * Not used yet.
      */
-    public TestContainer[] parse( final Option... options )
+    public TestContainer[] materializeContainers( final ExamSystem system )
     {
-        Parser p = new Parser( options );
-        TestContainer container = new RBCRemoteContainer( new RBCRemoteTarget( p.getName(), p.getPort(), p.getRMILookupTimpout() ) );
         return new TestContainer[]{
-            container
+            
         };
     }
 }

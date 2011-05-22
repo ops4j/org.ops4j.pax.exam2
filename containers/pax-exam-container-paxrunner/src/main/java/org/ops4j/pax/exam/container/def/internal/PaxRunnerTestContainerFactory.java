@@ -20,6 +20,8 @@ package org.ops4j.pax.exam.container.def.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -51,48 +53,32 @@ public class PaxRunnerTestContainerFactory
     /**
      * {@inheritDoc}
      */
-    public TestContainer[] parse( Option... options )
+    public TestContainer[] materializeContainers( ExamSystem system )
     {
-
-        options = expand( combine( options, setDefaultOptions() ) );
-        FrameworkOption[] frameworks = getFrameworks( options );
-        options = remove( FrameworkOption.class, options );
-
+        FrameworkOption[] frameworks = getFrameworks( system );
+        
         List<TestContainer> containers = new ArrayList<TestContainer>();
         for( FrameworkOption framework : frameworks ) {
             containers.add(
                 new PaxRunnerTestContainer(
+                	system,
                     new AsyncJavaRunner( new DefaultJavaRunner( BLOCKING_RUNNER_INTERNALLY ) ),
-                    m_rmiRegistry.getHost(),
-                    m_rmiRegistry.getPort(),
-                    combine( options, framework )
+                    m_rmiRegistry,
+                    framework
                 )
-            );
+              );
         }
 
         return containers.toArray( new TestContainer[ containers.size() ] );
     }
 
-    private FrameworkOption[] getFrameworks( Option[] options )
+    private FrameworkOption[] getFrameworks( ExamSystem system )
     {
-        FrameworkOption[] frameworks = ( filter( FrameworkOption.class, options ) );
+        FrameworkOption[] frameworks = ( system.getOptions( FrameworkOption.class ) );
         if( frameworks.length == 0 ) {
             frameworks = new FrameworkOption[]{ felix() };
         }
         return frameworks;
     }
-
-    private Option[] setDefaultOptions()
-    {
-        return new Option[]{
-            // boot delegation for sun.*. This seems only necessary in Knopflerfish version > 2.0.0
-            bootDelegationPackage( "sun.*" ),
-            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ),
-            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ),
-            url( "link:classpath:META-INF/links/org.osgi.compendium.link" ),
-            url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" )
-        };
-    }
-
 
 }

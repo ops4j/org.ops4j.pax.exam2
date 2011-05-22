@@ -20,14 +20,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
 import org.junit.Test;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.LibraryOptions.*;
@@ -50,11 +52,12 @@ public class BareAPITest {
             //mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" ),
             rawPaxRunnerOption("envo","mike=blue,foo=bar")
         };
-
-        TestProbeProvider p = makeProbe();
+        
+        ExamSystem system = createSystem( options );
+        TestProbeProvider p = makeProbe( system);
 
         // the parse will split all single containers
-        for( TestContainer testContainer : getTestContainerFactory().parse( options ) ) {
+        for( TestContainer testContainer : getTestContainerFactory().materializeContainers( system ) ) {
             try {
                 testContainer.start();
                 testContainer.install( p.getStream() );
@@ -76,10 +79,10 @@ public class BareAPITest {
             easyMockBundles(),
             systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" )
         };
+        ExamSystem system = createSystem( options );
+        TestProbeProvider p = makeProbe(system);
 
-        TestProbeProvider p = makeProbe();
-
-        TestContainer[] containers = PaxExamRuntime.getTestContainerFactory().parse( options );
+        TestContainer[] containers = PaxExamRuntime.getTestContainerFactory().materializeContainers( system );
 
         for( TestContainer testContainer : containers ) {
             testContainer.start();
@@ -101,10 +104,10 @@ public class BareAPITest {
         }
     }
 
-    private TestProbeProvider makeProbe()
+    private TestProbeProvider makeProbe(ExamSystem system )
         throws IOException
     {
-        TestProbeBuilder probe = new PlumbingContext().createProbe();
+        TestProbeBuilder probe = system.createProbe( new Properties() );
         probe.addTests( 
             SingleTestProbe.class,
             getAllMethods( SingleTestProbe.class )

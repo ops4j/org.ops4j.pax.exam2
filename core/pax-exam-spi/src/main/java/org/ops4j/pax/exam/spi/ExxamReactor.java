@@ -17,6 +17,9 @@
  */
 package org.ops4j.pax.exam.spi;
 
+import java.io.IOException;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -39,7 +42,7 @@ public interface ExxamReactor
      *
      * @param options a set of (user-end) options.
      */
-    void addConfiguration( Option[] options );
+    void addConfiguration( ExamSystem system );
 
     /**
      * Add the probe that contribute to desired container(s) you will get after calling {@link #stage(StagedExamReactorFactory)}.
@@ -54,6 +57,7 @@ public interface ExxamReactor
      * @param factory to be used to stage. (usually a strategy)
      *
      * @return new reactor that can be used to derive TestContainer instances.
+     * @throws IOException 
      */
-    StagedExamReactor stage( StagedExamReactorFactory factory );
+    StagedExamReactor stage( StagedExamReactorFactory factory ) throws IOException;
 }

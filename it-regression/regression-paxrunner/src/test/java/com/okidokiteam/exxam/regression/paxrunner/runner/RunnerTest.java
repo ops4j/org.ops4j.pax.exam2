@@ -30,13 +30,5 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.rawPaxRunnerOpti
  */
 public class RunnerTest {
 
-    @Test
-    public void testStart() {
-        Option[] opts = options(
-                rawPaxRunnerOption("platform=eq"),
-                rawPaxRunnerOption("--noDownloadFeedback=false")
-        );
-        final TestContainer container = PaxExamRuntime.getTestContainerFactory().parse(opts)[0];
-        container.start();
-    }
+   
 }

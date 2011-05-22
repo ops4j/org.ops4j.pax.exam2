@@ -27,6 +27,7 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.CompositeCustomizer;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
@@ -57,13 +58,14 @@ public class PaxRunnerTestContainer
 
     private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainer.class );
     public static final int SYSTEM_BUNDLE = 0;
+    
+	private static final String RUNNER_TEST_CONTAINER = "PaxRunnerTestContainer.start";
 
     private boolean m_started = false;
 
     final private StoppableJavaRunner m_javaRunner;
-    final private String m_host;
-    final private int m_port;
-    final private Option[] m_options;
+    final private RMIRegistry m_reg;
+    final private ExamSystem m_system;
     final private String m_frameworkName;
     /**
      * Underlying Test Target
@@ -78,16 +80,17 @@ public class PaxRunnerTestContainer
      * @param port       RMI Port to be used (Registry must exist)
      * @param options    Options to be parsed.
      */
-    public PaxRunnerTestContainer( final StoppableJavaRunner javaRunner,
-                                   final String host,
-                                   final int port,
-                                   final Option[] options )
+    public PaxRunnerTestContainer(
+    		final ExamSystem system,
+    		final StoppableJavaRunner javaRunner,
+            final RMIRegistry registry,
+            final FrameworkOption selectedFramework 
+       		)
     {
         m_javaRunner = javaRunner;
-        m_options = options;
-        m_host = host;
-        m_port = port;
-        m_frameworkName = filter( FrameworkOption.class, options )[ 0 ].getName();
+        m_system = system;
+        m_reg = registry;
+        m_frameworkName = selectedFramework.getName();
     }
 
     /**
@@ -105,26 +108,28 @@ public class PaxRunnerTestContainer
     public synchronized TestContainer start()
     {
         try {
-            String name = getUUID();
-            Option[] args = combine( m_options, addRMINameProperty(name));
-
-            ArgumentsBuilder argBuilder = getArgumentBuilder(args);
-            m_target = new RBCRemoteTarget( name, m_port, argBuilder.getStartTimeout() );
+            String name = m_system.createID( RUNNER_TEST_CONTAINER );
+            
+            ExamSystem subsystem = m_system.subsystem(
+            		options(
+	            		systemProperty( Constants.RMI_HOST_PROPERTY ).value( m_reg.getHost() ),
+						systemProperty( Constants.RMI_PORT_PROPERTY ).value( "" + m_reg.getPort() ),
+						systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ))
+					);
+            m_target = new RBCRemoteTarget( name, m_reg.getPort() ,subsystem.getTimeout().getValue() );
 
             long startedAt = System.currentTimeMillis();
             URLUtils.resetURLStreamHandlerFactory();
-            String[] arguments = argBuilder.getArguments();
-
+            
+            String[] arguments = ArgumentsBuilder.build(subsystem);
             printExtraBeforeStart( arguments );
 
             Run.start( m_javaRunner, arguments );
             LOG.info( "Test Container started in " + ( System.currentTimeMillis() - startedAt ) + " millis" );
+            LOG.debug( "Wait for test container to finish its initialization " + ( m_system.getTimeout()  ) );
+            waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, m_system.getTimeout().getValue() );
 
-            LOG.debug( "Wait for test container to finish its initialization " + ( argBuilder.getStartTimeout() == WAIT_FOREVER ? "without timing out" : "for " + argBuilder.getStartTimeout() + " millis" ) );
-
-            waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, argBuilder.getStartTimeout() );
-
-            new CompositeCustomizer( argBuilder.getCustomizers() ).customizeEnvironment( argBuilder.getWorkingFolder() );
+            //new CompositeCustomizer( argBuilder.getCustomizers() ).customizeEnvironment( argBuilder.getWorkingFolder() );
 
             m_started = true;
         } catch( IOException e ) {
@@ -133,19 +138,11 @@ public class PaxRunnerTestContainer
         return this;
     }
 
-    private ArgumentsBuilder getArgumentBuilder(Option[] args) throws IOException {
-        return new ArgumentsBuilder( m_host, m_port, args );
-    }
-
     protected SystemPropertyOption addRMINameProperty(String name) {
         return systemProperty( Constants.RMI_NAME_PROPERTY ).value( name );
     }
 
-    private String getUUID() {
-        // TODO make it a system service (when JSR330 hits)
-        return UUID.randomUUID().toString();
-    }
-
+   
     private void printExtraBeforeStart( String[] arguments )
     {
         LOG.debug( "Starting up the test container (Pax Runner " + Info.getPaxRunnerVersion() + " )" );

@@ -20,17 +20,13 @@ package org.ops4j.pax.exam.nat.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 
-import org.osgi.framework.launch.FrameworkFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.options.ProvisionOption;
+import org.osgi.framework.launch.FrameworkFactory;
 
 /**
  * Stateful
@@ -43,22 +39,14 @@ import org.ops4j.pax.exam.options.ProvisionOption;
  */
 public class NativeTestContainerFactory implements TestContainerFactory {
 
-    private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
-
-    public TestContainer[] parse( Option... options )
-        throws TestContainerException
+    public TestContainer[] materializeContainers ( ExamSystem system ) throws TestContainerException
     {
-        NativeTestContainerParser parser = new NativeTestContainerParser( options );
-        List<ProvisionOption> bundles = parser.getBundles();//new NativeTestContainerParser().get( options );
-        Map<String, String> properties = parser.getSystemProperties();
-
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    	List<TestContainer> containers = new ArrayList<TestContainer>();
         Iterator<FrameworkFactory> factories = ServiceLoader.load( FrameworkFactory.class ).iterator();
-        List<TestContainer> containers = new ArrayList<TestContainer>();
         while( factories.hasNext() ) {
-            FrameworkFactory f = factories.next();
-            LOG.info( "Found factory " + f.toString() );
-            containers.add(new NativeTestContainer( f , bundles, properties ));
+            containers.add(new NativeTestContainer( factories.next() , system ));
         }
         return containers.toArray( new TestContainer[containers.size()] );
-    }
+    }	
 }

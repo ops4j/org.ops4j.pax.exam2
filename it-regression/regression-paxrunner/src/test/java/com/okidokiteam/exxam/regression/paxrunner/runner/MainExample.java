@@ -15,9 +15,11 @@
  */
 package com.okidokiteam.exxam.regression.paxrunner.runner;
 
+import java.io.IOException;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
+import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
@@ -27,11 +29,11 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
  * It does not show anything new, just the ability that starting a container works and is not shutdown automatically.
  */
 public class MainExample {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Option[] opts = options(
                 profile("gogo")
         );
-        final TestContainer container = PaxExamRuntime.getTestContainerFactory().parse(opts)[0];
+        final TestContainer container = createContainer( createSystem() );
         container.start();
     }
 }

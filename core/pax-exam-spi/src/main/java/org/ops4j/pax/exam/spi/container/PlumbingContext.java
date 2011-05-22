@@ -28,25 +28,11 @@ import org.ops4j.store.StoreFactory;
 /**
  * @author Toni Menzel
  * @since Jan 11, 2010
+ *
+ * @deprecated since version 2.0-RC6
+ * 
  */
 public class PlumbingContext {
 
-    private Store<InputStream> m_store;
-
-    public PlumbingContext() {
-        m_store = StoreFactory.defaultStore();
-    }
-
-    public TestProbeBuilder createProbe( Properties p )
-        throws IOException
-    {
-        return new TestProbeBuilderImpl( p, m_store );
-    }
-
-    public TestProbeBuilder createProbe()
-        throws IOException
-    {
-        Properties p = new Properties();
-        return createProbe( p );
-    }
+    
 }

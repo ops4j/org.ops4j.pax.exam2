@@ -76,16 +76,6 @@ public class Parser
         return m_timeout;
     }
 
-    public Registry getRegistry()
-    {
-        return null;
-    }
-
-    public String getName()
-    {
-        return null;
-    }
-
     public Integer getPort()
     {
         return m_port;

@@ -17,31 +17,35 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.osgi.framework.*;
-import org.osgi.framework.launch.Framework;
-import org.osgi.framework.launch.FrameworkFactory;
-import org.osgi.service.startlevel.StartLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Constants;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.options.ProvisionOption;
+import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.FrameworkListener;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.launch.Framework;
+import org.osgi.framework.launch.FrameworkFactory;
+import org.osgi.service.startlevel.StartLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Toni Menzel
@@ -49,41 +53,29 @@ import org.ops4j.pax.exam.options.ProvisionOption;
  */
 public class NativeTestContainer implements TestContainer {
 
-    @Override
-    public String toString() {
-        return "NativeContainer:" + m_frameworkFactory.toString();
-    }
-
     final private static Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
-
+    final private static String PROBE_SIGNATURE_KEY = "Probe-Signature";
     final private Stack<Long> m_installed = new Stack<Long>();
 
-    volatile Framework m_framework;
-    final private Map<String, String> m_properties;
-    final private List<ProvisionOption> m_bundles;
     final private FrameworkFactory m_frameworkFactory;
-    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
-    private static final long TIMEOUT_IN_MILLIS = 10000;
-    private long m_timeout;
+    final private ExamSystem m_system;
 
-    public NativeTestContainer(FrameworkFactory frameworkFactory, List<ProvisionOption> bundles, Map<String, String> properties) {
-        m_bundles = bundles;
-        m_properties = properties;
+    volatile Framework m_framework;
+    
+    public NativeTestContainer( FrameworkFactory frameworkFactory, ExamSystem system ) {    	
+    	m_system = system;    	
         m_frameworkFactory = frameworkFactory;
-        String s = m_properties.get("pax-exam.framework.shutdown.timeout");
-        m_timeout = s != null ? Long.valueOf(s) : TIMEOUT_IN_MILLIS;
     }
-
-    @SuppressWarnings("unchecked")
-    private <T> T getService(Class<T> serviceType, String filter, long timeout)
+    
+	@SuppressWarnings("unchecked")
+    private <T> T getService(Class<T> serviceType, String filter )
             throws TestContainerException {
         assert m_framework != null : "Framework should be up";
         assert serviceType != null : "serviceType not be null";
 
+        LOG.debug("Aquiring Service " + serviceType.getName() + " " + (filter != null ? filter : ""));
+        Long timeout = m_system.getTimeout().getValue();
         final Long start = System.currentTimeMillis();
-
-        LOG.info("Aquiring Service " + serviceType.getName() + " " + (filter != null ? filter : ""));
-
         do {
             try {
                 ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences(serviceType.getName(), filter);
@@ -95,7 +87,6 @@ public class NativeTestContainer implements TestContainer {
             } catch (Exception e) {
                 LOG.error("Some problem during looking up service from framework: " + m_framework, e);
             }
-            // wait a bit
         } while ((System.currentTimeMillis()) < start + timeout);
         printAvailableAlternatives(serviceType);
 
@@ -122,7 +113,7 @@ public class NativeTestContainer implements TestContainer {
     public synchronized void call( TestAddress address )
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
-        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression, m_timeout);
+        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression);
         service.call(address.arguments());
     }
 
@@ -149,7 +140,7 @@ public class NativeTestContainer implements TestContainer {
                 bundle.uninstall();
                 LOG.debug("Uninstalled bundle " + id);
             } catch (BundleException e) {
-                e.printStackTrace();
+                // Sometimes bundles go mad when install + uninstall happens too fast.
             }
         }
     }
@@ -161,14 +152,11 @@ public class NativeTestContainer implements TestContainer {
     }
 
     public TestContainer stop() {
-//        if (1==1) throw new RuntimeException( "stop has been called." );
         if (m_framework != null) {
-
             try {
-                LOG.debug("Framework goes down..");
                 cleanup();
                 m_framework.stop();
-                m_framework.waitForStop(m_timeout);
+                m_framework.waitForStop(m_system.getTimeout().getValue());
                 m_framework = null;
 
             } catch (BundleException e) {
@@ -181,44 +169,19 @@ public class NativeTestContainer implements TestContainer {
         }
         return this;
     }
-
-    public void waitForState(long bundleId, int state, long timeoutInMillis)
-            throws TimeoutException {
-        // look for a certain state in fw
-    }
-
-    public TestContainer start()
-            throws TestContainerException {
-        ClassLoader parent = null;
+  
+    public TestContainer start()  throws TestContainerException {        
+    	ClassLoader parent = null;
         try {
-            final Map<String, String> p = new HashMap<String, String>(m_properties);
-            String folder = p.get("org.osgi.framework.storage");
-            if (folder == null) {
-                folder = System.getProperty("org.osgi.framework.storage");
-            }
-            if (folder == null) {
-                //folder = System.getProperty( "user.home" ) + File.separator + "osgi";
-                folder = getCache();
-            }
-            LOG.debug("Cache folder set to " + folder);
-            FileUtils.delete(new File(folder));
-            // load default stuff
-
-            p.put("org.osgi.framework.storage", folder);
-            //  System.setProperty( "org.osgi.vendor.framework", "org.ops4j.pax.exam" );
-
-            p.put("org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam;version=" + skipSnapshotFlag(Info.getPaxExamVersion()));
-
+        	final Map<String, String> p = createFrameworkProperties();
+            
+            
             parent = Thread.currentThread().getContextClassLoader();
             //Thread.currentThread().setContextClassLoader( null );
 
             m_framework = m_frameworkFactory.newFramework(p);
             m_framework.init();
-
             installAndStartBundles(m_framework.getBundleContext());
-
-            Thread.currentThread().setContextClassLoader(parent);
-
         } catch (Exception e) {
             throw new TestContainerException("Problem starting test container.", e);
         } finally {
@@ -229,23 +192,32 @@ public class NativeTestContainer implements TestContainer {
         return this;
     }
 
+	private Map<String, String> createFrameworkProperties() throws IOException {
+		final Map<String, String> p = new HashMap<String, String>( );
+		String cache =  m_system.getTempFolder().getAbsolutePath();
+		p.put("org.osgi.framework.storage",cache );
+		LOG.info("Cache: " + cache);
+		
+		p.put("org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam;version=" + skipSnapshotFlag(Info.getPaxExamVersion()));
+		for (SystemPropertyOption option : m_system.getOptions(SystemPropertyOption.class) ) {
+        	System.setProperty(option.getKey(), option.getValue());
+        }
+		return p;
+	}
+   
     private void installAndStartBundles(BundleContext context)
             throws BundleException {
-
         m_framework.start();
-
         StartLevel sl = getStartLevelService(context);
-
-        for (ProvisionOption bundle : m_bundles) {
+        for (ProvisionOption<?> bundle : m_system.getOptions(ProvisionOption.class)) {
             Bundle b = null;
             b = context.installBundle(bundle.getURL());
             int startLevel = getStartLevel(bundle);
             sl.setBundleStartLevel(b, startLevel);
             b.start();
-            LOG.info("+ Install (start@" + startLevel + ") " + bundle);
-
+            LOG.debug("+ Install (start@" + startLevel + ") " + bundle);
         }
-        LOG.info("++++ Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE);
+        LOG.debug("Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE);
         sl.setStartLevel(Constants.START_LEVEL_TEST_BUNDLE);
         // Work around for FELIX-2942
         final CountDownLatch latch = new CountDownLatch(1);
@@ -258,26 +230,21 @@ public class NativeTestContainer implements TestContainer {
             }
         });
         try {
-            latch.await(m_timeout, TimeUnit.MILLISECONDS);
+            latch.await(m_system.getTimeout().getValue(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     private StartLevel getStartLevelService(BundleContext context) {
         StartLevel sl;
         while ((sl = (StartLevel) context.getService(context.getServiceReference(StartLevel.class.getName()))) == null) {
-            System.out.println("Find SL..");
-        }
-        if (sl == null) {
-            throw new TestContainerException("No Startlevel Service ?");
+            
         }
         return sl;
     }
 
-    private int getStartLevel(ProvisionOption bundle) {
+    private int getStartLevel(ProvisionOption<?> bundle) {
         Integer start = bundle.getStartLevel();
         if (start == null) {
             start = Constants.START_LEVEL_DEFAULT_PROVISION;
@@ -293,17 +260,9 @@ public class NativeTestContainer implements TestContainer {
             return version;
         }
     }
-
-    private String getCache()
-            throws IOException {
-        File base = new File("target");
-        base.mkdir();
-        File f = File.createTempFile("examtest", ".dir", base);
-        f.delete();
-        f.mkdirs();
-        LOG.info("Caching" + " to " + f.getAbsolutePath());
-        return f.getAbsolutePath();
+    
+    @Override
+    public String toString() {
+        return "NativeContainer:" + m_frameworkFactory.toString();
     }
-
-
 }

@@ -70,6 +70,13 @@ public class Activator
     public synchronized void start( final BundleContext bundleContext )
         throws Exception
     {
+    	String host = getHost();
+        String name = getName();
+        Integer port = getPort();
+        if (host == null || port == null || name == null) {
+        	LOG.info("Name, port or host is null. So this RBC remains inactive.");
+        	return;
+        }
         //!! Absolutely necessary for RMIClassLoading to work
         m_registerRBCThread = new Thread( new Runnable() {
 
@@ -144,15 +151,17 @@ public class Activator
     public synchronized void stop( BundleContext bundleContext )
         throws Exception
     {
-        m_registerRBCThread.interrupt();
-        String name = getName();
-        m_registry.unbind( name );
-        UnicastRemoteObject.unexportObject( m_remoteBundleContext, true );
-
-        // UnicastRemoteObject.unexportObject( m_registry, true );
-        m_registry = null;
-        m_remoteBundleContext = null;
-        LOG.debug( "Container with name " + name + " has removed its RBC" );
+    	if (m_registerRBCThread != null) {
+	        m_registerRBCThread.interrupt();
+	        String name = getName();
+	        m_registry.unbind( name );
+	        UnicastRemoteObject.unexportObject( m_remoteBundleContext, true );
+	
+	        // UnicastRemoteObject.unexportObject( m_registry, true );
+	        m_registry = null;
+	        m_remoteBundleContext = null;
+	        LOG.debug( "Container with name " + name + " has removed its RBC" );
+    	}
     }
 
     /**
@@ -167,11 +176,7 @@ public class Activator
         try {
             return Integer.parseInt( System.getProperty( Constants.RMI_PORT_PROPERTY ) );
         } catch( NumberFormatException e ) {
-            throw new BundleException(
-                "Cannot determine rmi registry port. Ensure that property "
-                + Constants.RMI_PORT_PROPERTY
-                + " is set to a valid Integer."
-            );
+            return -1;
         }
     }
 

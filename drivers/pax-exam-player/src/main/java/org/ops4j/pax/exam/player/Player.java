@@ -27,7 +27,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
+import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
@@ -74,7 +74,7 @@ public class Player {
     public Player()
         throws IOException
     {
-        this( PaxExamRuntime.getTestContainerFactory() );
+        this( getTestContainerFactory() );
     }
 
     public Player with( Option... parts )
@@ -90,15 +90,15 @@ public class Player {
         return this;
     }
 
-    public void play()
+    public void play() throws IOException
     {
         play( DEFAULT_STRATEGY );
     }
 
-    public void play( StagedExamReactorFactory strategy )
+    public void play( StagedExamReactorFactory strategy ) throws IOException
     {
         DefaultExamReactor reactor = new DefaultExamReactor( m_factory );
-        reactor.addConfiguration( m_parts );
+        reactor.addConfiguration( createSystem ( m_parts ) );
         reactor.addProbe( m_builder.build() );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );

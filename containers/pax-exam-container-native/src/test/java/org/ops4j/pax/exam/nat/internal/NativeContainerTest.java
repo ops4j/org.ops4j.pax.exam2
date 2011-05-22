@@ -17,18 +17,20 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.util.Map;
+
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.ops4j.pax.exam.ExamSystem;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.ops4j.pax.exam.options.ProvisionOption;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Test
@@ -39,7 +41,8 @@ public class NativeContainerTest {
     public void emptySetup()
     {
         FrameworkFactory ff = mock( FrameworkFactory.class );
-        NativeTestContainer container = new NativeTestContainer( ff, new ArrayList<ProvisionOption>(), new HashMap<String, String>() );
+        ExamSystem system = mock (ExamSystem.class );
+		NativeTestContainer container = new NativeTestContainer( ff, system);
         assertThat( container, is( notNullValue() ) );
         verifyNoMoreInteractions( ff );
     }
@@ -50,8 +53,9 @@ public class NativeContainerTest {
         FrameworkFactory ff = mock( FrameworkFactory.class );
         Framework fw = mock( Framework.class );
         when( ff.newFramework( Matchers.<Map>anyObject() ) ).thenReturn( fw );
+        ExamSystem system = mock (ExamSystem.class );
 
-        NativeTestContainer container = new NativeTestContainer( ff, new ArrayList<ProvisionOption>(), new HashMap<String, String>() );
+        NativeTestContainer container =  new NativeTestContainer( ff, system);
         container.start();
         verifyNoMoreInteractions( ff );
         verifyNoMoreInteractions( fw );

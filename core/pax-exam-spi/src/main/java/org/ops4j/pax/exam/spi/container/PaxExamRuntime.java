@@ -25,12 +25,16 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.ServiceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Pax Exam runtime.
@@ -38,24 +42,18 @@ import org.ops4j.pax.exam.TestContainerFactory;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
+ * 
  */
 public class PaxExamRuntime {
+	 private static final Logger LOG = LoggerFactory.getLogger( PaxExamRuntime.class );
+     private static final String TESTCONTAINER_FACTORY = "META-INF/services/org.ops4j.pax.exam.TestContainerFactory";
 
-    private static final Logger LOG = LoggerFactory.getLogger( PaxExamRuntime.class );
-    private static final String TESTCONTAINER_FACTORY = "META-INF/services/org.ops4j.pax.exam.TestContainerFactory";
 
-    /**
-     * Utility class. Ment to be used via the static factory methods.
-     */
-    private PaxExamRuntime()
-    {
-        // utility class
-    }
-
-    /**
-     * Discovers the regression container. Discovery is performed via Appache Commons discovery mechanism.
+	 
+	/**
+     * Discovers the regression container. Discovery is performed via ServiceLoader discovery mechanism.
      *
-     * @return discovered regression container
+     * @return discovered test container
      */
     public static TestContainerFactory getTestContainerFactory()
     {
@@ -73,10 +71,34 @@ public class PaxExamRuntime {
      * @param option to be parsed.
      * @return exactly one Test Container.
      */
-    public static TestContainer createContainer( Option[] option ) {
-        return getTestContainerFactory().parse( option )[0];
+    public static TestContainer createContainer( ExamSystem system ) {
+        return getTestContainerFactory().materializeContainers( system )[0];
     }
 
+    public static ExamSystem createSystem( Option... options ) throws IOException {
+        return DefaultExamSystem.create(options);
+    }
+    
+
+    /**
+     * Select yourself
+     *
+     * @param select the exact implementation if you dont want to rely on commons util discovery or
+     *               change different containers in a single project.
+     *
+     * @return discovered regression container
+     */
+    public static TestContainerFactory getTestContainerFactory( Class<? extends TestContainerFactory> select )
+    {
+        try {
+            return select.newInstance();
+        } catch( InstantiationException e ) {
+            throw new IllegalArgumentException( "Class  " + select + "is not a valid Test Container Factory.", e );
+        } catch( IllegalAccessException e ) {
+            throw new IllegalArgumentException( "Class  " + select + "is not a valid Test Container Factory.", e );
+        }
+    }
+    
     /**
      * Exits with an exception if Classpath not set up properly.
      */
@@ -106,25 +128,6 @@ public class PaxExamRuntime {
             }
         } catch( IOException e ) {
             throw new TestContainerException( "Problem looking for TestContainerFactory descriptors in Classpath.. ", e );
-        }
-    }
-
-    /**
-     * Select yourself
-     *
-     * @param select the exact implementation if you dont want to rely on commons util discovery or
-     *               change different containers in a single project.
-     *
-     * @return discovered regression container
-     */
-    public static TestContainerFactory getTestContainerFactory( Class<? extends TestContainerFactory> select )
-    {
-        try {
-            return select.newInstance();
-        } catch( InstantiationException e ) {
-            throw new IllegalArgumentException( "Class  " + select + "is not a valid Test Container Factory.", e );
-        } catch( IllegalAccessException e ) {
-            throw new IllegalArgumentException( "Class  " + select + "is not a valid Test Container Factory.", e );
         }
     }
 }

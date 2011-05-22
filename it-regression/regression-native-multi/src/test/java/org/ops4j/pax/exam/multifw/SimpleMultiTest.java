@@ -5,14 +5,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
 import org.junit.Test;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
-import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
+import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 
 import static org.ops4j.pax.exam.LibraryOptions.*;
 
@@ -29,11 +31,11 @@ public class SimpleMultiTest {
             junitBundles(),
             easyMockBundles()
         };	
-
-        TestProbeProvider p = makeProbe();
+        ExamSystem system = createSystem(options);
+        TestProbeProvider p = makeProbe(system);
 
         // the parse will split all single containers
-        for( TestContainer testContainer : PaxExamRuntime.getTestContainerFactory().parse( options ) ) {
+        for( TestContainer testContainer : getTestContainerFactory().materializeContainers( system ) ) {
             try {
                 testContainer.start();
                 testContainer.install( p.getStream() );
@@ -46,10 +48,10 @@ public class SimpleMultiTest {
         }
     }
 
-    private TestProbeProvider makeProbe()
+    private TestProbeProvider makeProbe(ExamSystem system )
         throws IOException
     {
-        TestProbeBuilder probe = new PlumbingContext().createProbe();
+        TestProbeBuilder probe = system.createProbe(new Properties());
         probe.addTests( Probe.class, getAllMethods( Probe.class ) );
         return probe.build();
     }

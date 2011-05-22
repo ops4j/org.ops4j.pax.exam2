@@ -15,13 +15,13 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ops4j.pax.exam.options.BootDelegationOption;
+import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,36 +35,27 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Eats Options and spits out meta data used in factory
+ * Its also the place where NativeContainer default options should be set.
  */
 public class NativeTestContainerParser
 {
 
-    private static Logger LOG = LoggerFactory.getLogger( NativeTestContainerParser.class );
-
     final private List<ProvisionOption> m_bundles = new ArrayList<ProvisionOption>();
-    final private Map<String, String> m_properties = new HashMap<String, String>();
+    final private List<SystemPropertyOption> m_systemProperties = new ArrayList<SystemPropertyOption>();   
+    final private Map<String, String> m_frameworkProperties = new HashMap<String, String>();
 
-    public NativeTestContainerParser( Option[] options )
+    public NativeTestContainerParser( final Option[] optionsIn )
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        try {
-       // new URL("aether:foo/bar");
-        new URL("mvn:foo/bar");
-        }catch(Exception e) {
-            throw new RuntimeException( e );
-        }
-        options = expand( combine( localOptions(), options ) );
-        
-        ProvisionOption[] bundleOptions = filter( ProvisionOption.class, options );
-        for( ProvisionOption opt : bundleOptions )
-        {
-            m_bundles.add( opt  );
-        }
-
+        final Option[]  options = expand( combine( localOptions(), optionsIn ) );
         SystemPropertyOption[] systemProperties = filter( SystemPropertyOption.class, options );
         for( SystemPropertyOption opt : systemProperties )
         {
-            m_properties.put( opt.getKey(), opt.getValue() );
+        	// TODO: make dedicated option for framework properties.
+        	// or get rid of it at all.
+        	
+        	m_frameworkProperties.put( opt.getKey(), opt.getValue() );
+        	m_systemProperties.add(opt);
         }
         BootDelegationOption[] bootDelegations = filter( BootDelegationOption.class, options );
         StringBuilder sb = new StringBuilder();
@@ -77,7 +68,7 @@ public class NativeTestContainerParser
             sb.append( opt.getPackage() );
         }
         if ( sb.length() > 0 ) {
-            m_properties.put( "org.osgi.framework.bootdelegation" , sb.toString() );
+        	m_frameworkProperties.put( "org.osgi.framework.bootdelegation" , sb.toString() );
         }
     }
 
@@ -86,9 +77,15 @@ public class NativeTestContainerParser
         return m_bundles;
     }
 
-    public Map<String, String> getSystemProperties()
+    public Map<String, String> getFrameworkProperties()
     {
-        return m_properties;
+        return m_frameworkProperties;
+    }
+    
+
+    public List<SystemPropertyOption> getSystemProperties()
+    {
+        return m_systemProperties;
     }
 
     private Option[] localOptions()
@@ -102,6 +99,12 @@ public class NativeTestContainerParser
                 .version( "4.2.0" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES )
             ,
+            mavenBundle()
+            	.groupId( "org.ops4j.pax.logging" )
+            	.artifactId( "pax-logging-api" )
+            	.version( "1.6.2" )
+            	.startLevel( START_LEVEL_SYSTEM_BUNDLES )
+        ,
             mavenBundle()
                 .groupId( "org.ops4j.pax.exam" )
                 .artifactId( "pax-exam-extender-service" )

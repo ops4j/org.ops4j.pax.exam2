@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 
+import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
@@ -19,7 +21,7 @@ public class PaxRunnerTestContainerFactoryTest {
     {
         TestContainerFactory factory = new PaxRunnerTestContainerFactory();
 
-        TestContainer[] containers = factory.parse();
+        TestContainer[] containers = factory.materializeContainers( createSystem (  ) );
         assertThat( containers.length, is( 1 ) );
         TestContainer container = containers[ 0 ];
         assertNotNull( container );
@@ -31,7 +33,7 @@ public class PaxRunnerTestContainerFactoryTest {
     {
         TestContainerFactory factory = new PaxRunnerTestContainerFactory();
 
-        TestContainer[] containers = factory.parse( felix() );
+        TestContainer[] containers = factory.materializeContainers( createSystem ( felix()  ) );
         assertThat( containers.length, is( 1 ) );
         
         assertNotNull( containers[ 0 ] );
@@ -43,7 +45,7 @@ public class PaxRunnerTestContainerFactoryTest {
     {
         TestContainerFactory factory = new PaxRunnerTestContainerFactory();
 
-        TestContainer[] containers = factory.parse( felix(), equinox() );
+        TestContainer[] containers = factory.materializeContainers( createSystem ( felix(),equinox()  ) );
         assertThat( containers.length, is( 2 ) );
 
         assertNotNull( containers[ 0 ] );
