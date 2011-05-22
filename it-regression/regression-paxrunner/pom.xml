@@ -58,14 +58,6 @@
             <version>1.6.1</version>
             <scope>test</scope>
         </dependency>
-
-         <dependency>
-            <groupId>org.ops4j.pax.tinybundles</groupId>
-            <artifactId>pax-tinybundles-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-    
     </dependencies>
 
 </project>

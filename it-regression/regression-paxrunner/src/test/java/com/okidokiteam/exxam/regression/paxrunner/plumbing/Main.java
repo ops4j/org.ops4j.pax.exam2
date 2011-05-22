@@ -21,8 +21,6 @@ import org.ops4j.pax.exam.spi.container.PlumbingContext;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
-import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
-import static org.ops4j.pax.tinybundles.core.TinyBundles.*;
 
 /**
  * Interactive Pax Exam fun.
