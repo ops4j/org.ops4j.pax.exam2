@@ -90,6 +90,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             throw new TestContainerException( "Problem interacting with reactor.", e );
         } finally {
             m_reactor.tearDown();
+            m_system.clear();
         }
     }
 
@@ -165,7 +166,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             if( conf != null ) {
                 // consider as option, so prepare that one:
                 LOG.info( "Add Configuration " + m.getName() );
-                reactor.addConfiguration( m_system.subsystem( ( (Option[]) m.invoke( testClassInstance ) ) ) );
+                reactor.addConfiguration( m_system.fork( ( (Option[]) m.invoke( testClassInstance ) ) ) );
             }
         }
     }

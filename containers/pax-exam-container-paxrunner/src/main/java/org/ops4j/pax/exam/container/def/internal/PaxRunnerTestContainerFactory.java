@@ -18,18 +18,16 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
+import static org.ops4j.pax.exam.CoreOptions.felix;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Factory for {@link PaxRunnerTestContainer}.
@@ -42,7 +40,6 @@ public class PaxRunnerTestContainerFactory
 
     private RMIRegistry m_rmiRegistry;
     private static final int DEFAULTPORT = 21412;
-    private static final boolean BLOCKING_RUNNER_INTERNALLY = true;
 
     public PaxRunnerTestContainerFactory()
 
@@ -53,7 +50,7 @@ public class PaxRunnerTestContainerFactory
     /**
      * {@inheritDoc}
      */
-    public TestContainer[] materializeContainers( ExamSystem system )
+    public TestContainer[] create( ExamSystem system )
     {
         FrameworkOption[] frameworks = getFrameworks( system );
         
@@ -62,7 +59,6 @@ public class PaxRunnerTestContainerFactory
             containers.add(
                 new PaxRunnerTestContainer(
                 	system,
-                    new AsyncJavaRunner( new DefaultJavaRunner( BLOCKING_RUNNER_INTERNALLY ) ),
                     m_rmiRegistry,
                     framework
                 )

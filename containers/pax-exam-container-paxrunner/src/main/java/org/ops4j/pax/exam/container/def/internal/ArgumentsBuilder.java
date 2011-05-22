@@ -83,7 +83,7 @@ class ArgumentsBuilder {
         
         add( m_paxrunneArguments, extractArguments( system.getOptions( MavenPluginGeneratedConfigOption.class ) ) );
 
-        add( m_paxrunneArguments, extractArguments(selectedFramework ) );
+        add( m_paxrunneArguments, extractArguments( selectedFramework ) );
         add( m_paxrunneArguments, extractArguments( system.getOptions( ProfileOption.class ) ) );
         add( m_paxrunneArguments, extractArguments( system.getOptions( BootDelegationOption.class ) ) );
         add( m_paxrunneArguments, extractArguments( system.getOptions( SystemPackageOption.class ) ) );
@@ -135,7 +135,7 @@ class ArgumentsBuilder {
      *
      * @return eventual wrapped bundles
      */
-    private List<ProvisionOption> wrap( List<ProvisionOption> options )
+    private List<ProvisionOption> wrap( ProvisionOption[] options )
     {
         final List<ProvisionOption> processed = new ArrayList<ProvisionOption>();
         for( final ProvisionOption provisionOption : options ) {
@@ -263,7 +263,7 @@ class ArgumentsBuilder {
     private Collection<String> extractArguments( final ProvisionOption[] bundles )
     {
         final List<String> arguments = new ArrayList<String>();
-        for( ProvisionOption bundle : bundles ) {
+        for( ProvisionOption bundle : wrap(bundles) ) {
             arguments.add( bundle.getURL() );
         }
         return arguments;

@@ -77,7 +77,7 @@ public class DefaultExamReactor implements ExxamReactor {
             m_configurations.add( PaxExamRuntime.createSystem( options() ) );
         }
         for( ExamSystem system : m_configurations ) {
-            containers.addAll( Arrays.asList( m_factory.materializeContainers( system ) ) );
+            containers.addAll( Arrays.asList( m_factory.create( system ) ) );
         }
 
         return factory.create( containers, m_probes );

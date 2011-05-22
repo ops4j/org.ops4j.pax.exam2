@@ -29,11 +29,15 @@ import java.util.concurrent.TimeUnit;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.ProvisionOption;
+import static org.ops4j.pax.exam.OptionUtils.*;
+
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -62,8 +66,8 @@ public class NativeTestContainer implements TestContainer {
 
     volatile Framework m_framework;
     
-    public NativeTestContainer( FrameworkFactory frameworkFactory, ExamSystem system ) {    	
-    	m_system = system;    	
+    public NativeTestContainer( FrameworkFactory frameworkFactory, ExamSystem system ) throws IOException {    	
+    	m_system = system.fork(new Option[0]);    	
         m_frameworkFactory = frameworkFactory;
     }
     
@@ -74,7 +78,7 @@ public class NativeTestContainer implements TestContainer {
         assert serviceType != null : "serviceType not be null";
 
         LOG.debug("Aquiring Service " + serviceType.getName() + " " + (filter != null ? filter : ""));
-        Long timeout = m_system.getTimeout().getValue();
+        RelativeTimeout timeout = m_system.getTimeout();
         final Long start = System.currentTimeMillis();
         do {
             try {
@@ -87,7 +91,7 @@ public class NativeTestContainer implements TestContainer {
             } catch (Exception e) {
                 LOG.error("Some problem during looking up service from framework: " + m_framework, e);
             }
-        } while ((System.currentTimeMillis()) < start + timeout);
+        } while (timeout.isNoTimeout() || (System.currentTimeMillis()) < start + timeout.getValue() );
         printAvailableAlternatives(serviceType);
 
         throw new TestContainerException("Not found a matching Service " + serviceType.getName() + " for Filter:" + (filter != null ? filter : ""));
@@ -158,7 +162,7 @@ public class NativeTestContainer implements TestContainer {
                 m_framework.stop();
                 m_framework.waitForStop(m_system.getTimeout().getValue());
                 m_framework = null;
-
+                m_system.clear();
             } catch (BundleException e) {
                 LOG.warn("Problem during stopping fw.", e);
             } catch (InterruptedException e) {

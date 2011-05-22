@@ -25,7 +25,7 @@ public class PaxRunnerTestContainerTest {
     public void rbcTest()
         throws Exception
     {
-        TestContainer testContainer = new PaxRunnerTestContainerFactory().materializeContainers( createSystem (  ) )[0];
+        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
         testContainer.start();
         testContainer.stop();
     }
@@ -39,7 +39,7 @@ public class PaxRunnerTestContainerTest {
     public void restartTest()
         throws Exception
     {
-        TestContainer testContainer = new PaxRunnerTestContainerFactory().materializeContainers( createSystem (  ) )[0];
+        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
         for( int i = 0; i <= 10; i++ ) {
             LOG.info( "----------------Container start nr.: " + i );
             testContainer.start();
@@ -54,8 +54,8 @@ public class PaxRunnerTestContainerTest {
     public void mutlipleFactories()
         throws Exception
     {
-        TestContainer testContainer = new PaxRunnerTestContainerFactory().materializeContainers( createSystem (  ) )[0];
-        TestContainer testContainer2 = new PaxRunnerTestContainerFactory().materializeContainers( createSystem (  ) )[0];
+        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
+        TestContainer testContainer2 = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
 
         for( int i = 0; i <= 5; i++ ) {
             LOG.info( "----------------Container start nr.: " + i );

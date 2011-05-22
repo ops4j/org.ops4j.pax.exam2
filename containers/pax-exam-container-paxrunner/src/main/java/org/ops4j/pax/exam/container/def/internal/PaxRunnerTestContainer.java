@@ -41,6 +41,7 @@ import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.runner.Run;
 import org.ops4j.pax.runner.handler.internal.URLUtils;
+import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 import org.ops4j.pax.runner.platform.StoppableJavaRunner;
 
 import static org.ops4j.pax.exam.Constants.*;
@@ -58,6 +59,8 @@ public class PaxRunnerTestContainer
     implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainer.class );
+    private static final boolean BLOCKING_RUNNER_INTERNALLY = true;
+
     public static final int SYSTEM_BUNDLE = 0;
     
 	private static final String RUNNER_TEST_CONTAINER = "PaxRunnerTestContainer.start";
@@ -72,6 +75,7 @@ public class PaxRunnerTestContainer
      * Underlying Test Target
      */
     private RBCRemoteTarget m_target;
+	private ExamSystem m_subsystem;
 
     /**
      * Constructor.
@@ -83,12 +87,11 @@ public class PaxRunnerTestContainer
      */
     public PaxRunnerTestContainer(
     		final ExamSystem system,
-    		final StoppableJavaRunner javaRunner,
             final RMIRegistry registry,
             final FrameworkOption selectedFramework 
        		)
     {
-        m_javaRunner = javaRunner;
+        m_javaRunner = new AsyncJavaRunner( new DefaultJavaRunner( BLOCKING_RUNNER_INTERNALLY ) );
         m_system = system;
         m_reg = registry;
         m_selectedFramework = selectedFramework;
@@ -111,28 +114,26 @@ public class PaxRunnerTestContainer
         try {
             String name = m_system.createID( RUNNER_TEST_CONTAINER );
             
-            ExamSystem subsystem = m_system.subsystem(
+            m_subsystem = m_system.fork(
             		options(
 	            		systemProperty( Constants.RMI_HOST_PROPERTY ).value( m_reg.getHost() ),
 						systemProperty( Constants.RMI_PORT_PROPERTY ).value( "" + m_reg.getPort() ),
 						systemProperty( Constants.RMI_NAME_PROPERTY ).value( name )
 						)
 					);
-            m_target = new RBCRemoteTarget( name, m_reg.getPort() ,subsystem.getTimeout() );
+            m_target = new RBCRemoteTarget( name, m_reg.getPort() ,m_subsystem.getTimeout() );
 
             long startedAt = System.currentTimeMillis();
             URLUtils.resetURLStreamHandlerFactory();
             
-            String[] arguments = ArgumentsBuilder.build(subsystem,m_selectedFramework);
+            String[] arguments = ArgumentsBuilder.build(m_subsystem,m_selectedFramework);
             printExtraBeforeStart( arguments );
 
             Run.start( m_javaRunner, arguments );
-            LOG.info( "Test Container started in " + ( System.currentTimeMillis() - startedAt ) + " millis" );
+            LOG.debug( "Test Container started in " + ( System.currentTimeMillis() - startedAt ) + " millis" );
             LOG.info( "Wait for test container to finish its initialization " + ( m_system.getTimeout()  ) );
             waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, m_system.getTimeout() );
-
             //new CompositeCustomizer( argBuilder.getCustomizers() ).customizeEnvironment( argBuilder.getWorkingFolder() );
-            LOG.info("Wait done..");
             m_started = true;
         } catch( IOException e ) {
             throw new RuntimeException( "Problem starting container" );
@@ -180,6 +181,7 @@ public class PaxRunnerTestContainer
 
             m_started = false;
             m_target = null;
+            m_subsystem.clear();
         }
         return this;
     }

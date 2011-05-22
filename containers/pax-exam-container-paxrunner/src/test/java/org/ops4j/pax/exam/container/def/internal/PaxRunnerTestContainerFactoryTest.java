@@ -21,7 +21,7 @@ public class PaxRunnerTestContainerFactoryTest {
     {
         TestContainerFactory factory = new PaxRunnerTestContainerFactory();
 
-        TestContainer[] containers = factory.materializeContainers( createSystem (  ) );
+        TestContainer[] containers = factory.create( createSystem (  ) );
         assertThat( containers.length, is( 1 ) );
         TestContainer container = containers[ 0 ];
         assertNotNull( container );
@@ -33,7 +33,7 @@ public class PaxRunnerTestContainerFactoryTest {
     {
         TestContainerFactory factory = new PaxRunnerTestContainerFactory();
 
-        TestContainer[] containers = factory.materializeContainers( createSystem ( felix()  ) );
+        TestContainer[] containers = factory.create( createSystem ( felix()  ) );
         assertThat( containers.length, is( 1 ) );
         
         assertNotNull( containers[ 0 ] );
@@ -45,7 +45,7 @@ public class PaxRunnerTestContainerFactoryTest {
     {
         TestContainerFactory factory = new PaxRunnerTestContainerFactory();
 
-        TestContainer[] containers = factory.materializeContainers( createSystem ( felix(),equinox()  ) );
+        TestContainer[] containers = factory.create( createSystem ( felix(),equinox()  ) );
         assertThat( containers.length, is( 2 ) );
 
         assertNotNull( containers[ 0 ] );

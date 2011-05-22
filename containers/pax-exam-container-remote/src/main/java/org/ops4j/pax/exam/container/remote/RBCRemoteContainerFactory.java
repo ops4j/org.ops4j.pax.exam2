@@ -32,7 +32,7 @@ public class RBCRemoteContainerFactory implements TestContainerFactory
      * {@inheritDoc}
      * Not used yet.
      */
-    public TestContainer[] materializeContainers( final ExamSystem system )
+    public TestContainer[] create( final ExamSystem system )
     {
         return new TestContainer[]{
             

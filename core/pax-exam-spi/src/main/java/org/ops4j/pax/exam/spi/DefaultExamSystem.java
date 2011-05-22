@@ -29,23 +29,23 @@ import com.google.common.io.Files;
 
 public class DefaultExamSystem implements ExamSystem {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DefaultExamSystem.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultExamSystem.class);
 
 	final private Store<InputStream> m_store;
-	final private File m_tempDirectory;
 	final private File m_configDirectory;
 	final private Option[] m_options;
 
 	final private Stack<File> m_tempStack;
 	final private Stack<ExamSystem> m_subsystems;
 
+	final private RelativeTimeout m_timeout;
+
 	public static ExamSystem create(Option[] options) throws IOException {
 		LOG.info("!! Pax Exam System (Version: " + Info.getPaxExamVersion() + ") created.");
 		return new DefaultExamSystem(options);
 	}
 
-	public ExamSystem subsystem(Option[] options) throws IOException {
+	public ExamSystem fork(Option[] options) throws IOException {
 		ExamSystem sys = new DefaultExamSystem(combine(m_options, options));
 		m_subsystems.add(sys);
 		return sys;
@@ -53,15 +53,13 @@ public class DefaultExamSystem implements ExamSystem {
 
 	private DefaultExamSystem(Option[] options) throws IOException {
 		m_options = expand(combine(localOptions(), options));
-		m_tempDirectory = new File(System.getProperty("java.io.tmpdir") + "/paxexam_tmp/");
-		m_tempDirectory.mkdirs();
-
 		m_tempStack = new Stack<File>();
 		m_subsystems = new Stack<ExamSystem>();
 
 		m_configDirectory = new File(System.getProperty("user.home") + "/.pax/exam/");
 		m_configDirectory.mkdirs();
-		m_store = new TemporaryStore(new File(m_tempDirectory, "/tb"), false);
+		m_store = new TemporaryStore(getTempFolder(), false);
+		m_timeout = RelativeTimeout.TIMEOUT_DEFAULT;
 	}
 
 	private Option[] localOptions() {
@@ -117,23 +115,25 @@ public class DefaultExamSystem implements ExamSystem {
 	 * @return a relative indication of how to deal with timeouts.
 	 */
 	public RelativeTimeout getTimeout() {
-		return RelativeTimeout.TIMEOUT_NOTIMEOUT;
+		return m_timeout;
 	}
 
 	/**
 	 * 
 	 * Clears up resources taken by system (like temporary files)
 	 * 
-	 * @throws IOException
 	 */
-	public void clear() throws IOException {
-		for (ExamSystem sys : m_subsystems) {
-			sys.clear();
+	public void clear()  {
+		try {
+			for (ExamSystem sys : m_subsystems) {
+				sys.clear();
+			}
+			while (!m_tempStack.isEmpty()) {
+				Files.deleteRecursively(m_tempStack.pop().getCanonicalFile());
+			}
+		} catch(IOException e) {
+			//LOG.info("Clearing " + this.toString() + " failed." ,e);
 		}
-		for (File f : m_tempStack) {
-			Files.deleteDirectoryContents(f);
-		}
-		Files.deleteDirectoryContents(m_tempDirectory);
 	}
 
 	public TestProbeBuilder createProbe(Properties p) throws IOException {

@@ -36,7 +36,7 @@ public interface ExamSystem {
 		public  <T extends Option> T[] getOptions( final Class<T> optionType );
 		
 		
-		public ExamSystem subsystem (Option[] options ) throws IOException;
+		public ExamSystem fork (Option[] options ) throws IOException;
 		
 		/**
 		 * 
@@ -60,15 +60,16 @@ public interface ExamSystem {
 		 */
 		public RelativeTimeout getTimeout();
 		
-		/**
-		 * 
-		 * Clears up resources taken by system (like temporary files)
-		 * @throws IOException 
-		 */
-		public void clear() throws IOException;
+		
 		
 		public TestProbeBuilder createProbe( Properties p ) throws IOException ;
 
 
 		public String createID(String purposeText);
+		
+		/**
+		 * 
+		 * Clears up resources taken by system (like temporary files)
+		 */
+		public void clear();
 }

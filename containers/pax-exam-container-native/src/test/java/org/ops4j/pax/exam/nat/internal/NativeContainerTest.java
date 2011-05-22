@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Test;
@@ -38,7 +39,7 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class NativeContainerTest {
 
     @Test
-    public void emptySetup()
+    public void emptySetup() throws IOException
     {
         FrameworkFactory ff = mock( FrameworkFactory.class );
         ExamSystem system = mock (ExamSystem.class );
@@ -48,7 +49,7 @@ public class NativeContainerTest {
     }
 
     //@Test
-    public void starting()
+    public void starting() throws IOException
     {
         FrameworkFactory ff = mock( FrameworkFactory.class );
         Framework fw = mock( Framework.class );

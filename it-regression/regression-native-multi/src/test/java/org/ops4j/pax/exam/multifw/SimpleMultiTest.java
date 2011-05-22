@@ -35,7 +35,7 @@ public class SimpleMultiTest {
         TestProbeProvider p = makeProbe(system);
 
         // the parse will split all single containers
-        for( TestContainer testContainer : getTestContainerFactory().materializeContainers( system ) ) {
+        for( TestContainer testContainer : getTestContainerFactory().create( system ) ) {
             try {
                 testContainer.start();
                 testContainer.install( p.getStream() );
@@ -46,6 +46,7 @@ public class SimpleMultiTest {
                 testContainer.stop();
             }
         }
+        system.clear();
     }
 
     private TestProbeProvider makeProbe(ExamSystem system )

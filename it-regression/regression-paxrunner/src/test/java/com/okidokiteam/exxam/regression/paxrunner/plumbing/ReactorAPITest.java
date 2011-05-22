@@ -89,7 +89,9 @@ public class ReactorAPITest
         } finally
         {
             stagedReactor.tearDown();
+            system.clear();
         }
+        
     }
 
      private TestProbeProvider makeProbe( ExamSystem system )

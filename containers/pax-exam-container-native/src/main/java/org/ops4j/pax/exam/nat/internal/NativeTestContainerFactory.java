@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,13 +40,17 @@ import org.osgi.framework.launch.FrameworkFactory;
  */
 public class NativeTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] materializeContainers ( ExamSystem system ) throws TestContainerException
+    public TestContainer[] create ( ExamSystem system ) throws TestContainerException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
     	List<TestContainer> containers = new ArrayList<TestContainer>();
         Iterator<FrameworkFactory> factories = ServiceLoader.load( FrameworkFactory.class ).iterator();
         while( factories.hasNext() ) {
-            containers.add(new NativeTestContainer( factories.next() , system ));
+            try {
+				containers.add(new NativeTestContainer( factories.next() , system ));
+			} catch (IOException e) {
+				throw new TestContainerException("Problem initializing container.",e);
+			}
         }
         return containers.toArray( new TestContainer[containers.size()] );
     }	
