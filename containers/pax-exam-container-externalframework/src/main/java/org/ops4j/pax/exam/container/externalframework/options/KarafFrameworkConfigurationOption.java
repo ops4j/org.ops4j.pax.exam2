@@ -76,7 +76,10 @@ public class KarafFrameworkConfigurationOption extends ExternalFrameworkConfigur
 		add(systemProperty("karaf.lock").value("false"));
         return this;
 	}
-
+	
+	protected boolean mustExtract(File f, File workDir, File osgiFrameworkHomeDir) {
+        return f != null && (osgiFrameworkHomeDir.listFiles() == null || osgiFrameworkHomeDir.listFiles().length < 3);
+    }
     protected void configure(File karafHomeDir) {
 	}
     

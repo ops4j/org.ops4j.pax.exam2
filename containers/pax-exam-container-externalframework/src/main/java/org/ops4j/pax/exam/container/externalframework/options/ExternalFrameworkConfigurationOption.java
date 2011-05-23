@@ -145,9 +145,9 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
 		
 		File osgiFrameworkHomeDir = getOsgiFrameworkHomeDir(config);
         File f = getFile(configuration, workDir);
-        if (f != null)
+        if (f != null && mustExtract(f, workDir, osgiFrameworkHomeDir))
 			extractTo(f, workDir, osgiFrameworkHomeDir);
-		else
+		if (mustDeleteData())
 			deleteDir(getData(config));
         configure(osgiFrameworkHomeDir);
         runner.exec(vmOptions, getClassPath(osgiFrameworkHomeDir),
@@ -155,7 +155,15 @@ public abstract class ExternalFrameworkConfigurationOption<T extends ExternalFra
                 programOptions, javaHome,  osgiFrameworkHomeDir);
 	}
 
-	@Deprecated
+	protected boolean mustDeleteData() {
+        return true;
+    }
+
+    protected boolean mustExtract(File f, File workDir, File osgiFrameworkHomeDir) {
+        return f != null && !osgiFrameworkHomeDir.exists();
+    }
+
+    @Deprecated
 	protected File getHome(Properties config) {
 		return getOsgiFrameworkHomeDir(config);
 	}
