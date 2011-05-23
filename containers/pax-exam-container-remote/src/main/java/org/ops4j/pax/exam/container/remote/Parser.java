@@ -15,9 +15,6 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
-import java.rmi.registry.Registry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
@@ -26,7 +23,7 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Minimal parser for the rbcremote fragment.
- */
+ */ 
 public class Parser
 {
     private String m_host;

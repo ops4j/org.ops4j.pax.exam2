@@ -21,8 +21,6 @@ import static org.ops4j.pax.exam.OptionUtils.filter;
 
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
@@ -33,6 +31,8 @@ import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -44,7 +44,7 @@ import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
 public class RBCRemoteTarget implements TestContainer
 {
 
-    private static final Log LOG = LogFactory.getLog( RBCRemoteTarget.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RBCRemoteTarget.class );
 
     private RemoteBundleContextClient m_remoteBundleContextClient;
 

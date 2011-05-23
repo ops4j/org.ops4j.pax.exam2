@@ -63,27 +63,12 @@ public class DefaultExamSystem implements ExamSystem {
 	}
 
 	private Option[] localOptions() {
-		
-		/**
-		url("link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link")
-				.startLevel(START_LEVEL_SYSTEM_BUNDLES),
-		url(
-				"link:classpath:META-INF/links/org.ops4j.pax.extender.service.link")
-				.startLevel(START_LEVEL_SYSTEM_BUNDLES),
-		url("link:classpath:META-INF/links/org.osgi.compendium.link")
-				.startLevel(START_LEVEL_SYSTEM_BUNDLES),
-		url(
-				"link:classpath:META-INF/links/org.ops4j.pax.logging.api.link")
-				.startLevel(START_LEVEL_SYSTEM_BUNDLES), };
-				**/
-		
 		return new Option[] {
 				bootDelegationPackage("sun.*"),
-				url("mvn:org.ops4j.pax.exam/pax-exam-container-rbc/" + Info.getPaxExamVersion() ).startLevel(START_LEVEL_SYSTEM_BUNDLES),
-				url("mvn:org.ops4j.pax.exam/pax-exam-extender-service/" + Info.getPaxExamVersion() ).startLevel(START_LEVEL_SYSTEM_BUNDLES),
-				url("mvn:org.ops4j.pax.logging/pax-logging-api/1.6.2").startLevel(START_LEVEL_SYSTEM_BUNDLES),
-				url("mvn:org.osgi/org.osgi.compendium/4.2.0" ).startLevel ( START_LEVEL_SYSTEM_BUNDLES ) };
-				
+				url("link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel(START_LEVEL_SYSTEM_BUNDLES),
+				url("link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel(START_LEVEL_SYSTEM_BUNDLES),
+				url("link:classpath:META-INF/links/org.osgi.compendium.link").startLevel(START_LEVEL_SYSTEM_BUNDLES),
+				url("link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ).startLevel ( START_LEVEL_SYSTEM_BUNDLES ) };		
 	}
 
 	public <T extends Option> T[] getOptions(final Class<T> optionType) {

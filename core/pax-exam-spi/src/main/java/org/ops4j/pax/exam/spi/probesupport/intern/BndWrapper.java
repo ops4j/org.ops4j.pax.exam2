@@ -25,9 +25,9 @@ import java.util.Properties;
 import java.util.jar.Manifest;
 import aQute.lib.osgi.Analyzer;
 import aQute.lib.osgi.Jar;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ops4j.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -38,7 +38,7 @@ public class BndWrapper
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( BndWrapper.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BndWrapper.class );
 
     /**
      * Utility class. Ment to be used using static methods

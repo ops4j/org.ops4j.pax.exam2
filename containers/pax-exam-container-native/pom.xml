@@ -46,6 +46,14 @@
             <artifactId>ops4j-base-net</artifactId>
         </dependency>
         <dependency>
+        	<groupId>org.ops4j.pax.url</groupId>
+        	<artifactId>pax-url-link</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.ops4j.pax.url</groupId>
+        	<artifactId>pax-url-classpath</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
