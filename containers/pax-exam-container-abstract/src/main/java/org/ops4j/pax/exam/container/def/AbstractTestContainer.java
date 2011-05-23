@@ -32,6 +32,7 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
+import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.osgi.framework.Bundle;
@@ -95,7 +96,7 @@ public abstract class AbstractTestContainer
     {
     	try {
 	        String name = getUUID();
-	        Option[] args = combine( m_options, systemProperty( Constants.RMI_NAME_PROPERTY ).value( name ) );
+	        Option[] args = combine( m_options, addRMINameProperty( name ) );
 	        parseOption(m_host, m_port, args);
 	        
 			initRBCRemote( name, getRMITimeout() );
@@ -118,6 +119,10 @@ public abstract class AbstractTestContainer
             throw new RuntimeException( "Problem starting container", e );
         }
         return this;
+    }
+    
+    protected SystemPropertyOption addRMINameProperty(String name) {
+        return systemProperty( Constants.RMI_NAME_PROPERTY ).value( name );
     }
 
     /**
@@ -229,7 +234,10 @@ public abstract class AbstractTestContainer
         m_target.cleanup();
     }
     
-    protected String getUUID() {return UUID.randomUUID().toString();}
+    protected String getUUID() {
+        // TODO make it a system service (when JSR330 hits)
+        return UUID.randomUUID().toString();
+    }
     
     protected void printExtraBeforeStart( String[] arguments )
     {
