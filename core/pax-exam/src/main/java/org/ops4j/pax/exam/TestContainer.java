@@ -21,7 +21,7 @@ package org.ops4j.pax.exam;
 import java.io.InputStream;
 
 /**
- * Management of an OSGi framework that can be used as a integration regression container.
+ * Management of an OSGi framework that can be used as a integration test container.
  * Each container is also a test target.
  *
  * When constucting TestContainers, it is good practice to not put the parsing part (from Option[]) into the implementation.
@@ -34,11 +34,11 @@ import java.io.InputStream;
 public interface TestContainer {
 
     /**
-     * Starts the regression container.
+     * Starts the test container.
      *
      * @return this for fluent api
      *
-     * @throws TimeoutException - if timeout occured and the regression container cannot be started
+     * @throws TimeoutException - if timeout occured and the test container cannot be started
      */
     TestContainer start()
         throws TimeoutException;

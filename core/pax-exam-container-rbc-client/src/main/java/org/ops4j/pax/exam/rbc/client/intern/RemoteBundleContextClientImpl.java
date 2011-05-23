@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
@@ -58,7 +59,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     /**
      * Timeout for looking up the remote bundle context via RMI.
      */
-    final private long m_rmiLookupTimeout;
+    final private RelativeTimeout m_rmiLookupTimeout;
     /**
      * Remote bundle context instance.
      */
@@ -78,13 +79,13 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
      */
     public RemoteBundleContextClientImpl( final String name,
                                           final Integer registry,
-                                          final long rmiLookupTimeout )
+                                          final RelativeTimeout timeout )
     {
         assert registry != null : "registry should not be null";
 
         m_registry = registry;
         m_name = name;
-        m_rmiLookupTimeout = rmiLookupTimeout;
+        m_rmiLookupTimeout = timeout;
         m_installed = new Stack<Long>();
     }
 
@@ -92,7 +93,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
      * {@inheritDoc}
      */
     @SuppressWarnings( "unchecked" )
-    private <T> T getService( final Class<T> serviceType, final String filter, final long timeout )
+    private <T> T getService( final Class<T> serviceType, final String filter, final RelativeTimeout timeout )
     {
         return (T) Proxy.newProxyInstance(
             getClass().getClassLoader(),
@@ -226,11 +227,11 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
      */
     public void waitForState( final long bundleId,
                               final int state,
-                              final long timeoutInMillis )
+                              final RelativeTimeout timeout )
 
     {
         try {
-            getRemoteBundleContext().waitForState( bundleId, state, timeoutInMillis );
+            getRemoteBundleContext().waitForState( bundleId, state, timeout );
         } catch( RemoteException e ) {
             throw new RuntimeException( "waitForState", e );
         } catch( BundleException e ) {
@@ -250,7 +251,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             //!! Absolutely necesary for RMI class loading to work
             // TODO maybe use ContextClassLoaderUtils.doWithClassLoader
             Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-            LOG.debug( "Waiting for remote bundle context.. on " + m_registry + " name: " + m_name + " timout: " + m_rmiLookupTimeout );
+            LOG.info( "Waiting for remote bundle context.. on " + m_registry + " name: " + m_name + " timout: " + m_rmiLookupTimeout );
             // TODO create registry here
             Throwable reason = null;
             long startedTrying = System.currentTimeMillis();
@@ -260,15 +261,13 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
                     try {
                         Registry reg = LocateRegistry.getRegistry( m_registry );
                         m_remoteBundleContext = (RemoteBundleContext) reg.lookup( m_name );
-                    } catch( ConnectException e ) {
-                        reason = e;
-                    } catch( NotBoundException e ) {
+                    } catch( Exception e ) {
                         reason = e;
                     }
 
                 }
-                while( m_remoteBundleContext == null && ( m_rmiLookupTimeout == Constants.WAIT_FOREVER || System.currentTimeMillis() < startedTrying + m_rmiLookupTimeout ) );
-            } catch( RemoteException e ) {
+                while( m_remoteBundleContext == null && ( m_rmiLookupTimeout.isNoTimeout() || System.currentTimeMillis() < startedTrying + m_rmiLookupTimeout.getValue() ) );
+            } catch( Exception e ) {
 
                 //throw new RuntimeException( "Cannot get the remote bundle context", e );
             }
@@ -284,7 +283,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     public void call( TestAddress address )
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
-        ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, 5000 );
+        ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, m_rmiLookupTimeout );
         service.call( address.arguments() );
     }
 

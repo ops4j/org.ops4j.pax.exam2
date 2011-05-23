@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.rbc.internal;
 
+import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TimeoutException;
 import org.osgi.framework.BundleException;
 
@@ -50,7 +51,7 @@ public interface RemoteBundleContext
      * @param serviceType      service class of the remote service
      * @param methodName       method name
      * @param methodParamTypes method parameters types
-     * @param timeoutInMillis  timeout for looking up the service
+     * @param timeout  		   timeout for looking up the service
      * @param actualParams     actual parameters (must match the given method params)
      * @return remote call rsult
      * @throws NoSuchServiceException    - If a service of the specified type cannot be located
@@ -63,7 +64,7 @@ public interface RemoteBundleContext
                       String methodName,
                       Class<?>[] methodParamTypes,
                       String filter,
-                      long timeoutInMillis,
+                      RelativeTimeout timeout,
                       Object... actualParams)
             throws
             RemoteException,
@@ -136,7 +137,7 @@ public interface RemoteBundleContext
      * @throws BundleException  - If bundle cannot be found
      * @throws org.ops4j.pax.exam.TimeoutException - if timeout occured and expected state has not being reached
      */
-    void waitForState(long bundleId, int state, long timeoutInMillis)
+    void waitForState(long bundleId, int state, RelativeTimeout timeout)
             throws RemoteException, BundleException, TimeoutException;
 
     /**

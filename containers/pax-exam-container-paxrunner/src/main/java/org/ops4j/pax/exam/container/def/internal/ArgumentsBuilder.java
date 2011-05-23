@@ -18,14 +18,16 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
-import java.io.File;
+import static org.ops4j.pax.exam.OptionUtils.filter;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanBundle;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.ops4j.pax.exam.Customizer;
-import org.ops4j.pax.exam.Option;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
 import org.ops4j.pax.exam.container.def.options.CleanCachesOption;
 import org.ops4j.pax.exam.container.def.options.ExcludeDefaultRepositoriesOption;
@@ -35,7 +37,6 @@ import org.ops4j.pax.exam.container.def.options.RawPaxRunnerOptionOption;
 import org.ops4j.pax.exam.container.def.options.RepositoryOptionImpl;
 import org.ops4j.pax.exam.container.def.options.Scanner;
 import org.ops4j.pax.exam.container.def.options.VMOption;
-import org.ops4j.pax.exam.container.def.options.WorkingDirectoryOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
@@ -47,11 +48,6 @@ import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
-import org.ops4j.pax.exam.rbc.Constants;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * Utility methods for converting configuration options to Pax Runner arguments.
@@ -68,69 +64,67 @@ class ArgumentsBuilder {
      * unintentional runner.args files being picked up by paxrunner.
      */
     private boolean argsSetManually = false;
+    
+    final private List<String> m_paxrunneArguments;
 
-    /**
-     * Pax Runner compatible arguments parsed from input.
-     */
-    private final String[] m_parsedArgs;
-
-    /**
-     * There's a default location (users home) as well as an option for this.
-     * Effective working folder is of great importance not only to the pax runner instance.
-     *
-     * To make things simple, we store this property redundantly here.
-     * It is readable by a getter.
-     */
-    private File m_workingFolder;
-    private Customizer[] m_customizers;
 
     /**
      * Converts configuration options to Pax Runner arguments.
+     * @param selectedFramework 
      *
      * @param options array of configuration options
      */
-    ArgumentsBuilder( String host, int rmiPort, Option... options )
+    ArgumentsBuilder( ExamSystem system, FrameworkOption selectedFramework )
         throws IOException
     {
-        options = wrap( options );
-        final List<String> arguments = new ArrayList<String>();
-        m_customizers = filter( Customizer.class, options );
+        m_paxrunneArguments = new ArrayList<String>();
+        
+    	add( m_paxrunneArguments, extractArguments( system.getOptions( RawPaxRunnerOptionOption.class ) ) );
+        
+        add( m_paxrunneArguments, extractArguments( system.getOptions( MavenPluginGeneratedConfigOption.class ) ) );
 
-        options = combine( options,systemProperty( Constants.RMI_HOST_PROPERTY ).value( host) );
-        options = combine( options,systemProperty( Constants.RMI_PORT_PROPERTY ).value( "" + rmiPort) );
-
-        add( arguments, extractArguments( markingFilter( RawPaxRunnerOptionOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( MavenPluginGeneratedConfigOption.class, options ) ) );
-
-        add( arguments, extractArguments( markingFilter( FrameworkOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( ProfileOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( BootDelegationOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( SystemPackageOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( ProvisionOption.class, options ) ) );
-        add( arguments,
+        add( m_paxrunneArguments, extractArguments( selectedFramework ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( ProfileOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( BootDelegationOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( SystemPackageOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( ProvisionOption.class ) ) );
+        add( m_paxrunneArguments,
              extractArguments(
-                 filter( RepositoryOptionImpl.class, options ),
-                 filter( ExcludeDefaultRepositoriesOption.class, options )
+            		 system.getOptions( RepositoryOptionImpl.class ),
+            		 system.getOptions( ExcludeDefaultRepositoriesOption.class )
              )
         );
-        add( arguments, extractArguments( markingFilter( AutoWrapOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( CleanCachesOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( LocalRepositoryOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( FrameworkStartLevelOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( BundleStartLevelOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( WorkingDirectoryOption.class, options ) ) );
-
-        add( arguments,
-             extractArguments(
-                 markingFilter( SystemPropertyOption.class, options ),
-                 markingFilter( VMOption.class, options )
+        add( m_paxrunneArguments, extractArguments( system.getOptions( AutoWrapOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( CleanCachesOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( LocalRepositoryOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( FrameworkStartLevelOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( BundleStartLevelOption.class ) ) );
+        
+        add( m_paxrunneArguments,
+             extractArguments( 
+            		 system.getOptions( SystemPropertyOption.class ),
+            		 system.getOptions( VMOption.class )
              )
         );
-        add( arguments, extractArguments( markingFilter( BootClasspathLibraryOption.class, options ) ) );
-        add( arguments, extractArguments( markingFilter( DebugClassLoadingOption.class, options ) ) );
-        add( arguments, defaultArguments() );
+        add( m_paxrunneArguments, extractArguments( filter( BootClasspathLibraryOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( filter( DebugClassLoadingOption.class ) ) );
+        add( m_paxrunneArguments, defaultArguments( system ) );
+      }
 
-        m_parsedArgs = arguments.toArray( new String[ arguments.size() ] );
+    public String[] get() {
+    	return m_paxrunneArguments.toArray( new String[ m_paxrunneArguments.size() ] );
+    }
+    
+    /**
+     * @param m_selectedFramework 
+     * @param m_frameworkName 
+     * @return Pax Runner arguments
+     * @throws IOException 
+     */
+    public static String[] build ( ExamSystem system, FrameworkOption selectedFramework ) throws IOException
+    {
+    	// add UUID
+    	return new ArgumentsBuilder(system,selectedFramework).get();
     }
 
     /**
@@ -141,50 +135,28 @@ class ArgumentsBuilder {
      *
      * @return eventual wrapped bundles
      */
-    private Option[] wrap( final Option... options )
+    private List<ProvisionOption> wrap( ProvisionOption[] options )
     {
-        if( options != null && options.length > 0 ) {
-            // get provison options out of options
-            final ProvisionOption[] provisionOptions = filter( ProvisionOption.class, options );
-            if( provisionOptions != null && provisionOptions.length > 0 ) {
-                final List<Option> processed = new ArrayList<Option>();
-                for( final ProvisionOption provisionOption : provisionOptions ) {
-                    if( !( provisionOption instanceof Scanner ) ) {
-                        processed.add( scanBundle( provisionOption ).start( provisionOption.shouldStart() ).startLevel(
-                            provisionOption.getStartLevel()
-                        ).update(
-                            provisionOption.shouldUpdate()
-                        )
-                        );
-                    }
-                    else {
-                        processed.add( provisionOption );
-                    }
-                }
-                // finally combine the processed provision options with the original options
-                // (where provison options are removed)
-                return combine( remove( ProvisionOption.class, options ),
-                                processed.toArray( new Option[ processed.size() ] )
+        final List<ProvisionOption> processed = new ArrayList<ProvisionOption>();
+        for( final ProvisionOption provisionOption : options ) {
+            if( !( provisionOption instanceof Scanner ) ) {
+                processed.add( scanBundle( provisionOption ).start( provisionOption.shouldStart() ).startLevel(
+                    provisionOption.getStartLevel()
+                ).update(
+                    provisionOption.shouldUpdate()
+                )
                 );
             }
+            else {
+                processed.add( provisionOption );
+            }
         }
-        // if there is nothing to process of there are no provision options just return the original options
-        return options;
+        return processed;
+                
+          
     }
 
-    public <T extends Option> T[] markingFilter( final Class<T> optionType,
-                                                 final Option... options )
-    {
-        return filter( optionType, options );
-    }
-
-    /**
-     * @return Pax Runner arguments
-     */
-    public String[] getArguments()
-    {
-        return m_parsedArgs;
-    }
+   
 
     /**
      * Adds a collection of arguments to a list of arguments by skipping null arguments.
@@ -220,7 +192,7 @@ class ArgumentsBuilder {
      * @return collection of default arguments
      * @throws java.io.IOException problems 
      */
-    private Collection<String> defaultArguments()
+    private Collection<String> defaultArguments(ExamSystem system)
         throws IOException
     {
         final List<String> arguments = new ArrayList<String>();
@@ -232,12 +204,7 @@ class ArgumentsBuilder {
             arguments.add( "--noArgs" );
         }
 
-        File f = File.createTempFile( "pax", "exam" );
-
-        f.delete();
-        f.mkdirs();
-
-        arguments.add( "--workingDirectory=" + createWorkingDirectory( f.getAbsolutePath() ).getAbsolutePath() );
+        arguments.add( "--workingDirectory=" + system.getTempFolder() );
         return arguments;
     }
 
@@ -250,29 +217,24 @@ class ArgumentsBuilder {
      *
      * @throws IllegalArgumentException - If there are more then one framework options
      */
-    private Collection<String> extractArguments( final FrameworkOption[] frameworks )
+    private Collection<String> extractArguments( final FrameworkOption framework )
     {
         final List<String> arguments = new ArrayList<String>();
-        if( frameworks.length > 1 ) {
-            
-            throw new IllegalArgumentException( "Configuration cannot contain more then one platform" );
-        }
-        if( frameworks.length > 0 ) {
-            if( frameworks[ 0 ] instanceof CustomFrameworkOption ) {
-                String basePlatform = ( (CustomFrameworkOption) frameworks[ 0 ] ).getBasePlatform();
+            if( framework instanceof CustomFrameworkOption ) {
+                String basePlatform = ( (CustomFrameworkOption) framework ).getBasePlatform();
                 if( basePlatform != null && basePlatform.trim().length() > 0 ) {
                     arguments.add( "--platform=" + basePlatform );
                 }
-                arguments.add( "--definitionURL=" + ( (CustomFrameworkOption) frameworks[ 0 ] ).getDefinitionURL() );
+                arguments.add( "--definitionURL=" + ( (CustomFrameworkOption) framework ).getDefinitionURL() );
             }
             else {
-                arguments.add( "--platform=" + frameworks[ 0 ].getName() );
-                final String version = frameworks[ 0 ].getVersion();
+                arguments.add( "--platform=" + framework.getName() );
+                final String version = framework.getVersion();
                 if( version != null && version.trim().length() > 0 ) {
                     arguments.add( "--version=" + version );
                 }
             }
-        }
+        
         return arguments;
     }
 
@@ -301,7 +263,7 @@ class ArgumentsBuilder {
     private Collection<String> extractArguments( final ProvisionOption[] bundles )
     {
         final List<String> arguments = new ArrayList<String>();
-        for( ProvisionOption bundle : bundles ) {
+        for( ProvisionOption bundle : wrap(bundles) ) {
             arguments.add( bundle.getURL() );
         }
         return arguments;
@@ -497,15 +459,6 @@ class ArgumentsBuilder {
         return args;
     }
 
-    private String extractArguments( WorkingDirectoryOption[] workingDirectoryOptions )
-    {
-        if( workingDirectoryOptions.length > 0 ) {
-            return "--workingDirectory=" + createWorkingDirectory( workingDirectoryOptions[ 0 ].getWorkingDirectory()
-            ).getAbsolutePath();
-        }
-        return null;
-    }
-
     /**
      * Converts framework start level option into coresponding argument (--startLevel).
      *
@@ -585,43 +538,4 @@ class ArgumentsBuilder {
             return null;
         }
     }
-
-    /**
-     * Creates by default a working directory as ${java.io.tmpdir}/paxexam_runner_${user.name}.
-     * Unless manualWorkingDirectory is set.
-     *
-     * @param workingDirectoryOption
-     *
-     * @return created working directory
-     */
-    private File createWorkingDirectory( String workingDirectoryOption )
-    {
-        final File workDir = new File( workingDirectoryOption );
-        // create if not existent:
-        if( !workDir.exists() ) {
-            workDir.mkdirs();
-        }
-        if( m_workingFolder == null ) {
-            m_workingFolder = workDir;
-        }
-        return workDir;
-    }
-
-    public File getWorkingFolder()
-    {
-        return m_workingFolder;
-    }
-
-    public Customizer[] getCustomizers()
-    {
-        return m_customizers;
-    }
-
-    public long getStartTimeout()
-    {
-        // TODO tbd
-        return 60*1000;
-    }
-
-
 }

@@ -31,14 +31,12 @@ public interface TestContainerFactory
     /**
      * Creates a one or more {@link TestContainer}. Depending on the underlying implementation.
      *
-     * This step is also told to fail if there are incompatible options being passed in.
+     * @param system System that you want to materialize the containers from
      *
-     * @param options integration regression options
-     *
-     * @return created regression container
+     * @return created test container(s)
      *
      * @throws TestContainerException fail if incompatible options are being passed in.
      */
-    TestContainer[] parse( Option... options )  throws TestContainerException;
+    TestContainer[] create( ExamSystem system )  throws TestContainerException;
 
 }

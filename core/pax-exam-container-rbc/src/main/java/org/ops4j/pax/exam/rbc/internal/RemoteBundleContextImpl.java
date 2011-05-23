@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.ops4j.lang.NullArgumentException.*;
 
+import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
 
@@ -76,14 +77,14 @@ public class RemoteBundleContextImpl
                               final String methodName,
                               final Class<?>[] methodParams,
                               String filter,
-                              final long timeoutInMillis,
+                              final RelativeTimeout timeout,
                               final Object... actualParams )
         throws NoSuchServiceException, NoSuchMethodException, IllegalAccessException, InvocationTargetException
     {
         LOG.trace( "Remote call of [" + serviceType.getName() + "." + methodName + "]" );
 
         return serviceType.getMethod( methodName, methodParams ).invoke(
-            getService( serviceType, filter, timeoutInMillis ),
+            getService( serviceType, filter, timeout ),
             actualParams
         );
     }
@@ -155,7 +156,7 @@ public class RemoteBundleContextImpl
         throws RemoteException, BundleException
     {
         try {
-            final StartLevel startLevelService = getService( StartLevel.class, null, 0 );
+            final StartLevel startLevelService = getService( StartLevel.class, null, RelativeTimeout.TIMEOUT_NOWAIT );
             startLevelService.setBundleStartLevel( m_bundleContext.getBundle( bundleId ), startLevel );
         } catch( NoSuchServiceException e ) {
             throw new BundleException( "Cannot get the start level service to set bundle start level" );
@@ -167,10 +168,10 @@ public class RemoteBundleContextImpl
      */
     public void waitForState( final long bundleId,
                               final int state,
-                              final long timeoutInMillis )
+                              final RelativeTimeout timeout )
     {
         Bundle bundle = m_bundleContext.getBundle( bundleId );
-        if( bundle == null || (timeoutInMillis == NO_WAIT && ( bundle == null || bundle.getState() < state ) ) ) {
+        if( bundle == null || (timeout.isNoWait() && ( bundle == null || bundle.getState() < state ) ) ) {
             throw new TimeoutException(
                 "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle )
                 + "' not '" + bundleStateToString( state ) + "' as expected"
@@ -187,8 +188,8 @@ public class RemoteBundleContextImpl
             }
         }
         while( ( bundle == null || bundle.getState() < state )
-               && ( timeoutInMillis == WAIT_FOREVER
-                    || System.currentTimeMillis() < startedTrying + timeoutInMillis ) );
+               && ( timeout.isNoTimeout()
+                    || System.currentTimeMillis() < startedTrying + timeout.getValue() ) );
 
         if( bundle == null || bundle.getState() < state ) {
             throw new TimeoutException(
@@ -213,10 +214,10 @@ public class RemoteBundleContextImpl
     @SuppressWarnings( "unchecked" )
     private <T> T getService( final Class<T> serviceType,
                               String filter,
-                              final long timeoutInMillis )
+                              final RelativeTimeout timeout )
         throws NoSuchServiceException
     {
-        LOG.trace( "Look up service [" + serviceType.getName() + "] filter [" + filter + "], timeout in " + timeoutInMillis + " millis" );
+        LOG.trace( "Look up service [" + serviceType.getName() + "] filter [" + filter + "], timeout in " + timeout.getValue() + " millis" );
         long start = System.currentTimeMillis();
         do {
             try {
@@ -229,7 +230,7 @@ public class RemoteBundleContextImpl
                 LOG.error( "Some problem during looking up service from framework: " + m_bundleContext, e );
             }
             // wait a bit
-        } while( ( System.currentTimeMillis() ) < start + timeoutInMillis );
+        } while( ( timeout.isNoTimeout() || ( System.currentTimeMillis() ) < start + timeout.getValue() ) );
         throw new TestContainerException( "Not found a matching Service " + serviceType.getName() + " for Filter:" + ( filter != null ? filter : "" ) );
     }
 

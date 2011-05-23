@@ -34,8 +34,10 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamConfigurationException;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -69,6 +71,8 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     final private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
     final private Map<FrameworkMethod, TestAddress> m__childs = new HashMap<FrameworkMethod, TestAddress>();
 
+	private ExamSystem m_system;
+
     public JUnit4TestRunner( Class<?> klass )
         throws Exception
     {
@@ -86,6 +90,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             throw new TestContainerException( "Problem interacting with reactor.", e );
         } finally {
             m_reactor.tearDown();
+            m_system.clear();
         }
     }
 
@@ -142,7 +147,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private synchronized StagedExamReactor prepareReactor()
         throws Exception
     {
-
+    	m_system = PaxExamRuntime.createSystem();
         Class testClass = getTestClass().getJavaClass();
         Object testClassInstance = testClass.newInstance();
         ExxamReactor reactor = getReactor( testClass );
@@ -153,7 +158,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     }
 
     private void addConfigurationsToReactor( ExxamReactor reactor, Class testClass, Object testClassInstance )
-        throws IllegalAccessException, InvocationTargetException
+        throws IllegalAccessException, InvocationTargetException, IllegalArgumentException, IOException
     {
         Method[] methods = testClass.getMethods();
         for( Method m : methods ) {
@@ -161,7 +166,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             if( conf != null ) {
                 // consider as option, so prepare that one:
                 LOG.info( "Add Configuration " + m.getName() );
-                reactor.addConfiguration( (Option[]) m.invoke( testClassInstance ) );
+                reactor.addConfiguration( m_system.fork( ( (Option[]) m.invoke( testClassInstance ) ) ) );
             }
         }
     }
@@ -170,7 +175,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         throws IOException, ExamConfigurationException
     {
         Properties extraProperties = new Properties();
-        TestProbeBuilder probe = new PlumbingContext().createProbe( extraProperties );
+        TestProbeBuilder probe = m_system.createProbe( extraProperties );
         probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
 
         //probe.setAnchor( testClass );

@@ -17,21 +17,23 @@
  */
 package org.ops4j.pax.exam.spi.driversupport;
 
+import static org.ops4j.pax.exam.CoreOptions.options;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.Option;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
+import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reactor decouples {@link org.ops4j.pax.exam.TestContainer} state from the observer. It is also
@@ -44,20 +46,20 @@ public class DefaultExamReactor implements ExxamReactor {
 
     private static Logger LOG = LoggerFactory.getLogger( DefaultExamReactor.class );
 
-    final private List<Option[]> m_configurations;
+    final private List<ExamSystem> m_configurations;
     final private List<TestProbeProvider> m_probes;
     final private TestContainerFactory m_factory;
 
     public DefaultExamReactor( TestContainerFactory factory )
     {
-        m_configurations = new ArrayList<Option[]>();
+        m_configurations = new ArrayList<ExamSystem>();
         m_probes = new ArrayList<TestProbeProvider>();
         m_factory = factory;
     }
 
-    synchronized public void addConfiguration( Option[] options )
+    synchronized public void addConfiguration( ExamSystem configuration )
     {
-        m_configurations.add( options );
+        m_configurations.add( configuration );
     }
 
     synchronized public void addProbe( TestProbeProvider addTest )
@@ -65,17 +67,17 @@ public class DefaultExamReactor implements ExxamReactor {
         m_probes.add( addTest );
     }
 
-    synchronized public StagedExamReactor stage( StagedExamReactorFactory factory )
+    synchronized public StagedExamReactor stage( StagedExamReactorFactory factory ) throws IOException
     {
         LOG.info( "Staging reactor with probes: " + m_probes.size() + " using strategy: " + factory );
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
         if( m_configurations.isEmpty() ) {
             LOG.info( "No configuration given. Setting an empty one." );
-            m_configurations.add( options() );
+            m_configurations.add( PaxExamRuntime.createSystem( options() ) );
         }
-        for( Option[] options : m_configurations ) {
-            containers.addAll( Arrays.asList( m_factory.parse( options ) ) );
+        for( ExamSystem system : m_configurations ) {
+            containers.addAll( Arrays.asList( m_factory.create( system ) ) );
         }
 
         return factory.create( containers, m_probes );

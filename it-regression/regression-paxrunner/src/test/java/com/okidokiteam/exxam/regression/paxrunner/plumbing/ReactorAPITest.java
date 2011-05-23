@@ -20,7 +20,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
 import org.junit.Test;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -29,8 +32,7 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
+import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
@@ -45,7 +47,7 @@ public class ReactorAPITest
 
     private TestContainerFactory getFactory()
     {
-        return PaxExamRuntime.getTestContainerFactory();
+        return getTestContainerFactory();
     }
 
     @Test
@@ -67,13 +69,14 @@ public class ReactorAPITest
     {
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
-
+        
+        ExamSystem system = createSystem(options);
         ExxamReactor reactor = new DefaultExamReactor( factory );
 
-        TestProbeProvider probe = makeProbe();
+        TestProbeProvider probe = makeProbe( system );
 
         reactor.addProbe( probe );
-        reactor.addConfiguration( options );
+        reactor.addConfiguration( system );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
         try
@@ -86,13 +89,15 @@ public class ReactorAPITest
         } finally
         {
             stagedReactor.tearDown();
+            system.clear();
         }
+        
     }
 
-     private TestProbeProvider makeProbe()
+     private TestProbeProvider makeProbe( ExamSystem system )
         throws IOException
     {
-        TestProbeBuilder probe = new PlumbingContext().createProbe();
+        TestProbeBuilder probe = system.createProbe( new Properties() );
         probe.addTests( SingleTestProbe.class, getAllMethods( SingleTestProbe.class ) );
         return probe.build();
     }
