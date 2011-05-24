@@ -69,11 +69,11 @@ public class DefaultExamReactor implements ExxamReactor {
 
     synchronized public StagedExamReactor stage( StagedExamReactorFactory factory ) throws IOException
     {
-        LOG.info( "Staging reactor with probes: " + m_probes.size() + " using strategy: " + factory );
+        LOG.debug( "Staging reactor with probes: " + m_probes.size() + " using strategy: " + factory );
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
         if( m_configurations.isEmpty() ) {
-            LOG.info( "No configuration given. Setting an empty one." );
+            LOG.debug( "No configuration given. Setting an empty one." );
             m_configurations.add( PaxExamRuntime.createSystem( options() ) );
         }
         for( ExamSystem system : m_configurations ) {

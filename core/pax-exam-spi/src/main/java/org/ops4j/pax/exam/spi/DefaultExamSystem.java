@@ -10,9 +10,12 @@ import static org.ops4j.pax.exam.OptionUtils.filter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.Vector;
 
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
@@ -35,11 +38,13 @@ public class DefaultExamSystem implements ExamSystem
     final private Store<InputStream> m_store;
     final private File m_configDirectory;
     final private Option[] m_combinedOptions;
-    
+
     final private Stack<File> m_tempStack;
     final private Stack<ExamSystem> m_subsystems;
 
     final private RelativeTimeout m_timeout;
+
+    private Set<Class> m_requestedOptionTypes = new HashSet<Class>();
 
     /**
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults.
@@ -52,8 +57,28 @@ public class DefaultExamSystem implements ExamSystem
      */
     public static ExamSystem create( Option[] options ) throws IOException
     {
+        return create( options, true );
+    }
+
+    /**
+     * Creates a fresh ExamSystem. Your options will be combined with internal defaults.
+     * If you need to change the system after it has been created, you fork() it.
+     * Forking will not add default options again.
+     * 
+     * @param options
+     * @return
+     * @throws IOException
+     */
+    public static ExamSystem create( Option[] options, boolean includeDefaults ) throws IOException
+    {
         LOG.info( "Pax Exam System (Version: " + Info.getPaxExamVersion() + ") created." );
-        return new DefaultExamSystem( combine( options,localOptions() ) );
+        if ( includeDefaults )
+        {
+            return new DefaultExamSystem( combine( options, defaultOptions() ) );
+        } else
+        {
+            return new DefaultExamSystem( options );
+        }
     }
 
     /**
@@ -61,7 +86,7 @@ public class DefaultExamSystem implements ExamSystem
      * The forked System remembers the forked instances in order to clear resources up (if desired).
      */
     public ExamSystem fork( Option[] options ) throws IOException
-    {   
+    {
         ExamSystem sys = new DefaultExamSystem( combine( m_combinedOptions, options ) );
         m_subsystems.add( sys );
         return sys;
@@ -69,7 +94,7 @@ public class DefaultExamSystem implements ExamSystem
 
     private DefaultExamSystem( Option[] options ) throws IOException
     {
-        m_combinedOptions = expand(options);
+        m_combinedOptions = expand( options );
         m_tempStack = new Stack<File>();
         m_subsystems = new Stack<ExamSystem>();
 
@@ -79,7 +104,7 @@ public class DefaultExamSystem implements ExamSystem
         m_timeout = RelativeTimeout.TIMEOUT_DEFAULT;
     }
 
-    private static Option[] localOptions()
+    private static Option[] defaultOptions()
     {
         return new Option[] {
                 bootDelegationPackage( "sun.*" ),
@@ -91,6 +116,7 @@ public class DefaultExamSystem implements ExamSystem
 
     public <T extends Option> T[] getOptions( final Class<T> optionType )
     {
+        m_requestedOptionTypes.add( optionType );
         return filter( optionType, m_combinedOptions );
     }
 
@@ -127,13 +153,15 @@ public class DefaultExamSystem implements ExamSystem
 
     /**
      * 
-     * Clears up resources taken by system (like temporary files)
+     * Clears up resources taken by system (like temporary files).
      * 
      */
     public void clear()
     {
         try
         {
+            warnUnusedOptions();
+
             for ( ExamSystem sys : m_subsystems )
             {
                 sys.clear();
@@ -148,6 +176,43 @@ public class DefaultExamSystem implements ExamSystem
         }
     }
 
+    private void warnUnusedOptions()
+    {
+        if ( m_subsystems.isEmpty() )
+        {
+            for ( String skipped : findOptionTypes() )
+            {
+                LOG.warn( "Option " + skipped + " has not been recognized." );
+            }
+        }
+    }
+
+    private Set<String> findOptionTypes()
+    {
+        Set<String> missing = new HashSet<String>();
+        for ( Option option : m_combinedOptions )
+        {
+            boolean found = false;
+            for ( Class<?> c : m_requestedOptionTypes )
+            {
+                try
+                {
+                    option.getClass().asSubclass( c );
+                    found = true;
+                    break;
+                } catch ( Exception e )
+                {
+
+                }
+            }
+            if ( !found )
+            {
+                missing.add( option.getClass().getCanonicalName() );
+            }
+        }
+        return missing;
+    }
+
     public TestProbeBuilder createProbe( Properties p ) throws IOException
     {
         return new TestProbeBuilderImpl( p, m_store );
@@ -156,5 +221,10 @@ public class DefaultExamSystem implements ExamSystem
     public String createID( String purposeText )
     {
         return UUID.randomUUID().toString();
+    }
+
+    public String toString()
+    {
+        return "ExamSystem:options=" + m_combinedOptions.length + ";queried=" + m_requestedOptionTypes.size();
     }
 }

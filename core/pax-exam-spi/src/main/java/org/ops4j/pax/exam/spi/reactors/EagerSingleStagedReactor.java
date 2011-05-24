@@ -55,7 +55,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
             container.start();
 
             for( TestProbeProvider builder : mProbes ) {
-                LOG.info( "installing probe " + builder );
+                LOG.debug( "installing probe " + builder );
 
                 try {
                     container.install( builder.getStream() );

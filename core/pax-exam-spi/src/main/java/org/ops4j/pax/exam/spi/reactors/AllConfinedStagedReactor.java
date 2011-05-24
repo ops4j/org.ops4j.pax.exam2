@@ -27,46 +27,53 @@ import org.ops4j.pax.exam.spi.probesupport.intern.DefaultTestAddress;
 /**
  * This will use new containers for any regression (hence confined)
  */
-public class AllConfinedStagedReactor implements StagedExamReactor {
+public class AllConfinedStagedReactor implements StagedExamReactor
+{
 
     final private List<TestProbeProvider> m_probes;
     final private HashMap<TestAddress, TestContainer> m_map;
 
     /**
      * @param containers to be used
-     * @param mProbes    probes to be installed
+     * @param mProbes probes to be installed
      */
     public AllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
         m_probes = mProbes;
         m_map = new HashMap<TestAddress, TestContainer>();
         // todo: don't do this here.
-        for( TestContainer container : containers ) {
-            for( TestProbeProvider builder : m_probes ) {
-                for( TestAddress a : builder.getTests() ) {
+        for ( TestContainer container : containers )
+        {
+            for ( TestProbeProvider builder : m_probes )
+            {
+                for ( TestAddress a : builder.getTests() )
+                {
                     m_map.put( new DefaultTestAddress( a, container.toString() ), container );
                 }
             }
         }
-
     }
 
     public void invoke( TestAddress address )
-        throws Exception
+            throws Exception
     {
-        assert ( address != null ) : "TestAddress must not be null.";
+        assert (address != null) : "TestAddress must not be null.";
         // you can directly invoke:
         TestContainer container = m_map.get( address );
-        if (container == null) {
+        if ( container == null )
+        {
             throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
         }
         container.start();
-        try {
-            for( TestProbeProvider builder : m_probes ) {
+        try
+        {
+            for ( TestProbeProvider builder : m_probes )
+            {
                 container.install( builder.getStream() );
             }
             container.call( address );
-        } finally {
+        } finally
+        {
             container.stop();
         }
 
