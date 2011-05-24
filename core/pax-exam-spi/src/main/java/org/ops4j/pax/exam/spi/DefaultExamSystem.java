@@ -22,6 +22,7 @@ import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
@@ -207,7 +208,15 @@ public class DefaultExamSystem implements ExamSystem
             }
             if ( !found )
             {
+                try {
+                    option.getClass().asSubclass(  FrameworkOption.class );
+                    // false friend
+                    continue;
+                }catch(Exception e) {
+                    
+                }
                 missing.add( option.getClass().getCanonicalName() );
+                
             }
         }
         return missing;
