@@ -27,7 +27,6 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.options.FrameworkOption;
-import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 
 /**
  * Factory for {@link PaxRunnerTestContainer}.

@@ -11,8 +11,6 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.LibraryOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  *

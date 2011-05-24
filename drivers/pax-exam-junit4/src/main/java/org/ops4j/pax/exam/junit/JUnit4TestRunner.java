@@ -108,14 +108,14 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     {
         Set<TestAddress> targets = m_reactor.getTargets();
         for( final TestAddress address : targets ) {
-            FrameworkMethod frameworkMethod = m_map.get( address.root() );
+            final FrameworkMethod frameworkMethod = m_map.get( address.root() );
 
             // now, someone later may refer to that artificial FrameworkMethod. We need to be able to tell the address.
             FrameworkMethod method = new FrameworkMethod( frameworkMethod.getMethod() ) {
                 @Override
                 public String getName()
                 {
-                    return address.caption();
+                    return frameworkMethod.getName() + ":" + address.caption();
                 }
 
                 @Override
@@ -192,8 +192,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         try {
             Class<?>[] types = s.getMethod().getParameterTypes();
             if( types.length == 1 && types[ 0 ].isAssignableFrom( TestProbeBuilder.class ) ) {
-                // its a delegate:
-                // invoke:
+                // do some backtracking:
                 return (TestAddress) s.getMethod().invoke( testClassInstance, probe );
 
             }

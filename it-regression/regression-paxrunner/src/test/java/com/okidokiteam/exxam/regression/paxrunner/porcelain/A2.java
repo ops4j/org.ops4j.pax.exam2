@@ -31,8 +31,6 @@ import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.LibraryOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * Simple Test Rack that uses the JUnit4 UI

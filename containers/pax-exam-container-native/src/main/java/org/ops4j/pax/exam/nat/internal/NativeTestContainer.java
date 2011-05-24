@@ -73,7 +73,8 @@ public class NativeTestContainer implements TestContainer
     {
         // we add framework specific options.
         m_system = system.fork( new Option[] {
-                        systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) )
+                        systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
+                        systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
                 } );
         m_frameworkFactory = frameworkFactory;
     }

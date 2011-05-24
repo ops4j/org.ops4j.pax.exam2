@@ -20,8 +20,9 @@ package org.ops4j.pax.exam.container.def.options;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.ops4j.pax.exam.options.extra.FileScannerProvisionOption;
+
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * Unit Tests for {@link FileScannerProvisionOption} and corresponding factory methods.

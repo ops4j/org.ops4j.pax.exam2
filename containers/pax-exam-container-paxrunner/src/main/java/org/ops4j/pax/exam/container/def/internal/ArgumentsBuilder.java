@@ -19,7 +19,7 @@
 package org.ops4j.pax.exam.container.def.internal;
 
 import static org.ops4j.pax.exam.OptionUtils.filter;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanBundle;
+import static org.ops4j.pax.exam.CoreOptions.scanBundle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,15 +28,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.container.def.options.AutoWrapOption;
-import org.ops4j.pax.exam.container.def.options.CleanCachesOption;
-import org.ops4j.pax.exam.container.def.options.ExcludeDefaultRepositoriesOption;
-import org.ops4j.pax.exam.container.def.options.LocalRepositoryOption;
-import org.ops4j.pax.exam.container.def.options.ProfileOption;
-import org.ops4j.pax.exam.container.def.options.RawPaxRunnerOptionOption;
-import org.ops4j.pax.exam.container.def.options.RepositoryOptionImpl;
-import org.ops4j.pax.exam.container.def.options.Scanner;
-import org.ops4j.pax.exam.container.def.options.VMOption;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
@@ -48,6 +39,15 @@ import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.extra.AutoWrapOption;
+import org.ops4j.pax.exam.options.extra.CleanCachesOption;
+import org.ops4j.pax.exam.options.extra.ExcludeDefaultRepositoriesOption;
+import org.ops4j.pax.exam.options.extra.LocalRepositoryOption;
+import org.ops4j.pax.exam.options.extra.ProfileOption;
+import org.ops4j.pax.exam.options.extra.RawPaxRunnerOptionOption;
+import org.ops4j.pax.exam.options.extra.RepositoryOptionImpl;
+import org.ops4j.pax.exam.options.extra.Scanner;
+import org.ops4j.pax.exam.options.extra.VMOption;
 
 /**
  * Utility methods for converting configuration options to Pax Runner arguments.
@@ -128,7 +128,7 @@ class ArgumentsBuilder {
     }
 
     /**
-     * Wrap provision options that are not already scanner provision bundles with a {@link org.ops4j.pax.exam.container.def.options.BundleScannerProvisionOption}
+     * Wrap provision options that are not already scanner provision bundles with a {@link org.ops4j.pax.exam.options.extra.BundleScannerProvisionOption}
      * in order to force update.
      *
      * @param options options to be wrapped (can be null or an empty array)

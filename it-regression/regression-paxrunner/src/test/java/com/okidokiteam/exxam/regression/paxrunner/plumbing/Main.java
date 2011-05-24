@@ -1,17 +1,10 @@
 package com.okidokiteam.exxam.regression.paxrunner.plumbing;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Properties;
 
-import org.apache.aries.util.tracker.BundleTrackerFactory;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.service.http.HttpService;
-import org.osgi.util.tracker.BundleTracker;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamSystem;
@@ -22,7 +15,6 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 
 /**
  * Interactive Pax Exam fun.

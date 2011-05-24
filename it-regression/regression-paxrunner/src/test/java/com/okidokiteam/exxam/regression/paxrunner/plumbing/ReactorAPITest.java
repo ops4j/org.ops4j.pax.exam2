@@ -36,8 +36,7 @@ import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
-
-import static org.ops4j.pax.exam.LibraryOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
  * Simple regression

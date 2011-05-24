@@ -14,23 +14,21 @@ import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.LibraryOptions.*;
 
 /**
  *
  */
-@RunWith( JUnit4TestRunner.class )
-public class JUnitMultiFwTest {
+@RunWith(JUnit4TestRunner.class)
+public class JUnitMultiFwTest
+{
 
     @Configuration()
     public Option[] config()
     {
-        return options(
-            junitBundles()
-        );
+        return options( profile("web") );
     }
 
-    @Test
+    //@Test
     public void withBC( BundleContext ctx )
     {
         assertThat( ctx, is( notNullValue() ) );
@@ -44,7 +42,7 @@ public class JUnitMultiFwTest {
         System.out.println( "------- HERE!" );
     }
 
-    @Test
+    //@Test
     public TestAddress prebuilt( TestProbeBuilder builder )
     {
         return builder.addTest( CountBundles.class, 7 );

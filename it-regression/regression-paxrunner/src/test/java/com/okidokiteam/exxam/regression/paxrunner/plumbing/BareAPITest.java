@@ -32,8 +32,6 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.LibraryOptions.*;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
 import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
 
 /**

@@ -37,12 +37,11 @@ public class NativeTestContainerFactory implements TestContainerFactory {
 
     public TestContainer[] create ( ExamSystem system ) throws TestContainerException
     {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-    	List<TestContainer> containers = new ArrayList<TestContainer>();
+        List<TestContainer> containers = new ArrayList<TestContainer>();
         Iterator<FrameworkFactory> factories = ServiceLoader.load( FrameworkFactory.class ).iterator();
         while( factories.hasNext() ) {
             try {
-				containers.add(new NativeTestContainer( factories.next() , system ));
+				containers.add( new NativeTestContainer( factories.next() , system ) );
 			} catch (IOException e) {
 				throw new TestContainerException("Problem initializing container.",e);
 			}
