@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -27,17 +29,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -46,12 +46,10 @@ import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
-import org.ops4j.pax.exam.spi.container.PlumbingContext;
 import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
-
-import static org.junit.Assert.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the default Test Runner using Exxam plumbing API.
@@ -165,7 +163,6 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             Configuration conf = m.getAnnotation( Configuration.class );
             if( conf != null ) {
                 // consider as option, so prepare that one:
-                LOG.info( "Add Configuration " + m.getName() );
                 reactor.addConfiguration( m_system.fork( ( (Option[]) m.invoke( testClassInstance ) ) ) );
             }
         }
