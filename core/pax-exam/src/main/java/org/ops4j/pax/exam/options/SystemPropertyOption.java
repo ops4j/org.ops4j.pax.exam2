@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.options;
 
 import static org.ops4j.lang.NullArgumentException.*;
-import org.ops4j.pax.exam.Option;
 
 /**
  * Option specifying a system property.
@@ -26,8 +25,7 @@ import org.ops4j.pax.exam.Option;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 10, 2008
  */
-public class SystemPropertyOption
-    implements Option
+public class SystemPropertyOption implements ValueOption
 {
 
     /**

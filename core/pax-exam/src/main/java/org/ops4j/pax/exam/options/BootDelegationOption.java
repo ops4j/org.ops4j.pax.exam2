@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.options;
 
 import static org.ops4j.lang.NullArgumentException.*;
-import org.ops4j.pax.exam.Option;
 
 /**
  * Options specifying a boot delegation package (package for which framework will delegate to the system classloader).
@@ -26,8 +25,7 @@ import org.ops4j.pax.exam.Option;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public class BootDelegationOption
-    implements Option
+public class BootDelegationOption implements ValueOption
 {
 
     /**
@@ -56,6 +54,16 @@ public class BootDelegationOption
     public String getPackage()
     {
         return m_package;
+    }
+    
+    /**
+     * Getter.
+     *
+     * @return boot delegation package (cannot be null or empty)
+     */
+    public String getValue()
+    {
+        return getPackage();
     }
 
     /**

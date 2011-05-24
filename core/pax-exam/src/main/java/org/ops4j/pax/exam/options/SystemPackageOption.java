@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.options;
 
 import static org.ops4j.lang.NullArgumentException.*;
-import org.ops4j.pax.exam.Option;
 
 /**
  * Option specifying a system package (package exported by system bundle).
@@ -27,7 +26,7 @@ import org.ops4j.pax.exam.Option;
  * @since 0.3.0, December 08, 2008
  */
 public class SystemPackageOption
-    implements Option
+    implements ValueOption
 {
 
     /**
@@ -56,6 +55,16 @@ public class SystemPackageOption
     public String getPackage()
     {
         return m_package;
+    }
+    
+    /**
+     * Getter.
+     *
+     * @return system package (cannot be null or empty)
+     */
+    public String getValue()
+    {
+        return getPackage();
     }
 
     /**
