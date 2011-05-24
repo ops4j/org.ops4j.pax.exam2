@@ -30,11 +30,6 @@ import org.ops4j.pax.exam.TestContainerFactory;
 import org.osgi.framework.launch.FrameworkFactory;
 
 /**
- * Stateful
- *
- * If would be really cool if this native runner would accept more than one osgi fw in classpath. Though this might not work due to dangerous cp
- * issues.
- *
  * @author Toni Menzel
  * @since Jan 7, 2010
  */

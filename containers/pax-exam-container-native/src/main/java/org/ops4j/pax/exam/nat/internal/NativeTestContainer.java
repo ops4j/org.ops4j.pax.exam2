@@ -19,35 +19,37 @@ package org.ops4j.pax.exam.nat.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.ops4j.pax.exam.CoreOptions.*;
+
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeInvoker;
-import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
-import static org.ops4j.pax.exam.OptionUtils.*;
-
+import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.ValueOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.service.startlevel.StartLevel;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +57,10 @@ import org.slf4j.LoggerFactory;
  * @author Toni Menzel
  * @since Jan 7, 2010
  */
-public class NativeTestContainer implements TestContainer {
+public class NativeTestContainer implements TestContainer
+{
 
-    final private static Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
+    final private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
     final private static String PROBE_SIGNATURE_KEY = "Probe-Signature";
     final private Stack<Long> m_installed = new Stack<Long>();
 
@@ -65,208 +68,259 @@ public class NativeTestContainer implements TestContainer {
     final private ExamSystem m_system;
 
     volatile Framework m_framework;
-    
-    public NativeTestContainer( FrameworkFactory frameworkFactory, ExamSystem system ) throws IOException {    	
-    	m_system = system.fork(new Option[0]);    	
+
+    public NativeTestContainer( FrameworkFactory frameworkFactory, ExamSystem system ) throws IOException
+    {
+        // we add framework specific options.
+        m_system = system.fork( new Option[] {
+                        systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) )
+                } );
         m_frameworkFactory = frameworkFactory;
-    }
-    
-	@SuppressWarnings("unchecked")
-    private <T> T getService(Class<T> serviceType, String filter )
-            throws TestContainerException {
-        assert m_framework != null : "Framework should be up";
-        assert serviceType != null : "serviceType not be null";
-
-        LOG.debug("Aquiring Service " + serviceType.getName() + " " + (filter != null ? filter : ""));
-        RelativeTimeout timeout = m_system.getTimeout();
-        final Long start = System.currentTimeMillis();
-        do {
-            try {
-                ServiceReference[] reference = m_framework.getBundleContext().getServiceReferences(serviceType.getName(), filter);
-                if (reference != null && reference.length > 0) {
-                    return ((T) m_framework.getBundleContext().getService(reference[0]));
-                }
-
-                Thread.sleep(200);
-            } catch (Exception e) {
-                LOG.error("Some problem during looking up service from framework: " + m_framework, e);
-            }
-        } while (timeout.isNoTimeout() || (System.currentTimeMillis()) < start + timeout.getValue() );
-        printAvailableAlternatives(serviceType);
-
-        throw new TestContainerException("Not found a matching Service " + serviceType.getName() + " for Filter:" + (filter != null ? filter : ""));
-
-    }
-
-    private <T> void printAvailableAlternatives(Class<T> serviceType) {
-        try {
-            ServiceReference[] reference = m_framework.getBundleContext().getAllServiceReferences(serviceType.getName(), null);
-            if (reference != null) {
-                LOG.warn("Test Endpoints: " + reference.length);
-
-                for (ServiceReference ref : reference) {
-                    LOG.warn("Endpoint: " + ref);
-                }
-            }
-
-        } catch (Exception e) {
-            LOG.error("Some problem during looking up alternative service. ", e);
-        }
     }
 
     public synchronized void call( TestAddress address )
     {
-        String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
-        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression);
-        service.call(address.arguments());
+        String filterExpression = "(&(objectclass=" + ProbeInvoker.class.getName() + ") (" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + "))";
+        ProbeInvoker service = getService( ProbeInvoker.class, filterExpression );
+        service.call( address.arguments() );
     }
 
-    public synchronized long install(InputStream stream) {
-        try {
-            Bundle b = m_framework.getBundleContext().installBundle("local", stream);
-            m_installed.push(b.getBundleId());
-            LOG.debug("Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId());
-            setBundleStartLevel(b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE);
+    @SuppressWarnings("unchecked")
+    private <T> T getService( Class<T> serviceType, String filter ) throws TestContainerException
+    {
+        assert m_framework != null : "Framework should be up";
+        assert serviceType != null : "serviceType not be null";
+
+        LOG.debug( "Aquiring Service " + serviceType.getName() + " " + (filter != null ? filter : "") );
+        try
+        {
+            ServiceTracker tracker = new ServiceTracker( m_framework.getBundleContext(), m_framework.getBundleContext().createFilter( filter ), null );
+            tracker.open();
+            T service = ( T ) tracker.waitForService( m_system.getTimeout().getValue() );
+            tracker.close();
+            return service;
+        } catch ( InvalidSyntaxException e1 )
+        {
+            throw new TestContainerException( "NativeTestContainer implementation error. Please fix. Filter: " + filter, e1 );
+        } catch ( InterruptedException e )
+        {
+            throw new TestContainerException( "Interrupt during aquiring service of type " + serviceType.getName(), e );
+        }
+    }
+
+    public synchronized long install( InputStream stream )
+    {
+        try
+        {
+            Bundle b = m_framework.getBundleContext().installBundle( "local", stream );
+            m_installed.push( b.getBundleId() );
+            LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
+            setBundleStartLevel( b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE );
             // stream.close();
             b.start();
             return b.getBundleId();
-        } catch (BundleException e) {
+        } catch ( BundleException e )
+        {
             e.printStackTrace();
         }
         return -1;
     }
 
-    public synchronized void cleanup() {
-        while ((!m_installed.isEmpty())) {
-            try {
+    public synchronized void cleanup()
+    {
+        while ( (!m_installed.isEmpty()) )
+        {
+            try
+            {
                 Long id = m_installed.pop();
-                Bundle bundle = m_framework.getBundleContext().getBundle(id);
+                Bundle bundle = m_framework.getBundleContext().getBundle( id );
                 bundle.uninstall();
-                LOG.debug("Uninstalled bundle " + id);
-            } catch (BundleException e) {
-                // Sometimes bundles go mad when install + uninstall happens too fast.
+                LOG.debug( "Uninstalled bundle " + id );
+            } catch ( BundleException e )
+            {
+                // Sometimes bundles go mad when install + uninstall happens too
+                // fast.
             }
         }
     }
 
-    public void setBundleStartLevel(long bundleId, int startLevel)
-            throws TestContainerException {
-        StartLevel sl = getStartLevelService(m_framework.getBundleContext());
-        sl.setBundleStartLevel(m_framework.getBundleContext().getBundle(bundleId), startLevel);
+    public void setBundleStartLevel( long bundleId, int startLevel ) throws TestContainerException
+    {
+        StartLevel sl = getStartLevelService( m_framework.getBundleContext() );
+        sl.setBundleStartLevel( m_framework.getBundleContext().getBundle( bundleId ), startLevel );
     }
 
-    public TestContainer stop() {
-        if (m_framework != null) {
-            try {
+    public TestContainer stop()
+    {
+        if ( m_framework != null )
+        {
+            try
+            {
                 cleanup();
                 m_framework.stop();
-                m_framework.waitForStop(m_system.getTimeout().getValue());
+                m_framework.waitForStop( m_system.getTimeout().getValue() );
                 m_framework = null;
                 m_system.clear();
-            } catch (BundleException e) {
-                LOG.warn("Problem during stopping fw.", e);
-            } catch (InterruptedException e) {
-                LOG.warn("InterruptedException during stopping fw.", e);
+            } catch ( BundleException e )
+            {
+                LOG.warn( "Problem during stopping fw.", e );
+            } catch ( InterruptedException e )
+            {
+                LOG.warn( "InterruptedException during stopping fw.", e );
             }
-        } else {
-            LOG.warn("Framework does not exist. Called start() before ? ");
+        } else
+        {
+            LOG.warn( "Framework does not exist. Called start() before ? " );
         }
         return this;
     }
-  
-    public TestContainer start()  throws TestContainerException {        
-    	ClassLoader parent = null;
-        try {
-        	final Map<String, String> p = createFrameworkProperties();
-            
-            
+
+    public TestContainer start() throws TestContainerException
+    {
+        ClassLoader parent = null;
+        try
+        {
+            final Map<String, String> p = createFrameworkProperties();
             parent = Thread.currentThread().getContextClassLoader();
-            //Thread.currentThread().setContextClassLoader( null );
-
-            m_framework = m_frameworkFactory.newFramework(p);
+            m_framework = m_frameworkFactory.newFramework( p );
             m_framework.init();
-            installAndStartBundles(m_framework.getBundleContext());
-        } catch (Exception e) {
-            throw new TestContainerException("Problem starting test container.", e);
-        } finally {
-            if (parent != null) {
-                Thread.currentThread().setContextClassLoader(parent);
+            installAndStartBundles( m_framework.getBundleContext() );
+        } catch ( Exception e )
+        {
+            throw new TestContainerException( "Problem starting test container.", e );
+        } finally
+        {
+            if ( parent != null )
+            {
+                Thread.currentThread().setContextClassLoader( parent );
             }
         }
         return this;
     }
 
-	private Map<String, String> createFrameworkProperties() throws IOException {
-		final Map<String, String> p = new HashMap<String, String>( );
-		String cache =  m_system.getTempFolder().getAbsolutePath();
-		p.put("org.osgi.framework.storage",cache );
-		LOG.info("Cache: " + cache);
-		
-		p.put("org.osgi.framework.system.packages.extra", "org.ops4j.pax.exam;version=" + skipSnapshotFlag(Info.getPaxExamVersion()));
-		for (SystemPropertyOption option : m_system.getOptions(SystemPropertyOption.class) ) {
-        	System.setProperty(option.getKey(), option.getValue());
+    private Map<String, String> createFrameworkProperties() throws IOException
+    {
+        final Map<String, String> p = new HashMap<String, String>();
+        p.put( org.osgi.framework.Constants.FRAMEWORK_STORAGE, m_system.getTempFolder().getAbsolutePath() );
+        p.put( org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( m_system.getOptions( SystemPackageOption.class ) ) );
+        p.put( org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION, buildString( m_system.getOptions( BootDelegationOption.class ) ) );
+        
+        for ( SystemPropertyOption option : m_system.getOptions( SystemPropertyOption.class ) )
+        {
+            System.setProperty( option.getKey(), option.getValue() );
         }
-		return p;
-	}
-   
-    private void installAndStartBundles(BundleContext context)
-            throws BundleException {
+        return p;
+    }
+
+    private String buildString( ValueOption[] options )
+    {
+        return buildString( new String[0], options, new String[0] );
+    }
+
+    private String buildString( String[] prepend, ValueOption[] options )
+    {
+        return buildString( prepend, options, new String[0] );
+    }
+
+    private String buildString( ValueOption[] options, String[] append )
+    {
+        return buildString( new String[0], options, append );
+    }
+
+    private String buildString( String[] prepend, ValueOption[] options, String[] append )
+    {
+        StringBuilder builder = new StringBuilder();
+        for ( String a : prepend )
+        {
+            builder.append( a );
+            builder.append( "," );
+        }
+        for ( ValueOption option : options )
+        {
+            builder.append( option.getValue() );
+            builder.append( "," );
+        }
+        for ( String a : append )
+        {
+            builder.append( a );
+            builder.append( "," );
+        }
+        if ( builder.length() > 0 )
+        {
+            return builder.substring( 0, builder.length() - 1 );
+        } else
+        {
+            return "";
+        }
+    }
+
+    private void installAndStartBundles( BundleContext context ) throws BundleException
+    {
         m_framework.start();
-        StartLevel sl = getStartLevelService(context);
-        for (ProvisionOption<?> bundle : m_system.getOptions(ProvisionOption.class)) {
+        StartLevel sl = getStartLevelService( context );
+        for ( ProvisionOption<?> bundle : m_system.getOptions( ProvisionOption.class ) )
+        {
             Bundle b = null;
-            b = context.installBundle(bundle.getURL());
-            int startLevel = getStartLevel(bundle);
-            sl.setBundleStartLevel(b, startLevel);
+            b = context.installBundle( bundle.getURL() );
+            int startLevel = getStartLevel( bundle );
+            sl.setBundleStartLevel( b, startLevel );
             b.start();
-            LOG.debug("+ Install (start@" + startLevel + ") " + bundle);
+            LOG.debug( "+ Install (start@" + startLevel + ") " + bundle );
         }
-        LOG.debug("Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE);
-        sl.setStartLevel(Constants.START_LEVEL_TEST_BUNDLE);
+        LOG.debug( "Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE );
+        sl.setStartLevel( Constants.START_LEVEL_TEST_BUNDLE );
         // Work around for FELIX-2942
-        final CountDownLatch latch = new CountDownLatch(1);
-        context.addFrameworkListener(new FrameworkListener() {
-            public void frameworkEvent(FrameworkEvent frameworkEvent) {
-                switch (frameworkEvent.getType()) {
-                    case FrameworkEvent.STARTLEVEL_CHANGED:
-                        latch.countDown();
+        final CountDownLatch latch = new CountDownLatch( 1 );
+        context.addFrameworkListener( new FrameworkListener()
+        {
+            public void frameworkEvent( FrameworkEvent frameworkEvent )
+            {
+                switch (frameworkEvent.getType())
+                {
+                case FrameworkEvent.STARTLEVEL_CHANGED :
+                    latch.countDown();
                 }
             }
-        });
-        try {
-            latch.await(m_system.getTimeout().getValue(), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } );
+        try
+        {
+            latch.await( m_system.getTimeout().getValue(), TimeUnit.MILLISECONDS );
+        } catch ( InterruptedException e )
+        {
+            throw new RuntimeException( e );
         }
     }
 
-    private StartLevel getStartLevelService(BundleContext context) {
-        StartLevel sl;
-        while ((sl = (StartLevel) context.getService(context.getServiceReference(StartLevel.class.getName()))) == null) {
-            
-        }
-        return sl;
+    private StartLevel getStartLevelService( BundleContext context )
+    {
+        return getService( StartLevel.class, "(objectclass=" + StartLevel.class.getName() + ")" );
     }
 
-    private int getStartLevel(ProvisionOption<?> bundle) {
+    private int getStartLevel( ProvisionOption<?> bundle )
+    {
         Integer start = bundle.getStartLevel();
-        if (start == null) {
+        if ( start == null )
+        {
             start = Constants.START_LEVEL_DEFAULT_PROVISION;
         }
         return start;
     }
 
-    private String skipSnapshotFlag(String version) {
-        int idx = version.indexOf("-");
-        if (idx >= 0) {
-            return version.substring(0, idx);
-        } else {
+    private String skipSnapshotFlag( String version )
+    {
+        int idx = version.indexOf( "-" );
+        if ( idx >= 0 )
+        {
+            return version.substring( 0, idx );
+        } else
+        {
             return version;
         }
     }
-    
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "NativeContainer:" + m_frameworkFactory.toString();
     }
 }
