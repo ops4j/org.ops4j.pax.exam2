@@ -8,6 +8,7 @@ import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -28,8 +29,11 @@ public class Main {
     {
     	ExamSystem system = createSystem ( options(
                 systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" ),
-                //  mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "pax-tinybundles-core" ).version( "1.0.0-SNAPSHOT" ),
-                  profile( "gogo" )
+                  mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "pax-tinybundles-core" ).version( "1.0.0-SNAPSHOT" ),
+                  profile( "gogo" ),
+                  profile("web"),
+                  rawPaxRunnerOption( "keepOriginalUrls" ),
+                  bootClasspathLibrary( maven("org.ops4j.pax.exam","pax-exam-link-assembly",Info.getPaxExamVersion()) )
               )
               );
         TestContainer container = createContainer( system );
@@ -57,11 +61,13 @@ public class Main {
         log.info( "I AM AN INFO MESSAGE" );
         log.warn( "I AM A WARN MESSAGE" );
         log.error( "I AM AN ERROR MESSAGE" );
+        log.warn("C:" + ctx.getBundle( 8 ).getLocation());
 
     }
 
     public void test2()
     {
+        
         log.warn( "You and me2." );
     }
 }

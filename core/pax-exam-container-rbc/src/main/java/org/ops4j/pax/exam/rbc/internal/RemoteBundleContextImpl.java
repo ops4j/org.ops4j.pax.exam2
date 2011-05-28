@@ -102,9 +102,7 @@ public class RemoteBundleContextImpl
     /**
      * {@inheritDoc}
      */
-    public long installBundle( final String bundleLocation,
-                               final byte[] bundle )
-        throws BundleException
+    public long installBundle( final String bundleLocation, final byte[] bundle ) throws BundleException
     {
         LOG.trace( "Install bundle [ location=" + bundleLocation + "] from byte array" );
         final ByteArrayInputStream inp = new ByteArrayInputStream( bundle );

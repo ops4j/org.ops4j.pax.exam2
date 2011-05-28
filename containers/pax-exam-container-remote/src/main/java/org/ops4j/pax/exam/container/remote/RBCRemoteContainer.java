@@ -44,9 +44,14 @@ public class RBCRemoteContainer implements TestContainer
         m_target.call( address );
     }
 
+    public long install( String location, InputStream stream )
+    {
+        return m_target.install( location, stream );
+    }
+    
     public long install( InputStream stream )
     {
-        return m_target.install( stream );
+        return install("local",stream);
     }
 
     public TestContainer start()

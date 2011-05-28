@@ -32,7 +32,7 @@ import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
  */
 public interface RemoteBundleContextClient {
 
-    public long install( InputStream stream );
+    public long install( String location, InputStream stream );
 
     public void cleanup();
 
@@ -54,9 +54,10 @@ public interface RemoteBundleContextClient {
     /**
      * {@inheritDoc}
      */
-    public void waitForState( final long bundleId,
-                              final int state,
-                              final RelativeTimeout timeout );
+    public void waitForState( final long bundleId, final int state,  final RelativeTimeout timeout );
 
+    /**
+     * {@inheritDoc}
+     */
     public void call( TestAddress address );
 }

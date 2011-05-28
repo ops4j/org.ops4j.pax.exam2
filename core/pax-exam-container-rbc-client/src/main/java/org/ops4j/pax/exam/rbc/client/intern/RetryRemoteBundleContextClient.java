@@ -93,9 +93,9 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
         );
     }
 
-    public long install( InputStream stream )
+    public long install( String location, InputStream stream )
     {
-        return m_proxy.install( stream );
+        return m_proxy.install( location, stream );
     }
 
     public void cleanup()

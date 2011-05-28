@@ -40,8 +40,7 @@ public interface TestContainer {
      *
      * @throws TimeoutException - if timeout occured and the test container cannot be started
      */
-    TestContainer start()
-        throws TimeoutException;
+    TestContainer start() throws TimeoutException;
 
     /**
      * @param stream stream the content
@@ -49,14 +48,20 @@ public interface TestContainer {
      * @return Bundle ID
      */
     long install( InputStream stream );
+    
+    /**
+     * @param stream stream the content
+     *
+     * @return Bundle ID
+     */
+    long install( String location, InputStream stream );
 
     /**
      * @param address the target to be called.
      *
      * @throws TestContainerException exception
      */
-    void call( TestAddress address )
-        throws TestContainerException;
+    void call( TestAddress address ) throws TestContainerException;
 
     /**
      * Stops the regression container. Implementations should take care of calling cleanup() internally, too.
@@ -65,7 +70,6 @@ public interface TestContainer {
      *
      * @throws TimeoutException - if timeout occured and the regression container cannot be stopped
      */
-    TestContainer stop()
-        throws TimeoutException;
+    TestContainer stop() throws TimeoutException;
 
 }

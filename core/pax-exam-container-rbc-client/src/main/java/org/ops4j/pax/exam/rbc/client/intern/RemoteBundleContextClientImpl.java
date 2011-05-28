@@ -130,7 +130,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             ;
     }
 
-    public long install( InputStream stream )
+    public long install( String location, InputStream stream )
     {
         // turn this into a local url because we don't want pass the stream any further.
         try {
@@ -138,7 +138,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             // pack as bytecode
             byte[] packed = pack( stream );
 
-            long id = getRemoteBundleContext().installBundle( "no", packed );
+            long id = getRemoteBundleContext().installBundle( location, packed );
             m_installed.push( id );
             getRemoteBundleContext().startBundle( id );
             return id;

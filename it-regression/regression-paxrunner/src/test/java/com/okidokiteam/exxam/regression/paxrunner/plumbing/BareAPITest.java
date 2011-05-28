@@ -42,7 +42,7 @@ public class BareAPITest {
 	@Test
 	public void bareRunTest() throws Exception {
 		Option[] options = new Option[] {
-				felix(),
+				//felix(),
 				equinox(),
 				junitBundles(),
 				easyMockBundles(),
@@ -50,7 +50,11 @@ public class BareAPITest {
 						.value("DEBUG"),
 				// mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId(
 				// "pax-logging-service" ).version( "1.6.1" ),
-				rawPaxRunnerOption("envo", "mike=blue,foo=bar") };
+				rawPaxRunnerOption("envo", "mike=blue,foo=bar"),
+				//rawPaxRunnerOption( "keepOriginalUrls" ),
+				//mavenBundle().groupId( "org.ops4j.pax.url").artifactId("pax-url-link" ).version( "1.3.2" ).startLevel( 0 )
+				 
+		};
 
 		ExamSystem system = createSystem(options);
 		TestProbeProvider p = makeProbe(system);

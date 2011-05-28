@@ -81,15 +81,20 @@ public class RBCRemoteTarget implements TestContainer
         return this;
     }
 
+     public long install( String location, InputStream probe ) throws TestContainerException
+    {
+        LOG.debug( "Preparing and Installing bundle (from stream ).." );
+    
+        long id = 0;
+        id = m_remoteBundleContextClient.install( location, probe );
+        LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
+        return id;
+    }
+    
     public long install( InputStream probe )
         throws TestContainerException
     {
-        LOG.debug( "Preparing and Installing bundle (from stream ).." );
-
-        long id = 0;
-        id = m_remoteBundleContextClient.install( probe );
-        LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
-        return id;
+        return install("local", probe);
     }
 
     public TestContainer stop()

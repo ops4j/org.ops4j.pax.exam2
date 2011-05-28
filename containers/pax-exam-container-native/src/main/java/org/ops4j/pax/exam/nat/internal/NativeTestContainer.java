@@ -109,11 +109,11 @@ public class NativeTestContainer implements TestContainer
         }
     }
 
-    public synchronized long install( InputStream stream )
+    public synchronized long install( String location, InputStream stream )
     {
         try
         {
-            Bundle b = m_framework.getBundleContext().installBundle( "local", stream );
+            Bundle b = m_framework.getBundleContext().installBundle( location, stream );
             m_installed.push( b.getBundleId() );
             LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
             setBundleStartLevel( b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE );
@@ -125,6 +125,11 @@ public class NativeTestContainer implements TestContainer
             e.printStackTrace();
         }
         return -1;
+    }
+    
+    public synchronized long install( InputStream stream )
+    {
+        return install("local",stream);
     }
 
     public synchronized void cleanup()

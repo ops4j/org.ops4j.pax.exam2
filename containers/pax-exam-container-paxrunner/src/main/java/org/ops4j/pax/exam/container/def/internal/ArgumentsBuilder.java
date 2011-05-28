@@ -106,8 +106,8 @@ class ArgumentsBuilder {
             		 system.getOptions( VMOption.class )
              )
         );
-        add( m_paxrunneArguments, extractArguments( filter( BootClasspathLibraryOption.class ) ) );
-        add( m_paxrunneArguments, extractArguments( filter( DebugClassLoadingOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( BootClasspathLibraryOption.class ) ) );
+        add( m_paxrunneArguments, extractArguments( system.getOptions( DebugClassLoadingOption.class ) ) );
         add( m_paxrunneArguments, defaultArguments( system ) );
       }
 

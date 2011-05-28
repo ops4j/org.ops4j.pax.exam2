@@ -210,10 +210,15 @@ public class PaxRunnerTestContainer
     {
         m_target.call( address );
     }
-
+    
     public synchronized long install( InputStream stream )
     {
-        return m_target.install( stream );
+        return  install("local",stream);
+    }
+
+    public synchronized long install( String location, InputStream stream )
+    {
+        return m_target.install( location, stream );
     }
 
     @Override
