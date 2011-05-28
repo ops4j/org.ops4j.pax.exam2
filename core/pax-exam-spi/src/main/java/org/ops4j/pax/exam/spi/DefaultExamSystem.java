@@ -15,7 +15,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
-import java.util.Vector;
 
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
