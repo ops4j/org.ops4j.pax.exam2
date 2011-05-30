@@ -32,6 +32,7 @@ import java.util.List;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
+import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.CustomFrameworkOption;
 import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
@@ -931,11 +932,40 @@ public class CoreOptions
      *
      * @return clean caches option
      */
+    public static CleanCachesOption cleanCaches(boolean value)
+    {
+        return new CleanCachesOption(value);
+    }
+    
+    /**
+     * Creates a {@link CleanCachesOption}.
+     *
+     * @return clean caches option
+     */
     public static CleanCachesOption cleanCaches()
     {
         return new CleanCachesOption();
     }
 
+    /**
+     * Creates a {@link CleanCachesOption}.
+     *
+     * @return clean caches option
+     */
+    public static CleanCachesOption keepCaches()
+    {
+        return new CleanCachesOption(Boolean.FALSE);
+    }
+    
+    /**
+     * Creates a {@link CleanCachesOption}.value(false) + workingDirectory(folder) options. 
+     *
+     * @return options set so it should just be used to kick a single process. Not for test runners. (they would interfere).
+     */
+    public static Option serverMode(String folder)
+    {
+        return composite( keepCaches(),workingDirectory( folder ) );
+    }
    
 
     /**

@@ -40,7 +40,7 @@ public interface TestContainer {
      *
      * @throws TimeoutException - if timeout occured and the test container cannot be started
      */
-    TestContainer start() throws TimeoutException;
+    TestContainer start( ) throws TimeoutException;
 
     /**
      * @param stream stream the content
