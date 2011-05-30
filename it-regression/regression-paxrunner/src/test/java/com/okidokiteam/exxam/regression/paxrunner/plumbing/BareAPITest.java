@@ -87,8 +87,7 @@ public class BareAPITest {
 		ExamSystem system = createSystem(options);
 		TestProbeProvider p = makeProbe(system);
 
-		TestContainer[] containers = PaxExamRuntime.getTestContainerFactory()
-				.create(system);
+		TestContainer[] containers = PaxExamRuntime.getTestContainerFactory().create(system);
 
 		for (TestContainer testContainer : containers) {
 			testContainer.start();

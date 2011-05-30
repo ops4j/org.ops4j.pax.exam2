@@ -163,7 +163,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             Configuration conf = m.getAnnotation( Configuration.class );
             if( conf != null ) {
                 // consider as option, so prepare that one:
-                reactor.addConfiguration( m_system.fork( ( (Option[]) m.invoke( testClassInstance ) ) ) );
+                reactor.addConfiguration( ( (Option[]) m.invoke( testClassInstance ) ) );
             }
         }
     }
@@ -224,7 +224,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private DefaultExamReactor getReactor( Class testClass )
         throws InstantiationException, IllegalAccessException
     {
-        return new DefaultExamReactor( getExamFactory( testClass ) );
+        return new DefaultExamReactor( m_system, getExamFactory( testClass ) );
     }
 
     @SuppressWarnings( "unchecked" )

@@ -18,6 +18,7 @@ package org.ops4j.pax.exam.spi.reactors;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -64,7 +65,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         {
             throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
         }
-        container.start();
+        container.start(  );
         try
         {
             for ( TestProbeProvider builder : m_probes )

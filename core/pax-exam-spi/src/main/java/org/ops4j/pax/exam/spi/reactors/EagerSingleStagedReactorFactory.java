@@ -16,6 +16,8 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.util.List;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;

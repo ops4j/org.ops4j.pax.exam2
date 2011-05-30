@@ -56,7 +56,7 @@ public class ReactorAPITest
         reactorRun( new AllConfinedStagedReactorFactory() );
     }
 
-   // @Test
+    @Test
     public void reactorRunEagerTest()
         throws Exception
     {
@@ -69,13 +69,12 @@ public class ReactorAPITest
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
         
-        ExamSystem system = createSystem(options);
-        ExxamReactor reactor = new DefaultExamReactor( factory );
-
+        ExamSystem system = createSystem();
+        ExxamReactor reactor = new DefaultExamReactor( system, factory );
         TestProbeProvider probe = makeProbe( system );
-
+        
         reactor.addProbe( probe );
-        reactor.addConfiguration( system );
+        reactor.addConfiguration( options );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
         try

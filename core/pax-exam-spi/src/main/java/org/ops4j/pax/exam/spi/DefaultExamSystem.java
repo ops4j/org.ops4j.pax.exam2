@@ -1,8 +1,7 @@
 package org.ops4j.pax.exam.spi;
 
 import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
-import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
-import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.OptionUtils.expand;
 import static org.ops4j.pax.exam.OptionUtils.filter;
@@ -22,6 +21,8 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.options.extra.CleanCachesOption;
+import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
@@ -39,12 +40,15 @@ public class DefaultExamSystem implements ExamSystem
     final private File m_configDirectory;
     final private Option[] m_combinedOptions;
 
-    final private Stack<File> m_tempStack;
     final private Stack<ExamSystem> m_subsystems;
 
     final private RelativeTimeout m_timeout;
 
     private Set<Class> m_requestedOptionTypes = new HashSet<Class>();
+
+    private CleanCachesOption m_clean;
+
+    private File m_cache;
 
     /**
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults.
@@ -94,14 +98,41 @@ public class DefaultExamSystem implements ExamSystem
 
     private DefaultExamSystem( Option[] options ) throws IOException
     {
-        m_combinedOptions = expand( options );
-        m_tempStack = new Stack<File>();
         m_subsystems = new Stack<ExamSystem>();
-
+        m_combinedOptions = expand( options );
         m_configDirectory = new File( System.getProperty( "user.home" ) + "/.pax/exam/" );
         m_configDirectory.mkdirs();
-        m_store = new TemporaryStore( getTempFolder(), false );
+        
+        WorkingDirectoryOption work = getSingleOption(WorkingDirectoryOption.class);
+        if (work != null) {
+            m_cache = createTemp( new File ( work.getWorkingDirectory() ) );
+        }else  {
+            m_cache = createTemp(null);
+        }
+        
+        m_store = new TemporaryStore( m_cache, false );
         m_timeout = RelativeTimeout.TIMEOUT_DEFAULT;
+        
+        m_clean = getSingleOption(CleanCachesOption.class);
+        
+    }
+
+    /**
+     * Creates a fresh temp folder under the mentioned working folder.
+     * If workingFolder is null, system wide temp location will be used.
+     * 
+     * @param workingDirectory
+     * @return
+     * @throws IOException 
+     */
+    private synchronized File createTemp( File workingDirectory ) throws IOException
+    {
+        if (workingDirectory == null) {
+            return Files.createTempDir();
+        }else {
+            workingDirectory.mkdirs();
+            return workingDirectory;
+        }
     }
 
     private static Option[] defaultOptions()
@@ -114,6 +145,25 @@ public class DefaultExamSystem implements ExamSystem
                 url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ) };
     }
 
+    /**
+     * Helper method for single options. First occurence has precedence.
+     * 
+     * @param <T>
+     * @param optionType
+     * @return The first option found of type T or null if none was found.
+     */
+    public <T extends Option> T getSingleOption( final Class<T> optionType )
+    {
+        m_requestedOptionTypes.add( optionType );
+        T[] filter = filter( optionType, m_combinedOptions );
+        
+        if (filter.length > 0) {
+            return filter[0];
+        }else {
+            return null;
+        }
+    }
+    
     public <T extends Option> T[] getOptions( final Class<T> optionType )
     {
         m_requestedOptionTypes.add( optionType );
@@ -137,9 +187,7 @@ public class DefaultExamSystem implements ExamSystem
      */
     public File getTempFolder()
     {
-        File tmp = Files.createTempDir();
-        m_tempStack.add( tmp );
-        return tmp;
+        return m_cache;
     }
 
     /**
@@ -162,13 +210,13 @@ public class DefaultExamSystem implements ExamSystem
         {
             warnUnusedOptions();
 
-            for ( ExamSystem sys : m_subsystems )
-            {
-                sys.clear();
-            }
-            while ( !m_tempStack.isEmpty() )
-            {
-                Files.deleteRecursively( m_tempStack.pop().getCanonicalFile() );
+            if (m_clean == null || m_clean.getValue() == Boolean.TRUE ) {
+                for ( ExamSystem sys : m_subsystems )
+                {
+                    sys.clear();
+                }
+                Files.deleteRecursively( m_cache.getCanonicalFile() );
+                
             }
         } catch ( IOException e )
         {

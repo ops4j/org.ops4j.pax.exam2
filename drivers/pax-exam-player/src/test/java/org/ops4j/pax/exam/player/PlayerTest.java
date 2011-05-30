@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.player;
 
 import junit.framework.AssertionFailedError;
 import org.junit.Test;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 import org.ops4j.pax.exam.ProbeInvoker;
@@ -71,7 +72,6 @@ public class PlayerTest {
     {
         new Player().with(
             options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.1" ).startLevel( 1 ),
                 mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" ).start()
             )
         ).test( WaitForService.class, LogService.class.getName(), 5000 ).play();
@@ -104,6 +104,9 @@ public class PlayerTest {
 
     public void probe( BundleContext ctx, String s )
     {
-        System.out.println( "Hello World" );
+        for (Bundle b: ctx.getBundles()) {
+            System.out.println( b.getSymbolicName() + " " + b.getState() );
+
+        }
     }
 }

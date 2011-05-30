@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -46,18 +47,21 @@ public class DefaultExamReactor implements ExxamReactor {
 
     private static Logger LOG = LoggerFactory.getLogger( DefaultExamReactor.class );
 
-    final private List<ExamSystem> m_configurations;
+    final private List<Option[]> m_configurations;
     final private List<TestProbeProvider> m_probes;
     final private TestContainerFactory m_factory;
 
-    public DefaultExamReactor( TestContainerFactory factory )
+    final private ExamSystem m_system;
+
+    public DefaultExamReactor( ExamSystem system, TestContainerFactory factory )
     {
-        m_configurations = new ArrayList<ExamSystem>();
+        m_system = system;
+        m_configurations = new ArrayList<Option[]>();
         m_probes = new ArrayList<TestProbeProvider>();
         m_factory = factory;
     }
 
-    synchronized public void addConfiguration( ExamSystem configuration )
+    synchronized public void addConfiguration( Option[] configuration )
     {
         m_configurations.add( configuration );
     }
@@ -71,13 +75,13 @@ public class DefaultExamReactor implements ExxamReactor {
     {
         LOG.debug( "Staging reactor with probes: " + m_probes.size() + " using strategy: " + factory );
         List<TestContainer> containers = new ArrayList<TestContainer>();
-
+        
         if( m_configurations.isEmpty() ) {
             LOG.debug( "No configuration given. Setting an empty one." );
-            m_configurations.add( PaxExamRuntime.createSystem( options() ) );
+            m_configurations.add( options() );
         }
-        for( ExamSystem system : m_configurations ) {
-            containers.addAll( Arrays.asList( m_factory.create( system ) ) );
+        for( Option[] config : m_configurations ) {
+            containers.addAll( Arrays.asList( m_factory.create( m_system.fork( config ) ) ) );
         }
 
         return factory.create( containers, m_probes );

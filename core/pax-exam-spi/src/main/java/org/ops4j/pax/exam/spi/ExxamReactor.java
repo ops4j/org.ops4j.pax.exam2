@@ -42,7 +42,7 @@ public interface ExxamReactor
      *
      * @param options a set of (user-end) options.
      */
-    void addConfiguration( ExamSystem system );
+    void addConfiguration( Option[] options );
 
     /**
      * Add the probe that contribute to desired container(s) you will get after calling {@link #stage(StagedExamReactorFactory)}.

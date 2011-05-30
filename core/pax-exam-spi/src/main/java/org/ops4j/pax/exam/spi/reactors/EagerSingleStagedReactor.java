@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -52,7 +53,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
         m_targetContainer = containers;
 
         for( TestContainer container : containers ) {
-            container.start();
+            container.start( );
 
             for( TestProbeProvider builder : mProbes ) {
                 LOG.debug( "installing probe " + builder );

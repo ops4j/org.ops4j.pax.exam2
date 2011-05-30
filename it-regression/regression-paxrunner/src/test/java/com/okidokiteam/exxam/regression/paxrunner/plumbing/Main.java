@@ -33,14 +33,15 @@ public class Main {
                   profile( "gogo" ),
                   profile("web"),
                   rawPaxRunnerOption( "keepOriginalUrls" ),
-                  bootClasspathLibrary( maven("org.ops4j.pax.exam","pax-exam-link-assembly",Info.getPaxExamVersion()) )
+                  bootClasspathLibrary( maven("org.ops4j.pax.exam","pax-exam-link-assembly",Info.getPaxExamVersion()) ),
+                  serverMode( "/Users/tonit/server" )               
               )
               );
         TestContainer container = createContainer( system );
         container.start();
 
         //container.install( bundle( withBnd() ).add( Probe2.class ).set( "Bundle-Activator", Probe2.class.getName() ).build() );
-
+/**
         TestProbeBuilder probe = system.createProbe(new Properties());
         probe.addTest( Main.class, "test" );
         TestProbeProvider p = probe.build();
@@ -50,7 +51,7 @@ public class Main {
         for( TestAddress t : p.getTests() ) {
             container.call( t );
         }
- 
+ **/
     }
 
     public void test( BundleContext ctx )

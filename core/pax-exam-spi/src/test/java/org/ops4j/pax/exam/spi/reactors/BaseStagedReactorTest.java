@@ -17,17 +17,19 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Test;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -37,7 +39,7 @@ public abstract class BaseStagedReactorTest {
     abstract protected StagedExamReactor getReactor( List<TestContainer> containers, List<TestProbeProvider> providers );
 
     @Test
-    public void testEmptyContainersAndProviders()
+    public void testEmptyContainersAndProviders() throws IOException
     {
         List<TestContainer> containers = new ArrayList<TestContainer>();
         List<TestProbeProvider> providers = new ArrayList<TestProbeProvider>();

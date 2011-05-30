@@ -18,6 +18,8 @@
 package org.ops4j.pax.exam.spi;
 
 import java.util.List;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeProvider;
 

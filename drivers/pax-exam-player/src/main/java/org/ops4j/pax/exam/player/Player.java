@@ -20,6 +20,8 @@ package org.ops4j.pax.exam.player;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
@@ -54,6 +56,7 @@ public class Player {
     final private TestContainerFactory m_factory;
     final private Option[] m_parts;
     final private TestProbeBuilder m_builder;
+    final private ExamSystem m_system;
 
     public Player( TestContainerFactory containerFactory, Option... parts )
         throws IOException
@@ -61,6 +64,7 @@ public class Player {
         Store<InputStream> store = StoreFactory.defaultStore();
         Properties p = new Properties();
         m_factory = containerFactory;
+        m_system = createSystem( );
         m_parts = parts;
         m_builder = new TestProbeBuilderImpl( p, store );
     }
@@ -97,8 +101,8 @@ public class Player {
 
     public void play( StagedExamReactorFactory strategy ) throws IOException
     {
-        DefaultExamReactor reactor = new DefaultExamReactor( m_factory );
-        reactor.addConfiguration( createSystem ( m_parts ) );
+        DefaultExamReactor reactor = new DefaultExamReactor( m_system, m_factory );
+        reactor.addConfiguration(  m_parts  );
         reactor.addProbe( m_builder.build() );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
