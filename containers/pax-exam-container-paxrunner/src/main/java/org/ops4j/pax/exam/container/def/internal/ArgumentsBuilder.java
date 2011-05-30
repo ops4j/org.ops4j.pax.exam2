@@ -123,7 +123,6 @@ class ArgumentsBuilder {
      */
     public static String[] build ( ExamSystem system, FrameworkOption selectedFramework ) throws IOException
     {
-    	// add UUID
     	return new ArgumentsBuilder(system,selectedFramework).get();
     }
 

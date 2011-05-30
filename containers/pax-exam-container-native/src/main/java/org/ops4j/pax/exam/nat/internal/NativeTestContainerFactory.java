@@ -41,7 +41,7 @@ public class NativeTestContainerFactory implements TestContainerFactory {
         Iterator<FrameworkFactory> factories = ServiceLoader.load( FrameworkFactory.class ).iterator();
         while( factories.hasNext() ) {
             try {
-				containers.add( new NativeTestContainer( factories.next() , system ) );
+				containers.add( new NativeTestContainer( system, factories.next() ) );
 			} catch (IOException e) {
 				throw new TestContainerException("Problem initializing container.",e);
 			}

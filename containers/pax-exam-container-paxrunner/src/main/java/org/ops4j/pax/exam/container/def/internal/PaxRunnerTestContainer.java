@@ -21,6 +21,7 @@ package org.ops4j.pax.exam.container.def.internal;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -50,8 +51,7 @@ import static org.ops4j.pax.exam.CoreOptions.*;
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
  */
-public class PaxRunnerTestContainer
-        implements TestContainer
+public class PaxRunnerTestContainer implements TestContainer
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( PaxRunnerTestContainer.class );
@@ -65,13 +65,13 @@ public class PaxRunnerTestContainer
 
     final private StoppableJavaRunner m_javaRunner;
     final private RMIRegistry m_reg;
-    final private ExamSystem m_system;
     final private FrameworkOption m_selectedFramework;
     /**
      * Underlying Test Target
      */
     private RBCRemoteTarget m_target;
-    private ExamSystem m_subsystem;
+    
+    final private ExamSystem m_system;
 
     /**
      * Constructor.
@@ -87,8 +87,8 @@ public class PaxRunnerTestContainer
             final FrameworkOption selectedFramework )
     {
         m_javaRunner = new AsyncJavaRunner( new DefaultJavaRunner( BLOCKING_RUNNER_INTERNALLY ) );
-        m_system = system;
         m_reg = registry;
+        m_system = system;
         m_selectedFramework = selectedFramework;
     }
 
@@ -104,13 +104,13 @@ public class PaxRunnerTestContainer
     /**
      * {@inheritDoc}
      */
-    public synchronized TestContainer start()
+    public synchronized TestContainer start(  )
     {
         try
         {
             String name = m_system.createID( RUNNER_TEST_CONTAINER );
 
-            m_subsystem = m_system.fork(
+            ExamSystem m_subsystem = m_system.fork(
                     options(
                             systemProperty( Constants.RMI_HOST_PROPERTY ).value( m_reg.getHost() ),
                             systemProperty( Constants.RMI_PORT_PROPERTY ).value( "" + m_reg.getPort() ),
@@ -127,8 +127,16 @@ public class PaxRunnerTestContainer
 
             Run.start( m_javaRunner, arguments );
             LOG.debug( "Test Container started in " + (System.currentTimeMillis() - startedAt) + " millis" );
-            LOG.info( "Wait for test container to finish its initialization " + (m_system.getTimeout()) );
-            waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, m_system.getTimeout() );
+            LOG.info( "Wait for test container to finish its initialization " + (m_subsystem.getTimeout()) );
+            
+            
+            if (m_subsystem.getOptions( ServerModeOption.class ).length == 0) {
+                waitForState( SYSTEM_BUNDLE, Bundle.ACTIVE, m_subsystem.getTimeout() );
+            }else {
+                LOG.info("System runs in Server Mode. Which means, not Test facility bundles available on target system.");
+            }
+            
+            // Unsupported currently
             // new CompositeCustomizer( argBuilder.getCustomizers() ).customizeEnvironment( argBuilder.getWorkingFolder() );
             m_started = true;
         } catch ( IOException e )
@@ -184,7 +192,7 @@ public class PaxRunnerTestContainer
 
             m_started = false;
             m_target = null;
-            m_subsystem.clear();
+            m_system.clear();
         }
         return this;
     }

@@ -18,6 +18,8 @@
 package org.ops4j.pax.exam.container.remote;
 
 import java.io.InputStream;
+
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TimeoutException;

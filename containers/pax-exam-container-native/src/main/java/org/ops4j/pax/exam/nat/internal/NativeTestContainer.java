@@ -65,18 +65,14 @@ public class NativeTestContainer implements TestContainer
     final private Stack<Long> m_installed = new Stack<Long>();
 
     final private FrameworkFactory m_frameworkFactory;
-    final private ExamSystem m_system;
+    private ExamSystem m_system;
 
     volatile Framework m_framework;
 
-    public NativeTestContainer( FrameworkFactory frameworkFactory, ExamSystem system ) throws IOException
+    public NativeTestContainer( ExamSystem system, FrameworkFactory frameworkFactory ) throws IOException
     {
-        // we add framework specific options.
-        m_system = system.fork( new Option[] {
-                        systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
-                        systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
-                } );
         m_frameworkFactory = frameworkFactory;
+        m_system = system;
     }
 
     public synchronized void call( TestAddress address )
@@ -99,6 +95,9 @@ public class NativeTestContainer implements TestContainer
             tracker.open();
             T service = ( T ) tracker.waitForService( m_system.getTimeout().getValue() );
             tracker.close();
+            if (service == null) {
+                throw new TestContainerException("Service " + filter + " no found in time.");
+            }
             return service;
         } catch ( InvalidSyntaxException e1 )
         {
@@ -181,11 +180,15 @@ public class NativeTestContainer implements TestContainer
         return this;
     }
 
-    public TestContainer start() throws TestContainerException
+    public TestContainer start(  ) throws TestContainerException
     {
         ClassLoader parent = null;
         try
         {
+            m_system = m_system.fork( new Option[] {
+                    systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
+                    systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
+            } );
             final Map<String, String> p = createFrameworkProperties();
             parent = Thread.currentThread().getContextClassLoader();
             m_framework = m_frameworkFactory.newFramework( p );
@@ -204,7 +207,7 @@ public class NativeTestContainer implements TestContainer
         return this;
     }
 
-    private Map<String, String> createFrameworkProperties() throws IOException
+    private Map<String, String> createFrameworkProperties( ) throws IOException
     {
         final Map<String, String> p = new HashMap<String, String>();
         p.put( org.osgi.framework.Constants.FRAMEWORK_STORAGE, m_system.getTempFolder().getAbsolutePath() );

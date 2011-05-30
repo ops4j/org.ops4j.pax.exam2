@@ -1,12 +1,13 @@
 package org.ops4j.pax.exam.container.def.internal;
 
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.createSystem;
+import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.createTestSystem;
 
 import java.io.File;
 import java.io.IOException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 
 /**
@@ -25,7 +26,8 @@ public class PaxRunnerTestContainerTest {
     public void rbcTest()
         throws Exception
     {
-        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
+        ExamSystem system = createTestSystem (  );
+        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( system )[0];
         testContainer.start();
         testContainer.stop();
     }
@@ -39,7 +41,9 @@ public class PaxRunnerTestContainerTest {
     public void restartTest()
         throws Exception
     {
-        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
+        ExamSystem system = createTestSystem (  );
+
+        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( system )[0];
         for( int i = 0; i <= 10; i++ ) {
             LOG.info( "----------------Container start nr.: " + i );
             testContainer.start();
@@ -54,8 +58,10 @@ public class PaxRunnerTestContainerTest {
     public void mutlipleFactories()
         throws Exception
     {
-        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
-        TestContainer testContainer2 = new PaxRunnerTestContainerFactory().create( createSystem (  ) )[0];
+        ExamSystem system = createTestSystem (  );
+       
+        TestContainer testContainer = new PaxRunnerTestContainerFactory().create( system )[0];
+        TestContainer testContainer2 = new PaxRunnerTestContainerFactory().create( system )[0];
 
         for( int i = 0; i <= 5; i++ ) {
             LOG.info( "----------------Container start nr.: " + i );

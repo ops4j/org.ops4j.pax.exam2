@@ -52,18 +52,10 @@ public class PaxRunnerTestContainerFactory
     public TestContainer[] create( ExamSystem system )
     {
         FrameworkOption[] frameworks = getFrameworks( system );
-        
         List<TestContainer> containers = new ArrayList<TestContainer>();
         for( FrameworkOption framework : frameworks ) {
-            containers.add(
-                new PaxRunnerTestContainer(
-                	system,
-                    m_rmiRegistry,
-                    framework
-                )
-              );
+            containers.add( new PaxRunnerTestContainer( system, m_rmiRegistry, framework ) );
         }
-
         return containers.toArray( new TestContainer[ containers.size() ] );
     }
 

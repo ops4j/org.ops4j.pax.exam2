@@ -43,7 +43,7 @@ public class NativeContainerTest {
     {
         FrameworkFactory ff = mock( FrameworkFactory.class );
         ExamSystem system = mock (ExamSystem.class );
-		NativeTestContainer container = new NativeTestContainer( ff, system);
+		NativeTestContainer container = new NativeTestContainer( system, ff );
         assertThat( container, is( notNullValue() ) );
         verifyNoMoreInteractions( ff );
     }
@@ -56,7 +56,7 @@ public class NativeContainerTest {
         when( ff.newFramework( Matchers.<Map>anyObject() ) ).thenReturn( fw );
         ExamSystem system = mock (ExamSystem.class );
 
-        NativeTestContainer container =  new NativeTestContainer( ff, system);
+        NativeTestContainer container =  new NativeTestContainer( system, ff );
         container.start();
         verifyNoMoreInteractions( ff );
         verifyNoMoreInteractions( fw );
