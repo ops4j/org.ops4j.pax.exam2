@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-link-mvn</artifactId>
+            <artifactId>pax-exam-link-assembly</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
