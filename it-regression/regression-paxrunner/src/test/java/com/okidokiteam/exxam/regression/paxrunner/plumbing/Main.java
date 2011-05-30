@@ -27,31 +27,20 @@ public class Main {
     public static void main( String[] args )
         throws Exception
     {
-    	ExamSystem system = createSystem ( options(
-                systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" ),
+    	ExamSystem system = createServerSystem ( options(
+                  systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" ),
                   mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "pax-tinybundles-core" ).version( "1.0.0-SNAPSHOT" ),
                   profile( "gogo" ),
                   profile("web"),
-                  rawPaxRunnerOption( "keepOriginalUrls" ),
-                  bootClasspathLibrary( maven("org.ops4j.pax.exam","pax-exam-link-assembly",Info.getPaxExamVersion()) ),
-                  serverMode( "/Users/tonit/server" )               
-              )
+                  workingDirectory(  "/Users/tonit/server")  
+                )         
               );
         TestContainer container = createContainer( system );
         container.start();
 
         //container.install( bundle( withBnd() ).add( Probe2.class ).set( "Bundle-Activator", Probe2.class.getName() ).build() );
-/**
-        TestProbeBuilder probe = system.createProbe(new Properties());
-        probe.addTest( Main.class, "test" );
-        TestProbeProvider p = probe.build();
-
-        container.install( p.getStream() );
-
-        for( TestAddress t : p.getTests() ) {
-            container.call( t );
-        }
- **/
+        
+ 
     }
 
     public void test( BundleContext ctx )
@@ -62,7 +51,7 @@ public class Main {
         log.info( "I AM AN INFO MESSAGE" );
         log.warn( "I AM A WARN MESSAGE" );
         log.error( "I AM AN ERROR MESSAGE" );
-        log.warn("C:" + ctx.getBundle( 8 ).getLocation());
+        log.warn("TONIC:" + ctx.getBundle( 8 ).getLocation());
 
     }
 

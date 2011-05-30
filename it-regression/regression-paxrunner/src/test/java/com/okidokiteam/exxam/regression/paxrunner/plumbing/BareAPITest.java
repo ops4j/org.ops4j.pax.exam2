@@ -56,7 +56,7 @@ public class BareAPITest {
 				 
 		};
 
-		ExamSystem system = createSystem(options);
+		ExamSystem system = createTestSystem(options);
 		TestProbeProvider p = makeProbe(system);
 
 		// the parse will split all single containers
@@ -84,7 +84,7 @@ public class BareAPITest {
 				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG") };
-		ExamSystem system = createSystem(options);
+		ExamSystem system = createTestSystem(options);
 		TestProbeProvider p = makeProbe(system);
 
 		TestContainer[] containers = PaxExamRuntime.getTestContainerFactory().create(system);

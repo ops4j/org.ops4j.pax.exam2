@@ -20,6 +20,10 @@ package org.ops4j.pax.exam;
 import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
 import static org.ops4j.lang.NullArgumentException.validateNotNull;
+import static org.ops4j.pax.exam.CoreOptions.keepCaches;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.rawPaxRunnerOption;
+import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 import static org.ops4j.pax.exam.OptionUtils.expand;
 
 import java.io.IOException;
@@ -46,6 +50,7 @@ import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.OptionalCompositeOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
+import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
@@ -962,9 +967,13 @@ public class CoreOptions
      *
      * @return options set so it should just be used to kick a single process. Not for test runners. (they would interfere).
      */
-    public static Option serverMode(String folder)
+    public static Option serverMode(  )
     {
-        return composite( keepCaches(),workingDirectory( folder ) );
+        return  composite( 
+                keepCaches(),
+                rawPaxRunnerOption( "keepOriginalUrls" ),
+                new  ServerModeOption() // marker
+               );
     }
    
 

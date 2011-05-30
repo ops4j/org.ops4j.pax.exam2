@@ -17,17 +17,18 @@
  */
 package org.ops4j.pax.exam.player;
 
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
 import junit.framework.AssertionFailedError;
+
 import org.junit.Test;
+import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.testforge.CountBundles;
+import org.ops4j.pax.exam.testforge.WaitForService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
-import org.ops4j.pax.exam.ProbeInvoker;
-import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.testforge.CountBundles;
-import org.ops4j.pax.exam.testforge.WaitForService;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
  * An entire test harness in a tweet.

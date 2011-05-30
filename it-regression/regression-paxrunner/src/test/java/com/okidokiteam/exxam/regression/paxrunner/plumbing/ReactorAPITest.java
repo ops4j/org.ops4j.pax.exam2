@@ -69,7 +69,7 @@ public class ReactorAPITest
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
         
-        ExamSystem system = createSystem();
+        ExamSystem system = createTestSystem();
         ExxamReactor reactor = new DefaultExamReactor( system, factory );
         TestProbeProvider probe = makeProbe( system );
         

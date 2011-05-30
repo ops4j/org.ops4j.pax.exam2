@@ -50,6 +50,8 @@ public class DefaultExamSystem implements ExamSystem
 
     private File m_cache;
 
+    
+
     /**
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults.
      * If you need to change the system after it has been created, you fork() it.
@@ -61,28 +63,9 @@ public class DefaultExamSystem implements ExamSystem
      */
     public static ExamSystem create( Option[] options ) throws IOException
     {
-        return create( options, true );
-    }
-
-    /**
-     * Creates a fresh ExamSystem. Your options will be combined with internal defaults.
-     * If you need to change the system after it has been created, you fork() it.
-     * Forking will not add default options again.
-     * 
-     * @param options
-     * @return
-     * @throws IOException
-     */
-    public static ExamSystem create( Option[] options, boolean includeDefaults ) throws IOException
-    {
         LOG.info( "Pax Exam System (Version: " + Info.getPaxExamVersion() + ") created." );
-        if ( includeDefaults )
-        {
-            return new DefaultExamSystem( combine( options, defaultOptions() ) );
-        } else
-        {
-            return new DefaultExamSystem( options );
-        }
+        return new DefaultExamSystem( options );
+       
     }
 
     /**
@@ -133,16 +116,6 @@ public class DefaultExamSystem implements ExamSystem
             workingDirectory.mkdirs();
             return workingDirectory;
         }
-    }
-
-    private static Option[] defaultOptions()
-    {
-        return new Option[] {
-                bootDelegationPackage( "sun.*" ),
-                url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                url( "link:classpath:META-INF/links/org.osgi.compendium.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ) };
     }
 
     /**

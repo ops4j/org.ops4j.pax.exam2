@@ -19,6 +19,11 @@
  */
 package org.ops4j.pax.exam.spi.container;
 
+import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
+import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
+import static org.ops4j.pax.exam.CoreOptions.serverMode;
+import static org.ops4j.pax.exam.CoreOptions.url;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +33,7 @@ import java.util.ServiceLoader;
 
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -75,10 +81,31 @@ public class PaxExamRuntime {
         return getTestContainerFactory().create( system )[0];
     }
 
-    public static ExamSystem createSystem( Option... options ) throws IOException {
-        return DefaultExamSystem.create(options);
+    public static ExamSystem createTestSystem ( Option... options ) throws IOException {
+        return DefaultExamSystem.create( OptionUtils.combine(options, defaultTestSystemOptions() ) );
     }
     
+    public static ExamSystem createServerSystem ( Option... options ) throws IOException {
+        return DefaultExamSystem.create( OptionUtils.combine (options, defaultServerSystemOptions( ) ) );
+    }
+    
+    private static Option[] defaultTestSystemOptions()
+    {
+        return new Option[] {
+                bootDelegationPackage( "sun.*" ),
+                url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                url( "link:classpath:META-INF/links/org.osgi.compendium.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ) };
+    }
+    
+    private static Option[] defaultServerSystemOptions()
+    {
+        return new Option[] {
+                bootDelegationPackage( "sun.*" ),
+                serverMode( )
+            };
+        }
 
     /**
      * Select yourself

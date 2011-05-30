@@ -145,7 +145,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private synchronized StagedExamReactor prepareReactor()
         throws Exception
     {
-    	m_system = PaxExamRuntime.createSystem();
+    	m_system = PaxExamRuntime.createTestSystem();
         Class testClass = getTestClass().getJavaClass();
         Object testClassInstance = testClass.newInstance();
         ExxamReactor reactor = getReactor( testClass );

@@ -31,7 +31,7 @@ public class SimpleMultiTest {
             junitBundles(),
             easyMockBundles()
         };	
-        ExamSystem system = createSystem(options);
+        ExamSystem system = createTestSystem(options);
         TestProbeProvider p = makeProbe(system);
 
         // the parse will split all single containers
