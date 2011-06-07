@@ -31,7 +31,7 @@ Run Build:
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 2.0.0.
+The current release of Pax Exam is 2.1.0.
 
 ## Issue Tracking
 
