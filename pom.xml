@@ -41,7 +41,9 @@
 
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
-
+                <module>pax-exam-eclipse-plugin</module>
+                <module>pax-exam-eclipse-feature</module>
+                <module>pax-exam-eclipse-repository</module>
             </modules>
         </profile>
         <profile>
@@ -50,6 +52,16 @@
                 <module>pom</module>
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>eclipseplugin</id>
+            <modules>
+                <module>pom</module>
+                <module>pax-exam-eclipse-plugin</module>
+                <module>pax-exam-eclipse-feature</module>
+                <module>pax-exam-eclipse-repository</module>
             </modules>
         </profile>
     </profiles>

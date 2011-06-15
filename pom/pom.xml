@@ -31,7 +31,54 @@
         <dependency.mockito.version>1.8.5</dependency.mockito.version>
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.guava.version>r09</dependency.guava.version>
+        <tycho-version>0.12.0</tycho-version>
+        <platform-version-name>helios</platform-version-name>
+        <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
+        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20110124210048/repository</orbit-site>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>helios</id>
+            <layout>p2</layout>
+            <url>${eclipse-site}</url>
+        </repository>
+        <repository>
+            <id>orbit</id>
+            <layout>p2</layout>
+            <url>${orbit-site}</url>
+        </repository>
+    </repositories>
+
+    <profiles>
+        <profile>
+            <id>platform-helios</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>platform-version-name</name>
+                    <value>helios</value>
+                </property>
+            </activation>
+            <properties>
+                <eclipse-site>http://download.eclipse.org/releases/helios</eclipse-site>
+                <platform-version>[3.6,3.7)</platform-version>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-indigo</id>
+            <activation>
+                <property>
+                    <name>platform-version-name</name>
+                    <value>indigo</value>
+                </property>
+            </activation>
+            <properties>
+                <eclipse-site>http://download.eclipse.org/releases/indigo</eclipse-site>
+                <platform-version>[3.7,3.8)</platform-version>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -45,7 +92,7 @@
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.0-alpha-4</version>
             </plugin>
-
+            <!--  
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -59,6 +106,7 @@
                     </execution>
                 </executions>
             </plugin>
+             -->
         </plugins>
         <pluginManagement>
             <plugins>
@@ -73,6 +121,41 @@
                         </instructions>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-maven-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>target-platform-configuration</artifactId>
+                    <version>${tycho-version}</version>
+                    <configuration>
+                        <resolver>p2</resolver>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-compiler-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-source-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <executions>
+                        <execution>
+                            <id>plugin-source</id>
+                            <goals>
+                                <goal>plugin-source</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <extensions>
@@ -83,10 +166,6 @@
             </extension>
         </extensions>
     </build>
-
-    <dependencies>
-
-    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -114,7 +193,7 @@
                 <version>${dependency.mockito.version}</version>
                 <scope>test</scope>
             </dependency>
-            <!--  URL Handlers are runtime artifacts. -->
+            <!-- URL Handlers are runtime artifacts. -->
             <dependency>
                 <groupId>org.ops4j.pax.url</groupId>
                 <artifactId>pax-url-aether</artifactId>

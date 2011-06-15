@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="org.ops4j.pax.exam.eclipseplugin.examBuilder"
+         name="Pax Exam Eclipse Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.ops4j.pax.exam.eclipseplugin.builder.ExamBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="examNature"
+         name="Pax Exam Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.ops4j.pax.exam.eclipseplugin.builder.ExamNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.ops4j.pax.exam.eclipseplugin.examBuilder">
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            nameFilter="*"
+            id="pax-exam-eclipse-plugin.contribution1">
+         <action
+               class="org.ops4j.pax.exam.eclipseplugin.builder.ToggleNatureAction"
+               enablesFor="+"
+               id="pax-exam-eclipse-plugin.addRemoveNatureAction"
+               label="Pax Exam Advisor"
+               menubarPath="additions"
+               style="toggle">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         id="problemMarker"
+         name="Pax Exam Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+  
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>

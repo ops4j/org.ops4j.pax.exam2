@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pax Exam Advisor for Eclipse
+Bundle-SymbolicName: org.ops4j.pax.exam.eclipseplugin;singleton:=true
+Bundle-Version: 2.2.0.qualifier
+Bundle-Activator: org.ops4j.pax.exam.eclipseplugin.Activator
+Bundle-Vendor: OPS4J
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.ui.intro,
+ org.eclipse.ui.intro.universal,
+ org.eclipse.jdt.core;bundle-version="3.6.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

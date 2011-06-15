@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://github.com/ops4j/org.ops4j.pax.exam2">Pax Exam Eclipse Support</description>
+   <feature url="features/org.ops4j.pax.exam.eclipse.feature_0.0.0.qualifier.jar" id="org.ops4j.pax.exam.eclipse.feature" version="0.0.0" patch="false">
+      <category name="org.ops4j.pax.exam"/>
+   </feature>
+   <category-def name="org.ops4j.pax.exam" label="Pax Exam Eclipse Support">
+      <description>
+         Pax Exam Support for the Eclipse IDE
+      </description>
+   </category-def>
+</site>
