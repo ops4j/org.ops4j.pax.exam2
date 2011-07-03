@@ -17,22 +17,16 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
-import static org.ops4j.pax.exam.OptionUtils.filter;
-
 import java.io.InputStream;
-
-import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
-import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -47,15 +41,16 @@ public class RBCRemoteTarget implements TestContainer
     private static final Logger LOG = LoggerFactory.getLogger( RBCRemoteTarget.class );
 
     private RemoteBundleContextClient m_remoteBundleContextClient;
-
+    private RelativeTimeout m_timeout;
 
     /**
      * @param registry
      * @param name
-     * @param rmiLookupTimeout
+     * @param timeout
      */
     public RBCRemoteTarget( String name, Integer registry, RelativeTimeout timeout )
     {
+        m_timeout = timeout;
         m_remoteBundleContextClient = new RemoteBundleContextClientImpl( name, registry, timeout);
     }
 
@@ -105,23 +100,5 @@ public class RBCRemoteTarget implements TestContainer
         return this;
     }
 
-    /**
-     * Determine the timeout while starting the osgi framework.<br/>
-     * Timeout is dermined by first looking for a {@link org.ops4j.pax.exam.options.TestContainerStartTimeoutOption} in the user options. If not
-     * specified a default is used.
-     *
-     * @param options user options
-     *
-     * @return rmi lookup timeout
-     */
-    private static long getTestContainerStartTimeout( final Option... options )
-    {
-        final TestContainerStartTimeoutOption[] timeoutOptions =
-            filter( TestContainerStartTimeoutOption.class, options );
-        if( timeoutOptions.length > 0 )
-        {
-            return timeoutOptions[ 0 ].getTimeout();
-        }
-        return CoreOptions.waitForFrameworkStartup().getTimeout();
-    }
+  
 }
