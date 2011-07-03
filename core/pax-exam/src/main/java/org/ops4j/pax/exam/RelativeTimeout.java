@@ -34,7 +34,7 @@ public class RelativeTimeout implements Serializable {
 	private static final long serialVersionUID = 3490846022856083260L;
 	public final static RelativeTimeout TIMEOUT_NOWAIT = new RelativeTimeout(0L);
 	public final static RelativeTimeout TIMEOUT_NOTIMEOUT = new RelativeTimeout(Long.MAX_VALUE);
-	public final static RelativeTimeout TIMEOUT_DEFAULT = new RelativeTimeout(10000L);
+	public final static RelativeTimeout TIMEOUT_DEFAULT = new RelativeTimeout(1000L * 180L);
 	
 	final private long m_value;
 
