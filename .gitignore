@@ -2,6 +2,7 @@
 .svn
 exam.iws
 target
+bin
 *.iml
 *.ipr
 *.iws
