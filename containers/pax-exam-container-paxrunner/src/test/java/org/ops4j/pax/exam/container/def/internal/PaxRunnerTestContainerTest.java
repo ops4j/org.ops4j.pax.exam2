@@ -1,9 +1,7 @@
 package org.ops4j.pax.exam.container.def.internal;
 
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.createTestSystem;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.createTestSystem;
 
-import java.io.File;
-import java.io.IOException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

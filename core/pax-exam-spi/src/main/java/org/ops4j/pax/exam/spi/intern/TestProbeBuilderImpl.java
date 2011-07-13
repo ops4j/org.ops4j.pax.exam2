@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.probesupport.intern;
+package org.ops4j.pax.exam.spi.intern;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestAddress;
@@ -36,8 +37,11 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
-import org.ops4j.pax.exam.spi.probesupport.ContentCollector;
+import org.ops4j.pax.exam.spi.ContentCollector;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.store.Store;
+
+import static org.ops4j.pax.tinybundles.core.TinyBundles.*;
 
 /**
  * Default implementation allows you to dynamically create a probe from current classpath.
@@ -64,15 +68,15 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         m_extraProperties = p;
     }
 
-    public TestAddress addTest( Class clazz, String methodName, Object... args  )
+    public TestAddress addTest( Class clazz, String methodName, Object... args )
     {
-        TestAddress address =  new DefaultTestAddress( clazz.getSimpleName() + "." + methodName ,args );
+        TestAddress address = new DefaultTestAddress( clazz.getSimpleName() + "." + methodName, args );
         m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
         addAnchor( clazz );
         return address;
     }
 
-    public TestAddress addTest( Class clazz, Object... args  )
+    public TestAddress addTest( Class clazz, Object... args )
     {
         return addTest( clazz, DEFAULT_PROBE_METHOD_NAME, args );
     }
@@ -117,18 +121,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         }
 
         constructProbeTag( m_extraProperties );
-        Properties p = createExtraIgnores();
-
         try {
-
-            ContentCollector collector = selectCollector( new File( "." ) );
-
-            BundleBuilder bundleBuilder = new BundleBuilder( new DefaultResourceWriter( collector ), m_extraProperties, p );
-
+            TinyBundle bundle = prepareProbeBundle( createExtraIgnores() );
             return new DefaultTestProbeProvider(
                 getTests(),
                 m_store,
-                m_store.store( bundleBuilder.build() )
+                m_store.store( bundle.build( withClassicBuilder() ) )
             );
 
         } catch( IOException e ) {
@@ -136,22 +134,46 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         }
     }
 
+    private TinyBundle prepareProbeBundle( Properties p )
+        throws IOException
+    {
+        TinyBundle bundle = bundle().set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
+
+        for( Object key : m_extraProperties.keySet() ) {
+            bundle.set( (String) key, (String) m_extraProperties.get( key ) );
+        }
+        for( Object key : p.keySet() ) {
+            bundle.set( (String) key, (String) p.get( key ) );
+        }
+
+        Map<String, URL> map = collectResources();
+        for( String item : map.keySet() ) {
+            bundle.add( item, map.get( item ) );
+        }
+        return bundle;
+    }
+
+    private Map<String, URL> collectResources()
+        throws IOException
+    {
+        ContentCollector collector = selectCollector( new File( "." ) );
+        Map<String, URL> map = new HashMap<String, URL>();
+        collector.collect( map );
+        return map;
+    }
+
     private ContentCollector selectCollector( File dir )
         throws IOException
     {
         validateTopLevelDir( dir );
-
-        ContentCollector collector = null;
-
         File root = new ClassSourceFolder( dir ).find( m_anchors.get( 0 ) );
 
         if( root != null ) {
-            collector = new CompositeCollector( new CollectFromBase( root ), new CollectFromItems( m_anchors ) );
+            return new CompositeCollector( new CollectFromBase( root ), new CollectFromItems( m_anchors ) );
         }
         else {
-            collector = new CollectFromItems( m_anchors );
+            return new CollectFromItems( m_anchors );
         }
-        return collector;
     }
 
     private void validateTopLevelDir( File f )
@@ -192,25 +214,5 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
             p.put( address.identifier(), m_probeCalls.get( address ).toString() );
         }
         p.put( "PaxExam-Executable", sbKeyChain.toString() );
-    }
-
-    /**
-     * parse regression methods using reflection
-     *
-     * @param clazz
-     */
-    private List<TestInstantiationInstruction> parseMethods( Class clazz )
-    {
-        List<TestInstantiationInstruction> calls = new ArrayList<TestInstantiationInstruction>();
-
-        for( Method m : clazz.getDeclaredMethods() ) {
-            if( Modifier.isPublic( m.getModifiers() ) ) {
-                calls.add( new TestInstantiationInstruction( clazz + ";" + m ) );
-            }
-            else {
-                LOG.debug( "Skipping " + clazz.getName() + " Method " + m.getName() + " (not public)" );
-            }
-        }
-        return calls;
     }
 }

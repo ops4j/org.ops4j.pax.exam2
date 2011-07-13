@@ -18,12 +18,11 @@ package org.ops4j.pax.exam.spi.reactors;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.probesupport.intern.DefaultTestAddress;
+import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 
 /**
  * This will use new containers for any regression (hence confined)

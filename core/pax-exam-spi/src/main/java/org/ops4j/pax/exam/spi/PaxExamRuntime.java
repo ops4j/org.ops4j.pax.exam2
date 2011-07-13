@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.container;
+package org.ops4j.pax.exam.spi;
 
 import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
 import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
@@ -37,7 +37,6 @@ import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

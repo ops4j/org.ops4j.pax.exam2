@@ -1,19 +1,15 @@
 package com.okidokiteam.exxam.regression.paxrunner.plumbing;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.Info;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.TestProbeProvider;
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
+
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 

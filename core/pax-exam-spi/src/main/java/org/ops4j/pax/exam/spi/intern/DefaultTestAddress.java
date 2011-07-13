@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.probesupport.intern;
+package org.ops4j.pax.exam.spi.intern;
 
 import java.util.UUID;
 import org.slf4j.Logger;

@@ -50,6 +50,7 @@ public interface TestContainer {
     long install( InputStream stream );
     
     /**
+     * @param location update location of the installed stream. (used on bundle.update())
      * @param stream stream the content
      *
      * @return Bundle ID

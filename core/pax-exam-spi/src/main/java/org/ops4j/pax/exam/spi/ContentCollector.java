@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Toni Menzel.
+ * Copyright 2009 Toni Menzel.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -15,30 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.probesupport.intern;
+package org.ops4j.pax.exam.spi;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-import org.ops4j.pax.exam.spi.probesupport.ContentCollector;
 
 /**
- *
+ * @author Toni Menzel (tonit)
+ * @since Mar 7, 2009
  */
-public class CompositeCollector implements ContentCollector {
+public interface ContentCollector {
 
-    private ContentCollector[] m_collectors;
-
-    public CompositeCollector( ContentCollector... collectors )
-    {
-        m_collectors = collectors;
-    }
-
-    public void collect( Map<String, URL> map )
-        throws IOException
-    {
-        for( ContentCollector c : m_collectors ) {
-            c.collect( map );
-        }
-    }
+    /**
+     * Puts resources into given map.
+     *
+     * @param map to be filled.
+     *
+     * @throws java.io.IOException problems
+     */
+    void collect( Map<String, URL> map )
+        throws IOException;
 }

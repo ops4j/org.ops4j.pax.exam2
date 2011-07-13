@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.spi.probesupport.intern;
+package org.ops4j.pax.exam.spi.intern;
 
 import java.io.File;
 import java.io.IOException;

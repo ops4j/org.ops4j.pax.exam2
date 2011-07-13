@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Alin Dreghiciu.
+ * Copyright 2011 Toni Menzel.
  *
  * Licensed  under the  Apache License,  Version 2.0  (the "License");
  * you may not use  this file  except in  compliance with the License.
@@ -15,30 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.probesupport.intern;
+package org.ops4j.pax.exam.spi.intern;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+import org.ops4j.pax.exam.spi.ContentCollector;
 
 /**
- * Strategy to use regarding manifest rewrite, for a jar that is already a bundle (has osgi manifest attributes).
  *
- * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since 1.1.1, September 17, 2009
  */
-public enum OverwriteMode
-{
+public class CompositeCollector implements ContentCollector {
 
-    /**
-     * Keep existing manifest.
-     */
-    KEEP,
+    private ContentCollector[] m_collectors;
 
-    /**
-     * Merge instructions with current manifest entries.
-     */
-    MERGE,
+    public CompositeCollector( ContentCollector... collectors )
+    {
+        m_collectors = collectors;
+    }
 
-    /**
-     * Full rewrite.
-     */
-    FULL
-
+    public void collect( Map<String, URL> map )
+        throws IOException
+    {
+        for( ContentCollector c : m_collectors ) {
+            c.collect( map );
+        }
+    }
 }

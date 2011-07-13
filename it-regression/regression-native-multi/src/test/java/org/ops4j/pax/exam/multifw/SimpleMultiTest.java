@@ -14,7 +14,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.spi.driversupport;
+package org.ops4j.pax.exam.spi;
 
 import static org.ops4j.pax.exam.CoreOptions.options;
 
@@ -29,10 +29,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeProvider;
-import org.ops4j.pax.exam.spi.ExxamReactor;
-import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

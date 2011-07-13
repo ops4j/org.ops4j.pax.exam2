@@ -21,18 +21,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
-import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
+
+import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;

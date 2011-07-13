@@ -29,10 +29,10 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
-import org.ops4j.pax.exam.spi.container.PaxExamRuntime;
+import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
 
 /**
  *
@@ -43,7 +43,7 @@ public class BareAPITest {
 	public void bareRunTest() throws Exception {
 		Option[] options = new Option[] {
 				//felix(),
-				equinox(),
+				felix(),
 				junitBundles(),
 				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")

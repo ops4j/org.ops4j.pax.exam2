@@ -33,10 +33,25 @@ public interface TestAddress {
      */
     public String identifier();
 
+    /**
+     * @return A human readable name of that test address
+     */
     public String caption();
 
+    /**
+     * Test Addresses are built from other test adresses, so they build a compound tree.
+     * This returns the root of the tree.
+     * Sub-Adresses (so, TestAddresses that have a root()) refer usually to one indentical test deployed on differnt test containers.
+     *
+     * @return root of this address (where this was built from).
+     */
     public TestAddress root();
 
+    /**
+     * Test Addresses can have default argument values.
+     *
+     * @return the arguments passed to this address by default.
+     */
     public Object[] arguments();
 
 

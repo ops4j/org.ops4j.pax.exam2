@@ -28,6 +28,7 @@ import org.ops4j.pax.swissbox.extender.RegexKeyManifestFilter;
  * @author Toni Menzel
  * @since Dec 5, 2009
  */
+@SuppressWarnings( "unchecked" )
 public class Activator implements BundleActivator {
 
     private static final String PAX_EXAM_HEADER_PREFIX = "PaxExam-.*";

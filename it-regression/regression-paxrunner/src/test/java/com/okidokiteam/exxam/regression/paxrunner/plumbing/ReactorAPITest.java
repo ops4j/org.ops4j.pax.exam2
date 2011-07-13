@@ -29,11 +29,12 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
+import org.ops4j.pax.exam.spi.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.ExxamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import static org.ops4j.pax.exam.spi.container.PaxExamRuntime.*;
-import org.ops4j.pax.exam.spi.driversupport.DefaultExamReactor;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
+
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 import static org.ops4j.pax.exam.CoreOptions.*;

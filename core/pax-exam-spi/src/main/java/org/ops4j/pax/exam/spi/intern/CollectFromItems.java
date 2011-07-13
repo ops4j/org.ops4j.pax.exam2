@@ -1,10 +1,10 @@
-package org.ops4j.pax.exam.spi.probesupport.intern;
+package org.ops4j.pax.exam.spi.intern;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import org.ops4j.pax.exam.spi.probesupport.ContentCollector;
+import org.ops4j.pax.exam.spi.ContentCollector;
 
 /**
  *

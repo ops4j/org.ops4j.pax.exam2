@@ -1,7 +1,5 @@
 package org.ops4j.pax.exam.spi;
 
-import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
-import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.OptionUtils.expand;
 import static org.ops4j.pax.exam.OptionUtils.filter;
@@ -23,7 +21,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
-import org.ops4j.pax.exam.spi.probesupport.intern.TestProbeBuilderImpl;
+import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
 import org.slf4j.Logger;

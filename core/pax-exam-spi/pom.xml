@@ -41,9 +41,9 @@
         </dependency>
          <!--  This should be replaced by Tinybundles -->
         <dependency>
-            <groupId>biz.aQute</groupId>
-            <artifactId>bndlib</artifactId>
-            <version>1.43.0</version>
+            <groupId>org.ops4j.pax.tinybundles</groupId>
+            <artifactId>tinybundles</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
      <!--  Test Dependencies -->   
         <dependency>
