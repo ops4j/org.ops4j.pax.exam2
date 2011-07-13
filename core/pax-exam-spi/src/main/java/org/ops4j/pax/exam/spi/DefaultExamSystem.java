@@ -19,6 +19,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.options.TimeoutOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
@@ -92,8 +93,13 @@ public class DefaultExamSystem implements ExamSystem
         }
         
         m_store = new TemporaryStore( m_cache, false );
-        m_timeout = RelativeTimeout.TIMEOUT_DEFAULT;
-        
+
+        TimeoutOption timeoutOption = getSingleOption( TimeoutOption.class );
+        if (timeoutOption != null) {
+            m_timeout = new RelativeTimeout( timeoutOption.getTimeout() );
+        }else {
+            m_timeout = RelativeTimeout.TIMEOUT_DEFAULT;
+        }
         m_clean = getSingleOption(CleanCachesOption.class);
         
     }

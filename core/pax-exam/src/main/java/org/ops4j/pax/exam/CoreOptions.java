@@ -17,26 +17,15 @@
  */
 package org.ops4j.pax.exam;
 
-import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
-import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
-import static org.ops4j.lang.NullArgumentException.validateNotNull;
-import static org.ops4j.pax.exam.CoreOptions.keepCaches;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.rawPaxRunnerOption;
-import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
-import static org.ops4j.pax.exam.OptionUtils.expand;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
-import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.CustomFrameworkOption;
 import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
@@ -53,7 +42,7 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
-import org.ops4j.pax.exam.options.TestContainerStartTimeoutOption;
+import org.ops4j.pax.exam.options.TimeoutOption;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
@@ -80,6 +69,9 @@ import org.ops4j.pax.exam.options.libraries.JUnitBundlesOption;
 import org.ops4j.pax.exam.options.libraries.MockitoBundlesOption;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
+
+import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Factory methods for core options.
@@ -769,37 +761,17 @@ public class CoreOptions
     }
 
     /**
-     * Creates a {@link TestContainerStartTimeoutOption} for a number of millis.
+     * Creates a {@link TimeoutOption} for a number of millis.
      * 
      * @param timeoutInMillis timeout in millis
      * 
      * @return timeout option
      */
-    public static TestContainerStartTimeoutOption waitForFrameworkStartupFor( final long timeoutInMillis )
+    public static TimeoutOption systemTimeout( final long timeoutInMillis )
     {
-        return new TestContainerStartTimeoutOption( timeoutInMillis );
+        return new TimeoutOption( timeoutInMillis );
     }
 
-    /**
-     * Creates a {@link TestContainerStartTimeoutOption} that will not wait for framework startup.
-     * 
-     * @return timeout option
-     */
-    public static TestContainerStartTimeoutOption doNotWaitForFrameworkStartup()
-    {
-        return waitForFrameworkStartupFor( Constants.NO_WAIT );
-    }
-
-    /**
-     * Creates a {@link TestContainerStartTimeoutOption} that will wait for framework startup without timing out.
-     * 
-     * @return timeout option
-     */
-    public static TestContainerStartTimeoutOption waitForFrameworkStartup()
-    {
-        return waitForFrameworkStartupFor( Constants.WAIT_5_MINUTES );
-    }
-    
     // -------------------- Libraries ------------
     
     /**
