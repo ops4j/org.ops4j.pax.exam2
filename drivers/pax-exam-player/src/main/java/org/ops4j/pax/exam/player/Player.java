@@ -114,5 +114,6 @@ public class Player {
                 fail( t.getMessage() );
             }
         }
+        stagedReactor.tearDown();
     }
 }
