@@ -36,6 +36,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.BootDelegationOption;
+import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
@@ -116,7 +117,6 @@ public class NativeTestContainer implements TestContainer
             m_installed.push( b.getBundleId() );
             LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
             setBundleStartLevel( b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE );
-            // stream.close();
             b.start();
             return b.getBundleId();
         } catch ( BundleException e )
@@ -155,6 +155,33 @@ public class NativeTestContainer implements TestContainer
         sl.setBundleStartLevel( m_framework.getBundleContext().getBundle( bundleId ), startLevel );
     }
 
+    public TestContainer start(  ) throws TestContainerException
+    {
+        ClassLoader parent = null;
+        try
+        {
+            m_system = m_system.fork( new Option[] {
+                systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
+                systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
+            } );
+            final Map<String, String> p = createFrameworkProperties();
+            parent = Thread.currentThread().getContextClassLoader();
+            m_framework = m_frameworkFactory.newFramework( p );
+            m_framework.init();
+            installAndStartBundles( m_framework.getBundleContext() );
+        } catch ( Exception e )
+        {
+            throw new TestContainerException( "Problem starting test container.", e );
+        } finally
+        {
+            if ( parent != null )
+            {
+                Thread.currentThread().setContextClassLoader( parent );
+            }
+        }
+        return this;
+    }
+
     public TestContainer stop()
     {
         if ( m_framework != null )
@@ -176,33 +203,6 @@ public class NativeTestContainer implements TestContainer
         } else
         {
             LOG.warn( "Framework does not exist. Called start() before ? " );
-        }
-        return this;
-    }
-
-    public TestContainer start(  ) throws TestContainerException
-    {
-        ClassLoader parent = null;
-        try
-        {
-            m_system = m_system.fork( new Option[] {
-                    systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
-                    systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
-            } );
-            final Map<String, String> p = createFrameworkProperties();
-            parent = Thread.currentThread().getContextClassLoader();
-            m_framework = m_frameworkFactory.newFramework( p );
-            m_framework.init();
-            installAndStartBundles( m_framework.getBundleContext() );
-        } catch ( Exception e )
-        {
-            throw new TestContainerException( "Problem starting test container.", e );
-        } finally
-        {
-            if ( parent != null )
-            {
-                Thread.currentThread().setContextClassLoader( parent );
-            }
         }
         return this;
     }
@@ -269,15 +269,16 @@ public class NativeTestContainer implements TestContainer
         StartLevel sl = getStartLevelService( context );
         for ( ProvisionOption<?> bundle : m_system.getOptions( ProvisionOption.class ) )
         {
-            Bundle b = null;
-            b = context.installBundle( bundle.getURL() );
+            Bundle b = context.installBundle( bundle.getURL() );
             int startLevel = getStartLevel( bundle );
             sl.setBundleStartLevel( b, startLevel );
             b.start();
             LOG.debug( "+ Install (start@" + startLevel + ") " + bundle );
         }
-        LOG.debug( "Jump to startlevel: " + Constants.START_LEVEL_TEST_BUNDLE );
-        sl.setStartLevel( Constants.START_LEVEL_TEST_BUNDLE );
+
+        int startLevel = m_system.getSingleOption( FrameworkStartLevelOption.class ).getStartLevel();
+        LOG.debug( "Jump to startlevel: " + startLevel );
+        sl.setStartLevel( startLevel );
         // Work around for FELIX-2942
         final CountDownLatch latch = new CountDownLatch( 1 );
         context.addFrameworkListener( new FrameworkListener()
@@ -293,7 +294,7 @@ public class NativeTestContainer implements TestContainer
         } );
         try
         {
-            latch.await( m_system.getTimeout().getValue(), TimeUnit.MILLISECONDS );
+            latch.await( m_system.getTimeout().getLowerValue(), TimeUnit.MILLISECONDS );
         } catch ( InterruptedException e )
         {
             throw new RuntimeException( e );
