@@ -20,9 +20,7 @@
 package org.ops4j.pax.exam.spi;
 
 import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
-import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
-import static org.ops4j.pax.exam.CoreOptions.serverMode;
-import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +29,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
@@ -73,7 +72,7 @@ public class PaxExamRuntime {
      * Note, this will break if there is not exaclty one container available and parsed from options.
      * If there are more containers, just the first (whatever comes first) will be picked.
      *
-     * @param option to be parsed.
+     * @param system to be used.
      * @return exactly one Test Container.
      */
     public static TestContainer createContainer( ExamSystem system ) {
@@ -92,6 +91,7 @@ public class PaxExamRuntime {
     {
         return new Option[] {
                 bootDelegationPackage( "sun.*" ),
+                frameworkStartLevel( Constants.START_LEVEL_TEST_BUNDLE ),
                 url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
                 url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
                 url( "link:classpath:META-INF/links/org.osgi.compendium.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
