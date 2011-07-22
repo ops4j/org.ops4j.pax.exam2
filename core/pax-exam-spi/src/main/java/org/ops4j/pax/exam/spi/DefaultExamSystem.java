@@ -17,19 +17,16 @@
  */
 package org.ops4j.pax.exam.spi;
 
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.OptionUtils.expand;
-import static org.ops4j.pax.exam.OptionUtils.filter;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
-
+import com.google.common.io.Files;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -42,10 +39,8 @@ import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
+import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * {@literal DefaultExamSystem} represents the default implementation of {@link ExamSystem}.
@@ -262,10 +257,12 @@ public class DefaultExamSystem implements ExamSystem {
         return missing;
     }
 
-    public TestProbeBuilder createProbe( Properties p )
+    public TestProbeBuilder createProbe(  )
         throws IOException
     {
-        return new TestProbeBuilderImpl( p, m_store );
+        TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl( m_store );
+        testProbeBuilder.setHeader( "Bundle-SymbolicName","PAXEXAM-PROBE-" + createID( "created probe" ) );
+        return testProbeBuilder;
     }
 
     public String createID( String purposeText )

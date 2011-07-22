@@ -171,8 +171,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private void addTestsToReactor( ExxamReactor reactor, Class testClass, Object testClassInstance )
         throws IOException, ExamConfigurationException
     {
-        Properties extraProperties = new Properties();
-        TestProbeBuilder probe = m_system.createProbe( extraProperties );
+        TestProbeBuilder probe = m_system.createProbe(  );
         probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
 
         //probe.setAnchor( testClass );

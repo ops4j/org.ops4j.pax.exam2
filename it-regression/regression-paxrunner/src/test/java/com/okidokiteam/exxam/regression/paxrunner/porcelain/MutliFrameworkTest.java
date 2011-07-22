@@ -26,8 +26,7 @@ public class MutliFrameworkTest {
     {
         return options(
             junitBundles(),
-            equinox(),
-            felix(),
+            felix().version( "3.0.6" ),
             logProfile(),
             rawPaxRunnerOption( "log","trace" )
         );

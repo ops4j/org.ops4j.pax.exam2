@@ -52,7 +52,7 @@ public class SimpleMultiTest {
     private TestProbeProvider makeProbe(ExamSystem system )
         throws IOException
     {
-        TestProbeBuilder probe = system.createProbe(new Properties());
+        TestProbeBuilder probe = system.createProbe();
         probe.addTests( Probe.class, getAllMethods( Probe.class ) );
         return probe.build();
     }

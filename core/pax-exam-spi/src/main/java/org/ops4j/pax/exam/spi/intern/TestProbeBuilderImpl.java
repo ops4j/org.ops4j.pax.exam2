@@ -60,12 +60,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private final Set<String> m_ignorePackages = new HashSet<String>();
     private final Store<InputStream> m_store;
 
-    public TestProbeBuilderImpl( Properties p, Store<InputStream> store )
+    public TestProbeBuilderImpl( Store<InputStream> store )
         throws IOException
     {
         m_anchors = new ArrayList<Class>();
         m_store = store;
-        m_extraProperties = p;
+        m_extraProperties = new Properties( );
     }
 
     public TestAddress addTest( Class clazz, String methodName, Object... args )
@@ -139,6 +139,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     {
         TinyBundle bundle = bundle().set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
 
+        bundle.set( Constants.BUNDLE_SYMBOLICNAME,"" );
         for( Object key : m_extraProperties.keySet() ) {
             bundle.set( (String) key, (String) m_extraProperties.get( key ) );
         }

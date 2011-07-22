@@ -77,11 +77,10 @@ public interface ExamSystem {
 
     /**
      * New Probe creator using this systems "caches".
-     * @param p initial properties
      * @return a new {@link TestProbeBuilder} that can be used to create the actual probe.
      * @throws IOException in case of an IO problem.
      */
-    public TestProbeBuilder createProbe( Properties p )
+    public TestProbeBuilder createProbe(  )
         throws IOException;
 
     /**

@@ -44,7 +44,7 @@ public class BareAPITest {
 		Option[] options = new Option[] {
 				//felix(),
 				felix(),
-				junitBundles(),
+            	junitBundles(),
 				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG"),
@@ -112,7 +112,7 @@ public class BareAPITest {
 	}
 
 	private TestProbeProvider makeProbe(ExamSystem system) throws IOException {
-		TestProbeBuilder probe = system.createProbe(new Properties());
+		TestProbeBuilder probe = system.createProbe();
 		probe.addTests(SingleTestProbe.class,
 				getAllMethods(SingleTestProbe.class));
 		return probe.build();

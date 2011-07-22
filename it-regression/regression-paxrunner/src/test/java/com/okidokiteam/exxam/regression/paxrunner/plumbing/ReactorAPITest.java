@@ -96,7 +96,7 @@ public class ReactorAPITest
      private TestProbeProvider makeProbe( ExamSystem system )
         throws IOException
     {
-        TestProbeBuilder probe = system.createProbe( new Properties() );
+        TestProbeBuilder probe = system.createProbe( );
         probe.addTests( SingleTestProbe.class, getAllMethods( SingleTestProbe.class ) );
         return probe.build();
     }
