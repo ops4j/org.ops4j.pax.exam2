@@ -41,6 +41,7 @@
 
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
+                <module>it-regression/regression-pde-bundle</module>
 
             </modules>
         </profile>
@@ -50,6 +51,7 @@
                 <module>pom</module>
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
+                <module>it-regression/regression-pde-bundle</module>
             </modules>
         </profile>
     </profiles>

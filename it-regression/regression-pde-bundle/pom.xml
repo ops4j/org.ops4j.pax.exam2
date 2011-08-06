@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ops4j.pax</groupId>
+        <artifactId>exam</artifactId>
+        <version>2.2.1-SNAPSHOT</version>
+        <relativePath>../../pom/pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.ops4j.pax.exam</groupId>
+    <artifactId>regression-pde-bundle</artifactId>
+    <version>2.2.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>OPS4J Pax Exam Regression - PDE Bundle</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- 
+       This bundle has a layout which is standard for Eclipse PDE
+       but non-standard for Maven. We use it to test "reference:"
+       URLs in combination with the development mode of Equinox
+       enabled by the osgi.dev system property.
+       
+       We tweak Maven to understand this layout, and we do NOT
+       use the maven-bundle-plugin, because Eclipse PDE assumes
+       the Manifest to be in the project root folder.
+     -->
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addClasspath>false</addClasspath>
+                        </manifest>                        
+                   </archive>
+                   <finalName>regression-pde-bundle</finalName>
+                </configuration>
+             </plugin>
+         </plugins>
+    </build>
+</project>

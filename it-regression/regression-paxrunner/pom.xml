@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,6 +20,21 @@
     <name>OPS4J Pax Exam Regression - PaxRunner</name>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>org.eclipse.osgi</artifactId>
+            <version>3.6.2.R36x_v20110210</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>regression-pde-bundle</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Resource Management -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -59,5 +75,39 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+            <!-- unpack the regression-pde-bundle so we have an exploded bundle for testing -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-pde-bundle</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.exam</groupId>
+                                    <artifactId>regression-pde-bundle</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/regression-pde-bundle</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Setting java.protocol.handler.pkgs cannot be undone while the VM is running, so we for each test to cancel the effect. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                  <forkMode>pertest</forkMode>                  
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

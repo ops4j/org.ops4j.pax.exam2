@@ -26,7 +26,7 @@ public class JUnitMultiFwTest {
     {
         return options( profile( "web" ),
                         junitBundles(),
-                        mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "tinybundles" ).version( "1.0.0-SNAPSHOT" ),
+                        mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "tinybundles" ).version( "1.0.0" ),
                         frameworkStartLevel( 100 )
         );
     }
