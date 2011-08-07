@@ -22,22 +22,29 @@
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-native</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
-		<!-- Preferred link because it does not require an mvn url handler implicitely. -->
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-util</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+	<!-- Preferred link because it does not require an mvn url handler implicitely. -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-link-mvn</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <!--  Required when using mvn provisioning options --> 
@@ -72,10 +79,44 @@
          <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-testforge</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         
     </dependencies>
+    <build>
+        <plugins>
+            <!-- unpack the regression-pde-bundle so we have an exploded bundle for testing -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-pde-bundle</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.exam</groupId>
+                                    <artifactId>regression-pde-bundle</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/regression-pde-bundle</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                  <forkMode>pertest</forkMode>                  
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

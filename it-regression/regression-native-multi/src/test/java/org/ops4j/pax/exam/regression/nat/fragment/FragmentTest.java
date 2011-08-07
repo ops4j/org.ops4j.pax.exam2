@@ -13,50 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.reference;
+package org.ops4j.pax.exam.regression.nat.fragment;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.exam.util.ServiceLookup;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.store.Handle;
+import org.ops4j.store.Store;
+import org.ops4j.store.StoreFactory;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 
 
 @RunWith(JUnit4TestRunner.class)
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
-public class ExplodedReferenceTest {
+public class FragmentTest {
 
+    private static final String PAX_EXAM_VERSION = "2.2.1-SNAPSHOT";
     @Configuration()
     public Option[] config()
     {
-        String baseDir = PathUtils.getBaseDir();
         return options(
-            url("reference:file:" + baseDir + "/target/regression-pde-bundle"),
-            mavenBundle("org.ops4j.pax.exam", "pax-exam-util", "2.2.1-SNAPSHOT"),                   
+            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", PAX_EXAM_VERSION),                   
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-util", PAX_EXAM_VERSION),                   
+            url(createFragmentBundle().toExternalForm()).noStart(),
             junitBundles(),
-            equinox(),
-            felix(),
-            knopflerfish()
+            cleanCaches()
             );
     }
+
+    private URL createFragmentBundle() {
+        TinyBundle bundle = TinyBundles.bundle()
+            .set(Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.regression.pde")
+            .set(Constants.BUNDLE_MANIFESTVERSION, "2")
+            .set(Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment")
+            .add("messages.properties", getClass().getResource("/messages.properties"));
+        
+        Store<InputStream> store = StoreFactory.defaultStore();
+        try {
+            Handle handle = store.store(bundle.build());
+            return store.getLocation(handle).toURL();
+        } catch (IOException e) {
+            throw new TestContainerException(e);
+        }
+    }
+
     @Test
     public void getHelloService(BundleContext bc) {
+        for (Bundle bundle : bc.getBundles()) {
+            System.out.println(bundle.getSymbolicName() + " state = " + bundle.getState());
+        }
         Object service = ServiceLookup.getService(bc, "org.ops4j.pax.exam.regression.pde.HelloService");
         assertThat(service, is(notNullValue()));        
     }

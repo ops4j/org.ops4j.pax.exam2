@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 
@@ -31,9 +32,9 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.regression.paxrunner.util.ServiceLookup;
-import org.ops4j.pax.exam.regression.paxrunner.util.PathUtils;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.util.PathUtils;
+import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 
@@ -47,6 +48,7 @@ public class ReferenceJarTest {
         return options(
             url("reference:file:" + PathUtils.getBaseDir() +
             		"/../regression-pde-bundle/target/regression-pde-bundle.jar"),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-util", "2.2.1-SNAPSHOT"),                    
             junitBundles(),
             equinox(),
             felix(),

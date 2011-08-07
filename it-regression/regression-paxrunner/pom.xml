@@ -14,7 +14,6 @@
 
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>regression-paxrunner</artifactId>
-    <version>2.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam Regression - PaxRunner</name>
@@ -39,14 +38,14 @@
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-link-mvn</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-paxrunner</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -58,7 +57,14 @@
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-util</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

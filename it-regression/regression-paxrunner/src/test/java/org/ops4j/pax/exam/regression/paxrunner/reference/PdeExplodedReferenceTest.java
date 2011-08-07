@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.keepCaches;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.CoreOptions.vmOptions;
@@ -32,9 +33,9 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.regression.paxrunner.util.ServiceLookup;
-import org.ops4j.pax.exam.regression.paxrunner.util.PathUtils;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.util.PathUtils;
+import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 
@@ -47,10 +48,9 @@ public class PdeExplodedReferenceTest {
     {
         return options(
             url("reference:file:" + PathUtils.getBaseDir() + "/../regression-pde-bundle"),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-util", "2.2.1-SNAPSHOT"),                   
             junitBundles(),
             vmOptions("-Dosgi.clean=true", "-Dosgi.dev=target/classes"),
-            keepCaches(),
-            workingDirectory("/tmp/pax"),
             equinox()
             );
     }

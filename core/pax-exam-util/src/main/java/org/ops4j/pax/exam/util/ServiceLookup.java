@@ -15,12 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.util;
+package org.ops4j.pax.exam.util;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.ops4j.pax.exam.TestContainerException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
@@ -90,12 +89,12 @@ public class ServiceLookup
             Object svc = tracker.waitForService(timeout);
             if (svc == null)
             {
-                throw new TestContainerException("gave up waiting for service " + className);
+                throw new RuntimeException("gave up waiting for service " + className);
             }
             return (T) svc;
         } catch (InterruptedException exc)
         {
-            throw new TestContainerException(exc);
+            throw new RuntimeException(exc);
         } finally
         {
             tracker.close();
@@ -130,7 +129,7 @@ public class ServiceLookup
             return tracker;
         } catch (InvalidSyntaxException exc)
         {
-            throw new TestContainerException(exc);
+            throw new RuntimeException(exc);
         }
     }
 }

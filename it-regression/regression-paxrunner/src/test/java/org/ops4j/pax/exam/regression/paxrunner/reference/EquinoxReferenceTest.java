@@ -30,7 +30,7 @@ import org.eclipse.osgi.launch.Equinox;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.ops4j.pax.exam.regression.paxrunner.util.PathUtils;
+import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
