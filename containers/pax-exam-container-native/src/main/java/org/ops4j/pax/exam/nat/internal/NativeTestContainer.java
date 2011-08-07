@@ -221,22 +221,24 @@ public class NativeTestContainer implements TestContainer
         return p;
     }
 
-    private String buildString( ValueOption[] options )
+    private String buildString( ValueOption<?>[] options )
     {
         return buildString( new String[0], options, new String[0] );
     }
 
-    private String buildString( String[] prepend, ValueOption[] options )
+    @SuppressWarnings("unused")
+    private String buildString( String[] prepend, ValueOption<?>[] options )
     {
         return buildString( prepend, options, new String[0] );
     }
 
-    private String buildString( ValueOption[] options, String[] append )
+    @SuppressWarnings("unused")
+    private String buildString( ValueOption<?>[] options, String[] append )
     {
         return buildString( new String[0], options, append );
     }
 
-    private String buildString( String[] prepend, ValueOption[] options, String[] append )
+    private String buildString( String[] prepend, ValueOption<?>[] options, String[] append )
     {
         StringBuilder builder = new StringBuilder();
         for ( String a : prepend )
@@ -244,7 +246,7 @@ public class NativeTestContainer implements TestContainer
             builder.append( a );
             builder.append( "," );
         }
-        for ( ValueOption option : options )
+        for ( ValueOption<?> option : options )
         {
             builder.append( option.getValue() );
             builder.append( "," );
@@ -272,8 +274,15 @@ public class NativeTestContainer implements TestContainer
             Bundle b = context.installBundle( bundle.getURL() );
             int startLevel = getStartLevel( bundle );
             sl.setBundleStartLevel( b, startLevel );
-            b.start();
-            LOG.debug( "+ Install (start@" + startLevel + ") " + bundle );
+            if ( bundle.shouldStart() )  
+            {
+                b.start();
+                LOG.debug( "+ Install (start@{}) {}", startLevel, bundle );
+            }
+            else
+            {
+                LOG.debug( "+ Install (no start) {}", bundle );
+            }
         }
 
         int startLevel = m_system.getSingleOption( FrameworkStartLevelOption.class ).getStartLevel();
