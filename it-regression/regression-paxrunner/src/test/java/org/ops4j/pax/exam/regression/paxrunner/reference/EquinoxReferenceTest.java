@@ -59,7 +59,7 @@ public class EquinoxReferenceTest {
 
         Map<String, String> props = new HashMap<String, String>();
         props.put("osgi.clean", "true");
-        props.put("osgi.dev", "bin");
+        props.put("osgi.dev", "target/classes");
 
         Framework framework = new Equinox(props);
         framework.start();
