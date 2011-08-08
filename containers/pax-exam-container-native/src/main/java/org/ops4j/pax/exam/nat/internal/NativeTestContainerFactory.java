@@ -39,12 +39,18 @@ public class NativeTestContainerFactory implements TestContainerFactory {
     {
         List<TestContainer> containers = new ArrayList<TestContainer>();
         Iterator<FrameworkFactory> factories = ServiceLoader.load( FrameworkFactory.class ).iterator();
+        boolean factoryFound = false;
         while( factories.hasNext() ) {
             try {
 				containers.add( new NativeTestContainer( system, factories.next() ) );
+				factoryFound = true;
 			} catch (IOException e) {
 				throw new TestContainerException("Problem initializing container.",e);
 			}
+        }
+        if ( !factoryFound )
+        {
+            throw new TestContainerException("No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath");            
         }
         return containers.toArray( new TestContainer[containers.size()] );
     }	
