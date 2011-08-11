@@ -20,9 +20,10 @@ package org.ops4j.pax.exam.raw.extender.intern;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.osgi.framework.BundleContext;
+
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.osgi.framework.BundleContext;
 
 /**
  * Turns a instruction into a service call.
@@ -36,6 +37,8 @@ public class ProbeInvokerImpl implements ProbeInvoker {
     private BundleContext m_ctx;
     private String m_clazz;
     private String m_method;
+    
+    //private Injector m_injector;
 
     public ProbeInvokerImpl( String encodedInstruction, BundleContext bundleContext )
     {
@@ -44,6 +47,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         m_clazz = parts[ 0 ];
         m_method = parts[ 1 ];
         m_ctx = bundleContext;
+        //m_injector = new ServiceInjector();
     }
 
     public void call( Object... args )
@@ -100,7 +104,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         throws TestContainerException
     {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
-        //injectFieldInstances( testInstance.getClass(), testInstance );
+        //m_injector.injectFields( m_ctx, testInstance );
         boolean cleanup = false;
         try {
             //runBefores( testInstance );
