@@ -42,7 +42,7 @@ public class JUnitBundlesOption
             mavenBundle()
                 .groupId( "org.junit" )
                 .artifactId( "com.springsource.org.junit" )
-                .version( "4.4.0" )
+                .version( "4.8.1" )
         );
         noUpdate();
         startLevel( START_LEVEL_SYSTEM_BUNDLES );
