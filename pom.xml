@@ -41,6 +41,7 @@
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
 
+                <module>it-regression/regression-native-felix</module>
                 <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
