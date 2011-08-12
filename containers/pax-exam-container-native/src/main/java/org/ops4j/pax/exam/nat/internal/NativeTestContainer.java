@@ -17,6 +17,9 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
+import static org.ops4j.pax.exam.CoreOptions.systemPackage;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -24,8 +27,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
 
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
@@ -36,6 +37,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.BootDelegationOption;
+import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
@@ -164,7 +166,7 @@ public class NativeTestContainer implements TestContainer
                 systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
                 systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
             } );
-            final Map<String, String> p = createFrameworkProperties();
+            final Map<String, Object> p = createFrameworkProperties();
             parent = Thread.currentThread().getContextClassLoader();
             m_framework = m_frameworkFactory.newFramework( p );
             m_framework.init();
@@ -207,13 +209,18 @@ public class NativeTestContainer implements TestContainer
         return this;
     }
 
-    private Map<String, String> createFrameworkProperties( ) throws IOException
+    private Map<String, Object> createFrameworkProperties( ) throws IOException
     {
-        final Map<String, String> p = new HashMap<String, String>();
+        final Map<String, Object> p = new HashMap<String, Object>();
         p.put( org.osgi.framework.Constants.FRAMEWORK_STORAGE, m_system.getTempFolder().getAbsolutePath() );
         p.put( org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( m_system.getOptions( SystemPackageOption.class ) ) );
         p.put( org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION, buildString( m_system.getOptions( BootDelegationOption.class ) ) );
         
+        for ( FrameworkPropertyOption option : m_system.getOptions( FrameworkPropertyOption.class ) )
+        {
+            p.put( option.getKey(), option.getValue() );
+        }
+
         for ( SystemPropertyOption option : m_system.getOptions( SystemPropertyOption.class ) )
         {
             System.setProperty( option.getKey(), option.getValue() );

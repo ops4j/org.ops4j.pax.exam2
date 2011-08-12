@@ -17,12 +17,18 @@
  */
 package org.ops4j.pax.exam;
 
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
+import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
+import static org.ops4j.pax.exam.OptionUtils.expand;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
@@ -32,6 +38,7 @@ import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.EquinoxFrameworkOption;
 import org.ops4j.pax.exam.options.FelixFrameworkOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
 import org.ops4j.pax.exam.options.KnopflerfishFrameworkOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
@@ -69,9 +76,6 @@ import org.ops4j.pax.exam.options.libraries.JUnitBundlesOption;
 import org.ops4j.pax.exam.options.libraries.MockitoBundlesOption;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
-
-import static org.ops4j.lang.NullArgumentException.*;
-import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Factory methods for core options.
@@ -644,11 +648,35 @@ public class CoreOptions
      * 
      * @param key system property key
      * 
-     * @return system property option
+     * @return framework property option
      */
     public static SystemPropertyOption systemProperty( final String key )
     {
         return new SystemPropertyOption( key );
+    }
+
+    /**
+     * Creates a {@link FrameworkPropertyOption}.
+     * 
+     * @param key framework property key
+     * 
+     * @return framework property option
+     */
+    public static FrameworkPropertyOption frameworkProperty( final String key )
+    {
+        return new FrameworkPropertyOption( key );
+    }
+
+    /**
+     * Creates a composite option of {@link FrameworkPropertyOption}s.
+     * 
+     * @param frameworkProperties framework property options
+     * 
+     * @return composite option of framework property options
+     */
+    public static Option frameworkProperties( final FrameworkPropertyOption... frameworkProperties )
+    {
+        return composite( frameworkProperties );
     }
 
     /**
