@@ -45,46 +45,51 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-
-@RunWith(JUnit4TestRunner.class)
-@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
-public class FragmentTest {
+@RunWith( JUnit4TestRunner.class )
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+public class FragmentTest
+{
 
     private static final String PAX_EXAM_VERSION = "2.2.1-SNAPSHOT";
-    @Configuration()
+
+    @Configuration( )
     public Option[] config()
     {
         return options(
-            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", PAX_EXAM_VERSION),                   
-            mavenBundle("org.ops4j.pax.exam", "pax-exam-util", PAX_EXAM_VERSION),                   
-            url(createFragmentBundle().toExternalForm()).noStart(),
+            mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", PAX_EXAM_VERSION ),
+            url( createFragmentBundle().toExternalForm() ).noStart(),
             junitBundles(),
-            cleanCaches()
-            );
+            cleanCaches() );
     }
 
-    private URL createFragmentBundle() {
+    private URL createFragmentBundle()
+    {
         TinyBundle bundle = TinyBundles.bundle()
-            .set(Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.regression.pde")
-            .set(Constants.BUNDLE_MANIFESTVERSION, "2")
-            .set(Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment")
-            .add("messages.properties", getClass().getResource("/messages.properties"));
-        
+            .set( Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.regression.pde" )
+            .set( Constants.BUNDLE_MANIFESTVERSION, "2" )
+            .set( Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment" )
+            .add( "messages.properties", getClass().getResource( "/messages.properties" ) );
+
         Store<InputStream> store = StoreFactory.defaultStore();
-        try {
-            Handle handle = store.store(bundle.build());
-            return store.getLocation(handle).toURL();
-        } catch (IOException e) {
-            throw new TestContainerException(e);
+        try
+        {
+            Handle handle = store.store( bundle.build() );
+            return store.getLocation( handle ).toURL();
+        }
+        catch ( IOException e )
+        {
+            throw new TestContainerException( e );
         }
     }
 
     @Test
-    public void getHelloService(BundleContext bc) {
-        for (Bundle bundle : bc.getBundles()) {
-            System.out.println(bundle.getSymbolicName() + " state = " + bundle.getState());
+    public void getHelloService( BundleContext bc )
+    {
+        for ( Bundle bundle : bc.getBundles() )
+        {
+            System.out.println( bundle.getSymbolicName() + " state = " + bundle.getState() );
         }
-        Object service = ServiceLookup.getService(bc, "org.ops4j.pax.exam.regression.pde.HelloService");
-        assertThat(service, is(notNullValue()));        
+        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
+        assertThat( service, is( notNullValue() ) );
     }
 }

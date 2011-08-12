@@ -20,12 +20,9 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.keepCaches;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.CoreOptions.vmOptions;
-import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,26 +35,25 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
+@RunWith( JUnit4TestRunner.class )
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+public class PdeExplodedReferenceTest
+{
 
-@RunWith(JUnit4TestRunner.class)
-@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
-public class PdeExplodedReferenceTest {
-
-    @Configuration()
+    @Configuration( )
     public Option[] config()
     {
         return options(
-            url("reference:file:" + PathUtils.getBaseDir() + "/../regression-pde-bundle"),
-            mavenBundle("org.ops4j.pax.exam", "pax-exam-util", "2.2.1-SNAPSHOT"),                   
+            url( "reference:file:" + PathUtils.getBaseDir() + "/../regression-pde-bundle" ),
             junitBundles(),
-            vmOptions("-Dosgi.clean=true", "-Dosgi.dev=target/classes"),
-            equinox()
-            );
+            vmOptions( "-Dosgi.clean=true", "-Dosgi.dev=target/classes" ),
+            equinox() );
     }
 
     @Test
-    public void getHelloService(BundleContext bc) {
-        Object service = ServiceLookup.getService(bc, "org.ops4j.pax.exam.regression.pde.HelloService");
-        assertThat(service, is(notNullValue()));        
+    public void getHelloService( BundleContext bc )
+    {
+        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
+        assertThat( service, is( notNullValue() ) );
     }
 }

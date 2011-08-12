@@ -22,7 +22,6 @@ import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 
@@ -37,28 +36,27 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
+@RunWith( JUnit4TestRunner.class )
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+public class ReferenceJarTest
+{
 
-@RunWith(JUnit4TestRunner.class)
-@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
-public class ReferenceJarTest {
-
-    @Configuration()
+    @Configuration( )
     public Option[] config()
     {
         return options(
-            url("reference:file:" + PathUtils.getBaseDir() +
-            		"/../regression-pde-bundle/target/regression-pde-bundle.jar"),
-            mavenBundle("org.ops4j.pax.exam", "pax-exam-util", "2.2.1-SNAPSHOT"),                    
+            url( "reference:file:" + PathUtils.getBaseDir() +
+                    "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             junitBundles(),
             equinox(),
             felix(),
-            knopflerfish()
-            );
+            knopflerfish() );
     }
 
     @Test
-    public void getHelloService(BundleContext bc) {
-        Object service = ServiceLookup.getService(bc, "org.ops4j.pax.exam.regression.pde.HelloService");
-        assertThat(service, is(notNullValue()));        
+    public void getHelloService( BundleContext bc )
+    {
+        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
+        assertThat( service, is( notNullValue() ) );
     }
 }

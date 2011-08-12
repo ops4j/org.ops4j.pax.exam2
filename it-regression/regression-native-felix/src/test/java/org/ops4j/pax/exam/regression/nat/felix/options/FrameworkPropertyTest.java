@@ -45,7 +45,6 @@ public class FrameworkPropertyTest
     public Option[] config()
     {
         return options(
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-util", "2.2.1-SNAPSHOT" ),
             frameworkProperty( "felix.startlevel.bundle" ).value( "6" ),
             junitBundles() 
             );

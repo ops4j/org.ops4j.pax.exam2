@@ -45,10 +45,8 @@ public class FrameworkIsNotSystemPropertyTest
     public Option[] config()
     {
         return options(
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-util", "2.2.1-SNAPSHOT" ),
             systemProperty( "felix.startlevel.bundle" ).value( "6" ),
-            junitBundles() 
-            );
+            junitBundles() );
     }
 
     @Test
@@ -56,6 +54,6 @@ public class FrameworkIsNotSystemPropertyTest
     {
         StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );
         assertThat( startLevel, is( notNullValue() ) );
-        assertThat(startLevel.getInitialBundleStartLevel(), is(equalTo(1)));
+        assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 1 ) ) );
     }
 }
