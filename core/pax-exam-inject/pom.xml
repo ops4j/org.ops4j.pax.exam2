@@ -17,6 +17,7 @@
 
     <properties>
       <bundle.symbolicName>org.ops4j.pax.exam.inject</bundle.symbolicName>
+      <bundle.namespace>org.ops4j.pax.exam.inject</bundle.namespace>
     </properties>
     <dependencies>
     <!--  Project Dependencies -->

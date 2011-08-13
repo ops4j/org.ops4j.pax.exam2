@@ -23,8 +23,8 @@ import java.lang.reflect.Method;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.inject.ServiceInjector;
 import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -49,13 +49,21 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         m_clazz = parts[ 0 ];
         m_method = parts[ 1 ];
         m_ctx = bundleContext;
-        // TODO get this from service registry
-        m_injector = new ServiceInjector();
+        
+        // acquire (optional) injector
+        // TODO replace system property by core configuration option
+        boolean inject = "true".equals(System.getProperty( "pax.exam.inject" ));
+        if (inject) {
+            m_injector = ServiceLookup.getService( m_ctx, Injector.class );
+        }
+        else  {
+            m_injector = new NoOpInjector();
+        }
     }
 
     public void call( Object... args )
     {
-        Class testClass;
+        Class<?> testClass;
         try {
             testClass = m_ctx.getBundle().loadClass( m_clazz );
         } catch( ClassNotFoundException e ) {
@@ -67,7 +75,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         }
     }
 
-    private boolean findAndInvoke( Class testClass, Object... params )
+    private boolean findAndInvoke( Class<?> testClass, Object... params )
 
     {
         try {

@@ -61,6 +61,8 @@ public class FilterTest
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
             mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", "2.2.1-SNAPSHOT" ),
+            systemProperty("pax.exam.inject").value("true"),
+            systemProperty("osgi.console").value("6666"),
             junitBundles() );
     }
 

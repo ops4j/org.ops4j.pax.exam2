@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
 
 import javax.inject.Inject;
@@ -57,6 +58,7 @@ public class InjectTest
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
             mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", "2.2.1-SNAPSHOT" ),
+            systemProperty("pax.exam.inject").value("true"),
             junitBundles() );
     }
 
