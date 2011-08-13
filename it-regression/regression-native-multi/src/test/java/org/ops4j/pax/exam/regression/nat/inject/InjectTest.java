@@ -16,6 +16,7 @@
 package org.ops4j.pax.exam.regression.nat.inject;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
@@ -44,6 +45,9 @@ public class InjectTest
 {
 
     @Inject
+    private BundleContext bundleContext;
+
+    @Inject
     private HelloService helloService;
 
     @Configuration( )
@@ -53,14 +57,29 @@ public class InjectTest
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
+            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", "2.2.1-SNAPSHOT" ),
             junitBundles() );
     }
 
-    @Test @Ignore("injection is not yet implemented")
-    public void getHelloService( BundleContext bc )
+    @Test
+    public void getServiceByLookup( BundleContext bc )
     {
-        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
+        Object service = ServiceLookup.getService( bc, HelloService.class );
         assertThat( service, is( notNullValue() ) );
+    }
+
+    @Test
+    public void getServiceFromInjectedBundleContext()
+    {
+        assertThat( bundleContext, is( notNullValue() ) );
+        Object service = ServiceLookup.getService( bundleContext, HelloService.class );
+        assertThat( service, is( notNullValue() ) );
+    }
+
+    @Test
+    public void getInjectedService()
+    {
         assertThat( helloService, is( notNullValue() ) );
+        assertThat( helloService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
     }
 }

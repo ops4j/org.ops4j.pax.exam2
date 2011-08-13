@@ -27,7 +27,6 @@ import org.osgi.framework.BundleContext;
 
 public class ServiceInjector implements Injector
 {
-
     public void injectFields( BundleContext bc, Object target )
     {
         Class<?> targetClass = target.getClass();
@@ -52,7 +51,7 @@ public class ServiceInjector implements Injector
     private void injectField( BundleContext bc, Object target, Field field )
     {
         Class<?> type = field.getType();
-        Object service = ServiceLookup.getService( bc, type );
+        Object service = (BundleContext.class == type) ? bc : ServiceLookup.getService( bc, type );
         try
         {
             if( field.isAccessible() )

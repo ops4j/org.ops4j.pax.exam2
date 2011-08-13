@@ -23,6 +23,8 @@ import java.lang.reflect.Method;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.inject.ServiceInjector;
+import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -38,7 +40,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
     private String m_clazz;
     private String m_method;
     
-    //private Injector m_injector;
+    private Injector m_injector;
 
     public ProbeInvokerImpl( String encodedInstruction, BundleContext bundleContext )
     {
@@ -47,7 +49,8 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         m_clazz = parts[ 0 ];
         m_method = parts[ 1 ];
         m_ctx = bundleContext;
-        //m_injector = new ServiceInjector();
+        // TODO get this from service registry
+        m_injector = new ServiceInjector();
     }
 
     public void call( Object... args )
@@ -104,7 +107,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         throws TestContainerException
     {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
-        //m_injector.injectFields( m_ctx, testInstance );
+        m_injector.injectFields( m_ctx, testInstance );
         boolean cleanup = false;
         try {
             //runBefores( testInstance );
