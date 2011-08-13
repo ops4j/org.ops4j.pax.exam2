@@ -15,7 +15,7 @@
  */
 package org.ops4j.pax.exam.regression.pde;
 
-public class HelloServiceImpl implements HelloService {
+public class EnglishHelloService implements HelloService {
     
     public String getMessage() {
         return "Hello Pax!";

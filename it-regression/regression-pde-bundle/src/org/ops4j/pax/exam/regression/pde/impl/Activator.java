@@ -15,8 +15,11 @@
  */
 package org.ops4j.pax.exam.regression.pde.impl;
 
+import java.util.Hashtable;
+
+import org.ops4j.pax.exam.regression.pde.EnglishHelloService;
 import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.regression.pde.HelloServiceImpl;
+import org.ops4j.pax.exam.regression.pde.LatinHelloService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -24,8 +27,15 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bc) throws Exception {
-        HelloServiceImpl service = new HelloServiceImpl();
-        bc.registerService(HelloService.class.getName(), service, null);
+        EnglishHelloService service = new EnglishHelloService();
+        Hashtable<String,String> props = new Hashtable<String, String>();
+        props.put("language", "en");
+        bc.registerService(HelloService.class.getName(), service, props);
+
+        LatinHelloService latinService = new LatinHelloService();
+        Hashtable<String,String> latinProps = new Hashtable<String, String>();
+        latinProps.put("language", "la");
+        bc.registerService(HelloService.class.getName(), latinService, latinProps);
     }
 
     @Override

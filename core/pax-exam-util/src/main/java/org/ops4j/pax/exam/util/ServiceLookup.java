@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.util;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -43,7 +44,7 @@ public class ServiceLookup
 
     public static <T> T getService(BundleContext bc, String className)
     {
-        return ServiceLookup.<T> getService(bc, className, DEFAULT_TIMEOUT, null);
+        return ServiceLookup.<T> getService(bc, className, DEFAULT_TIMEOUT, "");
     }
 
     public static <T> T getService(BundleContext bc, Class<T> type)
@@ -75,7 +76,12 @@ public class ServiceLookup
 
     public static <T> T getService(BundleContext bc, Class<T> type, long timeout)
     {
-        return ServiceLookup.<T> getService(bc, type.getName(), timeout, null);
+        return ServiceLookup.<T> getService(bc, type.getName(), timeout, "");
+    }
+
+    public static <T> T getService(BundleContext bc, Class<T> type, long timeout, String filter)
+    {
+        return ServiceLookup.<T> getService(bc, type.getName(), timeout, filter);
     }
 
     @SuppressWarnings("unchecked")
@@ -83,6 +89,29 @@ public class ServiceLookup
             Map<String, String> props)
     {
         ServiceTracker tracker = createServiceTracker(bc, className, props);
+        try
+        {
+            tracker.open();
+            Object svc = tracker.waitForService(timeout);
+            if (svc == null)
+            {
+                throw new RuntimeException("gave up waiting for service " + className);
+            }
+            return (T) svc;
+        } catch (InterruptedException exc)
+        {
+            throw new RuntimeException(exc);
+        } finally
+        {
+            tracker.close();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getService(BundleContext bc, String className, long timeout,
+            String filter)
+    {
+        ServiceTracker tracker = createServiceTracker(bc, className, filter);
         try
         {
             tracker.open();
@@ -119,6 +148,29 @@ public class ServiceLookup
             builder.append('=');
             builder.append(entry.getValue());
             builder.append(')');
+        }
+        builder.append(')');
+        try
+        {
+            Filter filter;
+            filter = bc.createFilter(builder.toString());
+            ServiceTracker tracker = new ServiceTracker(bc, filter, null);
+            return tracker;
+        } catch (InvalidSyntaxException exc)
+        {
+            throw new RuntimeException(exc);
+        }
+    }
+
+    private static ServiceTracker createServiceTracker(BundleContext bc, String className,
+            String filterString)
+    {
+        StringBuilder builder = new StringBuilder("(&(objectClass=");
+        builder.append(className);
+        builder.append(')');
+        if (filterString != null ) 
+        {
+            builder.append(filterString);
         }
         builder.append(')');
         try

@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 import javax.inject.Inject;
 
@@ -34,20 +34,24 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.regression.pde.HelloService;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class InjectTest
+public class FilterTest
 {
 
     @Inject
     private BundleContext bundleContext;
 
-    @Inject
-    private HelloService helloService;
+    @Inject @Filter("(language=la)")
+    private HelloService latinService;
+
+    @Inject @Filter("(language=en)")
+    private HelloService englishService;
 
     @Configuration( )
     public Option[] config()
@@ -78,7 +82,9 @@ public class InjectTest
     @Test
     public void getInjectedService()
     {
-        assertThat( helloService, is( notNullValue() ) );
-        assertThat( helloService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
+        assertThat( latinService, is( notNullValue() ) );
+        assertThat( latinService.getMessage(), is( equalTo( "Pax Vobiscum!" ) ) );
+        assertThat( englishService, is( notNullValue() ) );
+        assertThat( englishService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
     }
 }

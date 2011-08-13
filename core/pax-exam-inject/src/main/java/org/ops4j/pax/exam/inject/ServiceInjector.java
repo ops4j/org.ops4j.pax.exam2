@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 
 import javax.inject.Inject;
 
+import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
@@ -51,7 +52,14 @@ public class ServiceInjector implements Injector
     private void injectField( BundleContext bc, Object target, Field field )
     {
         Class<?> type = field.getType();
-        Object service = (BundleContext.class == type) ? bc : ServiceLookup.getService( bc, type );
+        String filterString = "";
+        long timeout = ServiceLookup.DEFAULT_TIMEOUT;
+        Filter filter = field.getAnnotation( Filter.class );
+        if ( filter != null ) 
+        {
+            filterString = filter.value();
+        }
+        Object service = (BundleContext.class == type) ? bc : ServiceLookup.getService( bc, type, timeout, filterString );
         try
         {
             if( field.isAccessible() )
