@@ -17,13 +17,21 @@
  */
 package org.ops4j.pax.exam.raw.extender.intern;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
+import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.raw.extender.ProbeInvokerFactory;
+import org.ops4j.pax.exam.util.ServiceLookup;
+import org.ops4j.pax.swissbox.extender.ManifestEntry;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.ProbeInvoker;
-import org.ops4j.pax.swissbox.extender.ManifestEntry;
 
 /**
  * @author Toni Menzel
@@ -55,7 +63,21 @@ public class Parser {
         LOG.debug("Registering Service: " + ProbeInvoker.class.getName() + " with Probe-Signature=\"" + sig + "\" and expression=\"" + expr + "\"");
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put("Probe-Signature", sig);
-        return new Probe(ProbeInvoker.class.getName(), new ProbeInvokerImpl(expr, ctx), props);
+        return new Probe(ProbeInvoker.class.getName(), createInvoker( ctx, expr ), props);
+    }
+
+    private ProbeInvoker createInvoker( BundleContext ctx, String expr )
+    {
+        String invokerType = System.getProperty("pax.exam.invoker");
+        if (invokerType == null) {
+            return new ProbeInvokerImpl(expr, ctx);
+        }
+        else {
+            Map<String,String> props = new HashMap<String, String>();
+            props.put( "driver", invokerType );
+            ProbeInvokerFactory factory = ServiceLookup.getService( ctx, ProbeInvokerFactory.class, props );
+            return factory.createProbeInvoker( ctx, expr );
+        }
     }
 
     public Probe[] getProbes() {
