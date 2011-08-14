@@ -27,9 +27,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
+import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -93,6 +94,37 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     }
 
     /**
+     * Override to avoid running BeforeClass and AfterClass by the driver.
+     * They shall only be run by the container.
+     */
+    protected Statement classBlock(final RunNotifier notifier) {
+        Statement statement= childrenInvoker(notifier);
+        return statement;
+    }
+
+    /**
+     * Override to avoid running Before, After and Rule methods by the driver.
+     * They shall only be run by the container.
+     */
+    protected Statement methodBlock(FrameworkMethod method) {
+        Object test;
+        try {
+            test= new ReflectiveCallable() {
+                @Override
+                protected Object runReflectiveCall() throws Throwable {
+                    return createTest();
+                }
+            }.run();
+        } catch (Throwable e) {
+            return new Fail(e);
+        }
+
+        Statement statement= methodInvoker(method, test);
+        return statement;
+    }
+
+    
+    /**
      * We overwrite those with reactor content
      */
     @Override
@@ -146,7 +178,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         throws Exception
     {
     	m_system = PaxExamRuntime.createTestSystem();
-        Class testClass = getTestClass().getJavaClass();
+        Class<?> testClass = getTestClass().getJavaClass();
         Object testClassInstance = testClass.newInstance();
         ExxamReactor reactor = getReactor( testClass );
 
@@ -155,7 +187,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         return reactor.stage( getFactory( testClass ) );
     }
 
-    private void addConfigurationsToReactor( ExxamReactor reactor, Class testClass, Object testClassInstance )
+    private void addConfigurationsToReactor( ExxamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IllegalAccessException, InvocationTargetException, IllegalArgumentException, IOException
     {
         Method[] methods = testClass.getMethods();
@@ -168,7 +200,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private void addTestsToReactor( ExxamReactor reactor, Class testClass, Object testClassInstance )
+    private void addTestsToReactor( ExxamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IOException, ExamConfigurationException
     {
         TestProbeBuilder probe = m_system.createProbe(  );
@@ -203,8 +235,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    @SuppressWarnings( "unchecked" )
-    private StagedExamReactorFactory getFactory( Class testClass )
+    private StagedExamReactorFactory getFactory( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
         ExamReactorStrategy strategy = (ExamReactorStrategy) testClass.getAnnotation( ExamReactorStrategy.class );
@@ -220,14 +251,13 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         return fact;
     }
 
-    private DefaultExamReactor getReactor( Class testClass )
+    private DefaultExamReactor getReactor( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
         return new DefaultExamReactor( m_system, getExamFactory( testClass ) );
     }
 
-    @SuppressWarnings( "unchecked" )
-    private TestContainerFactory getExamFactory( Class testClass )
+    private TestContainerFactory getExamFactory( Class<?> testClass )
         throws IllegalAccessException, InstantiationException
     {
         ExamFactory f = (ExamFactory) testClass.getAnnotation( ExamFactory.class );
@@ -273,7 +303,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
     }
 
-    private TestProbeBuilder overwriteWithUserDefinition( Class testClass, Object instance, TestProbeBuilder probe )
+    private TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance, TestProbeBuilder probe )
         throws ExamConfigurationException
     {
         Method[] methods = testClass.getMethods();
