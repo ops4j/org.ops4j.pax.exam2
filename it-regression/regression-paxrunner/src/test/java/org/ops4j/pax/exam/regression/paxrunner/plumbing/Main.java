@@ -1,4 +1,4 @@
-package com.okidokiteam.exxam.regression.paxrunner.plumbing;
+package org.ops4j.pax.exam.regression.paxrunner.plumbing;
 
 import java.io.IOException;
 

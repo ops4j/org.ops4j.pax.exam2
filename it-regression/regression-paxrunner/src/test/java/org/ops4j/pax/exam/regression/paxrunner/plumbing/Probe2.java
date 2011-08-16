@@ -13,31 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.regression.paxrunner.plumbing;
+package org.ops4j.pax.exam.regression.paxrunner.plumbing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
-
 /**
- * External TestProbe.
- * Assemble yourself using:
- * createProbe().addTest( SingleTestProbe.class )
+ * Another SingleTestProbe.
  */
-public class SingleTestProbe
+public class Probe2
 {
 
-    private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
+    //private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
 
-    public void withoutBCTest()
+    public void myOwnClass()
     {
-        LOG.info( "INSIDE OSGI " + SingleTestProbe.class.getName() + " Method withoutBCTest" );
-        LOG.info( "Environment: " + System.getenv( "foo" ) );
-    }
-
-    private void neverCall()
-    {
-        fail( "Don't call me !" );
+        System.out.println("Hello");
+       // LOG.info( "INSIDE OSGI " + Probe2.class.getName() + " Method withoutBCTest" );
     }
 }

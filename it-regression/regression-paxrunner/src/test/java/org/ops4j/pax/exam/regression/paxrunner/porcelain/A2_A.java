@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.regression.paxrunner.porcelain;
+package org.ops4j.pax.exam.regression.paxrunner.porcelain;
 
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;

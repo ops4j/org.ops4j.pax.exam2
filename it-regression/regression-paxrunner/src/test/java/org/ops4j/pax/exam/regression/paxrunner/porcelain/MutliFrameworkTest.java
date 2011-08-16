@@ -1,4 +1,4 @@
-package com.okidokiteam.exxam.regression.paxrunner.porcelain;
+package org.ops4j.pax.exam.regression.paxrunner.porcelain;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

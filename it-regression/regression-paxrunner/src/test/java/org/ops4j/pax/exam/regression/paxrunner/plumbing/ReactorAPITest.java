@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.okidokiteam.exxam.regression.paxrunner.plumbing;
+package org.ops4j.pax.exam.regression.paxrunner.plumbing;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
