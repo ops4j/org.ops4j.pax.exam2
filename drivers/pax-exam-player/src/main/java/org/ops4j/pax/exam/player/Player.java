@@ -28,7 +28,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.ExxamReactor;
+import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
@@ -101,7 +101,7 @@ public class Player {
 
     public void play( StagedExamReactorFactory strategy ) throws IOException
     {
-        ExxamReactor reactor = new DefaultExamReactor( m_testSystem, m_factory );
+        ExamReactor reactor = new DefaultExamReactor( m_testSystem, m_factory );
         reactor.addConfiguration(  m_parts  );
         reactor.addProbe( m_builder.build() );
 

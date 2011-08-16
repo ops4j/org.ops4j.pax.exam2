@@ -22,7 +22,7 @@ import org.ops4j.pax.exam.TestAddress;
 
 /**
  * Separates logical regression invocations from underlying reactor strategy.
- * You get an instance from {@link org.ops4j.pax.exam.spi.ExxamReactor}
+ * You get an instance from {@link org.ops4j.pax.exam.spi.ExamReactor}
  */
 public interface StagedExamReactor {
 

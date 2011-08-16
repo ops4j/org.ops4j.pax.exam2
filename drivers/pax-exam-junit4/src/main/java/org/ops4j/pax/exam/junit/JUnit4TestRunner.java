@@ -44,7 +44,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.ExxamReactor;
+import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
@@ -180,14 +180,14 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     	m_system = PaxExamRuntime.createTestSystem();
         Class<?> testClass = getTestClass().getJavaClass();
         Object testClassInstance = testClass.newInstance();
-        ExxamReactor reactor = getReactor( testClass );
+        ExamReactor reactor = getReactor( testClass );
 
         addConfigurationsToReactor( reactor, testClass, testClassInstance );
         addTestsToReactor( reactor, testClass, testClassInstance );
         return reactor.stage( getFactory( testClass ) );
     }
 
-    private void addConfigurationsToReactor( ExxamReactor reactor, Class<?> testClass, Object testClassInstance )
+    private void addConfigurationsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IllegalAccessException, InvocationTargetException, IllegalArgumentException, IOException
     {
         Method[] methods = testClass.getMethods();
@@ -200,7 +200,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private void addTestsToReactor( ExxamReactor reactor, Class<?> testClass, Object testClassInstance )
+    private void addTestsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IOException, ExamConfigurationException
     {
         TestProbeBuilder probe = m_system.createProbe(  );

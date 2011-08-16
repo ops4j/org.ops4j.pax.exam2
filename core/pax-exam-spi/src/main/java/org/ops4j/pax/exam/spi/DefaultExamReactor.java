@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author tonit
  */
-public class DefaultExamReactor implements ExxamReactor {
+public class DefaultExamReactor implements ExamReactor {
 
     private static Logger LOG = LoggerFactory.getLogger( DefaultExamReactor.class );
 
