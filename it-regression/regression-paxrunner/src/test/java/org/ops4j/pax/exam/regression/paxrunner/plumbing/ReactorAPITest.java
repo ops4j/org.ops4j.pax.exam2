@@ -30,7 +30,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.ExxamReactor;
+import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
@@ -71,7 +71,7 @@ public class ReactorAPITest
         Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
         
         ExamSystem system = createTestSystem();
-        ExxamReactor reactor = new DefaultExamReactor( system, factory );
+        ExamReactor reactor = new DefaultExamReactor( system, factory );
         TestProbeProvider probe = makeProbe( system );
         
         reactor.addProbe( probe );
