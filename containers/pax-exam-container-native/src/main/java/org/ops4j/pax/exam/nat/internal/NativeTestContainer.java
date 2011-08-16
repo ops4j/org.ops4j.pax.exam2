@@ -310,10 +310,16 @@ public class NativeTestContainer implements TestContainer
         } );
         try
         {
-            latch.await( m_system.getTimeout().getLowerValue(), TimeUnit.MILLISECONDS );
+            final long timeout = m_system.getTimeout().getLowerValue();
+            if ( !latch.await( timeout, TimeUnit.MILLISECONDS )) {
+                 // Framework start level has not reached yet, so report an error to cause the test process to abort
+                final String message = "Framework is yet to reach target start level " + startLevel + " after " +
+                        timeout + " ms. Current start level is " + sl.getStartLevel();
+                throw new TestContainerException(message);
+            }
         } catch ( InterruptedException e )
         {
-            throw new RuntimeException( e );
+            throw new TestContainerException( e );
         }
     }
 
