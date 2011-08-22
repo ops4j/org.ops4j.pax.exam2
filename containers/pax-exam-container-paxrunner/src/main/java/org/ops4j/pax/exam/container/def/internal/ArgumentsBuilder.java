@@ -427,11 +427,13 @@ class ArgumentsBuilder {
     private String extractArguments( CleanCachesOption[] cleanCachesOption )
     {
         if( cleanCachesOption.length > 0 ) {
-            return "--clean";
+            Boolean cleanCaches = cleanCachesOption[0].getValue();
+            if( cleanCaches != null && cleanCaches.booleanValue() ) 
+            {
+                return "--clean";
+            }
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     private String extractArguments( LocalRepositoryOption[] localRepositoryOptions )
