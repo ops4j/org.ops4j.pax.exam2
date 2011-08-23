@@ -74,6 +74,7 @@ import org.ops4j.pax.exam.options.libraries.EasyMockBundlesOption;
 import org.ops4j.pax.exam.options.libraries.JMockBundlesOption;
 import org.ops4j.pax.exam.options.libraries.JUnitBundlesOption;
 import org.ops4j.pax.exam.options.libraries.MockitoBundlesOption;
+import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
 
@@ -299,7 +300,7 @@ public class CoreOptions
     public static Option provision( final String... urls )
     {
         validateNotEmptyContent( urls, true, "URLs" );
-        final List<ProvisionOption> options = new ArrayList<ProvisionOption>();
+        final List<ProvisionOption<?>> options = new ArrayList<ProvisionOption<?>>();
         for ( String url : urls )
         {
             options.add( new UrlProvisionOption( url ) );
@@ -319,23 +320,14 @@ public class CoreOptions
     public static Option provision( final InputStream... streams )
     {
         validateNotNull( streams, "streams" );
-        // TODO make the store more global to the exam session to control
-        // caching load + shutdown.
-        // For now we do it fully3 locally:
-        Store<InputStream> store = StoreFactory.defaultStore();
 
-        final List<ProvisionOption> options = new ArrayList<ProvisionOption>();
+        final UrlProvisionOption[] options = new UrlProvisionOption[streams.length];
+        int i = 0;
         for ( InputStream stream : streams )
         {
-            try
-            {
-                options.add( new UrlProvisionOption( store.getLocation( store.store( stream ) ).toURL().toExternalForm() ) );
-            } catch ( IOException e )
-            {
-                throw new IllegalArgumentException( "A supplied stream blew up..", e );
-            }
+            options[i++] = streamBundle(stream);
         }
-        return provision( options.toArray( new ProvisionOption[options.size()] ) );
+        return provision( options );
     }
 
     /**
@@ -345,9 +337,31 @@ public class CoreOptions
      * 
      * @return composite option of provision options
      */
-    public static Option provision( final ProvisionOption... urls )
+    public static Option provision( final ProvisionOption<?>... urls )
     {
         return composite( urls );
+    }
+    
+    public static UrlProvisionOption streamBundle( final InputStream stream )
+    {
+        validateNotNull( stream, "stream" );
+        // TODO make the store more global to the exam session to control
+        // caching load + shutdown.
+        // For now we do it fully3 locally:
+        Store<InputStream> store = StoreFactory.defaultStore();
+
+        try
+        {
+            Handle handle = store.store( stream );
+            URL url = store.getLocation( handle ).toURL();
+            UrlProvisionOption option =
+                new UrlProvisionOption( url.toExternalForm() );
+            return option;
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalArgumentException( "A supplied stream blew up..", e );
+        }
     }
 
     /**
