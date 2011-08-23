@@ -18,7 +18,6 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
-import static org.ops4j.pax.exam.OptionUtils.filter;
 import static org.ops4j.pax.exam.CoreOptions.scanBundle;
 
 import java.io.IOException;
@@ -34,6 +33,7 @@ import org.ops4j.pax.exam.options.BundleStartLevelOption;
 import org.ops4j.pax.exam.options.CustomFrameworkOption;
 import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
 import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
@@ -102,7 +102,8 @@ class ArgumentsBuilder {
         
         add( m_paxrunneArguments,
              extractArguments( 
-            		 system.getOptions( SystemPropertyOption.class ),
+                     system.getOptions( SystemPropertyOption.class ),
+                     system.getOptions( FrameworkPropertyOption.class ),
             		 system.getOptions( VMOption.class )
              )
         );
@@ -134,10 +135,10 @@ class ArgumentsBuilder {
      *
      * @return eventual wrapped bundles
      */
-    private List<ProvisionOption> wrap( ProvisionOption[] options )
+    private List<ProvisionOption<?>> wrap( ProvisionOption<?>[] options )
     {
-        final List<ProvisionOption> processed = new ArrayList<ProvisionOption>();
-        for( final ProvisionOption provisionOption : options ) {
+        final List<ProvisionOption<?>> processed = new ArrayList<ProvisionOption<?>>();
+        for( final ProvisionOption<?> provisionOption : options ) {
             if( !( provisionOption instanceof Scanner ) ) {
                 processed.add( scanBundle( provisionOption ).start( provisionOption.shouldStart() ).startLevel(
                     provisionOption.getStartLevel()
@@ -259,10 +260,10 @@ class ArgumentsBuilder {
      *
      * @return converted Pax Runner collection of arguments
      */
-    private Collection<String> extractArguments( final ProvisionOption[] bundles )
+    private Collection<String> extractArguments( final ProvisionOption<?>[] bundles )
     {
         final List<String> arguments = new ArrayList<String>();
-        for( ProvisionOption bundle : wrap(bundles) ) {
+        for( ProvisionOption<?> bundle : wrap(bundles) ) {
             arguments.add( bundle.getURL() );
         }
         return arguments;
@@ -355,11 +356,22 @@ class ArgumentsBuilder {
      * @return converted Pax Runner argument
      */
     private String extractArguments( final SystemPropertyOption[] systemProperties,
+                                     final FrameworkPropertyOption[] frameworkProperties,
                                      final VMOption[] vmOptions )
     {
         final StringBuilder argument = new StringBuilder();
         if( systemProperties != null && systemProperties.length > 0 ) {
             for( SystemPropertyOption property : systemProperties ) {
+                if( property != null && property.getKey() != null && property.getKey().trim().length() > 0 ) {
+                    if( argument.length() > 0 ) {
+                        argument.append( " " );
+                    }
+                    argument.append( "-D" ).append( property.getKey() ).append( "=" ).append( property.getValue() );
+                }
+            }
+        }
+        if( frameworkProperties != null && frameworkProperties.length > 0 ) {
+            for( FrameworkPropertyOption property : frameworkProperties ) {
                 if( property != null && property.getKey() != null && property.getKey().trim().length() > 0 ) {
                     if( argument.length() > 0 ) {
                         argument.append( " " );
