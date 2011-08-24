@@ -33,6 +33,7 @@
                 <module>forge/pax-exam-testforge</module>
                 <module>drivers/pax-exam-player</module>
                 <module>drivers/pax-exam-junit4</module>
+                <module>drivers/pax-exam-testng</module>
 
                 <module>core/pax-exam-link-mvn</module>
                 <module>core/pax-exam-link-assembly</module>
@@ -44,6 +45,7 @@
 
                 <module>it-regression/regression-native-felix</module>
                 <module>it-regression/regression-native-multi</module>
+                <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
 
@@ -53,7 +55,9 @@
             <id>regression</id>
             <modules>
                 <module>pom</module>
+                <module>it-regression/regression-native-felix</module>
                 <module>it-regression/regression-native-multi</module>
+                <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
             </modules>
