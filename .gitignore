@@ -9,3 +9,4 @@ bin
 .classpath
 .project
 .settings
+test-output
