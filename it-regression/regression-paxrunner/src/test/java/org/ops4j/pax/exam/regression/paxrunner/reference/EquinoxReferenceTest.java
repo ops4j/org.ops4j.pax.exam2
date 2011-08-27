@@ -76,7 +76,7 @@ public class EquinoxReferenceTest {
         ServiceReference serviceRef = bc.getServiceReference("org.ops4j.pax.exam.regression.pde.HelloService");
         Object service = bc.getService(serviceRef);
         assertNotNull(service);
-        assertEquals("org.ops4j.pax.exam.regression.pde.EnglishHelloService", service.getClass().getName());
+        assertEquals("org.ops4j.pax.exam.regression.pde.impl.EnglishHelloService", service.getClass().getName());
 
         bundle.uninstall();
         framework.stop();
