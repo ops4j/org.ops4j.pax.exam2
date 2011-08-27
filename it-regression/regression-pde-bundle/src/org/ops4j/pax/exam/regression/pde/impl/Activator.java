@@ -17,9 +17,7 @@ package org.ops4j.pax.exam.regression.pde.impl;
 
 import java.util.Hashtable;
 
-import org.ops4j.pax.exam.regression.pde.EnglishHelloService;
 import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.regression.pde.LatinHelloService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

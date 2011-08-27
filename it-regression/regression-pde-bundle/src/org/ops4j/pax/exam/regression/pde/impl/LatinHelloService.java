@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.pde;
+package org.ops4j.pax.exam.regression.pde.impl;
 
-public class EnglishHelloService implements HelloService {
+import org.ops4j.pax.exam.regression.pde.HelloService;
+
+public class LatinHelloService implements HelloService {
     
     public String getMessage() {
-        return "Hello Pax!";
+        return "Pax Vobiscum!";
     }
 }
