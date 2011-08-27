@@ -91,7 +91,7 @@ public class NativeTestContainer implements TestContainer
         assert m_framework != null : "Framework should be up";
         assert serviceType != null : "serviceType not be null";
 
-        LOG.debug( "Aquiring Service " + serviceType.getName() + " " + (filter != null ? filter : "") );
+        LOG.debug( "Acquiring Service " + serviceType.getName() + " " + (filter != null ? filter : "") );
         try
         {
             ServiceTracker tracker = new ServiceTracker( m_framework.getBundleContext(), m_framework.getBundleContext().createFilter( filter ), null );
@@ -99,7 +99,7 @@ public class NativeTestContainer implements TestContainer
             T service = ( T ) tracker.waitForService( m_system.getTimeout().getValue() );
             tracker.close();
             if (service == null) {
-                throw new TestContainerException("Service " + filter + " no found in time.");
+                throw new TestContainerException("Service " + filter + " not found in time.");
             }
             return service;
         } catch ( InvalidSyntaxException e1 )
@@ -107,7 +107,7 @@ public class NativeTestContainer implements TestContainer
             throw new TestContainerException( "NativeTestContainer implementation error. Please fix. Filter: " + filter, e1 );
         } catch ( InterruptedException e )
         {
-            throw new TestContainerException( "Interrupt during aquiring service of type " + serviceType.getName(), e );
+            throw new TestContainerException( "Interrupted while acquiring service of type " + serviceType.getName(), e );
         }
     }
 

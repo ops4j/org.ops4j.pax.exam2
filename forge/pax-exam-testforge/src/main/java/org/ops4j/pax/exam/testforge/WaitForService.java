@@ -25,7 +25,7 @@ import org.ops4j.pax.exam.TestContainerException;
 /**
  * Simple pre-build test to be used with Pax Exam Player.
  *
- * Takes an Interface Name as argument and tries to aquire that service in certain timespan.
+ * Takes an Interface Name as argument and tries to acquire that service in certain timespan.
  * 
  */
 public class WaitForService {
