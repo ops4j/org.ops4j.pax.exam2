@@ -53,14 +53,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is the default Test Runner using Exxam plumbing API.
+ * This is the default Test Runner using the Exam plumbing API.
  * Its also the blueprint for custom, much more specific runners.
  * This will make a single probe bundling in all @Tests in this class.
  *
- * This uses the whole regression class as a single unit of tests with the following valid annotaions:
- * - @Configuration -> Configuration 1:N. Multiple configurations will result into multiple invokations of the same regression.
+ * This uses the whole regression class as a single unit of tests with the following valid annotations:
+ * - @Configuration -> Configuration 1:N. Multiple configurations will result in multiple invocations of the same regression.
  * - @ProbeBuilder -> Customize the probe creation.
- * - @Test -> Single tests to be invoked. Note that in @Configuration you can specify the invokation strategy.
+ * - @Test -> Single tests to be invoked. Note that in @Configuration you can specify the invocation strategy.
  */
 public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
