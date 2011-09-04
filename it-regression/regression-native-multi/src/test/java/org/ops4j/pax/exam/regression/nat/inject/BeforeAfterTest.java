@@ -19,12 +19,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.CoreOptions.*;
 
 import javax.inject.Inject;
 
@@ -32,18 +26,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.regression.pde.HelloService;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.BundleContext;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class BeforeAfterTest
+public class BeforeAfterTest extends BeforeAfterParent
 {
 
     @Inject
@@ -52,38 +43,24 @@ public class BeforeAfterTest
     @Inject
     private HelloService helloService;
 
-    @Configuration( )
-    public Option[] config()
-    {
-        return options(
-            url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
-            mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", "2.2.1-SNAPSHOT" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-invoker-junit", "2.2.1-SNAPSHOT" ),
-            systemProperty( "pax.exam.inject" ).value( "true" ),
-            systemProperty( "pax.exam.invoker" ).value( "junit" ),
-            junitBundles() );
-    }
-
     @Before
     public void setUp()
     {
-        System.out.println( "******** Before" );        
+        addMessage( "Before" );        
         assertThat( bundleContext, is( notNullValue() ) );
     }
 
     @After
     public void tearDown()
     {
-        System.out.println( "******** After" );        
+        addMessage( "After" );        
         assertThat( bundleContext, is( notNullValue() ) );
     }
 
     @Test
     public void getInjectedService()
     {
-        System.out.println( "******** Test" );        
+        addMessage( "Test" );        
         assertThat( helloService, is( notNullValue() ) );
         assertThat( helloService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
     }
@@ -91,7 +68,7 @@ public class BeforeAfterTest
     @Test
     public void injectedBundleContext()
     {
-        System.out.println( "******** Test" );        
+        addMessage( "Test" );        
         assertThat( bundleContext, is( notNullValue() ) );
     }
 }
