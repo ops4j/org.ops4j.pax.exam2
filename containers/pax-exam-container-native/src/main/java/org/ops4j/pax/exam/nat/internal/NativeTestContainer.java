@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Toni Menzel
+ * @author Harald Wellmann
  * @since Jan 7, 2010
  */
 public class NativeTestContainer implements TestContainer
@@ -191,22 +192,43 @@ public class NativeTestContainer implements TestContainer
             try
             {
                 cleanup();
-                m_framework.stop();
-                m_framework.waitForStop( m_system.getTimeout().getValue() );
+                stopOrAbort();
                 m_framework = null;
                 m_system.clear();
-            } catch ( BundleException e )
+            }
+            catch ( BundleException e )
             {
                 LOG.warn( "Problem during stopping fw.", e );
-            } catch ( InterruptedException e )
+            } 
+            catch ( InterruptedException e )
             {
                 LOG.warn( "InterruptedException during stopping fw.", e );
             }
-        } else
+        } 
+        else
         {
             LOG.warn( "Framework does not exist. Called start() before ? " );
         }
         return this;
+    }
+
+    private void stopOrAbort() throws BundleException, InterruptedException
+    {
+        m_framework.stop();
+        long timeout = m_system.getTimeout().getValue();
+        Thread stopper = new Stopper( timeout );
+        stopper.start();
+        stopper.join(timeout + 500);
+        
+        // If the framework is not stopped, then we're in trouble anyway, so we do not worry 
+        // about stopping the worker thread.
+        
+        if (m_framework.getState() != Framework.RESOLVED)
+        {
+            String message = "Framework has not yet stopped after " +
+                    timeout + " ms. waitForStop did not return";
+            throw new TestContainerException( message );            
+        }
     }
 
     private Map<String, Object> createFrameworkProperties( ) throws IOException
@@ -354,5 +376,43 @@ public class NativeTestContainer implements TestContainer
     public String toString()
     {
         return "NativeContainer:" + m_frameworkFactory.toString();
+    }
+    
+    
+    /**
+     * Worker thread for shutting down the framework. 
+     * We'd expect Framework.waitForStop(timeout) to return after the given timeout, but this
+     * is not the case with Equinox (tested on 3.6.2 and 3.7.0), so we use this worker thread
+     * to avoid blocking the main thread.
+     * 
+     * @author Harald Wellmann
+     */
+    private class Stopper extends Thread
+    {
+        private final long timeout;
+
+        private Stopper( long timeout )
+        {
+            this.timeout = timeout;
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                FrameworkEvent frameworkEvent = m_framework.waitForStop( timeout );
+                if( frameworkEvent.getType() != FrameworkEvent.STOPPED )
+                {
+                    String message = String.format("Framework has not yet stopped after %d  ms. " +
+                    		"waitForStop returned: %s", timeout, frameworkEvent);
+                    throw new TestContainerException( message );
+                }
+            }
+            catch ( InterruptedException exc )
+            {
+                throw new TestContainerException( exc );
+            }
+        }
     }
 }

@@ -36,7 +36,15 @@ public class Activator implements BundleActivator {
         bc.registerService(HelloService.class.getName(), latinService, latinProps);
     }
 
+    /**
+     * Optionally blocks framework shutdown for a shutdown timeout regression test.
+     */
     @Override
     public void stop(BundleContext bc) throws Exception {
+
+        String blockOnStop = System.getProperty( "pax.exam.regression.blockOnStop", "false" );
+        if (Boolean.valueOf( blockOnStop )) {
+            Thread.sleep( Long.MAX_VALUE );
+        }
     }
 }
