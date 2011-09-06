@@ -24,6 +24,8 @@ import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -40,6 +42,9 @@ import org.osgi.service.startlevel.StartLevel;
 public class FrameworkPropertyTest
 {
 
+    @Inject
+    private BundleContext bc;
+    
     @Configuration
     public Option[] config()
     {
@@ -50,7 +55,7 @@ public class FrameworkPropertyTest
     }
 
     @Test
-    public void startLevel( BundleContext bc )
+    public void startLevel()
     {
         // Framework properties are currently translated into vmOptions for Pax Runner.
         // Pax Runner does not clearly distinguish framework and system properties.

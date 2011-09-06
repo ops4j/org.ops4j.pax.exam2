@@ -36,6 +36,7 @@ public class SingleTestProbe
         LOG.info( "Environment: " + System.getenv( "foo" ) );
     }
 
+    @SuppressWarnings( "unused" )
     private void neverCall()
     {
         fail( "Don't call me !" );

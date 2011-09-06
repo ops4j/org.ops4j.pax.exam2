@@ -1,11 +1,14 @@
 package org.ops4j.pax.exam.multifw;
 
+import static org.ops4j.pax.exam.CoreOptions.easyMockBundles;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.createTestSystem;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.getTestContainerFactory;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
@@ -14,9 +17,6 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
-import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
  *
@@ -28,7 +28,6 @@ public class SimpleMultiTest {
         throws Exception
     {
         Option[] options = new Option[]{
-            junitBundles(),
             easyMockBundles()
         };	
         ExamSystem system = createTestSystem(options);

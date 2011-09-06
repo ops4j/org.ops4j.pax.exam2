@@ -24,6 +24,8 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.CoreOptions.vmOptions;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -40,6 +42,9 @@ import org.osgi.framework.BundleContext;
 public class PdeExplodedReferenceTest
 {
 
+    @Inject
+    private BundleContext bc;
+    
     @Configuration( )
     public Option[] config()
     {
@@ -51,7 +56,7 @@ public class PdeExplodedReferenceTest
     }
 
     @Test
-    public void getHelloService( BundleContext bc )
+    public void getHelloService()
     {
         Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
         assertThat( service, is( notNullValue() ) );

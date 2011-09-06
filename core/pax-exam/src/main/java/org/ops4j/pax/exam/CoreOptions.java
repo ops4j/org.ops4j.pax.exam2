@@ -20,6 +20,7 @@ package org.ops4j.pax.exam;
 import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
 import static org.ops4j.lang.NullArgumentException.validateNotNull;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.OptionUtils.expand;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.List;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
+import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.CustomFrameworkOption;
 import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
@@ -844,9 +846,11 @@ public class CoreOptions
      *
      * @return junit bundles option
      */
-    public static JUnitBundlesOption junitBundles()
+    public static CompositeOption junitBundles()
     {
-        return new JUnitBundlesOption();
+        return new DefaultCompositeOption(new JUnitBundlesOption(), 
+            systemProperty( "pax.exam.invoker" ).value( "junit" ),            
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-junit", Info.getPaxExamVersion()));
     }
 
     /**

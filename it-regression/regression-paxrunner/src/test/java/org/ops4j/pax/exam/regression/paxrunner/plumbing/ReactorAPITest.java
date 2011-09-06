@@ -15,12 +15,15 @@
  */
 package org.ops4j.pax.exam.regression.paxrunner.plumbing;
 
+import static org.ops4j.pax.exam.CoreOptions.easyMockBundles;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.createTestSystem;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.getTestContainerFactory;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
@@ -33,11 +36,8 @@ import org.ops4j.pax.exam.spi.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
-
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
-import static org.ops4j.pax.exam.CoreOptions.*;
 
 /**
  * Simple regression
@@ -68,7 +68,7 @@ public class ReactorAPITest
         throws Exception
     {
         TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{ junitBundles(), easyMockBundles() };
+        Option[] options = new Option[]{ easyMockBundles() };
         
         ExamSystem system = createTestSystem();
         ExamReactor reactor = new DefaultExamReactor( system, factory );

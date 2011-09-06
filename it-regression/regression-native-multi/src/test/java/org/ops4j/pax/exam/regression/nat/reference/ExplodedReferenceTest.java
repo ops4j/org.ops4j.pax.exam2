@@ -23,6 +23,8 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -38,7 +40,9 @@ import org.osgi.framework.BundleContext;
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class ExplodedReferenceTest
 {
-
+    @Inject
+    private BundleContext bc;
+    
     @Configuration( )
     public Option[] config()
     {
@@ -50,7 +54,7 @@ public class ExplodedReferenceTest
     }
 
     @Test
-    public void getHelloService( BundleContext bc )
+    public void getHelloService()
     {
         Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
         assertThat( service, is( notNullValue() ) );

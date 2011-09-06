@@ -1,19 +1,25 @@
 package org.ops4j.pax.exam.multifw;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
+import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.profile;
+
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.osgi.framework.BundleContext;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.testforge.CountBundles;
-
-import static org.hamcrest.core.Is.*;
-import static org.hamcrest.core.IsNull.*;
-import static org.junit.Assert.*;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import org.osgi.framework.BundleContext;
 
 /**
  *
@@ -21,6 +27,9 @@ import static org.ops4j.pax.exam.CoreOptions.*;
 @RunWith( JUnit4TestRunner.class )
 public class JUnitMultiFwTest {
 
+    @Inject
+    private BundleContext ctx;
+    
     @Configuration()
     public Option[] config()
     {
@@ -32,7 +41,7 @@ public class JUnitMultiFwTest {
     }
 
     @Test
-    public void withBC( BundleContext ctx )
+    public void withBC( )
     {
         assertThat( ctx, is( notNullValue() ) );
         System.out.println( "BundleContext of bundle injected: " + ctx.getBundle().getSymbolicName() );

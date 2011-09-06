@@ -18,14 +18,17 @@ package org.ops4j.pax.exam.regression.nat.fragment;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.url;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +53,9 @@ import org.osgi.framework.Constants;
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class FragmentTest
 {
-
+    @Inject
+    private BundleContext bc;
+    
     @Configuration( )
     public Option[] config()
     {
@@ -82,7 +87,7 @@ public class FragmentTest
     }
 
     @Test
-    public void getHelloService( BundleContext bc )
+    public void getHelloService()
     {
         for ( Bundle bundle : bc.getBundles() )
         {

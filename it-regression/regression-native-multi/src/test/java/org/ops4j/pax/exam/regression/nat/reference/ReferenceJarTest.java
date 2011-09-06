@@ -18,9 +18,13 @@ package org.ops4j.pax.exam.regression.nat.reference;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.systemTimeout;
 import static org.ops4j.pax.exam.CoreOptions.url;
+
+import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +41,9 @@ import org.osgi.framework.BundleContext;
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class ReferenceJarTest
 {
-
+    @Inject
+    private BundleContext bc;
+    
     @Configuration( )
     public Option[] config()
     {
@@ -50,7 +56,7 @@ public class ReferenceJarTest
     }
 
     @Test
-    public void getHelloService( BundleContext bc )
+    public void getHelloService()
     {
         Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
         assertThat( service, is( notNullValue() ) );

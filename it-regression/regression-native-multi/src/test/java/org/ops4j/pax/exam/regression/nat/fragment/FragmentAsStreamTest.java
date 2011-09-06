@@ -26,6 +26,8 @@ import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Info;
@@ -45,6 +47,9 @@ import org.osgi.framework.Constants;
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class FragmentAsStreamTest
 {
+    @Inject
+    private BundleContext bc;
+    
 
     @Configuration( )
     public Option[] config()
@@ -68,7 +73,7 @@ public class FragmentAsStreamTest
     }
 
     @Test
-    public void getHelloService( BundleContext bc )
+    public void getHelloService()
     {
         for ( Bundle bundle : bc.getBundles() )
         {

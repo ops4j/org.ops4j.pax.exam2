@@ -24,6 +24,8 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -39,7 +41,9 @@ import org.osgi.service.startlevel.StartLevel;
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class SystemPropertyTest
 {
-
+    @Inject
+    private BundleContext bc;
+    
     @Configuration
     public Option[] config()
     {
@@ -52,7 +56,7 @@ public class SystemPropertyTest
     }
 
     @Test
-    public void startLevel( BundleContext bc )
+    public void startLevel()
     {
         assertThat( System.getProperty( "felix.startlevel.bundle" ), is("2"));
         assertThat( System.getProperty( "foo" ), is("bar"));

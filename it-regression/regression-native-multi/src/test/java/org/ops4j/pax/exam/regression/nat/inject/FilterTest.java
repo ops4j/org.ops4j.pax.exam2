@@ -20,15 +20,14 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.url;
 
 import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
@@ -62,13 +61,6 @@ public class FilterTest
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             systemProperty("osgi.console").value("6666"),
             junitBundles() );
-    }
-
-    @Test
-    public void getServiceByLookup( BundleContext bc )
-    {
-        Object service = ServiceLookup.getService( bc, HelloService.class );
-        assertThat( service, is( notNullValue() ) );
     }
 
     @Test

@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
@@ -118,7 +117,7 @@ public class BareAPITest {
 		return probe.build();
 	}
 
-	private Method[] getAllMethods(Class c) {
+	private Method[] getAllMethods(Class<?> c) {
 		List<Method> methods = new ArrayList<Method>();
 		for (Method m : c.getDeclaredMethods()) {
 			if (m.getModifiers() == Modifier.PUBLIC) {

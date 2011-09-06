@@ -16,17 +16,21 @@
 package org.ops4j.pax.exam.regression.paxrunner.cache;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+
+import javax.inject.Inject;
 
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
 abstract public class CacheTestBase
 {
+    @Inject
+    private BundleContext bc;
+    
     @Test
-    public void countBundles( BundleContext bc )
+    public void countBundles()
     {
-        assertThat(bc.getBundles().length, is(9));
+        assertThat(bc.getBundles().length, is(10));
     }
 }

@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 
 import java.util.List;
@@ -72,6 +73,8 @@ public class MockitoTest
             wrappedBundle( mavenBundle( "junit", "junit-dep", "4.8.1" ) ).exports( "*;version=4.8.1" ),
 
             
+            systemProperty( "pax.exam.invoker" ).value( "junit" ),            
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-junit", Info.getPaxExamVersion()),
             /*
              * Felix has implicit boot delegation enabled by default, which causes the following 
              * exception: 

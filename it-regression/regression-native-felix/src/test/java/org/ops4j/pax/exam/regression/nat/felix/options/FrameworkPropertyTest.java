@@ -23,6 +23,8 @@ import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -38,7 +40,9 @@ import org.osgi.service.startlevel.StartLevel;
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class FrameworkPropertyTest
 {
-
+    @Inject
+    private BundleContext bc;
+    
     @Configuration
     public Option[] config()
     {
@@ -49,7 +53,7 @@ public class FrameworkPropertyTest
     }
 
     @Test
-    public void startLevel( BundleContext bc )
+    public void startLevel()
     {
         StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );
         assertThat( startLevel, is( notNullValue() ) );
