@@ -29,6 +29,7 @@ import java.net.URL;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -50,13 +51,11 @@ import org.osgi.framework.Constants;
 public class FragmentTest
 {
 
-    private static final String PAX_EXAM_VERSION = "2.2.1-SNAPSHOT";
-
     @Configuration( )
     public Option[] config()
     {
         return options(
-            mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", PAX_EXAM_VERSION ),
+            mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
             url( createFragmentBundle().toExternalForm() ).noStart(),
             junitBundles(),
             cleanCaches() );

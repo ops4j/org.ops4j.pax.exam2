@@ -29,6 +29,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
@@ -57,7 +58,7 @@ public class InjectTest
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", "2.2.1-SNAPSHOT" ),
+            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", Info.getPaxExamVersion() ),
             systemProperty("pax.exam.inject").value("true"),
             junitBundles() );
     }

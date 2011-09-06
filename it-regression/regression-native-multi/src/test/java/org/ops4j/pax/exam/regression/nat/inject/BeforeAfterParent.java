@@ -26,6 +26,7 @@ import java.util.prefs.Preferences;
 
 import org.junit.After;
 import org.junit.Before;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -40,8 +41,8 @@ public class BeforeAfterParent
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", "2.2.1-SNAPSHOT" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-invoker-junit", "2.2.1-SNAPSHOT" ),
+            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", Info.getPaxExamVersion() ),
+            mavenBundle( "org.ops4j.pax.exam", "pax-exam-invoker-junit", Info.getPaxExamVersion() ),
             systemProperty( "pax.exam.inject" ).value( "true" ),
             systemProperty( "pax.exam.invoker" ).value( "junit" ),
             junitBundles() );

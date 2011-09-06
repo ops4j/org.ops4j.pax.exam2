@@ -7,6 +7,7 @@ import static org.testng.Assert.*;
 
 import javax.inject.Inject;
 
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.testng.Configuration;
 import org.osgi.framework.BundleContext;
@@ -44,7 +45,7 @@ public class TestNGExamTest
             //wrappedBundle(mavenBundle("org.yaml", "snakeyaml", "1.6")),
 
             mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", "2.2.1-SNAPSHOT" ),
+            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", Info.getPaxExamVersion() ),
             systemProperty( "pax.exam.inject" ).value( "true" ),
             systemProperty( "osgi.console" ).value( "6666" ) );
     }
