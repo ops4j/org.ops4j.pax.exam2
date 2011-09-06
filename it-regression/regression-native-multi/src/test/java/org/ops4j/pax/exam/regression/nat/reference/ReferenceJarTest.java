@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.regression.nat.reference;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 
@@ -44,6 +44,8 @@ public class ReferenceJarTest
         return options(
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
+                    systemProperty("osgi.console").value("6666"),
+                    systemTimeout(10000 * 1000),
             junitBundles() );
     }
 

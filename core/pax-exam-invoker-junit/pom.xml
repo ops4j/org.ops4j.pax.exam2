@@ -40,13 +40,6 @@
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-util</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-extender-service</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

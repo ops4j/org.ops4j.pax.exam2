@@ -10,9 +10,10 @@ Bundle-SymbolicName:\
 Export-Package: org.ops4j.pax.exam.raw.extender
 
 -exportcontents: org.ops4j.pax.exam;version="${pom.version}",\
- org.ops4j.pax.exam.options;version="${pom.version}"
+ org.ops4j.pax.exam.options;version="${pom.version}",\
+ org.ops4j.pax.exam.util;version="${pom.version}"
 
-Import-Package: org.ops4j.pax.exam,!org.slf4j.impl,*
+Import-Package: org.ops4j.pax.exam,org.ops4j.pax.exam.util,!org.slf4j.impl,*
 
 Private-Package:\
   ${bundle.namespace}.*

@@ -49,6 +49,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.service.startlevel.StartLevel;
@@ -93,6 +94,7 @@ public class NativeTestContainer implements TestContainer
         assert serviceType != null : "serviceType not be null";
 
         LOG.debug( "Acquiring Service " + serviceType.getName() + " " + (filter != null ? filter : "") );
+        printServices(serviceType);
         try
         {
             ServiceTracker tracker = new ServiceTracker( m_framework.getBundleContext(), m_framework.getBundleContext().createFilter( filter ), null );
@@ -109,6 +111,25 @@ public class NativeTestContainer implements TestContainer
         } catch ( InterruptedException e )
         {
             throw new TestContainerException( "Interrupted while acquiring service of type " + serviceType.getName(), e );
+        }
+    }
+    
+    private <T> void printServices(Class<T> serviceType) {
+        BundleContext bc = m_framework.getBundleContext();
+        try
+        {
+            ServiceReference[] refs = bc.getServiceReferences( serviceType.getName(), null );
+            if (refs == null)
+                return;
+            
+            for (ServiceReference ref : refs) {
+                LOG.info("ref = {}", ref);
+            }
+        }
+        catch ( InvalidSyntaxException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

@@ -15,9 +15,6 @@
  */
 package org.ops4j.pax.exam.regression.paxrunner.cache;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -28,18 +25,16 @@ import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 
 import java.io.File;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.osgi.framework.BundleContext;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class CacheTestCleanTrue
+public class CacheTestCleanTrue extends CacheTestBase
 {
     @Configuration( )
     public Option[] config()
@@ -52,11 +47,5 @@ public class CacheTestCleanTrue
             equinox(),
             felix(),
             knopflerfish() );
-    }
-
-    @Test
-    public void countBundles( BundleContext bc )
-    {
-        assertThat(bc.getBundles().length, is(equalTo(8)));
     }
 }

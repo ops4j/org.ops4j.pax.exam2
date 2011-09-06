@@ -28,7 +28,6 @@
                 <module>core/pax-exam-extender-service</module>
                 <module>core/pax-exam-inject</module>
                 <module>core/pax-exam-invoker-junit</module>
-                <module>core/pax-exam-util</module>
                 <module>containers/pax-exam-container-native</module>
                 <module>forge/pax-exam-testforge</module>
                 <module>drivers/pax-exam-player</module>

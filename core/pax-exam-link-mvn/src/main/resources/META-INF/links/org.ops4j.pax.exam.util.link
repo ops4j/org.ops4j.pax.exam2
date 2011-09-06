@@ -1,1 +1,0 @@
-mvn:org.ops4j.pax.exam/pax-exam-util/${project.version}
