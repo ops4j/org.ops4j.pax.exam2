@@ -27,6 +27,6 @@ abstract public class CacheTestBase
     @Test
     public void countBundles( BundleContext bc )
     {
-        assertThat(bc.getBundles().length, is(equalTo(7)));
+        assertThat(bc.getBundles().length, is(9));
     }
 }

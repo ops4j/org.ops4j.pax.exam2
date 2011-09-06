@@ -44,9 +44,6 @@ public class TestNGExamTest
             //mavenBundle("com.google.inject", "guice", "2.0"),
             //wrappedBundle(mavenBundle("org.yaml", "snakeyaml", "1.6")),
 
-            mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", Info.getPaxExamVersion() ),
-            systemProperty( "pax.exam.inject" ).value( "true" ),
             systemProperty( "osgi.console" ).value( "6666" ) );
     }
 

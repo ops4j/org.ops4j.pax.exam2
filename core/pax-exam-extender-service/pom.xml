@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>2.3.0.M1-SNAPSHOT</version>
         <relativePath>../../pom/pom.xml</relativePath>
     </parent>
 
@@ -34,12 +34,6 @@
             <artifactId>pax-exam</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-util</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Version must match the Pax Logging exported API. Otherwise things will not work -->

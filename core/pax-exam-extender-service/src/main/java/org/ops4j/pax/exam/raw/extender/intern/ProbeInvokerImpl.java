@@ -52,7 +52,8 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         
         // acquire (optional) injector
         // TODO replace system property by core configuration option
-        boolean inject = "true".equals(System.getProperty( "pax.exam.inject" ));
+        //boolean inject = "true".equals(System.getProperty( "pax.exam.inject" ));
+        boolean inject = true;
         if (inject) {
             m_injector = ServiceLookup.getService( m_ctx, Injector.class );
         }

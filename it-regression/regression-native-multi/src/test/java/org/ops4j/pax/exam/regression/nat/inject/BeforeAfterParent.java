@@ -40,11 +40,9 @@ public class BeforeAfterParent
         return options(
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
-            mavenBundle( "org.apache.geronimo.specs", "geronimo-atinject_1.0_spec", "1.0" ),
-            mavenBundle( "org.ops4j.pax.exam", "pax-exam-inject", Info.getPaxExamVersion() ),
             mavenBundle( "org.ops4j.pax.exam", "pax-exam-invoker-junit", Info.getPaxExamVersion() ),
-            systemProperty( "pax.exam.inject" ).value( "true" ),
             systemProperty( "pax.exam.invoker" ).value( "junit" ),
+            systemProperty( "osgi.console" ).value( "6666" ),
             junitBundles() );
     }
 

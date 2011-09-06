@@ -54,18 +54,7 @@ public class JUnitProbeInvoker implements ProbeInvoker
         m_clazz = parts[0];
         m_method = parts[1];
         m_ctx = bundleContext;
-
-        // acquire (optional) injector
-        // TODO replace system property by core configuration option
-        boolean inject = "true".equals( System.getProperty( "pax.exam.inject" ) );
-        if( inject )
-        {
-            m_injector = ServiceLookup.getService( m_ctx, Injector.class );
-        }
-        else
-        {
-            // m_injector = new NoOpInjector();
-        }
+        m_injector = ServiceLookup.getService( m_ctx, Injector.class );
     }
 
     public void call( Object... args )
