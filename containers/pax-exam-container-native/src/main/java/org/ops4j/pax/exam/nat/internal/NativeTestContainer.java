@@ -404,14 +404,13 @@ public class NativeTestContainer implements TestContainer
                 FrameworkEvent frameworkEvent = m_framework.waitForStop( timeout );
                 if( frameworkEvent.getType() != FrameworkEvent.STOPPED )
                 {
-                    String message = String.format("Framework has not yet stopped after %d  ms. " +
-                    		"waitForStop returned: %s", timeout, frameworkEvent);
-                    throw new TestContainerException( message );
+                    LOG.error( "Framework has not yet stopped after {} ms. " +
+                            "waitForStop returned: {}", timeout, frameworkEvent );
                 }
             }
             catch ( InterruptedException exc )
             {
-                throw new TestContainerException( exc );
+                LOG.error( "Stopper thread was interrupted" );
             }
         }
     }
