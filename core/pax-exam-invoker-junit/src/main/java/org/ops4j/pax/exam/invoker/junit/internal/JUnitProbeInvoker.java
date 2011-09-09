@@ -109,7 +109,7 @@ public class JUnitProbeInvoker implements ProbeInvoker
         List<Failure> failures = result.getFailures();
         if( !failures.isEmpty() )
         {
-            throw new TestContainerException( failures.toString() );
+            throw new TestContainerException( failures.toString(), failures.get( 0 ).getException() );
         }
     }
 }
