@@ -30,7 +30,7 @@ public class TestNGExamTest
              * A pull request is pending.
              */
             
-            mavenBundle( "org.testng", "testng", "6.3-SNAPSHOT" ),
+            mavenBundle( "org.testng", "testng", "6.2.1" ),
             
             /*
              * The following are optional direct and transitive dependencies
