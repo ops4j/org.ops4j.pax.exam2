@@ -70,7 +70,7 @@ public class MockitoTest
             mavenBundle( "org.mockito", "mockito-all", "1.8.5" ),
 
             // JUnit without Hamcrest
-            wrappedBundle( mavenBundle( "junit", "junit-dep", "4.8.1" ) ).exports( "*;version=4.8.1" ),
+            wrappedBundle( mavenBundle( "junit", "junit-dep", "4.9" ) ).exports( "*;version=4.9" ),
 
             
             systemProperty( "pax.exam.invoker" ).value( "junit" ),            
@@ -117,7 +117,7 @@ public class MockitoTest
             wrappedBundle( mavenBundle( "org.objenesis", "objenesis", "1.2" ) ).exports( "*;version=1.2" ),
 
             // The default JUnit bundle also exports Hamcrest, but with an (incorrect) version of
-            // 4.8.1 which does not match the Mockito import.
+            // 4.9 which does not match the Mockito import.
             junitBundles(),
 
             // see config1()
