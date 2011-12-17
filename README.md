@@ -31,19 +31,19 @@ Run Build:
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 2.1.0.
+The current release of Pax Exam is 2.3.0.
 
 ## Issue Tracking
 
-* <http://github.com/ops4j/org.ops4j.pax.exam2/issues>
+* <http://team.ops4j.org/browse/PAXEXAM>
 
 ## Continuus Integration Builds
 
 We have a continuus integration build set up here:
 
-* <http://ci.okidokiteam.com/hudson/job/org.ops4j.pax.exam2>
+* <http://ci.ops4j.org/hudson/job/org.ops4j.pax.exam2>
 
-Artifacts are being published to:
+Snapshot artifacts are being published to:
 
 * <https://oss.sonatype.org/content/repositories/ops4j-snapshots>
 
