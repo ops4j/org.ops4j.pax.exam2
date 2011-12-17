@@ -41,6 +41,7 @@
                 <module>core/pax-exam-container-rbc-client</module>
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
+                <module>containers/pax-exam-container-forked</module>
 
                 <module>it-regression/regression-native-felix</module>
                 <module>it-regression/regression-native-multi</module>
