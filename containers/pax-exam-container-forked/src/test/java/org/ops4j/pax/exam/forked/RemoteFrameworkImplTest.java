@@ -17,18 +17,13 @@
  */
 package org.ops4j.pax.exam.forked;
 
-import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ServiceLoader;
 
 import org.junit.Test;
-import org.ops4j.pax.exam.forked.RemoteFramework;
-import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.launch.FrameworkFactory;
 
 public class RemoteFrameworkImplTest
 {

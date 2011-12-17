@@ -24,9 +24,6 @@ import java.util.Collections;
 import java.util.ServiceLoader;
 
 import org.junit.Test;
-import org.ops4j.pax.exam.forked.ForkedFrameworkFactory;
-import org.ops4j.pax.exam.forked.RemoteFramework;
-import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
 
@@ -48,17 +45,15 @@ public class ForkedFrameworkFactoryTest
         RemoteFramework framework = forkedFactory.fork(Collections.<String, String>emptyMap(), Collections.<String, Object>emptyMap());
         framework.start();
         
-        long bundleId = framework.installBundle( "file:/home/hwellmann/.m2/repository/org/ops4j/pax/exam/regression-pde-bundle/2.3.0.M1/regression-pde-bundle-2.3.0.M1.jar" );
+        long bundleId = framework.installBundle( "file:target/bundles/regression-pde-bundle-2.3.0.jar" );
         framework.startBundle( bundleId );
 
         framework.callService( "(objectClass=org.ops4j.pax.exam.regression.pde.HelloService)", "getMessage" );
         
         Thread.sleep( 3000 );
         framework.stop();
-        //context.waitForState( 0, Bundle., timeout )
         
-        forkedFactory.join();
-        
+        forkedFactory.join();        
     }
 
 }

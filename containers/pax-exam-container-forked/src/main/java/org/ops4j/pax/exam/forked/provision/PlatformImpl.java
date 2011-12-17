@@ -359,19 +359,4 @@ public class PlatformImpl
         }
         return bundleSymbolicName + "_" + bundleVersion + ".jar";
     }
-
-    /**
-     * Creates a working directory.
-     *
-     * @param path path to working directory.
-     *
-     * @return a working directory.
-     */
-    private File createWorkingDir( final String path )
-    {
-        File workDir = new File( path );
-        workDir.mkdirs();
-        return workDir;
-    }
-
 }

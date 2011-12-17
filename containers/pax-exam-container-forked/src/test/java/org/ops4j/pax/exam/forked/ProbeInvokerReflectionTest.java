@@ -42,7 +42,6 @@ public class ProbeInvokerReflectionTest
     {
         Object target = new MyProbeInvoker();
         Method method = target.getClass().getMethod( "call", Object[].class );
-        Class<?>[] parameterTypes = method.getParameterTypes();
         method.invoke( target, (Object) new Object[]{} );
     }
 }

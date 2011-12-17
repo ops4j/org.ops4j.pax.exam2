@@ -176,9 +176,20 @@ public class RemoteFrameworkImpl implements RemoteFramework
             if (service == null) {
                 throw new IllegalStateException("could not acquire ProbeInvoker service");
             }
-            Method method = service.getClass().getMethod( methodName, Object[].class );
-            System.out.println("method = " + method);
-            method.invoke( service, (Object) new Object[] {} );
+            Class<? extends Object> klass = service.getClass();
+            Method method;
+            try
+            {
+                method = klass.getMethod( methodName, Object[].class );
+                System.out.println("method = " + method);
+                method.invoke( service, (Object) new Object[] {} );
+            }
+            catch ( NoSuchMethodException e )
+            {
+                method = klass.getMethod( methodName);
+                System.out.println("method = " + method);
+                method.invoke( service );
+            }            
             tracker.close();
         }
         catch ( InvalidSyntaxException exc )
@@ -210,7 +221,6 @@ public class RemoteFrameworkImpl implements RemoteFramework
             throw new IllegalStateException(exc);
         }        
     }
-    
 
     @SuppressWarnings( "unchecked" )
     public static <T> T getService( BundleContext context, Class<T> klass, int timeout )
