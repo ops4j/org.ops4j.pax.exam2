@@ -21,17 +21,47 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.osgi.framework.BundleException;
+import org.osgi.framework.launch.Framework;
+import org.osgi.service.startlevel.StartLevel;
 
+/**
+ * An RMI-capable variant of the OSGi {@link Framework} interface.
+
+ * @author Harald Wellmann
+ */
 public interface RemoteFramework extends Remote
 {
+    /**
+     * Initializes the framework.
+     * 
+     * @see {@link Framework#init}
+     * @throws RemoteException
+     * @throws BundleException
+     */
     void init() throws RemoteException, BundleException;
+
+    /**
+     * Starts the framework.
+     * 
+     * @see {@link Framework#start}
+     * @throws RemoteException
+     * @throws BundleException
+     */
     void start() throws RemoteException, BundleException;
+
+    /**
+     * Stops the framework.
+     * 
+     * @see {@link Framework#start}
+     * @throws RemoteException
+     * @throws BundleException
+     */
     void stop() throws RemoteException, BundleException;
     
     /**
-     * Installs a bundle remotly.
+     * Installs a bundle remotely.
      *
-     * @param bundleUrl url of the bundle to be installed. The url must be accessible from the remote OSGi container.
+     * @param bundleUrl url of the bundle to be installed. The url must be accessible from the remote framework.
      * @return bundle id of the installed bundle
      * @throws RemoteException - Remote communication related exception (mandatory by RMI)
      * @throws BundleException - Re-thrown from installing the bundle
@@ -40,7 +70,7 @@ public interface RemoteFramework extends Remote
             throws RemoteException, BundleException;
 
     /**
-     * Installs a bundle remotly given the bundle content.
+     * Installs a bundle remotely, given the bundle content.
      *
      * @param bundleLocation bundle location
      * @param bundle         bundle content as a byte array
@@ -92,8 +122,8 @@ public interface RemoteFramework extends Remote
      * @throws BundleException  - If bundle cannot be found
      * @throws org.ops4j.pax.exam.TimeoutException - if timeout occured and expected state has not being reached
      */
-//    void waitForState(long bundleId, int state, RelativeTimeout timeout)
-//            throws RemoteException, BundleException, TimeoutException;
+    void waitForState(long bundleId, int state, long timeoutInMillis)
+            throws RemoteException, BundleException;
 
     /**
      * @param id of bundle to uninstall
@@ -105,7 +135,13 @@ public interface RemoteFramework extends Remote
     
     void callService(String filter, String methodName) throws RemoteException, BundleException;
     
-    void setFrameworkStartLevel(int startLevel) throws RemoteException, BundleException;
+    /**
+     * Sets the framework startlevel.
+     * @see {@link StartLevel#setStartLevel(int)}
+     * @param startLevel
+     * @throws RemoteException
+     */
+    void setFrameworkStartLevel(int startLevel) throws RemoteException;
     
 
 }

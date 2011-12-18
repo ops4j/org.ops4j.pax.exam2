@@ -43,9 +43,14 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.service.startlevel.StartLevel;
 import org.osgi.util.tracker.ServiceTracker;
 
+/**
+ * Implements the {@link RemoteFramework} interface by instantiating a local {@link Framework},
+ * exporting it via an RMI registry and delegating all remote calls to the local framework.
+ * 
+ * @author Harald Wellmann
+ */
 public class RemoteFrameworkImpl implements RemoteFramework
-{
-    
+{    
     private Framework framework;
     private Registry registry;
     private String name;
@@ -60,8 +65,8 @@ public class RemoteFrameworkImpl implements RemoteFramework
 
     private void export() throws RemoteException, AccessException
     {
-        String port = System.getProperty( "org.ops4j.rmi.port", "1099" );
-        name = System.getProperty( "org.ops4j.rmi.name");
+        String port = System.getProperty( "org.ops4j.pax.exam.rmi.port", "1099" );
+        name = System.getProperty( "org.ops4j.pax.exam.rmi.name");
         registry = LocateRegistry.getRegistry( Integer.parseInt( port ) );
         URL location = getClass().getProtectionDomain().getCodeSource().getLocation();
         URL location2 = Bundle.class.getProtectionDomain().getCodeSource().getLocation();
@@ -152,16 +157,6 @@ public class RemoteFrameworkImpl implements RemoteFramework
         return props;
     }
     
-    
-    public static void main( String[] args ) throws RemoteException, AlreadyBoundException, BundleException, InterruptedException
-    {
-        Map<String,String> props = buildFrameworkProperties(args);
-//        props.put( "osgi.console", "6666" );
-//        props.put( org.osgi.framework.Constants.FRAMEWORK_STORAGE, "target/storage" );
-        RemoteFrameworkImpl impl = new RemoteFrameworkImpl( props );
-        impl.start();
-    }
-
     public void callService( String filter, String methodName ) throws RemoteException, BundleException
     {
         try
@@ -169,7 +164,7 @@ public class RemoteFrameworkImpl implements RemoteFramework
             System.out.println("acquiring service " + filter);
             BundleContext bc = framework.getBundleContext();
             Filter parsedFilter = bc.createFilter( filter );
-            ServiceTracker tracker = new ServiceTracker(bc, parsedFilter, null);
+            ServiceTracker<?, ?> tracker = new ServiceTracker<Object, Object>(bc, parsedFilter, null);
             tracker.open();
             tracker.waitForService( 30000 );
             Object service = tracker.getService();
@@ -225,7 +220,7 @@ public class RemoteFrameworkImpl implements RemoteFramework
     @SuppressWarnings( "unchecked" )
     public static <T> T getService( BundleContext context, Class<T> klass, int timeout )
     {
-        ServiceTracker tracker = new ServiceTracker( context, klass.getName(), null );
+        ServiceTracker<T, T> tracker = new ServiceTracker<T, T>( context, klass.getName(), null );
         try
         {
             tracker.open();
@@ -252,7 +247,17 @@ public class RemoteFrameworkImpl implements RemoteFramework
         StartLevel sl = getService( bc, StartLevel.class, 3000 );
         sl.setStartLevel( startLevel );
     }
+
+    public void waitForState( long bundleId, int state, long timeoutInMillis )
+        throws RemoteException, BundleException
+    {
+        throw new UnsupportedOperationException( "not yet implemented" );
+    }
     
-    
-    
+    public static void main( String[] args ) throws RemoteException, AlreadyBoundException, BundleException, InterruptedException
+    {
+        Map<String,String> props = buildFrameworkProperties(args);
+        RemoteFrameworkImpl impl = new RemoteFrameworkImpl( props );
+        impl.start();
+    }
 }

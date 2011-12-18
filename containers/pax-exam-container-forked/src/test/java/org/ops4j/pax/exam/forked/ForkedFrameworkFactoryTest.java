@@ -31,29 +31,33 @@ public class ForkedFrameworkFactoryTest
 {
 
     @Test
-    public void forkEquinox() throws BundleException, IOException, InterruptedException, NotBoundException
-    {        
+    public void forkEquinox() throws BundleException, IOException, InterruptedException,
+        NotBoundException
+    {
         ServiceLoader<FrameworkFactory> loader = ServiceLoader.load( FrameworkFactory.class );
         FrameworkFactory frameworkFactory = loader.iterator().next();
 
-        ForkedFrameworkFactory forkedFactory = new ForkedFrameworkFactory();
-        forkedFactory.setFrameworkFactory( frameworkFactory );
-        File storage = new File("target/storage" );
+        File storage = new File( "target/storage" );
         storage.mkdir();
-        forkedFactory.setStorage( storage );
-        
-        RemoteFramework framework = forkedFactory.fork(Collections.<String, String>emptyMap(), Collections.<String, Object>emptyMap());
+        ForkedFrameworkFactory forkedFactory =
+            new ForkedFrameworkFactory( frameworkFactory, storage );
+
+        RemoteFramework framework =
+            forkedFactory.fork( Collections.<String, String> emptyMap(),
+                Collections.<String, Object> emptyMap() );
         framework.start();
-        
-        long bundleId = framework.installBundle( "file:target/bundles/regression-pde-bundle-2.3.0.jar" );
+
+        long bundleId =
+            framework.installBundle( "file:target/bundles/regression-pde-bundle-2.3.0.jar" );
         framework.startBundle( bundleId );
 
-        framework.callService( "(objectClass=org.ops4j.pax.exam.regression.pde.HelloService)", "getMessage" );
-        
+        framework.callService( "(objectClass=org.ops4j.pax.exam.regression.pde.HelloService)",
+            "getMessage" );
+
         Thread.sleep( 3000 );
         framework.stop();
-        
-        forkedFactory.join();        
+
+        forkedFactory.join();
     }
 
 }

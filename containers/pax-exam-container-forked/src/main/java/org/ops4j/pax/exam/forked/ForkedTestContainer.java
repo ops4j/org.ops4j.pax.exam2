@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.forked;
 
+import static org.osgi.framework.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import java.io.ByteArrayOutputStream;
@@ -31,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ops4j.io.StreamUtils;
-import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
@@ -50,10 +50,23 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A {@link TestContainer} which launches an OSGi framework in a forked Java VM to isolate the
+ * framework parent class loader from the application class loader containing Pax Exam and
+ * additional user classes.
+ * <p>
+ * The drawback of this container is that remote debugging is required to debug the tests executed
+ * by the forked framework.
+ * <p>
+ * TODO remove hard-coded paths TODO support additional Exam options
+ * 
+ * @author Harald Wellmann
+ * 
+ */
 public class ForkedTestContainer implements TestContainer
 {
     private static Logger LOG = LoggerFactory.getLogger( ForkedTestContainer.class );
-    
+
     private ExamSystem system;
     private ForkedFrameworkFactory frameworkFactory;
     private RemoteFramework remoteFramework;
@@ -62,16 +75,16 @@ public class ForkedTestContainer implements TestContainer
     public ForkedTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
         this.system = system;
-        this.frameworkFactory = new ForkedFrameworkFactory();
-        this.frameworkFactory.setFrameworkFactory( frameworkFactory );
-        this.frameworkFactory.setStorage( new File("target/storage") );
+        File storage = new File( "target/storage" );
+        this.frameworkFactory = new ForkedFrameworkFactory( frameworkFactory, storage );
         this.platform = new PlatformImpl();
     }
 
-    
     public void call( TestAddress address )
     {
-        String filterExpression = "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker)(Probe-Signature=" + address.root().identifier() + "))";
+        String filterExpression =
+            "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker)(Probe-Signature="
+                    + address.root().identifier() + "))";
         try
         {
             remoteFramework.callService( filterExpression, "call" );
@@ -101,12 +114,12 @@ public class ForkedTestContainer implements TestContainer
             throw new TestContainerException( exc );
         }
     }
-    
+
     public long install( InputStream stream )
     {
         try
         {
-            long bundleId = remoteFramework.installBundle( "local", pack(stream) );
+            long bundleId = remoteFramework.installBundle( "local", pack( stream ) );
             remoteFramework.startBundle( bundleId );
             return bundleId;
         }
@@ -124,12 +137,12 @@ public class ForkedTestContainer implements TestContainer
     {
         try
         {
-            system = system.fork( new Option[] {
-                systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
+            system = system.fork( new Option[]{
+                systemProperty( "java.protocol.handler.pkgs" ).value( "org.ops4j.pax.url" )
             } );
             Map<String, String> systemProperties = createSystemProperties();
             Map<String, Object> frameworkProperties = createFrameworkProperties();
-            remoteFramework = frameworkFactory.fork(systemProperties, frameworkProperties);
+            remoteFramework = frameworkFactory.fork( systemProperties, frameworkProperties );
             remoteFramework.init();
             installAndStartBundles();
         }
@@ -169,25 +182,30 @@ public class ForkedTestContainer implements TestContainer
         frameworkFactory.join();
         return this;
     }
-    
+
     private byte[] pack( InputStream stream )
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
+        try
+        {
             StreamUtils.copyStream( stream, out, true );
-        } catch( IOException e ) {
+        }
+        catch ( IOException e )
+        {
 
         }
         return out.toByteArray();
     }
-    
-    private Map<String, Object> createFrameworkProperties( ) throws IOException
+
+    private Map<String, Object> createFrameworkProperties() throws IOException
     {
         final Map<String, Object> p = new HashMap<String, Object>();
-        p.put( org.osgi.framework.Constants.FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath() );
-        p.put( org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( system.getOptions( SystemPackageOption.class ) ) );
-        p.put( org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION, buildString( system.getOptions( BootDelegationOption.class ) ) );
-        
+        p.put( FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath() );
+        p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA,
+            buildString( system.getOptions( SystemPackageOption.class ) ) );
+        p.put( FRAMEWORK_BOOTDELEGATION,
+            buildString( system.getOptions( BootDelegationOption.class ) ) );
+
         for ( FrameworkPropertyOption option : system.getOptions( FrameworkPropertyOption.class ) )
         {
             p.put( option.getKey(), option.getValue() );
@@ -199,16 +217,17 @@ public class ForkedTestContainer implements TestContainer
         }
         return p;
     }
-    
-    private Map<String, String> createSystemProperties() {
+
+    private Map<String, String> createSystemProperties()
+    {
         Map<String, String> p = new HashMap<String, String>();
         for ( SystemPropertyOption option : system.getOptions( SystemPropertyOption.class ) )
         {
-            p.put(option.getKey(), option.getValue());
+            p.put( option.getKey(), option.getValue() );
         }
         return p;
     }
-    
+
     private String buildString( ValueOption<?>[] options )
     {
         return buildString( new String[0], options, new String[0] );
@@ -232,10 +251,11 @@ public class ForkedTestContainer implements TestContainer
             builder.append( a );
             builder.append( "," );
         }
-        if ( builder.length() > 0 )
+        if( builder.length() > 0 )
         {
             return builder.substring( 0, builder.length() - 1 );
-        } else
+        }
+        else
         {
             return "";
         }
@@ -246,11 +266,11 @@ public class ForkedTestContainer implements TestContainer
         remoteFramework.start();
         for ( ProvisionOption<?> bundle : system.getOptions( ProvisionOption.class ) )
         {
-            String localUrl = localizeBundle( bundle.getURL() );
+            String localUrl = downloadBundle( bundle.getURL() );
             long bundleId = remoteFramework.installBundle( localUrl );
             int startLevel = getStartLevel( bundle );
             remoteFramework.setBundleStartLevel( bundleId, startLevel );
-            if ( bundle.shouldStart() )  
+            if( bundle.shouldStart() )
             {
                 remoteFramework.startBundle( bundleId );
                 LOG.debug( "+ Install (start@{}) {}", startLevel, bundle );
@@ -266,22 +286,21 @@ public class ForkedTestContainer implements TestContainer
         remoteFramework.setFrameworkStartLevel( startLevel );
         try
         {
-            Thread.sleep(1000);
+            Thread.sleep( 1000 );
         }
-        catch ( InterruptedException e )
+        catch ( InterruptedException exc )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new TestContainerException( exc );
         }
     }
 
-    
-    private String localizeBundle( String url )
+    private String downloadBundle( String url )
     {
-        File bundleDir = new File("bundles");
+        File bundleDir = new File( "bundles" );
         try
         {
-            File localBundle = platform.download( bundleDir, new URL(url), url, false, true, true, false );
+            File localBundle =
+                platform.download( bundleDir, new URL( url ), url, false, true, true, false );
             return localBundle.toURI().toURL().toString();
         }
         catch ( MalformedURLException exc )
@@ -290,13 +309,12 @@ public class ForkedTestContainer implements TestContainer
         }
     }
 
-
     private int getStartLevel( ProvisionOption<?> bundle )
     {
         Integer start = bundle.getStartLevel();
-        if ( start == null )
+        if( start == null )
         {
-            start = Constants.START_LEVEL_DEFAULT_PROVISION;
+            start = org.ops4j.pax.exam.Constants.START_LEVEL_DEFAULT_PROVISION;
         }
         return start;
     }

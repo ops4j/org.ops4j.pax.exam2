@@ -49,18 +49,11 @@ public class FrameworkLauncher
     
     private void launch( String[] args ) throws BundleException
     {
-        System.setProperty( "org.ops4j.pax.exam.rbc.rmi.host", "localhost" );
-        System.setProperty( "org.ops4j.pax.exam.rbc.rmi.name", "Exam" );
-        System.setProperty( "org.ops4j.pax.exam.rbc.rmi.port", "1099" );
-        //System.setProperty( "osgi.console", "6666" );
-        
         Map<String, String> props = buildFrameworkProperties( args );
         FrameworkFactory factory = findFrameworkFactory();
         Framework framework = factory.newFramework( props );
         System.out.println("starting framework");
         framework.start();
-        System.out.println("framework stopped");
-        //framework.stop();
     }
 
     public static void main( String[] args ) throws BundleException
@@ -68,5 +61,4 @@ public class FrameworkLauncher
         FrameworkLauncher launcher = new FrameworkLauncher();
         launcher.launch(args);        
     }
-
 }

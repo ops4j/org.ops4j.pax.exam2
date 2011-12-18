@@ -38,6 +38,15 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Wraps an OSGi {@link FrameworkFactory} to create and launch a framework in a forked Java
+ * virtual machine running in a separate process.
+ * <p>
+ * The framework in the forked process can be controlled via a {@link RemoteFramework} interface.
+ * 
+ * @author Harald Wellmann
+ *
+ */
 public class ForkedFrameworkFactory
 {
     private static Logger LOG = LoggerFactory.getLogger( ForkedFrameworkFactory.class );
@@ -48,6 +57,24 @@ public class ForkedFrameworkFactory
     private Process process;
 
     private int port;
+
+    private Pipe errPipe;
+
+    private Pipe outPipe;
+
+    private Pipe inPipe;
+
+    /**
+     * Creates a ForkedFrameworkFactory wrapping a given OSGi FrameworkFactory and a given
+     * framework storage directory
+     * @param frameworkFactory  OSGi framework factory
+     * @param storage framework storage directory for the forked framework
+     */
+    public ForkedFrameworkFactory( FrameworkFactory frameworkFactory, File storage )
+    {
+        this.frameworkFactory = frameworkFactory;
+        this.storage = storage;
+    }
 
     public FrameworkFactory getFrameworkFactory()
     {
@@ -69,6 +96,19 @@ public class ForkedFrameworkFactory
         this.storage = storage;
     }
 
+    /**
+     * Forks a Java VM process running an OSGi framework and returns a {@link RemoteFramework} handle
+     * to it.
+     * <p>
+     * TODO add VM properties
+     * @param systemProperties    system properties for the forked Java VM
+     * @param frameworkProperties framework properties for the remote framework
+     * @return
+     * @throws BundleException
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws NotBoundException
+     */
     public RemoteFramework fork(Map<String, String> systemProperties, Map<String, Object> frameworkProperties) throws BundleException, IOException, InterruptedException, NotBoundException
     {
         
@@ -88,23 +128,29 @@ public class ForkedFrameworkFactory
         List<String> args = new ArrayList<String>();
         args.add( getJavaProgram() );
         appendSystemProperties(args, systemProperties);
-        args.add( "-Dorg.ops4j.rmi.host=localhost" );
-        args.add( "-Dorg.ops4j.rmi.port=" + port );
-        args.add( "-Dorg.ops4j.rmi.name=Exam"); 
-        args.add( "-Dosgi.console=6666"); 
+        
+        // FIXME do not use hard-coded property names and values
+        args.add( "-Dorg.ops4j.pax.exam.rmi.port=" + port );
+        args.add( "-Dorg.ops4j.pax.exam.rmi.name=ExamRemoteFramework"); 
+        
         args.add( "-cp" );
         args.add( buildClasspath() );
+        
+        // main class name
         args.add( RemoteFrameworkImpl.class.getName() );
+        
+        // program arguments: framework properties in key-value pairs
         args.add( FRAMEWORK_STORAGE );
         args.add( storage.getAbsolutePath() );
         appendFrameworkProperties(args, frameworkProperties);
+        
         processBuilder.command( args );
         LOG.info("launching remote framework");
         LOG.info("arguments = {}" , args);
         process = processBuilder.start();
-        final Pipe errPipe = new Pipe( process.getErrorStream(), System.err ).start( "Error pipe" );
-        final Pipe outPipe = new Pipe( process.getInputStream(), System.out ).start( "Out pipe" );
-        final Pipe inPipe = new Pipe( process.getOutputStream(), System.in ).start( "In pipe" );
+        errPipe = new Pipe( process.getErrorStream(), System.err ).start( "Error pipe" );
+        outPipe = new Pipe( process.getInputStream(), System.out ).start( "Out pipe" );
+        inPipe = new Pipe( process.getOutputStream(), System.in ).start( "In pipe" );
     }
 
     private void appendSystemProperties( List<String> args, Map<String, String> systemProperties )
@@ -155,7 +201,7 @@ public class ForkedFrameworkFactory
                 try
                 {
                     Registry reg = LocateRegistry.getRegistry( port );
-                    framework = (RemoteFramework) reg.lookup( "Exam" );
+                    framework = (RemoteFramework) reg.lookup( "ExamRemoteFramework" );
                 }
                 catch ( Exception e )
                 {
@@ -167,23 +213,30 @@ public class ForkedFrameworkFactory
         }
         catch ( Exception e )
         {
-
-            throw new RuntimeException( "Cannot get the remote bundle context", e );
+            throw new TestContainerException( "Cannot get the remote bundle context", e );
         }
         if( framework == null )
         {
-            throw new RuntimeException( "Cannot get the remote bundle context", reason );
+            throw new TestContainerException( "Cannot get the remote bundle context", reason );
         }
         return framework;
 
     }
 
+    /**
+     * Waits for the remote framework to shutdown and frees all resources.
+     * <p>
+     * TODO error handling, timeouts etc.
+     */
     public void join()
     {
         try
         {
             UnicastRemoteObject.unexportObject( registry, true );
             process.waitFor();
+            errPipe.stop();
+            outPipe.stop();
+            inPipe.stop();
         }
         catch ( NoSuchObjectException exc )
         {
