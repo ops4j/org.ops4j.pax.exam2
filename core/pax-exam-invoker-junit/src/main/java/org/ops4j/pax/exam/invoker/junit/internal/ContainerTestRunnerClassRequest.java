@@ -23,6 +23,13 @@ import org.junit.runners.model.RunnerBuilder;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
 
+/**
+ * A JUnit {@link Request} returning a custom {@link Runner} which is aware of an {@link Injector}
+ * and a {@link BundleContext}.
+ * 
+ * @author Harald Wellmann
+ * 
+ */
 public class ContainerTestRunnerClassRequest extends ClassRequest
 {
 
@@ -30,7 +37,15 @@ public class ContainerTestRunnerClassRequest extends ClassRequest
     private BundleContext m_ctx;
     private Injector m_injector;
 
-    public ContainerTestRunnerClassRequest( Class<?> testClass, BundleContext context, Injector injector )
+    /**
+     * Constructs a request for the given class which will be injected with dependencies from
+     * the given bundle context by the given injector
+     * @param testClass  test class to be run
+     * @param context    bundle context providing dependencies
+     * @param injector   injector for injecting dependencies
+     */
+    public ContainerTestRunnerClassRequest( Class<?> testClass, BundleContext context,
+            Injector injector )
     {
         super( testClass );
         this.testClass = testClass;
@@ -44,5 +59,4 @@ public class ContainerTestRunnerClassRequest extends ClassRequest
         RunnerBuilder builder = new ContainerTestRunnerBuilder( m_ctx, m_injector );
         return builder.safeRunnerForClass( testClass );
     }
-
 }

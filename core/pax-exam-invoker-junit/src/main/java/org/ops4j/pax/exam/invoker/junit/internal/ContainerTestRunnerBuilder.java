@@ -27,6 +27,13 @@ public class ContainerTestRunnerBuilder extends RunnerBuilder
     private BundleContext m_ctx;
     private Injector m_injector;
 
+    /**
+     * Constructs a request for the given class which will be injected with dependencies from
+     * the given bundle context by the given injector
+     * @param testClass  test class to be run
+     * @param context    bundle context providing dependencies
+     * @param injector   injector for injecting dependencies
+     */
     public ContainerTestRunnerBuilder( BundleContext context, Injector injector )
     {
         m_ctx = context;

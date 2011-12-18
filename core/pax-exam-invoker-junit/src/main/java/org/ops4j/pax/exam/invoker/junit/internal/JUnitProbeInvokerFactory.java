@@ -21,7 +21,11 @@ import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.raw.extender.ProbeInvokerFactory;
 import org.osgi.framework.BundleContext;
 
-
+/**
+ * A {@link ProbeInvokerFactory} which creates {@link JUnitProbeInvoker}s.
+ *
+ * @author Harald Wellmann
+ */
 public class JUnitProbeInvokerFactory implements ProbeInvokerFactory
 {
 

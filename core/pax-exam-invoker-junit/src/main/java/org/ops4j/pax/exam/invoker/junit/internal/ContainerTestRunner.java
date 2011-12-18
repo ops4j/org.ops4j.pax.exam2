@@ -17,9 +17,7 @@
  */
 package org.ops4j.pax.exam.invoker.junit.internal;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -29,6 +27,13 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A JUnit {@link Runner} which is aware of an {@link Injector}
+ * and a {@link BundleContext} for injecting dependencies from the OSGi service registry.
+ * 
+ * @author Harald Wellmann
+ * 
+ */
 public class ContainerTestRunner extends BlockJUnit4ClassRunner
 {
     private static Logger LOG = LoggerFactory.getLogger( ContainerTestRunner.class );
@@ -36,6 +41,13 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
     private BundleContext m_ctx;
     private Injector m_injector;
     
+    /**
+     * Constructs a runner for the given class which will be injected with dependencies from
+     * the given bundle context by the given injector
+     * @param klass  test class to be run
+     * @param context    bundle context providing dependencies
+     * @param injector   injector for injecting dependencies
+     */
     public ContainerTestRunner( Class<?> klass, BundleContext context, Injector injector ) throws InitializationError
     {
         super( klass );
@@ -64,6 +76,5 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
     
     public void setInjector(Injector injector) {
         m_injector = injector;
-    }
-    
+    }    
 }

@@ -32,8 +32,13 @@ import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 /**
- * Turns a instruction into a service call. Currently used with encoded instructions from
- * org.ops4j.pax.exam.spi.container.ClassMethodTestAddress
+ * A ProbeInvoker which delegates the test method invocation to JUnit.
+ * <p>
+ * By doing so, JUnit can handle {@code @Before}, {@code @After} and {@code @Rule} annotations in
+ * the usual way.
+ * <p>
+ * The test method to be executed is defined by an encoded instruction from
+ * {@code org.ops4j.pax.exam.spi.intern.DefaultTestAddress}.
  * 
  * @author Harald Wellmann
  * @since 2.3.0, August 2011
@@ -98,6 +103,17 @@ public class JUnitProbeInvoker implements ProbeInvoker
         return false;
     }
 
+    /**
+     * Invokes a given method of a given test class via {@link JUnitCore} and injects dependencies
+     * into the instantiated test class.
+     * <p>
+     * This requires building a {@code Request} which is aware of an {@code Injector} and a 
+     * {@code BundleContext}.
+     * 
+     * @param testClass
+     * @param testMethod
+     * @throws TestContainerException
+     */
     private void invokeViaJUnit( final Class<?> testClass, final Method testMethod )
         throws TestContainerException
     {
