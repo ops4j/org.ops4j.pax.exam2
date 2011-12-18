@@ -58,12 +58,6 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
         super.runChild( method, notifier );
     }
     
-    @Override
-    protected void validatePublicVoidNoArgMethods( Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors )
-    {
-
-    }
-
     public void setContext(BundleContext context) {
         m_ctx = context;
     }

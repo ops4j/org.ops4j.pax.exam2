@@ -25,7 +25,6 @@ import static org.ops4j.pax.exam.CoreOptions.url;
 
 import javax.inject.Inject;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -35,16 +34,11 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.regression.pde.HelloService;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.util.PathUtils;
-import org.ops4j.pax.exam.util.ServiceLookup;
-import org.osgi.framework.BundleContext;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class InjectTest
 {
-
-    @Inject
-    private BundleContext bundleContext;
 
     @Inject
     private HelloService helloService;
@@ -56,21 +50,6 @@ public class InjectTest
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             junitBundles() );
-    }
-
-    @Test @Ignore("no longer supported in 2.3.0")
-    public void getServiceByLookup( BundleContext bc )
-    {
-        Object service = ServiceLookup.getService( bc, HelloService.class );
-        assertThat( service, is( notNullValue() ) );
-    }
-
-    @Test @Ignore("no longer supported in 2.3.0")
-    public void getServiceFromInjectedBundleContext()
-    {
-        assertThat( bundleContext, is( notNullValue() ) );
-        Object service = ServiceLookup.getService( bundleContext, HelloService.class );
-        assertThat( service, is( notNullValue() ) );
     }
 
     @Test
