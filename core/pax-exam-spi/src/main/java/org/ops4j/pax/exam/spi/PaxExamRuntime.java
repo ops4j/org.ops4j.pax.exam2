@@ -20,12 +20,14 @@
 package org.ops4j.pax.exam.spi;
 
 import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
+import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
+import static org.ops4j.pax.exam.CoreOptions.serverMode;
+import static org.ops4j.pax.exam.CoreOptions.url;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -50,9 +52,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PaxExamRuntime {
 	 private static final Logger LOG = LoggerFactory.getLogger( PaxExamRuntime.class );
-     private static final String TESTCONTAINER_FACTORY = "META-INF/services/org.ops4j.pax.exam.TestContainerFactory";
-
-
 	 
 	/**
      * Discovers the regression container. Discovery is performed via ServiceLoader discovery mechanism.
@@ -133,30 +132,24 @@ public class PaxExamRuntime {
      */
     private static void sanityCheck( )
     {
-        try {
-            List<URL> factories = new ArrayList<URL>();
+        List<TestContainerFactory> factories = new ArrayList<TestContainerFactory>();
 
-            Enumeration<URL> systemResources = ClassLoader.getSystemResources( TESTCONTAINER_FACTORY );
-            while( systemResources.hasMoreElements() ) {
-                factories.add( systemResources.nextElement() );
+        Iterator<TestContainerFactory> iter = ServiceLoader.load( TestContainerFactory.class ).iterator();
+        while( iter.hasNext() ) {
+            factories.add( iter.next() );
+        }
+        if( factories.size() == 0 ) {
+            throw new TestContainerException( "No TestContainer implementation in Classpath" );
+        }
+        else if( factories.size() > 1 ) {
+            for( TestContainerFactory fac : factories ) {
+                LOG.error( "Ambiguous TestContainer:  " + fac.getClass().getName() );
             }
-            if( factories.size() == 0 ) {
-                throw new TestContainerException( "No TestContainer implementation in Classpath.. " );
-
-            }
-            else if( factories.size() > 1 ) {
-                for( URL fac : factories ) {
-                    LOG.error( "Ambiquous TestContainer:  " + fac.toExternalForm() );
-                }
-                throw new TestContainerException( "Too many TestContainer implementations in Classpath.. " );
-
-            }
-            else {
-                // good!
-                return;
-            }
-        } catch( IOException e ) {
-            throw new TestContainerException( "Problem looking for TestContainerFactory descriptors in Classpath.. ", e );
+            throw new TestContainerException( "Too many TestContainer implementations in Classpath" );
+        }
+        else {
+            // good!
+            return;
         }
     }
 }
