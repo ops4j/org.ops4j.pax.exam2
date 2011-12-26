@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -167,7 +169,11 @@ public class NativeTestContainer implements TestContainer
                 systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
                 systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
             } );
-            final Map<String, Object> p = createFrameworkProperties();
+            Map<String, Object> p = createFrameworkProperties();
+            if (LOG.isDebugEnabled()) {
+                logFrameworkProperties( p );
+                logSystemProperties();
+            }
             parent = Thread.currentThread().getContextClassLoader();
             m_framework = m_frameworkFactory.newFramework( p );
             m_framework.init();
@@ -183,6 +189,23 @@ public class NativeTestContainer implements TestContainer
             }
         }
         return this;
+    }
+
+    private void logFrameworkProperties( Map<String, Object> p )
+    {
+        LOG.debug( "==== Framework properties:" );
+        for (String key :  p.keySet()) {
+            LOG.debug( "{} = {}", key, p.get( key ) );
+        }
+    }
+
+    private void logSystemProperties()
+    {
+        LOG.debug( "==== System properties:" );
+        SortedMap<Object,Object> map = new TreeMap<Object, Object>(System.getProperties());
+        for (Map.Entry<Object, Object> entry : map.entrySet()) {
+            LOG.debug( "{} = {}", entry.getKey(), entry.getValue()  );
+        }
     }
 
     public TestContainer stop()
