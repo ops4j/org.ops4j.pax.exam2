@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.ServiceLoader;
 
 import org.junit.Test;
+import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
 

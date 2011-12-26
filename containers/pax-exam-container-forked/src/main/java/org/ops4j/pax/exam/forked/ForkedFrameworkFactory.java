@@ -33,6 +33,8 @@ import java.util.Map;
 import org.ops4j.io.Pipe;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.swissbox.framework.RemoteFramework;
+import org.ops4j.pax.swissbox.framework.RemoteFrameworkImpl;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
