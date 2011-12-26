@@ -223,6 +223,11 @@
                 <artifactId>slf4j-simple</artifactId>
                 <version>${dependency.slf4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>1.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

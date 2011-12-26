@@ -17,11 +17,11 @@
  */
 package org.ops4j.pax.exam.forked;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
+import static org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder.findFrameworkFactories;
 
+import java.util.List;
+
+import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -35,25 +35,22 @@ import org.osgi.framework.launch.FrameworkFactory;
  * @author Harald Wellmann
  * 
  */
+@MetaInfServices
 public class ForkedTestContainerFactory implements TestContainerFactory
 {
 
     public TestContainer[] create( final ExamSystem system )
     {
-        List<TestContainer> containers = new ArrayList<TestContainer>();
-        Iterator<FrameworkFactory> factories =
-            ServiceLoader.load( FrameworkFactory.class ).iterator();
-        boolean factoryFound = false;
-        while ( factories.hasNext() )
-        {
-            containers.add( new ForkedTestContainer( system, factories.next() ) );
-            factoryFound = true;
-        }
-        if( !factoryFound )
-        {
+        List<FrameworkFactory> frameworkFactories = findFrameworkFactories();
+        if (frameworkFactories.isEmpty()) {
             throw new TestContainerException(
-                "No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath" );
+                    "No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath" );            
         }
-        return containers.toArray( new TestContainer[containers.size()] );
+        TestContainer[] containers = new TestContainer[frameworkFactories.size()];
+        int index = 0;
+        for (FrameworkFactory frameworkFactory : frameworkFactories ) {
+            containers[index++] = new ForkedTestContainer( system, frameworkFactory ) ;
+        }
+        return containers;
     }
 }
