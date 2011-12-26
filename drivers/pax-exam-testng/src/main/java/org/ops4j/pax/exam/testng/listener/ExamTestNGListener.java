@@ -55,6 +55,7 @@ import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.internal.MethodInstance;
 
+// @MetaInfServices(ITestNGListener.class)
 public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, IHookable
 {
     private static Logger LOG = LoggerFactory.getLogger( ExamTestNGListener.class );

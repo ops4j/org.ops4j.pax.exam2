@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -33,6 +34,7 @@ import org.osgi.framework.launch.FrameworkFactory;
  * @author Toni Menzel
  * @since Jan 7, 2010
  */
+@MetaInfServices
 public class NativeTestContainerFactory implements TestContainerFactory {
 
     public TestContainer[] create ( ExamSystem system ) throws TestContainerException
