@@ -44,6 +44,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.DefaultExamReactor;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
@@ -177,7 +178,13 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private synchronized StagedExamReactor prepareReactor()
         throws Exception
     {
-    	m_system = PaxExamRuntime.createTestSystem();
+        String systemType = System.getProperty( "pax.exam.system", "test" );
+        if (systemType.equals( "default" )) {
+            m_system = DefaultExamSystem.create(new Option[0]);
+        }
+        else {
+            m_system = PaxExamRuntime.createTestSystem();
+        }
         Class<?> testClass = getTestClass().getJavaClass();
         Object testClassInstance = testClass.newInstance();
         ExamReactor reactor = getReactor( testClass );
