@@ -128,14 +128,14 @@ public class ForkedFrameworkFactory
         {
             vmOptions[i++] = String.format( "-D%s=%s", entry.getKey(), entry.getValue() );
         }
-        vmOptions[i++] = "-Dorg.ops4j.pax.exam.rmi.port=" + port;
-        vmOptions[i++] = "-Dorg.ops4j.pax.exam.rmi.name=ExamRemoteFramework";
+        vmOptions[i++] = "-Dpax.swissbox.framework.rmi.port=" + port;
+        vmOptions[i++] = "-Dpax.swissbox.framework.rmi.name=ExamRemoteFramework";
         return vmOptions;
     }
 
     private String[] buildFrameworkProperties( Map<String, Object> frameworkProperties )
     {
-        String[] args = new String[frameworkProperties.size() + 2];
+        String[] args = new String[2*frameworkProperties.size() + 2];
         int i = 0;
         args[i++] = FRAMEWORK_STORAGE;
         args[i++] = storage.getAbsolutePath();
@@ -188,7 +188,6 @@ public class ForkedFrameworkFactory
                 {
                     reason = e;
                 }
-
             }
             while ( framework == null && ( System.currentTimeMillis() < startedTrying + 3000 ) );
         }
