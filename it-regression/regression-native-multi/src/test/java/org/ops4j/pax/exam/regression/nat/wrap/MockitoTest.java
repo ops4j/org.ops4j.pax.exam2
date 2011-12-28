@@ -24,6 +24,7 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
+import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import java.util.List;
 
@@ -63,6 +64,8 @@ public class MockitoTest
     {
         return options(
             
+            regressionDefaults(),
+
             // A simple test bundle 
             mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
             
@@ -103,6 +106,8 @@ public class MockitoTest
     public Option[] config2()
     {
         return options(
+
+            regressionDefaults(),
 
             // A simple test bundle 
             mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),

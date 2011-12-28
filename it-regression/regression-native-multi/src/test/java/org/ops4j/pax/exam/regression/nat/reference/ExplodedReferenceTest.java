@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -48,6 +49,7 @@ public class ExplodedReferenceTest
     {
         String baseDir = PathUtils.getBaseDir();
         return options(
+            regressionDefaults(),
             url( "reference:file:" + baseDir + "/target/regression-pde-bundle" ),
             junitBundles(),
             cleanCaches() );

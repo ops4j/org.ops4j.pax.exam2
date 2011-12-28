@@ -23,6 +23,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.systemTimeout;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +52,7 @@ public class ShutdownTimeoutTestWrapped
     public Option[] config()
     {
         return options(
+            regressionDefaults(),
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             systemTimeout( 3000 ),

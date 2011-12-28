@@ -23,6 +23,7 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -57,6 +58,7 @@ public class FilterTest
     public Option[] config()
     {
         return options(
+            regressionDefaults(),
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             systemProperty("osgi.console").value("6666"),

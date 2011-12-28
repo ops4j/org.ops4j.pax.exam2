@@ -8,6 +8,7 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.profile;
+import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -34,6 +35,7 @@ public class JUnitMultiFwTest {
     public Option[] config()
     {
         return options( profile( "web" ),
+                        regressionDefaults(),
                         junitBundles(),
                         mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "tinybundles" ).version( "1.0.0" ),
                         frameworkStartLevel( 100 )

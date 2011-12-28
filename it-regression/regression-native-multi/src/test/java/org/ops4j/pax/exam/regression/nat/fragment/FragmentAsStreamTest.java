@@ -23,6 +23,7 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
+import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import java.io.InputStream;
 
@@ -55,6 +56,7 @@ public class FragmentAsStreamTest
     public Option[] config()
     {
         return options(
+            regressionDefaults(),
             mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
             streamBundle( createFragmentBundle() ).noStart(),
             junitBundles(),

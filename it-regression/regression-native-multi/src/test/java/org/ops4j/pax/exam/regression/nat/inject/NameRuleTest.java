@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +42,9 @@ public class NameRuleTest {
    
    @Configuration
    public Option[] config() {
-       return options(junitBundles());
+       return options(
+           regressionDefaults(),
+           junitBundles());
    }
    
    @Test
