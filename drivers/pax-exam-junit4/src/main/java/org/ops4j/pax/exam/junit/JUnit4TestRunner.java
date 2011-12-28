@@ -36,6 +36,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.ConfigurationManager;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
@@ -183,8 +184,8 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         throws Exception
     {
         ConfigurationManager cm = new ConfigurationManager();        
-        String systemType = cm.getProperty( "pax.exam.system" );
-        if( "default".equals( systemType ) )
+        String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
+        if( Constants.EXAM_SYSTEM_DEFAULT.equals( systemType ) )
         {
             m_system = DefaultExamSystem.create( new Option[0] );
         }

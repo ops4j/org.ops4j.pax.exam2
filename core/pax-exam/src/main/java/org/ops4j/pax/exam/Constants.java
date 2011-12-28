@@ -21,6 +21,7 @@ package org.ops4j.pax.exam;
  * Pax Exam related constants.
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
+ * @author Harald Wellmann
  * @since 0.5.0, April 22, 2009
  */
 public interface Constants {
@@ -52,4 +53,19 @@ public interface Constants {
      * Timeout specifing that it should wait .
      */
     long WAIT_5_MINUTES = 5 * 60 * 1000;
+    
+    /** Name of configuration properties file. */
+    static final String EXAM_PROPERTIES_FILE = "exam.properties";
+    
+    /** Resource path of configuration properties file. */
+    static final String EXAM_PROPERTIES_PATH = "/" + EXAM_PROPERTIES_FILE;
+
+    /** Configuration key for Exam system type. */
+    static final String EXAM_SYSTEM_KEY = "pax.exam.system";
+    
+    /** Default exam system with no predefined options.  */
+    static final String EXAM_SYSTEM_DEFAULT = "default";
+
+    /** Test exam system with predefined options for Exam's own bundles etc.  */
+    static final String EXAM_SYSTEM_TEST = "test";
 }
