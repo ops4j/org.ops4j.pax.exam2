@@ -35,6 +35,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
@@ -62,6 +63,9 @@ import org.slf4j.LoggerFactory;
  * - @Configuration -> Configuration 1:N. Multiple configurations will result in multiple invocations of the same regression.
  * - @ProbeBuilder -> Customize the probe creation.
  * - @Test -> Single tests to be invoked. Note that in @Configuration you can specify the invocation strategy.
+ * 
+ * @author Toni Menzel
+ * @author Harald Wellmann
  */
 public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
@@ -178,11 +182,14 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private synchronized StagedExamReactor prepareReactor()
         throws Exception
     {
-        String systemType = System.getProperty( "pax.exam.system", "test" );
-        if (systemType.equals( "default" )) {
-            m_system = DefaultExamSystem.create(new Option[0]);
+        ConfigurationManager cm = new ConfigurationManager();        
+        String systemType = cm.getProperty( "pax.exam.system" );
+        if( "default".equals( systemType ) )
+        {
+            m_system = DefaultExamSystem.create( new Option[0] );
         }
-        else {
+        else
+        {
             m_system = PaxExamRuntime.createTestSystem();
         }
         Class<?> testClass = getTestClass().getJavaClass();

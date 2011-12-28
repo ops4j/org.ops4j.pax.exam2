@@ -96,6 +96,23 @@
                                         <ignore></ignore>
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.servicemix.tooling
+                                        </groupId>
+                                        <artifactId>
+                                            depends-maven-plugin
+                                        </artifactId>
+                                        <versionRange>[1.2,)</versionRange>
+                                        <goals>
+                                            <goal>generate-depends-file</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -176,6 +193,11 @@
             <dependency>
                 <groupId>org.ops4j.base</groupId>
                 <artifactId>ops4j-base-spi</artifactId>
+                <version>${dependency.base.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.base</groupId>
+                <artifactId>ops4j-base-util-property</artifactId>
                 <version>${dependency.base.version}</version>
             </dependency>
             <dependency>
