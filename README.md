@@ -5,6 +5,10 @@ Thanks for looking into Pax Exam 2.
 This is the official source repository of the OPS4J Pax Exam 2 project.
 Its licensed under the Apache Software License 2.0 by the OPS4J community.
 
+## Documentation
+
+* <http://team.ops4j.org/wiki/display/paxexam/Documentation>
+
 You may want to have a look at the Pax Exam 2 Learning project for more help and introductionary content:
 
 * <https://github.com/tonit/Learn-PaxExam>
@@ -16,7 +20,7 @@ Or check it out directly:
 
 ## Build
 
-You'll need a machine with Java 5+ and Apache Maven 3 installed.
+You'll need a machine with Java 6+ and Apache Maven 3 installed.
 
 Checkout:
 
@@ -37,9 +41,9 @@ The current release of Pax Exam is 2.3.0.
 
 * <http://team.ops4j.org/browse/PAXEXAM>
 
-## Continuus Integration Builds
+## Continuous Integration Builds
 
-We have a continuus integration build set up here:
+We have a continuous integration build set up here:
 
 * <http://ci.ops4j.org/hudson/job/org.ops4j.pax.exam2>
 
