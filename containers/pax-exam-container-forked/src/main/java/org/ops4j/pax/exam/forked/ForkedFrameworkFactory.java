@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.ops4j.base.exec.DefaultJavaRunner;
 import org.ops4j.net.FreePort;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.ops4j.pax.swissbox.framework.RemoteFrameworkImpl;
@@ -47,6 +48,9 @@ import org.osgi.framework.launch.FrameworkFactory;
  */
 public class ForkedFrameworkFactory
 {
+    // TODO make this configurable
+    private static final long TIMEOUT = 60 * 1000;
+    
     private FrameworkFactory frameworkFactory;
     private File storage;
     private Registry registry;
@@ -54,6 +58,7 @@ public class ForkedFrameworkFactory
     private int port;
 
     private DefaultJavaRunner javaRunner;
+    
 
     /**
      * Creates a ForkedFrameworkFactory wrapping a given OSGi FrameworkFactory and a given framework
@@ -189,7 +194,7 @@ public class ForkedFrameworkFactory
                     reason = e;
                 }
             }
-            while ( framework == null && ( System.currentTimeMillis() < startedTrying + 3000 ) );
+            while ( framework == null && ( System.currentTimeMillis() < startedTrying + TIMEOUT ) );
         }
         catch ( Exception e )
         {
