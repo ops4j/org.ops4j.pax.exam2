@@ -30,9 +30,8 @@
                 <executions>
                     <execution>
                         <id>equinox-native</id>
-                        <phase>verify</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>integration-test</goal>
                         </goals>
                         <configuration>
                             <profiles>
@@ -43,9 +42,8 @@
                     </execution>
                     <execution>
                         <id>felix-native</id>
-                        <phase>verify</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>integration-test</goal>
                         </goals>
                         <configuration>
                             <profiles>
@@ -56,9 +54,8 @@
                     </execution>
                     <execution>
                         <id>equinox-forked</id>
-                        <phase>verify</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>integration-test</goal>
                         </goals>
                         <configuration>
                             <profiles>
@@ -71,7 +68,7 @@
                         <id>felix-forked</id>
                         <phase>verify</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>integration-test</goal>
                         </goals>
                         <configuration>
                             <profiles>
@@ -82,13 +79,12 @@
                     </execution -->
                     <execution>
                         <id>runner</id>
-                        <phase>verify</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>integration-test</goal>
                         </goals>
                         <configuration>
                             <profiles>
-                                <profile>runner</profile>
+                                <profile>paxrunner</profile>
                             </profiles>
                         </configuration>
                     </execution>

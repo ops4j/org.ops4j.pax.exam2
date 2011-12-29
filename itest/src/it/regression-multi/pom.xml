@@ -142,7 +142,7 @@
         <profile>
             <id>felix</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
@@ -215,9 +215,9 @@
             </dependencies>
         </profile>
         <profile>
-            <id>runner</id>
+            <id>paxrunner</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
