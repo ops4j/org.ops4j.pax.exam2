@@ -300,8 +300,12 @@ public class ForkedTestContainer implements TestContainer
         File bundleDir = new File( "bundles" );
         try
         {
+            URL realUrl = new URL( url );
+            if (realUrl.getProtocol().equals( "reference" )) {
+                return url;
+            }
             File localBundle =
-                platform.download( bundleDir, new URL( url ), url, false, true, true, false );
+                platform.download( bundleDir, realUrl, url, false, true, true, false );
             return localBundle.toURI().toURL().toString();
         }
         catch ( MalformedURLException exc )
