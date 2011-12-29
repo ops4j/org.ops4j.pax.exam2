@@ -48,7 +48,7 @@
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
-
+                <module>itest</module>
             </modules>
         </profile>
         <profile>
