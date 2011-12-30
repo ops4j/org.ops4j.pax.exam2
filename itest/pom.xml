@@ -53,6 +53,18 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>knopflerfish-native</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <profiles>
+                                <profile>knopflerfish</profile>
+                                <profile>native</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>equinox-forked</id>
                         <goals>
                             <goal>integration-test</goal>
@@ -64,9 +76,8 @@
                             </profiles>
                         </configuration>
                     </execution>
-                    <!-- execution>
+                    <execution>
                         <id>felix-forked</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
@@ -76,14 +87,27 @@
                                 <profile>forked</profile>
                             </profiles>
                         </configuration>
-                    </execution -->
+                    </execution>
                     <execution>
-                        <id>runner</id>
+                        <id>knopflerfish-forked</id>
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
                             <profiles>
+                                <profile>felix</profile>
+                                <profile>forked</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>paxrunner</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <profiles>
+                                <profile>equinox</profile>
                                 <profile>paxrunner</profile>
                             </profiles>
                         </configuration>
