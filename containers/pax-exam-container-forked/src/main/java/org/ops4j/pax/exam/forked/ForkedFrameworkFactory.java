@@ -30,7 +30,6 @@ import java.util.Map;
 
 import org.ops4j.base.exec.DefaultJavaRunner;
 import org.ops4j.net.FreePort;
-import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.ops4j.pax.swissbox.framework.RemoteFrameworkImpl;
@@ -111,7 +110,7 @@ public class ForkedFrameworkFactory
             Map<String, Object> frameworkProperties ) throws BundleException, IOException,
         InterruptedException, NotBoundException
     {
-
+        // TODO make port range configurable
         FreePort freePort = new FreePort( 21000, 21099 );
         port = freePort.getPort();
 
@@ -217,7 +216,12 @@ public class ForkedFrameworkFactory
         try
         {
             UnicastRemoteObject.unexportObject( registry, true );
-            javaRunner.waitForExit();
+            /*
+             * NOTE: javaRunner.waitForExit() works for Equinox and Felix, but not for Knopflerfish,
+             * need to investigate why. OTOH, it may be better to kill the process as we're doing
+             * now, just to be on the safe side.
+             */
+            javaRunner.shutdown();
         }
         catch ( NoSuchObjectException exc )
         {
