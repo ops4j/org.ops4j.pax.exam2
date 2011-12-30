@@ -202,8 +202,10 @@ public class ForkedTestContainer implements TestContainer
     {
         final Map<String, Object> p = new HashMap<String, Object>();
         p.put( FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath() );
-        p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA,
-            buildString( system.getOptions( SystemPackageOption.class ) ) );
+        SystemPackageOption[] systemPackageOptions = system.getOptions( SystemPackageOption.class );
+        if (systemPackageOptions.length > 0) {
+            p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( systemPackageOptions ) );
+        }
         p.put( FRAMEWORK_BOOTDELEGATION,
             buildString( system.getOptions( BootDelegationOption.class ) ) );
 
