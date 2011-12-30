@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.options;
 
+import static org.osgi.framework.Constants.*;
+
 /**
  * Option specifying a provision url that will wrap (osgify) another bundle.
  *
@@ -93,7 +95,7 @@ public class WrappedUrlProvisionOption
             {
                 options.append( "&" );
             }
-            options.append( "Bundle-SymboliName=" ).append( m_bundleSymbolicName );
+            options.append( BUNDLE_SYMBOLICNAME ).append( "=" ).append( m_bundleSymbolicName );
         }
         if( m_bundleVersion != null )
         {
@@ -101,7 +103,7 @@ public class WrappedUrlProvisionOption
             {
                 options.append( "&" );
             }
-            options.append( "Bundle-Version=" ).append( m_bundleVersion );
+            options.append( BUNDLE_VERSION ).append( "=" ).append( m_bundleVersion );
         }
         if( m_imports != null && m_imports.length > 0 )
         {
@@ -109,7 +111,7 @@ public class WrappedUrlProvisionOption
             {
                 options.append( "&" );
             }
-            options.append( "Import-Package=" );
+            options.append( IMPORT_PACKAGE ).append( "=" );
             for( String entry : m_imports )
             {
                 options.append( entry ).append( "," );
@@ -122,7 +124,7 @@ public class WrappedUrlProvisionOption
             {
                 options.append( "&" );
             }
-            options.append( "Export-Package=" );
+            options.append( EXPORT_PACKAGE ).append( "=" );
             for( String entry : m_exports )
             {
                 options.append( entry ).append( "," );
