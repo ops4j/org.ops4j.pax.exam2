@@ -18,17 +18,11 @@ package org.ops4j.pax.exam.regression.multi.reference;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
-import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
-import static org.ops4j.pax.exam.CoreOptions.composite;
-import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.CoreOptions.systemTimeout;
 import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
+
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -56,8 +50,6 @@ public class ReferenceJarTest
             regressionDefaults(),
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/target/regression-pde-bundle.jar" ),
-            systemProperty("osgi.console").value("6666"),
-            systemTimeout(10000 * 1000),
             junitBundles() );
     }
 

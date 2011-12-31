@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.multifw;
+package org.ops4j.pax.exam.regression.multi.plumbing;
 
 import static org.ops4j.pax.exam.CoreOptions.easyMockBundles;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.createTestSystem;
@@ -56,7 +56,7 @@ public class SimpleMultiTest {
         return probe.build();
     }
 
-    private Method[] getAllMethods( Class c )
+    private Method[] getAllMethods( Class<?> c )
     {
         List<Method> methods = new ArrayList<Method>();
         for( Method m : c.getDeclaredMethods() ) {

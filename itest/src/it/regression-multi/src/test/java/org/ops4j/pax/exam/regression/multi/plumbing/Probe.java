@@ -1,10 +1,8 @@
-package org.ops4j.pax.exam.multifw;
+package org.ops4j.pax.exam.regression.multi.plumbing;
+
+import static org.junit.Assert.fail;
 
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,6 +21,7 @@ public class Probe {
     {
     }
 
+    @SuppressWarnings( "unused" )
     private void neverCall()
     {
         fail( "Don't parseForTests me !" );

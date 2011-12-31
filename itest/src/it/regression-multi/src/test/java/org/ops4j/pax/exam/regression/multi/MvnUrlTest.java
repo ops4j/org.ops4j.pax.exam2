@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.multifw;
+package org.ops4j.pax.exam.regression.multi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
