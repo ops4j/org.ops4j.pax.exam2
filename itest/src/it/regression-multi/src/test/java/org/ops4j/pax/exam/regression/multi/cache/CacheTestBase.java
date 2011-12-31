@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.cache;
+package org.ops4j.pax.exam.regression.multi.cache;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -31,6 +31,10 @@ abstract public class CacheTestBase
     @Test
     public void countBundles()
     {
-        assertThat(bc.getBundles().length, is(10));
+        int numBundles = 10;
+        if ("paxrunner".equals( System.getProperty( "pax.exam.container" ) )) {
+            numBundles += 2;
+        }
+        assertThat(bc.getBundles().length, is(numBundles));
     }
 }

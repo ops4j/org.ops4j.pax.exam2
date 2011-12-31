@@ -79,4 +79,12 @@ public class RegressionConfiguration
                 knopflerfish())            		
             );
     }
+    
+    public static boolean isPaxRunnerContainer() {
+        return "paxrunner".equals( System.getProperty( "pax.exam.container" ) );
+    }
+
+    public static boolean isFelix() {
+        return "felix".equals( System.getProperty( "pax.exam.framework" ) );
+    }
 }

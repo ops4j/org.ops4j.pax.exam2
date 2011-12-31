@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.cache;
+package org.ops4j.pax.exam.regression.multi.cache;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.keepCaches;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;
 
@@ -34,18 +32,17 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class CacheTestKeep extends CacheTestBase
+public class CacheTestCleanTrue extends CacheTestBase
 {
     @Configuration( )
     public Option[] config()
     {
         File workDir = CacheTest.getWorkDir();
         return options(
+            regressionDefaults(),
             junitBundles(),
             workingDirectory( workDir.getAbsolutePath() ),
-            keepCaches(),
-            equinox(),
-            felix(),
-            knopflerfish() );
+            cleanCaches( true )
+            );
     }
 }

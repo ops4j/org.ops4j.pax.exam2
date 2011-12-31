@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.cache;
+package org.ops4j.pax.exam.regression.multi.cache;
 
 import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;
 
@@ -41,11 +39,9 @@ public class CacheTestCleanFalse extends CacheTestBase
     {
         File workDir = CacheTest.getWorkDir();
         return options(
+            regressionDefaults(),
             junitBundles(),
             workingDirectory( workDir.getAbsolutePath() ),
-            cleanCaches( false ),
-            equinox(),
-            felix(),
-            knopflerfish() );
+            cleanCaches( false ) );
     }
 }

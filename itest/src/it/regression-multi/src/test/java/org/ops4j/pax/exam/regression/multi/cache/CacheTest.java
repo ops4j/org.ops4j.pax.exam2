@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.cache;
+package org.ops4j.pax.exam.regression.multi.cache;
+import static  org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
 import static org.hamcrest.core.IsEqual.*;
 import static org.hamcrest.core.Is.*;
+import static org.junit.Assume.*;
 import static org.junit.Assert.*;
 import java.io.File;
 
@@ -42,6 +44,9 @@ public class CacheTest
     @Test
     public void cleanCachesFalse() 
     {
+        assumeThat(isFelix(), is(true));
+        assumeThat(isPaxRunnerContainer(), is(true));
+
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( CacheTestCleanFalse.class );
         assertThat(result.getFailureCount(), is(equalTo(0)));
@@ -53,6 +58,9 @@ public class CacheTest
     @Test
     public void cleanCachesTrue() 
     {
+        assumeThat(isFelix(), is(true));
+        assumeThat(isPaxRunnerContainer(), is(true));
+
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( CacheTestCleanTrue.class );
         assertThat(result.getFailureCount(), is(equalTo(0)));
@@ -64,6 +72,9 @@ public class CacheTest
     @Test
     public void keepCaches() 
     {
+        assumeThat(isFelix(), is(true));
+        assumeThat(isPaxRunnerContainer(), is(true));
+
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( CacheTestKeep.class );
         assertThat(result.getFailureCount(), is(equalTo(0)));
