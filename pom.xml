@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -48,7 +49,6 @@
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
-                <module>itest</module>
             </modules>
         </profile>
         <profile>
@@ -60,6 +60,14 @@
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>itest</id>
+            <activation>
+            </activation>
+            <modules>
+                <module>itest</module>
             </modules>
         </profile>
     </profiles>
@@ -102,7 +110,8 @@
                     <bootclasspath>${sun.boot.class.path}</bootclasspath>
                     <additionalparam>
                         -quiet
-                        <!-- -federate JDK http://download.oracle.com/javase/6/docs/api/index.html? -federationxml JDK http://doclava.googlecode.com/svn/static/api/openjdk-6.xml -->
+                        <!-- -federate JDK http://download.oracle.com/javase/6/docs/api/index.html? 
+                            -federationxml JDK http://doclava.googlecode.com/svn/static/api/openjdk-6.xml -->
                         -hdf project.name "${project.name}"
                         -d
                         ${project.build.directory}/apidocs
