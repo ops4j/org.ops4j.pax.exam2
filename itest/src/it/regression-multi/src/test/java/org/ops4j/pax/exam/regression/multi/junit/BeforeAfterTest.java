@@ -13,51 +13,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.inject;
+package org.ops4j.pax.exam.regression.multi.junit;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.regression.pde.HelloService;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.util.PathUtils;
+import org.osgi.framework.BundleContext;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class InjectTest
+public class BeforeAfterTest extends BeforeAfterParent
 {
+
+    @Inject
+    private BundleContext bundleContext;
 
     @Inject
     private HelloService helloService;
 
-    @Configuration( )
-    public Option[] config()
+    @Before
+    public void setUp()
     {
-        return options(
-            regressionDefaults(),
-            url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
-            junitBundles() );
+        addMessage( "Before" );        
+        assertThat( bundleContext, is( notNullValue() ) );
+    }
+
+    @After
+    public void tearDown()
+    {
+        addMessage( "After" );        
+        assertThat( bundleContext, is( notNullValue() ) );
     }
 
     @Test
     public void getInjectedService()
     {
+        addMessage( "Test" );        
         assertThat( helloService, is( notNullValue() ) );
         assertThat( helloService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
+    }
+
+    @Test
+    public void injectedBundleContext()
+    {
+        addMessage( "Test" );        
+        assertThat( bundleContext, is( notNullValue() ) );
     }
 }

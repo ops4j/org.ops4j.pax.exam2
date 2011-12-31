@@ -28,6 +28,7 @@ import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.when;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.util.PathUtils;
@@ -54,15 +55,10 @@ public class RegressionConfiguration
             // except RBC and Pax Logging
             bootDelegationPackage( "sun.*" ),
             frameworkStartLevel( START_LEVEL_TEST_BUNDLE ),
-            // only for Pax Runner container
-            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            
-            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-            
-            url( "link:classpath:META-INF/links/org.apache.geronimo.specs.atinject.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
 
-            
+            url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),            
+            url( "link:classpath:META-INF/links/org.apache.geronimo.specs.atinject.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),            
             
             // add SLF4J and logback bundles
             mavenBundle("org.slf4j", "slf4j-api").versionAsInProject().startLevel( START_LEVEL_SYSTEM_BUNDLES ),
@@ -74,9 +70,13 @@ public class RegressionConfiguration
             systemProperty("logback.configurationFile").value( "file:" + PathUtils.getBaseDir() +
             		"/src/test/resources/logback.xml" ),
             		
-            equinox(),		
-            felix(),
-            knopflerfish()
+            // only for Pax Runner container
+            when ( "paxrunner".equals( System.getProperty("pax.exam.container"))).useOptions(
+                url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                mavenBundle("org.slf4j", "jcl-over-slf4j").versionAsInProject().startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                equinox(),      
+                felix(),
+                knopflerfish())            		
             );
     }
 }

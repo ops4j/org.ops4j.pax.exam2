@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.wrap;
+package org.ops4j.pax.exam.regression.multi.wrap;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
-import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import java.util.List;
 

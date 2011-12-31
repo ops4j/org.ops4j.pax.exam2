@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.inject;
+package org.ops4j.pax.exam.regression.multi.junit;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -45,6 +47,8 @@ public class BeforeAfterInvokerTest
     @Test
     public void beforeAfterMethodInvocationOrder() throws IOException, BackingStoreException
     {
+        Assume.assumeThat( System.getProperty( "pax.exam.container" ), is("native") );
+
         BeforeAfterParent.clearMessages();
 
         JUnitCore junit = new JUnitCore();
@@ -56,10 +60,10 @@ public class BeforeAfterInvokerTest
         int numMessages = prefs.getInt( "numMessages", 0 );
         int messageNum = 0;
 
-        // 2 tests * 2 frameworks * 5 messages per test
-        assertEquals( 20, numMessages );
+        // 2 tests * 1 framework * 5 messages per test
+        assertEquals( 10, numMessages );
 
-        for ( int testNum = 0; testNum < 4; testNum++ )
+        for ( int testNum = 0; testNum < 2; testNum++ )
         {
             assertMessage( "Before in parent", messageNum++ );
             assertMessage( "Before", messageNum++ );

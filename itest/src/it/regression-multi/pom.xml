@@ -64,6 +64,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-testforge</artifactId>
             <version>${project.version}</version>
@@ -110,6 +117,23 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>copy-pde-bundle</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.exam</groupId>
+                                    <artifactId>regression-pde-bundle</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-pde-bundle</id>
                         <goals>
                             <goal>unpack</goal>
@@ -133,6 +157,10 @@
                 <configuration>
                     <forkMode>pertest</forkMode>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
+                    <systemProperties>
+                        <pax.exam.container>${pax.exam.container}</pax.exam.container>
+                        <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>
@@ -144,6 +172,9 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <pax.exam.framework>felix</pax.exam.framework>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.apache.felix</groupId>
@@ -158,6 +189,9 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <pax.exam.framework>equinox</pax.exam.framework>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.eclipse.tycho</groupId>
@@ -168,10 +202,43 @@
             </dependencies>
         </profile>
         <profile>
+            <id>jbosgi</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <pax.exam.framework>jbosgi</pax.exam.framework>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>jboss-public</id>
+                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
+                </repository>
+            </repositories>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.osgi.framework</groupId>
+                    <artifactId>jbosgi-framework-aggregated</artifactId>
+                    <version>1.1.0</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                    <version>3.1.0.CR2</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <id>knopflerfish</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <pax.exam.framework>knopflerfish</pax.exam.framework>
+            </properties>
             <repositories>
                 <repository>
                     <id>knopflerfish-releases</id>
@@ -193,6 +260,9 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <pax.exam.container>native</pax.exam.container>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.ops4j.pax.exam</groupId>
@@ -219,6 +289,9 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <pax.exam.container>paxrunner</pax.exam.container>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.ops4j.pax.exam</groupId>
@@ -235,12 +308,15 @@
 
             </dependencies>
         </profile>
-        
+
         <profile>
             <id>forked</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <pax.exam.container>forked</pax.exam.container>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.ops4j.pax.exam</groupId>
@@ -267,7 +343,7 @@
 
             </dependencies>
         </profile>
-        
+
     </profiles>
 
 </project>

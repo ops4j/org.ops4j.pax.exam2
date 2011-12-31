@@ -60,7 +60,7 @@ public class RepositoryTest
     }
 
     @Test
-    public void testSpringCoreIsResolvable() throws Exception
+    public void bundleFromExternalRepositoryIsResolved() throws Exception
     {
         Bundle[] bundles = bundleContext.getBundles();
         boolean demoBundleFound = false;

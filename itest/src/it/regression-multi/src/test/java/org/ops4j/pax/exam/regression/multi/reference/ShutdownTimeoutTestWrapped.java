@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.reference;
+package org.ops4j.pax.exam.regression.multi.reference;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
-import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
-import static org.ops4j.pax.exam.CoreOptions.composite;
-import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.systemTimeout;
 import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
+
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -42,29 +38,37 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.exam.util.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
+/**
+ * This class is called {@code ...TestWrapped} so it doesn't get run by Maven Surefire.
+ * 
+ * @see ShutdownTimeoutInvokerTest
+ * @author Harald Wellmann
+ *
+ */
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class ReferenceJarTest
+public class ShutdownTimeoutTestWrapped
 {
     @Inject
     private BundleContext bc;
-    
+
     @Configuration( )
     public Option[] config()
     {
         return options(
             regressionDefaults(),
             url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
-            systemProperty("osgi.console").value("6666"),
-            systemTimeout(10000 * 1000),
+                    "/target/regression-pde-bundle.jar" ),
+            systemTimeout( 3000 ),
+            systemProperty( "pax.exam.regression.blockOnStop" ).value( "true" ),
             junitBundles() );
     }
 
     @Test
     public void getHelloService()
     {
-        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
+        Object service =
+            ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
         assertThat( service, is( notNullValue() ) );
     }
 }

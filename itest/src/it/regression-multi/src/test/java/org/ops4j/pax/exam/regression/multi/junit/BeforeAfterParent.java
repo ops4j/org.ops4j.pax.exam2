@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.inject;
+package org.ops4j.pax.exam.regression.multi.junit;
 
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -38,7 +38,7 @@ public class BeforeAfterParent
         return options(
             regressionDefaults(),
             url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
+                    "/target/regression-pde-bundle.jar" ),
             junitBundles() );
     }
 

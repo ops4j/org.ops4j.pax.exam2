@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.inject;
+package org.ops4j.pax.exam.regression.multi.inject;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -23,7 +23,7 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -60,7 +60,7 @@ public class FilterTest
         return options(
             regressionDefaults(),
             url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
+                    "/target/regression-pde-bundle.jar" ),
             systemProperty("osgi.console").value("6666"),
             junitBundles() );
     }

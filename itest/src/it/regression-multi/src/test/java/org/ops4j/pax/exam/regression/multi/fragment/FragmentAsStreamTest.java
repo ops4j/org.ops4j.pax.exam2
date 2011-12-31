@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.fragment;
+package org.ops4j.pax.exam.regression.multi.fragment;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -22,12 +22,10 @@ import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.CoreOptions.streamBundle;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import javax.inject.Inject;
 
@@ -35,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -43,32 +40,30 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.util.ServiceLookup;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
-import org.ops4j.store.Handle;
-import org.ops4j.store.Store;
-import org.ops4j.store.StoreFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class FragmentTest
+public class FragmentAsStreamTest
 {
     @Inject
     private BundleContext bc;
     
+
     @Configuration( )
     public Option[] config()
     {
         return options(
             regressionDefaults(),
             mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
-            url( createFragmentBundle().toExternalForm() ).noStart(),
+            streamBundle( createFragmentBundle() ).noStart(),
             junitBundles(),
             cleanCaches() );
     }
 
-    private URL createFragmentBundle()
+    private InputStream createFragmentBundle()
     {
         TinyBundle bundle = TinyBundles.bundle()
             .set( Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.regression.pde" )
@@ -76,16 +71,7 @@ public class FragmentTest
             .set( Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment" )
             .add( "messages.properties", getClass().getResource( "/messages.properties" ) );
 
-        Store<InputStream> store = StoreFactory.defaultStore();
-        try
-        {
-            Handle handle = store.store( bundle.build() );
-            return store.getLocation( handle ).toURL();
-        }
-        catch ( IOException e )
-        {
-            throw new TestContainerException( e );
-        }
+        return bundle.build();
     }
 
     @Test

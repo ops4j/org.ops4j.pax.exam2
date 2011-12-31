@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.inject;
+package org.ops4j.pax.exam.regression.multi.junit;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.regression.nat.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,12 +31,12 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
 @RunWith(JUnit4TestRunner.class)
-@ExamReactorStrategy(EagerSingleStagedReactorFactory.class)
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class NameRuleTest {
-
+    
    @Rule
    public TestName name = new TestName();
    
