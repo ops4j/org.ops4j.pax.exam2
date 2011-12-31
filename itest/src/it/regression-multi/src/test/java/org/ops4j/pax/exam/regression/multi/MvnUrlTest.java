@@ -20,11 +20,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -53,14 +52,9 @@ public class MvnUrlTest
     @Test
     public void provisionMvnUrl() throws BundleException, IOException
     {
-        ServiceLoader<FrameworkFactory> loader = ServiceLoader.load( FrameworkFactory.class );
-        Iterator<FrameworkFactory> it = loader.iterator();
-        while ( it.hasNext() )
-        {
-            FrameworkFactory frameworkFactory = it.next();
-            Framework framework = frameworkFactory.newFramework( props );
-            provisionToFramework( framework );
-        }
+        FrameworkFactory frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
+        Framework framework = frameworkFactory.newFramework( props );
+        provisionToFramework( framework );
     }
 
     private void provisionToFramework( Framework framework ) throws BundleException, IOException
