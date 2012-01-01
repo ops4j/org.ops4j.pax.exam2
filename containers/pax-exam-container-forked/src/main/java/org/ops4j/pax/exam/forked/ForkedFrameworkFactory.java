@@ -17,16 +17,15 @@
  */
 package org.ops4j.pax.exam.forked;
 
-import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
-
-import java.io.File;
 import java.io.IOException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.ops4j.base.exec.DefaultJavaRunner;
 import org.ops4j.net.FreePort;
@@ -51,7 +50,6 @@ public class ForkedFrameworkFactory
     private static final long TIMEOUT = 60 * 1000;
     
     private FrameworkFactory frameworkFactory;
-    private File storage;
     private Registry registry;
 
     private int port;
@@ -66,10 +64,9 @@ public class ForkedFrameworkFactory
      * @param frameworkFactory OSGi framework factory
      * @param storage framework storage directory for the forked framework
      */
-    public ForkedFrameworkFactory( FrameworkFactory frameworkFactory, File storage )
+    public ForkedFrameworkFactory( FrameworkFactory frameworkFactory )
     {
         this.frameworkFactory = frameworkFactory;
-        this.storage = storage;
     }
 
     public FrameworkFactory getFrameworkFactory()
@@ -80,16 +77,6 @@ public class ForkedFrameworkFactory
     public void setFrameworkFactory( FrameworkFactory frameworkFactory )
     {
         this.frameworkFactory = frameworkFactory;
-    }
-
-    public File getStorage()
-    {
-        return storage;
-    }
-
-    public void setStorage( File storage )
-    {
-        this.storage = storage;
     }
 
     /**
@@ -113,41 +100,40 @@ public class ForkedFrameworkFactory
         // TODO make port range configurable
         FreePort freePort = new FreePort( 21000, 21099 );
         port = freePort.getPort();
+        
+        String rmiName = "ExamRemoteFramework-" + UUID.randomUUID().toString();
 
         registry = LocateRegistry.createRegistry( port );
 
-        String[] vmOptions = buildSystemProperties( systemProperties );
+        Map<String,String> systemPropsNew = new HashMap<String, String>(systemProperties);
+        systemPropsNew.put( RemoteFramework.RMI_PORT_KEY, Integer.toString( port ) );
+        systemPropsNew.put( RemoteFramework.RMI_NAME_KEY, rmiName );
+        String[] vmOptions = buildSystemProperties( systemPropsNew );
         String[] args = buildFrameworkProperties( frameworkProperties );
         javaRunner = new DefaultJavaRunner( false );
         javaRunner.exec( vmOptions, buildClasspath(), RemoteFrameworkImpl.class.getName(),
             args, getJavaHome(), null );
-        return findRemoteFramework();
+        return findRemoteFramework(port, rmiName);
     }
 
     private String[] buildSystemProperties( Map<String, String> systemProperties )
     {
-        String[] vmOptions = new String[systemProperties.size() + 2];
+        String[] vmOptions = new String[systemProperties.size() ];
         int i = 0;
         for ( Map.Entry<String, String> entry : systemProperties.entrySet() )
         {
             vmOptions[i++] = String.format( "-D%s=%s", entry.getKey(), entry.getValue() );
         }
-        vmOptions[i++] = "-Dpax.swissbox.framework.rmi.port=" + port;
-        vmOptions[i++] = "-Dpax.swissbox.framework.rmi.name=ExamRemoteFramework";
         return vmOptions;
     }
 
     private String[] buildFrameworkProperties( Map<String, Object> frameworkProperties )
     {
-        String[] args = new String[2*frameworkProperties.size() + 2];
+        String[] args = new String[frameworkProperties.size()];
         int i = 0;
-        args[i++] = FRAMEWORK_STORAGE;
-        args[i++] = storage.getAbsolutePath();
-        for ( Map.Entry<String, Object> entry : frameworkProperties.entrySet() )
+        for( Map.Entry<String, Object> entry : frameworkProperties.entrySet() )
         {
-
-            args[i++] = entry.getKey();
-            args[i++] = entry.getValue().toString();
+            args[i++] = String.format( "-F%s=%s", entry.getKey(), entry.getValue().toString() );
         }
         return args;
     }
@@ -173,7 +159,7 @@ public class ForkedFrameworkFactory
         return new String[]{ frameworkPath, launcherPath };
     }
 
-    private RemoteFramework findRemoteFramework()
+    private RemoteFramework findRemoteFramework(int port, String rmiName )
     {
         RemoteFramework framework = null;
         Throwable reason = null;
@@ -186,7 +172,7 @@ public class ForkedFrameworkFactory
                 try
                 {
                     Registry reg = LocateRegistry.getRegistry( port );
-                    framework = (RemoteFramework) reg.lookup( "ExamRemoteFramework" );
+                    framework = (RemoteFramework) reg.lookup( rmiName );
                 }
                 catch ( Exception e )
                 {
