@@ -28,8 +28,10 @@ import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.swissbox.framework.ServiceLookup.getService;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
@@ -52,6 +55,7 @@ import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.glassfish.zip.ZipInstaller;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
@@ -77,12 +81,14 @@ import org.slf4j.LoggerFactory;
  */
 public class GlassFishTestContainer implements TestContainer
 {
+    public static final String GLASSFISH_WEB_DISTRIBUTION_URL =
+        "mvn:org.glassfish.distributions/web/3.1.1/zip";
 
-    final private static Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
-    final private static String PROBE_SIGNATURE_KEY = "Probe-Signature";
-    final private Stack<Long> installed = new Stack<Long>();
+    private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
+    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
+    private Stack<Long> installed = new Stack<Long>();
 
-    final private FrameworkFactory frameworkFactory;
+    private FrameworkFactory frameworkFactory;
     private ExamSystem system;
 
     private Framework framework;
@@ -101,7 +107,8 @@ public class GlassFishTestContainer implements TestContainer
     {
         Map<String, String> filterProps = new HashMap<String, String>();
         filterProps.put( PROBE_SIGNATURE_KEY, address.root().identifier() );
-        ProbeInvoker service = getService( framework.getBundleContext(), ProbeInvoker.class, filterProps );
+        ProbeInvoker service =
+            getService( framework.getBundleContext(), ProbeInvoker.class, filterProps );
         service.call( address.arguments() );
     }
 
@@ -128,8 +135,8 @@ public class GlassFishTestContainer implements TestContainer
     {
         return install( "local", stream );
     }
-    
-    public void deployModules() 
+
+    public void deployModules()
     {
         try
         {
@@ -171,6 +178,7 @@ public class GlassFishTestContainer implements TestContainer
     {
         try
         {
+            installContainer();
             system = system.fork( buildContainerOptions() );
             Map<String, Object> p = createFrameworkProperties();
             if( LOG.isDebugEnabled() )
@@ -187,22 +195,24 @@ public class GlassFishTestContainer implements TestContainer
                 mavenBundle( "ch.qos.logback", "logback-core", "0.9.29" ).startLevel( 1 ),
                 mavenBundle( "ch.qos.logback", "logback-classic", "0.9.29" ).startLevel( 1 ),
                 mavenBundle( "org.slf4j", "slf4j-api", "1.6.1" ).startLevel( 1 ),
-                url( "file:" + glassFishHome + "/modules/glassfish.jar" ).startLevel( 1 )
+                url( "file:" + glassFishHome + "/glassfish/modules/glassfish.jar" ).startLevel( 1 )
                 );
 
             LogManager.getLogManager().readConfiguration();
             List<Bundle> bundles = new ArrayList<Bundle>();
-            for (Option option : earlyOptions) {
+            for( Option option : earlyOptions )
+            {
                 ProvisionOption<?> bundle = (ProvisionOption<?>) option;
                 Bundle b = bc.installBundle( bundle.getURL() );
-                bundles.add(b);
+                bundles.add( b );
                 int startLevel = getStartLevel( bundle );
                 sl.setBundleStartLevel( b, startLevel );
             }
-            for (Bundle bundle : bundles) {
+            for( Bundle bundle : bundles )
+            {
                 bundle.start();
             }
-            
+
             glassFish = getService( bc, GlassFish.class );
             installAndStartBundles( bc );
         }
@@ -213,24 +223,61 @@ public class GlassFishTestContainer implements TestContainer
         return this;
     }
 
-    private Option[] buildContainerOptions()
+    private void installContainer() throws IOException
     {
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         ConfigurationManager cm = new ConfigurationManager();
         glassFishHome = cm.getProperty( "pax.exam.server.home" );
-        if (glassFishHome == null) {
-            throw new TestContainerException( "System property pax.exam.server.home must be set to GlassFish install root" );
+        if( glassFishHome == null )
+        {
+            throw new TestContainerException(
+                "System property pax.exam.server.home must be set to GlassFish install root" );
         }
-        
+        File gfHome = new File( glassFishHome );
+        File installDir = gfHome;
+        if( installDir.exists() )
+        {
+            File bootBundle = new File( installDir, "glassfish/modules/glassfish.jar" );
+            if( bootBundle.exists() )
+            {
+                LOG.info( "using GlassFish installation in {}", glassFishHome );
+            }
+            else
+            {
+                String msg =
+                    String.format( "%s exists, but %s does not. " +
+                            "This does not look like a valid GlassFish installation.",
+                        glassFishHome, bootBundle );
+                throw new TestContainerException( msg );
+            }
+        }
+        else
+        {
+            LOG.info( "installing GlassFish in {}", glassFishHome );
+            URL url = new URL( GLASSFISH_WEB_DISTRIBUTION_URL );
+            File gfParent = gfHome.getParentFile();
+            File tempInstall = new File( gfParent, UUID.randomUUID().toString() );
+            ZipInstaller installer = new ZipInstaller( url, tempInstall.getAbsolutePath() );
+            installer.downloadAndInstall();
+            new File( tempInstall, "glassfish3" ).renameTo( gfHome );
+        }
+    }
+
+    private Option[] buildContainerOptions()
+    {
         return new Option[]{
             systemPackages(
                 "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
                 "org.glassfish.embeddable;version=3.1",
                 "org.glassfish.embeddable.spi;version=3.1" ),
             systemProperty( "java.protocol.handler.pkgs" ).value( "org.ops4j.pax.url" ),
-            systemProperty( "com.sun.aas.installRoot" ).value( glassFishHome ),
-            systemProperty( "com.sun.aas.instanceRoot" ).value( glassFishHome + "/domains/domain1" ),
-            systemProperty("java.util.logging.config.file").value(PathUtils.getBaseDir() + "/src/test/resources/logging.properties"),       
-            systemProperty("logback.configurationFile").value("file:" + PathUtils.getBaseDir() + "/src/test/resources/logback.xml"),       
+            systemProperty( "com.sun.aas.installRoot" ).value( glassFishHome + "/glassfish" ),
+            systemProperty( "com.sun.aas.instanceRoot" ).value(
+                glassFishHome + "/glassfish/domains/domain1" ),
+            systemProperty( "java.util.logging.config.file" ).value(
+                PathUtils.getBaseDir() + "/src/test/resources/logging.properties" ),
+            systemProperty( "logback.configurationFile" ).value(
+                "file:" + PathUtils.getBaseDir() + "/src/test/resources/logback.xml" ),
             systemProperty( "GlassFish_Platform" ).value( "Equinox" ),
             frameworkProperty( "org.osgi.framework.bundle.parent" ).value( "framework" ),
             frameworkProperty( "osgi.resolver.preferSystemPackages" ).value( "false" ),
@@ -239,7 +286,7 @@ public class GlassFishTestContainer implements TestContainer
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" )
                 .startLevel( START_LEVEL_TEST_BUNDLE ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" )
-                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),            
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
         };
     }
 

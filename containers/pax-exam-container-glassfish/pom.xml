@@ -12,6 +12,15 @@
     <name>OPS4J Pax Exam - GlassFish Container</name>
 
     <dependencies>
+    
+        <!-- This is on top to override no-op commons logging from swissbox -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
             <artifactId>metainf-services</artifactId>
@@ -41,16 +50,7 @@
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-framework</artifactId>
         </dependency>
-<!-- 
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-native</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
- -->
          
- 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
