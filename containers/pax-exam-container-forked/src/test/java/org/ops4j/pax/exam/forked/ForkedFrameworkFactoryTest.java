@@ -21,11 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.junit.Test;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.launch.FrameworkFactory;
 
 public class ForkedFrameworkFactoryTest
@@ -41,11 +44,13 @@ public class ForkedFrameworkFactoryTest
         File storage = new File( "target/storage" );
         storage.mkdir();
         ForkedFrameworkFactory forkedFactory =
-            new ForkedFrameworkFactory( frameworkFactory, storage );
+            new ForkedFrameworkFactory( frameworkFactory );
 
+        Map<String,Object> frameworkProperties = new HashMap<String, Object>();
+        frameworkProperties.put( Constants.FRAMEWORK_STORAGE, storage.getAbsolutePath() );
         RemoteFramework framework =
             forkedFactory.fork( Collections.<String, String> emptyMap(),
-                Collections.<String, Object> emptyMap() );
+                frameworkProperties );
         framework.start();
 
         long bundleId =
@@ -60,5 +65,4 @@ public class ForkedFrameworkFactoryTest
 
         forkedFactory.join();
     }
-
 }

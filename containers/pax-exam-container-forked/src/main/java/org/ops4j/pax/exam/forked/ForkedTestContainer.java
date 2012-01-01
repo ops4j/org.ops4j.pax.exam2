@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * The drawback of this container is that remote debugging is required to debug the tests executed
  * by the forked framework.
  * <p>
- * TODO remove hard-coded paths TODO support additional Exam options
+ * TODO support additional Exam options
  * 
  * @author Harald Wellmann
  * 
@@ -76,8 +76,7 @@ public class ForkedTestContainer implements TestContainer
     public ForkedTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
         this.system = system;
-        File storage = new File( "target/storage" );
-        this.frameworkFactory = new ForkedFrameworkFactory( frameworkFactory, storage );
+        this.frameworkFactory = new ForkedFrameworkFactory( frameworkFactory );
         this.platform = new PlatformImpl();
     }
 
