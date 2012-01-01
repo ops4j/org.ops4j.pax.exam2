@@ -42,6 +42,7 @@
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
                 <module>containers/pax-exam-container-forked</module>
+                <module>containers/pax-exam-container-glassfish</module>
 
                 <module>it-regression/regression-native-felix</module>
                 <module>it-regression/regression-native-testng</module>
