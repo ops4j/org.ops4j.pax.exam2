@@ -10,3 +10,5 @@ bin
 .project
 .settings
 test-output
+*.log
+
