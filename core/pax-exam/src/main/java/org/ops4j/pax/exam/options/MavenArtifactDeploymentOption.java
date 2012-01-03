@@ -19,17 +19,19 @@ package org.ops4j.pax.exam.options;
 
 import static org.ops4j.lang.NullArgumentException.validateNotNull;
 
-public class MavenArtifactDeploymentOption implements DeploymentOption, MavenUrlReference
+public class MavenArtifactDeploymentOption extends UrlDeploymentOption implements MavenUrlReference
 {
     private MavenUrlReference artifact;
     
     public MavenArtifactDeploymentOption()
     {
+        super("");
         this.artifact = new MavenArtifactUrlReference();
     }
 
     public MavenArtifactDeploymentOption( final MavenUrlReference artifact )
     {
+        super(artifact);
         validateNotNull( artifact, "Maven artifact" );
         this.artifact = artifact;
     }

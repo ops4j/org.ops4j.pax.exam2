@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 import javax.inject.Inject;
 
@@ -43,16 +43,17 @@ public class GlassFishTestContainerTest
 {
     @Inject
     private BundleContext bc;
-    
+
     @Inject
     private GlassFish gf;
-    
+
     @Configuration( )
     public Option[] config()
     {
         return options(
             workingDirectory( "/tmp/osgi-cache" ),
-            systemProperty("osgi.console").value("6666"),
+            systemProperty( "osgi.console" ).value( "6666" ),
+            war( "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war" ),
             junitBundles() );
     }
 

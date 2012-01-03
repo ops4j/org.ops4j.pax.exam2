@@ -31,6 +31,8 @@ import static org.ops4j.pax.swissbox.framework.ServiceLookup.getService;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
 
+import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
 import org.glassfish.embeddable.GlassFishException;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -62,6 +65,8 @@ import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.UrlDeploymentOption;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
@@ -81,6 +86,8 @@ import org.slf4j.LoggerFactory;
  */
 public class GlassFishTestContainer implements TestContainer
 {
+    // TODO make this configurable
+    // The only reason for not using full profile is reduced download time ;-)
     public static final String GLASSFISH_WEB_DISTRIBUTION_URL =
         "mvn:org.glassfish.distributions/web/3.1.1/zip";
 
@@ -138,11 +145,36 @@ public class GlassFishTestContainer implements TestContainer
 
     public void deployModules()
     {
+        UrlDeploymentOption[] deploymentOptions = system.getOptions( UrlDeploymentOption.class );
+        int numModules = 0;
+        for( UrlDeploymentOption option : deploymentOptions )
+        {
+            numModules++;
+            UrlReference urlReference = option.getUrlReference();
+            // TODO get application name from option
+            deployModule( urlReference, "app" + numModules );
+        }
+    }
+
+    private void deployModule( UrlReference urlReference, String applicationName )
+    {
         try
         {
-            glassFish.getDeployer();
+            String url = urlReference.getURL();
+            LOG.info( "deploying module {}", url );
+            URI uri = new URL( url ).toURI();
+            Deployer deployer = glassFish.getDeployer();
+            deployer.deploy( uri, "--name", applicationName );
+        }
+        catch ( IOException exc )
+        {
+            throw new TestContainerException( exc );
         }
         catch ( GlassFishException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+        catch ( URISyntaxException exc )
         {
             throw new TestContainerException( exc );
         }
@@ -150,6 +182,7 @@ public class GlassFishTestContainer implements TestContainer
 
     public synchronized void cleanup()
     {
+        undeployModules();
         while( !installed.isEmpty() )
         {
             try
@@ -164,6 +197,20 @@ public class GlassFishTestContainer implements TestContainer
                 // Sometimes bundles go mad when install + uninstall happens too
                 // fast.
             }
+        }
+    }
+
+    private void undeployModules()
+    {
+        try
+        {
+            Deployer deployer = glassFish.getDeployer();
+            // FIXME undeploy all modules, and get name from options
+            deployer.undeploy( "app1" );
+        }
+        catch ( GlassFishException exc )
+        {
+            throw new TestContainerException( exc );
         }
     }
 
@@ -192,9 +239,9 @@ public class GlassFishTestContainer implements TestContainer
             sl = getService( bc, StartLevel.class );
 
             Option[] earlyOptions = options(
-                mavenBundle( "ch.qos.logback", "logback-core", "0.9.29" ).startLevel( 1 ),
-                mavenBundle( "ch.qos.logback", "logback-classic", "0.9.29" ).startLevel( 1 ),
-                mavenBundle( "org.slf4j", "slf4j-api", "1.6.1" ).startLevel( 1 ),
+                mavenBundle( "ch.qos.logback", "logback-core", "0.9.20" ).startLevel( 1 ),
+                mavenBundle( "ch.qos.logback", "logback-classic", "0.9.20" ).startLevel( 1 ),
+                mavenBundle( "org.slf4j", "slf4j-api", "1.5.11" ).startLevel( 1 ),
                 url( "file:" + glassFishHome + "/glassfish/modules/glassfish.jar" ).startLevel( 1 )
                 );
 
@@ -215,6 +262,8 @@ public class GlassFishTestContainer implements TestContainer
 
             glassFish = getService( bc, GlassFish.class );
             installAndStartBundles( bc );
+
+            deployModules();
         }
         catch ( Exception e )
         {
