@@ -14,7 +14,8 @@ Export-Package: org.ops4j.pax.exam.raw.extender
  org.ops4j.pax.exam.options.extra;version="${pom.version}",\
  org.ops4j.pax.exam.util;version="${pom.version}"
 
-Import-Package: org.ops4j.pax.exam,org.ops4j.pax.exam.util,!org.slf4j.impl,*
+Import-Package: org.ops4j.pax.exam,org.ops4j.pax.exam.util,!org.slf4j.impl,\
+  org.slf4j;version="[1.4,2)", *
 
 Private-Package:\
   ${bundle.namespace}.*

@@ -11,6 +11,6 @@ Private-Package:\
   ${bundle.namespace}.*
 
 Import-Package:\
-  !${bundle.namespace}, *
+  !${bundle.namespace}, org.slf4j;version="[1.4,2)", *
   
   
