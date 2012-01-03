@@ -20,7 +20,6 @@ package org.ops4j.pax.exam;
 import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
 import static org.ops4j.lang.NullArgumentException.validateNotNull;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.OptionUtils.expand;
 
 import java.io.IOException;
@@ -43,6 +42,7 @@ import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
 import org.ops4j.pax.exam.options.KnopflerfishFrameworkOption;
+import org.ops4j.pax.exam.options.MavenArtifactDeploymentOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption;
@@ -52,6 +52,7 @@ import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.TimeoutOption;
+import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
@@ -1305,5 +1306,22 @@ public class CoreOptions
         return new WorkingDirectoryOption( directory );
     }
 
+    public static UrlDeploymentOption war( String url)
+    {
+        return new UrlDeploymentOption( url );
+    }
 
+    public static MavenArtifactDeploymentOption mavenWar()
+    {
+        return new MavenArtifactDeploymentOption();
+    }
+
+    
+    public static MavenArtifactDeploymentOption mavenWar( final String groupId,
+            final String artifactId,
+            final String version )
+    {
+        return mavenWar().groupId( groupId ).artifactId( artifactId ).version( version );
+    }
+    
 }
