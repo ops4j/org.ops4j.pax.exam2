@@ -20,7 +20,6 @@ package org.ops4j.pax.exam;
 import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
 import static org.ops4j.lang.NullArgumentException.validateNotNull;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.OptionUtils.expand;
 
 import java.io.IOException;
@@ -353,10 +352,10 @@ public class CoreOptions
         // TODO make the store more global to the exam session to control
         // caching load + shutdown.
         // For now we do it fully3 locally:
-        Store<InputStream> store = StoreFactory.defaultStore();
 
         try
         {
+            Store<InputStream> store = StoreFactory.anonymousStore();
             Handle handle = store.store( stream );
             URL url = store.getLocation( handle ).toURL();
             UrlProvisionOption option =
@@ -365,7 +364,7 @@ public class CoreOptions
         }
         catch ( IOException e )
         {
-            throw new IllegalArgumentException( "A supplied stream blew up..", e );
+            throw new IllegalArgumentException( "A supplied stream blew up", e );
         }
     }
 

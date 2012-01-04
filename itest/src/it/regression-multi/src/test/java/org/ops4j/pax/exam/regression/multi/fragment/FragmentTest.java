@@ -76,9 +76,9 @@ public class FragmentTest
             .set( Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment" )
             .add( "messages.properties", getClass().getResource( "/messages.properties" ) );
 
-        Store<InputStream> store = StoreFactory.defaultStore();
         try
         {
+            Store<InputStream> store = StoreFactory.anonymousStore();
             Handle handle = store.store( bundle.build() );
             return store.getLocation( handle ).toURL();
         }

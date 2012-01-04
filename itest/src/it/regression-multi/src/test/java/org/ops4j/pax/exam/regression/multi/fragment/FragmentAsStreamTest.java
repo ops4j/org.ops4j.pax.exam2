@@ -25,6 +25,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -40,6 +42,7 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.ops4j.pax.exam.util.ServiceLookup;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.store.StoreFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -65,13 +68,20 @@ public class FragmentAsStreamTest
 
     private InputStream createFragmentBundle()
     {
-        TinyBundle bundle = TinyBundles.bundle()
-            .set( Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.regression.pde" )
-            .set( Constants.BUNDLE_MANIFESTVERSION, "2" )
-            .set( Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment" )
-            .add( "messages.properties", getClass().getResource( "/messages.properties" ) );
+        try
+        {
+            TinyBundle bundle = TinyBundles.bundle(StoreFactory.anonymousStore())
+                .set( Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.regression.pde" )
+                .set( Constants.BUNDLE_MANIFESTVERSION, "2" )
+                .set( Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment" )
+                .add( "messages.properties", getClass().getResource( "/messages.properties" ) );
+            return bundle.build();
+        }
+        catch ( IOException e )
+        {
+            throw new TestContainerException( e );
+        }
 
-        return bundle.build();
     }
 
     @Test
