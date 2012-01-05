@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.nat.internal;
 
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.osgi.framework.Constants.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +46,7 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
+import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -257,9 +259,14 @@ public class NativeTestContainer implements TestContainer
     private Map<String, Object> createFrameworkProperties( ) throws IOException
     {
         final Map<String, Object> p = new HashMap<String, Object>();
-        p.put( org.osgi.framework.Constants.FRAMEWORK_STORAGE, m_system.getTempFolder().getAbsolutePath() );
-        p.put( org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( m_system.getOptions( SystemPackageOption.class ) ) );
-        p.put( org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION, buildString( m_system.getOptions( BootDelegationOption.class ) ) );
+        CleanCachesOption cleanCaches = m_system.getSingleOption( CleanCachesOption.class );
+        if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
+            p.put( FRAMEWORK_STORAGE_CLEAN,  FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT );            
+        }
+
+        p.put( FRAMEWORK_STORAGE, m_system.getTempFolder().getAbsolutePath() );
+        p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( m_system.getOptions( SystemPackageOption.class ) ) );
+        p.put( FRAMEWORK_BOOTDELEGATION, buildString( m_system.getOptions( BootDelegationOption.class ) ) );
         
         for ( FrameworkPropertyOption option : m_system.getOptions( FrameworkPropertyOption.class ) )
         {
