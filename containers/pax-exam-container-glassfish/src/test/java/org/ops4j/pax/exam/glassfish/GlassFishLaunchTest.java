@@ -36,6 +36,8 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 
+import com.google.common.io.Files;
+
 public class GlassFishLaunchTest
 {
 
@@ -116,7 +118,7 @@ public class GlassFishLaunchTest
     private Map<String, String> createFrameworkProperties()
     {
         Map<String, String> frameworkProps = new HashMap<String, String>();
-        frameworkProps.put( "org.osgi.framework.storage", "/tmp/gf" );
+        frameworkProps.put( "org.osgi.framework.storage", Files.createTempDir().getAbsolutePath() );
         frameworkProps.put( "org.osgi.framework.bundle.parent", "framework" );
         frameworkProps.put( "org.osgi.framework.startlevel.beginning", "5" );
         frameworkProps.put( Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
