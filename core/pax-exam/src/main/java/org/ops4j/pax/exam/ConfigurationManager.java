@@ -51,7 +51,7 @@ public class ConfigurationManager
             {
                 url = new URL( configurationLocation );
             }
-            InputStream is = url.openStream();
+            InputStream is = (url == null) ? null :  url.openStream();
             if( is != null )
             {
                 props.load( is );
