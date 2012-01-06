@@ -17,7 +17,7 @@
       <property name="connectionAttributes" value=";create=true"></property>
     </jdbc-connection-pool>
     <jdbc-connection-pool datasource-classname="org.apache.derby.jdbc.EmbeddedXADataSource" res-type="javax.sql.XADataSource" name="DerbyPool">
-      <property name="databaseName" value="${com.sun.aas.instanceRoot}/lib/databases/default"></property>
+      <property name="databaseName" value="memory:default"></property>
       <property name="connectionAttributes" value=";create=true"></property>
     </jdbc-connection-pool>
   </resources>
