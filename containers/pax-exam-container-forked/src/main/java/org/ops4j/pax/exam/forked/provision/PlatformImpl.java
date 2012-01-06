@@ -131,7 +131,7 @@ public class PlatformImpl
                     }
                     StreamUtils.streamCopy( url, fileChannel, progressBar );
                     fileChannel.close();
-                    LOGGER.debug( "Succesfully downloaded to [" + destination + "]" );
+                    LOGGER.debug( "Successfully downloaded to [" + destination + "]" );
                 }
                 finally
                 {

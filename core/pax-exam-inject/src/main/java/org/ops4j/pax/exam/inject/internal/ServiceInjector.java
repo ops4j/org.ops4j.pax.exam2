@@ -81,6 +81,7 @@ public class ServiceInjector implements Injector
         if ( filter != null ) 
         {
             filterString = filter.value();
+            timeout = filter.timeout();
         }
         Object service = (BundleContext.class == type) ? bc : ServiceLookup.getService( bc, type, timeout, filterString );
         try

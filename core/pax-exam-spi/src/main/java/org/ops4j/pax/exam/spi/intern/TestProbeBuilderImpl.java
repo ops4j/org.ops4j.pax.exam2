@@ -137,7 +137,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private TinyBundle prepareProbeBundle( Properties p )
         throws IOException
     {
-        TinyBundle bundle = bundle().set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
+        TinyBundle bundle = bundle(m_store).set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
 
         bundle.set( Constants.BUNDLE_SYMBOLICNAME,"" );
         for( Object key : m_extraProperties.keySet() ) {

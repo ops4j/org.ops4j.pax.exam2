@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.regression.multi;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
+import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -54,6 +55,7 @@ public class RegressionConfiguration
             // copy most options from PaxExamRuntime.defaultTestSystemOptions(),
             // except RBC and Pax Logging
             bootDelegationPackage( "sun.*" ),
+            cleanCaches(),
             frameworkStartLevel( START_LEVEL_TEST_BUNDLE ),
 
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
