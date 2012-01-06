@@ -19,6 +19,8 @@ package org.ops4j.pax.exam;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.ops4j.util.property.PropertiesPropertyResolver;
@@ -37,20 +39,35 @@ public class ConfigurationManager
     public ConfigurationManager()
     {
         Properties props = new Properties();
-        InputStream is = getClass().getResourceAsStream( Constants.EXAM_PROPERTIES_PATH );
-        if( is != null )
+        URL url = null;
+        String configurationLocation = System.getProperty( Constants.EXAM_CONFIGURATION_KEY );
+        try
         {
-            try
+            if( configurationLocation == null )
+            {
+                url = getClass().getResource( Constants.EXAM_PROPERTIES_PATH );
+            }
+            else
+            {
+                url = new URL( configurationLocation );
+            }
+            InputStream is = url.openStream();
+            if( is != null )
             {
                 props.load( is );
+                is.close();
                 resolver = new PropertiesPropertyResolver( props );
             }
-            catch ( IOException exc )
-            {
-                throw new TestContainerException( exc );
-            }
+            resolver = new PropertiesPropertyResolver( System.getProperties(), resolver );
         }
-        resolver = new PropertiesPropertyResolver( System.getProperties(), resolver );
+        catch ( MalformedURLException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+        catch ( IOException exc )
+        {
+            throw new TestContainerException( exc );
+        }
     }
 
     public String getProperty( String key )
