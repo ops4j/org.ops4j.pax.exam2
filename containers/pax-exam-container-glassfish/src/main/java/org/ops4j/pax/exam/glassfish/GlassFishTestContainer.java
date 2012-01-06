@@ -49,6 +49,7 @@ import java.util.logging.LogManager;
 import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
 import org.glassfish.embeddable.GlassFishException;
+import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
@@ -309,6 +310,25 @@ public class GlassFishTestContainer implements TestContainer
             ZipInstaller installer = new ZipInstaller( url, tempInstall.getAbsolutePath() );
             installer.downloadAndInstall();
             new File( tempInstall, "glassfish3" ).renameTo( gfHome );
+
+            installConfiguration();
+        }
+    }
+
+    private void installConfiguration()
+    {
+        File configTarget = new File( glassFishHome, "glassfish/domains/domain1/config/domain.xml" );
+        File configSource = new File( PathUtils.getBaseDir(), "src/test/resources/domain.xml" );
+        if( configSource.exists() )
+        {
+            try
+            {
+                FileUtils.copyFile( configSource, configTarget, null );
+            }
+            catch ( IOException exc )
+            {
+                throw new TestContainerException( "error copying GlassFish domain.xml", exc );
+            }
         }
     }
 
