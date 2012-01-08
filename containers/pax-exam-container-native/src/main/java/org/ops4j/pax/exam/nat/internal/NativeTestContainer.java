@@ -19,7 +19,11 @@ package org.ops4j.pax.exam.nat.internal;
 
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.osgi.framework.Constants.*;
+import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
+import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
+import static org.osgi.framework.Constants.FRAMEWORK_STORAGE_CLEAN;
+import static org.osgi.framework.Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT;
+import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,16 +51,15 @@ import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
+import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.service.startlevel.StartLevel;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,37 +88,12 @@ public class NativeTestContainer implements TestContainer
 
     public synchronized void call( TestAddress address )
     {
-        String filterExpression = "(&(objectclass=" + ProbeInvoker.class.getName() + ") (" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + "))";
-        ProbeInvoker service = getService( ProbeInvoker.class, filterExpression );
+        Map<String,String> props = new HashMap<String, String>();
+        props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
+        ProbeInvoker service = ServiceLookup.getService( m_framework.getBundleContext(), ProbeInvoker.class, props );
         service.call( address.arguments() );
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T getService( Class<T> serviceType, String filter ) throws TestContainerException
-    {
-        assert m_framework != null : "Framework should be up";
-        assert serviceType != null : "serviceType not be null";
-
-        LOG.debug( "Acquiring Service " + serviceType.getName() + " " + (filter != null ? filter : "") );
-        try
-        {
-            ServiceTracker tracker = new ServiceTracker( m_framework.getBundleContext(), m_framework.getBundleContext().createFilter( filter ), null );
-            tracker.open();
-            T service = ( T ) tracker.waitForService( m_system.getTimeout().getValue() );
-            tracker.close();
-            if (service == null) {
-                throw new TestContainerException("Service " + filter + " not found in time.");
-            }
-            return service;
-        } catch ( InvalidSyntaxException e1 )
-        {
-            throw new TestContainerException( "NativeTestContainer implementation error. Please fix. Filter: " + filter, e1 );
-        } catch ( InterruptedException e )
-        {
-            throw new TestContainerException( "Interrupted while acquiring service of type " + serviceType.getName(), e );
-        }
-    }
-    
     public synchronized long install( String location, InputStream stream )
     {
         try
@@ -158,7 +136,7 @@ public class NativeTestContainer implements TestContainer
 
     public void setBundleStartLevel( long bundleId, int startLevel ) throws TestContainerException
     {
-        StartLevel sl = getStartLevelService( m_framework.getBundleContext() );
+        StartLevel sl = ServiceLookup.getService( m_framework.getBundleContext(), StartLevel.class );
         sl.setBundleStartLevel( m_framework.getBundleContext().getBundle( bundleId ), startLevel );
     }
 
@@ -327,7 +305,7 @@ public class NativeTestContainer implements TestContainer
     private void installAndStartBundles( BundleContext context ) throws BundleException
     {
         m_framework.start();
-        StartLevel sl = getStartLevelService( context );
+        StartLevel sl = ServiceLookup.getService(  context, StartLevel.class );
         for ( ProvisionOption<?> bundle : m_system.getOptions( ProvisionOption.class ) )
         {
             Bundle b = context.installBundle( bundle.getURL() );
@@ -375,10 +353,6 @@ public class NativeTestContainer implements TestContainer
         }
     }
 
-    private StartLevel getStartLevelService( BundleContext context )
-    {
-        return getService( StartLevel.class, "(objectclass=" + StartLevel.class.getName() + ")" );
-    }
 
     private int getStartLevel( ProvisionOption<?> bundle )
     {

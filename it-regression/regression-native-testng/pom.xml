@@ -17,14 +17,6 @@
 
     <name>OPS4J Pax Exam Regression - Native Container + TestNG</name>
 
-    <!-- 
-         Tests are skipped by default as long as we depend on a private 
-         6.3-SNAPSHOT version of TestNG.
-     -->
-    <properties>
-      <skipTests>true</skipTests>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>

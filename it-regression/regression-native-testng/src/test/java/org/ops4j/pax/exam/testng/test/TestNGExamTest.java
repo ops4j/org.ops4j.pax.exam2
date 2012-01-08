@@ -3,11 +3,10 @@ package org.ops4j.pax.exam.testng.test;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
 
 import javax.inject.Inject;
 
-import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.testng.Configuration;
 import org.osgi.framework.BundleContext;
@@ -23,14 +22,7 @@ public class TestNGExamTest
     {
         return options(
             
-            /*
-             * The TestNG 6.2 bundle does not resolve due to an incorrect
-             * package version for Guice. The 6.3-SNAPSHOT used here is built
-             * from https://github.com/hwellmann/testng.
-             * A pull request is pending.
-             */
-            
-            mavenBundle( "org.testng", "testng", "6.2.1" ),
+            mavenBundle( "org.testng", "testng", "6.3.1" ),
             
             /*
              * The following are optional direct and transitive dependencies

@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.util.Injector;
-import org.ops4j.pax.exam.util.ServiceLookup;
+import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 /**
