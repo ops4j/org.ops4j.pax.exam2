@@ -1,0 +1,1 @@
+mvn:org.ops4j.base/ops4j-base/${dependency.base.version}

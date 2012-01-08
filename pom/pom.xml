@@ -172,6 +172,16 @@
             </dependency>
             <dependency>
                 <groupId>org.ops4j.base</groupId>
+                <artifactId>ops4j-base</artifactId>
+                <version>${dependency.base.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.base</groupId>
+                <artifactId>ops4j-base-exec</artifactId>
+                <version>${dependency.base.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.base</groupId>
                 <artifactId>ops4j-base-lang</artifactId>
                 <version>${dependency.base.version}</version>
             </dependency>
