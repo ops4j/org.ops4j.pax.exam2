@@ -44,7 +44,11 @@
             <artifactId>tinybundles</artifactId>
             <version>1.0.0</version>
         </dependency>
-     <!--  Test Dependencies -->   
+        <dependency>
+            <groupId>org.glassfish.common</groupId>
+            <artifactId>scattered-archive-api</artifactId>
+        </dependency>
+        <!--  Test Dependencies -->   
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

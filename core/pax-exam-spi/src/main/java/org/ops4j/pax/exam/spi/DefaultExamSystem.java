@@ -34,9 +34,11 @@ import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.TimeoutOption;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
+import org.ops4j.pax.exam.spi.war.WarTestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
 
@@ -257,12 +259,23 @@ public class DefaultExamSystem implements ExamSystem {
         return missing;
     }
 
-    public TestProbeBuilder createProbe(  )
+    public TestProbeBuilder createProbe()
         throws IOException
     {
-        TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl( m_store );
-        testProbeBuilder.setHeader( "Bundle-SymbolicName","PAXEXAM-PROBE-" + createID( "created probe" ) );
-        return testProbeBuilder;
+        Option warProbeOption = getSingleOption( WarProbeOption.class );
+        if( warProbeOption == null )
+        {
+            LOG.debug( "creating default probe" );
+            TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl( m_store );
+            testProbeBuilder.setHeader( "Bundle-SymbolicName", "PAXEXAM-PROBE-"
+                    + createID( "created probe" ) );
+            return testProbeBuilder;
+        }
+        else
+        {
+            LOG.debug( "creating WAR probe" );
+            return new WarTestProbeBuilderImpl();
+        }
     }
 
     public String createID( String purposeText )
