@@ -44,7 +44,10 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.TestDirectory;
+import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.ExamReactor;
@@ -145,8 +148,13 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private void fillChildren()
     {
         Set<TestAddress> targets = m_reactor.getTargets();
+        TestDirectory testDirectory = TestDirectory.getInstance();
         for( final TestAddress address : targets ) {
             final FrameworkMethod frameworkMethod = m_map.get( address.root() );
+            String className = frameworkMethod.getMethod().getDeclaringClass().getName();
+            String methodName = frameworkMethod.getName();
+            
+            testDirectory.add( address, new TestInstantiationInstruction( className + ";" + methodName ) );
 
             // now, someone later may refer to that artificial FrameworkMethod. We need to be able to tell the address.
             FrameworkMethod method = new FrameworkMethod( frameworkMethod.getMethod() ) {
@@ -183,16 +191,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private synchronized StagedExamReactor prepareReactor()
         throws Exception
     {
-        ConfigurationManager cm = new ConfigurationManager();        
-        String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
-        if( Constants.EXAM_SYSTEM_DEFAULT.equals( systemType ) )
-        {
-            m_system = DefaultExamSystem.create( new Option[0] );
-        }
-        else
-        {
-            m_system = PaxExamRuntime.createTestSystem();
-        }
+        createExamSystem();
         Class<?> testClass = getTestClass().getJavaClass();
         Object testClassInstance = testClass.newInstance();
         ExamReactor reactor = getReactor( testClass );
@@ -201,7 +200,26 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         addTestsToReactor( reactor, testClass, testClassInstance );
         return reactor.stage( getFactory( testClass ) );
     }
+    
+    private void createExamSystem() throws IOException
+    {
+        ConfigurationManager cm = new ConfigurationManager();
+        String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
+        if( Constants.EXAM_SYSTEM_DEFAULT.equals( systemType ) )
+        {
+            m_system = DefaultExamSystem.create( new Option[0] );
+        }
+        else if( Constants.EXAM_SYSTEM_JAVAEE.equals( systemType ) )
+        {
+            m_system = DefaultExamSystem.create( new Option[]{ new WarProbeOption() } );
+        }
+        else
+        {
+            m_system = PaxExamRuntime.createTestSystem();
+        }
+    }
 
+    
     private void addConfigurationsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IllegalAccessException, InvocationTargetException, IllegalArgumentException, IOException
     {
