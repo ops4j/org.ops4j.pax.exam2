@@ -69,16 +69,19 @@
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-link</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-classpath</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- Required when using mvn provisioning options -->
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-aether</artifactId>
+            <scope>test</scope>
         </dependency>
 
 
@@ -116,8 +119,6 @@
             <artifactId>simple-glassfish-api</artifactId>
             <version>3.1.1</version>
         </dependency>
-        <!--dependency> <groupId>org.glassfish.distributions</groupId> <artifactId>glassfish</artifactId> 
-            <version>3.1.1</version> <type>zip</type> </dependency -->
     </dependencies>
 
     <build>

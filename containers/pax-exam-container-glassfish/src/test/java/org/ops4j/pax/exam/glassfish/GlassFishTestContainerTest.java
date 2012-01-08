@@ -35,10 +35,12 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
 import org.osgi.framework.BundleContext;
 
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+//@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
+@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
 public class GlassFishTestContainerTest
 {
     @Inject
@@ -60,6 +62,11 @@ public class GlassFishTestContainerTest
     public void getBundleContext() throws InterruptedException
     {
         assertThat( bc, is( notNullValue() ) );
+    }
+
+    @Test
+    public void getGlassFish() throws InterruptedException
+    {
         assertThat( gf, is( notNullValue() ) );
     }
 }

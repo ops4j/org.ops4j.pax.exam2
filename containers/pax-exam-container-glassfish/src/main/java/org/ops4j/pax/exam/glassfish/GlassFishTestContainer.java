@@ -29,6 +29,7 @@ import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.swissbox.framework.ServiceLookup.getService;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -49,16 +50,21 @@ import java.util.logging.LogManager;
 import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
 import org.glassfish.embeddable.GlassFishException;
+import org.glassfish.embeddable.GlassFishRuntime;
 import org.ops4j.io.FileUtils;
+import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDirectory;
+import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.glassfish.zip.ZipInstaller;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
@@ -70,6 +76,7 @@ import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.util.PathUtils;
+import org.ops4j.spi.ServiceProviderFinder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -95,6 +102,7 @@ public class GlassFishTestContainer implements TestContainer
     private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
     private Stack<Long> installed = new Stack<Long>();
+    private Stack<String> deployed = new Stack<String>();
 
     private FrameworkFactory frameworkFactory;
     private ExamSystem system;
@@ -105,23 +113,66 @@ public class GlassFishTestContainer implements TestContainer
     private String glassFishHome;
     private BundleContext bc;
 
+    private boolean isJavaEE;
+
+    private GlassFishRuntime glassFishRuntime;
+
+    private TestDirectory testDirectory;
+
     public GlassFishTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
         this.frameworkFactory = frameworkFactory;
         this.system = system;
+        this.testDirectory = TestDirectory.getInstance();
+        
     }
 
     public synchronized void call( TestAddress address )
     {
-        Map<String, String> filterProps = new HashMap<String, String>();
-        filterProps.put( PROBE_SIGNATURE_KEY, address.root().identifier() );
-        ProbeInvoker service =
-            getService( framework.getBundleContext(), ProbeInvoker.class, filterProps );
-        service.call( address.arguments() );
+        if( isJavaEE )
+        {
+            TestInstantiationInstruction instruction = testDirectory.lookup( address );
+            ProbeInvokerFactory probeInvokerFactory =
+                ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
+            ProbeInvoker invoker =
+                probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
+            invoker.call( address.arguments() );
+        }
+        else
+        {
+            Map<String, String> filterProps = new HashMap<String, String>();
+            filterProps.put( PROBE_SIGNATURE_KEY, address.root().identifier() );
+            ProbeInvoker service =
+                getService( framework.getBundleContext(), ProbeInvoker.class, filterProps );
+            service.call( address.arguments() );
+        }
     }
 
     public synchronized long install( String location, InputStream stream )
     {
+        if (isJavaEE)
+        {
+            try
+            {
+                LOG.info( "installing probe from stream" );
+                Deployer deployer = glassFish.getDeployer();
+                File tempFile = File.createTempFile( "pax-exam", ".war" );
+                tempFile.deleteOnExit();
+                StreamUtils.copyStream( stream, new FileOutputStream( tempFile ), true );
+                deployer.deploy( tempFile, "--name", "Pax-Exam-Probe" );
+                deployed.push( "Pax-Exam-Probe" );
+//              deployer.deploy( stream, "--name", "Pax-Exam-Probe" );
+            }
+            catch ( GlassFishException exc )            
+            {
+                throw new TestContainerException( exc );
+            }
+            catch ( IOException exc )
+            {
+                throw new TestContainerException( exc );
+            }
+            return -1;
+        }
         try
         {
             Bundle b = framework.getBundleContext().installBundle( location, stream );
@@ -166,6 +217,8 @@ public class GlassFishTestContainer implements TestContainer
             URI uri = new URL( url ).toURI();
             Deployer deployer = glassFish.getDeployer();
             deployer.deploy( uri, "--name", applicationName );
+            deployed.push( applicationName );
+            LOG.info( "deployed module {}", url );
         }
         catch ( IOException exc )
         {
@@ -184,6 +237,14 @@ public class GlassFishTestContainer implements TestContainer
     public synchronized void cleanup()
     {
         undeployModules();
+        try {
+            glassFish.stop();       
+            glassFishRuntime.shutdown();
+        }
+        catch ( GlassFishException exc )
+        {
+            throw new TestContainerException( exc );
+        }
         while( !installed.isEmpty() )
         {
             try
@@ -206,8 +267,11 @@ public class GlassFishTestContainer implements TestContainer
         try
         {
             Deployer deployer = glassFish.getDeployer();
-            // FIXME undeploy all modules, and get name from options
-            deployer.undeploy( "app1" );
+            while (! deployed.isEmpty())
+            {
+                String applicationName = deployed.pop();
+                deployer.undeploy( applicationName );
+            }
         }
         catch ( GlassFishException exc )
         {
@@ -252,6 +316,7 @@ public class GlassFishTestContainer implements TestContainer
             {
                 ProvisionOption<?> bundle = (ProvisionOption<?>) option;
                 Bundle b = bc.installBundle( bundle.getURL() );
+                installed.push( b.getBundleId() );
                 bundles.add( b );
                 int startLevel = getStartLevel( bundle );
                 sl.setBundleStartLevel( b, startLevel );
@@ -262,6 +327,8 @@ public class GlassFishTestContainer implements TestContainer
             }
 
             glassFish = getService( bc, GlassFish.class );
+            glassFishRuntime = glassFish.getService( GlassFishRuntime.class );
+            testDirectory.setAccessPoint( new URI("http://localhost:18080/Pax-Exam-Probe/" ) );
             installAndStartBundles( bc );
 
             deployModules();
@@ -277,6 +344,8 @@ public class GlassFishTestContainer implements TestContainer
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         ConfigurationManager cm = new ConfigurationManager();
+        String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
+        isJavaEE = Constants.EXAM_SYSTEM_JAVAEE.equals( systemType );
         glassFishHome = cm.getProperty( "pax.exam.server.home" );
         if( glassFishHome == null )
         {
