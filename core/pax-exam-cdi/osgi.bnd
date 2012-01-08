@@ -1,0 +1,16 @@
+Bundle-Activator:\
+  ${bundle.namespace}.internal.Activator
+
+Bundle-Version>:\
+  ${pom.version}
+
+Bundle-SymbolicName:\
+  ${bundle.symbolicName}
+
+Private-Package:\
+  ${bundle.namespace}.*
+
+Import-Package:\
+  !${bundle.namespace}, org.slf4j;version="[1.4,2)", *
+  
+  
