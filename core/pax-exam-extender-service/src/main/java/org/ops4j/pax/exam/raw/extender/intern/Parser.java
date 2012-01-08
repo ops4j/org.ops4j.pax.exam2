@@ -27,8 +27,8 @@ import java.util.Map;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.raw.extender.ProbeInvokerFactory;
-import org.ops4j.pax.exam.util.ServiceLookup;
 import org.ops4j.pax.swissbox.extender.ManifestEntry;
+import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
