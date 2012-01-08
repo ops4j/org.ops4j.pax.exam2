@@ -15,9 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.raw.extender;
+package org.ops4j.pax.exam;
 
-import org.ops4j.pax.exam.ProbeInvoker;
 import org.osgi.framework.BundleContext;
 
 /**
