@@ -63,6 +63,12 @@ public interface Constants {
     /** Configuration key for Exam system type. */
     static final String EXAM_SYSTEM_KEY = "pax.exam.system";
     
+    /** 
+     * URL of configuration properties, overriding the default classpath:/exam.properties.
+     * If you want this to be a plain old file, make sure to include the {@code file:} protocol. 
+     */
+    static final String EXAM_CONFIGURATION_KEY = "pax.exam.configuration";
+    
     /** Default exam system with no predefined options.  */
     static final String EXAM_SYSTEM_DEFAULT = "default";
 
