@@ -51,7 +51,7 @@ import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -261,7 +261,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         }
         else {
             // default:
-            fact = new EagerSingleStagedReactorFactory();
+            fact = new AllConfinedStagedReactorFactory();
         }
         return fact;
     }
