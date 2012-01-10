@@ -49,6 +49,7 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
+import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.osgi.framework.BundleException;
@@ -245,6 +246,13 @@ public class ForkedTestContainer implements TestContainer
         {
             p.put( option.getKey(), option.getValue() );
         }
+        
+        RepositoryOption[] repositories = system.getOptions ( RepositoryOption.class);
+        if (repositories.length != 0)
+        {
+            System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString( repositories ));
+        }
+        
         return p;
     }
 
