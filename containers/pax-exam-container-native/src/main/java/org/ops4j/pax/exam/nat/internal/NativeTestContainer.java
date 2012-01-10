@@ -51,6 +51,7 @@ import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
+import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -255,6 +256,8 @@ public class NativeTestContainer implements TestContainer
         {
             System.setProperty( option.getKey(), option.getValue() );
         }
+        
+        System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString( m_system.getOptions ( RepositoryOption.class)));
         return p;
     }
 

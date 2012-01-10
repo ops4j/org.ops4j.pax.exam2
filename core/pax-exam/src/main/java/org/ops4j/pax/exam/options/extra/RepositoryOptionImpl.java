@@ -43,6 +43,11 @@ public class RepositoryOptionImpl implements RepositoryOption
      * MArks repository as allowing releases.
      */
     private boolean m_allowReleases;
+    
+    /**
+     * Defines repository identifier to be referenced in Maven settings. 
+     */
+    private String m_id;
 
     /**
      * Constructor.
@@ -77,6 +82,12 @@ public class RepositoryOptionImpl implements RepositoryOption
         m_allowReleases = false;
         return this;
     }
+    
+    public RepositoryOption id(String id)
+    {
+        m_id = id;
+        return this;
+    }
 
     /**
      * Returns the full repository url.
@@ -101,6 +112,11 @@ public class RepositoryOptionImpl implements RepositoryOption
         {
             repositoryUrl.append( "@noreleases" );
         }
+        if ( m_id != null )
+        {
+            repositoryUrl.append( "@id=" );            
+            repositoryUrl.append( m_id );            
+        }
         return repositoryUrl.toString();
     }
 
@@ -115,5 +131,10 @@ public class RepositoryOptionImpl implements RepositoryOption
         sb.append( "{url=" ).append( getRepository() );
         sb.append( '}' );
         return sb.toString();
+    }
+
+    public String getValue()
+    {
+        return getRepository();
     }
 }

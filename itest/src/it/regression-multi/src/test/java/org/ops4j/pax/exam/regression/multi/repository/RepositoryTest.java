@@ -23,7 +23,8 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.repository;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isPaxRunnerContainer;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -42,9 +43,7 @@ import org.osgi.framework.BundleContext;
  * NOTE: This test is not fail-safe. If the bundle happens to be in the local repository 
  * already, the test passes, even though remote access may be broken.
  * 
- * (The test currently fails with Native Container.)
  * @author Harald Wellmann
- *
  */
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
@@ -59,7 +58,7 @@ public class RepositoryTest
     {
         return options( //
             regressionDefaults(),
-            repository( "http://www.knopflerfish.org/maven2" ),
+            repository( "http://www.knopflerfish.org/maven2" ).id("knopflerfish"),
             cleanCaches(),
             mavenBundle( "org.knopflerfish.bundle", "demo1", "2.0.0" ),
             junitBundles() );
