@@ -20,15 +20,16 @@ package org.ops4j.pax.exam.raw.extender.intern;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
+
 import org.ops4j.pax.exam.libraryoptions.Constants;
 import org.ops4j.pax.swissbox.core.BundleUtils;
 import org.ops4j.pax.swissbox.extender.BundleObserver;
 import org.ops4j.pax.swissbox.extender.ManifestEntry;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Toni Menzel
@@ -40,7 +41,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
     /**
      * Logger.
      */
-    private static final Log LOG = LogFactory.getLog( TestBundleObserver.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TestBundleObserver.class );
     /**
      * Holder for regression runner registrations per bundle.
      */
@@ -108,13 +109,11 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
     {
 
         final Probe probe;
-        final ServiceRegistration serviceRegistration;
 
         public Registration( Probe probe,
                              final ServiceRegistration serviceRegistration )
         {
             this.probe = probe;
-            this.serviceRegistration = serviceRegistration;
         }
     }
 
