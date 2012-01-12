@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.forked;
 
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
@@ -51,7 +51,6 @@ import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
-import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
