@@ -19,7 +19,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
@@ -48,7 +48,6 @@ public class ReferenceJarTest
     {
         return options(
             regressionDefaults(),
-            systemProperty( "osgi.console" ).value( "6666" ),
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/target/regression-pde-bundle.jar" ),
             junitBundles() );

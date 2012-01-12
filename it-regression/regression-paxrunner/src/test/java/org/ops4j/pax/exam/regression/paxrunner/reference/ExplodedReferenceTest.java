@@ -18,6 +18,7 @@ package org.ops4j.pax.exam.regression.paxrunner.reference;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
@@ -52,6 +53,7 @@ public class ExplodedReferenceTest
         String baseDir = PathUtils.getBaseDir();
         return options(
             url( "reference:file:" + baseDir + "/target/regression-pde-bundle" ),
+            cleanCaches(),
             junitBundles(),
             equinox(),
             felix(),

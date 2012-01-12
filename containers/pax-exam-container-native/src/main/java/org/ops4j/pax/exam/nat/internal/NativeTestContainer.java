@@ -148,6 +148,8 @@ public class NativeTestContainer implements TestContainer
         {
             m_system = m_system.fork( new Option[] {
                 systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
+                systemPackage( "org.ops4j.pax.exam.options;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
+                systemPackage( "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
                 systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
             } );
             Map<String, Object> p = createFrameworkProperties();

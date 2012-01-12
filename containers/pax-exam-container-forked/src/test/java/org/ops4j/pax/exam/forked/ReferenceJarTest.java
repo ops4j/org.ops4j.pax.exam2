@@ -42,21 +42,20 @@ public class ReferenceJarTest
 {
     @Inject
     private BundleContext bc;
-    
+
     @Configuration( )
     public Option[] config()
     {
         return options(
-            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", "2.3.0" ),
-                    systemProperty("osgi.console").value("6666"),
-                    systemTimeout(10000 * 1000),
+            mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", "2.3.0" ),
             junitBundles() );
     }
 
     @Test
     public void getHelloService()
     {
-        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
+        Object service =
+            ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
         assertThat( service, is( notNullValue() ) );
     }
 }

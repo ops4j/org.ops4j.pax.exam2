@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.regression.paxrunner.reference;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
@@ -52,6 +52,7 @@ public class ReferenceJarTest
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/../regression-pde-bundle/target/regression-pde-bundle.jar" ),
             junitBundles(),
+            cleanCaches(),
             equinox(),
             felix(),
             knopflerfish() );

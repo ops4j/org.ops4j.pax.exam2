@@ -34,6 +34,8 @@ import org.osgi.service.log.LogService;
  * An entire test harness in a tweet.
  */
 public class PlayerTest {
+    
+    private static final int NUM_EXAM_BUNDLES = 14;
 
     @Test( expected = TestContainerException.class )
     public void noTestAdded()
@@ -55,7 +57,8 @@ public class PlayerTest {
     public void count()
         throws Exception
     {
-        new Player().test( CountBundles.class, 10 ).play();
+        System.setProperty("osgi.console", "6666");
+        new Player().test( CountBundles.class, NUM_EXAM_BUNDLES ).play();
 
     }
 
@@ -63,7 +66,7 @@ public class PlayerTest {
     public void twoTests()
         throws Exception
     {
-        new Player().test( WaitForService.class, ProbeInvoker.class.getName(), 5000 ).test( CountBundles.class, 10 ).play();
+        new Player().test( WaitForService.class, ProbeInvoker.class.getName(), 5000 ).test( CountBundles.class, NUM_EXAM_BUNDLES ).play();
 
     }
 
