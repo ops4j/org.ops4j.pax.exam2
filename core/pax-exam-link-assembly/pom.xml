@@ -50,6 +50,12 @@
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-extender-service</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -79,7 +85,22 @@
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-extender</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-framework</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-lifecycle</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -24,6 +24,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -83,8 +84,7 @@ public class ForkedFrameworkFactory
      * Forks a Java VM process running an OSGi framework and returns a {@link RemoteFramework}
      * handle to it.
      * <p>
-     * TODO add VM properties
-     * 
+     * @param vmArgs VM arguments 
      * @param systemProperties system properties for the forked Java VM
      * @param frameworkProperties framework properties for the remote framework
      * @return
@@ -93,7 +93,7 @@ public class ForkedFrameworkFactory
      * @throws InterruptedException
      * @throws NotBoundException
      */
-    public RemoteFramework fork( Map<String, String> systemProperties,
+    public RemoteFramework fork( List<String> vmArgs, Map<String, String> systemProperties,
             Map<String, Object> frameworkProperties ) throws BundleException, IOException,
         InterruptedException, NotBoundException
     {
@@ -108,7 +108,7 @@ public class ForkedFrameworkFactory
         Map<String,String> systemPropsNew = new HashMap<String, String>(systemProperties);
         systemPropsNew.put( RemoteFramework.RMI_PORT_KEY, Integer.toString( port ) );
         systemPropsNew.put( RemoteFramework.RMI_NAME_KEY, rmiName );
-        String[] vmOptions = buildSystemProperties( systemPropsNew );
+        String[] vmOptions = buildSystemProperties( vmArgs, systemPropsNew );
         String[] args = buildFrameworkProperties( frameworkProperties );
         javaRunner = new DefaultJavaRunner( false );
         javaRunner.exec( vmOptions, buildClasspath(), RemoteFrameworkImpl.class.getName(),
@@ -116,10 +116,14 @@ public class ForkedFrameworkFactory
         return findRemoteFramework(port, rmiName);
     }
 
-    private String[] buildSystemProperties( Map<String, String> systemProperties )
+    private String[] buildSystemProperties( List<String> vmArgs, Map<String, String> systemProperties )
     {
-        String[] vmOptions = new String[systemProperties.size() ];
+        String[] vmOptions = new String[vmArgs.size() + systemProperties.size() ];
         int i = 0;
+        for (String vmArg : vmArgs)
+        {
+            vmOptions[i++] = vmArg;
+        }
         for ( Map.Entry<String, String> entry : systemProperties.entrySet() )
         {
             vmOptions[i++] = String.format( "-D%s=%s", entry.getKey(), entry.getValue() );

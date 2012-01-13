@@ -49,7 +49,7 @@ public class ForkedFrameworkFactoryTest
         Map<String,Object> frameworkProperties = new HashMap<String, Object>();
         frameworkProperties.put( Constants.FRAMEWORK_STORAGE, storage.getAbsolutePath() );
         RemoteFramework framework =
-            forkedFactory.fork( Collections.<String, String> emptyMap(),
+            forkedFactory.fork( Collections.<String>emptyList(), Collections.<String, String> emptyMap(),
                 frameworkProperties );
         framework.start();
 

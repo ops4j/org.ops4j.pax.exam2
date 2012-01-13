@@ -17,8 +17,10 @@
  */
 package org.ops4j.pax.exam.forked;
 
-import static org.osgi.framework.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
+import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
+import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,7 +30,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ops4j.io.StreamUtils;
@@ -45,6 +49,8 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
+import org.ops4j.pax.exam.options.extra.RepositoryOption;
+import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -140,9 +146,10 @@ public class ForkedTestContainer implements TestContainer
             system = system.fork( new Option[]{
                 systemProperty( "java.protocol.handler.pkgs" ).value( "org.ops4j.pax.url" )
             } );
+            List<String> vmArgs = createVmArguments();
             Map<String, String> systemProperties = createSystemProperties();
             Map<String, Object> frameworkProperties = createFrameworkProperties();
-            remoteFramework = frameworkFactory.fork( systemProperties, frameworkProperties );
+            remoteFramework = frameworkFactory.fork( vmArgs, systemProperties, frameworkProperties );
             remoteFramework.init();
             installAndStartBundles();
         }
@@ -219,6 +226,18 @@ public class ForkedTestContainer implements TestContainer
         }
         return p;
     }
+    
+    private List<String> createVmArguments()
+    {
+        VMOption[] options = system.getOptions( VMOption.class );
+        List<String> args = new ArrayList<String>();
+        for (VMOption option : options)
+        {
+            args.add(option.getOption());
+        }
+        return args;
+        
+    }
 
     private Map<String, String> createSystemProperties()
     {
@@ -227,6 +246,13 @@ public class ForkedTestContainer implements TestContainer
         {
             p.put( option.getKey(), option.getValue() );
         }
+        
+        RepositoryOption[] repositories = system.getOptions ( RepositoryOption.class);
+        if (repositories.length != 0)
+        {
+            System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString( repositories ));
+        }
+        
         return p;
     }
 
@@ -286,6 +312,8 @@ public class ForkedTestContainer implements TestContainer
         int startLevel = system.getSingleOption( FrameworkStartLevelOption.class ).getStartLevel();
         LOG.debug( "Jump to startlevel: " + startLevel );
         remoteFramework.setFrameworkStartLevel( startLevel );
+        
+        // FIXME listen for a startup event instead of sleeping
         try
         {
             Thread.sleep( 1000 );
@@ -298,7 +326,6 @@ public class ForkedTestContainer implements TestContainer
 
     private String downloadBundle( String url )
     {
-        File bundleDir = new File( "bundles" );
         try
         {
             URL realUrl = new URL( url );
@@ -306,7 +333,7 @@ public class ForkedTestContainer implements TestContainer
                 return url;
             }
             File localBundle =
-                platform.download( bundleDir, realUrl, url, false, true, true, false );
+                platform.download( system.getTempFolder(), realUrl, url, false, true, true, false );
             return localBundle.toURI().toURL().toString();
         }
         catch ( MalformedURLException exc )

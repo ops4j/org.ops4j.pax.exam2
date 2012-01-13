@@ -230,8 +230,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                     m_reactor.invoke( address );
                 } catch( Exception e ) {
                     Throwable t = ExceptionHelper.unwind( e );
-                    LOG.error("Exception" ,e);
-                    fail( t.getMessage() );
+                    throw t;
                 }
             }
         };

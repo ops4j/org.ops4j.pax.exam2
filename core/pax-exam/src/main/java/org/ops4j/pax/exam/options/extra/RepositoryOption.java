@@ -17,30 +17,35 @@
  */
 package org.ops4j.pax.exam.options.extra;
 
-import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.ValueOption;
 
 /**
  * Option specifiying a Pax Runner repository.
  *
  * @author Toni Menzel (tonit)
+ * @author Harald Wellmann
  * @since 0.3.0, December 19, 2008
  */
-public interface RepositoryOption
-    extends Option
+public interface RepositoryOption extends ValueOption<String>
 {
 
     /**
      * Mark repository as allowing snapshots.
      *
-     * @return this for fluent api
+     * @return this for fluent API
      */
-    public RepositoryOption allowSnapshots();
+    RepositoryOption allowSnapshots();
 
     /**
      * Mark repository as not allowing releases.
      *
-     * @return this for fluent api
+     * @return this for fluent API
      */
-    public RepositoryOption disableReleases();
+    RepositoryOption disableReleases();
 
+    /**
+     * Defines repository identifier to be referenced in Maven settings. 
+     * @return this for fluent API
+     */
+    RepositoryOption id(String id);
 }
