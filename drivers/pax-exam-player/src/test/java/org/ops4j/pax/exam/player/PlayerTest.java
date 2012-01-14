@@ -88,7 +88,7 @@ public class PlayerTest {
     {
         new Player().with(
             options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.1" )
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.4" )
             )
         ).test( WaitForService.class, LogService.class.getName() ).play();
 
@@ -100,8 +100,8 @@ public class PlayerTest {
     {
         new Player().with(
             options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.1" ),
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" )
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.4" ),
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.4" )
             )
         ).test( getClass(), LogService.class.getName() ).play();
     }
