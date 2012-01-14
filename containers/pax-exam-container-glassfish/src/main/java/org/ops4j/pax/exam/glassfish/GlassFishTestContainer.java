@@ -406,6 +406,8 @@ public class GlassFishTestContainer implements TestContainer
         return new Option[]{
             systemPackages(
                 "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
+                "org.ops4j.pax.exam.options;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
+                "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
                 "org.glassfish.embeddable;version=3.1",
                 "org.glassfish.embeddable.spi;version=3.1" ),
             systemProperty( "java.protocol.handler.pkgs" ).value( "org.ops4j.pax.url" ),
@@ -424,6 +426,16 @@ public class GlassFishTestContainer implements TestContainer
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" )
                 .startLevel( START_LEVEL_TEST_BUNDLE ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/org.ops4j.base.link" ).startLevel(
+                START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.core.link" ).startLevel(
+                START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.extender.link" ).startLevel(
+                START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.framework.link" )
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.lifecycle.link" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
         };
     }

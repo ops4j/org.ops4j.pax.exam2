@@ -77,7 +77,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
         ExamReactor examReactor = m_manager.prepareReactor(klass, testClassInstance);
         addTestsToReactor( examReactor, klass, testClassInstance );
-        m_reactor = examReactor.stage( m_manager.getFactory( klass ) );
+        m_reactor = m_manager.stageReactor();
     }
 
     @Override
@@ -88,8 +88,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         } catch( Exception e ) {
             throw new TestContainerException( "Problem interacting with reactor.", e );
         } finally {
-            m_reactor.tearDown();
-            m_system.clear();
+            m_manager.shutdown();
         }
     }
 
@@ -182,8 +181,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private void addTestsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IOException, ExamConfigurationException
     {
-        TestProbeBuilder probe = m_system.createProbe(  );
-        probe = m_manager.overwriteWithUserDefinition( testClass, testClassInstance, probe );
+        TestProbeBuilder probe = m_manager.createProbe( testClassInstance );
 
         //probe.setAnchor( testClass );
         for( FrameworkMethod s : super.getChildren() ) {

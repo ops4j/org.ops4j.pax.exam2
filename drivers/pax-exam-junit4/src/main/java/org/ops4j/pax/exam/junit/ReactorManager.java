@@ -153,6 +153,14 @@ public class ReactorManager
         return fact;
     }
 
+    public TestProbeBuilder createProbe(Object testClassInstance) throws IOException, ExamConfigurationException
+    {
+        TestProbeBuilder probe = system.createProbe(  );
+        probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
+        return probe;
+    }
+    
+
     public TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance,
             TestProbeBuilder probe )
         throws ExamConfigurationException
