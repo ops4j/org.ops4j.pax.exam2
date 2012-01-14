@@ -36,6 +36,11 @@ import org.osgi.service.log.LogService;
 public class PlayerTest {
     
     private static final int NUM_EXAM_BUNDLES = 14;
+    
+    /**
+     * WARNING: Do NOT use the same as PaxExamRuntime, or the test will fail.
+     */
+    private static final String PAX_LOGGING_VERSION = "1.6.1";
 
     @Test( expected = TestContainerException.class )
     public void noTestAdded()
@@ -76,7 +81,7 @@ public class PlayerTest {
     {
         new Player().with(
             options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.1" ).start()
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( PAX_LOGGING_VERSION ).start()
             )
         ).test( WaitForService.class, LogService.class.getName(), 5000 ).play();
 
@@ -88,7 +93,7 @@ public class PlayerTest {
     {
         new Player().with(
             options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.4" )
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( PAX_LOGGING_VERSION )
             )
         ).test( WaitForService.class, LogService.class.getName() ).play();
 
@@ -100,8 +105,8 @@ public class PlayerTest {
     {
         new Player().with(
             options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( "1.6.4" ),
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( "1.6.4" )
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( PAX_LOGGING_VERSION ),
+                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( PAX_LOGGING_VERSION )
             )
         ).test( getClass(), LogService.class.getName() ).play();
     }
