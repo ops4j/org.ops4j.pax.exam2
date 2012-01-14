@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.nat.felix.options;
+package org.ops4j.pax.exam.regression.multi.reference;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
+import static org.junit.Assume.assumeTrue;
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.vmOptions;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isNativeContainer;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -32,31 +37,34 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.startlevel.StartLevel;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class FrameworkPropertyTest
+public class PdeExplodedReferenceTest
 {
+
     @Inject
     private BundleContext bc;
     
-    @Configuration
+    @Configuration( )
     public Option[] config()
     {
+        String baseDir = PathUtils.getBaseDir();
         return options(
-            frameworkProperty( "felix.startlevel.bundle" ).value( "6" ),
-            junitBundles() 
-            );
+            regressionDefaults(),
+            url( "reference:file:" + baseDir + "/target/regression-pde-bundle" ),
+            junitBundles(),
+            vmOptions( "-Dosgi.clean=true", "-Dosgi.dev=target/classes" ));
     }
 
     @Test
-    public void startLevel()
+    public void getHelloService()
     {
-        StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );
-        assertThat( startLevel, is( notNullValue() ) );
-        assertThat(startLevel.getInitialBundleStartLevel(), is(equalTo(6)));
+        assumeTrue( isEquinox() );
+        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
+        assertThat( service, is( notNullValue() ) );
     }
 }

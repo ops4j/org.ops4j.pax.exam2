@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.plumbing;
+package org.ops4j.pax.exam.regression.multi.plumbing;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -31,6 +31,7 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
 
 /**
@@ -41,18 +42,12 @@ public class BareAPITest {
 	@Test
 	public void bareRunTest() throws Exception {
 		Option[] options = new Option[] {
-				//felix(),
-				felix(),
-            	junitBundles(),
+                regressionDefaults(),
+	            mavenBundle( "org.junit" , "com.springsource.org.junit", "4.9.0" ),
 				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG"),
-				// mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId(
-				// "pax-logging-service" ).version( "1.6.1" ),
-				rawPaxRunnerOption("envo", "mike=blue,foo=bar"),
-				//rawPaxRunnerOption( "keepOriginalUrls" ),
-				//mavenBundle().groupId( "org.ops4j.pax.url").artifactId("pax-url-link" ).version( "1.3.2" ).startLevel( 0 )
-				 
+				rawPaxRunnerOption("envo", "mike=blue,foo=bar")
 		};
 
 		ExamSystem system = createTestSystem(options);
@@ -76,10 +71,10 @@ public class BareAPITest {
 		system.clear();
 	}
 
-	// @Test
+	@Test
 	public void singleStepTest() throws Exception {
 		Option[] options = new Option[] {
-				junitBundles(),
+            mavenBundle( "org.junit" , "com.springsource.org.junit", "4.9.0" ),
 				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG") };

@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.felix.options;
+package org.ops4j.pax.exam.regression.multi.felix.options;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.junit.Assume.assumeTrue;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -48,16 +50,18 @@ public class SystemPropertyTest
     public Option[] config()
     {
         return options(
+            regressionDefaults(),
             systemProperty( "felix.startlevel.bundle" ).value( "2" ),
             systemProperty( "foo" ).value( "bar" ),
-            junitBundles(),
-            felix()
+            junitBundles()
             );
     }
 
     @Test
     public void startLevel()
     {
+        assumeTrue( isFelix() && !isNativeContainer() );
+        
         assertThat( System.getProperty( "felix.startlevel.bundle" ), is("2"));
         assertThat( System.getProperty( "foo" ), is("bar"));
         StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );

@@ -44,9 +44,7 @@
                 <module>containers/pax-exam-container-paxrunner</module>
                 <module>containers/pax-exam-container-forked</module>
 
-                <module>it-regression/regression-native-felix</module>
                 <module>it-regression/regression-native-testng</module>
-                <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
             </modules>
         </profile>
@@ -54,10 +52,7 @@
             <id>regression</id>
             <modules>
                 <module>pom</module>
-                <module>it-regression/regression-native-felix</module>
-                <module>it-regression/regression-native-multi</module>
                 <module>it-regression/regression-native-testng</module>
-                <module>it-regression/regression-paxrunner</module>
                 <module>it-regression/regression-pde-bundle</module>
             </modules>
         </profile>

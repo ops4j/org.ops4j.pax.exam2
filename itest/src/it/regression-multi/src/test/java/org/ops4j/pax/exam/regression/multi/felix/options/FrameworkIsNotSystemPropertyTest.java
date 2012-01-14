@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.felix.options;
+package org.ops4j.pax.exam.regression.multi.felix.options;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.junit.Assume.assumeTrue;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isFelix;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -39,30 +42,28 @@ import org.osgi.service.startlevel.StartLevel;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class FrameworkPropertyTest
+public class FrameworkIsNotSystemPropertyTest
 {
-
-    @Inject
+    @Inject 
     private BundleContext bc;
     
     @Configuration
     public Option[] config()
     {
         return options(
-            frameworkProperty( "felix.startlevel.bundle" ).value( "4" ),
-            junitBundles(),
-            felix() );
+            regressionDefaults(),
+            cleanCaches(),
+            systemProperty( "felix.startlevel.bundle" ).value( "4" ),
+            junitBundles() );
     }
 
     @Test
-    public void startLevel()
+    public void startLevel(  )
     {
-        // Framework properties are currently translated into vmOptions for Pax Runner.
-        // Pax Runner does not clearly distinguish framework and system properties.
-        assertThat( System.getProperty( "felix.startlevel.bundle" ), is( "4" ) );
+        assumeTrue( isFelix() );
 
         StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );
         assertThat( startLevel, is( notNullValue() ) );
-        assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 4 ) ) );
+        assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 1 ) ) );
     }
 }

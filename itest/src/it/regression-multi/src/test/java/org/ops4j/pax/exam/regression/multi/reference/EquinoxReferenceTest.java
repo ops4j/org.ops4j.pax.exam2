@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.reference;
+package org.ops4j.pax.exam.regression.multi.reference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assume.assumeTrue;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isEquinox;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isNativeContainer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,16 +29,17 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.osgi.launch.Equinox;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.ops4j.pax.exam.util.PathUtils;
+import org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
+import org.osgi.framework.launch.FrameworkFactory;
 
 public class EquinoxReferenceTest {
 
@@ -44,30 +48,35 @@ public class EquinoxReferenceTest {
 
     @Test
     public void exceptionWithoutCustomHandler() throws BundleException, IOException {
+        assumeTrue( isEquinox() );
+
         assertNull(System.getProperty("java.protocol.handler.pkgs"));
         expectedException.expect(MalformedURLException.class);
         expectedException.expectMessage("unknown protocol");
         assertNull(System.getProperty("java.protocol.handler.pkgs"));
         String reference = "reference:file:" + PathUtils.getBaseDir() +
-                "/../regression-pde-bundle";
+                "/target/regression-pde-bundle";
         new URL(reference);
     }
 
     @Test
     public void installAndStartReferenceBundle() throws BundleException, IOException {
+        assumeTrue( isEquinox() );
+
         assertNull(System.getProperty("java.protocol.handler.pkgs"));
 
         Map<String, String> props = new HashMap<String, String>();
         props.put("osgi.clean", "true");
         props.put("osgi.dev", "target/classes");
 
-        Framework framework = new Equinox(props);
+        FrameworkFactory frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
+        Framework framework = frameworkFactory.newFramework( props );
         framework.start();
         BundleContext bc = framework.getBundleContext();
         assertNotNull(bc);
 
         String reference = "reference:file:" + PathUtils.getBaseDir() +
-                "/../regression-pde-bundle";
+                "/target/regression-pde-bundle";
         Bundle bundle = bc.installBundle(reference);
         assertNotNull(bundle);
         assertEquals("org.ops4j.pax.exam.regression.pde", bundle.getSymbolicName());
@@ -84,10 +93,12 @@ public class EquinoxReferenceTest {
 
     @Test
     public void equinoxInternalReferenceHandler() throws BundleException, IOException {
+        assumeTrue( isEquinox() );
+
         try {
             System.setProperty("java.protocol.handler.pkgs", "org.eclipse.osgi.framework.internal.protocol");
             String reference = "reference:file:" + PathUtils.getBaseDir() +
-                    "/../regression-pde-bundle";
+                    "/target/regression-pde-bundle";
             URL url = new URL(reference);
             assertEquals("reference", url.getProtocol());
             InputStream is = url.openStream();

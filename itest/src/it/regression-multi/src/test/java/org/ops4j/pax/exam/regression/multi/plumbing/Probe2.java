@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.paxrunner.porcelain;
+package org.ops4j.pax.exam.regression.multi.plumbing;
 
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple Test Rack that uses the JUnit4 UI
+ * Another SingleTestProbe.
  */
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-public class A2_A extends MutliFrameworkTest
+public class Probe2
 {
 
+    //private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
 
+    public void myOwnClass()
+    {
+        System.out.println("Hello");
+       // LOG.info( "INSIDE OSGI " + Probe2.class.getName() + " Method withoutBCTest" );
+    }
 }
