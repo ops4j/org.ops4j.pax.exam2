@@ -1,0 +1,1 @@
+mvn:org.ops4j.pax.exam/pax-exam-invoker-junit/${project.version}
