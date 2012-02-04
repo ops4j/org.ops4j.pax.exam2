@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ops4j.base.exec.DefaultJavaRunner;
+import org.ops4j.exec.DefaultJavaRunner;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
