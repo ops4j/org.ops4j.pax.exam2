@@ -10,3 +10,4 @@ bin
 .project
 .settings
 test-output
+*felix-cache
