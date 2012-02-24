@@ -32,6 +32,11 @@ public class Info
 {
 
     /**
+     * Snapshot constant to avaoid typos in analysing code.
+     */
+    private static final String SNAPSHOT = "SNAPSHOT";
+
+    /**
      * Pax Exam version.
      */
     private static final String m_paxExamVersion;
@@ -44,6 +49,14 @@ public class Info
      */
     private static final String m_paxRunnerVersion;
     /**
+     * Ops4J Base libraries version
+     */
+    private static final String m_ops4jBaseVersion;
+    /**
+     * Pax Swissbox libraries version
+     */
+    private static final String m_paxSwissboxVersion;
+    /**
      * True if pax exam is a snapshot version.
      */
     private static boolean m_paxExamSnapshotVersion;
@@ -51,35 +64,50 @@ public class Info
      * True if pax url is a snapshot version.
      */
     private static boolean m_paxUrlSnapshotVersion;
+    /**
+     * True if ops4j base is a snapshot verison.
+     */
+    private static boolean m_ops4jBaseSnapshotVersion;
+    /**
+     * True if pax swissbox is a snapshot version.
+     */
+    private static boolean m_paxSwissboxSnapshotVersion;
 
     static
     {
         String paxExamVersion = "";
         String paxUrlVersion = "";
         String paxRunnerVersion = "";
+        String ops4jBaseVersion = "";
+        String paxSwissboxVersion = "";
         try
         {
             final InputStream is = Info.class.getClassLoader().getResourceAsStream(
                 "META-INF/pax-exam-version.properties"
-            );
-            if( is != null )
+                );
+            if (is != null)
             {
                 final Properties properties = new Properties();
-                properties.load( is );
-                paxExamVersion = properties.getProperty( "pax.exam.version", "" ).trim();
-                paxUrlVersion = properties.getProperty( "pax.url.version", "" ).trim();
-                paxRunnerVersion = properties.getProperty( "pax.runner.version", "" ).trim();
+                properties.load(is);
+                paxExamVersion = properties.getProperty("pax.exam.version", "").trim();
+                paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
+                paxRunnerVersion = properties.getProperty("pax.runner.version", "").trim();
+                ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
+                paxSwissboxVersion = properties.getProperty("${dependency.swissbox.version}").trim();
             }
-        }
-        catch( Exception ignore )
+        } catch (Exception ignore)
         {
             // use default versions
         }
         m_paxExamVersion = paxExamVersion;
         m_paxUrlVersion = paxUrlVersion;
         m_paxRunnerVersion = paxRunnerVersion;
-        m_paxExamSnapshotVersion = paxExamVersion.endsWith( "SNAPSHOT" );
-        m_paxUrlSnapshotVersion = paxUrlVersion.endsWith( "SNAPSHOT" );
+        m_ops4jBaseVersion = ops4jBaseVersion;
+        m_paxSwissboxVersion = paxSwissboxVersion;
+        m_paxExamSnapshotVersion = paxExamVersion.endsWith(SNAPSHOT);
+        m_paxUrlSnapshotVersion = paxUrlVersion.endsWith(SNAPSHOT);
+        m_ops4jBaseSnapshotVersion = ops4jBaseVersion.endsWith(SNAPSHOT);
+        m_paxSwissboxSnapshotVersion = paxSwissboxVersion.endsWith(SNAPSHOT);
     }
 
     /**
@@ -121,6 +149,24 @@ public class Info
     }
 
     /**
+     * Discovers the Ops4j base version. If version cannot be determined returns an empty string.
+     *
+     * @return the ops4j base version.
+     */
+    public static String getOps4jBaseVersion() {
+        return m_ops4jBaseVersion;
+    }
+
+    /**
+     * Discovers the Pax Swissbox version. If version cannot be determined returns an empty string.
+     *
+     * @return pax swissbox version
+     */
+    public static String getPaxSwissboxVersion() {
+        return m_paxSwissboxVersion;
+    }
+
+    /**
      * Getter.
      *
      * @return true if pax exam is a snapshot version, false otherwise
@@ -138,6 +184,24 @@ public class Info
     public static boolean isPaxUrlSnapshotVersion()
     {
         return m_paxUrlSnapshotVersion;
+    }
+
+    /**
+     * Getter.
+     *
+     * @return true if ops4j base is a snapshot version, false otherwise
+     */
+    public static boolean isOps4jBaseSnapshotVersion() {
+        return m_ops4jBaseSnapshotVersion;
+    }
+
+    /**
+     * Getter.
+     *
+     * @return true if pax swissbox is a snapshot version, false otherwise.
+     */
+    public static boolean isPaxSwissboxSnapshotVersion() {
+        return m_paxSwissboxSnapshotVersion;
     }
 
     /**
