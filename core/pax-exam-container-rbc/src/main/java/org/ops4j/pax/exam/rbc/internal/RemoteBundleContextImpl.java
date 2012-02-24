@@ -256,6 +256,7 @@ public class RemoteBundleContextImpl
 
         // Start bundle
         bundle.start();
+        waitForState(bundle.getBundleId(), Bundle.ACTIVE, RelativeTimeout.TIMEOUT_DEFAULT);
 
         bundleState = bundle.getState();
         if( bundleState != Bundle.ACTIVE ) {
