@@ -13,5 +13,6 @@ Import-Package:\
 Export-Package:\
   ${bundle.namespace}; version="${pom.version}",\
   ${bundle.namespace}.options; version="${pom.version}",\
+  ${bundle.namespace}.options.extra; version="${pom.version}",\
   ${bundle.namespace}.util; version="${pom.version}"
  
