@@ -43,7 +43,7 @@ public class BareAPITest {
 	public void bareRunTest() throws Exception {
 		Option[] options = new Option[] {
                 regressionDefaults(),
-	            mavenBundle( "org.junit" , "com.springsource.org.junit", "4.9.0" ),
+	            mavenBundle( "org.apache.servicemix.bundles" , "org.apache.servicemix.bundles.junit", "4.9_2" ),
 				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG"),
@@ -74,7 +74,7 @@ public class BareAPITest {
 	@Test
 	public void singleStepTest() throws Exception {
 		Option[] options = new Option[] {
-            mavenBundle( "org.junit" , "com.springsource.org.junit", "4.9.0" ),
+            mavenBundle( "org.apache.servicemix.bundles" , "org.apache.servicemix.bundles.junit", "4.9_2" ),
 				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG") };
