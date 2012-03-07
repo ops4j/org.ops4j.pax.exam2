@@ -24,9 +24,10 @@ import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 
 /**
  * Option specifying junit bundles (osgi-fyed JUnit).
- * By default uses junit bundle published by SpringSource, version 4.4.0 (can be changed).
+ * By default uses junit bundle published by Apache ServiceMix, version 4.9_2 (can be changed).
  *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
+ * @author Jean-Baptiste Onofré (jbonofre@apache.org)
  * @since 0.3.0, December 09, 2008
  */
 public class JUnitBundlesOption
@@ -40,9 +41,9 @@ public class JUnitBundlesOption
     {
         super(
             mavenBundle()
-            .groupId( "org.junit" )
-            .artifactId( "com.springsource.org.junit" )
-            .version( "4.9.0" )
+            .groupId( "org.apache.servicemix.bundles" )
+            .artifactId( "org.apache.servicemix.bundles.junit" )
+            .version( "4.9_2" )
         );
         noUpdate();
         startLevel( START_LEVEL_SYSTEM_BUNDLES );
