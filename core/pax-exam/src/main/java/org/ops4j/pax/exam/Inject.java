@@ -25,9 +25,13 @@ import java.lang.annotation.Target;
 /**
  * @author Toni Menzel ( toni@okidokiteam.com )
  * @since Jan 12, 2009
+ *
+ * @deprecated This injection does no longer work! Rather use javax.inject.Inject!
+ *
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )
+@Deprecated
 public @interface Inject
 {
 
