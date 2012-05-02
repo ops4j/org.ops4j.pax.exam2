@@ -302,8 +302,9 @@
         <developer>
             <id>tonit</id>
             <name>Toni Menzel</name>
-            <email>toni@okidokiteam.com</email>
-            <organization>independent software developer</organization>
+            <email>toni.menzel@rebaze.com</email>
+            <organization>Rebaze</organization>
+            <organizationUrl>http://www.rebaze.com</organizationUrl>
             <roles>
                 <role>Developer</role>
             </roles>
