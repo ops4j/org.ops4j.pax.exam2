@@ -28,7 +28,7 @@
         <dependency.osgicomp.version>4.2.0</dependency.osgicomp.version>
         <dependency.mockito.version>1.8.5</dependency.mockito.version>
         <dependency.asm.version>3.0</dependency.asm.version>
-        <dependency.guava.version>r09</dependency.guava.version>
+        <dependency.guava.version>12.0</dependency.guava.version>
     </properties>
 
     <build>
