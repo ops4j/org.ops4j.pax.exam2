@@ -11,3 +11,4 @@ bin
 .project
 .settings
 test-output
+atlassian-ide-plugin.xml
