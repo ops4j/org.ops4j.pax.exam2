@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.forked;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
@@ -29,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ops4j.exec.DefaultJavaRunner;
+import org.ops4j.base.exec.DefaultJavaRunner;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
@@ -95,9 +94,8 @@ public class ForkedFrameworkFactory
      * @throws NotBoundException
      */
     public RemoteFramework fork( List<String> vmArgs, Map<String, String> systemProperties,
-            Map<String, Object> frameworkProperties )
-        throws BundleException, IOException,
-               InterruptedException, NotBoundException, URISyntaxException
+            Map<String, Object> frameworkProperties ) throws BundleException, IOException,
+        InterruptedException, NotBoundException
     {
         // TODO make port range configurable
         FreePort freePort = new FreePort( 21000, 21099 );
@@ -155,14 +153,13 @@ public class ForkedFrameworkFactory
     }
 
     private String[] buildClasspath()
-        throws URISyntaxException
     {
         String frameworkPath =
             frameworkFactory.getClass().getProtectionDomain().getCodeSource().getLocation()
-                .toURI().getPath();
+                .toString();
         String launcherPath =
             RemoteFrameworkImpl.class.getProtectionDomain().getCodeSource().getLocation()
-                .toURI().getPath();
+                .toString();
         return new String[]{ frameworkPath, launcherPath };
     }
 

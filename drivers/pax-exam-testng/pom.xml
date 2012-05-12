@@ -81,6 +81,14 @@
            <scope>provided</scope>
         </dependency>
         
+        <!-- Disabled, causes a compiler error on jdk1.6.0_28. jdk1.7.0_01 is fine.
+        
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <scope>provided</scope>            
+        </dependency>
+         -->        
     </dependencies>
 
 </project>

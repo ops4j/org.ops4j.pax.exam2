@@ -23,6 +23,7 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
+    @Override
     public void start(BundleContext bc) throws Exception {
         EnglishHelloService service = new EnglishHelloService();
         Hashtable<String,String> props = new Hashtable<String, String>();
@@ -38,6 +39,7 @@ public class Activator implements BundleActivator {
     /**
      * Optionally blocks framework shutdown for a shutdown timeout regression test.
      */
+    @Override
     public void stop(BundleContext bc) throws Exception {
 
         String blockOnStop = System.getProperty( "pax.exam.regression.blockOnStop", "false" );

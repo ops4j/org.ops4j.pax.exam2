@@ -19,7 +19,6 @@ package org.ops4j.pax.exam.forked;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.rmi.NotBoundException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,9 +35,8 @@ public class ForkedFrameworkFactoryTest
 {
 
     @Test
-    public void forkEquinox()
-        throws BundleException, IOException, InterruptedException,
-               NotBoundException, URISyntaxException
+    public void forkEquinox() throws BundleException, IOException, InterruptedException,
+        NotBoundException
     {
         ServiceLoader<FrameworkFactory> loader = ServiceLoader.load( FrameworkFactory.class );
         FrameworkFactory frameworkFactory = loader.iterator().next();

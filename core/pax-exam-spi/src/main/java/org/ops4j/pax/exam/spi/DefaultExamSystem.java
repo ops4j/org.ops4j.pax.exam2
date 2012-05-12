@@ -27,7 +27,6 @@ import java.util.UUID;
 import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -214,7 +213,7 @@ public class DefaultExamSystem implements ExamSystem {
                 for( ExamSystem sys : m_subsystems ) {
                     sys.clear();
                 }
-                FileUtils.delete( m_cache.getCanonicalFile() );
+                Files.deleteRecursively( m_cache.getCanonicalFile() );
 
             }
         } catch( IOException e ) {

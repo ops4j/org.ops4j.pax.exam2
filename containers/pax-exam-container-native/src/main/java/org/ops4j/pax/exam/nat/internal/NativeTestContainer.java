@@ -259,10 +259,7 @@ public class NativeTestContainer implements TestContainer
             System.setProperty( option.getKey(), option.getValue() );
         }
         
-        String repositories = buildString( m_system.getOptions ( RepositoryOption.class ));
-        if (! repositories.isEmpty()) {
-            System.setProperty("org.ops4j.pax.url.mvn.repositories", repositories);
-        }
+        System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString( m_system.getOptions ( RepositoryOption.class)));
         return p;
     }
 

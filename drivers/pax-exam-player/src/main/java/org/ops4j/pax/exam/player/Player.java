@@ -18,6 +18,8 @@
 package org.ops4j.pax.exam.player;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
@@ -31,7 +33,10 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
 
+import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.ops4j.store.Store;
+import org.ops4j.store.StoreFactory;
 
 import static junit.framework.Assert.*;
 

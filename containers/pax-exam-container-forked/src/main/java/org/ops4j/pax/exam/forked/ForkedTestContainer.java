@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -169,9 +168,6 @@ public class ForkedTestContainer implements TestContainer
         catch ( NotBoundException exc )
         {
             throw new TestContainerException( exc );
-        } catch( URISyntaxException e )
-        {
-            throw new TestContainerException( e );
         }
         return this;
     }
