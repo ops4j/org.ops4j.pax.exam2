@@ -21,7 +21,6 @@ import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemPackages;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -73,7 +72,6 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
-import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -203,19 +201,25 @@ public class GlassFishTestContainer implements TestContainer
         for( UrlDeploymentOption option : deploymentOptions )
         {
             numModules++;
-            UrlReference urlReference = option.getUrlReference();
-            // TODO get application name from option
-            deployModule( urlReference, "app" + numModules );
+            if (option.getName() == null) {
+                option.name( "app" + numModules );
+            }            
+            deployModule( option );
         }
     }
 
-    private void deployModule( UrlReference urlReference, String applicationName )
+    private void deployModule( UrlDeploymentOption option )
     {
         try
         {
-            String url = urlReference.getURL();
+            String url = option.getUrlReference().getURL();
             LOG.info( "deploying module {}", url );
             URI uri = new URL( url ).toURI();
+            String applicationName = option.getName();
+            String contextRoot = option.getContextRoot();
+            if (contextRoot == null) {
+                contextRoot = applicationName;
+            }
             Deployer deployer = glassFish.getDeployer();
             deployer.deploy( uri, "--name", applicationName, "--contextroot", applicationName );
             deployed.push( applicationName );

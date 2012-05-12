@@ -24,6 +24,8 @@ package org.ops4j.pax.exam.options;
 public class UrlDeploymentOption implements DeploymentOption
 {
     private UrlReference urlReference;
+    private String name;
+    private String contextRoot;
     
     /**
      * Constructor.
@@ -52,6 +54,28 @@ public class UrlDeploymentOption implements DeploymentOption
     public UrlReference getUrlReference()
     {
         return urlReference;
+    }
+    
+    public UrlDeploymentOption name( String name )
+    {
+        this.name = name;
+        return this;
+    }
+    
+    public String getName() 
+    {
+        return name;
+    }
+
+    public UrlDeploymentOption contextRoot( String contextRoot )
+    {
+        this.contextRoot = contextRoot;
+        return this;
+    }
+    
+    public String getContextRoot()
+    {
+        return contextRoot;
     }
 
     /**
