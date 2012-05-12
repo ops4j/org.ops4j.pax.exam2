@@ -56,7 +56,6 @@ public class RegressionConfiguration
             // except RBC and Pax Logging
             bootDelegationPackage( "sun.*" ),
             cleanCaches(),
-            frameworkStartLevel( START_LEVEL_TEST_BUNDLE ),
 
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
@@ -84,12 +83,24 @@ public class RegressionConfiguration
                 mavenBundle("org.slf4j", "jcl-over-slf4j").versionAsInProject().startLevel( START_LEVEL_SYSTEM_BUNDLES ),
                 equinox(),      
                 felix(),
-                knopflerfish())            		
+                knopflerfish()),            		
+            
+            // not for Pax Runner container
+            when ( ! "paxrunner".equals( System.getProperty("pax.exam.container"))).useOptions(
+                frameworkStartLevel( START_LEVEL_TEST_BUNDLE ))
             );
     }
     
     public static boolean isPaxRunnerContainer() {
         return "paxrunner".equals( System.getProperty( "pax.exam.container" ) );
+    }
+
+    public static boolean isNativeContainer() {
+        return "native".equals( System.getProperty( "pax.exam.container" ) );
+    }
+
+    public static boolean isEquinox() {
+        return "equinox".equals( System.getProperty( "pax.exam.framework" ) );
     }
 
     public static boolean isFelix() {

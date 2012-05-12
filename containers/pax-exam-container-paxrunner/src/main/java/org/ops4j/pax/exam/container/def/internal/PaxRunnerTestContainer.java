@@ -18,31 +18,30 @@
  */
 package org.ops4j.pax.exam.container.def.internal;
 
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.ops4j.pax.exam.options.ServerModeOption;
-import org.ops4j.pax.exam.options.SystemPropertyOption;
-import org.osgi.framework.Bundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.exam.options.FrameworkOption;
+import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.rbc.Constants;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.runner.Run;
 import org.ops4j.pax.runner.handler.internal.URLUtils;
 import org.ops4j.pax.runner.platform.DefaultJavaRunner;
 import org.ops4j.pax.runner.platform.StoppableJavaRunner;
-
-import static org.ops4j.pax.exam.CoreOptions.*;
+import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link TestContainer} implementation using Pax Runner.

@@ -21,7 +21,6 @@ import static org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder.findFramew
 
 import java.util.List;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -35,7 +34,7 @@ import org.osgi.framework.launch.FrameworkFactory;
  * @author Harald Wellmann
  * 
  */
-@MetaInfServices
+// @MetaInfServices
 public class ForkedTestContainerFactory implements TestContainerFactory
 {
 

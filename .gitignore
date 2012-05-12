@@ -3,6 +3,7 @@
 exam.iws
 target
 bin
+.idea
 *.iml
 *.ipr
 *.iws
@@ -11,4 +12,4 @@ bin
 .settings
 test-output
 *.log
-
+atlassian-ide-plugin.xml
