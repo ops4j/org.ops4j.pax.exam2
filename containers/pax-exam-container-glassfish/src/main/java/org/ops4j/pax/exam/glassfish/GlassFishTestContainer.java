@@ -97,10 +97,11 @@ public class GlassFishTestContainer implements TestContainer
     // TODO make this configurable
     // The only reason for not using full profile is reduced download time ;-)
     public static final String GLASSFISH_WEB_DISTRIBUTION_URL =
-        "mvn:org.glassfish.distributions/web/3.1.1/zip";
+        "mvn:org.glassfish.main.distributions/web/3.1.2/zip";
 
     private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
+    private static final String PROBE_APPLICATION_NAME = "Pax-Exam-Probe";
     private Stack<Long> installed = new Stack<Long>();
     private Stack<String> deployed = new Stack<String>();
 
@@ -159,9 +160,9 @@ public class GlassFishTestContainer implements TestContainer
                 File tempFile = File.createTempFile( "pax-exam", ".war" );
                 tempFile.deleteOnExit();
                 StreamUtils.copyStream( stream, new FileOutputStream( tempFile ), true );
-                deployer.deploy( tempFile, "--name", "Pax-Exam-Probe" );
-                deployed.push( "Pax-Exam-Probe" );
-//              deployer.deploy( stream, "--name", "Pax-Exam-Probe" );
+                deployer.deploy( tempFile, "--name", PROBE_APPLICATION_NAME, "--contextroot", PROBE_APPLICATION_NAME );
+//                deployer.deploy( stream, "--name", "Pax-Exam-Probe", "--contextroot", "Pax-Exam-Probe"  );
+                deployed.push( PROBE_APPLICATION_NAME );
             }
             catch ( GlassFishException exc )            
             {
@@ -216,7 +217,7 @@ public class GlassFishTestContainer implements TestContainer
             LOG.info( "deploying module {}", url );
             URI uri = new URL( url ).toURI();
             Deployer deployer = glassFish.getDeployer();
-            deployer.deploy( uri, "--name", applicationName );
+            deployer.deploy( uri, "--name", applicationName, "--contextroot", applicationName );
             deployed.push( applicationName );
             LOG.info( "deployed module {}", url );
         }
@@ -304,9 +305,6 @@ public class GlassFishTestContainer implements TestContainer
             sl = getService( bc, StartLevel.class );
 
             Option[] earlyOptions = options(
-                mavenBundle( "ch.qos.logback", "logback-core", "0.9.20" ).startLevel( 1 ),
-                mavenBundle( "ch.qos.logback", "logback-classic", "0.9.20" ).startLevel( 1 ),
-                mavenBundle( "org.slf4j", "slf4j-api", "1.5.11" ).startLevel( 1 ),
                 url( "file:" + glassFishHome + "/glassfish/modules/glassfish.jar" ).startLevel( 1 )
                 );
 

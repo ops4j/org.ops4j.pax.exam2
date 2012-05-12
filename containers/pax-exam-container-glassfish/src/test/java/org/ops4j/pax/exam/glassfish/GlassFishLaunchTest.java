@@ -86,7 +86,8 @@ public class GlassFishLaunchTest
         String sampleAppName = "wicket-examples";
 
         System.out.println( "deploying " + sampleAppName );
-        deployer.deploy( sampleWarUri, "--name", sampleAppName );
+        //deployer.deploy( sampleWarUri, "--name", sampleAppName, "--contextroot", sampleAppName );
+        deployer.deploy( sampleWarUri.toURL().openStream(), "--name", sampleAppName, "--contextroot", sampleAppName );
         delay();
 
         System.out.println( "undeploying " + sampleAppName );
