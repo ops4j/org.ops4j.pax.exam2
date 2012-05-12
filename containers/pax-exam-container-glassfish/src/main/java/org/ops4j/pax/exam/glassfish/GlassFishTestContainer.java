@@ -438,6 +438,12 @@ public class GlassFishTestContainer implements TestContainer
             url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.framework.link" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.lifecycle.link" )
+               .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/ch.qos.logback.classic.link" )
+               .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/ch.qos.logback.core.link" )
+               .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+            url( "link:classpath:META-INF/links/org.slf4j.api.link" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
         };
     }

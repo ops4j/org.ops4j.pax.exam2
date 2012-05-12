@@ -54,7 +54,7 @@ public class GlassFishTestContainerTest
     {
         return options(
             systemProperty( "osgi.console" ).value( "6666" ),
-            war( "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war" ),
+            war( "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war" ).name( "sample1" ),
             junitBundles() );
     }
 
