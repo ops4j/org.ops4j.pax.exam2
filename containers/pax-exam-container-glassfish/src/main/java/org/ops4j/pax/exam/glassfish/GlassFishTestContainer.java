@@ -46,6 +46,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
 import org.glassfish.embeddable.GlassFishException;
@@ -85,6 +92,8 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.service.startlevel.StartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * @author Harald Wellmann
@@ -100,6 +109,9 @@ public class GlassFishTestContainer implements TestContainer
     private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
     private static final String PROBE_APPLICATION_NAME = "Pax-Exam-Probe";
+    private static final String HTTP_PORT_XPATH = "/domain/configs/config/network-config/network-listeners/network-listener[@name='http-listener-1']/@port";
+
+    
     private Stack<Long> installed = new Stack<Long>();
     private Stack<String> deployed = new Stack<String>();
 
@@ -117,6 +129,8 @@ public class GlassFishTestContainer implements TestContainer
     private GlassFishRuntime glassFishRuntime;
 
     private TestDirectory testDirectory;
+
+    private File configTarget;
 
     public GlassFishTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
@@ -330,7 +344,8 @@ public class GlassFishTestContainer implements TestContainer
 
             glassFish = getService( bc, GlassFish.class );
             glassFishRuntime = glassFish.getService( GlassFishRuntime.class );
-            testDirectory.setAccessPoint( new URI("http://localhost:18080/Pax-Exam-Probe/" ) );
+            String portNumber = getPortNumber( configTarget );
+            testDirectory.setAccessPoint( new URI("http://localhost:" + portNumber + "/Pax-Exam-Probe/" ) );
             installAndStartBundles( bc );
 
             deployModules();
@@ -355,6 +370,7 @@ public class GlassFishTestContainer implements TestContainer
                 "System property pax.exam.server.home must be set to GlassFish install root" );
         }
         File gfHome = new File( glassFishHome );
+        configTarget = new File( glassFishHome, "glassfish/domains/domain1/config/domain.xml" );
         File installDir = gfHome;
         if( installDir.exists() )
         {
@@ -388,7 +404,6 @@ public class GlassFishTestContainer implements TestContainer
 
     private void installConfiguration()
     {
-        File configTarget = new File( glassFishHome, "glassfish/domains/domain1/config/domain.xml" );
         File configSource = new File( PathUtils.getBaseDir(), "src/test/resources/domain.xml" );
         if( configSource.exists() )
         {
@@ -403,6 +418,37 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Reads the first port number from the domain.xml configuration.
+     * @param domainConfig
+     * @return
+     */
+    private String getPortNumber(File domainConfig) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder;
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(domainConfig);
+            XPathFactory xpf = XPathFactory.newInstance();
+            XPath xPath = xpf.newXPath();
+            String port = xPath.evaluate(HTTP_PORT_XPATH, doc);
+            return port;
+        }
+        catch (ParserConfigurationException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+        catch (SAXException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+        catch (IOException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+        catch (XPathExpressionException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+    }
+  
+    
     private Option[] buildContainerOptions()
     {
         return new Option[]{
