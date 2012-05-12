@@ -47,7 +47,11 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
     private static String[] classPathExcludes = {
         ".cp",
         "scattered-archive-api",
+        "simple-glassfish-api",
+        "jersey-client",
+        "pax-exam-container",
         "tinybundles",
+        "geronimo-atinject",
         "bndlib"
     };
 

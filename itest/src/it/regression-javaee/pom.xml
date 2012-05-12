@@ -32,11 +32,6 @@
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-aether</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-link</artifactId>
             <scope>test</scope>
         </dependency>
@@ -46,14 +41,13 @@
             <scope>test</scope>
         </dependency>
 
-
+ 
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
             <artifactId>pax-exam-sample1-service</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
@@ -71,7 +65,7 @@
         <!-- Preferred link because it does not require an mvn url handler implicitely. -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-link-mvn</artifactId>
+            <artifactId>pax-exam-link-assembly</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
