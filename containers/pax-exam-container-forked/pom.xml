@@ -94,17 +94,9 @@
             <artifactId>pax-exam-link-assembly</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        
-        
-
+        </dependency>        
     </dependencies>
+    
     <build>
         <plugins>
             <!-- copy the regression-pde-bundle so we have a bundle for 

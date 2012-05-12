@@ -18,6 +18,14 @@
     <name>OPS4J Pax Exam Regression - Native Container + TestNG</name>
 
     <dependencies>
+        <!-- For sane logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>regression-pde-bundle</artifactId>
@@ -64,14 +72,6 @@
 
         <!-- OSGi R4 frameworks -->
 
-
-        <!-- For sane logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>

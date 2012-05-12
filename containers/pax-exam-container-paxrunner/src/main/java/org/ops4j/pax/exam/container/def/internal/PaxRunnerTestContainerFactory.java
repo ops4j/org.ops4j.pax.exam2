@@ -23,7 +23,6 @@ import static org.ops4j.pax.exam.CoreOptions.felix;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -35,7 +34,7 @@ import org.ops4j.pax.exam.options.FrameworkOption;
  * @author Toni Menzel
  * @since 2.0, March 09, 2011
  */
-@MetaInfServices
+// @MetaInfServices
 public class PaxRunnerTestContainerFactory
     implements TestContainerFactory {
 

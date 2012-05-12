@@ -853,8 +853,8 @@ public class CoreOptions
     public static CompositeOption junitBundles()
     {
         return new DefaultCompositeOption(new JUnitBundlesOption(), 
-            systemProperty( "pax.exam.invoker" ).value( "junit" ),            
-            mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-junit", Info.getPaxExamVersion()));
+            systemProperty( "pax.exam.invoker" ).value( "junit" ),  
+            bundle( "link:classpath:META-INF/links/org.ops4j.pax.exam.invoker.junit.link" ));
     }
 
     /**

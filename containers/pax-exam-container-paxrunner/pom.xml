@@ -64,11 +64,6 @@
             <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-net</artifactId>
         </dependency>        
-        <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
-            <scope>provided</scope>
-        </dependency>
         
         <!-- Pax Runner still needs that :( -->
         <dependency>

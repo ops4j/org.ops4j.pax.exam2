@@ -10,7 +10,7 @@ import java.net.URL;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ops4j.pax.exam.glassfish.zip.ZipInstaller;
+import org.ops4j.io.FileUtils;
 
 import com.google.common.io.Files;
 
@@ -28,7 +28,7 @@ public class ZipInstallerTest
     @After
     public void tearDown() throws IOException
     {
-        Files.deleteRecursively( installDir );
+        FileUtils.delete( installDir );
     }
 
     @Test
