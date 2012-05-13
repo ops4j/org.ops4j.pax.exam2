@@ -19,6 +19,7 @@ package org.ops4j.pax.exam;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * High Level Access to the Probe (bundle) as well as its {@link TestAddress}es you can invoke.
@@ -29,7 +30,7 @@ import java.io.InputStream;
 public interface TestProbeProvider
 {
 
-    TestAddress[] getTests();
+    Set<TestAddress> getTests();
 
     InputStream getStream()
         throws IOException;

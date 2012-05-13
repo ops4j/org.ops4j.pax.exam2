@@ -61,7 +61,7 @@ public class DefaultExamSystem implements ExamSystem {
     final private Option[] m_combinedOptions;
     final private Stack<ExamSystem> m_subsystems;
     final private RelativeTimeout m_timeout;
-    final private Set<Class> m_requestedOptionTypes = new HashSet<Class>();
+    final private Set<Class<?>> m_requestedOptionTypes = new HashSet<Class<?>>();
     final private CleanCachesOption m_clean;
     final private File m_cache;
 

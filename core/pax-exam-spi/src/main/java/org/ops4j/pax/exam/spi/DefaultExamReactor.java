@@ -29,7 +29,7 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.TestProbeProvider;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class DefaultExamReactor implements ExamReactor
     private static Logger LOG = LoggerFactory.getLogger( DefaultExamReactor.class );
 
     final private List<Option[]> m_configurations;
-    final private List<TestProbeProvider> m_probes;
+    final private List<TestProbeBuilder> m_probes;
     final private TestContainerFactory m_factory;
 
     final private ExamSystem m_system;
@@ -57,7 +57,7 @@ public class DefaultExamReactor implements ExamReactor
     {
         m_system = system;
         m_configurations = new ArrayList<Option[]>();
-        m_probes = new ArrayList<TestProbeProvider>();
+        m_probes = new ArrayList<TestProbeBuilder>();
         m_factory = factory;
     }
 
@@ -66,9 +66,9 @@ public class DefaultExamReactor implements ExamReactor
         m_configurations.add( configuration );
     }
 
-    synchronized public void addProbe( TestProbeProvider addTest )
+    synchronized public void addProbe( TestProbeBuilder builder )
     {
-        m_probes.add( addTest );
+        m_probes.add( builder );
     }
 
     synchronized public StagedExamReactor stage( StagedExamReactorFactory factory )

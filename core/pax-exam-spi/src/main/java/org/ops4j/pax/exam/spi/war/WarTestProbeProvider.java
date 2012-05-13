@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.spi.war;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
@@ -26,16 +27,16 @@ import org.ops4j.pax.exam.TestProbeProvider;
 public class WarTestProbeProvider implements TestProbeProvider
 {
     private URI warUri;
-    private TestAddress[] testAddresses;
+    private Set<TestAddress> testAddresses;
     
-    public WarTestProbeProvider(URI uri, TestAddress[] testAddresses)
+    public WarTestProbeProvider(URI uri, Set<TestAddress> testAddresses)
     {
         this.warUri = uri;
         this.testAddresses = testAddresses;
     }
 
     @Override
-    public TestAddress[] getTests()
+    public Set<TestAddress> getTests()
     {
         return testAddresses;
     }

@@ -55,7 +55,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private static final String DEFAULT_PROBE_METHOD_NAME = "probe";
 
     private final Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new HashMap<TestAddress, TestInstantiationInstruction>();
-    private final List<Class> m_anchors;
+    private final List<Class<?>> m_anchors;
     private final Properties m_extraProperties;
     private final Set<String> m_ignorePackages = new HashSet<String>();
     private final Store<InputStream> m_store;
@@ -63,12 +63,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     public TestProbeBuilderImpl( Store<InputStream> store )
         throws IOException
     {
-        m_anchors = new ArrayList<Class>();
+        m_anchors = new ArrayList<Class<?>>();
         m_store = store;
         m_extraProperties = new Properties( );
     }
 
-    public TestAddress addTest( Class clazz, String methodName, Object... args )
+    public TestAddress addTest( Class<?> clazz, String methodName, Object... args )
     {
         TestAddress address = new DefaultTestAddress( clazz.getSimpleName() + "." + methodName, args );
         m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
@@ -76,12 +76,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         return address;
     }
 
-    public TestAddress addTest( Class clazz, Object... args )
+    public TestAddress addTest( Class<?> clazz, Object... args )
     {
         return addTest( clazz, DEFAULT_PROBE_METHOD_NAME, args );
     }
 
-    public List<TestAddress> addTests( Class clazz, Method... methods )
+    public List<TestAddress> addTests( Class<?> clazz, Method... methods )
     {
         List<TestAddress> list = new ArrayList<TestAddress>();
         for( Method method : methods ) {
@@ -90,7 +90,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         return list;
     }
 
-    public TestProbeBuilder addAnchor( Class clazz )
+    public TestProbeBuilder addAnchor( Class<?> clazz )
     {
         m_anchors.add( clazz );
         return this;
@@ -105,9 +105,9 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     // when your testclass contains clutter in non-test methods,
     // bnd generates too many impports.
     // This makes packages optional.
-    public TestProbeBuilder ignorePackageOf( Class... classes )
+    public TestProbeBuilder ignorePackageOf( Class<?>... classes )
     {
-        for( Class c : classes ) {
+        for( Class<?> c : classes ) {
             m_ignorePackages.add( c.getPackage().getName() );
         }
 
@@ -185,9 +185,9 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         LOG.debug( "Top level dir " + f + " has been verified." );
     }
 
-    private TestAddress[] getTests()
+    public Set<TestAddress> getTests()
     {
-        return m_probeCalls.keySet().toArray( new TestAddress[ m_probeCalls.size() ] );
+        return m_probeCalls.keySet();
     }
 
     private Properties createExtraIgnores()

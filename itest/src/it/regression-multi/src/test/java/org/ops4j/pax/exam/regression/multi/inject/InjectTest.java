@@ -19,25 +19,18 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
+@RunWith( PaxExam.class )
+@ExamReactorStrategy( PerSuite.class )
 public class InjectTest
 {
 

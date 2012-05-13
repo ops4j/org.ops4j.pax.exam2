@@ -19,10 +19,8 @@ package org.ops4j.pax.exam.spi;
 
 import java.io.IOException;
 
-import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.TestProbeProvider;
 
 /**
  * Part of the Plumbing Level API.
@@ -49,7 +47,7 @@ public interface ExamReactor
      *
      * @param addTest provider that will (in the end) create a probe to be installed in the target container.
      */
-    void addProbe( TestProbeProvider addTest );
+    void addProbe( TestProbeBuilder builder );
 
     /**
      * Last thing you parseForTests on the reactor usually. This gives you a unmodifiable Reactor version.

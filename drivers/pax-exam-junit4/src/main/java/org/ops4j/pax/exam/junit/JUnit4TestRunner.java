@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam.junit;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +31,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.ExamConfigurationException;
-import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
@@ -63,10 +60,12 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private static Logger LOG = LoggerFactory.getLogger( JUnit4TestRunner.class );
 
     private StagedExamReactor m_reactor;
-    final private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
+    final static private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
     final private Map<FrameworkMethod, TestAddress> m_children = new HashMap<FrameworkMethod, TestAddress>();
 
 	private ReactorManager m_manager = new ReactorManager();
+
+    private static TestProbeBuilder probe;
 
     public JUnit4TestRunner( Class<?> klass )
         throws Exception
@@ -83,7 +82,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     public void run( RunNotifier notifier )
     {
         try {
-            m_reactor.execute();
+            m_reactor.setUp();
             super.run( notifier );
         } catch( Exception e ) {
             throw new TestContainerException( "Problem interacting with reactor.", e );
@@ -144,8 +143,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             String className = frameworkMethod.getMethod().getDeclaringClass().getName();
             String methodName = frameworkMethod.getName();
             
-            testDirectory.add( address, new TestInstantiationInstruction( className + ";" + methodName ) );
-
+            if (! className.equals( getTestClass().getName() )) {
+                continue;
+            }
+            
             // now, someone later may refer to that artificial FrameworkMethod. We need to be able to tell the address.
             FrameworkMethod method = new FrameworkMethod( frameworkMethod.getMethod() ) {
                 @Override
@@ -166,6 +167,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                     return address.hashCode();
                 }
             };
+            testDirectory.add( address, new TestInstantiationInstruction( className + ";" + methodName));
 
             m_children.put( method, address );
         }
@@ -181,7 +183,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private void addTestsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IOException, ExamConfigurationException
     {
-        TestProbeBuilder probe = m_manager.createProbe( testClassInstance );
+        if (probe == null)
+        {
+            probe = m_manager.createProbe( testClassInstance );
+        }
 
         //probe.setAnchor( testClass );
         for( FrameworkMethod s : super.getChildren() ) {
@@ -192,7 +197,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             }
             m_map.put( address, s );
         }
-        reactor.addProbe( probe.build() );
+        reactor.addProbe( probe );
     }
 
     private TestAddress delegateTest( Object testClassInstance, TestProbeBuilder probe, FrameworkMethod s )

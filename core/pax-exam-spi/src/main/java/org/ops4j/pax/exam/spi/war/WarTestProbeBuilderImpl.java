@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.glassfish.embeddable.archive.ScatteredArchive;
@@ -150,9 +151,9 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
         }
     }
     
-    private TestAddress[] getTests()
+    public Set<TestAddress> getTests()
     {
-        return probeCalls.keySet().toArray( new TestAddress[ probeCalls.size() ] );
+        return probeCalls.keySet();
     }
     
 
