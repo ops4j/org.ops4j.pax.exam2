@@ -130,7 +130,7 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
                 File file = new File( pathElem );
                 if( file.exists() && classpathFilter.accept( file ) )
                 {
-                    LOG.info( "including classpath element {}", file );
+                    LOG.debug( "including classpath element {}", file );
                     sar.addClassPath( file );
                 }
             }

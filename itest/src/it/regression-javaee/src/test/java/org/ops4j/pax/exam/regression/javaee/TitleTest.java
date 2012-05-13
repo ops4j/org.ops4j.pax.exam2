@@ -28,10 +28,10 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample1.model.Book;
 import org.ops4j.pax.exam.sample1.service.LibraryService;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 
 @RunWith( PaxExam.class )
-@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
+@ExamReactorStrategy( PerSuite.class )
 public class TitleTest
 {
 
