@@ -200,6 +200,5 @@ public class ReactorManager
     public void shutdown()
     {
         stagedReactor.tearDown();
-        system.clear();
     }
 }
