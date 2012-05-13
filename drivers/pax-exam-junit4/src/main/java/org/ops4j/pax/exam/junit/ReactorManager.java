@@ -113,8 +113,7 @@ public class ReactorManager
     public StagedExamReactorFactory getFactory( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
-        ExamReactorStrategy strategy =
-            (ExamReactorStrategy) testClass.getAnnotation( ExamReactorStrategy.class );
+        ExamReactorStrategy strategy = testClass.getAnnotation( ExamReactorStrategy.class );
 
         StagedExamReactorFactory fact;
         if( strategy != null )
