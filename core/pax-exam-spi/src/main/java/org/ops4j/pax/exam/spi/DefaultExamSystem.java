@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.spi;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -288,4 +289,28 @@ public class DefaultExamSystem implements ExamSystem {
     {
         return "ExamSystem:options=" + m_combinedOptions.length + ";queried=" + m_requestedOptionTypes.size();
     }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode( m_combinedOptions );
+        return result;
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if( this == obj )
+            return true;
+        if( obj == null )
+            return false;
+        if( getClass() != obj.getClass() )
+            return false;
+        DefaultExamSystem other = (DefaultExamSystem) obj;
+        if( !Arrays.equals( m_combinedOptions, other.m_combinedOptions ) )
+            return false;
+        return true;
+    }    
 }

@@ -62,11 +62,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
     private static Logger LOG = LoggerFactory.getLogger( JUnit4TestRunner.class );
 
-    final private StagedExamReactor m_reactor;
+    private StagedExamReactor m_reactor;
     final private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
     final private Map<FrameworkMethod, TestAddress> m_children = new HashMap<FrameworkMethod, TestAddress>();
 
-	private ExamSystem m_system;
 	private ReactorManager m_manager = new ReactorManager();
 
     public JUnit4TestRunner( Class<?> klass )
@@ -84,6 +83,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     public void run( RunNotifier notifier )
     {
         try {
+            m_reactor.execute();
             super.run( notifier );
         } catch( Exception e ) {
             throw new TestContainerException( "Problem interacting with reactor.", e );

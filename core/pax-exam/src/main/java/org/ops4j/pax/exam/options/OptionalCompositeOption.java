@@ -86,6 +86,45 @@ public class OptionalCompositeOption
         return new Option[0];
     }
 
+    
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( ( m_composite == null ) ? 0 : m_composite.hashCode() );
+        result = prime * result + ( ( m_condition == null ) ? 0 : m_condition.hashCode() );
+        return result;
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if( this == obj )
+            return true;
+        if( obj == null )
+            return false;
+        if( getClass() != obj.getClass() )
+            return false;
+        OptionalCompositeOption other = (OptionalCompositeOption) obj;
+        if( m_composite == null )
+        {
+            if( other.m_composite != null )
+                return false;
+        }
+        else if( !m_composite.equals( other.m_composite ) )
+            return false;
+        if( m_condition == null )
+        {
+            if( other.m_condition != null )
+                return false;
+        }
+        else if( !m_condition.equals( other.m_condition ) )
+            return false;
+        return true;
+    }
+
+
     /**
      * Condition to be evaluated.
      */
@@ -127,6 +166,30 @@ public class OptionalCompositeOption
         public boolean evaluate()
         {
             return m_condition;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ( m_condition ? 1231 : 1237 );
+            return result;
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if( this == obj )
+                return true;
+            if( obj == null )
+                return false;
+            if( getClass() != obj.getClass() )
+                return false;
+            BooleanCondition other = (BooleanCondition) obj;
+            if( m_condition != other.m_condition )
+                return false;
+            return true;
         }
 
     }

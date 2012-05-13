@@ -40,6 +40,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
 
     final private List<TestContainer> m_targetContainer;
+    final private List<TestProbeProvider> m_probes;
     final private HashMap<TestAddress, TestContainer> m_map;
 
     /**
@@ -50,19 +51,10 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     {
         m_map = new HashMap<TestAddress, TestContainer>();
         m_targetContainer = containers;
+        m_probes = mProbes;
 
         for( TestContainer container : containers ) {
-            container.start( );
-
             for( TestProbeProvider builder : mProbes ) {
-                LOG.debug( "installing probe " + builder );
-
-                try {
-                    container.install( builder.getStream() );
-                } catch( IOException e ) {
-                    throw new TestContainerException( "Unable to build the probe.", e );
-                }
-
                 // each probe has addresses.
                 for( TestAddress a : builder.getTests() ) {
                     // we need to create a new, because "a" exists for each test container
@@ -71,6 +63,23 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
                 }
             }
         }
+    }
+    
+    public void execute()
+    {
+        for( TestContainer container : m_targetContainer ) {
+            container.start( );
+
+            for( TestProbeProvider builder : m_probes ) {
+                LOG.debug( "installing probe " + builder );
+
+                try {
+                    container.install( builder.getStream() );
+                } catch( IOException e ) {
+                    throw new TestContainerException( "Unable to build the probe.", e );
+                }
+            }
+        }        
     }
 
     public void invoke( TestAddress address )

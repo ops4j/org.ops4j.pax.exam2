@@ -177,4 +177,65 @@ public class MavenArtifactUrlReference
         return sb.toString();
     }
 
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( ( m_artifactId == null ) ? 0 : m_artifactId.hashCode() );
+        result = prime * result + ( ( m_classifier == null ) ? 0 : m_classifier.hashCode() );
+        result = prime * result + ( ( m_groupId == null ) ? 0 : m_groupId.hashCode() );
+        result = prime * result + ( ( m_type == null ) ? 0 : m_type.hashCode() );
+        result = prime * result + ( ( m_version == null ) ? 0 : m_version.hashCode() );
+        return result;
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if( this == obj )
+            return true;
+        if( obj == null )
+            return false;
+        if( getClass() != obj.getClass() )
+            return false;
+        MavenArtifactUrlReference other = (MavenArtifactUrlReference) obj;
+        if( m_artifactId == null )
+        {
+            if( other.m_artifactId != null )
+                return false;
+        }
+        else if( !m_artifactId.equals( other.m_artifactId ) )
+            return false;
+        if( m_classifier == null )
+        {
+            if( other.m_classifier != null )
+                return false;
+        }
+        else if( !m_classifier.equals( other.m_classifier ) )
+            return false;
+        if( m_groupId == null )
+        {
+            if( other.m_groupId != null )
+                return false;
+        }
+        else if( !m_groupId.equals( other.m_groupId ) )
+            return false;
+        if( m_type == null )
+        {
+            if( other.m_type != null )
+                return false;
+        }
+        else if( !m_type.equals( other.m_type ) )
+            return false;
+        if( m_version == null )
+        {
+            if( other.m_version != null )
+                return false;
+        }
+        else if( !m_version.equals( other.m_version ) )
+            return false;
+        return true;
+    }
+
 }

@@ -53,6 +53,11 @@ public class AllConfinedStagedReactor implements StagedExamReactor
             }
         }
     }
+    
+    public void execute()
+    {
+        
+    }
 
     public void invoke( TestAddress address )
             throws Exception
