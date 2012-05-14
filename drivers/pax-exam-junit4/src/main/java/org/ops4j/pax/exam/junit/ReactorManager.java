@@ -33,6 +33,7 @@ import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.WarProbeOption;
@@ -47,9 +48,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manages the exam system and reactor required by a driver.
+ * Manages the exam system and reactor required by a test driver. This class is a singleton and
+ * keeps track of all tests in the current test suite and lets a reactor reuse the Exam system and
+ * the test probe, where applicable.
+ * 
  * <p>
  * This class was factored out from the JUnit4TestRunner and does not depend on JUnit.
+ * <p>
+ * TODO move it to another module so it can be used by the TestNG driver.
+ * <p>
+ * TODO check if there are any concurrency issues. Some methods are synchronized, which is just
+ * inherited from the 2.1.0 implementation. The use cases are not quite clear.
  * 
  * @author Harald Wellmann
  */
@@ -57,27 +66,66 @@ public class ReactorManager
 {
     private static Logger LOG = LoggerFactory.getLogger( ReactorManager.class );
 
+    /** Singleton instance of this manager. */
     private static ReactorManager instance;
 
+    /** Exam system, containing system and user configuration options. */
     private ExamSystem system;
-    private Class<?> testClass;
 
-    private ExamReactor reactor;
-
-    private StagedExamReactor stagedReactor;
-
+    /** The system type, which determines the kind of probe to be used. */
     private String systemType;
 
-    private TestProbeBuilder probe;
+    /** The current test class. */
+    private Class<?> testClass;
 
+    /** The reactor. */
+    private ExamReactor reactor;
+
+    /**
+     * The staged reactor. A new instance is created for each test class. Using the {@link PerSuite}
+     * strategy, each new instance actually just wraps a singleton reactor instance, so the reactor
+     * is effectivly reused.
+     */
+    private StagedExamReactor stagedReactor;
+
+    /**
+     * A probe builder for the current test probe. A probe builder contains a number of test classes
+     * and their dependent classes and a list of test methods to be executed.
+     * <p>
+     * Test methods are added incrementally as classes are scanned. By default, the same probe
+     * builder is reused for all test classes, unless a given class overrides the default probe
+     * configuration.
+     */
+    private TestProbeBuilder defaultProbeBuilder;
+
+    /**
+     * Maps test addresses to driver-dependent test method wrappers. A test address is a unique
+     * identifier for a test method in a given container which is used by a {@link ProbeInvoker} for
+     * indirectly invoking the test method in the container.
+     * <p>
+     * This map is not used when tests are executed directly, i.e. without invoker.
+     */
     private Map<TestAddress, Object> testAddressToMethodMap = new HashMap<TestAddress, Object>();
 
-    private ReactorManager() throws IOException
+    /**
+     * Private constructor for singleton.
+     */
+    private ReactorManager()
     {
-        system = createExamSystem();
+        try
+        {
+            system = createExamSystem();
+        }
+        catch ( IOException exc )
+        {
+            throw new TestContainerException( "cannot create Exam system", exc );
+        }
     }
 
-    public static synchronized ReactorManager getInstance() throws IOException
+    /**
+     * Returns the singleton ReactorManager instance.
+     */
+    public static synchronized ReactorManager getInstance()
     {
         if( instance == null )
         {
@@ -86,20 +134,41 @@ public class ReactorManager
         return instance;
     }
 
+    /**
+     * Prepares the unstaged reactor for the given test class instance. Any configurations from
+     * {@code Configuration} methods of the class are added to the reactor.
+     * 
+     * @param testClass
+     * @param testClassInstance
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws IOException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     */
     public synchronized ExamReactor prepareReactor( Class<?> testClass, Object testClassInstance )
-        throws Exception
+        throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+        InvocationTargetException, IOException
     {
         this.testClass = testClass;
-        this.reactor = getReactor( testClass );
+        this.reactor = createReactor( testClass );
 
-        addConfigurationsToReactor( reactor, testClass, testClassInstance );
+        addConfigurationsToReactor( testClass, testClassInstance );
         return reactor;
     }
 
+    /**
+     * Stages the reactor for the current class.
+     * @return staged reactor
+     * @throws IOException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     public StagedExamReactor stageReactor() throws IOException, InstantiationException,
         IllegalAccessException
     {
-        stagedReactor = reactor.stage( getFactory( testClass ) );
+        stagedReactor = reactor.stage( getStagingFactory( testClass ) );
         return stagedReactor;
     }
 
@@ -122,8 +191,18 @@ public class ReactorManager
         return system;
     }
 
-    public void addConfigurationsToReactor( ExamReactor reactor, Class<?> testClass,
-            Object testClassInstance )
+    /**
+     * Scans the current test class for declared or inherited {@code @Configuration} methods
+     * and invokes them, adding the returned configuration to the reactor.
+     * 
+     * @param testClass
+     * @param testClassInstance
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
+    private void addConfigurationsToReactor( Class<?> testClass, Object testClassInstance )
         throws IllegalAccessException, InvocationTargetException, IllegalArgumentException,
         IOException
     {
@@ -139,7 +218,15 @@ public class ReactorManager
         }
     }
 
-    private StagedExamReactorFactory getFactory( Class<?> testClass )
+    /**
+     * Creates a staging factory indicated by the {@link ExamReactorStrategy} annotation of
+     * the test class.
+     * @param testClass
+     * @return
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    private StagedExamReactorFactory getStagingFactory( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
         ExamReactorStrategy strategy = testClass.getAnnotation( ExamReactorStrategy.class );
@@ -157,13 +244,30 @@ public class ReactorManager
         return fact;
     }
 
-    private DefaultExamReactor getReactor( Class<?> testClass )
+    /**
+     * Creates an unstaged reactor for the given test class.
+     * @param testClass
+     * @return
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    private DefaultExamReactor createReactor( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
-        return new DefaultExamReactor( system, getExamFactory( testClass ) );
+        return new DefaultExamReactor( system, createsTestContainerFactory( testClass ) );
     }
 
-    private TestContainerFactory getExamFactory( Class<?> testClass )
+    /**
+     * Creates the test container factory to be used by the reactor.
+     * <p>
+     * TODO Do we really need this? 
+     * 
+     * @param testClass
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    private TestContainerFactory createsTestContainerFactory( Class<?> testClass )
         throws IllegalAccessException, InstantiationException
     {
         ExamFactory f = testClass.getAnnotation( ExamFactory.class );
@@ -181,19 +285,26 @@ public class ReactorManager
         return fact;
     }
 
-    public TestProbeBuilder createProbe( Object testClassInstance ) throws IOException,
+    /**
+     * Lazily creates a probe builder. The same probe builder will be reused for all test classes,
+     * unless the default builder is overridden in a given class. 
+     * @param testClassInstance
+     * @return
+     * @throws IOException
+     * @throws ExamConfigurationException
+     */
+    public TestProbeBuilder createProbeBuilder( Object testClassInstance ) throws IOException,
         ExamConfigurationException
     {
-        if( probe == null )
+        if( defaultProbeBuilder == null )
         {
-            probe = system.createProbe();
+            defaultProbeBuilder = system.createProbe();
         }
-        probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
-        return probe;
+        TestProbeBuilder probeBuilder = overwriteWithUserDefinition( testClass, testClassInstance );
+        return probeBuilder;
     }
 
-    private TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance,
-            TestProbeBuilder probe )
+    private TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance )
         throws ExamConfigurationException
     {
         Method[] methods = testClass.getMethods();
@@ -202,12 +313,11 @@ public class ReactorManager
             ProbeBuilder conf = m.getAnnotation( ProbeBuilder.class );
             if( conf != null )
             {
-                // consider as option, so prepare that one:
                 LOG.debug( "User defined probe hook found: " + m.getName() );
                 TestProbeBuilder probeBuilder;
                 try
                 {
-                    probeBuilder = (TestProbeBuilder) m.invoke( instance, probe );
+                    probeBuilder = (TestProbeBuilder) m.invoke( instance, defaultProbeBuilder );
                 }
                 catch ( Exception e )
                 {
@@ -216,7 +326,7 @@ public class ReactorManager
                 }
                 if( probeBuilder != null )
                 {
-                    return probe;
+                    return probeBuilder;
                 }
                 else
                 {
@@ -226,12 +336,7 @@ public class ReactorManager
             }
         }
         LOG.debug( "No User defined probe hook found" );
-        return probe;
-    }
-
-    public void shutdown()
-    {
-        stagedReactor.tearDown();
+        return defaultProbeBuilder;
     }
 
     /**
@@ -242,11 +347,21 @@ public class ReactorManager
         return systemType;
     }
 
+    /**
+     * Looks up a test method for a given address.
+     * @param address test method address used by probe
+     * @return test method wrapper - the type is only known to the test driver.
+     */
     public Object lookupTestMethod( TestAddress address )
     {
         return testAddressToMethodMap.get( address );
     }
 
+    /**
+     * Stores the test method wrapper for a given test address
+     * @param address test method address used by probe
+     * @param testMethod test method wrapper - the type is only known to the test driver
+     */
     public void storeTestMethod( TestAddress address, Object testMethod )
     {
         testAddressToMethodMap.put( address, testMethod );

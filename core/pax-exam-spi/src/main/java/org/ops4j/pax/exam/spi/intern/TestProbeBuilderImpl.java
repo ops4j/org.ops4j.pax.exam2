@@ -70,7 +70,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     public TestAddress addTest( Class<?> clazz, String methodName, Object... args )
     {
-        TestAddress address = new DefaultTestAddress( clazz.getSimpleName() + "." + methodName, args );
+        TestAddress address = new DefaultTestAddress( clazz.getName() + "." + methodName, args );
         m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
         addAnchor( clazz );
         return address;
