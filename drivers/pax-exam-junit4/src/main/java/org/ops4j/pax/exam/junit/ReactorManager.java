@@ -57,6 +57,8 @@ public class ReactorManager
 
     private StagedExamReactor stagedReactor;
 
+    private String systemType;
+
     public synchronized ExamReactor prepareReactor( Class<?> testClass, Object testClassInstance )
         throws Exception
     {
@@ -77,7 +79,7 @@ public class ReactorManager
     public ExamSystem createExamSystem() throws IOException
     {
         ConfigurationManager cm = new ConfigurationManager();
-        String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
+        systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
         if( Constants.EXAM_SYSTEM_DEFAULT.equals( systemType ) )
         {
             system = DefaultExamSystem.create( new Option[0] );
@@ -201,4 +203,14 @@ public class ReactorManager
     {
         stagedReactor.tearDown();
     }
+
+    /**
+     * @return the systemType
+     */
+    public String getSystemType()
+    {
+        return systemType;
+    }
+    
+    
 }

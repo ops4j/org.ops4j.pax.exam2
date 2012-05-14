@@ -14,20 +14,10 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.cdi;
+package org.ops4j.pax.exam.util;
 
-import javax.servlet.ServletContext;
 
-import org.ops4j.pax.exam.cdi.impl.CdiInjector;
-import org.ops4j.pax.exam.util.Injector;
-import org.ops4j.pax.exam.util.InjectorFactory;
-
-public class CdiInjectorFactory implements InjectorFactory
+public interface InjectorFactory
 {
-
-    @Override
-    public Injector createInjector()
-    {
-        return new CdiInjector();
-    }
+    Injector createInjector();
 }

@@ -14,13 +14,23 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.servlet;
 
-import javax.servlet.ServletContext;
+package org.ops4j.pax.exam.weld;
 
-import org.ops4j.pax.exam.util.Injector;
+import javax.enterprise.inject.spi.BeanManager;
 
-public interface InjectorFactory
-{
-    Injector createInjector(ServletContext servletContext);
+import org.kohsuke.MetaInfServices;
+import org.ops4j.pax.exam.cdi.spi.BeanManagerProvider;
+
+/**
+ * @author Harald Wellmann
+ * @since 3.0.0
+ */
+@MetaInfServices
+public class WeldBeanManagerProvider implements BeanManagerProvider {
+
+    @Override
+    public BeanManager getBeanManager() {
+        return WeldTestContainer.getWeldContainer().getBeanManager();
+    }
 }

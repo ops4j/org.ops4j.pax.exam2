@@ -20,8 +20,10 @@ package org.ops4j.pax.exam.junit;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import org.junit.internal.runners.model.ReflectiveCallable;
@@ -30,6 +32,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
@@ -39,6 +42,8 @@ import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.exam.util.InjectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +72,8 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
     private static TestProbeBuilder probe;
 
+    private boolean useProbeInvoker;
+
     public JUnit4TestRunner( Class<?> klass )
         throws Exception
     {
@@ -74,7 +81,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         Object testClassInstance = klass.newInstance();
 
         ExamReactor examReactor = m_manager.prepareReactor(klass, testClassInstance);
-        addTestsToReactor( examReactor, klass, testClassInstance );
+        useProbeInvoker = ! m_manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
+        if (useProbeInvoker)
+        {
+            addTestsToReactor( examReactor, klass, testClassInstance );
+        }
         m_reactor = m_manager.stageReactor();
     }
 
@@ -96,8 +107,15 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
      * They shall only be run by the container.
      */
     protected Statement classBlock(final RunNotifier notifier) {
-        Statement statement= childrenInvoker(notifier);
-        return statement;
+        if (useProbeInvoker)
+        {
+            Statement statement= childrenInvoker(notifier);
+            return statement;
+        }
+        else
+        {
+            return super.classBlock( notifier );
+        }
     }
 
     /**
@@ -105,6 +123,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
      * They shall only be run by the container.
      */
     protected Statement methodBlock(FrameworkMethod method) {
+        if (!useProbeInvoker)
+        {
+            return super.methodBlock( method );
+        }
+        
         Object test;
         try {
             test= new ReflectiveCallable() {
@@ -128,6 +151,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     @Override
     protected List<FrameworkMethod> getChildren()
     {
+        if (! useProbeInvoker)
+        {
+            return super.getChildren();
+        }
+        
         if( m_children.isEmpty() ) {
             fillChildren();
         }
@@ -219,6 +247,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
     protected synchronized Statement methodInvoker( final FrameworkMethod method, final Object test )
     {
+        if (!useProbeInvoker)
+        {
+            return super.methodInvoker( method, test );
+        }
+        
         return new Statement() {
 
             @Override
@@ -238,4 +271,31 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             }
         };
     }
+    
+    @Override
+    protected Object createTest() throws Exception {
+        if (useProbeInvoker) {
+            return super.createTest();
+        }
+        else {
+            Object test = super.createTest();
+            inject(test);
+            return test;
+        }
+    }
+
+    private void inject(Object test) {
+        Injector injector = findInjector();
+        injector.injectFields(null, test);
+    }
+
+    private Injector findInjector() {
+        Iterator<InjectorFactory> it = ServiceLoader.load(InjectorFactory.class).iterator();
+        if (it.hasNext()) {
+            InjectorFactory injectorFactory = it.next();
+            return injectorFactory.createInjector( );
+        }
+        throw new IllegalStateException("no InjectorFactory implementation found in META-INF/services");
+    }
+
 }

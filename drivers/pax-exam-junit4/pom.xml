@@ -38,8 +38,8 @@
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
             <version>1.11</version>
+            <optional>true</optional>
         </dependency>
-
     </dependencies>
 
 </project>

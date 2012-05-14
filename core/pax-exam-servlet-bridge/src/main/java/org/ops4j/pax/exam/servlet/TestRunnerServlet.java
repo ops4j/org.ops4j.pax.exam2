@@ -35,6 +35,7 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.spi.ServiceProviderFinder;
 
 /**
@@ -69,7 +70,7 @@ public class TestRunnerServlet extends HttpServlet {
     private void runSuite(OutputStream os, Class<?> clazz, String methodName) throws IOException {
 
         InjectorFactory injectorFactory = ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
-        Injector injector = injectorFactory.createInjector(getServletContext());
+        Injector injector = injectorFactory.createInjector();
         Request classRequest = new ContainerTestRunnerClassRequest(clazz, injector);
         Description method = Description.createTestDescription(clazz, methodName);
         Request request = classRequest.filterWith(method);
