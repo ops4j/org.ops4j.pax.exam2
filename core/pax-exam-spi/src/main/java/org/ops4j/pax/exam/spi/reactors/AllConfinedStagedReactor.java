@@ -42,7 +42,6 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     {
         m_probes = mProbes;
         m_map = new HashMap<TestAddress, TestContainer>();
-        // todo: don't do this here.
         for ( TestContainer container : containers )
         {
             for ( TestProbeBuilder builder : m_probes )

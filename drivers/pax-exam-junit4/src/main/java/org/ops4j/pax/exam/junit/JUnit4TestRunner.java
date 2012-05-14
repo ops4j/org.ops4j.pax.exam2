@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 - 2011 Toni Menzel.
+ * Copyright 2010 - 2012 Toni Menzel, Harald Wellmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,6 +101,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         reactor = manager.stageReactor();
     }
 
+    /**
+     * We decorate the super method by reactor setup and teardown. This method is called once
+     * per class. Note that the given reactor strategy decides whether or not the setup
+     * and teardown actually happens at this level.
+     */
     @Override
     public void run( RunNotifier notifier )
     {
@@ -121,7 +126,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
     /**
      * Override to avoid running BeforeClass and AfterClass by the driver. They shall only be run by
-     * the container.
+     * the container when using a probe invoker.
      */
     protected Statement classBlock( final RunNotifier notifier )
     {
@@ -138,7 +143,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
     /**
      * Override to avoid running Before, After and Rule methods by the driver. They shall only be
-     * run by the container.
+     * run by the container when using a probe invoker.
      */
     protected Statement methodBlock( FrameworkMethod method )
     {
@@ -169,7 +174,9 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     }
 
     /**
-     * We overwrite those with reactor content
+     * When using a probe invoker, we replace the test methods of this class by a potentially
+     * larger set of decorated test methods. Each original test method may give rise to multiple
+     * copies per test container or configuration.
      */
     @Override
     protected List<FrameworkMethod> getChildren()
@@ -208,6 +215,24 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         }
     }
 
+    /**
+     * Adds test methods to the reactor, mapping method names to test addresses which are used
+     * by the probe invoker.
+     * <p>
+     * Note that when a collection of test classes is passed to an external JUnit runner like
+     * Eclipse or Maven Surefire, this method is invoked (via the constructor of this runner)
+     * for each class <em>before</em> the {@link #run(RunNotifier)} method is invoked for any
+     * class. 
+     * <p>
+     * This way, we can register all test methods in the reactor before the actual test execution
+     * starts.
+     * 
+     * @param reactor
+     * @param testClass
+     * @param testClassInstance
+     * @throws IOException
+     * @throws ExamConfigurationException
+     */
     private void addTestsToReactor( ExamReactor reactor, Class<?> testClass,
             Object testClassInstance )
         throws IOException, ExamConfigurationException
@@ -229,7 +254,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     }
 
     /**
-     * FIXME What is this doing, and what is use case?  Parameterized methods break JUnit's
+     * FIXME What is this doing, and what is the use case?  Parameterized methods break JUnit's
      * default behaviour, and most of these non-standard signatures introduced in 2.0.0 have
      * been dropped since 2.3.0.
      * 
@@ -261,6 +286,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         }
     }
 
+    /**
+     * When using a probe invoker, we replace the super method and invoke the test method
+     * indirectly via the reactor.
+     */
     protected synchronized Statement
         methodInvoker( final FrameworkMethod method, final Object test )
     {
@@ -336,5 +365,4 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
             ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
         return injectorFactory.createInjector();
     }
-
 }

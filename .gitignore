@@ -13,3 +13,5 @@ bin
 test-output
 *.log
 atlassian-ide-plugin.xml
+felix-cache
+fwdir
