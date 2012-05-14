@@ -46,7 +46,6 @@ import org.osgi.framework.BundleContext;
  *
  */
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class ShutdownTimeoutTestWrapped
 {
     @Inject
