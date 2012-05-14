@@ -19,6 +19,9 @@ package org.ops4j.pax.exam.weld;
 
 import java.io.InputStream;
 
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterDeploymentValidation;
+
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.ops4j.pax.exam.ExamSystem;
@@ -37,6 +40,7 @@ public class WeldTestContainer implements TestContainer
     private static final Logger LOG = LoggerFactory.getLogger( WeldTestContainer.class );
 
     private Weld weld;
+    private boolean isValid;
 
     private static WeldContainer weldContainer;
 
@@ -44,18 +48,23 @@ public class WeldTestContainer implements TestContainer
     {
     }
 
-    public synchronized void call( TestAddress address )
+    public void call( TestAddress address )
     {
     }
 
-    public synchronized long install( String location, InputStream stream )
+    public long install( String location, InputStream stream )
     {
         return -1;
     }
 
-    public synchronized long install( InputStream stream )
+    public long install( InputStream stream )
     {
         return -1;
+    }
+    
+    public void afterDeployment(@Observes AfterDeploymentValidation event)
+    {
+        isValid = true;
     }
 
     public TestContainer start() throws TestContainerException
@@ -68,7 +77,7 @@ public class WeldTestContainer implements TestContainer
 
     public TestContainer stop()
     {
-        if (weld != null) 
+        if (weld != null && isValid) 
         {
             LOG.debug("stopping Weld container");
             weld.shutdown();
