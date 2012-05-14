@@ -17,15 +17,22 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_DEFAULT;
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_JAVAEE;
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_KEY;
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_TEST;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ops4j.pax.exam.ConfigurationManager;
-import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.WarProbeOption;
@@ -35,7 +42,7 @@ import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +57,8 @@ public class ReactorManager
 {
     private static Logger LOG = LoggerFactory.getLogger( ReactorManager.class );
 
+    private static ReactorManager instance;
+
     private ExamSystem system;
     private Class<?> testClass;
 
@@ -59,32 +68,50 @@ public class ReactorManager
 
     private String systemType;
 
+    private TestProbeBuilder probe;
+
+    private Map<TestAddress, Object> testAddressToMethodMap = new HashMap<TestAddress, Object>();
+
+    private ReactorManager() throws IOException
+    {
+        system = createExamSystem();
+    }
+
+    public static synchronized ReactorManager getInstance() throws IOException
+    {
+        if( instance == null )
+        {
+            instance = new ReactorManager();
+        }
+        return instance;
+    }
+
     public synchronized ExamReactor prepareReactor( Class<?> testClass, Object testClassInstance )
         throws Exception
     {
-        this.system = createExamSystem();
         this.testClass = testClass;
         this.reactor = getReactor( testClass );
 
         addConfigurationsToReactor( reactor, testClass, testClassInstance );
         return reactor;
     }
-    
-    public StagedExamReactor stageReactor( ) throws IOException, InstantiationException, IllegalAccessException
+
+    public StagedExamReactor stageReactor() throws IOException, InstantiationException,
+        IllegalAccessException
     {
         stagedReactor = reactor.stage( getFactory( testClass ) );
-        return stagedReactor;        
+        return stagedReactor;
     }
 
-    public ExamSystem createExamSystem() throws IOException
+    private ExamSystem createExamSystem() throws IOException
     {
         ConfigurationManager cm = new ConfigurationManager();
-        systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
-        if( Constants.EXAM_SYSTEM_DEFAULT.equals( systemType ) )
+        systemType = cm.getProperty( EXAM_SYSTEM_KEY, EXAM_SYSTEM_TEST );
+        if( EXAM_SYSTEM_DEFAULT.equals( systemType ) )
         {
             system = DefaultExamSystem.create( new Option[0] );
         }
-        else if( Constants.EXAM_SYSTEM_JAVAEE.equals( systemType ) )
+        else if( EXAM_SYSTEM_JAVAEE.equals( systemType ) )
         {
             system = DefaultExamSystem.create( new Option[]{ new WarProbeOption() } );
         }
@@ -112,7 +139,7 @@ public class ReactorManager
         }
     }
 
-    public StagedExamReactorFactory getFactory( Class<?> testClass )
+    private StagedExamReactorFactory getFactory( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
         ExamReactorStrategy strategy = testClass.getAnnotation( ExamReactorStrategy.class );
@@ -125,21 +152,21 @@ public class ReactorManager
         else
         {
             // default:
-            fact = new AllConfinedStagedReactorFactory();
+            fact = new PerMethod();
         }
         return fact;
     }
 
-    public DefaultExamReactor getReactor( Class<?> testClass )
+    private DefaultExamReactor getReactor( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
         return new DefaultExamReactor( system, getExamFactory( testClass ) );
     }
 
-    public TestContainerFactory getExamFactory( Class<?> testClass )
+    private TestContainerFactory getExamFactory( Class<?> testClass )
         throws IllegalAccessException, InstantiationException
     {
-        ExamFactory f = (ExamFactory) testClass.getAnnotation( ExamFactory.class );
+        ExamFactory f = testClass.getAnnotation( ExamFactory.class );
 
         TestContainerFactory fact;
         if( f != null )
@@ -154,15 +181,18 @@ public class ReactorManager
         return fact;
     }
 
-    public TestProbeBuilder createProbe(Object testClassInstance) throws IOException, ExamConfigurationException
+    public TestProbeBuilder createProbe( Object testClassInstance ) throws IOException,
+        ExamConfigurationException
     {
-        TestProbeBuilder probe = system.createProbe(  );
+        if( probe == null )
+        {
+            probe = system.createProbe();
+        }
         probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
         return probe;
     }
-    
 
-    public TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance,
+    private TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance,
             TestProbeBuilder probe )
         throws ExamConfigurationException
     {
@@ -211,6 +241,14 @@ public class ReactorManager
     {
         return systemType;
     }
-    
-    
+
+    public Object lookupTestMethod( TestAddress address )
+    {
+        return testAddressToMethodMap.get( address );
+    }
+
+    public void storeTestMethod( TestAddress address, Object testMethod )
+    {
+        testAddressToMethodMap.put( address, testMethod );
+    }
 }

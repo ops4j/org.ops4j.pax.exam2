@@ -64,41 +64,39 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
     private static Logger LOG = LoggerFactory.getLogger( JUnit4TestRunner.class );
 
-    private StagedExamReactor m_reactor;
-    final static private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
-    final private Map<FrameworkMethod, TestAddress> m_children = new HashMap<FrameworkMethod, TestAddress>();
+    private StagedExamReactor reactor;
+    final private Map<FrameworkMethod, TestAddress> methodToTestAddressMap = new HashMap<FrameworkMethod, TestAddress>();
 
-	private ReactorManager m_manager = new ReactorManager();
-
-    private static TestProbeBuilder probe;
+	private ReactorManager manager;
 
     private boolean useProbeInvoker;
 
     public JUnit4TestRunner( Class<?> klass )
         throws Exception
     {
-        super( klass );
+        super( klass );        
         Object testClassInstance = klass.newInstance();
 
-        ExamReactor examReactor = m_manager.prepareReactor(klass, testClassInstance);
-        useProbeInvoker = ! m_manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
+        manager = ReactorManager.getInstance();        
+        ExamReactor examReactor = manager.prepareReactor(klass, testClassInstance);
+        useProbeInvoker = ! manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
         if (useProbeInvoker)
         {
             addTestsToReactor( examReactor, klass, testClassInstance );
         }
-        m_reactor = m_manager.stageReactor();
+        reactor = manager.stageReactor();
     }
 
     @Override
     public void run( RunNotifier notifier )
     {
         try {
-            m_reactor.setUp();
+            reactor.setUp();
             super.run( notifier );
         } catch( Exception e ) {
             throw new TestContainerException( "Problem interacting with reactor.", e );
         } finally {
-            m_manager.shutdown();
+            manager.shutdown();
         }
     }
 
@@ -156,18 +154,18 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             return super.getChildren();
         }
         
-        if( m_children.isEmpty() ) {
+        if( methodToTestAddressMap.isEmpty() ) {
             fillChildren();
         }
-        return Arrays.asList( m_children.keySet().toArray( new FrameworkMethod[ m_children.size() ] ) );
+        return Arrays.asList( methodToTestAddressMap.keySet().toArray( new FrameworkMethod[ methodToTestAddressMap.size() ] ) );
     }
 
     private void fillChildren()
     {
-        Set<TestAddress> targets = m_reactor.getTargets();
+        Set<TestAddress> targets = reactor.getTargets();
         TestDirectory testDirectory = TestDirectory.getInstance();
         for( final TestAddress address : targets ) {
-            final FrameworkMethod frameworkMethod = m_map.get( address.root() );
+            final FrameworkMethod frameworkMethod = (FrameworkMethod) manager.lookupTestMethod(  address.root() );
             String className = frameworkMethod.getMethod().getDeclaringClass().getName();
             String methodName = frameworkMethod.getName();
             
@@ -197,7 +195,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             };
             testDirectory.add( address, new TestInstantiationInstruction( className + ";" + methodName));
 
-            m_children.put( method, address );
+            methodToTestAddressMap.put( method, address );
         }
     }
 
@@ -211,10 +209,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private void addTestsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IOException, ExamConfigurationException
     {
-        if (probe == null)
-        {
-            probe = m_manager.createProbe( testClassInstance );
-        }
+        TestProbeBuilder probe = manager.createProbe( testClassInstance );
 
         //probe.setAnchor( testClass );
         for( FrameworkMethod s : super.getChildren() ) {
@@ -223,7 +218,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             if( address == null ) {
                 address = probe.addTest( testClass, s.getMethod().getName() );
             }
-            m_map.put( address, s );
+            manager.storeTestMethod(  address, s );
         }
         reactor.addProbe( probe );
     }
@@ -258,12 +253,12 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             public void evaluate()
                 throws Throwable
             {
-                TestAddress address = m_children.get( method );
+                TestAddress address = methodToTestAddressMap.get( method );
                 TestAddress root = address.root();
 
                 LOG.debug( "Invoke " + method.getName() + " @ " + address + " Arguments: " + root.arguments() );
                 try {
-                    m_reactor.invoke( address );
+                    reactor.invoke( address );
                 } catch( Exception e ) {
                     Throwable t = ExceptionHelper.unwind( e );
                     throw t;
