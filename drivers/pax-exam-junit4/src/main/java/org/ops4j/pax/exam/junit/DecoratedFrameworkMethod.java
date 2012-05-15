@@ -26,7 +26,7 @@ import org.ops4j.pax.exam.TestAddress;
  * The background is that each method from the test class may be executed in multiple 
  * different configurations or containers.
  * <p>
- * TODO Can we tweak the names so that we can run a single configuration of a given methods
+ * TODO Can we tweak the names so that we can run a single configuration of a given method
  * from Eclipse? This works for the Parameterized runner, but maybe this is hard-coded in
  * Eclipse...
  * 
