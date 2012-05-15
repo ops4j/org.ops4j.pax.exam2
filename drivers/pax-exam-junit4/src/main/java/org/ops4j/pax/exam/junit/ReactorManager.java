@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.junit;
 
-import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_DEFAULT;
+import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_JAVAEE;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_KEY;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_TEST;
@@ -44,6 +44,7 @@ import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -236,9 +237,13 @@ public class ReactorManager
         {
             fact = strategy.value()[0].newInstance();
         }
+        else if (systemType.equals( EXAM_SYSTEM_CDI ) || systemType.equals( EXAM_SYSTEM_JAVAEE ))
+        {
+            fact = new PerSuite();
+        }
         else
         {
-            // default:
+            // OSGi default from Pax Exam 2.x
             fact = new PerMethod();
         }
         return fact;
