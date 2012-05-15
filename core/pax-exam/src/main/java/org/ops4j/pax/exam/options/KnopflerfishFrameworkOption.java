@@ -20,9 +20,11 @@ package org.ops4j.pax.exam.options;
 /**
  * Option specifying a Knopflerfish framework.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
+@Deprecated
 public class KnopflerfishFrameworkOption
     extends FrameworkOption
 {

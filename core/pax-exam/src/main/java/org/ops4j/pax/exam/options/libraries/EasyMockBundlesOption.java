@@ -30,6 +30,7 @@ import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
+@Deprecated
 public class EasyMockBundlesOption
     extends AbstractDelegateProvisionOption<EasyMockBundlesOption>
 {

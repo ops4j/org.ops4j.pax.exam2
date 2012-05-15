@@ -22,9 +22,11 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 /**
  * Utility methods related to scanner options.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 18, 2008
  */
+@Deprecated
 class ScannerUtils
 {
 

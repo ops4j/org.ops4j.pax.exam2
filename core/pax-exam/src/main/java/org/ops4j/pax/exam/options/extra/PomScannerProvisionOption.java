@@ -24,10 +24,12 @@ import static org.ops4j.pax.exam.options.extra.ScannerUtils.*;
 import org.ops4j.pax.exam.options.AbstractProvisionOption;
 
 /**
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since Mar 7, 2009
  */
+@Deprecated
 public class PomScannerProvisionOption
     extends AbstractProvisionOption<PomScannerProvisionOption>
     implements Scanner

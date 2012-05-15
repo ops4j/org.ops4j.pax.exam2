@@ -25,9 +25,11 @@ import org.ops4j.pax.exam.options.AbstractProvisionOption;
 /**
  * Option specifying a raw (non scanner type specific) provision spec for Pax Runner.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.4.1, April 17, 2009
  */
+@Deprecated
 public class RawScannerProvisionOption
     extends AbstractProvisionOption<RawScannerProvisionOption>
     implements Scanner

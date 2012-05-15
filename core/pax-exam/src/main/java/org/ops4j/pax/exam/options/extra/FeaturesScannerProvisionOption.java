@@ -25,9 +25,11 @@ import org.ops4j.pax.exam.options.UrlReference;
 /**
  * Option specifying provision from an Pax Runner Features scanner.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 19, 2008
  */
+@Deprecated
 public class FeaturesScannerProvisionOption
     extends AbstractUrlProvisionOption<FeaturesScannerProvisionOption>
     implements Scanner
