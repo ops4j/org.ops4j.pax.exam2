@@ -17,21 +17,14 @@ package org.ops4j.pax.exam.regression.multi.reference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeTrue;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isEquinox;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isNativeContainer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder;
 import org.osgi.framework.Bundle;
@@ -43,27 +36,10 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 public class EquinoxReferenceTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Test
-    public void exceptionWithoutCustomHandler() throws BundleException, IOException {
-        assumeTrue( isEquinox() );
-
-        assertNull(System.getProperty("java.protocol.handler.pkgs"));
-        expectedException.expect(MalformedURLException.class);
-        expectedException.expectMessage("unknown protocol");
-        assertNull(System.getProperty("java.protocol.handler.pkgs"));
-        String reference = "reference:file:" + PathUtils.getBaseDir() +
-                "/target/regression-pde-bundle";
-        new URL(reference);
-    }
-
     @Test
     public void installAndStartReferenceBundle() throws BundleException, IOException {
         assumeTrue( isEquinox() );
-
-        assertNull(System.getProperty("java.protocol.handler.pkgs"));
+        assumeTrue(System.getProperty("java.protocol.handler.pkgs") == null);
 
         Map<String, String> props = new HashMap<String, String>();
         props.put("osgi.clean", "true");
@@ -89,23 +65,5 @@ public class EquinoxReferenceTest {
 
         bundle.uninstall();
         framework.stop();
-    }
-
-    @Test
-    public void equinoxInternalReferenceHandler() throws BundleException, IOException {
-        assumeTrue( isEquinox() );
-
-        try {
-            System.setProperty("java.protocol.handler.pkgs", "org.eclipse.osgi.framework.internal.protocol");
-            String reference = "reference:file:" + PathUtils.getBaseDir() +
-                    "/target/regression-pde-bundle";
-            URL url = new URL(reference);
-            assertEquals("reference", url.getProtocol());
-            InputStream is = url.openStream();
-            assertNotNull(is);
-            assertEquals("org.eclipse.osgi.framework.internal.core.ReferenceInputStream", is.getClass().getName());
-        } finally {
-            System.setProperty("java.protocol.handler.pkgs", "bogus");
-        }
     }
 }
