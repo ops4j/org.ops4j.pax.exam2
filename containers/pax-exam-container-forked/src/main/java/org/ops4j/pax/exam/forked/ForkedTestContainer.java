@@ -181,6 +181,7 @@ public class ForkedTestContainer implements TestContainer
         try
         {
             remoteFramework.stop();
+            system.clear();
         }
         catch ( RemoteException exc )
         {

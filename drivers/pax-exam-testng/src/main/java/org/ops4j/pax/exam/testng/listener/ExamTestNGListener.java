@@ -84,7 +84,6 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     public void onFinish( ISuite suite )
     {
         reactor.tearDown();
-        system.clear();
     }
 
     private synchronized StagedExamReactor prepareReactor( ISuite suite )

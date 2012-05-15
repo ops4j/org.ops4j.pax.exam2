@@ -95,7 +95,6 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             throw new TestContainerException( "Problem interacting with reactor.", e );
         } finally {
             m_reactor.tearDown();
-            m_system.clear();
         }
     }
 
