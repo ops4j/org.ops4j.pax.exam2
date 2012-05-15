@@ -63,16 +63,30 @@ public class DefaultTestAddress implements TestAddress {
     @Override
     public int hashCode()
     {
-        return m_sig.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( ( m_caption == null ) ? 0 : m_caption.hashCode() );
+        return result;
     }
 
     @Override
-    public boolean equals( Object o )
+    public boolean equals( Object obj )
     {
-        if( o instanceof TestAddress ) {
-            return o.equals( m_sig );
+        if( this == obj )
+            return true;
+        if( obj == null )
+            return false;
+        if( getClass() != obj.getClass() )
+            return false;
+        DefaultTestAddress other = (DefaultTestAddress) obj;
+        if( m_caption == null )
+        {
+            if( other.m_caption != null )
+                return false;
         }
-        return false;
+        else if( !m_caption.equals( other.m_caption ) )
+            return false;
+        return true;
     }
 
     public String identifier()

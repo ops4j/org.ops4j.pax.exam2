@@ -149,26 +149,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
             final FrameworkMethod frameworkMethod = m_map.get( address.root() );
 
             // now, someone later may refer to that artificial FrameworkMethod. We need to be able to tell the address.
-            FrameworkMethod method = new FrameworkMethod( frameworkMethod.getMethod() ) {
-                @Override
-                public String getName()
-                {
-                    return frameworkMethod.getName() + ":" + address.caption();
-                }
-
-                @Override
-                public boolean equals( Object obj )
-                {
-                    return address.equals( obj );
-                }
-
-                @Override
-                public int hashCode()
-                {
-                    return address.hashCode();
-                }
-            };
-
+            FrameworkMethod method = new DecoratedFrameworkMethod( address, frameworkMethod );
             m__childs.put( method, address );
         }
     }
