@@ -21,26 +21,29 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenWar;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.CoreOptions.*;
+
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
+import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
+import org.glassfish.embeddable.GlassFishException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-//@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
-@ExamReactorStrategy( EagerSingleStagedReactorFactory.class )
+@RunWith( PaxExam.class )
+@ExamReactorStrategy( PerClass.class )
 public class GlassFishTestContainerTest
 {
     @Inject
@@ -54,19 +57,30 @@ public class GlassFishTestContainerTest
     {
         return options(
             systemProperty( "osgi.console" ).value( "6666" ),
-            war( "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war" ).name( "sample1" ),
+            mavenWar( "org.ops4j.pax.exam.samples", "pax-exam-sample1-web", 
+                Info.getPaxExamVersion() ).name( "sample1" ),
             junitBundles() );
     }
 
     @Test
-    public void getBundleContext() throws InterruptedException
+    public void getBundleContext()
     {
         assertThat( bc, is( notNullValue() ) );
     }
 
     @Test
-    public void getGlassFish() throws InterruptedException
+    public void getGlassFish()
     {
         assertThat( gf, is( notNullValue() ) );
+    }
+
+    @Test
+    public void getDeployedApplications() throws GlassFishException
+    {
+        Deployer deployer = gf.getDeployer();
+        Iterator<String> applications = deployer.getDeployedApplications().iterator();
+        assertThat( applications.hasNext(), is(true));
+        String applicationName = applications.next();
+        assertThat( applicationName, is("sample1"));
     }
 }

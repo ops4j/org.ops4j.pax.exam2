@@ -226,7 +226,7 @@ public class GlassFishTestContainer implements TestContainer
     {
         try
         {
-            String url = option.getUrlReference().getURL();
+            String url = option.getURL();
             LOG.info( "deploying module {}", url );
             URI uri = new URL( url ).toURI();
             String applicationName = option.getName();

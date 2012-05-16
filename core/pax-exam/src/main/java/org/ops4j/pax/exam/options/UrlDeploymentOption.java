@@ -21,7 +21,7 @@ package org.ops4j.pax.exam.options;
  * 
  * @author Harald Wellmann
  */
-public class UrlDeploymentOption implements DeploymentOption
+public class UrlDeploymentOption implements DeploymentOption, UrlReference
 {
     private UrlReference urlReference;
     private String name;
@@ -84,6 +84,12 @@ public class UrlDeploymentOption implements DeploymentOption
     protected UrlDeploymentOption itself()
     {
         return this;
+    }
+
+    @Override
+    public String getURL()
+    {
+        return urlReference.getURL();
     }
 
 }

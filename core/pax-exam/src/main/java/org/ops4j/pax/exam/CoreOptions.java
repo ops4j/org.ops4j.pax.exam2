@@ -1398,7 +1398,7 @@ public class CoreOptions
 
     public static MavenArtifactDeploymentOption mavenWar()
     {
-        return new MavenArtifactDeploymentOption();
+        return new MavenArtifactDeploymentOption().type( "war" );
     }
 
     
@@ -1406,7 +1406,7 @@ public class CoreOptions
             final String artifactId,
             final String version )
     {
-        return mavenWar().groupId( groupId ).artifactId( artifactId ).version( version );
+        return mavenWar().groupId( groupId ).artifactId( artifactId ).version( version ).type( "war" );
     }
     
 }
