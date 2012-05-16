@@ -51,6 +51,7 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
         "simple-glassfish-api",
         "jersey-client",
         "pax-exam-container",
+        "pax-exam-spi",
         "tinybundles",
         "geronimo-atinject",
         "bndlib"
