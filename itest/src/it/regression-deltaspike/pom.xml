@@ -43,7 +43,7 @@
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-weld</artifactId>
+            <artifactId>pax-exam-container-openwebbeans</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
