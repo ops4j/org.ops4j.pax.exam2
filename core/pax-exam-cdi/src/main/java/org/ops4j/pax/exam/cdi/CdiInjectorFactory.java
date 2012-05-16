@@ -16,8 +16,6 @@
  */
 package org.ops4j.pax.exam.cdi;
 
-import javax.servlet.ServletContext;
-
 import org.ops4j.pax.exam.cdi.impl.CdiInjector;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
