@@ -83,9 +83,13 @@ import org.ops4j.store.StoreFactory;
 
 /**
  * Factory methods for core options.
+ * <p>
+ * Deprecated options are only supported by Pax Runner Container which is deprecated itself
+ * and will be removed in Pax Exam 3.0.
  * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com
+ * @author Harald Wellmann
  * @since 0.3.0, December 08, 2008
  */
 public class CoreOptions
@@ -133,7 +137,9 @@ public class CoreOptions
      * @param frameworks framework options
      * 
      * @return composite option of framework options
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option frameworks( final FrameworkOption... frameworks )
     {
         return composite( frameworks );
@@ -143,7 +149,9 @@ public class CoreOptions
      * Creates a {@link FelixFrameworkOption}.
      * 
      * @return felix framework option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static FelixFrameworkOption felix()
     {
         return new FelixFrameworkOption();
@@ -153,7 +161,9 @@ public class CoreOptions
      * Creates a composite option of all {@link FelixFrameworkOption} versions (up to the date of Pax Exam release).
      * 
      * @return all felix framework versions composite option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option allFelixVersions()
     {
         return composite(
@@ -187,7 +197,9 @@ public class CoreOptions
      * Creates a {@link EquinoxFrameworkOption}.
      * 
      * @return equinox framework option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static EquinoxFrameworkOption equinox()
     {
         return new EquinoxFrameworkOption();
@@ -197,7 +209,9 @@ public class CoreOptions
      * Creates a composite option of all {@link EquinoxFrameworkOption} versions (up to the date of Pax Exam release).
      * 
      * @return all equinox framework versions composite option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option allEquinoxVersions()
     {
         return composite(
@@ -220,7 +234,9 @@ public class CoreOptions
      * Creates a {@link KnopflerfishFrameworkOption}.
      * 
      * @return knopflerfish framework option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static KnopflerfishFrameworkOption knopflerfish()
     {
         return new KnopflerfishFrameworkOption();
@@ -230,7 +246,9 @@ public class CoreOptions
      * Creates a composite option of all {@link KnopflerfishFrameworkOption} versions (up to the date of Pax Exam release).
      * 
      * @return all knopflerfish framework versions composite option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option allKnopflerfishVersions()
     {
         return composite(
@@ -260,7 +278,9 @@ public class CoreOptions
      * Creates a composite option of latest versions of Felix, Equinox and Knopflerfish.
      * 
      * @return latest versions of all frameworks composite option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option allFrameworks()
     {
         return composite(
@@ -288,7 +308,9 @@ public class CoreOptions
      * @param definitionURL url to a custom pax runner platform xml descriptor
      * @param name a custom name you give this combo (will show up in pax runner startup and error msg)
      * @return instance of CustomFrameworkOption
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static CustomFrameworkOption customFramework( String baseFrameworkName, String definitionURL, String name )
     {
         return new CustomFrameworkOption( definitionURL, baseFrameworkName, name );
@@ -716,7 +738,9 @@ public class CoreOptions
      * Creates a {@link org.ops4j.pax.exam.options.MavenPluginGeneratedConfigOption}.
      * 
      * @return Args option with file written from paxexam plugin
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static MavenPluginGeneratedConfigOption mavenConfiguration()
     {
         URL url = CoreOptions.class.getClassLoader().getResource( DEFAULT_CONFIGURATION );
@@ -737,7 +761,9 @@ public class CoreOptions
      * @param url of configuration to be used
      * 
      * @return Args option with file written from paxexam plugin
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static MavenPluginGeneratedConfigOption mavenConfiguration( String url )
     {
         validateNotEmpty( url, "specified configuration url must not be empty " );
@@ -756,7 +782,9 @@ public class CoreOptions
      * @param url of configuration to be used
      * 
      * @return Args option with file written from paxexam plugin
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static MavenPluginGeneratedConfigOption mavenConfiguration( URL url )
     {
         validateNotNull( url, "specified configuration url " );
@@ -830,6 +858,7 @@ public class CoreOptions
      *
      * @return easy mock bundles option
      */
+    @Deprecated
     public static EasyMockBundlesOption easyMockBundles()
     {
         return new EasyMockBundlesOption();
@@ -840,6 +869,7 @@ public class CoreOptions
      *
      * @return mockito bundles option
      */
+    @Deprecated
     public static MockitoBundlesOption mockitoBundles()
     {
         return new MockitoBundlesOption();
@@ -862,6 +892,7 @@ public class CoreOptions
      *
      * @return jmock bundles option
      */
+    @Deprecated
     public static JMockBundlesOption jmockBundles()
     {
         return new JMockBundlesOption();
@@ -875,7 +906,9 @@ public class CoreOptions
      * @param profiles profile options
      *
      * @return composite option of profiles options
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option profiles( final ProfileOption... profiles )
     {
         return new DefaultCompositeOption( profiles );
@@ -887,7 +920,9 @@ public class CoreOptions
      * @param name profile name
      *
      * @return profile option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ProfileOption profile( final String name )
     {
         return new ProfileOption( name );
@@ -900,7 +935,9 @@ public class CoreOptions
      * @param version profile version
      *
      * @return profile option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ProfileOption profile( final String name,
                                          final String version )
     {
@@ -911,7 +948,9 @@ public class CoreOptions
      * Creates a Http Service {@link ProfileOption} (--profiles=web).
      *
      * @return web profile option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ProfileOption webProfile()
     {
         return new ProfileOption( "web" );
@@ -921,7 +960,9 @@ public class CoreOptions
      * Creates a Log Service {@link ProfileOption} (--profiles=log).
      *
      * @return log profile option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ProfileOption logProfile()
     {
         return new ProfileOption( "log" );
@@ -931,7 +972,9 @@ public class CoreOptions
      * Creates a Configuration Admin Service {@link ProfileOption} (--profiles=config).
      *
      * @return config profile option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ProfileOption configProfile()
     {
         return new ProfileOption( "config" );
@@ -941,7 +984,9 @@ public class CoreOptions
      * Creates a Declarative Service {@link ProfileOption} (--profiles=ds).
      *
      * @return ds profile option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ProfileOption dsProfile()
     {
         return new ProfileOption( "ds" );
@@ -951,7 +996,9 @@ public class CoreOptions
      * Creates a Log Service {@link ProfileOption} (--profiles=compendium).
      *
      * @return log profile option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ProfileOption compendiumProfile()
     {
         return new ProfileOption( "compendium" );
@@ -1053,7 +1100,9 @@ public class CoreOptions
      * @param value option value
      *
      * @return a PaxRunner Option instance.
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static RawPaxRunnerOptionOption rawPaxRunnerOption( final String key,
                                                                final String value )
     {
@@ -1066,7 +1115,9 @@ public class CoreOptions
      * @param option full Pax Runner option (including --)
      *
      * @return a PaxRunner Option instance.
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static RawPaxRunnerOptionOption rawPaxRunnerOption( final String option )
     {
         return new RawPaxRunnerOptionOption( option );
@@ -1080,7 +1131,9 @@ public class CoreOptions
      * @return composite option of virtual machine options
      *
      * @throws IllegalArgumentException - If urls array is null or contains null entries
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option repositories( final String... repositoryUrls )
     {
         validateNotEmptyContent( repositoryUrls, true, "Repository URLs" );
@@ -1098,7 +1151,9 @@ public class CoreOptions
      * @param repositoryOptions repository options
      *
      * @return composite option of repository options
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static Option repositories( final RepositoryOption... repositoryOptions )
     {
         return new DefaultCompositeOption( repositoryOptions );
@@ -1110,7 +1165,9 @@ public class CoreOptions
      * @param path localRepository path or url
      *
      * @return localRepository option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static LocalRepositoryOption localRepository( final String path )
     {
         return new LocalRepositoryOption( path );
@@ -1122,7 +1179,9 @@ public class CoreOptions
      * @param repositoryUrl repository url
      *
      * @return repository option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static RepositoryOption repository( final String repositoryUrl )
     {
         return new RepositoryOptionImpl( repositoryUrl );
@@ -1132,7 +1191,9 @@ public class CoreOptions
      * Creates a {@link ExcludeDefaultRepositoriesOption}.
      *
      * @return option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static ExcludeDefaultRepositoriesOption excludeDefaultRepositories()
     {
         return new ExcludeDefaultRepositoriesOption();
@@ -1144,7 +1205,9 @@ public class CoreOptions
      * @param provisionSpec raw provisioning spec
      *
      * @return raw scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static RawScannerProvisionOption scan( final String provisionSpec )
     {
         return new RawScannerProvisionOption( provisionSpec );
@@ -1156,7 +1219,9 @@ public class CoreOptions
      * @param directory directory to be scanned
      *
      * @return directory scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static DirScannerProvisionOption scanDir( final String directory )
     {
         return new DirScannerProvisionOption( directory );
@@ -1168,7 +1233,9 @@ public class CoreOptions
      * @param url to pom
      *
      * @return pom scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static PomScannerProvisionOption scanPom( final String url )
     {
         return new PomScannerProvisionOption( url );
@@ -1178,7 +1245,9 @@ public class CoreOptions
      * Creates a {@link PomScannerProvisionOption}.
      *
      * @return pom scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static PomScannerProvisionOption scanPom()
     {
         return new PomScannerProvisionOption();
@@ -1190,7 +1259,9 @@ public class CoreOptions
      * @param fileUrl url of the file to be scanned
      *
      * @return file scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static FileScannerProvisionOption scanFile( final String fileUrl )
     {
         return new FileScannerProvisionOption( fileUrl );
@@ -1202,7 +1273,9 @@ public class CoreOptions
      * @param fileUrl url of the file to be scanned
      *
      * @return file scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static FileScannerProvisionOption scanFile( final UrlReference fileUrl )
     {
         return new FileScannerProvisionOption( fileUrl );
@@ -1215,7 +1288,9 @@ public class CoreOptions
      * @param features      features to be scanned
      *
      * @return file scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static FeaturesScannerProvisionOption scanFeatures( final String repositoryUrl,
                                                                final String... features )
     {
@@ -1229,7 +1304,9 @@ public class CoreOptions
      * @param features      features to be scanned
      *
      * @return file scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static FeaturesScannerProvisionOption scanFeatures( final UrlReference repositoryUrl,
                                                                final String... features )
     {
@@ -1242,7 +1319,9 @@ public class CoreOptions
      * @param fileUrl url of the file to be scanned
      *
      * @return composite scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static CompositeScannerProvisionOption scanComposite( final String fileUrl )
     {
         return new CompositeScannerProvisionOption( fileUrl );
@@ -1254,7 +1333,9 @@ public class CoreOptions
      * @param fileUrl url of the file to be scanned
      *
      * @return composite scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static CompositeScannerProvisionOption scanComposite( final UrlReference fileUrl )
     {
         return new CompositeScannerProvisionOption( fileUrl );
@@ -1276,7 +1357,9 @@ public class CoreOptions
      * @param bundleUrl url of the bundle to be scanned
      *
      * @return bundle scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static BundleScannerProvisionOption scanBundle( final String bundleUrl )
     {
         return new BundleScannerProvisionOption( bundleUrl );
@@ -1288,7 +1371,9 @@ public class CoreOptions
      * @param bundleUrl url of the bundle to be scanned
      *
      * @return bundle scanner option
+     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
+    @Deprecated
     public static BundleScannerProvisionOption scanBundle( final UrlReference bundleUrl )
     {
         return new BundleScannerProvisionOption( bundleUrl );

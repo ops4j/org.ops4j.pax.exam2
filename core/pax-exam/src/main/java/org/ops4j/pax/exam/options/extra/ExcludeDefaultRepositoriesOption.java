@@ -22,9 +22,11 @@ import org.ops4j.pax.exam.Option;
 /**
  * Option specifiying a that Pax Runner should exclude default repositories.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.4.1, April 17, 2009
  */
+@Deprecated
 public class ExcludeDefaultRepositoriesOption
     implements Option
 {

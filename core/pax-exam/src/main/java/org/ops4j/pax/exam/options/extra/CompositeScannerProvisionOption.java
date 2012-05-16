@@ -25,9 +25,11 @@ import org.ops4j.pax.exam.options.UrlReference;
 /**
  * Option specifying provision form an Pax Runner composite scanner.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.6.0, May 01, 2009
  */
+@Deprecated
 public class CompositeScannerProvisionOption
     extends AbstractUrlProvisionOption<CompositeScannerProvisionOption>
     implements Scanner

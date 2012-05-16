@@ -24,10 +24,12 @@ import static org.ops4j.lang.NullArgumentException.*;
  * {@link RepositoryOption} implementations.
  * This is the implementation that bridges nice api with actual string representation in pax runner.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 19, 2008
  */
+@Deprecated
 public class RepositoryOptionImpl implements RepositoryOption
 {
 

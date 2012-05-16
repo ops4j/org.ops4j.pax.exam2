@@ -32,6 +32,7 @@ import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since Mar 15, 2009
  */
+@Deprecated
 public class JMockBundlesOption
     extends AbstractDelegateProvisionOption<JMockBundlesOption>
 {

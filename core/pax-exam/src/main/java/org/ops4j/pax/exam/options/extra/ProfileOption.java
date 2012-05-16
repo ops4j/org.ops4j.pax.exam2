@@ -24,9 +24,11 @@ import org.ops4j.pax.exam.Option;
 /**
  * Option specifying a Pax runner provisioning profile.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
+@Deprecated
 public class ProfileOption
     implements Option
 {

@@ -22,10 +22,12 @@ import org.ops4j.pax.exam.options.ValueOption;
 /**
  * Option specifiying a Pax Runner repository.
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Toni Menzel (tonit)
  * @author Harald Wellmann
  * @since 0.3.0, December 19, 2008
  */
+@Deprecated
 public interface RepositoryOption extends ValueOption<String>
 {
 

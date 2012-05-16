@@ -26,9 +26,11 @@ import org.ops4j.pax.exam.options.UrlReference;
 /**
  * Option specifying provision form an Pax Runner Bundle scanner (scan-bundle).
  *
+ * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 17, 2008
  */
+@Deprecated
 public class BundleScannerProvisionOption
     extends AbstractUrlProvisionOption<BundleScannerProvisionOption>
 {
