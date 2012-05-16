@@ -111,6 +111,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     {
         try
         {
+            reactor.setUp();
             super.run( notifier );
         }
         catch ( Exception e )
@@ -332,7 +333,6 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     @Override
     protected Object createTest() throws Exception
     {
-        reactor.setUp();
         if( useProbeInvoker )
         {
             return super.createTest();
