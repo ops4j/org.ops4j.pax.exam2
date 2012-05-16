@@ -67,6 +67,7 @@
             </activation>
             <modules>
                 <module>itest</module>
+                <module>itest-cdi</module>
             </modules>
         </profile>
     </profiles>

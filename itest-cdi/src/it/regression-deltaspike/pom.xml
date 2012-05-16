@@ -6,8 +6,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.ops4j.pax</groupId>
-        <artifactId>exam</artifactId>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>exam-itest-cdi</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
@@ -38,13 +38,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
             <version>${dependency.slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-openwebbeans</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -98,74 +91,6 @@
         </dependency>
 
     </dependencies>
-    <build>
-        <plugins>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>once</forkMode>
-                    <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
-                    <argLine>-XX:MaxPermSize=256M</argLine>
-                    <systemProperties>
-                        <pax.exam.container>${pax.exam.container}</pax.exam.container>
-                        <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
-                        <osgi.console>6666</osgi.console>
-                    </systemProperties>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>felix</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>felix</pax.exam.framework>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.apache.felix.framework</artifactId>
-                    <version>4.0.2</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>equinox</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>equinox</pax.exam.framework>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>org.eclipse.osgi</artifactId>
-                    <version>3.6.2.R36x_v20110210</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>weld</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>weld</pax.exam.container>
-            </properties>
-            <dependencies>
-            </dependencies>
-        </profile>
-
-    </profiles>
 
 </project>
