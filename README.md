@@ -30,6 +30,9 @@ Run Build:
 
     mvn clean install
 
+Run build with integration tests
+
+    mvn -P itest clean install
 
 ## Releases
 
