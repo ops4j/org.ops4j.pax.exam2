@@ -93,7 +93,7 @@ public class Info
                 paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
                 paxRunnerVersion = properties.getProperty("pax.runner.version", "").trim();
                 ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
-                paxSwissboxVersion = properties.getProperty("${dependency.swissbox.version}").trim();
+                paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
             }
         } catch (Exception ignore)
         {
