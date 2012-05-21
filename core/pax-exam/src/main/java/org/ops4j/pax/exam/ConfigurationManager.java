@@ -75,4 +75,10 @@ public class ConfigurationManager
     {
         return resolver.get( key );
     }
+
+    public String getProperty( String key, String defaultValue )
+    {
+        String value = resolver.get( key );
+        return (value == null) ? defaultValue : value;
+    }
 }

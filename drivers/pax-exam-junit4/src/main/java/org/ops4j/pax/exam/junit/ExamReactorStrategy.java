@@ -19,8 +19,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
 /**
  * Define the invokation strategy.
@@ -30,5 +31,5 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 public @interface ExamReactorStrategy
 {
 
-    Class<? extends StagedExamReactorFactory>[] value() default { AllConfinedStagedReactorFactory.class };
+    Class<? extends StagedExamReactorFactory>[] value() default { PerMethod.class };
 }

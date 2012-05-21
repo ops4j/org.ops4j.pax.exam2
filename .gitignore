@@ -11,4 +11,8 @@ bin
 .project
 .settings
 test-output
+*.log
 atlassian-ide-plugin.xml
+felix-cache
+fwdir
+moviedb-json

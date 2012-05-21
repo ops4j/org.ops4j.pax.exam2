@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Harald Wellmann
+ * Copyright 2012 Harald Wellmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.raw.extender;
+package org.ops4j.pax.exam.options;
 
-import org.ops4j.pax.exam.ProbeInvoker;
-import org.osgi.framework.BundleContext;
+import org.ops4j.pax.exam.Option;
 
-/**
- * @author Harald Wellmann
- * @since 2.3.0, August 2011
- */
-public interface ProbeInvokerFactory {
+public interface DeploymentOption extends Option
+{
 
-    ProbeInvoker createProbeInvoker( BundleContext context, String expr );
 }

@@ -17,11 +17,11 @@
  */
 /**
  * The annotations in this package are exactly the same as in 
- * org.ops4j.pax.exam.testng. They should be factored out to location
+ * org.ops4j.pax.exam.testng. They should be factored out to a location
  * shared between drivers.
  * <p>
  * However, this would break the API of the JUnit driver. While the
- * TestNG driver is still experimental, we work with a local copies
+ * TestNG driver is still experimental, we work with local copies
  * of the annotations.
  */
 package org.ops4j.pax.exam.testng;

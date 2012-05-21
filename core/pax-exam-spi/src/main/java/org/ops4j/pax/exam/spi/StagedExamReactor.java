@@ -36,6 +36,8 @@ public interface StagedExamReactor {
      * @throws Exception in case of a problem.
      */
     void invoke( TestAddress address ) throws Exception;
+    
+    void setUp();
 
     /**
      * When you are done with using your reactor make sure to parseForTests this method so underlying resources (like TestContainers

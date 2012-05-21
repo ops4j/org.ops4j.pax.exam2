@@ -98,15 +98,17 @@ public class Player {
     {
         ExamReactor reactor = new DefaultExamReactor( m_testSystem, m_factory );
         reactor.addConfiguration(  m_parts  );
-        reactor.addProbe( m_builder.build() );
+        reactor.addProbe( m_builder );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
+        stagedReactor.setUp();
 
         for( TestAddress target : stagedReactor.getTargets() ) {
             try {
                 stagedReactor.invoke( target );
             } catch( Exception e ) {
                 Throwable t = ExceptionHelper.unwind( e );
+                t.printStackTrace();
                 fail( t.getMessage() );
             }
         }

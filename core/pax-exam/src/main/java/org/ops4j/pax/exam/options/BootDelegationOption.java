@@ -79,4 +79,35 @@ public class BootDelegationOption implements ValueOption
         return sb.toString();
     }
 
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( ( m_package == null ) ? 0 : m_package.hashCode() );
+        return result;
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if( this == obj )
+            return true;
+        if( obj == null )
+            return false;
+        if( getClass() != obj.getClass() )
+            return false;
+        BootDelegationOption other = (BootDelegationOption) obj;
+        if( m_package == null )
+        {
+            if( other.m_package != null )
+                return false;
+        }
+        else if( !m_package.equals( other.m_package ) )
+            return false;
+        return true;
+    }
+    
+    
+
 }

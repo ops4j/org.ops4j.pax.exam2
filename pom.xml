@@ -10,7 +10,7 @@
 
     <groupId>org.ops4j.pax</groupId>
     <artifactId>exam-reactor</artifactId>
-    <version>2.5.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OPS4J Pax Exam (Reactor POM)</name>
@@ -28,6 +28,8 @@
                 <module>core/pax-exam-extender-service</module>
                 <module>core/pax-exam-inject</module>
                 <module>core/pax-exam-invoker-junit</module>
+                <module>core/pax-exam-servlet-bridge</module>
+                <module>core/pax-exam-cdi</module>
                 <module>containers/pax-exam-container-native</module>
                 <module>forge/pax-exam-testforge</module>
                 <module>drivers/pax-exam-player</module>
@@ -42,9 +44,13 @@
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
                 <module>containers/pax-exam-container-forked</module>
+                <module>containers/pax-exam-container-glassfish</module>
+                <module>containers/pax-exam-container-weld</module>
+                <module>containers/pax-exam-container-openwebbeans</module>
 
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-pde-bundle</module>
+                <module>samples</module>
             </modules>
         </profile>
         <profile>
@@ -61,6 +67,7 @@
             </activation>
             <modules>
                 <module>itest</module>
+                <module>itest-cdi</module>
             </modules>
         </profile>
     </profiles>

@@ -17,19 +17,20 @@ package org.ops4j.pax.exam.spi.reactors;
 
 import java.util.List;
 
-import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestProbeProvider;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 
 /**
- *
+ * @deprecated Use {@link PerClass} instead.
  */
+@Deprecated
 public class EagerSingleStagedReactorFactory implements StagedExamReactorFactory
 {
 
-    public StagedExamReactor create( List<TestContainer> containers, List<TestProbeProvider> mProbes )
+    @Override
+    public StagedExamReactor create( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
     {
         return new EagerSingleStagedReactor( containers, mProbes );
     }

@@ -74,6 +74,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         try
         {
             reactor = prepareReactor(suite);
+            reactor.setUp();
         }
         catch ( Exception exc )
         {
@@ -131,13 +132,13 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
             addressToMethodMap.put( address, m );
             //methodToAddressMap.put (m.getMethodName(), address );
         }
-        reactor.addProbe( probe.build() );
+        reactor.addProbe( probe );
     }
 
     private StagedExamReactorFactory getFactory( Class<?> testClass )
         throws InstantiationException, IllegalAccessException
     {
-        ExamReactorStrategy strategy = (ExamReactorStrategy) testClass.getAnnotation( ExamReactorStrategy.class );
+        ExamReactorStrategy strategy = testClass.getAnnotation( ExamReactorStrategy.class );
 
         StagedExamReactorFactory fact;
         if( strategy != null ) {
@@ -190,8 +191,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
             LOG.error("Exception" ,e);
             testResult.setStatus( ITestResult.FAILURE );
             testResult.setThrowable( t );
-       }
-        
+        }        
     }
 
     public List<IMethodInstance> intercept( List<IMethodInstance> methods, ITestContext context )
@@ -209,6 +209,5 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
             methodToAddressMap.put( reactorMethod.getMethodName(), address );
         }
         return newInstances;
-    }
-    
+    }    
 }

@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.spi;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -35,9 +36,11 @@ import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.TimeoutOption;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
+import org.ops4j.pax.exam.spi.war.WarTestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
 
@@ -58,7 +61,7 @@ public class DefaultExamSystem implements ExamSystem {
     final private Option[] m_combinedOptions;
     final private Stack<ExamSystem> m_subsystems;
     final private RelativeTimeout m_timeout;
-    final private Set<Class> m_requestedOptionTypes = new HashSet<Class>();
+    final private Set<Class<?>> m_requestedOptionTypes = new HashSet<Class<?>>();
     final private CleanCachesOption m_clean;
     final private File m_cache;
 
@@ -258,12 +261,23 @@ public class DefaultExamSystem implements ExamSystem {
         return missing;
     }
 
-    public TestProbeBuilder createProbe(  )
+    public TestProbeBuilder createProbe()
         throws IOException
     {
-        TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl( m_store );
-        testProbeBuilder.setHeader( "Bundle-SymbolicName","PAXEXAM-PROBE-" + createID( "created probe" ) );
-        return testProbeBuilder;
+        Option warProbeOption = getSingleOption( WarProbeOption.class );
+        if( warProbeOption == null )
+        {
+            LOG.debug( "creating default probe" );
+            TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl( m_store );
+            testProbeBuilder.setHeader( "Bundle-SymbolicName", "PAXEXAM-PROBE-"
+                    + createID( "created probe" ) );
+            return testProbeBuilder;
+        }
+        else
+        {
+            LOG.debug( "creating WAR probe" );
+            return new WarTestProbeBuilderImpl();
+        }
     }
 
     public String createID( String purposeText )
@@ -275,4 +289,28 @@ public class DefaultExamSystem implements ExamSystem {
     {
         return "ExamSystem:options=" + m_combinedOptions.length + ";queried=" + m_requestedOptionTypes.size();
     }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode( m_combinedOptions );
+        return result;
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if( this == obj )
+            return true;
+        if( obj == null )
+            return false;
+        if( getClass() != obj.getClass() )
+            return false;
+        DefaultExamSystem other = (DefaultExamSystem) obj;
+        if( !Arrays.equals( m_combinedOptions, other.m_combinedOptions ) )
+            return false;
+        return true;
+    }    
 }

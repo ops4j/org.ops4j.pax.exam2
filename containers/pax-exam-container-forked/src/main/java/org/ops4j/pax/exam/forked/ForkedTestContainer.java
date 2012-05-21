@@ -192,6 +192,7 @@ public class ForkedTestContainer implements TestContainer
             throw new TestContainerException( exc );
         }
         frameworkFactory.join();
+        system.clear();
         return this;
     }
 
