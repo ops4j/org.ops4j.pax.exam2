@@ -72,12 +72,6 @@ public interface Constants {
     /** Default exam system with no predefined options.  */
     static final String EXAM_SYSTEM_DEFAULT = "default";
 
-    /** Exam system for Java EE containers.  */
-    static final String EXAM_SYSTEM_JAVAEE = "javaee";
-
-    /** Exam system for CDI containers.  */
-    static final String EXAM_SYSTEM_CDI = "cdi";
-
     /** Test exam system with predefined options for Exam's own bundles etc.  */
     static final String EXAM_SYSTEM_TEST = "test";
 }

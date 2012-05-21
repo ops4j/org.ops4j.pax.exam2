@@ -20,7 +20,7 @@ package org.ops4j.pax.exam.invoker.junit.internal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.ops4j.pax.exam.ProbeInvokerFactory;
+import org.ops4j.pax.exam.raw.extender.ProbeInvokerFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

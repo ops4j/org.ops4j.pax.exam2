@@ -19,23 +19,38 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.spi.reactors.PerSuite;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
-@RunWith( PaxExam.class )
-@ExamReactorStrategy( PerSuite.class )
+@RunWith( JUnit4TestRunner.class )
+@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class InjectTest
 {
 
     @Inject
     private HelloService helloService;
+
+    @Configuration( )
+    public Option[] config()
+    {
+        return options(
+            regressionDefaults(),
+            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", "2.4.0-SNAPSHOT"),
+            junitBundles() );
+    }
 
     @Test
     public void getInjectedService()

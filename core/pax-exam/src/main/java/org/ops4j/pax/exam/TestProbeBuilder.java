@@ -19,7 +19,6 @@ package org.ops4j.pax.exam;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Toni Menzel
@@ -27,17 +26,15 @@ import java.util.Set;
  */
 public interface TestProbeBuilder {
 
-    TestAddress addTest( Class<?> clazz, String methodName, Object... args );
+    TestAddress addTest( Class clazz, String methodName, Object... args );
 
-    TestAddress addTest( Class<?> clazz, Object... args );
+    TestAddress addTest( Class clazz, Object... args );
 
-    List<TestAddress> addTests( Class<?> clazz, Method... m );
-
-    Set<TestAddress> getTests();
+    List<TestAddress> addTests( Class clazz, Method... m );
 
     TestProbeBuilder setHeader( String key, String value );
 
-    TestProbeBuilder ignorePackageOf( Class<?>... classes );
+    TestProbeBuilder ignorePackageOf( Class... classes );
 
     TestProbeProvider build();
 }

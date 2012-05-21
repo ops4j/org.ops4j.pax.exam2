@@ -94,34 +94,4 @@ public class DefaultCompositeOption
         return sb.toString();
     }
 
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( ( m_options == null ) ? 0 : m_options.hashCode() );
-        return result;
-    }
-
-    @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
-            return true;
-        if( obj == null )
-            return false;
-        if( getClass() != obj.getClass() )
-            return false;
-        DefaultCompositeOption other = (DefaultCompositeOption) obj;
-        if( m_options == null )
-        {
-            if( other.m_options != null )
-                return false;
-        }
-        else if( !m_options.equals( other.m_options ) )
-            return false;
-        return true;
-    }
-
-
 }

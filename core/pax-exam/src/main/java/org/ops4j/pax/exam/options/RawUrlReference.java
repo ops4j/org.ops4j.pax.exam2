@@ -68,33 +68,4 @@ public class RawUrlReference
         return sb.toString();
     }
 
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( ( m_url == null ) ? 0 : m_url.hashCode() );
-        return result;
-    }
-
-    @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
-            return true;
-        if( obj == null )
-            return false;
-        if( getClass() != obj.getClass() )
-            return false;
-        RawUrlReference other = (RawUrlReference) obj;
-        if( m_url == null )
-        {
-            if( other.m_url != null )
-                return false;
-        }
-        else if( !m_url.equals( other.m_url ) )
-            return false;
-        return true;
-    }
-
 }

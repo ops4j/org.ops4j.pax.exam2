@@ -118,41 +118,4 @@ public class FrameworkOption
         return sb.toString();
     }
 
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( ( m_name == null ) ? 0 : m_name.hashCode() );
-        result = prime * result + ( ( m_version == null ) ? 0 : m_version.hashCode() );
-        return result;
-    }
-
-    @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
-            return true;
-        if( obj == null )
-            return false;
-        if( getClass() != obj.getClass() )
-            return false;
-        FrameworkOption other = (FrameworkOption) obj;
-        if( m_name == null )
-        {
-            if( other.m_name != null )
-                return false;
-        }
-        else if( !m_name.equals( other.m_name ) )
-            return false;
-        if( m_version == null )
-        {
-            if( other.m_version != null )
-                return false;
-        }
-        else if( !m_version.equals( other.m_version ) )
-            return false;
-        return true;
-    }
-
 }

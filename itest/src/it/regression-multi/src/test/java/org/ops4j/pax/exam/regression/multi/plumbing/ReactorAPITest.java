@@ -77,7 +77,7 @@ public class ReactorAPITest
         
         ExamSystem system = DefaultExamSystem.create( options );
         ExamReactor reactor = new DefaultExamReactor( system, factory );
-        TestProbeBuilder probe = makeProbe( system );
+        TestProbeProvider probe = makeProbe( system );
         
         reactor.addProbe( probe );
         reactor.addConfiguration( options );
@@ -98,12 +98,12 @@ public class ReactorAPITest
         
     }
 
-     private TestProbeBuilder makeProbe( ExamSystem system )
+     private TestProbeProvider makeProbe( ExamSystem system )
         throws IOException
     {
         TestProbeBuilder probe = system.createProbe( );
         probe.addTests( SingleTestProbe.class, getAllMethods( SingleTestProbe.class ) );
-        return probe;
+        return probe.build();
     }
 
     private Method[] getAllMethods( Class c )

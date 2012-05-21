@@ -19,10 +19,11 @@ package org.ops4j.pax.exam.spi;
 
 import java.util.List;
 
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 
 public interface StagedExamReactorFactory
 {
-    StagedExamReactor create( List<TestContainer> factory, List<TestProbeBuilder> probes );
+    StagedExamReactor create( List<TestContainer> factory, List<TestProbeProvider> mProbes );
 }

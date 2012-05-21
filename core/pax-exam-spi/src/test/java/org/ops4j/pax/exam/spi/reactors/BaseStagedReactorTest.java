@@ -28,7 +28,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 
 /**
@@ -36,13 +36,13 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
  */
 public abstract class BaseStagedReactorTest {
 
-    abstract protected StagedExamReactor getReactor( List<TestContainer> containers, List<TestProbeBuilder> providers );
+    abstract protected StagedExamReactor getReactor( List<TestContainer> containers, List<TestProbeProvider> providers );
 
     @Test
-    public void testEmptyContainersAndBuilders() throws IOException
+    public void testEmptyContainersAndProviders() throws IOException
     {
         List<TestContainer> containers = new ArrayList<TestContainer>();
-        List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
+        List<TestProbeProvider> providers = new ArrayList<TestProbeProvider>();
 
         StagedExamReactor reactor = getReactor( containers, providers );
         assertThat( reactor.getTargets().size(), is( 0 ) );
@@ -53,7 +53,7 @@ public abstract class BaseStagedReactorTest {
         throws Exception
     {
         List<TestContainer> containers = new ArrayList<TestContainer>();
-        List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
+        List<TestProbeProvider> providers = new ArrayList<TestProbeProvider>();
 
         StagedExamReactor reactor = getReactor( containers, providers );
         reactor.invoke( null );
@@ -64,7 +64,7 @@ public abstract class BaseStagedReactorTest {
         throws Exception
     {
         List<TestContainer> containers = new ArrayList<TestContainer>();
-        List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
+        List<TestProbeProvider> providers = new ArrayList<TestProbeProvider>();
 
         StagedExamReactor reactor = getReactor( containers, providers );
         TestAddress dummy = mock( TestAddress.class );

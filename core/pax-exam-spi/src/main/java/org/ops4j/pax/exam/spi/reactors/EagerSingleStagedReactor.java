@@ -21,15 +21,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * One target only reactor implementation (simpliest and fastest)
@@ -41,21 +40,29 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
 
     final private List<TestContainer> m_targetContainer;
-    final private List<TestProbeBuilder> m_probes;
     final private HashMap<TestAddress, TestContainer> m_map;
 
     /**
      * @param containers to be used
      * @param mProbes    to be installed on all probes
      */
-    public EagerSingleStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
+    public EagerSingleStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
         m_map = new HashMap<TestAddress, TestContainer>();
         m_targetContainer = containers;
-        m_probes = mProbes;
 
         for( TestContainer container : containers ) {
-            for( TestProbeBuilder builder : mProbes ) {
+            container.start( );
+
+            for( TestProbeProvider builder : mProbes ) {
+                LOG.debug( "installing probe " + builder );
+
+                try {
+                    container.install( builder.getStream() );
+                } catch( IOException e ) {
+                    throw new TestContainerException( "Unable to build the probe.", e );
+                }
+
                 // each probe has addresses.
                 for( TestAddress a : builder.getTests() ) {
                     // we need to create a new, because "a" exists for each test container
@@ -64,23 +71,6 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
                 }
             }
         }
-    }
-    
-    public void setUp()
-    {
-        for( TestContainer container : m_targetContainer ) {
-            container.start( );
-
-            for( TestProbeBuilder builder : m_probes ) {
-                LOG.debug( "installing probe " + builder );
-
-                try {
-                    container.install( builder.build().getStream() );
-                } catch( IOException e ) {
-                    throw new TestContainerException( "Unable to build the probe.", e );
-                }
-            }
-        }        
     }
 
     public void invoke( TestAddress address )

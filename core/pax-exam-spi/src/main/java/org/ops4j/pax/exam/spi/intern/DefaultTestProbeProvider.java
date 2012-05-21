@@ -17,11 +17,9 @@ package org.ops4j.pax.exam.spi.intern;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.store.Handle;
@@ -32,12 +30,12 @@ import org.ops4j.store.Store;
  */
 public class DefaultTestProbeProvider implements TestProbeProvider
 {
-    private Set<TestAddress> m_tests;
+    private TestAddress[] m_tests;
     private Handle m_probe;
     private Store<InputStream> m_store;
     private String m_formattedInfo = "";
 
-    public DefaultTestProbeProvider( Set<TestAddress> tests, Store<InputStream> store, Handle probe )
+    public DefaultTestProbeProvider( TestAddress[] tests, Store<InputStream> store, Handle probe )
     {
         m_tests = tests;
         m_store = store;
@@ -47,7 +45,7 @@ public class DefaultTestProbeProvider implements TestProbeProvider
         m_formattedInfo = constuctInfo();
     }
 
-    public Set<TestAddress> getTests()
+    public TestAddress[] getTests()
     {
         return m_tests;
     }

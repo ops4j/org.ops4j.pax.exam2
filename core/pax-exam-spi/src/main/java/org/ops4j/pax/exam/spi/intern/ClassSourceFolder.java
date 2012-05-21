@@ -23,13 +23,13 @@ public class ClassSourceFolder {
      *
      * @throws java.io.IOException if a problem ocures (method crawls folders on disk..)
      */
-    public File find( Class<?> clazz )
+    public File find( Class clazz )
         throws IOException
     {
         return findParentOfTail( m_base, convert( clazz ) );
     }
 
-    private String convert( Class<?> c )
+    private String convert( Class c )
     {
         return c.getName().replace( ".", "/" ) + ".class";
 

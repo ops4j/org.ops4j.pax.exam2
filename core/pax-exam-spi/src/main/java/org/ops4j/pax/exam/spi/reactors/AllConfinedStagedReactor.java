@@ -18,10 +18,9 @@ package org.ops4j.pax.exam.spi.reactors;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 
@@ -31,20 +30,21 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 public class AllConfinedStagedReactor implements StagedExamReactor
 {
 
-    final private List<TestProbeBuilder> m_probes;
+    final private List<TestProbeProvider> m_probes;
     final private HashMap<TestAddress, TestContainer> m_map;
 
     /**
      * @param containers to be used
      * @param mProbes probes to be installed
      */
-    public AllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
+    public AllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
         m_probes = mProbes;
         m_map = new HashMap<TestAddress, TestContainer>();
+        // todo: don't do this here.
         for ( TestContainer container : containers )
         {
-            for ( TestProbeBuilder builder : m_probes )
+            for ( TestProbeProvider builder : m_probes )
             {
                 for ( TestAddress a : builder.getTests() )
                 {
@@ -52,11 +52,6 @@ public class AllConfinedStagedReactor implements StagedExamReactor
                 }
             }
         }
-    }
-    
-    public void setUp()
-    {
-        
     }
 
     public void invoke( TestAddress address )
@@ -72,9 +67,9 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         container.start(  );
         try
         {
-            for ( TestProbeBuilder builder : m_probes )
+            for ( TestProbeProvider builder : m_probes )
             {
-                container.install( builder.build().getStream() );
+                container.install( builder.getStream() );
             }
             container.call( address );
         } finally

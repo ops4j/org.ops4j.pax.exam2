@@ -90,33 +90,4 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
         return sb.toString();
     }
 
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ( ( m_urlReference == null ) ? 0 : m_urlReference.hashCode() );
-        return result;
-    }
-
-    @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
-            return true;
-        if( !super.equals( obj ) )
-            return false;
-        if( getClass() != obj.getClass() )
-            return false;
-        AbstractUrlProvisionOption other = (AbstractUrlProvisionOption) obj;
-        if( m_urlReference == null )
-        {
-            if( other.m_urlReference != null )
-                return false;
-        }
-        else if( !m_urlReference.equals( other.m_urlReference ) )
-            return false;
-        return true;
-    }
-
 }

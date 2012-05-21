@@ -177,36 +177,4 @@ public class MavenArtifactProvisionOption
         return this;
     }
 
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ( ( m_artifact == null ) ? 0 : m_artifact.hashCode() );
-        result = prime * result + ( m_updateUsed ? 1231 : 1237 );
-        return result;
-    }
-
-    @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
-            return true;
-        if( !super.equals( obj ) )
-            return false;
-        if( getClass() != obj.getClass() )
-            return false;
-        MavenArtifactProvisionOption other = (MavenArtifactProvisionOption) obj;
-        if( m_artifact == null )
-        {
-            if( other.m_artifact != null )
-                return false;
-        }
-        else if( !m_artifact.equals( other.m_artifact ) )
-            return false;
-        if( m_updateUsed != other.m_updateUsed )
-            return false;
-        return true;
-    }
-
 }

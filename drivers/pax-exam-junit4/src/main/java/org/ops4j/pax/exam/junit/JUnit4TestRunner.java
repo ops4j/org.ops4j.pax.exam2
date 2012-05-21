@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 - 2012 Toni Menzel, Harald Wellmann
+ * Copyright 2010 - 2011 Toni Menzel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,13 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
-import java.util.ArrayList;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,292 +35,254 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestDirectory;
-import org.ops4j.pax.exam.TestInstantiationInstruction;
+import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.DefaultExamReactor;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.ExamReactor;
+import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.util.Injector;
-import org.ops4j.pax.exam.util.InjectorFactory;
-import org.ops4j.spi.ServiceProviderFinder;
+import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is the default Test Runner using the Exam plumbing API. Its also the blueprint for custom,
- * much more specific runners. This will make a single probe bundling in all @Tests in this class.
- * 
- * This uses the whole regression class as a single unit of tests with the following valid
- * annotations: - @Configuration -> Configuration 1:N. Multiple configurations will result in
- * multiple invocations of the same regression. - @ProbeBuilder -> Customize the probe creation. - @Test
- * -> Single tests to be invoked. Note that in @Configuration you can specify the invocation
- * strategy.
+ * This is the default Test Runner using the Exam plumbing API.
+ * Its also the blueprint for custom, much more specific runners.
+ * This will make a single probe bundling in all @Tests in this class.
+ *
+ * This uses the whole regression class as a single unit of tests with the following valid annotations:
+ * - @Configuration -> Configuration 1:N. Multiple configurations will result in multiple invocations of the same regression.
+ * - @ProbeBuilder -> Customize the probe creation.
+ * - @Test -> Single tests to be invoked. Note that in @Configuration you can specify the invocation strategy.
  * 
  * @author Toni Menzel
  * @author Harald Wellmann
  */
-public class JUnit4TestRunner extends BlockJUnit4ClassRunner
-{
+public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
     private static Logger LOG = LoggerFactory.getLogger( JUnit4TestRunner.class );
 
-    /**
-     * Reactor manager singleton.
-     */
-    private ReactorManager manager;
-    
-    /**
-     * Staged reactor for this test class. This may actually be a reactor already staged for
-     * a previous test class, depending on the reactor strategy.
-     */
-    private StagedExamReactor reactor;
-    
-    /**
-     * Shall we use a probe invoker, or invoke test methods directly?
-     */
-    private boolean useProbeInvoker;
+    final private StagedExamReactor m_reactor;
+    final private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
+    final private Map<FrameworkMethod, TestAddress> m__childs = new HashMap<FrameworkMethod, TestAddress>();
 
-    private Map<FrameworkMethod, TestAddress> methodToTestAddressMap =
-        new HashMap<FrameworkMethod, TestAddress>();
-
-
+	private ExamSystem m_system;
 
     public JUnit4TestRunner( Class<?> klass )
         throws Exception
     {
         super( klass );
-        Object testClassInstance = klass.newInstance();
 
-        manager = ReactorManager.getInstance();
-        ExamReactor examReactor = manager.prepareReactor( klass, testClassInstance );
-        useProbeInvoker = !manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
-        if( useProbeInvoker )
-        {
-            addTestsToReactor( examReactor, klass, testClassInstance );
-        }
-        reactor = manager.stageReactor();
+        m_reactor = prepareReactor();
     }
 
-    /**
-     * We decorate the super method by reactor setup and teardown. This method is called once
-     * per class. Note that the given reactor strategy decides whether or not the setup
-     * and teardown actually happens at this level.
-     */
     @Override
     public void run( RunNotifier notifier )
     {
-        try
-        {
-            reactor.setUp();
+        try {
             super.run( notifier );
-        }
-        catch ( Exception e )
-        {
+        } catch( Exception e ) {
             throw new TestContainerException( "Problem interacting with reactor.", e );
-        }
-        finally
-        {
-            reactor.tearDown();
+        } finally {
+            m_reactor.tearDown();
         }
     }
 
     /**
-     * Override to avoid running BeforeClass and AfterClass by the driver. They shall only be run by
-     * the container when using a probe invoker.
+     * Override to avoid running BeforeClass and AfterClass by the driver.
+     * They shall only be run by the container.
      */
-    protected Statement classBlock( final RunNotifier notifier )
-    {
-        if( useProbeInvoker )
-        {
-            Statement statement = childrenInvoker( notifier );
-            return statement;
-        }
-        else
-        {
-            return super.classBlock( notifier );
-        }
-    }
-
-    /**
-     * Override to avoid running Before, After and Rule methods by the driver. They shall only be
-     * run by the container when using a probe invoker.
-     */
-    protected Statement methodBlock( FrameworkMethod method )
-    {
-        if( !useProbeInvoker )
-        {
-            return super.methodBlock( method );
-        }
-
-        Object test;
-        try
-        {
-            test = new ReflectiveCallable()
-            {
-                @Override
-                protected Object runReflectiveCall() throws Throwable
-                {
-                    return createTest();
-                }
-            }.run();
-        }
-        catch ( Throwable e )
-        {
-            return new Fail( e );
-        }
-
-        Statement statement = methodInvoker( method, test );
+    protected Statement classBlock(final RunNotifier notifier) {
+        Statement statement= childrenInvoker(notifier);
         return statement;
     }
 
     /**
-     * When using a probe invoker, we replace the test methods of this class by a potentially
-     * larger set of decorated test methods. Each original test method may give rise to multiple
-     * copies per test container or configuration.
+     * Override to avoid running Before, After and Rule methods by the driver.
+     * They shall only be run by the container.
+     */
+    protected Statement methodBlock(FrameworkMethod method) {
+        Object test;
+        try {
+            test= new ReflectiveCallable() {
+                @Override
+                protected Object runReflectiveCall() throws Throwable {
+                    return createTest();
+                }
+            }.run();
+        } catch (Throwable e) {
+            return new Fail(e);
+        }
+
+        Statement statement= methodInvoker(method, test);
+        return statement;
+    }
+
+    
+    /**
+     * We overwrite those with reactor content
      */
     @Override
     protected List<FrameworkMethod> getChildren()
     {
-        if( !useProbeInvoker )
-        {
-            return super.getChildren();
-        }
-
-        if( methodToTestAddressMap.isEmpty() )
-        {
+        if( m__childs.isEmpty() ) {
             fillChildren();
         }
-        return new ArrayList<FrameworkMethod>( methodToTestAddressMap.keySet() );
+        return Arrays.asList( m__childs.keySet().toArray( new FrameworkMethod[ m__childs.size() ] ) );
     }
 
     private void fillChildren()
     {
-        Set<TestAddress> targets = reactor.getTargets();
-        TestDirectory testDirectory = TestDirectory.getInstance();
-        for( TestAddress address : targets )
+        Set<TestAddress> targets = m_reactor.getTargets();
+        for( final TestAddress address : targets ) {
+            final FrameworkMethod frameworkMethod = m_map.get( address.root() );
+
+            // now, someone later may refer to that artificial FrameworkMethod. We need to be able to tell the address.
+            FrameworkMethod method = new DecoratedFrameworkMethod( address, frameworkMethod );
+            m__childs.put( method, address );
+        }
+    }
+
+    @Override
+    protected void collectInitializationErrors
+        ( List<Throwable> errors )
+    {
+        // do nothing
+    }
+
+    private synchronized StagedExamReactor prepareReactor()
+        throws Exception
+    {
+        ConfigurationManager cm = new ConfigurationManager();        
+        String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
+        if( Constants.EXAM_SYSTEM_DEFAULT.equals( systemType ) )
         {
-            FrameworkMethod frameworkMethod =
-                (FrameworkMethod) manager.lookupTestMethod( address.root() );
-            String className = frameworkMethod.getMethod().getDeclaringClass().getName();
-            String methodName = frameworkMethod.getName();
+            m_system = DefaultExamSystem.create( new Option[0] );
+        }
+        else
+        {
+            m_system = PaxExamRuntime.createTestSystem();
+        }
+        Class<?> testClass = getTestClass().getJavaClass();
+        Object testClassInstance = testClass.newInstance();
+        ExamReactor reactor = getReactor( testClass );
 
-            if( className.equals( getTestClass().getName() ) )
-            {
-                FrameworkMethod method = new DecoratedFrameworkMethod( address, frameworkMethod );
-                testDirectory.add( address, new TestInstantiationInstruction( className + ";"
-                        + methodName ) );
+        addConfigurationsToReactor( reactor, testClass, testClassInstance );
+        addTestsToReactor( reactor, testClass, testClassInstance );
+        return reactor.stage( getFactory( testClass ) );
+    }
 
-                methodToTestAddressMap.put( method, address );
+    private void addConfigurationsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
+        throws IllegalAccessException, InvocationTargetException, IllegalArgumentException, IOException
+    {
+        Method[] methods = testClass.getMethods();
+        for( Method m : methods ) {
+            Configuration conf = m.getAnnotation( Configuration.class );
+            if( conf != null ) {
+                // consider as option, so prepare that one:
+                reactor.addConfiguration( ( (Option[]) m.invoke( testClassInstance ) ) );
             }
         }
     }
 
-    /**
-     * Adds test methods to the reactor, mapping method names to test addresses which are used
-     * by the probe invoker.
-     * <p>
-     * Note that when a collection of test classes is passed to an external JUnit runner like
-     * Eclipse or Maven Surefire, this method is invoked (via the constructor of this runner)
-     * for each class <em>before</em> the {@link #run(RunNotifier)} method is invoked for any
-     * class. 
-     * <p>
-     * This way, we can register all test methods in the reactor before the actual test execution
-     * starts.
-     * 
-     * @param reactor
-     * @param testClass
-     * @param testClassInstance
-     * @throws IOException
-     * @throws ExamConfigurationException
-     */
-    private void addTestsToReactor( ExamReactor reactor, Class<?> testClass,
-            Object testClassInstance )
+    private void addTestsToReactor( ExamReactor reactor, Class<?> testClass, Object testClassInstance )
         throws IOException, ExamConfigurationException
     {
-        TestProbeBuilder probe = manager.createProbeBuilder( testClassInstance );
+        TestProbeBuilder probe = m_system.createProbe(  );
+        probe = overwriteWithUserDefinition( testClass, testClassInstance, probe );
 
-        // probe.setAnchor( testClass );
-        for( FrameworkMethod s : super.getChildren() )
-        {
+        //probe.setAnchor( testClass );
+        for( FrameworkMethod s : super.getChildren() ) {
             // record the method -> adress matching
             TestAddress address = delegateTest( testClassInstance, probe, s );
-            if( address == null )
-            {
+            if( address == null ) {
                 address = probe.addTest( testClass, s.getMethod().getName() );
             }
-            manager.storeTestMethod( address, s );
+            m_map.put( address, s );
         }
-        reactor.addProbe( probe );
+        reactor.addProbe( probe.build() );
     }
 
-    /**
-     * FIXME What is this doing, and what is the use case?  Parameterized methods break JUnit's
-     * default behaviour, and most of these non-standard signatures introduced in 2.0.0 have
-     * been dropped since 2.3.0.
-     * 
-     * @param testClassInstance
-     * @param probe
-     * @param s
-     * @return
-     */
-    private TestAddress delegateTest( Object testClassInstance, TestProbeBuilder probe,
-            FrameworkMethod s )
+    private TestAddress delegateTest( Object testClassInstance, TestProbeBuilder probe, FrameworkMethod s )
     {
-        try
-        {
+        try {
             Class<?>[] types = s.getMethod().getParameterTypes();
-            if( types.length == 1 && types[0].isAssignableFrom( TestProbeBuilder.class ) )
-            {
+            if( types.length == 1 && types[ 0 ].isAssignableFrom( TestProbeBuilder.class ) ) {
                 // do some backtracking:
                 return (TestAddress) s.getMethod().invoke( testClassInstance, probe );
 
             }
-            else
-            {
+            else {
                 return null;
             }
-        }
-        catch ( Exception e )
-        {
+        } catch( Exception e ) {
             throw new TestContainerException( "Problem delegating to test.", e );
         }
     }
 
-    /**
-     * When using a probe invoker, we replace the super method and invoke the test method
-     * indirectly via the reactor.
-     */
-    protected synchronized Statement
-        methodInvoker( final FrameworkMethod method, final Object test )
+    private StagedExamReactorFactory getFactory( Class<?> testClass )
+        throws InstantiationException, IllegalAccessException
     {
-        if( !useProbeInvoker )
-        {
-            return super.methodInvoker( method, test );
-        }
+        ExamReactorStrategy strategy = (ExamReactorStrategy) testClass.getAnnotation( ExamReactorStrategy.class );
 
-        return new Statement()
-        {
+        StagedExamReactorFactory fact;
+        if( strategy != null ) {
+            fact = strategy.value()[ 0 ].newInstance();
+        }
+        else {
+            // default:
+            fact = new AllConfinedStagedReactorFactory();
+        }
+        return fact;
+    }
+
+    private DefaultExamReactor getReactor( Class<?> testClass )
+        throws InstantiationException, IllegalAccessException
+    {
+        return new DefaultExamReactor( m_system, getExamFactory( testClass ) );
+    }
+
+    private TestContainerFactory getExamFactory( Class<?> testClass )
+        throws IllegalAccessException, InstantiationException
+    {
+        ExamFactory f = (ExamFactory) testClass.getAnnotation( ExamFactory.class );
+
+        TestContainerFactory fact;
+        if( f != null ) {
+            fact = f.value().newInstance();
+        }
+        else {
+            // default:
+            fact = PaxExamRuntime.getTestContainerFactory();
+        }
+        return fact;
+    }
+
+    protected synchronized Statement methodInvoker( final FrameworkMethod method, final Object test )
+    {
+        return new Statement() {
 
             @Override
             public void evaluate()
                 throws Throwable
             {
-                TestAddress address = methodToTestAddressMap.get( method );
+                TestAddress address = m__childs.get( method );
                 TestAddress root = address.root();
 
-                LOG.debug( "Invoke " + method.getName() + " @ " + address + " Arguments: "
-                        + root.arguments() );
-                try
-                {
-                    reactor.invoke( address );
-                }
-                catch ( Exception e )
-                {
+                LOG.debug( "Invoke " + method.getName() + " @ " + address + " Arguments: " + root.arguments() );
+                try {
+                    m_reactor.invoke( address );
+                } catch( Exception e ) {
                     Throwable t = ExceptionHelper.unwind( e );
                     throw t;
                 }
@@ -323,46 +290,37 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         };
     }
 
-    /**
-     * Creates an instance of the current test class. When using a probe invoker, this simply
-     * delegates to super. Otherwise, we perform injection on the instance created by the
-     * super method. 
-     * <p>
-     * In this case, an {@link InjectorFactory} is obtained via SPI lookup.
-     */
     @Override
-    protected Object createTest() throws Exception
+    protected void validatePublicVoidNoArgMethods( Class<? extends Annotation> annotation, boolean isStatic, List<Throwable> errors )
     {
-        if( useProbeInvoker )
-        {
-            return super.createTest();
-        }
-        else
-        {
-            Object test = super.createTest();
-            inject( test );
-            return test;
-        }
+
     }
 
-    /**
-     * Performs field injection on the given test class instance.
-     * @param test test class instance
-     */
-    private void inject( Object test )
+    private TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance, TestProbeBuilder probe )
+        throws ExamConfigurationException
     {
-        Injector injector = findInjector();
-        injector.injectFields( null, test );
-    }
+        Method[] methods = testClass.getMethods();
+        for( Method m : methods ) {
+            ProbeBuilder conf = m.getAnnotation( ProbeBuilder.class );
+            if( conf != null ) {
+                // consider as option, so prepare that one:
+                LOG.debug( "User defined probe hook found: " + m.getName() );
+                TestProbeBuilder probeBuilder;
+                try {
+                    probeBuilder = (TestProbeBuilder) m.invoke( instance, probe );
+                } catch( Exception e ) {
+                    throw new ExamConfigurationException( "Invoking custom probe hook " + m.getName() + " failed", e );
+                }
+                if( probeBuilder != null ) {
+                    return probe;
+                }
+                else {
+                    throw new ExamConfigurationException( "Invoking custom probe hook " + m.getName() + " succeeded but returned null" );
+                }
 
-    /**
-     * Finds an injector factory and creates an injector.
-     * @return
-     */
-    private Injector findInjector()
-    {
-        InjectorFactory injectorFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
-        return injectorFactory.createInjector();
+            }
+        }
+        LOG.debug( "No User defined probe hook found" );
+        return probe;
     }
 }
