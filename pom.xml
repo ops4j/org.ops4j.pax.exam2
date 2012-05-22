@@ -63,11 +63,8 @@
         </profile>
         <profile>
             <id>itest</id>
-            <activation>
-            </activation>
             <modules>
                 <module>itest</module>
-                <module>itest-cdi</module>
             </modules>
         </profile>
     </profiles>

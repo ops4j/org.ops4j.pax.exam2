@@ -20,18 +20,12 @@
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-glassfish</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-servlet-bridge</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
- 
+
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
             <artifactId>pax-exam-sample1-service</artifactId>
@@ -77,7 +71,7 @@
         </dependency>
 
 
-        
+
 
 
         <!-- For sane logging -->
@@ -189,6 +183,12 @@
                 <pax.exam.container>glassfish</pax.exam.container>
             </properties>
             <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-glassfish</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
         </profile>
 

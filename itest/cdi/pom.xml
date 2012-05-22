@@ -9,10 +9,10 @@
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
         <version>3.0.0-SNAPSHOT</version>
-        <relativePath>../pom/pom.xml</relativePath>
+        <relativePath>../../pom/pom.xml</relativePath>
     </parent>
 
-    <groupId>org.ops4j.pax.exam</groupId>
+    <groupId>org.ops4j.pax.exam.itest</groupId>
     <artifactId>exam-itest-cdi</artifactId>
     <packaging>pom</packaging>
 
@@ -71,7 +71,7 @@
         <profile>
             <id>openwebbeans</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <pax.exam.container>openwebbeans</pax.exam.container>
@@ -89,7 +89,7 @@
         <profile>
             <id>weld</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <pax.exam.container>weld</pax.exam.container>
