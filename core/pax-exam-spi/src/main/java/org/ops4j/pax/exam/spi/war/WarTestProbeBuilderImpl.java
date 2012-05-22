@@ -47,9 +47,11 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
 
     private static String[] classPathExcludes = {
         ".cp",
+        "org.eclipse.osgi",
         "scattered-archive-api",
         "simple-glassfish-api",
         "jersey-client",
+        "pax-exam-junit4",
         "pax-exam-container",
         "pax-exam-spi",
         "tinybundles",
