@@ -39,7 +39,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 @ExamReactorStrategy
 public class ConfigurationAdminTest
 {
-    private static final String EQUINOX_MIRROR = "http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/equinox/drops/R-3.7-201106131736/";
+    private static final String EQUINOX_MIRROR = "http://archive.eclipse.org/equinox/drops/R-3.7-201106131736/";
     private static final String DEBUG_OPTIONS = "0.org.eclipse.osgi.framework.debug.FrameworkDebugOptions";
 
     @Inject
@@ -50,7 +50,6 @@ public class ConfigurationAdminTest
     {
         return options(
             regressionDefaults(),
-            //systemProperty("osgi.console").value("6666"),
             bundle(EQUINOX_MIRROR + "org.eclipse.equinox.cm_1.0.300.v20110502.jar"),
             bundle(EQUINOX_MIRROR + "org.eclipse.osgi.services_3.3.0.v20110513.jar"),
             junitBundles());
