@@ -30,7 +30,6 @@
                 <module>core/pax-exam-invoker-junit</module>
                 <module>core/pax-exam-servlet-bridge</module>
                 <module>core/pax-exam-cdi</module>
-                <module>containers/pax-exam-container-native</module>
                 <module>forge/pax-exam-testforge</module>
                 <module>drivers/pax-exam-player</module>
                 <module>drivers/pax-exam-junit4</module>
@@ -38,9 +37,12 @@
 
                 <module>core/pax-exam-link-mvn</module>
                 <module>core/pax-exam-link-assembly</module>
-
                 <module>core/pax-exam-container-rbc</module>
                 <module>core/pax-exam-container-rbc-client</module>
+                
+                <module>samples</module>
+
+                <module>containers/pax-exam-container-native</module>
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-paxrunner</module>
                 <module>containers/pax-exam-container-forked</module>
@@ -50,7 +52,6 @@
 
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-pde-bundle</module>
-                <module>samples</module>
             </modules>
         </profile>
         <profile>
