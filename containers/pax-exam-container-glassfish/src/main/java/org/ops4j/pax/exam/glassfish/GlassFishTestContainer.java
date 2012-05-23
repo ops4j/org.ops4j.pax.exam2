@@ -357,7 +357,7 @@ public class GlassFishTestContainer implements TestContainer
         return this;
     }
 
-    private void installContainer() throws IOException
+    public void installContainer() throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         ConfigurationManager cm = new ConfigurationManager();

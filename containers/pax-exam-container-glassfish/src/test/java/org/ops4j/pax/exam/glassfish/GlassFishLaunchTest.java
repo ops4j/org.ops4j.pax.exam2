@@ -18,12 +18,14 @@
 package org.ops4j.pax.exam.glassfish;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
+import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -44,6 +46,13 @@ public class GlassFishLaunchTest
     private FrameworkFactory frameworkFactory;
     private String glassFishHome;
     private String instanceRoot;
+    
+    @Before
+    public void setUp() throws IOException
+    {
+        GlassFishTestContainer gftc = new GlassFishTestContainer( null, null );
+        gftc.installContainer();
+    }
 
     @Test
     public void launchGlassFish() throws Exception
