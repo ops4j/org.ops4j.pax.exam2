@@ -29,17 +29,24 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample2.model.Movie;
 import org.ops4j.pax.exam.sample2.service.DatabasePopulator;
 
-@RunWith(PaxExam.class)
-public class DatabasePopulatorTest {
+/**
+ * Run this class to populate the database.
+ * <p>
+ * Not an automatic test, hence not named *Test.
+ * 
+ * @author Harald Wellmann
+ */
+@RunWith( PaxExam.class )
+public class DatabasePopulatorRunner
+{
 
     @Inject
     private DatabasePopulator populator;
-    
-    
+
     @Test
-    public void populateDatabase() {
+    public void populateDatabase()
+    {
         List<Movie> movies = populator.populateDatabase();
-        assertThat(movies.isEmpty(), is(false));
+        assertThat( movies.isEmpty(), is( false ) );
     }
-    
 }

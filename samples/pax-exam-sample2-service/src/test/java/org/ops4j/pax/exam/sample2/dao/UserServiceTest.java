@@ -16,7 +16,9 @@
  */
 package org.ops4j.pax.exam.sample2.dao;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 import javax.inject.Inject;
 
@@ -25,8 +27,10 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample2.model.User;
 import org.ops4j.pax.exam.sample2.service.UserService;
+import org.ops4j.pax.exam.util.Transactional;
 
 @RunWith(PaxExam.class)
+@Transactional
 public class UserServiceTest
 {
     @Inject
@@ -35,7 +39,11 @@ public class UserServiceTest
     @Test
     public void authenticateValidUser()
     {
-        User user = userService.authenticate( "micha", "password" );
-        assertNotNull(user);
+        userService.register( "bilbo", "Bilbo Baggins", "treasure" );
+        User user = userService.authenticate( "bilbo", "treasure" );
+        assertThat( user, is( notNullValue()));
+        assertThat(user.getId(), is("bilbo") );
+        assertThat(user.getName(), is("Bilbo Baggins") );
+        assertThat(user.getPassword(), is("treasure") );
     }
 }
