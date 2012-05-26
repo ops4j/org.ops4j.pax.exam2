@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.jboss;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import org.jboss.as.embedded.EmbeddedServerFactory;
 import org.jboss.as.embedded.ServerStartException;
 import org.jboss.as.embedded.StandaloneServer;
+import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
@@ -176,6 +178,12 @@ public class JBossTestContainer implements TestContainer
     public TestContainer start() throws TestContainerException
     {
         installContainer();
+        File tempDir = system.getTempFolder();
+        File dataDir = new File(tempDir, "data");
+        dataDir.mkdir();
+        File configDir = new File("src/test/resources/jboss-config");
+        System.setProperty( "jboss.server.config.dir", configDir.getAbsolutePath() );
+        System.setProperty( "jboss.server.data.dir", dataDir.getAbsolutePath() );
         server =
             EmbeddedServerFactory.create( new File( jBossHome ), System.getProperties(),
                 System.getenv(), "org.jboss.logmanager", "org.jboss.logging", "org.slf4j",
