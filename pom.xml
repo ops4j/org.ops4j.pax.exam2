@@ -49,6 +49,7 @@
                 <module>containers/pax-exam-container-glassfish</module>
                 <module>containers/pax-exam-container-weld</module>
                 <module>containers/pax-exam-container-openwebbeans</module>
+                <module>containers/pax-exam-container-jboss</module>
 
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-pde-bundle</module>
