@@ -45,11 +45,6 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
         this.delegate = SingletonStagedReactor.getInstance( containers, mProbes );
     }
     
-    public void setUp()
-    {
-        delegate.setUp();
-    }
-
     public void invoke( TestAddress address )
         throws Exception
     {
@@ -61,14 +56,30 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
         return delegate.getTargets();
     }
 
-    public void tearDown()
-    {
-        delegate.tearDown();
-    }
-    
     @Override
     public void afterSuite()
     {
         delegate.afterSuite();
+    }
+
+    public void afterTest()
+    {
+    }
+
+    public void beforeTest()
+    {
+    }
+
+    public void afterClass()
+    {
+    }
+
+    public void beforeClass()
+    {
+    }
+
+    public void beforeSuite()
+    {
+        delegate.beforeSuite();
     }
 }

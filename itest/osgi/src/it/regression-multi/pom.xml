@@ -166,7 +166,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>pertest</forkMode>
+                    <forkMode>always</forkMode>
+                    <parallel>none</parallel>
+                    <threadCount>1</threadCount>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>

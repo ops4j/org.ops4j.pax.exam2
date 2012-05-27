@@ -110,4 +110,26 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     public void afterSuite()
     {
     }
+
+    public void afterTest()
+    {
+    }
+
+    public void beforeTest()
+    {
+    }
+
+    public void afterClass()
+    {
+        tearDown();
+    }
+
+    public void beforeClass()
+    {
+        setUp();
+    }
+
+    public void beforeSuite()
+    {
+    }
 }

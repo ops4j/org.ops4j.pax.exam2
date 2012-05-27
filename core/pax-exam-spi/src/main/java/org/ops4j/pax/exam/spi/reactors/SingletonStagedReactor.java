@@ -32,8 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A singleton reactor which starts the container and installs the probes just once. The
- * teardown logic is postponed to a JVM shutdown hook.
+ * A singleton reactor which starts the container and installs the probes just once. The teardown
+ * logic is postponed to a JVM shutdown hook.
  * 
  * @author Harald Wellmann
  * @since 3.0.0
@@ -48,7 +48,6 @@ public class SingletonStagedReactor implements StagedExamReactor
     private List<TestContainer> testContainers;
     private List<TestProbeBuilder> probes;
     private HashMap<TestAddress, TestContainer> testToContainerMap;
-    private boolean started;
 
     private SingletonStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
     {
@@ -56,7 +55,6 @@ public class SingletonStagedReactor implements StagedExamReactor
         testContainers = containers;
         probes = mProbes;
     }
-
 
     private void buildTestMap( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
     {
@@ -76,13 +74,12 @@ public class SingletonStagedReactor implements StagedExamReactor
             }
         }
     }
-    
-    
+
     /**
      * @param containers to be used
      * @param mProbes to be installed on all probes
      */
-    public static synchronized SingletonStagedReactor getInstance( List<TestContainer> containers,
+    public static synchronized StagedExamReactor getInstance( List<TestContainer> containers,
             List<TestProbeBuilder> mProbes )
     {
         if( instance == null )
@@ -91,39 +88,14 @@ public class SingletonStagedReactor implements StagedExamReactor
         }
         else
         {
-            if (/*! instance.testContainers.equals( containers ) || */ 
-                    ! instance.probes.equals( mProbes ))
+            if( /* ! instance.testContainers.equals( containers ) || */
+            !instance.probes.equals( mProbes ) )
             {
-                throw new IllegalArgumentException();
+                throw new TestContainerException(
+                    "using the PerSuite reactor strategy, all test classes must share the same probes" );
             }
         }
         return instance;
-    }
-
-    public synchronized void setUp()
-    {
-        if( !started )
-        {
-            started = true;
-            for( TestContainer container : testContainers )
-            {
-                container.start();
-
-                for( TestProbeBuilder builder : probes )
-                {
-                    LOG.debug( "installing probe " + builder );
-
-                    try
-                    {
-                        container.install( builder.build().getStream() );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new TestContainerException( "Unable to build the probe.", e );
-                    }
-                }
-            }
-        }
     }
 
     public void invoke( TestAddress address )
@@ -150,7 +122,30 @@ public class SingletonStagedReactor implements StagedExamReactor
     {
     }
 
-    private void shutdown()
+    @Override
+    public void beforeSuite()
+    {
+        for( TestContainer container : testContainers )
+        {
+            container.start();
+
+            for( TestProbeBuilder builder : probes )
+            {
+                LOG.debug( "installing probe " + builder );
+
+                try
+                {
+                    container.install( builder.build().getStream() );
+                }
+                catch ( IOException e )
+                {
+                    throw new TestContainerException( "Unable to build the probe.", e );
+                }
+            }
+        }
+    }
+
+    public void afterSuite()
     {
         for( TestContainer container : testContainers )
         {
@@ -158,9 +153,14 @@ public class SingletonStagedReactor implements StagedExamReactor
         }
     }
 
-
-    public void afterSuite()
+    @Override
+    public void beforeClass()
     {
-        shutdown();
+
+    }
+
+    @Override
+    public void afterClass()
+    {
     }
 }

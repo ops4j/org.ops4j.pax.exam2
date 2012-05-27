@@ -111,10 +111,10 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     public void run( RunNotifier notifier )
     {
         LOG.info("running test class {}", getTestClass().getName());
+        Class<?> testClass = getTestClass().getJavaClass();
         try
         {
-            reactor.setUp();
-            manager.addSuiteListener(notifier, getTestClass().getJavaClass());
+            manager.beforeClass(reactor, testClass);
             super.run( notifier );
         }
         catch ( Exception e )
@@ -123,7 +123,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         }
         finally
         {
-            reactor.tearDown();
+            manager.afterClass(reactor, testClass);
         }
     }
 

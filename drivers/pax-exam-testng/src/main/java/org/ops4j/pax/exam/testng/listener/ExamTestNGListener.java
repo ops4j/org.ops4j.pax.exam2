@@ -74,7 +74,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         try
         {
             reactor = prepareReactor(suite);
-            reactor.setUp();
+            reactor.beforeClass();
         }
         catch ( Exception exc )
         {
@@ -84,7 +84,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
 
     public void onFinish( ISuite suite )
     {
-        reactor.tearDown();
+        reactor.afterClass();
     }
 
     private synchronized StagedExamReactor prepareReactor( ISuite suite )

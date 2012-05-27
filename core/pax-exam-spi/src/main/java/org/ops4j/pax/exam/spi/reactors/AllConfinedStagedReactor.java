@@ -97,4 +97,24 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     public void afterSuite()
     {
     }
+
+    public void afterTest()
+    {
+    }
+
+    public void beforeTest()
+    {
+    }
+
+    public void afterClass()
+    {
+    }
+
+    public void beforeClass()
+    {
+    }
+
+    public void beforeSuite()
+    {
+    }
 }

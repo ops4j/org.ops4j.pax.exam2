@@ -17,6 +17,10 @@
  */
 package org.ops4j.pax.exam.player;
 
+import static junit.framework.Assert.fail;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.createTestSystem;
+import static org.ops4j.pax.exam.spi.PaxExamRuntime.getTestContainerFactory;
+
 import java.io.IOException;
 
 import org.ops4j.pax.exam.ExamSystem;
@@ -29,11 +33,7 @@ import org.ops4j.pax.exam.spi.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
-
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
-
-import static junit.framework.Assert.*;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 /**
  * Fully functional alternative Pax Exam Driver.
@@ -49,7 +49,7 @@ import static junit.framework.Assert.*;
  */
 public class Player {
 
-    private static final StagedExamReactorFactory DEFAULT_STRATEGY = new EagerSingleStagedReactorFactory();
+    private static final StagedExamReactorFactory DEFAULT_STRATEGY = new PerClass();
     final private TestContainerFactory m_factory;
     final private Option[] m_parts;
     final private TestProbeBuilder m_builder;
@@ -101,7 +101,7 @@ public class Player {
         reactor.addProbe( m_builder );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
-        stagedReactor.setUp();
+        stagedReactor.beforeClass();
 
         for( TestAddress target : stagedReactor.getTargets() ) {
             try {
@@ -112,6 +112,6 @@ public class Player {
                 fail( t.getMessage() );
             }
         }
-        stagedReactor.tearDown();
+        stagedReactor.afterClass();
     }
 }

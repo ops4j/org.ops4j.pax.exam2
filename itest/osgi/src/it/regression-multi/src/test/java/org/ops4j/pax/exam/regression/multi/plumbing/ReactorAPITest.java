@@ -83,6 +83,7 @@ public class ReactorAPITest
         reactor.addConfiguration( options );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
+        stagedReactor.beforeClass();
         try
         {
             for( TestAddress call : stagedReactor.getTargets() )
@@ -92,7 +93,7 @@ public class ReactorAPITest
 
         } finally
         {
-            stagedReactor.tearDown();
+            stagedReactor.afterClass();
             system.clear();
         }
         

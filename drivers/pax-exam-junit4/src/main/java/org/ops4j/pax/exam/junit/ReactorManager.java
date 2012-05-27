@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.runner.notification.RunNotifier;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
@@ -89,13 +88,6 @@ public class ReactorManager
 
         
     /**
-     * The staged reactor. A new instance is created for each test class. Using the {@link PerSuite}
-     * strategy, each new instance actually just wraps a singleton reactor instance, so the reactor
-     * is effectively reused.
-     */
-    private StagedExamReactor stagedReactor;
-
-    /**
      * A probe builder for the current test probe. A probe builder contains a number of test classes
      * and their dependent classes and a list of test methods to be executed.
      * <p>
@@ -115,9 +107,9 @@ public class ReactorManager
     private Map<TestAddress, Object> testAddressToMethodMap = new HashMap<TestAddress, Object>();
 
     
-    private TestClassListener suiteListener;
-    
     private Set<Class<?>> testClasses = new HashSet<Class<?>>();
+    
+    private boolean suiteStarted;
     
     /**
      * Private constructor for singleton.
@@ -180,7 +172,7 @@ public class ReactorManager
     public StagedExamReactor stageReactor() throws IOException, InstantiationException,
         IllegalAccessException
     {
-        stagedReactor = reactor.stage( getStagingFactory( testClass ) );
+        StagedExamReactor stagedReactor = reactor.stage( getStagingFactory( testClass ) );
         return stagedReactor;
     }
 
@@ -383,19 +375,24 @@ public class ReactorManager
         testAddressToMethodMap.put( address, testMethod );
     }
 
-    public void addSuiteListener( RunNotifier notifier, Class<?> klass )
+    public void afterClass( StagedExamReactor stagedReactor, Class<?> klass )
     {
-        suiteListener = new TestClassListener(klass);
-        notifier.addListener( suiteListener );
-    }
-
-    public void testClassFinished( Class<?> klass )
-    {
+        stagedReactor.afterClass();
         testClasses.remove( klass );
         if (testClasses.isEmpty())
         {
             LOG.info( "suite finished" );
             stagedReactor.afterSuite();
         }
+    }
+
+    public void beforeClass(  StagedExamReactor stagedReactor, Class<?> klass )
+    {
+        if (! suiteStarted)
+        {
+            suiteStarted = true;
+            stagedReactor.beforeSuite();
+        }
+        stagedReactor.beforeClass();
     }
 }
