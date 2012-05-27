@@ -19,9 +19,10 @@ public class JBossLauncherTest
     {
         System.setProperty( "java.util.logging.manager", "org.jboss.logmanager.LogManager" );
         System.setProperty( "org.jboss.logging.provider", "slf4j");
+        System.setProperty( "jboss.server.config.dir", "src/test/resources/jboss-config" );
 
         ConfigurationManager cm = new ConfigurationManager();
-        String jBossHome = cm.getProperty( "pax.exam.server.home" );
+        String jBossHome = cm.getProperty( "pax.exam.jboss.home" );
         StandaloneServer server = EmbeddedServerFactory.create( new File( jBossHome ), System.getProperties(),
             System.getenv(),
             "org.jboss.logmanager", "org.jboss.logging", "org.slf4j"
