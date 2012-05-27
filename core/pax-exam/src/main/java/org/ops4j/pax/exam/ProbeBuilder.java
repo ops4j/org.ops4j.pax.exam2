@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Harald Wellmann
+ * Copyright 2011 Toni Menzel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * The annotations in this package are exactly the same as in 
- * org.ops4j.pax.exam.testng. They should be factored out to a location
- * shared between drivers.
- * <p>
- * However, this would break the API of the JUnit driver. While the
- * TestNG driver is still experimental, we work with local copies
- * of the annotations.
- */
-package org.ops4j.pax.exam.testng;
+package org.ops4j.pax.exam;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ *
+ */
+@Retention( RetentionPolicy.RUNTIME )
+@Target( { ElementType.METHOD } )
+public @interface ProbeBuilder
+{
+
+}

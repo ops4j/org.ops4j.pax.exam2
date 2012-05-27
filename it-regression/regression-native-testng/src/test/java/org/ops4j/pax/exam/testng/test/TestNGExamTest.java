@@ -7,8 +7,8 @@ import static org.testng.Assert.assertNotNull;
 
 import javax.inject.Inject;
 
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.testng.Configuration;
 import org.osgi.framework.BundleContext;
 import org.testng.annotations.Test;
 

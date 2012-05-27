@@ -1,5 +1,6 @@
 /*
- * Copyright 2011 Toni Menzel.
+ * Copyright 2008 Alin Dreghiciu.
+ * Copyright 2009 Toni Menzel.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +16,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.ops4j.pax.exam.options.DefaultCompositeOption;
+import org.ops4j.pax.exam.options.CompositeOption;
 
 /**
+ * Annotation marking Pax Exam configuration method.
  *
+ * @author Toni Menzel (tonit)
+ * @author Alin Dreghiciu (adreghiciu@gmail.com)
+ * @since 0.3.0, October 14, 2008
  */
 @Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.METHOD } )
-public @interface ProbeBuilder
+@Target( { ElementType.METHOD, ElementType.TYPE } )
+public @interface Configuration
 {
 
+    Class<? extends CompositeOption>[] extend() default { DefaultCompositeOption.class };
 }

@@ -25,9 +25,9 @@ import java.util.prefs.Preferences;
 
 import org.junit.After;
 import org.junit.Before;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.util.PathUtils;
 
 public class BeforeAfterParent

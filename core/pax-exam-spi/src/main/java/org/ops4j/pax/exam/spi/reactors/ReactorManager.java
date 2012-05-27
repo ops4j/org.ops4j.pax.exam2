@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.spi.reactors;
 
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_CDI;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_DEFAULT;
@@ -31,10 +31,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamConfigurationException;
+import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
@@ -47,8 +50,6 @@ import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
-import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

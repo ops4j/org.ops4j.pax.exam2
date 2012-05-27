@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.Option;
@@ -38,10 +40,8 @@ import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
-import org.ops4j.pax.exam.testng.Configuration;
-import org.ops4j.pax.exam.testng.ExamFactory;
-import org.ops4j.pax.exam.testng.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IHookCallBack;
@@ -146,7 +146,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         }
         else {
             // default:
-            fact = new EagerSingleStagedReactorFactory();
+            fact = new PerMethod();
         }
         return fact;
     }
