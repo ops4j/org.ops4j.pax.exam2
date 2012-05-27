@@ -37,8 +37,7 @@ public class ZipInstallerTest
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
 
-        //URL url = new URL( "mvn:org.ops4j.base/ops4j-base-io/1.2.3/jar/sources" );
-        URL url = new URL( "mvn:org.jboss.as/jboss-as-dist/7.1.1.Final/zip");
+        URL url = new URL( "mvn:org.ops4j.base/ops4j-base-io/1.2.3/jar/sources" );
         ZipInstaller installer = new ZipInstaller( url, installDir.getAbsolutePath() );
         installer.downloadAndInstall();
 
