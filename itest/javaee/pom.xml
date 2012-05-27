@@ -40,6 +40,17 @@
                             </profiles>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>jboss</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <profiles>
+                                <profile>jboss</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

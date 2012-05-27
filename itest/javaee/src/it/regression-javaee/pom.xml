@@ -195,9 +195,6 @@
 
         <profile>
             <id>jboss</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
             <properties>
                 <pax.exam.container>jboss</pax.exam.container>
             </properties>

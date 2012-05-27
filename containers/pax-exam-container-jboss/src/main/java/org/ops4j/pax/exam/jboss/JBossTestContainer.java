@@ -274,11 +274,11 @@ public class JBossTestContainer implements TestContainer
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         System.setProperty( "java.util.logging.manager", "org.jboss.logmanager.LogManager" );
         ConfigurationManager cm = new ConfigurationManager();
-        jBossHome = cm.getProperty( "pax.exam.server.home" );
+        jBossHome = cm.getProperty( "pax.exam.jboss.home" );
         if( jBossHome == null )
         {
             throw new TestContainerException(
-                "System property pax.exam.server.home must be set to JBoss AS install root" );
+                "System property pax.exam.jboss.home must be set to JBoss AS install root" );
         }
         File installDir = new File(jBossHome);
         if( installDir.exists() )
