@@ -30,6 +30,13 @@ import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.jboss.as.controller.client.helpers.standalone.DeploymentPlan;
 import org.jboss.as.controller.client.helpers.standalone.InitialDeploymentPlanBuilder;
 import org.jboss.as.controller.client.helpers.standalone.ServerDeploymentActionResult;
@@ -49,10 +56,13 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
+import org.ops4j.pax.exam.zip.ZipInstaller;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * @author Harald Wellmann
@@ -77,6 +87,10 @@ public class JBossTestContainer implements TestContainer
     private StandaloneServer server;
 
     private ServerDeploymentManager deploymentManager;
+
+    private String httpPort;
+
+    private String mgmtPort;
 
     public JBossTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
@@ -213,6 +227,12 @@ public class JBossTestContainer implements TestContainer
         File dataDir = new File( tempDir, "data" );
         dataDir.mkdir();
         File configDir = new File( "src/test/resources/jboss-config" );
+        File configFile = new File(configDir, "standalone.xml");
+        if (!configFile.exists())
+        {
+            throw new TestContainerException( configFile + " does not exist" );
+        }
+        parseServerConfiguration( configFile );
         System.setProperty( "jboss.server.config.dir", configDir.getAbsolutePath() );
         System.setProperty( "jboss.server.data.dir", dataDir.getAbsolutePath() );
         server =
@@ -230,8 +250,8 @@ public class JBossTestContainer implements TestContainer
         {
             server.start();
             deploymentManager =
-                ServerDeploymentManager.Factory.create( InetAddress.getByName( "localhost" ), 9999 );
-            testDirectory.setAccessPoint( new URI( "http://localhost:9080/Pax-Exam-Probe/" ) );
+                ServerDeploymentManager.Factory.create( InetAddress.getByName( "localhost" ), Integer.parseInt( mgmtPort ) );
+            testDirectory.setAccessPoint( new URI( "http://localhost:" + httpPort + "/Pax-Exam-Probe/" ) );
             deployModules();
         }
         catch ( ServerStartException exc )
@@ -260,7 +280,95 @@ public class JBossTestContainer implements TestContainer
             throw new TestContainerException(
                 "System property pax.exam.server.home must be set to JBoss AS install root" );
         }
+        File installDir = new File(jBossHome);
+        if( installDir.exists() )
+        {
+            File moduleLoader = new File( installDir, "jboss-modules.jar" );
+            if( moduleLoader.exists() )
+            {
+                LOG.info( "using JBoss AS installation in {}", jBossHome );
+            }
+            else
+            {
+                String msg =
+                    String.format( "%s exists, but %s does not. " +
+                            "This does not look like a valid JBoss AS installation.",
+                        jBossHome, moduleLoader );
+                throw new TestContainerException( msg );
+            }
+        }
+        else
+        {
+            LOG.info( "installing JBoss AS in {}", jBossHome );
+            try
+            {
+                URL url = new URL( JBOSS_DISTRIBUTION_URL );
+                File installParent = installDir.getParentFile();
+                File tempInstall = new File( installParent, UUID.randomUUID().toString() );
+                ZipInstaller installer = new ZipInstaller( url, tempInstall.getAbsolutePath() );
+                installer.downloadAndInstall();
+                File unpackedRoot = tempInstall.listFiles()[0];
+                unpackedRoot.renameTo( installDir );
+            }
+            catch ( MalformedURLException exc )
+            {
+                throw new TestContainerException( exc );
+            }
+            catch ( IOException exc )
+            {
+                throw new TestContainerException( "error during JBoss AS installation", exc );                
+            }
+        }
     }
+    
+    private void parseServerConfiguration(File serverConfig) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder;
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(serverConfig);
+            XPathFactory xpf = XPathFactory.newInstance();
+            XPath xPath = xpf.newXPath();
+            String HTTP_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='http']/@port";
+            String MGMT_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='management-native']/@port";
+            httpPort = substituteProperties(xPath.evaluate(HTTP_PORT_XPATH, doc));
+            mgmtPort = substituteProperties(xPath.evaluate(MGMT_PORT_XPATH, doc));
+        }
+        catch (ParserConfigurationException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+        catch (SAXException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+        catch (IOException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+        catch (XPathExpressionException exc) {
+            throw new IllegalArgumentException(exc);
+        }
+    }
+  
+    
+    
+    public String substituteProperties(String value)
+    {
+        String result = value;
+        if (value.startsWith("${") && value.endsWith( "}" ))
+        {
+            String propWithDefault = value.substring( 2, value.length()-1 );
+            int colon = propWithDefault.indexOf( ':' );
+            String defaultValue = "";
+            String propertyKey = propWithDefault;
+            if (colon >= 0)
+            {
+                propertyKey = propWithDefault.substring( 0, colon );
+                defaultValue = propWithDefault.substring( colon+1 );
+            }
+            result = System.getProperty( propertyKey, defaultValue );
+        }
+        return result;
+    }
+    
 
     public TestContainer stop()
     {
