@@ -78,16 +78,6 @@ public class SingletonStagedReactor implements StagedExamReactor
     }
     
     
-    private void addShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                shutdown();
-            }
-        });
-    }
-
-    
     /**
      * @param containers to be used
      * @param mProbes to be installed on all probes
@@ -115,7 +105,6 @@ public class SingletonStagedReactor implements StagedExamReactor
         if( !started )
         {
             started = true;
-            addShutdownHook();
             for( TestContainer container : testContainers )
             {
                 container.start();
@@ -167,5 +156,11 @@ public class SingletonStagedReactor implements StagedExamReactor
         {
             container.stop();
         }
+    }
+
+
+    public void afterSuite()
+    {
+        shutdown();
     }
 }

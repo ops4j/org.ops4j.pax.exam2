@@ -17,7 +17,8 @@
  */
 package org.ops4j.pax.exam.junit;
 
-import static org.ops4j.pax.exam.Constants.*;
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_CDI;
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_DEFAULT;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_JAVAEE;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_KEY;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_TEST;
@@ -26,12 +27,16 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.junit.runner.notification.RunNotifier;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -82,10 +87,11 @@ public class ReactorManager
     /** The reactor. */
     private ExamReactor reactor;
 
+        
     /**
      * The staged reactor. A new instance is created for each test class. Using the {@link PerSuite}
      * strategy, each new instance actually just wraps a singleton reactor instance, so the reactor
-     * is effectivly reused.
+     * is effectively reused.
      */
     private StagedExamReactor stagedReactor;
 
@@ -108,6 +114,11 @@ public class ReactorManager
      */
     private Map<TestAddress, Object> testAddressToMethodMap = new HashMap<TestAddress, Object>();
 
+    
+    private TestClassListener suiteListener;
+    
+    private Set<Class<?>> testClasses = new HashSet<Class<?>>();
+    
     /**
      * Private constructor for singleton.
      */
@@ -154,7 +165,7 @@ public class ReactorManager
     {
         this.testClass = testClass;
         this.reactor = createReactor( testClass );
-
+        testClasses.add( testClass );
         addConfigurationsToReactor( testClass, testClassInstance );
         return reactor;
     }
@@ -370,5 +381,21 @@ public class ReactorManager
     public void storeTestMethod( TestAddress address, Object testMethod )
     {
         testAddressToMethodMap.put( address, testMethod );
+    }
+
+    public void addSuiteListener( RunNotifier notifier, Class<?> klass )
+    {
+        suiteListener = new TestClassListener(klass);
+        notifier.addListener( suiteListener );
+    }
+
+    public void testClassFinished( Class<?> klass )
+    {
+        testClasses.remove( klass );
+        if (testClasses.isEmpty())
+        {
+            LOG.info( "suite finished" );
+            stagedReactor.afterSuite();
+        }
     }
 }

@@ -106,4 +106,8 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
             container.stop();
         }
     }
+
+    public void afterSuite()
+    {
+    }
 }

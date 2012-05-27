@@ -65,4 +65,10 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
     {
         delegate.tearDown();
     }
+    
+    @Override
+    public void afterSuite()
+    {
+        delegate.afterSuite();
+    }
 }

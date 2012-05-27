@@ -93,4 +93,8 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     {
         // does not do anything.
     }
+
+    public void afterSuite()
+    {
+    }
 }

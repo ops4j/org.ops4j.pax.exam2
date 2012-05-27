@@ -18,22 +18,27 @@
 package org.ops4j.pax.exam.jboss;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import org.jboss.as.controller.client.helpers.standalone.DeploymentPlan;
+import org.jboss.as.controller.client.helpers.standalone.InitialDeploymentPlanBuilder;
+import org.jboss.as.controller.client.helpers.standalone.ServerDeploymentActionResult;
+import org.jboss.as.controller.client.helpers.standalone.ServerDeploymentManager;
+import org.jboss.as.controller.client.helpers.standalone.ServerDeploymentPlanResult;
+import org.jboss.as.controller.client.helpers.standalone.ServerUpdateActionResult.Result;
 import org.jboss.as.embedded.EmbeddedServerFactory;
 import org.jboss.as.embedded.ServerStartException;
 import org.jboss.as.embedded.StandaloneServer;
-import org.ops4j.io.FileUtils;
-import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ProbeInvoker;
@@ -44,11 +49,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
-import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.spi.ServiceProviderFinder;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,13 +61,12 @@ import org.slf4j.LoggerFactory;
 public class JBossTestContainer implements TestContainer
 {
     // TODO make this configurable
-    // The only reason for not using full profile is reduced download time ;-)
-    public static final String GLASSFISH_WEB_DISTRIBUTION_URL =
-        "mvn:org.glassfish.main.distributions/web/3.1.2/zip";
+    public static final String JBOSS_DISTRIBUTION_URL =
+        "mvn:org.jboss.as/jboss-as-dist/7.1.1.Final/zip";
 
     private static final Logger LOG = LoggerFactory.getLogger( JBossTestContainer.class );
 
-    private Stack<File> deployed = new Stack<File>();
+    private Stack<String> deployed = new Stack<String>();
 
     private ExamSystem system;
 
@@ -75,6 +75,8 @@ public class JBossTestContainer implements TestContainer
     private TestDirectory testDirectory;
 
     private StandaloneServer server;
+
+    private ServerDeploymentManager deploymentManager;
 
     public JBossTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
@@ -94,28 +96,7 @@ public class JBossTestContainer implements TestContainer
 
     public synchronized long install( String location, InputStream stream )
     {
-        try
-        {
-            File tempFile = new File( "/tmp/Pax-Exam-Probe.war" );
-            tempFile.deleteOnExit();
-            StreamUtils.copyStream( stream, new FileOutputStream( tempFile ), true );
-            server.deploy( tempFile );
-            deployed.push( tempFile );
-        }
-        catch ( IOException exc )
-        {
-
-        }
-        catch ( ExecutionException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch ( InterruptedException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        deployModule( "Pax-Exam-Probe", stream);
         return -1;
     }
 
@@ -143,18 +124,8 @@ public class JBossTestContainer implements TestContainer
     {
         try
         {
-            InputStream stream = new URL( option.getURL() ).openStream();
-            File tempFile = new File( "/tmp/" + option.getName() + ".war" );
-            StreamUtils.copyStream( stream, new FileOutputStream( tempFile ), true );
-            server.deploy( tempFile );
-        }
-        catch ( ExecutionException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
-        }
-        catch ( InterruptedException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+            URL applUrl = new URL( option.getURL() );
+            deployModule(option.getName(), applUrl.openStream());
         }
         catch ( MalformedURLException exc )
         {
@@ -165,43 +136,115 @@ public class JBossTestContainer implements TestContainer
             throw new TestContainerException( "Problem deploying " + option, exc );
         }
     }
+    
+    private void deployModule( String applicationName, InputStream stream)
+    {
+        
+        try
+        {
+            String warName = applicationName + ".war";
+            InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
+            DeploymentPlan plan = builder.add( warName, stream ).deploy( warName ).build();
+            ServerDeploymentPlanResult result = deploymentManager.execute( plan ).get();
+            UUID actionId = plan.getDeploymentActions().get( 0 ).getId();
+            ServerDeploymentActionResult actionResult = result.getDeploymentActionResult( actionId );
 
-    public synchronized void cleanup()
+            if( actionResult.getResult() != Result.EXECUTED )
+            {
+                throw new TestContainerException( "problem deploying " + applicationName );
+            }
+            deployed.push( warName );
+        }
+        catch ( ExecutionException exc )
+        {
+            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        }
+        catch ( InterruptedException exc )
+        {
+            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        }
+    }
+
+    public void cleanup()
     {
         undeployModules();
+        server.stop();
     }
 
     private void undeployModules()
     {
+        while( !deployed.isEmpty() )
+        {
+            String applicationName = deployed.pop();
+            undeployModule( applicationName );
+        }
+    }
+
+    private void undeployModule( String applName )
+    {
+        InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
+        DeploymentPlan plan = builder.undeploy( applName ).andRemoveUndeployed().build();
+        ServerDeploymentPlanResult result;
+        try
+        {
+            result = deploymentManager.execute( plan ).get();
+        }
+        catch ( InterruptedException exc )
+        {
+            throw new TestContainerException( "problem undeploying " + applName, exc );
+        }
+        catch ( ExecutionException exc )
+        {
+            throw new TestContainerException( "problem undeploying " + applName, exc );
+        }
+        UUID actionId = plan.getDeploymentActions().get( 0 ).getId();
+        ServerDeploymentActionResult actionResult = result.getDeploymentActionResult( actionId );
+
+        if( actionResult.getResult() != Result.EXECUTED )
+        {
+            throw new TestContainerException( "problem undeploying " + applName );
+        }
     }
 
     public TestContainer start() throws TestContainerException
     {
         installContainer();
         File tempDir = system.getTempFolder();
-        File dataDir = new File(tempDir, "data");
+        File dataDir = new File( tempDir, "data" );
         dataDir.mkdir();
-        File configDir = new File("src/test/resources/jboss-config");
+        File configDir = new File( "src/test/resources/jboss-config" );
         System.setProperty( "jboss.server.config.dir", configDir.getAbsolutePath() );
         System.setProperty( "jboss.server.data.dir", dataDir.getAbsolutePath() );
         server =
-            EmbeddedServerFactory.create( new File( jBossHome ), System.getProperties(),
-                System.getenv(), "org.jboss.logmanager", "org.jboss.logging", "org.slf4j",
-                "org.slf4j.cal10n", "ch.qos.cal10n" );
+            EmbeddedServerFactory.create( new File( jBossHome ), 
+                System.getProperties(),
+                System.getenv(),
+                // packages to be loaded from system class loader
+                "org.jboss.logmanager", 
+                "org.jboss.logging", 
+                "org.jboss.threads",
+                "org.slf4j",
+                "org.slf4j.cal10n", 
+                "ch.qos.cal10n" );
         try
         {
             server.start();
+            deploymentManager =
+                ServerDeploymentManager.Factory.create( InetAddress.getByName( "localhost" ), 9999 );
             testDirectory.setAccessPoint( new URI( "http://localhost:9080/Pax-Exam-Probe/" ) );
             deployModules();
         }
-        catch ( ServerStartException e )
+        catch ( ServerStartException exc )
         {
-            throw new TestContainerException( "Problem starting test container.", e );
+            throw new TestContainerException( "Problem starting test container.", exc );
         }
-        catch ( URISyntaxException e )
+        catch ( URISyntaxException exc )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new TestContainerException( "Problem starting test container.", exc );
+        }
+        catch ( UnknownHostException exc )
+        {
+            throw new TestContainerException( "Problem starting test container.", exc );
         }
         return this;
     }
@@ -224,51 +267,6 @@ public class JBossTestContainer implements TestContainer
         cleanup();
         system.clear();
         return this;
-    }
-
-    private String buildString( ValueOption<?>[] options )
-    {
-        return buildString( new String[0], options, new String[0] );
-    }
-
-    @SuppressWarnings( "unused" )
-    private String buildString( String[] prepend, ValueOption<?>[] options )
-    {
-        return buildString( prepend, options, new String[0] );
-    }
-
-    @SuppressWarnings( "unused" )
-    private String buildString( ValueOption<?>[] options, String[] append )
-    {
-        return buildString( new String[0], options, append );
-    }
-
-    private String buildString( String[] prepend, ValueOption<?>[] options, String[] append )
-    {
-        StringBuilder builder = new StringBuilder();
-        for( String a : prepend )
-        {
-            builder.append( a );
-            builder.append( "," );
-        }
-        for( ValueOption<?> option : options )
-        {
-            builder.append( option.getValue() );
-            builder.append( "," );
-        }
-        for( String a : append )
-        {
-            builder.append( a );
-            builder.append( "," );
-        }
-        if( builder.length() > 0 )
-        {
-            return builder.substring( 0, builder.length() - 1 );
-        }
-        else
-        {
-            return "";
-        }
     }
 
     @Override

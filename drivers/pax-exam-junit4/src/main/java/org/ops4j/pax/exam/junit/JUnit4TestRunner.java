@@ -89,6 +89,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         throws Exception
     {
         super( klass );
+        LOG.info("creating PaxExam runner for {}", klass);
         Object testClassInstance = klass.newInstance();
 
         manager = ReactorManager.getInstance();
@@ -109,9 +110,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     @Override
     public void run( RunNotifier notifier )
     {
+        LOG.info("running test class {}", getTestClass().getName());
         try
         {
             reactor.setUp();
+            manager.addSuiteListener(notifier, getTestClass().getJavaClass());
             super.run( notifier );
         }
         catch ( Exception e )

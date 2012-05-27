@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * A singleton directory which keeps track of all tests in a suite. A test is a single method
  * of a given test class in a given configuration. In particular, individual test methods may
- * occur multiple times in differnt configurations.
+ * occur multiple times in different configurations.
  * <p>
  * A test address is a unique identifier for a test. A probe lists the addresses of all tests
  * it contains. 

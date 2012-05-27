@@ -45,4 +45,6 @@ public interface StagedExamReactor {
      */
     void tearDown();
 
+    public abstract void afterSuite();
+
 }
