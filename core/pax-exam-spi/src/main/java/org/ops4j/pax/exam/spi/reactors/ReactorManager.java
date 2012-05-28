@@ -17,6 +17,10 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
+import static org.ops4j.pax.exam.Constants.EXAM_REACTOR_STRATEGY_KEY;
+import static org.ops4j.pax.exam.Constants.EXAM_REACTOR_STRATEGY_PER_CLASS;
+import static org.ops4j.pax.exam.Constants.EXAM_REACTOR_STRATEGY_PER_METHOD;
+import static org.ops4j.pax.exam.Constants.EXAM_REACTOR_STRATEGY_PER_SUITE;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_CDI;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_DEFAULT;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_JAVAEE;
@@ -75,6 +79,8 @@ public class ReactorManager
     /** Singleton instance of this manager. */
     private static ReactorManager instance;
 
+    private Map<String, StagedExamReactorFactory> reactorStrategies;
+
     /** Exam system, containing system and user configuration options. */
     private ExamSystem system;
 
@@ -87,7 +93,6 @@ public class ReactorManager
     /** The reactor. */
     private ExamReactor reactor;
 
-        
     /**
      * A probe builder for the current test probe. A probe builder contains a number of test classes
      * and their dependent classes and a list of test methods to be executed.
@@ -107,11 +112,21 @@ public class ReactorManager
      */
     private Map<TestAddress, Object> testAddressToMethodMap = new HashMap<TestAddress, Object>();
 
-    
+    /**
+     * Set of test classes in suite.
+     */
     private Set<Class<?>> testClasses = new HashSet<Class<?>>();
-    
+
+    /**
+     * Has the suite been started? Set to true when the first test class is about to run.
+     */
     private boolean suiteStarted;
-    
+
+    /**
+     * Configuration property access.
+     */
+    private ConfigurationManager cm;
+
     /**
      * Private constructor for singleton.
      */
@@ -119,7 +134,12 @@ public class ReactorManager
     {
         try
         {
+            cm = new ConfigurationManager();
             system = createExamSystem();
+            reactorStrategies = new HashMap<String, StagedExamReactorFactory>( 3 );
+            reactorStrategies.put( EXAM_REACTOR_STRATEGY_PER_SUITE, new PerSuite() );
+            reactorStrategies.put( EXAM_REACTOR_STRATEGY_PER_CLASS, new PerClass() );
+            reactorStrategies.put( EXAM_REACTOR_STRATEGY_PER_METHOD, new PerMethod() );
         }
         catch ( IOException exc )
         {
@@ -165,6 +185,7 @@ public class ReactorManager
 
     /**
      * Stages the reactor for the current class.
+     * 
      * @return staged reactor
      * @throws IOException
      * @throws InstantiationException
@@ -179,7 +200,6 @@ public class ReactorManager
 
     private ExamSystem createExamSystem() throws IOException
     {
-        ConfigurationManager cm = new ConfigurationManager();
         systemType = cm.getProperty( EXAM_SYSTEM_KEY, EXAM_SYSTEM_TEST );
         if( EXAM_SYSTEM_DEFAULT.equals( systemType ) )
         {
@@ -197,8 +217,8 @@ public class ReactorManager
     }
 
     /**
-     * Scans the current test class for declared or inherited {@code @Configuration} methods
-     * and invokes them, adding the returned configuration to the reactor.
+     * Scans the current test class for declared or inherited {@code @Configuration} methods and
+     * invokes them, adding the returned configuration to the reactor.
      * 
      * @param testClass
      * @param testClassInstance
@@ -224,8 +244,9 @@ public class ReactorManager
     }
 
     /**
-     * Creates a staging factory indicated by the {@link ExamReactorStrategy} annotation of
-     * the test class.
+     * Creates a staging factory indicated by the {@link ExamReactorStrategy} annotation of the test
+     * class.
+     * 
      * @param testClass
      * @return
      * @throws InstantiationException
@@ -235,26 +256,35 @@ public class ReactorManager
         throws InstantiationException, IllegalAccessException
     {
         ExamReactorStrategy strategy = testClass.getAnnotation( ExamReactorStrategy.class );
-
+        String strategyName = cm.getProperty( EXAM_REACTOR_STRATEGY_KEY );
         StagedExamReactorFactory fact;
         if( strategy != null )
         {
             fact = strategy.value()[0].newInstance();
         }
-        else if (systemType.equals( EXAM_SYSTEM_CDI ) || systemType.equals( EXAM_SYSTEM_JAVAEE ))
+        else if( strategyName == null )
         {
-            fact = new PerSuite();
+            if( systemType.equals( EXAM_SYSTEM_CDI ) || systemType.equals( EXAM_SYSTEM_JAVAEE ) )
+            {
+                strategyName = "PerSuite";
+            }
+            else
+            {
+                // OSGi default from Pax Exam 2.x
+                strategyName = "PerMethod";
+            }
         }
-        else
+        fact = reactorStrategies.get(strategyName);
+        if (fact == null)
         {
-            // OSGi default from Pax Exam 2.x
-            fact = new PerMethod();
+            throw new IllegalArgumentException( "unknown reactor strategy " + strategyName );
         }
         return fact;
     }
 
     /**
      * Creates an unstaged reactor for the given test class.
+     * 
      * @param testClass
      * @return
      * @throws InstantiationException
@@ -269,7 +299,7 @@ public class ReactorManager
     /**
      * Creates the test container factory to be used by the reactor.
      * <p>
-     * TODO Do we really need this? 
+     * TODO Do we really need this?
      * 
      * @param testClass
      * @return
@@ -296,7 +326,8 @@ public class ReactorManager
 
     /**
      * Lazily creates a probe builder. The same probe builder will be reused for all test classes,
-     * unless the default builder is overridden in a given class. 
+     * unless the default builder is overridden in a given class.
+     * 
      * @param testClassInstance
      * @return
      * @throws IOException
@@ -358,6 +389,7 @@ public class ReactorManager
 
     /**
      * Looks up a test method for a given address.
+     * 
      * @param address test method address used by probe
      * @return test method wrapper - the type is only known to the test driver.
      */
@@ -368,6 +400,7 @@ public class ReactorManager
 
     /**
      * Stores the test method wrapper for a given test address
+     * 
      * @param address test method address used by probe
      * @param testMethod test method wrapper - the type is only known to the test driver
      */
@@ -380,16 +413,16 @@ public class ReactorManager
     {
         stagedReactor.afterClass();
         testClasses.remove( klass );
-        if (testClasses.isEmpty())
+        if( testClasses.isEmpty() )
         {
             LOG.info( "suite finished" );
             stagedReactor.afterSuite();
         }
     }
 
-    public void beforeClass(  StagedExamReactor stagedReactor, Class<?> klass )
+    public void beforeClass( StagedExamReactor stagedReactor, Class<?> klass )
     {
-        if (! suiteStarted)
+        if( !suiteStarted )
         {
             suiteStarted = true;
             stagedReactor.beforeSuite();

@@ -19,12 +19,13 @@ package org.ops4j.pax.exam;
 
 /**
  * Pax Exam related constants.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Harald Wellmann
  * @since 0.5.0, April 22, 2009
  */
-public interface Constants {
+public interface Constants
+{
 
     /**
      * The start level at which Pax Exam system bundles are to be started.
@@ -37,7 +38,8 @@ public interface Constants {
     static final int START_LEVEL_DEFAULT_PROVISION = 3;
 
     /**
-     * The start level at which Pax Exam test bundle is to be started. This is also the startlevel, the test container reaches in start.
+     * The start level at which Pax Exam test bundle is to be started. This is also the startlevel,
+     * the test container reaches in start.
      */
     static final int START_LEVEL_TEST_BUNDLE = 5;
 
@@ -53,31 +55,40 @@ public interface Constants {
      * Timeout specifing that it should wait .
      */
     long WAIT_5_MINUTES = 5 * 60 * 1000;
-    
+
     /** Name of configuration properties file. */
     static final String EXAM_PROPERTIES_FILE = "exam.properties";
-    
+
     /** Resource path of configuration properties file. */
     static final String EXAM_PROPERTIES_PATH = "/" + EXAM_PROPERTIES_FILE;
 
     /** Configuration key for Exam system type. */
     static final String EXAM_SYSTEM_KEY = "pax.exam.system";
-    
-    /** 
-     * URL of configuration properties, overriding the default classpath:/exam.properties.
-     * If you want this to be a plain old file, make sure to include the {@code file:} protocol. 
+
+    /**
+     * URL of configuration properties, overriding the default classpath:/exam.properties. If you
+     * want this to be a plain old file, make sure to include the {@code file:} protocol.
      */
     static final String EXAM_CONFIGURATION_KEY = "pax.exam.configuration";
-    
-    /** Default exam system with no predefined options.  */
+
+    /** Default exam system with no predefined options. */
     static final String EXAM_SYSTEM_DEFAULT = "default";
 
-    /** Exam system for Java EE containers.  */
+    /** Exam system for Java EE containers. */
     static final String EXAM_SYSTEM_JAVAEE = "javaee";
 
-    /** Exam system for CDI containers.  */
+    /** Exam system for CDI containers. */
     static final String EXAM_SYSTEM_CDI = "cdi";
 
-    /** Test exam system with predefined options for Exam's own bundles etc.  */
+    /** Test exam system with predefined options for Exam's own bundles etc. */
     static final String EXAM_SYSTEM_TEST = "test";
+
+    /**
+     * Default reactor strategy. Legal values are {@code PerSuite, PerClass, PerMethod}.
+     */
+    static final String EXAM_REACTOR_STRATEGY_KEY = "pax.exam.reactor.strategy";
+    
+    static final String EXAM_REACTOR_STRATEGY_PER_SUITE = "PerSuite";
+    static final String EXAM_REACTOR_STRATEGY_PER_CLASS = "PerClass";
+    static final String EXAM_REACTOR_STRATEGY_PER_METHOD = "PerMethod";
 }
