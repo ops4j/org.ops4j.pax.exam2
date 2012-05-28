@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Harald Wellmann
+ * Copyright 2012 Harald Wellmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,11 @@ import static org.testng.Assert.assertNotNull;
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.ops4j.pax.exam.testng.listener.ExamTestNGListener;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners({ExamTestNGListener.class})
-@ExamReactorStrategy(PerClass.class)
+@Listeners(ExamTestNGListener.class)
 public class InjectTest
 {
 

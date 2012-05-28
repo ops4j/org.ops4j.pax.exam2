@@ -48,7 +48,6 @@ import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.internal.MethodInstance;
 
-// @MetaInfServices(ITestNGListener.class)
 public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, IHookable
 {
     private static Logger LOG = LoggerFactory.getLogger( ExamTestNGListener.class );
@@ -72,7 +71,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         try
         {
             reactor = prepareReactor(suite);
-            //reactor.beforeSuite();
+            reactor.beforeSuite();
         }
         catch ( Exception exc )
         {
@@ -86,7 +85,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         {
             manager.afterClass( reactor, currentTestClassInstance.getClass() );
         }
-        //reactor.afterSuite();
+        reactor.afterSuite();
     }
 
     private synchronized StagedExamReactor prepareReactor( ISuite suite )
