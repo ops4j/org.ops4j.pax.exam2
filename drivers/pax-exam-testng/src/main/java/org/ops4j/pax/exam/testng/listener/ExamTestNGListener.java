@@ -61,6 +61,8 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     private boolean useProbeInvoker;
     
     private boolean methodInterceptorCalled;
+    
+    private Object currentTestClassInstance;
 
 
     public void onStart( ISuite suite )
@@ -69,7 +71,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         try
         {
             reactor = prepareReactor(suite);
-            reactor.beforeClass();
+            //reactor.beforeSuite();
         }
         catch ( Exception exc )
         {
@@ -79,7 +81,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
 
     public void onFinish( ISuite suite )
     {
-        reactor.afterClass();
+        //reactor.afterSuite();
     }
 
     private synchronized StagedExamReactor prepareReactor( ISuite suite )
@@ -113,6 +115,17 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     public void run( IHookCallBack callBack, ITestResult testResult )
     {
         LOG.info( "running {}", testResult.getName() );
+        Object testClassInstance = testResult.getMethod().getInstance();
+        if (testClassInstance != currentTestClassInstance)
+        {
+            if (currentTestClassInstance != null)
+            {
+                manager.afterClass( reactor, currentTestClassInstance.getClass() );
+            }
+            manager.beforeClass( reactor, testClassInstance.getClass() );
+            currentTestClassInstance = testClassInstance;
+        }
+        
         
         TestAddress address = methodToAddressMap.get( testResult.getName() );
         TestAddress root = address.root();
