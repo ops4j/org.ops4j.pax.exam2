@@ -234,6 +234,42 @@
             </dependencies>
         </profile>
 
+        <profile>
+            <id>resin</id>
+            <properties>
+                <pax.exam.container>resin</pax.exam.container>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-resin</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.caucho</groupId>
+                    <artifactId>resin</artifactId>
+                    <version>4.0.23</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                    <version>3.6.8.Final</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derby</artifactId>
+                    <version>10.8.2.2</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
     </profiles>
 
 </project>

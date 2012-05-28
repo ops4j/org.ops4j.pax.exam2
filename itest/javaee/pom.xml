@@ -51,6 +51,17 @@
                             </profiles>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>resin</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <profiles>
+                                <profile>resin</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
