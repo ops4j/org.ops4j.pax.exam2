@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.testng.listener;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,10 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
 
     public void onFinish( ISuite suite )
     {
+        if (currentTestClassInstance != null)
+        {
+            manager.afterClass( reactor, currentTestClassInstance.getClass() );
+        }
         //reactor.afterSuite();
     }
 
@@ -161,6 +166,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
             newInstances.add(newInstance);
             methodToAddressMap.put( reactorMethod.getMethodName(), address );
         }
+        Collections.sort( newInstances, new IMethodInstanceComparator() );
         return newInstances;
     }    
 }
