@@ -26,14 +26,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 @RunWith( PaxExam.class )
-@ExamReactorStrategy( PerSuite.class )
 public class FilterTest
 {
 

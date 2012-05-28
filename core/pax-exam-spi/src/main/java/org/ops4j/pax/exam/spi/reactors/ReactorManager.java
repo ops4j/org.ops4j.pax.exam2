@@ -261,17 +261,19 @@ public class ReactorManager
         if( strategy != null )
         {
             fact = strategy.value()[0].newInstance();
+            return fact;
         }
-        else if( strategyName == null )
+        
+        if( strategyName == null )
         {
             if( systemType.equals( EXAM_SYSTEM_CDI ) || systemType.equals( EXAM_SYSTEM_JAVAEE ) )
             {
-                strategyName = "PerSuite";
+                strategyName = EXAM_REACTOR_STRATEGY_PER_SUITE;
             }
             else
             {
                 // OSGi default from Pax Exam 2.x
-                strategyName = "PerMethod";
+                strategyName = EXAM_REACTOR_STRATEGY_PER_METHOD;
             }
         }
         fact = reactorStrategies.get(strategyName);
