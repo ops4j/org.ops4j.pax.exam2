@@ -32,12 +32,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.regression.pde.Notifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SuiteTest implements Notifier, Remote
 {
+    private static Logger LOG = LoggerFactory.getLogger( SuiteTest.class );
+    
     private List<String> messages;
 
     @Override
@@ -54,13 +59,6 @@ public class SuiteTest implements Notifier, Remote
     }
     
     @Test
-    public void runSuiteWithPerSuiteStrategy() throws Exception
-    {
-        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerSuite" );
-        checkNumberOfRestartsInSuite( 1 );
-    }
-
-    @Test
     public void runSuiteWithPerClassStrategy() throws Exception
     {
         System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerClass" );
@@ -72,6 +70,13 @@ public class SuiteTest implements Notifier, Remote
     {
         System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerMethod" );
         checkNumberOfRestartsInSuite( 3 );
+    }
+
+    @Test
+    public void runSuiteWithPerSuiteStrategy() throws Exception
+    {
+        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerSuite" );
+        checkNumberOfRestartsInSuite( 1 );
     }
 
     private void checkNumberOfRestartsInSuite( int numRestarts ) throws Exception
@@ -86,6 +91,10 @@ public class SuiteTest implements Notifier, Remote
 
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( FilterTest.class, InjectTest.class );
+        for (Failure failure : result.getFailures())
+        {
+            LOG.error("failure in nested test", failure.getException());
+        }
         assertThat( result.getFailureCount(), is(0));
 
         registry.unbind( "PaxExamNotifier" );

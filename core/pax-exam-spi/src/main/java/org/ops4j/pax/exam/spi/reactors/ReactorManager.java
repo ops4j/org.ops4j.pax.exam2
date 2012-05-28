@@ -419,6 +419,9 @@ public class ReactorManager
         {
             LOG.info( "suite finished" );
             stagedReactor.afterSuite();
+            suiteStarted = false;
+            testClasses.clear();
+            testAddressToMethodMap.clear();
         }
     }
 
