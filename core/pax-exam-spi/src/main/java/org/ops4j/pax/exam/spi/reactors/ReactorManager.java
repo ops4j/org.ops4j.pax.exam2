@@ -127,6 +127,8 @@ public class ReactorManager
      */
     private ConfigurationManager cm;
 
+    private boolean waitForAfterSuiteEvent;
+
     /**
      * Private constructor for singleton.
      */
@@ -411,11 +413,24 @@ public class ReactorManager
         testAddressToMethodMap.put( address, testMethod );
     }
 
+    public void beforeSuite( StagedExamReactor stagedReactor )
+    {
+        stagedReactor.beforeSuite();
+        suiteStarted = true;
+        waitForAfterSuiteEvent = true;
+    }
+    
+    public void afterSuite( StagedExamReactor stagedReactor )
+    {
+        waitForAfterSuiteEvent = false;
+        stagedReactor.afterSuite();
+    }
+    
     public void afterClass( StagedExamReactor stagedReactor, Class<?> klass )
     {
         stagedReactor.afterClass();
         testClasses.remove( klass );
-        if( testClasses.isEmpty() )
+        if( !waitForAfterSuiteEvent && testClasses.isEmpty() )
         {
             LOG.info( "suite finished" );
             stagedReactor.afterSuite();
