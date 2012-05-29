@@ -15,7 +15,7 @@
  *
  */
 
-package org.ops4j.pax.exam.regression.weld.library;
+package org.ops4j.pax.exam.regression.cdi.library;
 
 import static org.junit.Assert.assertEquals;
 

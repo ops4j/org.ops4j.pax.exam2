@@ -41,9 +41,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
-import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
-import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -344,29 +342,8 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         else
         {
             Object test = super.createTest();
-            inject( test );
+            manager.inject( test );
             return test;
         }
-    }
-
-    /**
-     * Performs field injection on the given test class instance.
-     * @param test test class instance
-     */
-    private void inject( Object test )
-    {
-        Injector injector = findInjector();
-        injector.injectFields( null, test );
-    }
-
-    /**
-     * Finds an injector factory and creates an injector.
-     * @return
-     */
-    private Injector findInjector()
-    {
-        InjectorFactory injectorFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
-        return injectorFactory.createInjector();
     }
 }

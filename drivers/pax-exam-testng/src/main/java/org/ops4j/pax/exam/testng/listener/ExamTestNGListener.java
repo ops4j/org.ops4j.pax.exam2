@@ -126,8 +126,14 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
             {
                 manager.afterClass( reactor, currentTestClassInstance.getClass() );
             }
-            manager.beforeClass( reactor, testClassInstance.getClass() );
+            manager.beforeClass( reactor, testClassInstance );            
             currentTestClassInstance = testClassInstance;
+        }
+        
+        if (!useProbeInvoker)
+        {
+            callBack.runTestMethod( testResult );
+            return;
         }
         
         
@@ -149,7 +155,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
 
     public List<IMethodInstance> intercept( List<IMethodInstance> methods, ITestContext context )
     {
-        if (methodInterceptorCalled)
+        if (methodInterceptorCalled || !useProbeInvoker)
         {
             return methods;
         }

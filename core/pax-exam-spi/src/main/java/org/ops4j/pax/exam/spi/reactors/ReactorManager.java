@@ -54,6 +54,9 @@ import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
+import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.exam.util.InjectorFactory;
+import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +131,8 @@ public class ReactorManager
     private ConfigurationManager cm;
 
     private boolean waitForAfterSuiteEvent;
+    
+    private boolean injectDependencies;  
 
     /**
      * Private constructor for singleton.
@@ -215,6 +220,7 @@ public class ReactorManager
         {
             system = PaxExamRuntime.createTestSystem();
         }
+        injectDependencies = EXAM_SYSTEM_CDI.equals( systemType );
         return system;
     }
 
@@ -440,13 +446,38 @@ public class ReactorManager
         }
     }
 
-    public void beforeClass( StagedExamReactor stagedReactor, Class<?> klass )
+    public void beforeClass( StagedExamReactor stagedReactor, Object testClassInstance )
     {
         if( !suiteStarted )
         {
             suiteStarted = true;
             stagedReactor.beforeSuite();
         }
+        if (injectDependencies)
+        {
+            inject( testClassInstance );
+        }
         stagedReactor.beforeClass();
+    }
+
+    /**
+     * Performs field injection on the given test class instance.
+     * @param test test class instance
+     */
+    public void inject( Object test )
+    {
+        Injector injector = findInjector();
+        injector.injectFields( null, test );
+    }
+
+    /**
+     * Finds an injector factory and creates an injector.
+     * @return
+     */
+    private Injector findInjector()
+    {
+        InjectorFactory injectorFactory =
+            ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
+        return injectorFactory.createInjector();
     }
 }

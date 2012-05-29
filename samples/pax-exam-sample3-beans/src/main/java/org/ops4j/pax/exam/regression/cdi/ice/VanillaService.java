@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.weld.library.ice;
+package org.ops4j.pax.exam.regression.cdi.ice;
 
 import javax.enterprise.inject.Default;
 
