@@ -108,10 +108,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <systemPropertyVariables>
-                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <org.jboss.logging.provider>slf4j</org.jboss.logging.provider>
-                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

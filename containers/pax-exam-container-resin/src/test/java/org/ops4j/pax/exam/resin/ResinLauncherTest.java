@@ -57,11 +57,11 @@ public class ResinLauncherTest
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         ResinEmbed resin = new ResinEmbed();
         HttpEmbed http = new HttpEmbed(9080);
-        File webappDir = new File(tempDir, "wicket-examples");
-        URL applUrl = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war");
+        File webappDir = new File(tempDir, "dump");
+        URL applUrl = new URL("mvn:org.mortbay.jetty.testwars/test-war-dump/8.1.4.v20120524/war");
         ZipInstaller installer = new ZipInstaller( applUrl, webappDir.getAbsolutePath() );
         installer.downloadAndInstall();
-        WebAppEmbed webApp = new WebAppEmbed("/wicket-examples", webappDir.getAbsolutePath());
+        WebAppEmbed webApp = new WebAppEmbed("/dump", webappDir.getAbsolutePath());
         resin.addPort(http);
         resin.start();
 
