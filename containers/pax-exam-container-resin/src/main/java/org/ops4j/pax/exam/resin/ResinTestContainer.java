@@ -165,13 +165,16 @@ public class ResinTestContainer implements TestContainer
     public TestContainer start() 
     {
         LOG.info( "starting Resin");
+        File tempDir = system.getTempFolder();
+        System.setProperty( "resin.home", system.getTempFolder().getPath() );
         resin = new ResinEmbed();
+        resin.setRootDirectory( tempDir.getPath() );
         int httpPort = 9080;
         HttpEmbed http = new HttpEmbed(httpPort);
+        
         resin.addPort(http);
         resin.start();
 
-        File tempDir = system.getTempFolder();
         webappDir = new File( tempDir, "webapps" );
         webappDir.mkdir();
         try

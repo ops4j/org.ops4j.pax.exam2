@@ -17,6 +17,9 @@
  */
 package org.ops4j.pax.exam.resin;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -34,39 +37,43 @@ import com.google.common.io.Files;
 
 public class ResinLauncherTest
 {
-    
-    private File tempDir;
 
+    private File tempDir;
 
     @Before
     public void setUp()
     {
-        tempDir = Files.createTempDir();        
+        tempDir = Files.createTempDir();
     }
-    
+
     @After
     public void tearDown()
     {
-        FileUtils.delete( tempDir );        
+        FileUtils.delete( tempDir );
     }
 
-    
     @Test
     public void launchResin() throws InterruptedException, IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+        String tempDir = Files.createTempDir().getAbsolutePath();
+        System.setProperty( "resin.home", tempDir );
         ResinEmbed resin = new ResinEmbed();
-        HttpEmbed http = new HttpEmbed(9080);
-        File webappDir = new File(tempDir, "dump");
-        URL applUrl = new URL("mvn:org.mortbay.jetty.testwars/test-war-dump/8.1.4.v20120524/war");
+        resin.setRootDirectory( tempDir );
+        HttpEmbed http = new HttpEmbed( 9080 );
+        File webappDir = new File( tempDir, "dump" );
+        URL applUrl = new URL( "mvn:org.mortbay.jetty.testwars/test-war-dump/8.1.4.v20120524/war" );
         ZipInstaller installer = new ZipInstaller( applUrl, webappDir.getAbsolutePath() );
         installer.downloadAndInstall();
-        WebAppEmbed webApp = new WebAppEmbed("/dump", webappDir.getAbsolutePath());
-        resin.addPort(http);
+        WebAppEmbed webApp = new WebAppEmbed( "/dump", webappDir.getAbsolutePath() );
+        resin.addPort( http );
         resin.start();
 
         resin.addWebApp( webApp );
         resin.removeWebApp( webApp );
-        resin.stop();        
+        resin.stop();
+
+        // check that resin does not pollute our current directory
+        assertThat( new File( "resin-data" ).exists(), is( false ) );
     }
 }
