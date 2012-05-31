@@ -31,10 +31,15 @@ import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDirectory;
+import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
+import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.exam.util.InjectorFactory;
+import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IHookCallBack;
@@ -59,33 +64,53 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     private ReactorManager manager;
 
     private boolean useProbeInvoker;
-    
+
     private boolean methodInterceptorCalled;
-    
+
     private Object currentTestClassInstance;
 
+    public ExamTestNGListener()
+    {
+        LOG.debug( "created ExamTestNGListener" );
+    }
+
+    private boolean isRunningInTestContainer( ISuite suite )
+    {
+        return suite.getName().equals( "PaxExamInternal" );
+    }
+
+    private boolean isRunningInTestContainer( ITestNGMethod method )
+    {
+        return method.getXmlTest().getSuite().getName().equals( "PaxExamInternal" );
+    }
 
     public void onStart( ISuite suite )
     {
-        manager = ReactorManager.getInstance();
-        try
+        if( !isRunningInTestContainer( suite ) )
         {
-            reactor = prepareReactor(suite);
-            manager.beforeSuite( reactor );
-        }
-        catch ( Exception exc )
-        {
-            throw new TestContainerException( exc );
+            manager = ReactorManager.getInstance();
+            try
+            {
+                reactor = prepareReactor( suite );
+                manager.beforeSuite( reactor );
+            }
+            catch ( Exception exc )
+            {
+                throw new TestContainerException( exc );
+            }
         }
     }
 
     public void onFinish( ISuite suite )
     {
-        if (currentTestClassInstance != null)
+        if( !isRunningInTestContainer( suite ) )
         {
-            manager.afterClass( reactor, currentTestClassInstance.getClass() );
+            if( currentTestClassInstance != null )
+            {
+                manager.afterClass( reactor, currentTestClassInstance.getClass() );
+            }
+            manager.afterSuite( reactor );
         }
-        manager.afterSuite( reactor );
     }
 
     private synchronized StagedExamReactor prepareReactor( ISuite suite )
@@ -93,7 +118,6 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     {
         List<ITestNGMethod> methods = suite.getAllMethods();
         Class<?> testClass = methods.get( 0 ).getRealClass();
-        
         Object testClassInstance = testClass.newInstance();
         ExamReactor examReactor = manager.prepareReactor( testClass, testClassInstance );
         useProbeInvoker = !manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
@@ -104,11 +128,12 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         return manager.stageReactor();
     }
 
-    private void addTestsToReactor( ExamReactor reactor, Object testClassInstance, List<ITestNGMethod> methods )
+    private void addTestsToReactor( ExamReactor reactor, Object testClassInstance,
+            List<ITestNGMethod> methods )
         throws IOException, ExamConfigurationException
     {
         TestProbeBuilder probe = manager.createProbeBuilder( testClassInstance );
-        for ( ITestNGMethod m : methods )
+        for( ITestNGMethod m : methods )
         {
             TestAddress address = probe.addTest( m.getRealClass(), m.getMethodName() );
             manager.storeTestMethod( address, m );
@@ -118,60 +143,99 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
 
     public void run( IHookCallBack callBack, ITestResult testResult )
     {
+        if( isRunningInTestContainer( testResult.getMethod() ) )
+        {
+            runInTestContainer( callBack, testResult );
+            return;
+        }
+        else
+        {
+            runByDriver( callBack, testResult );
+        }
+    }
+
+    private void runInTestContainer( IHookCallBack callBack, ITestResult testResult )
+    {
+        Object testClassInstance = testResult.getInstance();
+        inject( testClassInstance );
+        callBack.runTestMethod( testResult );
+        return;
+    }
+
+    private void inject( Object testClassInstance )
+    {
+        InjectorFactory injectorFactory =
+            ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
+        Injector injector = injectorFactory.createInjector();
+        injector.injectFields( null, testClassInstance );
+    }
+
+    private void runByDriver( IHookCallBack callBack, ITestResult testResult )
+    {
         LOG.info( "running {}", testResult.getName() );
         Object testClassInstance = testResult.getMethod().getInstance();
-        if (testClassInstance != currentTestClassInstance)
+        if( testClassInstance != currentTestClassInstance )
         {
-            if (currentTestClassInstance != null)
+            if( currentTestClassInstance != null )
             {
                 manager.afterClass( reactor, currentTestClassInstance.getClass() );
             }
-            manager.beforeClass( reactor, testClassInstance );            
+            manager.beforeClass( reactor, testClassInstance );
             currentTestClassInstance = testClassInstance;
         }
-        
-        if (!useProbeInvoker)
+
+        if( !useProbeInvoker )
         {
             callBack.runTestMethod( testResult );
             return;
         }
-        
-        
+
         TestAddress address = methodToAddressMap.get( testResult.getName() );
         TestAddress root = address.root();
-        
 
-        LOG.debug( "Invoke " + testResult.getName() + " @ " + address + " Arguments: " + root.arguments() );
-        try {
+        LOG.debug( "Invoke " + testResult.getName() + " @ " + address + " Arguments: "
+                + root.arguments() );
+        try
+        {
             reactor.invoke( address );
             testResult.setStatus( ITestResult.SUCCESS );
-        } catch( Exception e ) {
+        }
+        catch ( Exception e )
+        {
             Throwable t = ExceptionHelper.unwind( e );
-            LOG.error("Exception" ,e);
+            LOG.error( "Exception", e );
             testResult.setStatus( ITestResult.FAILURE );
             testResult.setThrowable( t );
-        }        
+        }
     }
 
     public List<IMethodInstance> intercept( List<IMethodInstance> methods, ITestContext context )
     {
-        if (methodInterceptorCalled || !useProbeInvoker)
+        if( methodInterceptorCalled || !useProbeInvoker
+                || isRunningInTestContainer( context.getSuite() ) )
         {
             return methods;
         }
-        
+
         methodInterceptorCalled = true;
+        TestDirectory testDirectory = TestDirectory.getInstance();
         List<IMethodInstance> newInstances = new ArrayList<IMethodInstance>();
         Set<TestAddress> targets = reactor.getTargets();
-        for( TestAddress address : targets ) {
-            ITestNGMethod frameworkMethod = (ITestNGMethod) manager.lookupTestMethod( address.root() );
+        for( TestAddress address : targets )
+        {
+            ITestNGMethod frameworkMethod =
+                (ITestNGMethod) manager.lookupTestMethod( address.root() );
             Method javaMethod = frameworkMethod.getConstructorOrMethod().getMethod();
-            ReactorTestNGMethod reactorMethod = new ReactorTestNGMethod( frameworkMethod, javaMethod, address );
-            MethodInstance newInstance = new MethodInstance(reactorMethod);
-            newInstances.add(newInstance);
+            ReactorTestNGMethod reactorMethod =
+                new ReactorTestNGMethod( frameworkMethod, javaMethod, address );
+            MethodInstance newInstance = new MethodInstance( reactorMethod );
+            newInstances.add( newInstance );
             methodToAddressMap.put( reactorMethod.getMethodName(), address );
+            testDirectory.add( address, new TestInstantiationInstruction( frameworkMethod
+                .getRealClass().getName() + ";"
+                    + javaMethod.getName() ) );
         }
         Collections.sort( newInstances, new IMethodInstanceComparator() );
         return newInstances;
-    }    
+    }
 }
