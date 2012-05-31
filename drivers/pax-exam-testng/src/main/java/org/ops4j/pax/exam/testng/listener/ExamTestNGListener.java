@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.testng.listener;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,10 +49,12 @@ import org.testng.IMethodInstance;
 import org.testng.IMethodInterceptor;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
+import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.internal.MethodInstance;
+import org.testng.internal.NoOpTestClass;
 
 public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, IHookable
 {
@@ -118,6 +121,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     {
         List<ITestNGMethod> methods = suite.getAllMethods();
         Class<?> testClass = methods.get( 0 ).getRealClass();
+        disableConfigurationMethods( methods.get(0).getTestClass() );
         Object testClassInstance = testClass.newInstance();
         ExamReactor examReactor = manager.prepareReactor( testClass, testClassInstance );
         useProbeInvoker = !manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
@@ -237,5 +241,25 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         }
         Collections.sort( newInstances, new IMethodInstanceComparator() );
         return newInstances;
+    }
+
+    private void disableConfigurationMethods( ITestClass klass )
+    {
+        NoOpTestClass testClass = (NoOpTestClass) klass;
+        ITestNGMethod[] noMethods = new ITestNGMethod[0];
+        testClass.setBeforeTestMethods( noMethods );
+        try {
+            Field field = NoOpTestClass.class.getDeclaredField( "m_beforeTestMethods" );
+            field.setAccessible( true );
+            field.set( testClass, noMethods );
+
+            field = NoOpTestClass.class.getDeclaredField( "m_afterTestMethods" );
+            field.setAccessible( true );
+            field.set( testClass, noMethods );
+        }
+        catch (Exception exc)
+        {
+            throw new TestContainerException( exc );
+        }
     }
 }
