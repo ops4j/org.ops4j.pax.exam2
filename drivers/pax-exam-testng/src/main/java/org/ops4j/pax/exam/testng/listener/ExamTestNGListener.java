@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,20 +57,84 @@ import org.testng.ITestResult;
 import org.testng.internal.MethodInstance;
 import org.testng.internal.NoOpTestClass;
 
+/**
+ * TestNG driver for Pax Exam, implementing a number of ITestNGListener interfaces. To run a TestNG
+ * test class with Pax Exam, add this class as a listener to your test class:
+ * 
+ * <pre>
+ * &#64;Listeners(ExamTestNGListener.class) 
+ * public class MyTest {
+ * 
+ *     &#64;BeforeMethod
+ *     public void setUp() {
+ *     }
+ *
+ *     &#64;AfterMethod
+ *     public void tearDown() {
+ *     }
+ *     
+ *     &#64;Test
+ *     public void test1() {
+ *     }
+ * }
+ * </pre>
+ * 
+ * In OSGi and Java EE modes, Pax Exam processes each test class twice, once by test driver and
+ * then again inside the test container. The driver delegates each test method invocation to a
+ * probe invoker which excutes the test method inside the container via the probe.
+ * <p>
+ * It would be nice to separate these two aspects and handle them in two separate listeners, but
+ * TestNG has no way to override or disable the listener annotated on the test class.
+ * <p>
+ * TestNG provides a listener callback for configuration methods, but it does not let us intercept
+ * them. For this reason, we use an ugly reflection hack to disable them when running under the
+ * driver and to make sure they get executed inside the test container only.
+ * <p>
+ * Dependencies annotated by {@link javax.inject.Inject} get injected into the test class in the
+ * container (OSGi and Java EE modes) or by the driver (CDI mode).
+ * 
+ * @author Harald Wellmann
+ * @since 2.3.0
+ *
+ */
 public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, IHookable
 {
     private static Logger LOG = LoggerFactory.getLogger( ExamTestNGListener.class );
+    
+    public static final String PAX_EXAM_SUITE_NAME = "PaxExamInternal";
 
+    /**
+     * Staged reactor for this test class. This may actually be a reactor already staged for a
+     * previous test class, depending on the reactor strategy.
+     */
     private StagedExamReactor reactor;
 
+    /**
+     * Maps method names to test addresses. The method names are qualified by class and container
+     * names. Each method of the test class is cloned for each container.
+     */
     private Map<String, TestAddress> methodToAddressMap = new HashMap<String, TestAddress>();
 
+    /**
+     * Reactor manager singleton.
+     */
     private ReactorManager manager;
 
+    /**
+     * Shall we use a probe invoker, or invoke test methods directly?
+     */
     private boolean useProbeInvoker;
 
+    /**
+     * TestNG calls our intercept() method twice. We remember the first call and do nothing when
+     * called again.
+     */
     private boolean methodInterceptorCalled;
 
+    /**
+     * The test class currently executed. We use this to generate beforeClass and afterClass events,
+     * which we do not receive from TestNG.
+     */
     private Object currentTestClassInstance;
 
     public ExamTestNGListener()
@@ -77,16 +142,34 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         LOG.debug( "created ExamTestNGListener" );
     }
 
+    /**
+     * Are we running in the test container or directly under the driver?
+     * 
+     * @param suite current test suite
+     * @return true if running in container
+     */
     private boolean isRunningInTestContainer( ISuite suite )
     {
-        return suite.getName().equals( "PaxExamInternal" );
+        return suite.getName().equals( PAX_EXAM_SUITE_NAME );
     }
 
+    /**
+     * Are we running in the test container or directly under the driver?
+     * 
+     * @param method current test method
+     * @return true if running in container
+     */
     private boolean isRunningInTestContainer( ITestNGMethod method )
     {
-        return method.getXmlTest().getSuite().getName().equals( "PaxExamInternal" );
+        return method.getXmlTest().getSuite().getName().equals( PAX_EXAM_SUITE_NAME );
     }
 
+    /**
+     * Called by TestNG before the suite starts. When running in the container, this is a no op.
+     * Otherwise, we create and stage the reactor.
+     * 
+     * @param suite test suite
+     */
     public void onStart( ISuite suite )
     {
         if( !isRunningInTestContainer( suite ) )
@@ -94,7 +177,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
             manager = ReactorManager.getInstance();
             try
             {
-                reactor = prepareReactor( suite );
+                reactor = stageReactor( suite );
                 manager.beforeSuite( reactor );
             }
             catch ( Exception exc )
@@ -104,10 +187,17 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         }
     }
 
+    /**
+     * Called by TestNG after the suite has finished. When running in the container, this is a no
+     * op. Otherwise, we stop the reactor.
+     * 
+     * @param suite test suite
+     */
     public void onFinish( ISuite suite )
     {
         if( !isRunningInTestContainer( suite ) )
         {
+            // fire an afterClass event for the last test class
             if( currentTestClassInstance != null )
             {
                 manager.afterClass( reactor, currentTestClassInstance.getClass() );
@@ -116,22 +206,78 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         }
     }
 
-    private synchronized StagedExamReactor prepareReactor( ISuite suite )
-        throws Exception
+    /**
+     * Stages the reactor. This involves building the probe including all test methods of the suite
+     * and creating one or more test containers.
+     * <p>
+     * When using a probe invoker, we register the tests with the reactor.
+     * <p>
+     * Hack: As there is no way to intercept configuration methods, we disable them by reflection.
+     * 
+     * @param suite test suite
+     * @return staged reactor
+     */
+    private synchronized StagedExamReactor stageReactor( ISuite suite )
     {
-        List<ITestNGMethod> methods = suite.getAllMethods();
-        Class<?> testClass = methods.get( 0 ).getRealClass();
-        disableConfigurationMethods( methods.get(0).getTestClass() );
-        Object testClassInstance = testClass.newInstance();
-        ExamReactor examReactor = manager.prepareReactor( testClass, testClassInstance );
-        useProbeInvoker = !manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
-        if( useProbeInvoker )
+        try
         {
-            addTestsToReactor( examReactor, testClassInstance, methods );
+            List<ITestNGMethod> methods = suite.getAllMethods();
+            Class<?> testClass = methods.get( 0 ).getRealClass();
+            LOG.debug( "test class = {}", testClass );
+            disableConfigurationMethods( suite );
+            Object testClassInstance = testClass.newInstance();
+            ExamReactor examReactor = manager.prepareReactor( testClass, testClassInstance );
+            useProbeInvoker = !manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
+            if( useProbeInvoker )
+            {
+                addTestsToReactor( examReactor, testClassInstance, methods );
+            }
+            return manager.stageReactor();
         }
-        return manager.stageReactor();
+        catch ( Exception exc )
+        {
+            throw new TestContainerException( exc );
+        }
     }
 
+    /**
+     * Disables the {@code @BeforeMethod} and {@code @AfterMethod} configuration methods of all test
+     * classes, overriding the corresponding private fields of {@code TestClass}.
+     * <p>
+     * These methods shall run only once inside the test container, but not directly under the
+     * driver.
+     * <p>
+     * This is a rather ugly hack, but there does not seem to be any other way.
+     * 
+     * @param suite test suite
+     */
+    private void disableConfigurationMethods( ISuite suite )
+    {
+        Set<ITestClass> seen = new HashSet<ITestClass>();
+        for( ITestNGMethod method : suite.getAllMethods() )
+        {
+            ITestClass testClass = method.getTestClass();
+            if( !seen.contains( testClass ) )
+            {
+                disableConfigurationMethods( testClass );
+                seen.add( testClass );
+            }
+        }
+    }
+
+    /**
+     * Adds all tests of the suite to the reactor and creates a probe builder.
+     * <p>
+     * TODO This driver currently assumes that all test classes of the suite use the default probe
+     * builder. It builds one probe containing all tests of the suite. This is why the
+     * testClassInstance argument is just an arbitrary instance of one of the classes of the suite.
+     * 
+     * @param reactor unstaged reactor
+     * @param testClassInstance not used
+     * @param methods all methods of the suite.
+     * @throws IOException
+     * @throws ExamConfigurationException
+     */
     private void addTestsToReactor( ExamReactor reactor, Object testClassInstance,
             List<ITestNGMethod> methods )
         throws IOException, ExamConfigurationException
@@ -145,12 +291,15 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         reactor.addProbe( probe );
     }
 
+    /**
+     * Callback from TestNG which lets us intercept a test method invocation. The two cases of
+     * running in the container or under the driver are handled in separate methods.
+     */
     public void run( IHookCallBack callBack, ITestResult testResult )
     {
         if( isRunningInTestContainer( testResult.getMethod() ) )
         {
             runInTestContainer( callBack, testResult );
-            return;
         }
         else
         {
@@ -158,6 +307,15 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         }
     }
 
+    /**
+     * Runs a test method in the container. Before invoking the method, we inject its dependencies.
+     * <p>
+     * TODO Unlike JUnit, TestNG instantiates each test class only once, so maybe we should also
+     * inject the dependencies just once.
+     * 
+     * @param callBack TestNG callback for test method
+     * @param testResult test result container
+     */
     private void runInTestContainer( IHookCallBack callBack, ITestResult testResult )
     {
         Object testClassInstance = testResult.getInstance();
@@ -166,6 +324,12 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         return;
     }
 
+    /**
+     * Performs field injection on the given object. The injection method is looked up via the Java
+     * SE service loader.
+     * 
+     * @param testClassInstance test class instance
+     */
     private void inject( Object testClassInstance )
     {
         InjectorFactory injectorFactory =
@@ -174,6 +338,21 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         injector.injectFields( null, testClassInstance );
     }
 
+    /**
+     * Runs a test method under the driver.
+     * <p>
+     * Fires beforeClass and afterClass events when the current class changes, as we do not get
+     * these events from TestNG. This requires the test methods to be sorted by class, see
+     * {@link #intercept(List, ITestContext)}.
+     * <p>
+     * When using a probe invoker, we delegate the test method invocation to the invoker so that
+     * the test will be executed in the container context.
+     * <p>
+     * Otherwise, we directly run the test method.
+     * 
+     * @param callBack TestNG callback for test method
+     * @param testResult test result container
+     */
     private void runByDriver( IHookCallBack callBack, ITestResult testResult )
     {
         LOG.info( "running {}", testResult.getName() );
@@ -213,6 +392,15 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         }
     }
 
+    /**
+     * Callback from TestNG which lets us manipulate the list of test methods in the suite.
+     * When running under the driver and using a probe invoker, we now construct the test
+     * addresses to be used be the probe invoker, and we sort the methods by class to make
+     * sure we can fire beforeClass and afterClass events later on.
+     * <p>
+     * For some reason, TestNG invokes this callback twice. The second time over, we return the
+     * unchanged method list.
+     */
     public List<IMethodInstance> intercept( List<IMethodInstance> methods, ITestContext context )
     {
         if( methodInterceptorCalled || !useProbeInvoker
@@ -243,21 +431,35 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
         return newInstances;
     }
 
-    private void disableConfigurationMethods( ITestClass klass )
+    /**
+     * Disables BeforeMethod and AfterMethod configuration methods in the given test class.
+     * @param testClass TestNG test class wrapper
+     */
+    private void disableConfigurationMethods( ITestClass testClass )
     {
-        NoOpTestClass testClass = (NoOpTestClass) klass;
+        NoOpTestClass instance = (NoOpTestClass) testClass;
         ITestNGMethod[] noMethods = new ITestNGMethod[0];
-        testClass.setBeforeTestMethods( noMethods );
-        try {
-            Field field = NoOpTestClass.class.getDeclaredField( "m_beforeTestMethods" );
-            field.setAccessible( true );
-            field.set( testClass, noMethods );
+        Class<?> javaClass = NoOpTestClass.class;
+        setPrivateField( javaClass, instance, "m_beforeTestMethods", noMethods );
+        setPrivateField( javaClass, instance, "m_afterTestMethods", noMethods );
+    }
 
-            field = NoOpTestClass.class.getDeclaredField( "m_afterTestMethods" );
+    /**
+     * Sets a private field by injection
+     * @param klass Java class where the field is declared
+     * @param instance instance of (a subclass of) klass
+     * @param fieldName name of field to be set
+     * @param value new value for field
+     */
+    private void setPrivateField( Class<?> klass, Object instance, String fieldName, Object value )
+    {
+        try
+        {
+            Field field = NoOpTestClass.class.getDeclaredField( fieldName );
             field.setAccessible( true );
-            field.set( testClass, noMethods );
+            field.set( instance, value );
         }
-        catch (Exception exc)
+        catch ( Exception exc )
         {
             throw new TestContainerException( exc );
         }
