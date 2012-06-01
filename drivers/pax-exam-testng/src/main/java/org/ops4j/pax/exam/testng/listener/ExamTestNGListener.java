@@ -28,6 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
+
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
@@ -41,6 +47,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
+import org.ops4j.pax.exam.util.Transactional;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,26 +69,30 @@ import org.testng.internal.NoOpTestClass;
  * test class with Pax Exam, add this class as a listener to your test class:
  * 
  * <pre>
- * &#64;Listeners(ExamTestNGListener.class) 
- * public class MyTest {
+ * &#064;Listeners( ExamTestNGListener.class )
+ * public class MyTest
+ * {
  * 
- *     &#64;BeforeMethod
- *     public void setUp() {
+ *     &#064;BeforeMethod
+ *     public void setUp()
+ *     {
  *     }
- *
- *     &#64;AfterMethod
- *     public void tearDown() {
+ * 
+ *     &#064;AfterMethod
+ *     public void tearDown()
+ *     {
  *     }
- *     
- *     &#64;Test
- *     public void test1() {
+ * 
+ *     &#064;Test
+ *     public void test1()
+ *     {
  *     }
  * }
  * </pre>
  * 
- * In OSGi and Java EE modes, Pax Exam processes each test class twice, once by test driver and
- * then again inside the test container. The driver delegates each test method invocation to a
- * probe invoker which excutes the test method inside the container via the probe.
+ * In OSGi and Java EE modes, Pax Exam processes each test class twice, once by test driver and then
+ * again inside the test container. The driver delegates each test method invocation to a probe
+ * invoker which excutes the test method inside the container via the probe.
  * <p>
  * It would be nice to separate these two aspects and handle them in two separate listeners, but
  * TestNG has no way to override or disable the listener annotated on the test class.
@@ -95,12 +106,12 @@ import org.testng.internal.NoOpTestClass;
  * 
  * @author Harald Wellmann
  * @since 2.3.0
- *
+ * 
  */
 public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, IHookable
 {
     private static Logger LOG = LoggerFactory.getLogger( ExamTestNGListener.class );
-    
+
     public static final String PAX_EXAM_SUITE_NAME = "PaxExamInternal";
 
     /**
@@ -320,8 +331,100 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     {
         Object testClassInstance = testResult.getInstance();
         inject( testClassInstance );
-        callBack.runTestMethod( testResult );
+        if( isTransactional( testResult ) )
+        {
+            runInTransaction( callBack, testResult );
+        }
+        else
+        {
+            callBack.runTestMethod( testResult );
+        }
         return;
+    }
+
+    /**
+     * Checks if the current test method is transactional.
+     * @param testResult TestNG method and result wrapper
+     * @return true if the method or the enclosing class is annotated with {@link Transactional}.
+     */
+    private boolean isTransactional( ITestResult testResult )
+    {
+        boolean transactional = false;
+        Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
+        if( method.getAnnotation( Transactional.class ) != null )
+        {
+            transactional = true;
+        }
+        else
+        {
+            if( method.getDeclaringClass().getAnnotation( Transactional.class ) != null )
+            {
+                transactional = true;
+            }
+        }
+        return transactional;
+    }
+
+    /**
+     * Runs a test method enclosed by a Java EE auto-rollback transaction obtained from the
+     * JNDI context.
+     * 
+     * @param callBack TestNG callback for test method
+     * @param testResult test result container
+     */
+    private void runInTransaction( IHookCallBack callBack, ITestResult testResult )
+    {
+        UserTransaction tx = null;
+        try
+        {
+            InitialContext ctx = new InitialContext();
+            tx = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
+            tx.begin();
+            callBack.runTestMethod( testResult );
+        }
+        catch ( NamingException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+        catch ( NotSupportedException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+        catch ( SystemException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+        finally
+        {
+            rollback(tx);
+        }
+    }
+
+    /**
+     * Rolls back the given transaction, if not null.
+     * @param tx transaction
+     */
+    private void rollback( UserTransaction tx )
+    {
+        if (tx != null)
+        {
+            try
+            {
+                tx.rollback();
+            }
+            catch ( IllegalStateException exc )
+            {
+                throw new TestContainerException( exc );
+            }
+            catch ( SecurityException exc )
+            {
+                throw new TestContainerException( exc );
+            }
+            catch ( SystemException exc )
+            {
+                throw new TestContainerException( exc );
+            }
+        }
     }
 
     /**
@@ -345,8 +448,8 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
      * these events from TestNG. This requires the test methods to be sorted by class, see
      * {@link #intercept(List, ITestContext)}.
      * <p>
-     * When using a probe invoker, we delegate the test method invocation to the invoker so that
-     * the test will be executed in the container context.
+     * When using a probe invoker, we delegate the test method invocation to the invoker so that the
+     * test will be executed in the container context.
      * <p>
      * Otherwise, we directly run the test method.
      * 
@@ -393,10 +496,10 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
     }
 
     /**
-     * Callback from TestNG which lets us manipulate the list of test methods in the suite.
-     * When running under the driver and using a probe invoker, we now construct the test
-     * addresses to be used be the probe invoker, and we sort the methods by class to make
-     * sure we can fire beforeClass and afterClass events later on.
+     * Callback from TestNG which lets us manipulate the list of test methods in the suite. When
+     * running under the driver and using a probe invoker, we now construct the test addresses to be
+     * used be the probe invoker, and we sort the methods by class to make sure we can fire
+     * beforeClass and afterClass events later on.
      * <p>
      * For some reason, TestNG invokes this callback twice. The second time over, we return the
      * unchanged method list.
@@ -433,6 +536,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
 
     /**
      * Disables BeforeMethod and AfterMethod configuration methods in the given test class.
+     * 
      * @param testClass TestNG test class wrapper
      */
     private void disableConfigurationMethods( ITestClass testClass )
@@ -446,6 +550,7 @@ public class ExamTestNGListener implements ISuiteListener, IMethodInterceptor, I
 
     /**
      * Sets a private field by injection
+     * 
      * @param klass Java class where the field is declared
      * @param instance instance of (a subclass of) klass
      * @param fieldName name of field to be set
