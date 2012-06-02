@@ -96,50 +96,143 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
+ * A {@link TestContainer} for the GlassFish 3.1 Java EE 6 application server.
+ * <p>
+ * This container support both OSGi and Java EE modes. You can provision OSGi bundles and deploy WAR
+ * configuration modules via Pax Exam options.
+ * <p>
+ * The test probe is an OSGi bundle in OSGi mode, built by TinyBundles from the root directory of
+ * the current test class. In Java EE mode, the probe is a WAR built on the fly from the classpath
+ * contents with some default exclusions.
+ * <p>
+ * GlassFish logging is redirected from java.util.logging to SLF4J. The necessary artifacts are
+ * provisioned by this container automatically.
+ * <p>
+ * The implementation is based on the Native Test Container. This container is launched in the
+ * following steps:
+ * <ul>
+ * <li>Download and install GlassFish, if not present in the directory indicated by
+ * pax.exam.glassfish.home.</li>
+ * <li>Launch OSGi framework.</li>
+ * <li>Install and start GlassFish bootstrap bundle.</li>
+ * <li>Install and start user bundles and deploy user modules.</li>
+ * </ul>
+ * <p>
+ * TODO Support Felix. At the moment, this container has only been tested on Equinox.
+ * 
  * @author Harald Wellmann
- * @since Jan 2012
+ * @since 3.0.0
  */
 public class GlassFishTestContainer implements TestContainer
 {
     // TODO make this configurable
-    // The only reason for not using full profile is reduced download time ;-)
-    public static final String GLASSFISH_WEB_DISTRIBUTION_URL =
-        "mvn:org.glassfish.main.distributions/web/3.1.2/zip";
+    public static final String GLASSFISH_DISTRIBUTION_URL =
+        "mvn:org.glassfish.main.distributions/glassfish/3.1.2/zip";
 
     private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
-    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
-    private static final String PROBE_APPLICATION_NAME = "Pax-Exam-Probe";
-    private static final String HTTP_PORT_XPATH = "/domain/configs/config/network-config/network-listeners/network-listener[@name='http-listener-1']/@port";
 
-    
+    /**
+     * Probe service property key. In OSGi mode, each test method is wrapped in a probe invoker
+     * service with a given signature property.
+     */
+    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
+
+    /**
+     * Name of the probe web application (in Java EE mode).
+     */
+    private static final String PROBE_APPLICATION_NAME = "Pax-Exam-Probe";
+
+    /**
+     * XPath to read the HTTP port from the domain.xml configuration file.
+     */
+    private static final String HTTP_PORT_XPATH =
+        "/domain/configs/config/network-config/network-listeners/network-listener[@name='http-listener-1']/@port";
+
+    /**
+     * Stack of installed bundles. On shutdown, the bundles are uninstalled in reverse order.
+     */
     private Stack<Long> installed = new Stack<Long>();
+
+    /**
+     * Stack of deployed modules. On shutdown, the modules are undeployed in reverse order.
+     */
     private Stack<String> deployed = new Stack<String>();
 
+    /**
+     * OSGi framework factory located via Java SE ServiceLoader.
+     */
     private FrameworkFactory frameworkFactory;
+
+    /**
+     * Pax Exam system with configuration options.
+     */
     private ExamSystem system;
 
+    /**
+     * OSGi framework.
+     */
     private Framework framework;
+
+    /**
+     * OSGi Start level service.
+     */
     private StartLevel sl;
+
+    /**
+     * GlassFish OSGi service.
+     */
     private GlassFish glassFish;
+
+    /**
+     * GlassFish installation directory.
+     */
     private String glassFishHome;
+
+    /**
+     * Bundle context of OSGi framework.
+     */
     private BundleContext bc;
 
+    /**
+     * Are we running in Java EE mode (set in Exam configuration).
+     */
     private boolean isJavaEE;
 
+    /**
+     * GlassFish runtime, obtained from GlassFish OSGi service.
+     */
     private GlassFishRuntime glassFishRuntime;
 
+    /**
+     * Test directory which tracks all tests in the current suite. We need to register the context
+     * URL of the probe web app as access point.
+     */
     private TestDirectory testDirectory;
 
+    /**
+     * Copy of domain.xml in the GlassFish installation area.
+     */
     private File configTarget;
 
+    /**
+     * Creates a GlassFish container, running on top of an OSGi framework.
+     * 
+     * @param system Pax Exam system configuration
+     * @param frameworkFactory OSGi framework factory.
+     */
     public GlassFishTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
         this.frameworkFactory = frameworkFactory;
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
-        
+
     }
 
+    /**
+     * Calls a test with the given address. In OSGi mode, this works just as in the Native
+     * Container. In Java EE mode, we lookup the test from the test directory and invoke it via
+     * probe invoker obtained from the Java SE service loader. (This invoker uses a servlet bridge,)
+     */
     public synchronized void call( TestAddress address )
     {
         if( isJavaEE )
@@ -161,31 +254,32 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Installs a probe in the test container. In OSGi mode, this is a bundle which we can directly
+     * install from the given stream.
+     * <p>
+     * In Java EE mode, the probe is a WAR, enriched by the Pax Exam servlet bridge which allows us
+     * to invoke tests running within the container via an HTTP client.
+     * 
+     * @param location bundle location, not used for WAR probes
+     * @param stream input stream containing probe
+     * @return bundle ID, or -1 for WAR
+     */
     public synchronized long install( String location, InputStream stream )
     {
-        if (isJavaEE)
+        if( isJavaEE )
         {
-            try
-            {
-                LOG.info( "installing probe from stream" );
-                Deployer deployer = glassFish.getDeployer();
-                File tempFile = File.createTempFile( "pax-exam", ".war" );
-                tempFile.deleteOnExit();
-                StreamUtils.copyStream( stream, new FileOutputStream( tempFile ), true );
-                deployer.deploy( tempFile, "--name", PROBE_APPLICATION_NAME, "--contextroot", PROBE_APPLICATION_NAME );
-//                deployer.deploy( stream, "--name", "Pax-Exam-Probe", "--contextroot", "Pax-Exam-Probe"  );
-                deployed.push( PROBE_APPLICATION_NAME );
-            }
-            catch ( GlassFishException exc )            
-            {
-                throw new TestContainerException( exc );
-            }
-            catch ( IOException exc )
-            {
-                throw new TestContainerException( exc );
-            }
+            deployWarProbe( stream );
             return -1;
         }
+        else
+        {
+            return installOsgiProbe( location, stream );
+        }
+    }
+
+    private long installOsgiProbe( String location, InputStream stream )
+    {
         try
         {
             Bundle b = framework.getBundleContext().installBundle( location, stream );
@@ -203,11 +297,49 @@ public class GlassFishTestContainer implements TestContainer
         return -1;
     }
 
+    private void deployWarProbe( InputStream stream )
+    {
+        try
+        {
+            LOG.info( "installing probe from stream" );
+            Deployer deployer = glassFish.getDeployer();
+
+            /*
+             * FIXME The following should work, but does not. For some reason, we cannot directly
+             * deploy from a stream. As a workaround, we copy the stream to a temp file and deploy
+             * the file.
+             * 
+             * deployer.deploy( stream, "--name", "Pax-Exam-Probe", "--contextroot",
+             * "Pax-Exam-Probe" );
+             */
+
+            File tempFile = File.createTempFile( "pax-exam", ".war" );
+            tempFile.deleteOnExit();
+            StreamUtils.copyStream( stream, new FileOutputStream( tempFile ), true );
+            deployer.deploy( tempFile, "--name", PROBE_APPLICATION_NAME, "--contextroot",
+                PROBE_APPLICATION_NAME );
+            deployed.push( PROBE_APPLICATION_NAME );
+        }
+        catch ( GlassFishException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+        catch ( IOException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+    }
+
     public synchronized long install( InputStream stream )
     {
         return install( "local", stream );
     }
 
+    /**
+     * Deploys all Java EE modules defined in Pax Exam options. For options without an explicit
+     * application name, names app1, app2 etc. are generated on the fly. The context root defaults
+     * to the application name if not set in the option.
+     */
     public void deployModules()
     {
         UrlDeploymentOption[] deploymentOptions = system.getOptions( UrlDeploymentOption.class );
@@ -215,13 +347,19 @@ public class GlassFishTestContainer implements TestContainer
         for( UrlDeploymentOption option : deploymentOptions )
         {
             numModules++;
-            if (option.getName() == null) {
+            if( option.getName() == null )
+            {
                 option.name( "app" + numModules );
-            }            
+            }
             deployModule( option );
         }
     }
 
+    /**
+     * Deploys the module specified by the given option.
+     * 
+     * @param option deployment option
+     */
     private void deployModule( UrlDeploymentOption option )
     {
         try
@@ -231,7 +369,8 @@ public class GlassFishTestContainer implements TestContainer
             URI uri = new URL( url ).toURI();
             String applicationName = option.getName();
             String contextRoot = option.getContextRoot();
-            if (contextRoot == null) {
+            if( contextRoot == null )
+            {
                 contextRoot = applicationName;
             }
             Deployer deployer = glassFish.getDeployer();
@@ -253,11 +392,15 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Undeploys all modules and shuts down the GlassFish runtime, then uninstalls all OSGi bundles.
+     */
     public synchronized void cleanup()
     {
         undeployModules();
-        try {
-            glassFish.stop();       
+        try
+        {
+            glassFish.stop();
             glassFishRuntime.shutdown();
         }
         catch ( GlassFishException exc )
@@ -281,12 +424,15 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Undeploys all deployed modules in reverse order.
+     */
     private void undeployModules()
     {
         try
         {
             Deployer deployer = glassFish.getDeployer();
-            while (! deployed.isEmpty())
+            while( !deployed.isEmpty() )
             {
                 String applicationName = deployed.pop();
                 deployer.undeploy( applicationName );
@@ -298,6 +444,13 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Sets the start level for the given bundle.
+     * 
+     * @param bundleId
+     * @param startLevel
+     * @throws TestContainerException
+     */
     public void setBundleStartLevel( long bundleId, int startLevel ) throws TestContainerException
     {
         BundleContext context = framework.getBundleContext();
@@ -305,11 +458,16 @@ public class GlassFishTestContainer implements TestContainer
         sl.setBundleStartLevel( context.getBundle( bundleId ), startLevel );
     }
 
+    /**
+     * Starts the GlassFish container, first downloading and installing GlassFish, if required.
+     */
     public TestContainer start() throws TestContainerException
     {
         try
         {
             installContainer();
+
+            // start OSGi framework
             system = system.fork( buildContainerOptions() );
             Map<String, Object> p = createFrameworkProperties();
             if( LOG.isDebugEnabled() )
@@ -322,6 +480,10 @@ public class GlassFishTestContainer implements TestContainer
             bc = framework.getBundleContext();
             sl = getService( bc, StartLevel.class );
 
+            /*
+             * Start early bundles, i.e. the ones required for bootstrapping GlassFish with SLF4J
+             * bridge and logback.
+             */
             Option[] earlyOptions = options(
                 url( "file:" + glassFishHome + "/glassfish/modules/glassfish.jar" ).startLevel( 1 )
                 );
@@ -342,12 +504,17 @@ public class GlassFishTestContainer implements TestContainer
                 bundle.start();
             }
 
+            // get GlassFish service and runtime
             glassFish = getService( bc, GlassFish.class );
             glassFishRuntime = glassFish.getService( GlassFishRuntime.class );
-            String portNumber = getPortNumber( configTarget );
-            testDirectory.setAccessPoint( new URI("http://localhost:" + portNumber + "/Pax-Exam-Probe/" ) );
-            installAndStartBundles( bc );
 
+            // set access point in test directory
+            String portNumber = getPortNumber( configTarget );
+            testDirectory.setAccessPoint( new URI( "http://localhost:" + portNumber
+                    + "/Pax-Exam-Probe/" ) );
+
+            // install user bundles and modules
+            installAndStartBundles( bc );
             deployModules();
         }
         catch ( Exception e )
@@ -357,6 +524,13 @@ public class GlassFishTestContainer implements TestContainer
         return this;
     }
 
+    /**
+     * Checks if the given installation directory looks like a GlassFish installation. If the
+     * directory is empty, GlassFish is downloaded and installed, and then the domain.xml config
+     * file from src/test/resources is copied to {@code glassfish/domains/domain1/config/domain.xml}
+     * 
+     * @throws IOException
+     */
     public void installContainer() throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
@@ -391,7 +565,7 @@ public class GlassFishTestContainer implements TestContainer
         else
         {
             LOG.info( "installing GlassFish in {}", glassFishHome );
-            URL url = new URL( GLASSFISH_WEB_DISTRIBUTION_URL );
+            URL url = new URL( GLASSFISH_DISTRIBUTION_URL );
             File gfParent = gfHome.getParentFile();
             File tempInstall = new File( gfParent, UUID.randomUUID().toString() );
             ZipInstaller installer = new ZipInstaller( url, tempInstall.getAbsolutePath() );
@@ -402,6 +576,9 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Copies the user domain.xml to the GlassFish domain area.
+     */
     private void installConfiguration()
     {
         File configSource = new File( PathUtils.getBaseDir(), "src/test/resources/domain.xml" );
@@ -420,57 +597,87 @@ public class GlassFishTestContainer implements TestContainer
 
     /**
      * Reads the first port number from the domain.xml configuration.
+     * 
      * @param domainConfig
      * @return
      */
-    private String getPortNumber(File domainConfig) {
-        try {
+    private String getPortNumber( File domainConfig )
+    {
+        try
+        {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder;
             builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(domainConfig);
+            Document doc = builder.parse( domainConfig );
             XPathFactory xpf = XPathFactory.newInstance();
             XPath xPath = xpf.newXPath();
-            String port = xPath.evaluate(HTTP_PORT_XPATH, doc);
+            String port = xPath.evaluate( HTTP_PORT_XPATH, doc );
             return port;
         }
-        catch (ParserConfigurationException exc) {
-            throw new IllegalArgumentException(exc);
+        catch ( ParserConfigurationException exc )
+        {
+            throw new IllegalArgumentException( exc );
         }
-        catch (SAXException exc) {
-            throw new IllegalArgumentException(exc);
+        catch ( SAXException exc )
+        {
+            throw new IllegalArgumentException( exc );
         }
-        catch (IOException exc) {
-            throw new IllegalArgumentException(exc);
+        catch ( IOException exc )
+        {
+            throw new IllegalArgumentException( exc );
         }
-        catch (XPathExpressionException exc) {
-            throw new IllegalArgumentException(exc);
+        catch ( XPathExpressionException exc )
+        {
+            throw new IllegalArgumentException( exc );
         }
     }
-  
-    
+
+    /**
+     * Builds options for provisioning the GlassFish bootstrap bundle, Pax Exam bundles
+     * and logging support.
+     * 
+     * @return option array
+     */
     private Option[] buildContainerOptions()
     {
         return new Option[]{
+            // Container dependencies need to be delegated to the system class loader,
+            // or else we will run into class loader conflicts.
             systemPackages(
                 "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
                 "org.ops4j.pax.exam.options;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
                 "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
                 "org.glassfish.embeddable;version=3.1",
                 "org.glassfish.embeddable.spi;version=3.1" ),
+            
+            // enable Pax URL protocol handlers    
             systemProperty( "java.protocol.handler.pkgs" ).value( "org.ops4j.pax.url" ),
+            
+            // define installation area
             systemProperty( "com.sun.aas.installRoot" ).value( glassFishHome + "/glassfish" ),
             systemProperty( "com.sun.aas.instanceRoot" ).value(
                 glassFishHome + "/glassfish/domains/domain1" ),
+            
+            // override logging configuration    
             systemProperty( "java.util.logging.config.file" ).value(
                 PathUtils.getBaseDir() + "/src/test/resources/logging.properties" ),
+            
+            // set logback configuration    
             systemProperty( "logback.configurationFile" ).value(
                 "file:" + PathUtils.getBaseDir() + "/src/test/resources/logback.xml" ),
+            
+            // set property for OSGi framework - is this still needed?    
             systemProperty( "GlassFish_Platform" ).value( "Equinox" ),
+            
+            // for well-behaved class loading
             frameworkProperty( "org.osgi.framework.bundle.parent" ).value( "framework" ),
             frameworkProperty( "osgi.resolver.preferSystemPackages" ).value( "false" ),
             frameworkProperty( "osgi.compatibility.bootdelegation" ).value( "false" ),
+            
+            // set framework start leve
             frameworkStartLevel( START_LEVEL_TEST_BUNDLE ),
+            
+            // Pax Exam bundles and dependencies, including SLF4J + Logback instead of Pax Logging.
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" )
                 .startLevel( START_LEVEL_TEST_BUNDLE ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" )
@@ -484,11 +691,11 @@ public class GlassFishTestContainer implements TestContainer
             url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.framework.link" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.lifecycle.link" )
-               .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             url( "link:classpath:META-INF/links/ch.qos.logback.classic.link" )
-               .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             url( "link:classpath:META-INF/links/ch.qos.logback.core.link" )
-               .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
             url( "link:classpath:META-INF/links/org.slf4j.api.link" )
                 .startLevel( START_LEVEL_SYSTEM_BUNDLES ),
         };
@@ -513,6 +720,9 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Stops the test container gracefully, undeploying all modules and uninstalling all bundles.
+     */
     public TestContainer stop()
     {
         if( framework != null )
@@ -540,6 +750,13 @@ public class GlassFishTestContainer implements TestContainer
         return this;
     }
 
+    /**
+     * Stops the framework, throwing an exception if no stop event was received after the
+     * configured timeout period.
+     * 
+     * @throws BundleException
+     * @throws InterruptedException
+     */
     private void stopOrAbort() throws BundleException, InterruptedException
     {
         framework.stop();
@@ -584,18 +801,6 @@ public class GlassFishTestContainer implements TestContainer
     private String buildString( ValueOption<?>[] options )
     {
         return buildString( new String[0], options, new String[0] );
-    }
-
-    @SuppressWarnings( "unused" )
-    private String buildString( String[] prepend, ValueOption<?>[] options )
-    {
-        return buildString( prepend, options, new String[0] );
-    }
-
-    @SuppressWarnings( "unused" )
-    private String buildString( ValueOption<?>[] options, String[] append )
-    {
-        return buildString( new String[0], options, append );
     }
 
     private String buildString( String[] prepend, ValueOption<?>[] options, String[] append )
@@ -669,6 +874,13 @@ public class GlassFishTestContainer implements TestContainer
         }
     }
 
+    /**
+     * Installs and starts bundles defined in Pax Exam provisioning options. This does <em>not</em>
+     * include "early" bundles required for GlassFish and the Pax Exam itself.
+     * @param context
+     * @param bundle
+     * @throws BundleException
+     */
     private void installAndStartBundle( BundleContext context, ProvisionOption<?> bundle )
         throws BundleException
     {

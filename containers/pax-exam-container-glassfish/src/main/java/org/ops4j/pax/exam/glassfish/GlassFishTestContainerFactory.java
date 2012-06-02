@@ -26,13 +26,19 @@ import org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder;
 import org.osgi.framework.launch.FrameworkFactory;
 
 /**
+ * A {@link TestContainerFactory} for GlassFish test containers. This factory is published 
+ * in META-INF/services.
+ * 
  * @author Harald Wellmann
- * @since Jan 2012
+ * @since 3.0.0
  */
 @MetaInfServices
 public class GlassFishTestContainerFactory implements TestContainerFactory
 {
-
+    /**
+     * Creates a GlassFish test container for the given exam system.
+     * @return array with one element 
+     */
     public TestContainer[] create( ExamSystem system ) throws TestContainerException
     {
         FrameworkFactory frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
