@@ -129,8 +129,15 @@ public class GlassFishTestContainer implements TestContainer
     public static final String GLASSFISH_DISTRIBUTION_URL =
         "mvn:org.glassfish.main.distributions/glassfish/3.1.2/zip";
 
+    /** Configuration property key for GlassFish installation directory. */
     public static final String GLASSFISH_HOME_KEY = "pax.exam.glassfish.home";
-    
+
+    /**
+     * Configuration property key for GlassFish installation configuration file directory. The files
+     * contained in this directory will be copied to the config directory of the GlassFish instance.
+     */
+    public static final String GLASSFISH_CONFIG_DIR_KEY = "pax.exam.glassfish.config.dir";
+
     private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
 
     /**
@@ -215,6 +222,10 @@ public class GlassFishTestContainer implements TestContainer
      * Copy of domain.xml in the GlassFish installation area.
      */
     private File configTarget;
+
+    private ConfigurationManager cm;
+
+    private String configDirName;
 
     /**
      * Creates a GlassFish container, running on top of an OSGi framework.
@@ -303,7 +314,7 @@ public class GlassFishTestContainer implements TestContainer
     {
         try
         {
-            LOG.info( "installing probe from stream" );
+            LOG.info( "deploying probe" );
             Deployer deployer = glassFish.getDeployer();
 
             /*
@@ -528,31 +539,55 @@ public class GlassFishTestContainer implements TestContainer
 
     /**
      * Checks if the given installation directory looks like a GlassFish installation. If the
-     * directory is empty, GlassFish is downloaded and installed, and then the domain.xml config
-     * file from src/test/resources is copied to {@code glassfish/domains/domain1/config/domain.xml}
+     * directory is empty, GlassFish is downloaded and installed.
+     * <p>
+     * The GlassFish distribution archive has the following structure (excerpt only):
+     * 
+     * <pre>
+     * glassfish3
+     *     bin
+     *     glassfish
+     *         domains
+     *             domain1
+     *                 config
+     *         modules        
+     *     javadb
+     *     mq
+     *     pkg
+     * </pre>
+     * 
+     * The top-level directory is always called glassfish3 and does not reflect the actual version.
+     * We get rid of this directory by unpacking the archive to the <em>parent</em> directory of
+     * {@code pax.exam.glassfish.home} and then renaming {@code glassfish3} to the value of
+     * {@code pax.exam.glassfish.home}.
+     * <p>
+     * Finally, we copy all files contained in {@code pax.exam.glassfish.config.dir} (defaulting
+     * to {@code src/test/resources/glassfish-config}) to
+     * {@code pax.exam.glassfish.home/glassfish/domains/domain1/config/}.
      * 
      * @throws IOException
      */
     public void installContainer() throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        ConfigurationManager cm = new ConfigurationManager();
+        cm = new ConfigurationManager();
         String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
         isJavaEE = Constants.EXAM_SYSTEM_JAVAEE.equals( systemType );
         glassFishHome = cm.getProperty( GLASSFISH_HOME_KEY );
-        
+
         // try the property we had in 3.0.0.M1
-        if ( glassFishHome == null )
+        if( glassFishHome == null )
         {
             glassFishHome = cm.getProperty( "pax.exam.server.home" );
         }
-        
+
         if( glassFishHome == null )
         {
             throw new TestContainerException(
                 "System property " + GLASSFISH_HOME_KEY + " must be set to GlassFish install root" );
         }
         File gfHome = new File( glassFishHome );
+        configDirName = cm.getProperty( GLASSFISH_CONFIG_DIR_KEY, "src/test/resources/glassfish-config" );
         configTarget = new File( glassFishHome, "glassfish/domains/domain1/config/domain.xml" );
         File installDir = gfHome;
         if( installDir.exists() )
@@ -586,20 +621,28 @@ public class GlassFishTestContainer implements TestContainer
     }
 
     /**
-     * Copies the user domain.xml to the GlassFish domain area.
+     * Copies all files in a user-defined configuration directory to the GlassFish instance
+     * configuration directory.
      */
     private void installConfiguration()
     {
-        File configSource = new File( PathUtils.getBaseDir(), "src/test/resources/domain.xml" );
-        if( configSource.exists() )
+        File configSource = new File( configDirName );
+
+        File configTargetDir = new File( glassFishHome, "glassfish/domains/domain1/config" );
+        for( File configFile : configSource.listFiles() )
         {
-            try
+            if( !configFile.isDirectory() )
             {
-                FileUtils.copyFile( configSource, configTarget, null );
-            }
-            catch ( IOException exc )
-            {
-                throw new TestContainerException( "error copying GlassFish domain.xml", exc );
+                File targetFile = new File( configTargetDir, configFile.getName() );
+                try
+                {
+                    FileUtils.copyFile( configFile, targetFile, null );
+                }
+                catch ( IOException exc )
+                {
+                    throw new TestContainerException( "error copying config file " + configFile,
+                        exc );
+                }
             }
         }
     }
@@ -642,8 +685,8 @@ public class GlassFishTestContainer implements TestContainer
     }
 
     /**
-     * Builds options for provisioning the GlassFish bootstrap bundle, Pax Exam bundles
-     * and logging support.
+     * Builds options for provisioning the GlassFish bootstrap bundle, Pax Exam bundles and logging
+     * support.
      * 
      * @return option array
      */
@@ -658,34 +701,34 @@ public class GlassFishTestContainer implements TestContainer
                 "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ),
                 "org.glassfish.embeddable;version=3.1",
                 "org.glassfish.embeddable.spi;version=3.1" ),
-            
-            // enable Pax URL protocol handlers    
+
+            // enable Pax URL protocol handlers
             systemProperty( "java.protocol.handler.pkgs" ).value( "org.ops4j.pax.url" ),
-            
+
             // define installation area
             systemProperty( "com.sun.aas.installRoot" ).value( glassFishHome + "/glassfish" ),
             systemProperty( "com.sun.aas.instanceRoot" ).value(
                 glassFishHome + "/glassfish/domains/domain1" ),
-            
-            // override logging configuration    
+
+            // override logging configuration
             systemProperty( "java.util.logging.config.file" ).value(
-                PathUtils.getBaseDir() + "/src/test/resources/logging.properties" ),
-            
-            // set logback configuration    
+                configDirName + "/logging.properties" ),
+
+            // set logback configuration
             systemProperty( "logback.configurationFile" ).value(
                 "file:" + PathUtils.getBaseDir() + "/src/test/resources/logback.xml" ),
-            
-            // set property for OSGi framework - is this still needed?    
+
+            // set property for OSGi framework - is this still needed?
             systemProperty( "GlassFish_Platform" ).value( "Equinox" ),
-            
+
             // for well-behaved class loading
             frameworkProperty( "org.osgi.framework.bundle.parent" ).value( "framework" ),
             frameworkProperty( "osgi.resolver.preferSystemPackages" ).value( "false" ),
             frameworkProperty( "osgi.compatibility.bootdelegation" ).value( "false" ),
-            
+
             // set framework start leve
             frameworkStartLevel( START_LEVEL_TEST_BUNDLE ),
-            
+
             // Pax Exam bundles and dependencies, including SLF4J + Logback instead of Pax Logging.
             url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" )
                 .startLevel( START_LEVEL_TEST_BUNDLE ),
@@ -760,8 +803,8 @@ public class GlassFishTestContainer implements TestContainer
     }
 
     /**
-     * Stops the framework, throwing an exception if no stop event was received after the
-     * configured timeout period.
+     * Stops the framework, throwing an exception if no stop event was received after the configured
+     * timeout period.
      * 
      * @throws BundleException
      * @throws InterruptedException
@@ -886,6 +929,7 @@ public class GlassFishTestContainer implements TestContainer
     /**
      * Installs and starts bundles defined in Pax Exam provisioning options. This does <em>not</em>
      * include "early" bundles required for GlassFish and the Pax Exam itself.
+     * 
      * @param context
      * @param bundle
      * @throws BundleException

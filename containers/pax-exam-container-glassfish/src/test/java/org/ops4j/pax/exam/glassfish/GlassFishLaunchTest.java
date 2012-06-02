@@ -64,7 +64,7 @@ public class GlassFishLaunchTest
         setSystemProperties();
         Map<String, String> frameworkProps = createFrameworkProperties();
         
-        FileUtils.copyFile( new File("src/test/resources/domain.xml"), 
+        FileUtils.copyFile( new File("src/test/resources/glassfish-config/domain.xml"), 
             new File(instanceRoot, "config/domain.xml"), null );       
 
         frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
