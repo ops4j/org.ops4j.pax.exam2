@@ -31,85 +31,92 @@
                     <execution>
                         <id>equinox-native</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>equinox</profile>
                                 <profile>native</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/equinox-native</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>felix-native</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>felix</profile>
                                 <profile>native</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/felix-native</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>knopflerfish-native</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>knopflerfish</profile>
                                 <profile>native</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/knopflerfish-native</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>equinox-forked</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>equinox</profile>
                                 <profile>forked</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/equinox-forked</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>felix-forked</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>felix</profile>
                                 <profile>forked</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/felix-forked</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>knopflerfish-forked</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
-                                <profile>felix</profile>
+                                <profile>knopflerfish</profile>
                                 <profile>forked</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/knopferfish-forked</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>paxrunner</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>equinox</profile>
                                 <profile>paxrunner</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/paxrunner</cloneProjectsTo>
                         </configuration>
                     </execution>
                 </executions>

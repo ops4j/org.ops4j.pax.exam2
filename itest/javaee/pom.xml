@@ -31,35 +31,38 @@
                     <execution>
                         <id>glassfish</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>glassfish</profile>
                                 <profile>equinox</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/glassfish</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>jboss</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>jboss</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/jboss</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>resin</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>resin</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/resin</cloneProjectsTo>
                         </configuration>
                     </execution>
                 </executions>
