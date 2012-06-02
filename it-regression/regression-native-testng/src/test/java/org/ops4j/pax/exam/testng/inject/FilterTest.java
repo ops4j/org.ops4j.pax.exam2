@@ -21,14 +21,14 @@ import static org.testng.Assert.assertNotNull;
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.testng.listener.ExamTestNGListener;
+import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners(ExamTestNGListener.class)
+@Listeners(PaxExam.class)
 public class FilterTest
 {
 

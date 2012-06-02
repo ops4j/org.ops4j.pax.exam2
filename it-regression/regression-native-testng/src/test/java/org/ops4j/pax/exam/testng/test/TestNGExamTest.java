@@ -26,12 +26,12 @@ import javax.inject.Inject;
 
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.testng.listener.ExamTestNGListener;
+import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners({ExamTestNGListener.class})
+@Listeners({PaxExam.class})
 public class TestNGExamTest
 {
     @Inject

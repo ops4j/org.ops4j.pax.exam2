@@ -29,11 +29,11 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.ops4j.pax.exam.testng.listener.ExamTestNGListener;
+import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners( ExamTestNGListener.class )
+@Listeners( PaxExam.class )
 public class VanillaTest
 {
     @Inject

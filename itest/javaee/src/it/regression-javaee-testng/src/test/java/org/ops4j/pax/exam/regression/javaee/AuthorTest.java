@@ -25,12 +25,12 @@ import javax.inject.Inject;
 
 import org.ops4j.pax.exam.sample1.model.Book;
 import org.ops4j.pax.exam.sample1.service.LibraryService;
-import org.ops4j.pax.exam.testng.listener.ExamTestNGListener;
+import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.ops4j.pax.exam.util.Transactional;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners( ExamTestNGListener.class )
+@Listeners( PaxExam.class )
 public class AuthorTest
 {
 
