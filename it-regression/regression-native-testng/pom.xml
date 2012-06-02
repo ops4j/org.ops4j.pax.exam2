@@ -71,12 +71,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-testforge</artifactId>
             <version>${project.version}</version>
@@ -106,6 +100,13 @@
             <artifactId>org.eclipse.osgi</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
     
     <build>
