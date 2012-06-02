@@ -68,7 +68,6 @@ public class GlassFishLaunchTest
             new File(instanceRoot, "config/domain.xml"), null );       
 
         frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
-        System.out.println( frameworkFactory.getClass().getName() );
         Framework framework = frameworkFactory.newFramework( frameworkProps );
         framework.init();
 
