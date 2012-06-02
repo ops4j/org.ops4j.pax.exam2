@@ -28,39 +28,42 @@
                     <streamLogs>true</streamLogs>
                 </configuration>
                 <executions>
-                <!--  Resin does not fire a BeforeBeanDiscoveryEvent, which crashes DeltaSpike
                     <execution>
                         <id>candi</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>candi</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/candi</cloneProjectsTo>
+                            <!--  Resin does not fire a BeforeBeanDiscoveryEvent, which crashes DeltaSpike -->
+                            <invokerTest>regression-sample3-testng</invokerTest>
                         </configuration>
                     </execution>
-                -->    
                     <execution>
                         <id>openwebbeans</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
-                                <profile>openwebbeans</profile>
+                                <profile>openwebbeans</profile>                                
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/openwebbeans</cloneProjectsTo>
                         </configuration>
                     </execution>
                     <execution>
                         <id>weld</id>
                         <goals>
-                            <goal>integration-test</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>weld</profile>
                             </profiles>
+                            <cloneProjectsTo>${project.build.directory}/weld</cloneProjectsTo>
                         </configuration>
                     </execution>
                 </executions>
