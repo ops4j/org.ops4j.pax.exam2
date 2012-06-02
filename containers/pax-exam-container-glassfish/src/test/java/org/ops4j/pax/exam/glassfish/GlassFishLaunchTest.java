@@ -59,7 +59,7 @@ public class GlassFishLaunchTest
     {
 
         ConfigurationManager cm = new ConfigurationManager();
-        glassFishHome = cm.getProperty( "pax.exam.server.home" );
+        glassFishHome = cm.getProperty( GlassFishTestContainer.GLASSFISH_HOME_KEY );
 
         setSystemProperties();
         Map<String, String> frameworkProps = createFrameworkProperties();

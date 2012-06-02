@@ -129,6 +129,8 @@ public class GlassFishTestContainer implements TestContainer
     public static final String GLASSFISH_DISTRIBUTION_URL =
         "mvn:org.glassfish.main.distributions/glassfish/3.1.2/zip";
 
+    public static final String GLASSFISH_HOME_KEY = "pax.exam.glassfish.home";
+    
     private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
 
     /**
@@ -537,11 +539,18 @@ public class GlassFishTestContainer implements TestContainer
         ConfigurationManager cm = new ConfigurationManager();
         String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
         isJavaEE = Constants.EXAM_SYSTEM_JAVAEE.equals( systemType );
-        glassFishHome = cm.getProperty( "pax.exam.server.home" );
+        glassFishHome = cm.getProperty( GLASSFISH_HOME_KEY );
+        
+        // try the property we had in 3.0.0.M1
+        if ( glassFishHome == null )
+        {
+            glassFishHome = cm.getProperty( "pax.exam.server.home" );
+        }
+        
         if( glassFishHome == null )
         {
             throw new TestContainerException(
-                "System property pax.exam.server.home must be set to GlassFish install root" );
+                "System property " + GLASSFISH_HOME_KEY + " must be set to GlassFish install root" );
         }
         File gfHome = new File( glassFishHome );
         configTarget = new File( glassFishHome, "glassfish/domains/domain1/config/domain.xml" );
