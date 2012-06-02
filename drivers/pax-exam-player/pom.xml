@@ -71,6 +71,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
+            <!--  4.0.2 does not work out of the box -->
             <version>3.2.0</version>
             <scope>test</scope>
         </dependency>

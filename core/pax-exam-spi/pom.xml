@@ -42,14 +42,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-         <!--  This should be replaced by Tinybundles -->
         <dependency>
             <groupId>org.ops4j.pax.tinybundles</groupId>
             <artifactId>tinybundles</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.common</groupId>
+            <groupId>org.glassfish.main.common</groupId>
             <artifactId>scattered-archive-api</artifactId>
         </dependency>
         <!--  Test Dependencies -->   

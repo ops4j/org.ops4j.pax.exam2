@@ -30,7 +30,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-ext</artifactId>
-            <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
 
@@ -67,13 +66,11 @@
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-embedded</artifactId>
-            <version>7.1.1.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
-            <version>3.1.0.GA</version>
             <scope>test</scope>
         </dependency>
 
@@ -82,7 +79,6 @@
 
             <groupId>org.jboss.logmanager</groupId>
             <artifactId>jboss-logmanager</artifactId>
-            <version>1.2.2.GA</version>
             <scope>test</scope>
         </dependency>
 
@@ -90,7 +86,6 @@
         <dependency>
             <groupId>org.glassfish.main.common</groupId>
             <artifactId>scattered-archive-api</artifactId>
-            <version>3.1.2</version>
         </dependency>
 
         <!-- Required when using mvn provisioning options -->
