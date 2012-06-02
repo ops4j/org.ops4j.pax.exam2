@@ -454,6 +454,10 @@
             <id>felix</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>pax.exam.framework</name>                    
+                    <value>felix</value>
+                </property>
             </activation>
             <properties>
                 <pax.exam.framework>felix</pax.exam.framework>
@@ -469,7 +473,11 @@
         <profile>
             <id>equinox</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>pax.exam.framework</name>                    
+                    <value>equinox</value>
+                </property>
             </activation>
             <properties>
                 <pax.exam.framework>equinox</pax.exam.framework>
@@ -486,6 +494,10 @@
             <id>knopflerfish</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>pax.exam.framework</name>                    
+                    <value>knopflerfish</value>
+                </property>
             </activation>
             <properties>
                 <pax.exam.framework>knopflerfish</pax.exam.framework>
