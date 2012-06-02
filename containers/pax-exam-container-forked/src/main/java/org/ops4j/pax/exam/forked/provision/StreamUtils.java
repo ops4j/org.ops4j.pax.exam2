@@ -202,7 +202,7 @@ public class StreamUtils
         public CoarseGrainedProgressBar( final String downloadTargetName )
         {
             m_downloadTargetName = downloadTargetName;
-            LOGGER.info( downloadTargetName + " : downloading..." );
+            LOGGER.debug( downloadTargetName + " : downloading..." );
         }
 
         public void increment( final long bytes, final long kbps )
@@ -213,7 +213,7 @@ public class StreamUtils
 
         public void stop()
         {
-            LOGGER.info( m_downloadTargetName + " : " + m_bytes + " bytes @ [ " + m_kbps + "kBps ]" );
+            LOGGER.debug( m_downloadTargetName + " : " + m_bytes + " bytes @ [ " + m_kbps + "kBps ]" );
         }
 
     }

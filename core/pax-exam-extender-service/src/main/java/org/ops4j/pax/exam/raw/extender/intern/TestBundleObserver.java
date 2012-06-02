@@ -98,7 +98,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
             // Do not unregister as bellow, because the services are automatically unregistered as soon as the bundle
             // for which the services are reigistred gets stopped
             // registration.serviceRegistration.unregister();
-            LOG.info( "Unregistered testcase [" + registration.probe + "." + "]" );
+            LOG.debug( "Unregistered testcase [" + registration.probe + "." + "]" );
         }
     }
 
