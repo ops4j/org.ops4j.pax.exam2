@@ -21,6 +21,7 @@ import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.when;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import org.ops4j.pax.exam.ConfigurationFactory;
@@ -33,12 +34,15 @@ public class InjectConfigurationFactory implements ConfigurationFactory
     @Override
     public Option[] createConfiguration()
     {
+        String rmiPort = System.getProperty( "pax.exam.regression.rmi", "" );
+
         return options(
             regressionDefaults(),
             url( "reference:file:" + PathUtils.getBaseDir() +
                     "/target/regression-pde-bundle.jar" ),
-            systemProperty("osgi.console").value("6666"),
+            systemProperty( "osgi.console" ).value( "6666" ),
+            when( !rmiPort.isEmpty() ).useOptions(
+                systemProperty( "pax.exam.regression.rmi" ).value( rmiPort ) ),
             junitBundles() );
     }
-
 }
