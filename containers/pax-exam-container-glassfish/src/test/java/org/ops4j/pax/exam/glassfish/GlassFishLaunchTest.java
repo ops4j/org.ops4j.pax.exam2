@@ -57,7 +57,7 @@ public class GlassFishLaunchTest
     @Test
     public void launchGlassFish() throws Exception
     {
-
+        System.setProperty( "java.util.logging.config.file", "src/test/resources/glassfish-config/logging.properties" );
         ConfigurationManager cm = new ConfigurationManager();
         glassFishHome = cm.getProperty( GlassFishTestContainer.GLASSFISH_HOME_KEY );
 
