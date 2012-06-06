@@ -53,6 +53,7 @@
                 <module>containers/pax-exam-container-jboss</module>
                 <module>containers/pax-exam-container-resin</module>
                 <module>containers/pax-exam-container-candi</module>
+                <module>containers/pax-exam-container-tomcat</module>
 
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-pde-bundle</module>
