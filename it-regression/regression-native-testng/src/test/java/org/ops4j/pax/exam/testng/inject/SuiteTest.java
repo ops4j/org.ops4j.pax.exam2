@@ -84,6 +84,7 @@ public class SuiteTest implements Notifier, Remote
         registry.rebind( "PaxExamNotifier", remote );
 
         TestNG testNG = new TestNG();
+        testNG.setVerbose( 0 );
         testNG.setTestClasses( new Class[]{ FilterTest.class, InjectTest.class } );
         testNG.run();
 
