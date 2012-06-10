@@ -17,21 +17,64 @@
  */
 package org.ops4j.pax.exam.tomcat;
 
+import static org.ops4j.pax.exam.spi.container.ContainerConstants.BEAN_MANAGER_NAME;
+import static org.ops4j.pax.exam.spi.container.ContainerConstants.BEAN_MANAGER_TYPE;
+import static org.ops4j.pax.exam.spi.container.ContainerConstants.OWB_MANAGER_FACTORY;
+import static org.ops4j.pax.exam.spi.container.ContainerConstants.OWB_SERVLET_LISTENER;
+import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_MANAGER_FACTORY;
+import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_SERVLET_LISTENER;
+
+import org.apache.catalina.Context;
+import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
+import org.ops4j.pax.exam.ConfigurationManager;
 
 public class TomcatContextConfig extends ContextConfig
 {
+    private ConfigurationManager cm;
+
     public TomcatContextConfig()
     {
+        this.cm = new ConfigurationManager();
         setDefaultWebXml( Constants.NoDefaultWebXml );
     }
-    
+
     @Override
     protected synchronized void beforeStart()
     {
-       super.beforeStart();
-       Tomcat.initWebappDefaults(context);
+        super.beforeStart();
+        Tomcat.initWebappDefaults( context );
+        String listenerName = cm.getProperty( "pax.exam.tomcat.listener", "" );
+        if( listenerName.equals( "weld" ) )
+        {
+            registerBeanManager( context, WELD_MANAGER_FACTORY, WELD_SERVLET_LISTENER );
+        }
+        else if( listenerName.equals( "openwebbeans" ) )
+        {
+            registerBeanManager( context, OWB_MANAGER_FACTORY, OWB_SERVLET_LISTENER );
+        }
     };
+
+    private void registerBeanManager( Context appContext, String jndiObjectFactory, String servletListener )
+    {
+        ContextResource resource = new ContextResource();
+        resource.setAuth( "Container" );
+        resource.setName( BEAN_MANAGER_NAME );
+        resource.setType( BEAN_MANAGER_TYPE );
+        resource.setProperty( "factory", jndiObjectFactory );
+
+        appContext.getNamingResources().addResource( resource );
+
+        ContextResourceEnvRef resourceRef = new ContextResourceEnvRef();
+        resourceRef.setName( BEAN_MANAGER_NAME );
+        resourceRef.setType( BEAN_MANAGER_TYPE );
+
+        appContext.getNamingResources().addResourceEnvRef( resourceRef );
+
+        appContext.addApplicationListener( servletListener );
+    }
+    
 }

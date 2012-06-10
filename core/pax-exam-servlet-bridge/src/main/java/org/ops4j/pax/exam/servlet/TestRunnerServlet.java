@@ -22,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
@@ -37,6 +38,8 @@ import org.junit.runner.notification.Failure;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.spi.ServiceProviderFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for test runner servlets, providing the communication link
@@ -50,6 +53,15 @@ import org.ops4j.spi.ServiceProviderFinder;
 @WebServlet(urlPatterns = "/testrunner")
 public class TestRunnerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    
+    private static Logger log = LoggerFactory.getLogger(TestRunnerServlet.class);
+    
+    @Override
+    public void init( ServletConfig config ) throws ServletException
+    {
+        super.init( config );
+        log.info("TestRunnerServlet loaded");
+    }
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {

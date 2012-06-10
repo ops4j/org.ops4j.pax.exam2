@@ -1,1 +1,1 @@
-org.ops4j.pax.exam.resin.ResinTestContainerFactory
+org.ops4j.pax.exam.tomcat.TomcatTestContainerFactory

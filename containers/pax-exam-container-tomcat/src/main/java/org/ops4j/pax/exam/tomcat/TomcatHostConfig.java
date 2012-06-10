@@ -27,6 +27,7 @@ public class TomcatHostConfig extends HostConfig
     @Override
     public void deployWAR( ContextName cn, File war )
     {
+        setCopyXML( true );
         super.deployWAR( cn, war );
         addServiced( cn.getName() );
     }

@@ -34,7 +34,7 @@ public class TomcatTestContainerTest
     public void launchTomcat() throws IOException
     {
         ExamSystem system = PaxExamRuntime.createServerSystem( );
-        TomcatTestContainer container = new TomcatTestContainer( system, null );
+        TomcatTestContainer container = new TomcatTestContainer( system );
         container.start();
         container.stop();
     }
@@ -44,7 +44,7 @@ public class TomcatTestContainerTest
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         ExamSystem system = PaxExamRuntime.createServerSystem( war( "mvn:org.apache.wicket/wicket-examples/1.5.3/war" ).name( "wicket-examples" ) );
-        TomcatTestContainer container = new TomcatTestContainer( system, null );
+        TomcatTestContainer container = new TomcatTestContainer( system );
         container.start();
         container.deployModules();
         container.stop();
@@ -55,12 +55,11 @@ public class TomcatTestContainerTest
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         ExamSystem system = PaxExamRuntime.createServerSystem(  );
-        TomcatTestContainer container = new TomcatTestContainer( system, null );
+        TomcatTestContainer container = new TomcatTestContainer( system ) ;
         container.start();
         InputStream is = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war").openStream();
         container.install( is );
         is.close();
         container.stop();
     }
-    
 }

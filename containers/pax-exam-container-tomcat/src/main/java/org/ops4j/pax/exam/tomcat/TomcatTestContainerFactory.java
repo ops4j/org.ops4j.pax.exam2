@@ -33,8 +33,7 @@ public class TomcatTestContainerFactory implements TestContainerFactory
 
     public TestContainer[] create( ExamSystem system ) throws TestContainerException
     {
-        TomcatTestContainer container =
-                new TomcatTestContainer( system, null );
+        TomcatTestContainer container = new TomcatTestContainer( system );
         return new TestContainer[]{ container };
     }
 }

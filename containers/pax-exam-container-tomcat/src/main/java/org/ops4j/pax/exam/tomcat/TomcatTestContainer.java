@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.tomcat;
 
+import static org.ops4j.pax.exam.spi.container.ContainerConstants.EXAM_APPLICATION_NAME;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,9 +45,10 @@ import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.spi.ServiceProviderFinder;
-import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Files;
 
 /**
  * @author Harald Wellmann
@@ -54,6 +57,11 @@ import org.slf4j.LoggerFactory;
 public class TomcatTestContainer implements TestContainer
 {
     private static final Logger LOG = LoggerFactory.getLogger( TomcatTestContainer.class );
+
+    private static final String[] CONTEXT_XML = { 
+        "src/test/resources/META-INF/context.xml", 
+        "src/main/webapp/META-INF/context.xml", 
+    };
 
     private Stack<String> deployed = new Stack<String>();
 
@@ -67,7 +75,7 @@ public class TomcatTestContainer implements TestContainer
 
     private File webappDir;
 
-    public TomcatTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
+    public TomcatTestContainer( ExamSystem system )
     {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
@@ -85,7 +93,8 @@ public class TomcatTestContainer implements TestContainer
 
     public synchronized long install( String location, InputStream stream )
     {
-        deployModule( "Pax-Exam-Probe", stream);
+        copyContextXml( webappDir, EXAM_APPLICATION_NAME );
+        deployModule( EXAM_APPLICATION_NAME, stream );
         return -1;
     }
 
@@ -127,12 +136,11 @@ public class TomcatTestContainer implements TestContainer
     }
     
     private void deployModule( String applicationName, InputStream stream)
-    {
-        
+    {        
         try
         {
             File warFile = new File(webappDir, applicationName + ".war");
-            StreamUtils.copyStream( stream, new FileOutputStream(warFile), true );            
+            StreamUtils.copyStream( stream, new FileOutputStream(warFile), true );
             hostConfig.deployWAR( new ContextName( applicationName ), warFile);            
         }
         catch ( IOException exc )
@@ -140,6 +148,28 @@ public class TomcatTestContainer implements TestContainer
             throw new TestContainerException( "Problem deploying " + applicationName, exc );
         }
     }
+    
+    private void copyContextXml( File webappDir, String applicationName )
+    {
+        for( String fileName : CONTEXT_XML )
+        {
+            File contextXml = new File( fileName );
+            if( contextXml.exists() )
+            {
+                try
+                {
+                    File contextTarget = new File(hostConfig.getConfigBaseName(), applicationName + ".xml");
+                    Files.copy( contextXml, contextTarget );
+                    return;
+                }
+                catch ( IOException exc )
+                {
+                    throw new TestContainerException( exc );
+                }
+            }
+        }
+    }
+    
 
     public void cleanup()
     {
@@ -166,13 +196,7 @@ public class TomcatTestContainer implements TestContainer
 
     public TestContainer start() 
     {
-        LOG.info( "starting Tomcat");
-        
-        
-        if (tomcat != null) {
-            return this;
-        }
-
+        LOG.info( "starting Tomcat");        
         
         File tempDir = system.getTempFolder();
         webappDir = new File(tempDir, "webapps");
@@ -180,6 +204,7 @@ public class TomcatTestContainer implements TestContainer
         
         tomcat = new Tomcat();
         tomcat.setBaseDir(tempDir.getPath());
+        tomcat.enableNaming();
 
        
         Host host = tomcat.getHost();
@@ -187,6 +212,7 @@ public class TomcatTestContainer implements TestContainer
         host.setAutoDeploy( false );
         host.setConfigClass( TomcatContextConfig.class.getName() );
         hostConfig = new TomcatHostConfig();
+        hostConfig.setUnpackWARs( true );
         host.addLifecycleListener( hostConfig );
         
         try
@@ -221,5 +247,5 @@ public class TomcatTestContainer implements TestContainer
     public String toString()
     {
         return "TomcatContainer";
-    }
+    }    
 }

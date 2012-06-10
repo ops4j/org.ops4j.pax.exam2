@@ -56,6 +56,8 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
         "pax-exam-spi",
         "tinybundles",
         "geronimo-atinject",
+        "servlet-api",
+        "tomcat-",
         "jboss-log",
         "bndlib"
     };
