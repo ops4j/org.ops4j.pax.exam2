@@ -18,5 +18,8 @@
     <module>pax-exam-sample2-model</module>
     <module>pax-exam-sample2-service</module>
     <module>pax-exam-sample3-beans</module>
+    <module>pax-exam-sample4-model</module>
+    <module>pax-exam-sample4-service</module>
+    <module>pax-exam-sample4-web</module>
   </modules>
 </project>

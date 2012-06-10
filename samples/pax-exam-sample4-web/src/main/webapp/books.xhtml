@@ -1,0 +1,15 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <head>
+        <title>Books in the Library</title>
+    </head>
+    <body>
+      <h:dataTable value="#{library.books}" var="book">
+          <h:column>#{book.author.lastName}</h:column>
+          <h:column>#{book.author.firstName}</h:column>
+          <h:column>#{book.title}</h:column>
+      </h:dataTable>
+    </body>
+</html>
