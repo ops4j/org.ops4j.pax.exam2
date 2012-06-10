@@ -22,6 +22,7 @@
         <module>cdi</module>
         <module>javaee</module>
         <module>osgi</module>
+        <module>web</module>
     </modules>
 
 </project>
