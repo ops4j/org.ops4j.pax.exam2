@@ -8,6 +8,7 @@
         <relativePath>..</relativePath>
     </parent>
     <artifactId>pax-exam-sample4-service</artifactId>
+    <name>OPS4J Pax Exam Sample4 Service</name>
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
