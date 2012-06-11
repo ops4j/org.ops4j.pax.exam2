@@ -45,6 +45,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
+import org.ops4j.pax.exam.testng.TestNGLegacyAnnotationHandler;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.pax.exam.util.Transactional;
@@ -186,6 +187,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
         if( !isRunningInTestContainer( suite ) )
         {
             manager = ReactorManager.getInstance();
+            manager.setAnnotationHandler( new TestNGLegacyAnnotationHandler() );
             try
             {
                 reactor = stageReactor( suite );

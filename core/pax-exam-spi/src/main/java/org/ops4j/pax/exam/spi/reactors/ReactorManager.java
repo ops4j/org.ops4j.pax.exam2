@@ -131,8 +131,10 @@ public class ReactorManager
     private ConfigurationManager cm;
 
     private boolean waitForAfterSuiteEvent;
-    
-    private boolean injectDependencies;  
+
+    private boolean injectDependencies;
+
+    private AnnotationHandler annotationHandler;
 
     /**
      * Private constructor for singleton.
@@ -242,13 +244,18 @@ public class ReactorManager
         Method[] methods = testClass.getMethods();
         for( Method m : methods )
         {
-            Configuration conf = m.getAnnotation( Configuration.class );
-            if( conf != null )
+            if( isConfiguration( m ) )
             {
                 // consider as option, so prepare that one:
                 reactor.addConfiguration( ( (Option[]) m.invoke( testClassInstance ) ) );
             }
         }
+    }
+
+    private boolean isConfiguration( Method m )
+    {
+        Configuration conf = m.getAnnotation( Configuration.class );
+        return (conf != null) || annotationHandler.isConfiguration( m );
     }
 
     /**
@@ -271,7 +278,13 @@ public class ReactorManager
             fact = strategy.value()[0].newInstance();
             return fact;
         }
-        
+
+        fact = annotationHandler.createStagedReactorFactory( testClass );
+        if( fact != null )
+        {
+            return fact;
+        }
+
         if( strategyName == null )
         {
             if( systemType.equals( EXAM_SYSTEM_CDI ) || systemType.equals( EXAM_SYSTEM_JAVAEE ) )
@@ -284,8 +297,8 @@ public class ReactorManager
                 strategyName = EXAM_REACTOR_STRATEGY_PER_METHOD;
             }
         }
-        fact = reactorStrategies.get(strategyName);
-        if (fact == null)
+        fact = reactorStrategies.get( strategyName );
+        if( fact == null )
         {
             throw new IllegalArgumentException( "unknown reactor strategy " + strategyName );
         }
@@ -325,8 +338,12 @@ public class ReactorManager
         if( f != null )
         {
             fact = f.value().newInstance();
+            return fact;
         }
-        else
+
+        fact = annotationHandler.createTestContainerFactory( testClass );
+
+        if( fact == null )
         {
             // default:
             fact = PaxExamRuntime.getTestContainerFactory();
@@ -360,8 +377,7 @@ public class ReactorManager
         Method[] methods = testClass.getMethods();
         for( Method m : methods )
         {
-            ProbeBuilder conf = m.getAnnotation( ProbeBuilder.class );
-            if( conf != null )
+            if( isProbeBuilder( m ) )
             {
                 LOG.debug( "User defined probe hook found: " + m.getName() );
                 TestProbeBuilder probeBuilder;
@@ -387,6 +403,12 @@ public class ReactorManager
         }
         LOG.debug( "No User defined probe hook found" );
         return defaultProbeBuilder;
+    }
+
+    private boolean isProbeBuilder( Method m )
+    {
+        ProbeBuilder builder = m.getAnnotation( ProbeBuilder.class );
+        return (builder != null) || annotationHandler.isProbeBuilder( m );
     }
 
     /**
@@ -425,13 +447,13 @@ public class ReactorManager
         suiteStarted = true;
         waitForAfterSuiteEvent = true;
     }
-    
+
     public void afterSuite( StagedExamReactor stagedReactor )
     {
         waitForAfterSuiteEvent = false;
         stagedReactor.afterSuite();
     }
-    
+
     public void afterClass( StagedExamReactor stagedReactor, Class<?> klass )
     {
         stagedReactor.afterClass();
@@ -453,7 +475,7 @@ public class ReactorManager
             suiteStarted = true;
             stagedReactor.beforeSuite();
         }
-        if (injectDependencies)
+        if( injectDependencies )
         {
             inject( testClassInstance );
         }
@@ -462,6 +484,7 @@ public class ReactorManager
 
     /**
      * Performs field injection on the given test class instance.
+     * 
      * @param test test class instance
      */
     public void inject( Object test )
@@ -472,6 +495,7 @@ public class ReactorManager
 
     /**
      * Finds an injector factory and creates an injector.
+     * 
      * @return
      */
     private Injector findInjector()
@@ -480,4 +504,13 @@ public class ReactorManager
             ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
         return injectorFactory.createInjector();
     }
+
+    /**
+     * @param annotationHandler the annotationHandler to set
+     */
+    public void setAnnotationHandler( AnnotationHandler annotationHandler )
+    {
+        this.annotationHandler = annotationHandler;
+    }
+
 }

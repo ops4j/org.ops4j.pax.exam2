@@ -92,6 +92,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         Object testClassInstance = klass.newInstance();
 
         manager = ReactorManager.getInstance();
+        manager.setAnnotationHandler( new JUnitLegacyAnnotationHandler() );
         ExamReactor examReactor = manager.prepareReactor( klass, testClassInstance );
         useProbeInvoker = !manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
         if( useProbeInvoker )
