@@ -19,3 +19,5 @@ moviedb-json
 
 # ignore while experimental
 pax-exam-container-geronimo
+pax-exam-sample5-mdb
+regression-mdb
