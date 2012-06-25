@@ -131,7 +131,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
             );
 
         } catch( IOException e ) {
-            throw new RuntimeException( e );
+            throw new TestContainerException( e );
         }
     }
 
@@ -192,7 +192,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
                 return new File( parentDirPath );
             } catch ( URISyntaxException e ) {
                 // this should not happen as the uri was obtained from getResource
-                throw new RuntimeException( e );
+                throw new TestContainerException( e );
             }
         }
     }
