@@ -7,8 +7,12 @@ bin
 *.iml
 *.ipr
 *.iws
+*.log
 .classpath
 .project
 .settings
 test-output
 atlassian-ide-plugin.xml
+fwdir
+felix-cache
+
