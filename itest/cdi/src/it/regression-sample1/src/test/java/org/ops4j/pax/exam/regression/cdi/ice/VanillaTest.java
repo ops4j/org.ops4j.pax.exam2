@@ -26,14 +26,12 @@ import java.util.List;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.regression.cdi.ice.Chocolate;
-import org.ops4j.pax.exam.regression.cdi.ice.IceCreamService;
-import org.ops4j.pax.exam.regression.cdi.ice.Vanilla;
 
 @RunWith( PaxExam.class )
 public class VanillaTest
@@ -52,7 +50,10 @@ public class VanillaTest
     @Inject
     @Any
     private Instance<IceCreamService> allFlavours;
-
+    
+    @Inject @Any
+    private Instance<Object> instance;
+    
     @Test
     public void checkVanillaFlavour()
     {
@@ -88,5 +89,17 @@ public class VanillaTest
         }
         assertThat( numFlavours, is( 2 ) );
         assertThat( expectedFlavours.isEmpty(), is( true ) );
+    }
+    
+    @SuppressWarnings( "serial" )
+    @Test
+    public void checkInstance()
+    {
+        AnnotationLiteral<Chocolate> qualifier = new AnnotationLiteral<Chocolate>() {};
+        Instance<IceCreamService> chocolateInstance = allFlavours.select( qualifier );
+        IceCreamService iceCreamService = chocolateInstance.get();
+        assertThat(iceCreamService.getFlavour(), is("Chocolate"));
+        
+        instance.select( IceCreamService.class, qualifier ).get();
     }
 }

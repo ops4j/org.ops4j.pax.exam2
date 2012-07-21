@@ -38,7 +38,8 @@
                                 <profile>candi</profile>
                             </profiles>
                             <cloneProjectsTo>${project.build.directory}/candi</cloneProjectsTo>
-                            <!--  Resin does not fire a BeforeBeanDiscoveryEvent, which crashes DeltaSpike -->
+                            <!-- Resin does not fire a BeforeBeanDiscoveryEvent, 
+                                which crashes DeltaSpike -->
                             <invokerTest>regression-sample3-testng</invokerTest>
                         </configuration>
                     </execution>
@@ -49,7 +50,7 @@
                         </goals>
                         <configuration>
                             <profiles>
-                                <profile>openwebbeans</profile>                                
+                                <profile>openwebbeans</profile>
                             </profiles>
                             <cloneProjectsTo>${project.build.directory}/openwebbeans</cloneProjectsTo>
                         </configuration>
@@ -115,6 +116,11 @@
                     <groupId>org.ops4j.pax.exam</groupId>
                     <artifactId>pax-exam-container-openwebbeans</artifactId>
                     <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jul-to-slf4j</artifactId>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
