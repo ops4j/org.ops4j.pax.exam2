@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -130,7 +131,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
             );
 
         } catch( IOException e ) {
-            throw new RuntimeException( e );
+            throw new TestContainerException( e );
         }
     }
 
@@ -157,17 +158,49 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private Map<String, URL> collectResources()
         throws IOException
     {
-        ContentCollector collector = selectCollector( new File( "." ) );
+        ContentCollector collector = selectCollector();
         Map<String, URL> map = new HashMap<String, URL>();
         collector.collect( map );
         return map;
     }
 
-    private ContentCollector selectCollector( File dir )
+    static String convertClassToPath( Class c )
+    {
+        return c.getName().replace( ".", File.separator ) + ".class";
+    }
+
+    /**
+     * @param clazz to find the root classes folder for.
+     *
+     * @return A File instance being the exact folder on disk or null, if it hasn't been found.
+     *
+     * @throws java.io.IOException if a problem occurs (method crawls folders on disk..)
+     */
+    public static File findClassesFolder( Class clazz )
         throws IOException
     {
-        validateTopLevelDir( dir );
-        File root = new ClassSourceFolder( dir ).find( m_anchors.get( 0 ) );
+        ClassLoader classLoader = clazz.getClassLoader();
+        String clazzPath = convertClassToPath( clazz );
+        URL url = classLoader.getResource( clazzPath );
+        if( url == null || !"file".equals( url.getProtocol() ) ) {
+            return null;
+        } else {
+            try {
+                File file = new File( url.toURI() );
+                String fullPath = file.getCanonicalPath();
+                String parentDirPath = fullPath.substring( 0, fullPath.length() - clazzPath.length() );
+                return new File( parentDirPath );
+            } catch ( URISyntaxException e ) {
+                // this should not happen as the uri was obtained from getResource
+                throw new TestContainerException( e );
+            }
+        }
+    }
+
+    private ContentCollector selectCollector()
+        throws IOException
+    {
+        File root = findClassesFolder( m_anchors.get( 0 ) );
 
         if( root != null ) {
             return new CompositeCollector( new CollectFromBase( root ), new CollectFromItems( m_anchors ) );

@@ -57,6 +57,7 @@
 
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-pde-bundle</module>
+                <module>it-regression/regression-ds-bundle</module>
             </modules>
         </profile>
         <profile>
@@ -65,6 +66,7 @@
                 <module>pom</module>
                 <module>it-regression/regression-native-testng</module>
                 <module>it-regression/regression-pde-bundle</module>
+                <module>it-regression/regression-pde-ds</module>
             </modules>
         </profile>
         <profile>
