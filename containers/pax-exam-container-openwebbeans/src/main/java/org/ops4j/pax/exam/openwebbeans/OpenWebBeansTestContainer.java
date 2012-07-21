@@ -72,6 +72,7 @@ public class OpenWebBeansTestContainer implements TestContainer
         container = CdiTestContainerLoader.getCdiContainer();
         try {
             container.bootContainer();
+            container.startContexts();
         }
         catch (Exception exc) {
             throw new TestContainerException(exc);
@@ -86,6 +87,7 @@ public class OpenWebBeansTestContainer implements TestContainer
             LOG.debug("stopping OpenWebBeans container");
             try
             {
+                container.stopContexts();
                 container.shutdownContainer();
             }
             catch ( Exception exc )
