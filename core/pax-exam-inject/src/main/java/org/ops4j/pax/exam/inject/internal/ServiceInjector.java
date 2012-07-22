@@ -17,6 +17,9 @@
  */
 package org.ops4j.pax.exam.inject.internal;
 
+import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_DEFAULT;
+import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_KEY;
+
 import java.lang.reflect.Field;
 
 import javax.inject.Inject;
@@ -76,7 +79,8 @@ public class ServiceInjector implements Injector
     {
         Class<?> type = field.getType();
         String filterString = "";
-        long timeout = ServiceLookup.DEFAULT_TIMEOUT;
+        String timeoutProp = System.getProperty( EXAM_SERVICE_TIMEOUT_KEY, EXAM_SERVICE_TIMEOUT_DEFAULT );
+        long timeout = Integer.parseInt( timeoutProp );
         Filter filter = field.getAnnotation( Filter.class );
         if ( filter != null ) 
         {

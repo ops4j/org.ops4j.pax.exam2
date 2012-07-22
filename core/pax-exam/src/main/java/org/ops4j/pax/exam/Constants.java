@@ -91,4 +91,15 @@ public interface Constants
     static final String EXAM_REACTOR_STRATEGY_PER_SUITE = "PerSuite";
     static final String EXAM_REACTOR_STRATEGY_PER_CLASS = "PerClass";
     static final String EXAM_REACTOR_STRATEGY_PER_METHOD = "PerMethod";
+
+    /**
+     * Timeout for service lookup in milliseconds.
+     */
+    static final String EXAM_SERVICE_TIMEOUT_KEY = "pax.exam.service.timeout";
+    
+    /**
+     * Default value for service lookup timeout (10 seconds).
+     */
+    static final String EXAM_SERVICE_TIMEOUT_DEFAULT = "10000";
+    
 }
