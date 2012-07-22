@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,6 +34,7 @@
         <dependency.logback.version>1.0.3</dependency.logback.version>
         <dependency.openwebbeans.version>1.1.4</dependency.openwebbeans.version>
         <dependency.resin.version>4.0.23</dependency.resin.version>
+        <dependency.tomcat.version>7.0.27</dependency.tomcat.version>
         <dependency.weld.version>1.1.8.Final</dependency.weld.version>
     </properties>
 
@@ -468,6 +470,30 @@
                 <groupId>org.apache.openwebbeans</groupId>
                 <artifactId>openwebbeans-tomcat7</artifactId>
                 <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${dependency.tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-logging-juli</artifactId>
+                <version>${dependency.tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-jasper</artifactId>
+                <version>${dependency.tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-dbcp</artifactId>
+                <version>${dependency.tomcat.version}</version>
             </dependency>
 
             <dependency>
