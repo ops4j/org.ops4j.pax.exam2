@@ -35,11 +35,9 @@ public class ServiceTimeoutInvokerTest
 {
 
     /**
-     * The default service lookup timeout is 10 s, but we changed it to 5 s in exam.properties,
-     * so we expect the ServiceTimeout to fail after about 5 or 6 s. If this test does not
-     * complete within 8 s, then the timeout configuration property does not work.
+     * The default service lookup timeout is 10 s, but we changed it to 20 s in exam.properties,
      */
-    @Test( timeout = 8000 )
+    @Test( timeout = 30000 )
     public void checkServiceLookupTimeout()
     {
         JUnitCore junit = new JUnitCore();
