@@ -17,6 +17,8 @@ package org.ops4j.pax.exam.regression.multi.inject;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isPaxRunnerContainer;
 
 import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
@@ -35,11 +37,13 @@ public class ServiceTimeoutInvokerTest
 {
 
     /**
-     * The default service lookup timeout is 10 s, but we changed it to 20 s in exam.properties,
+     * The default service lookup timeout is 10 s, but we changed it to 5 s in exam.properties,
      */
-    @Test( timeout = 60000 )
+    @Test( timeout = 8000 )
     public void checkServiceLookupTimeout()
     {
+        assumeTrue( !isPaxRunnerContainer() );
+        
         JUnitCore junit = new JUnitCore();
         Result run = junit.run( ServiceTimeout.class );
         assertThat( run.getFailureCount(), is( 1 ) );
