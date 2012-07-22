@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,7 +32,9 @@
         <dependency.guava.version>12.0</dependency.guava.version>
         <dependency.glassfish.version>3.1.2</dependency.glassfish.version>
         <dependency.logback.version>1.0.3</dependency.logback.version>
+        <dependency.openwebbeans.version>1.1.4</dependency.openwebbeans.version>
         <dependency.resin.version>4.0.23</dependency.resin.version>
+        <dependency.weld.version>1.1.8.Final</dependency.weld.version>
     </properties>
 
     <build>
@@ -426,6 +429,62 @@
                 <version>1.11</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.jboss.weld.servlet</groupId>
+                <artifactId>weld-servlet-core</artifactId>
+                <version>${dependency.weld.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.weld</groupId>
+                <artifactId>weld-core</artifactId>
+                <version>${dependency.weld.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-impl</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-spi</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-resource</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-web</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-tomcat7</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>3.6.8.Final</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>10.8.2.2</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -436,7 +495,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <property>
-                    <name>pax.exam.framework</name>                    
+                    <name>pax.exam.framework</name>
                     <value>felix</value>
                 </property>
             </activation>
@@ -456,7 +515,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <property>
-                    <name>pax.exam.framework</name>                    
+                    <name>pax.exam.framework</name>
                     <value>equinox</value>
                 </property>
             </activation>
@@ -476,7 +535,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <property>
-                    <name>pax.exam.framework</name>                    
+                    <name>pax.exam.framework</name>
                     <value>knopflerfish</value>
                 </property>
             </activation>

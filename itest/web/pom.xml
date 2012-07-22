@@ -9,12 +9,12 @@
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
         <version>3.0.0-SNAPSHOT</version>
-        <relativePath>../../pom/pom.xml</relativePath>
+        <relativePath>../../pom</relativePath>
     </parent>
 
     <groupId>org.ops4j.pax.exam.itest</groupId>
     <artifactId>exam-itest-web</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>OPS4J Pax Exam Web Container Integration Tests</name>
 
@@ -28,21 +28,141 @@
                     <streamLogs>true</streamLogs>
                 </configuration>
                 <executions>
+
                     <execution>
-                        <id>tomcat</id>
+                        <id>tomcat-openwebbeans</id>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <profiles>
                                 <profile>tomcat</profile>
+                                <profile>openwebbeans</profile>
                             </profiles>
-                            <cloneProjectsTo>${project.build.directory}/tomcat</cloneProjectsTo>
+                            <cloneProjectsTo>${project.build.directory}/tomcat-openwebbeans</cloneProjectsTo>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>tomcat-weld</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <profiles>
+                                <profile>tomcat</profile>
+                                <profile>weld</profile>
+                            </profiles>
+                            <cloneProjectsTo>${project.build.directory}/tomcat-weld</cloneProjectsTo>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>tomcat</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <pax.exam.container>tomcat</pax.exam.container>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-tomcat</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>weld</id>
+
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <properties>
+                <pax.exam.cdi.provider>weld</pax.exam.cdi.provider>
+            </properties>
+
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.jboss.weld.servlet</groupId>
+                    <artifactId>weld-servlet-core</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.jboss.weld</groupId>
+                    <artifactId>weld-core</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+            </dependencies>
+        </profile>
+        
+        <profile>
+            <id>openwebbeans</id>
+
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <properties>
+                <pax.exam.cdi.provider>openwebbeans</pax.exam.cdi.provider>
+            </properties>
+
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.apache.openwebbeans</groupId>
+                    <artifactId>openwebbeans-impl</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.openwebbeans</groupId>
+                    <artifactId>openwebbeans-spi</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.openwebbeans</groupId>
+                    <artifactId>openwebbeans-resource</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.openwebbeans</groupId>
+                    <artifactId>openwebbeans-web</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.openwebbeans</groupId>
+                    <artifactId>openwebbeans-tomcat7</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+            </dependencies>
+
+        </profile>
+    </profiles>
+
+
+    
 </project>
