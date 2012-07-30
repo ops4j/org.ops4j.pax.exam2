@@ -14,23 +14,33 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.cdi;
+package org.ops4j.pax.exam.spring;
 
-import org.ops4j.pax.exam.cdi.impl.CdiInjector;
+import javax.servlet.ServletContext;
+
+import org.ops4j.pax.exam.spring.impl.SpringInjector;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
-public class CdiInjectorFactory implements InjectorFactory
+public class SpringInjectorFactory implements InjectorFactory
 {
+    private ServletContext servletContext;
+
+    public void setContext( Object context )
+    {
+        servletContext = (ServletContext) context;
+    }
 
     @Override
     public Injector createInjector()
     {
-        return new CdiInjector();
-    }
+        assert servletContext != null;
+        WebApplicationContext appContext = WebApplicationContextUtils
+            .getWebApplicationContext( servletContext );
+        SpringInjector injector = new SpringInjector( appContext.getAutowireCapableBeanFactory() );
 
-	@Override
-	public void setContext(Object context) {
-		// not used
-	}
+        return injector;
+    }
 }

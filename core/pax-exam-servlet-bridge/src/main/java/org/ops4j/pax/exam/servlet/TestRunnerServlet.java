@@ -82,6 +82,7 @@ public class TestRunnerServlet extends HttpServlet {
     private void runSuite(OutputStream os, Class<?> clazz, String methodName) throws IOException {
 
         InjectorFactory injectorFactory = ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
+        injectorFactory.setContext(getServletContext());
         Injector injector = injectorFactory.createInjector();
         Request classRequest = new ContainerTestRunnerClassRequest(clazz, injector);
         Description method = Description.createTestDescription(clazz, methodName);

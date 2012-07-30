@@ -34,6 +34,7 @@
         <dependency.logback.version>1.0.3</dependency.logback.version>
         <dependency.openwebbeans.version>1.1.4</dependency.openwebbeans.version>
         <dependency.resin.version>4.0.23</dependency.resin.version>
+        <dependency.spring.version>3.1.1.RELEASE</dependency.spring.version>
         <dependency.tomcat.version>7.0.27</dependency.tomcat.version>
         <dependency.weld.version>1.1.8.Final</dependency.weld.version>
     </properties>
@@ -509,6 +510,19 @@
                 <version>10.8.2.2</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${dependency.spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${dependency.spring.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>
