@@ -106,4 +106,8 @@ public class RegressionConfiguration
     public static boolean isFelix() {
         return "felix".equals( System.getProperty( "pax.exam.framework" ) );
     }
+
+    public static boolean isKnopflerfish() {
+        return "knopflerfish".equals( System.getProperty( "pax.exam.framework" ) );
+    }
 }

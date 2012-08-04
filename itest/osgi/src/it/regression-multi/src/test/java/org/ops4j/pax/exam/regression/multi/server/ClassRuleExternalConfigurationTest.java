@@ -17,8 +17,11 @@
 package org.ops4j.pax.exam.regression.multi.server;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isKnopflerfish;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ops4j.pax.exam.junit.PaxExamServer;
@@ -31,11 +34,17 @@ public class ClassRuleExternalConfigurationTest
     @ClassRule
     public static PaxExamServer exam = new PaxExamServer(WabSampleConfiguration.class);
     
+    @Before
+    public void waitForShutdown() throws InterruptedException {
+        assumeTrue( ! isKnopflerfish() );
+        Thread.sleep(3000);        
+    }
+    
     @Test
     public void checkWabSymbolicName()
     {
         Client client = Client.create();
-        WebResource resource = client.resource( "http://localhost:8080/wab/WABServlet" );
+        WebResource resource = client.resource( "http://localhost:8181/wab/WABServlet" );
         String response = resource.get( String.class );
         assertThat( response, containsString( "wab symbolic name : wab-sample" ) );
     }
@@ -44,7 +53,7 @@ public class ClassRuleExternalConfigurationTest
     public void checkWabVersion()
     {
         Client client = Client.create();
-        WebResource resource = client.resource( "http://localhost:8080/wab/WABServlet" );
+        WebResource resource = client.resource( "http://localhost:8181/wab/WABServlet" );
         String response = resource.get( String.class );
         assertThat( response, containsString( "wab version :3.0.0" ) );
     }
