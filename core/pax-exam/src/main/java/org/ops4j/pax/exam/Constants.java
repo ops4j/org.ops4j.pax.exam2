@@ -56,6 +56,11 @@ public interface Constants
      */
     long WAIT_5_MINUTES = 5 * 60 * 1000;
 
+    /**
+     * Manifest header specifying the string of executable services.
+     */
+    static final String PROBE_EXECUTABLE = "PaxExam-Executable";
+    
     /** Name of configuration properties file. */
     static final String EXAM_PROPERTIES_FILE = "exam.properties";
 
