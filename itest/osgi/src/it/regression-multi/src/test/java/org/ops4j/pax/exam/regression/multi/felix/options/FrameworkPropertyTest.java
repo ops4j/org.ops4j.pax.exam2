@@ -20,7 +20,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -55,8 +54,7 @@ public class FrameworkPropertyTest
         return options(
             regressionDefaults(),
             frameworkProperty( "felix.startlevel.bundle" ).value( "4" ),
-            junitBundles(),
-            felix() );
+            junitBundles() );
     }
 
     @Test

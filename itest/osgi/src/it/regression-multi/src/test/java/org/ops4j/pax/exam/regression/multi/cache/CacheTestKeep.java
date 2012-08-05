@@ -15,11 +15,8 @@
  */
 package org.ops4j.pax.exam.regression.multi.cache;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.keepCaches;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
@@ -45,9 +42,6 @@ public class CacheTestKeep extends CacheTestBase
             regressionDefaults(),
             junitBundles(),
             workingDirectory( workDir.getAbsolutePath() ),
-            keepCaches(),
-            equinox(),
-            felix(),
-            knopflerfish() );
+            keepCaches() );
     }
 }
