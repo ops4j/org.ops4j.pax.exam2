@@ -45,7 +45,6 @@ public class CacheTest
     public void cleanCachesFalse() 
     {
         assumeThat(isFelix(), is(true));
-        assumeThat(isPaxRunnerContainer(), is(true));
 
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( CacheTestCleanFalse.class );
@@ -59,7 +58,6 @@ public class CacheTest
     public void cleanCachesTrue() 
     {
         assumeThat(isFelix(), is(true));
-        assumeThat(isPaxRunnerContainer(), is(true));
 
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( CacheTestCleanTrue.class );
@@ -73,7 +71,6 @@ public class CacheTest
     public void keepCaches() 
     {
         assumeThat(isFelix(), is(true));
-        assumeThat(isPaxRunnerContainer(), is(true));
 
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( CacheTestKeep.class );

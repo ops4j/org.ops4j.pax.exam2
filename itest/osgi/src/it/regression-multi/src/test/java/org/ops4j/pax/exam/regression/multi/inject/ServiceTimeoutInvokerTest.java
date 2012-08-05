@@ -45,7 +45,6 @@ public class ServiceTimeoutInvokerTest
         // Equinox and Knopflerfish do not shutdown cleanly after an exception during startup,
         // so we restrict this test to Felix.
         assumeTrue( isFelix() );
-        assumeTrue( !isPaxRunnerContainer() );
         
         JUnitCore junit = new JUnitCore();
         Result run = junit.run( ServiceTimeout.class );

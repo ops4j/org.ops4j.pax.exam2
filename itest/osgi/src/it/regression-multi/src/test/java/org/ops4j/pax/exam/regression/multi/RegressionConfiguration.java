@@ -77,24 +77,10 @@ public class RegressionConfiguration
             systemProperty("logback.configurationFile").value( "file:" + PathUtils.getBaseDir() +
             		"/src/test/resources/logback.xml" ),
             		
-            // only for Pax Runner container
-            when ( "paxrunner".equals( System.getProperty("pax.exam.container"))).useOptions(
-                url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                mavenBundle("org.slf4j", "jcl-over-slf4j").versionAsInProject().startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                equinox(),      
-                felix(),
-                knopflerfish()),            		
-            
-            // not for Pax Runner container
-            when ( ! "paxrunner".equals( System.getProperty("pax.exam.container"))).useOptions(
-                frameworkStartLevel( START_LEVEL_TEST_BUNDLE ))
+            frameworkStartLevel( START_LEVEL_TEST_BUNDLE )
             );
     }
     
-    public static boolean isPaxRunnerContainer() {
-        return "paxrunner".equals( System.getProperty( "pax.exam.container" ) );
-    }
-
     public static boolean isNativeContainer() {
         return "native".equals( System.getProperty( "pax.exam.container" ) );
     }

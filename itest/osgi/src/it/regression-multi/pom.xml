@@ -302,31 +302,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>paxrunner</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>paxrunner</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-paxrunner</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.ops4j.pax.runner</groupId>
-                    <artifactId>pax-runner-no-jcl</artifactId>
-                    <scope>test</scope>
-                </dependency>
-
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>forked</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
