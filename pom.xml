@@ -72,6 +72,13 @@
         <profile>
             <id>itest</id>
             <modules>
+                <module>pom</module>
+                <module>itest</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>itest</id>
+            <modules>
                 <module>itest</module>
             </modules>
         </profile>
