@@ -45,10 +45,6 @@ public class Info
      */
     private static final String m_paxUrlVersion;
     /**
-     * Pax Runner version.
-     */
-    private static final String m_paxRunnerVersion;
-    /**
      * Ops4J Base libraries version
      */
     private static final String m_ops4jBaseVersion;
@@ -77,7 +73,6 @@ public class Info
     {
         String paxExamVersion = "";
         String paxUrlVersion = "";
-        String paxRunnerVersion = "";
         String ops4jBaseVersion = "";
         String paxSwissboxVersion = "";
         try
@@ -91,7 +86,6 @@ public class Info
                 properties.load(is);
                 paxExamVersion = properties.getProperty("pax.exam.version", "").trim();
                 paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
-                paxRunnerVersion = properties.getProperty("pax.runner.version", "").trim();
                 ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
                 paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
             }
@@ -101,7 +95,6 @@ public class Info
         }
         m_paxExamVersion = paxExamVersion;
         m_paxUrlVersion = paxUrlVersion;
-        m_paxRunnerVersion = paxRunnerVersion;
         m_ops4jBaseVersion = ops4jBaseVersion;
         m_paxSwissboxVersion = paxSwissboxVersion;
         m_paxExamSnapshotVersion = paxExamVersion.endsWith(SNAPSHOT);
@@ -136,16 +129,6 @@ public class Info
     public static String getPaxUrlVersion()
     {
         return m_paxUrlVersion;
-    }
-
-    /**
-     * Discovers the Pax Runner version. If version cannot be determined returns an empty string.
-     *
-     * @return pax runner version
-     */
-    public static String getPaxRunnerVersion()
-    {
-        return m_paxRunnerVersion;
     }
 
     /**
@@ -225,5 +208,4 @@ public class Info
         );
         System.out.println();
     }
-
 }

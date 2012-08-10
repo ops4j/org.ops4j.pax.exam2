@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.forked;
 
+import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
@@ -315,7 +316,8 @@ public class ForkedTestContainer implements TestContainer
             }
         }
 
-        int startLevel = system.getSingleOption( FrameworkStartLevelOption.class ).getStartLevel();
+        FrameworkStartLevelOption startLevelOption = system.getSingleOption( FrameworkStartLevelOption.class );
+        int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption.getStartLevel();
         LOG.debug( "Jump to startlevel: " + startLevel );
         remoteFramework.setFrameworkStartLevel( startLevel );
         

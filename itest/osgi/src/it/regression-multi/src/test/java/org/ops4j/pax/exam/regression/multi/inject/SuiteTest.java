@@ -57,10 +57,6 @@ public class SuiteTest implements Notifier, Remote
     @Before
     public void setUp()
     {
-        // Currently fails in Pax Runner container when running with Felix and Equinox
-        // in combination. Does cleanup of Equinox container delete the working directory
-        // of the Felix container?
-        Assume.assumeTrue( !RegressionConfiguration.isPaxRunnerContainer() );
         messages = new ArrayList<String>();
     }
 

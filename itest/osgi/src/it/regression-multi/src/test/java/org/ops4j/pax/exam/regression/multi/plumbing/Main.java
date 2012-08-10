@@ -26,8 +26,6 @@ public class Main {
     	ExamSystem system = createServerSystem ( options(
                   systemProperty( "org.ops4j.pax.logging.DefaultServiceLog.level" ).value( "WARN" ),
                   mavenBundle().groupId( "org.ops4j.pax.tinybundles" ).artifactId( "pax-tinybundles-core" ).version( "1.0.0-SNAPSHOT" ),
-                  profile( "gogo" ),
-                  profile("web"),
                   workingDirectory(  "/Users/tonit/server")  
                 )         
               );

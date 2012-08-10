@@ -17,6 +17,10 @@
  */
 package org.ops4j.pax.exam.spi.intern;
 
+import static org.ops4j.pax.exam.Constants.PROBE_EXECUTABLE;
+import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
+import static org.ops4j.pax.tinybundles.core.TinyBundles.withClassicBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import org.osgi.framework.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
@@ -41,8 +43,7 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ContentCollector;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.store.Store;
-
-import static org.ops4j.pax.tinybundles.core.TinyBundles.*;
+import org.osgi.framework.Constants;
 
 /**
  * Default implementation allows you to dynamically create a probe from current classpath.
@@ -52,7 +53,6 @@ import static org.ops4j.pax.tinybundles.core.TinyBundles.*;
  */
 public class TestProbeBuilderImpl implements TestProbeBuilder {
 
-    private static Logger LOG = LoggerFactory.getLogger( TestProbeBuilderImpl.class );
     private static final String DEFAULT_PROBE_METHOD_NAME = "probe";
 
     private final Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new HashMap<TestAddress, TestInstantiationInstruction>();
@@ -164,7 +164,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         return map;
     }
 
-    static String convertClassToPath( Class c )
+    static String convertClassToPath( Class<?> c )
     {
         return c.getName().replace( ".", File.separator ) + ".class";
     }
@@ -176,7 +176,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
      *
      * @throws java.io.IOException if a problem occurs (method crawls folders on disk..)
      */
-    public static File findClassesFolder( Class clazz )
+    public static File findClassesFolder( Class<?> clazz )
         throws IOException
     {
         ClassLoader classLoader = clazz.getClassLoader();
@@ -210,14 +210,6 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         }
     }
 
-    private void validateTopLevelDir( File f )
-    {
-        if( !f.exists() || !f.canRead() || !f.isDirectory() ) {
-            throw new IllegalArgumentException( "topLevelDir " + f.getAbsolutePath() + " is not a readable folder" );
-        }
-        LOG.debug( "Top level dir " + f + " has been verified." );
-    }
-
     public Set<TestAddress> getTests()
     {
         return m_probeCalls.keySet();
@@ -247,6 +239,6 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
             sbKeyChain.append( "," );
             p.put( address.identifier(), m_probeCalls.get( address ).toString() );
         }
-        p.put( "PaxExam-Executable", sbKeyChain.toString() );
+        p.put( PROBE_EXECUTABLE, sbKeyChain.toString() );
     }
 }

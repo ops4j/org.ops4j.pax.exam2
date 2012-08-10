@@ -1,6 +1,5 @@
 package org.ops4j.pax.exam.regression.multi.plumbing;
 
-import static org.ops4j.pax.exam.CoreOptions.easyMockBundles;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.createTestSystem;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.getTestContainerFactory;
 
@@ -28,7 +27,6 @@ public class SimpleMultiTest {
         throws Exception
     {
         Option[] options = new Option[]{
-            easyMockBundles()
         };	
         ExamSystem system = createTestSystem(options);
         TestProbeProvider p = makeProbe(system);

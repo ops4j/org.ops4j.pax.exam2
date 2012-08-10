@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,9 +19,8 @@
 
     <properties>
         <namespace>org.ops4j.pax.exam</namespace>
-        <dependency.paxrunner.version>1.7.6</dependency.paxrunner.version>
         <dependency.paxurl.version>1.4.0</dependency.paxurl.version>
-        <dependency.swissbox.version>1.5.1</dependency.swissbox.version>
+        <dependency.swissbox.version>1.6.0-SNAPSHOT</dependency.swissbox.version>
         <dependency.base.version>1.3.0</dependency.base.version>
         <dependency.slf4j.version>1.6.1</dependency.slf4j.version>
         <dependency.junit.version>4.9</dependency.junit.version>
@@ -31,8 +31,11 @@
         <dependency.guava.version>12.0</dependency.guava.version>
         <dependency.glassfish.version>3.1.2</dependency.glassfish.version>
         <dependency.logback.version>1.0.3</dependency.logback.version>
+        <dependency.maven.version>3.0.3</dependency.maven.version>
         <dependency.openwebbeans.version>1.1.4</dependency.openwebbeans.version>
         <dependency.resin.version>4.0.23</dependency.resin.version>
+        <dependency.spring.version>3.1.1.RELEASE</dependency.spring.version>
+        <dependency.tomcat.version>7.0.27</dependency.tomcat.version>
         <dependency.weld.version>1.1.8.Final</dependency.weld.version>
     </properties>
 
@@ -253,11 +256,6 @@
                 <version>1.6.4</version>
             </dependency>
             <dependency>
-                <groupId>org.ops4j.pax.runner</groupId>
-                <artifactId>pax-runner-no-jcl</artifactId>
-                <version>${dependency.paxrunner.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.ops4j.pax.tinybundles</groupId>
                 <artifactId>tinybundles</artifactId>
                 <version>1.0.0</version>
@@ -471,6 +469,30 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${dependency.tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-logging-juli</artifactId>
+                <version>${dependency.tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-jasper</artifactId>
+                <version>${dependency.tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-dbcp</artifactId>
+                <version>${dependency.tomcat.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>3.6.8.Final</version>
@@ -483,6 +505,19 @@
                 <version>10.8.2.2</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${dependency.spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${dependency.spring.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>

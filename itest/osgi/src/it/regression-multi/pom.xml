@@ -97,6 +97,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -159,6 +165,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.1</version>
                 <configuration>
                     <forkMode>always</forkMode>
                     <parallel>none</parallel>
@@ -168,6 +175,10 @@
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
                     </systemProperties>
+                    <excludes>
+                      <!-- This test works locally but not on our slow Hudson server -->
+                      <exclude>**/ServiceTimeoutInvokerTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -291,31 +302,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>paxrunner</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>paxrunner</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-paxrunner</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.ops4j.pax.runner</groupId>
-                    <artifactId>pax-runner-no-jcl</artifactId>
-                    <scope>test</scope>
-                </dependency>
-
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>forked</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -345,6 +331,14 @@
                     <groupId>org.ops4j.pax.url</groupId>
                     <artifactId>pax-url-wrap</artifactId>
                     <version>${dependency.paxurl.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.ops4j.pax.url</groupId>
+                    <artifactId>pax-url-link</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.ops4j.pax.url</groupId>
+                    <artifactId>pax-url-classpath</artifactId>
                 </dependency>
 
             </dependencies>

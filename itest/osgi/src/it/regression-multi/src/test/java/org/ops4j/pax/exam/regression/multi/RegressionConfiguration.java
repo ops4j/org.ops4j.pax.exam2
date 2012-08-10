@@ -22,14 +22,10 @@ import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
 import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.composite;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.CoreOptions.when;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.util.PathUtils;
@@ -77,24 +73,10 @@ public class RegressionConfiguration
             systemProperty("logback.configurationFile").value( "file:" + PathUtils.getBaseDir() +
             		"/src/test/resources/logback.xml" ),
             		
-            // only for Pax Runner container
-            when ( "paxrunner".equals( System.getProperty("pax.exam.container"))).useOptions(
-                url( "link:classpath:META-INF/links/org.ops4j.pax.exam.rbc.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                mavenBundle("org.slf4j", "jcl-over-slf4j").versionAsInProject().startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                equinox(),      
-                felix(),
-                knopflerfish()),            		
-            
-            // not for Pax Runner container
-            when ( ! "paxrunner".equals( System.getProperty("pax.exam.container"))).useOptions(
-                frameworkStartLevel( START_LEVEL_TEST_BUNDLE ))
+            frameworkStartLevel( START_LEVEL_TEST_BUNDLE )
             );
     }
     
-    public static boolean isPaxRunnerContainer() {
-        return "paxrunner".equals( System.getProperty( "pax.exam.container" ) );
-    }
-
     public static boolean isNativeContainer() {
         return "native".equals( System.getProperty( "pax.exam.container" ) );
     }
@@ -105,5 +87,9 @@ public class RegressionConfiguration
 
     public static boolean isFelix() {
         return "felix".equals( System.getProperty( "pax.exam.framework" ) );
+    }
+
+    public static boolean isKnopflerfish() {
+        return "knopflerfish".equals( System.getProperty( "pax.exam.framework" ) );
     }
 }

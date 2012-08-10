@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.regression.multi.inject;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isPaxRunnerContainer;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
 
 import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
@@ -42,7 +42,9 @@ public class ServiceTimeoutInvokerTest
     @Test( timeout = 8000 )
     public void checkServiceLookupTimeout()
     {
-        assumeTrue( !isPaxRunnerContainer() );
+        // Equinox and Knopflerfish do not shutdown cleanly after an exception during startup,
+        // so we restrict this test to Felix.
+        assumeTrue( isFelix() );
         
         JUnitCore junit = new JUnitCore();
         Result run = junit.run( ServiceTimeout.class );

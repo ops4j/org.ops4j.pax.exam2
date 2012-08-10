@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
+import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
@@ -330,7 +331,8 @@ public class NativeTestContainer implements TestContainer
             }
         }
 
-        int startLevel = m_system.getSingleOption( FrameworkStartLevelOption.class ).getStartLevel();
+        FrameworkStartLevelOption startLevelOption = m_system.getSingleOption( FrameworkStartLevelOption.class );
+        int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption.getStartLevel();
         LOG.debug( "Jump to startlevel: " + startLevel );
         sl.setStartLevel( startLevel );
         // Work around for FELIX-2942

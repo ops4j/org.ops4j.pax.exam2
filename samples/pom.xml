@@ -21,5 +21,7 @@
     <module>pax-exam-sample4-model</module>
     <module>pax-exam-sample4-service</module>
     <module>pax-exam-sample4-web</module>
+    <module>pax-exam-sample6-service</module>
+    <module>pax-exam-sample6-web</module>
   </modules>
 </project>

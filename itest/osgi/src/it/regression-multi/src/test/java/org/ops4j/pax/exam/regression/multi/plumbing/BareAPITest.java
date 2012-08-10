@@ -44,10 +44,8 @@ public class BareAPITest {
 		Option[] options = new Option[] {
                 regressionDefaults(),
 	            mavenBundle( "org.apache.servicemix.bundles" , "org.apache.servicemix.bundles.junit", "4.9_2" ),
-				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG"),
-				rawPaxRunnerOption("envo", "mike=blue,foo=bar")
 		};
 
 		ExamSystem system = createTestSystem(options);
@@ -75,7 +73,6 @@ public class BareAPITest {
 	public void singleStepTest() throws Exception {
 		Option[] options = new Option[] {
             mavenBundle( "org.apache.servicemix.bundles" , "org.apache.servicemix.bundles.junit", "4.9_2" ),
-				easyMockBundles(),
 				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
 						.value("DEBUG") };
 		ExamSystem system = createTestSystem(options);

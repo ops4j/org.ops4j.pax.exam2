@@ -28,4 +28,9 @@ public class CdiInjectorFactory implements InjectorFactory
     {
         return new CdiInjector();
     }
+
+	@Override
+	public void setContext(Object context) {
+		// not used
+	}
 }

@@ -15,7 +15,6 @@
  */
 package org.ops4j.pax.exam.regression.multi.plumbing;
 
-import static org.ops4j.pax.exam.CoreOptions.easyMockBundles;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.getTestContainerFactory;
 
@@ -32,7 +31,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.DefaultExamReactor;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.ExamReactor;
@@ -71,8 +69,7 @@ public class ReactorAPITest
     {
         TestContainerFactory factory = getFactory();
         Option[] options = new Option[]{ 
-            regressionDefaults(),
-            easyMockBundles() 
+            regressionDefaults()
         };
         
         ExamSystem system = DefaultExamSystem.create( options );
