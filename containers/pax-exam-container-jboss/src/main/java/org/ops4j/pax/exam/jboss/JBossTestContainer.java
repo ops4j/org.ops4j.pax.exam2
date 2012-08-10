@@ -76,13 +76,13 @@ public class JBossTestContainer implements TestContainer
 
     private static final Logger LOG = LoggerFactory.getLogger( JBossTestContainer.class );
 
-    private Stack<String> deployed = new Stack<String>();
+    final private Stack<String> deployed = new Stack<String>();
 
-    private ExamSystem system;
+    final private ExamSystem system;
+
+    final private TestDirectory testDirectory;
 
     private String jBossHome;
-
-    private TestDirectory testDirectory;
 
     private StandaloneServer server;
 
