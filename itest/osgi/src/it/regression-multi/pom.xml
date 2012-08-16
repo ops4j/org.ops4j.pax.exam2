@@ -266,7 +266,7 @@
                 <dependency>
                     <groupId>org.knopflerfish</groupId>
                     <artifactId>framework</artifactId>
-                    <version>5.1.14</version>
+                    <version>5.2.0</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
