@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.regression.multi.plumbing;
+package org.ops4j.pax.exam.regression.plumbing;
 
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.createTestSystem;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.getTestContainerFactory;

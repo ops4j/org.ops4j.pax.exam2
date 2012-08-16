@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.multi.plumbing;
+package org.ops4j.pax.exam.regression.plumbing;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -31,7 +31,7 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.plumbing.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
 
 /**

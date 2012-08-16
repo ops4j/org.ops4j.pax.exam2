@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.multi.plumbing;
+package org.ops4j.pax.exam.regression.plumbing;
 
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.plumbing.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.exam.spi.PaxExamRuntime.getTestContainerFactory;
 
 import java.io.IOException;
@@ -24,7 +24,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
@@ -32,12 +31,12 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.DefaultExamReactor;
-import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.ExamReactor;
+import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.EagerSingleStagedReactorFactory;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
+import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
 /**
  * Simple regression
@@ -54,28 +53,28 @@ public class ReactorAPITest
     public void reactorRunAllConfinedTest()
         throws Exception
     {
-        reactorRun( new AllConfinedStagedReactorFactory() );
+        reactorRun( new PerMethod() );
     }
 
-    @Test @Ignore("currently failing")
+    @Test
     public void reactorRunEagerTest()
         throws Exception
     {
-        reactorRun( new EagerSingleStagedReactorFactory() );
+        reactorRun( new PerClass() );
     }
 
     public void reactorRun( StagedExamReactorFactory strategy )
         throws Exception
     {
         TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{ 
+        Option[] options = new Option[]{
             regressionDefaults()
         };
-        
-        ExamSystem system = DefaultExamSystem.create( options );
+
+        ExamSystem system = PaxExamRuntime.createTestSystem( options );
         ExamReactor reactor = new DefaultExamReactor( system, factory );
         TestProbeBuilder probe = makeProbe( system );
-        
+
         reactor.addProbe( probe );
         reactor.addConfiguration( options );
 
@@ -88,31 +87,33 @@ public class ReactorAPITest
                 stagedReactor.invoke( call );
             }
 
-        } finally
+        }
+        finally
         {
             stagedReactor.afterClass();
             system.clear();
         }
-        
+
     }
 
-     private TestProbeBuilder makeProbe( ExamSystem system )
+    private TestProbeBuilder makeProbe( ExamSystem system )
         throws IOException
     {
-        TestProbeBuilder probe = system.createProbe( );
+        TestProbeBuilder probe = system.createProbe();
         probe.addTests( SingleTestProbe.class, getAllMethods( SingleTestProbe.class ) );
         return probe;
     }
 
-    private Method[] getAllMethods( Class c )
+    private Method[] getAllMethods( Class<?> c )
     {
         List<Method> methods = new ArrayList<Method>();
-        for( Method m : c.getDeclaredMethods() ) {
-            if( m.getModifiers() == Modifier.PUBLIC ) {
+        for( Method m : c.getDeclaredMethods() )
+        {
+            if( m.getModifiers() == Modifier.PUBLIC )
+            {
                 methods.add( m );
             }
         }
-        return methods.toArray( new Method[ methods.size() ] );
-
+        return methods.toArray( new Method[methods.size()] );
     }
 }

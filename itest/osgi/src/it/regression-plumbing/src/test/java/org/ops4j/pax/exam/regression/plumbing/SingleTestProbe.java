@@ -13,22 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.multi.plumbing;
+package org.ops4j.pax.exam.regression.plumbing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.*;
+
 /**
- * Another SingleTestProbe.
+ * External TestProbe.
+ * Assemble yourself using:
+ * createProbe().addTest( SingleTestProbe.class )
  */
-public class Probe2
+public class SingleTestProbe
 {
 
-    //private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
+    private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
 
-    public void myOwnClass()
+    public void withoutBCTest()
     {
-        System.out.println("Hello");
-       // LOG.info( "INSIDE OSGI " + Probe2.class.getName() + " Method withoutBCTest" );
+        LOG.info( "INSIDE OSGI " + SingleTestProbe.class.getName() + " Method withoutBCTest" );
+        LOG.info( "Environment: " + System.getenv( "foo" ) );
+    }
+
+    @SuppressWarnings( "unused" )
+    private void neverCall()
+    {
+        fail( "Don't call me !" );
     }
 }

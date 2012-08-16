@@ -107,4 +107,18 @@ public interface Constants
      */
     static final String EXAM_SERVICE_TIMEOUT_DEFAULT = "10000";
     
+    /**
+     * The logging system to be provisioned by Pax Exam.
+     */
+    static final String EXAM_LOGGING_KEY = "pax.exam.logging";
+    
+    /**
+     * Provision Pax Logging as logging system. (Default value).
+     */
+    static final String EXAM_LOGGING_PAX_LOGGING = "pax-logging";
+    
+    /**
+     * Do not provision any logging system and leave it to the user.
+     */
+    static final String EXAM_LOGGING_NONE = "none";    
 }

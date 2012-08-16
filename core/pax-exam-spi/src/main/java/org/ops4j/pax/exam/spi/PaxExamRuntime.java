@@ -23,7 +23,7 @@ import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
 import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
 import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
 import static org.ops4j.pax.exam.CoreOptions.serverMode;
-import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
@@ -88,6 +89,9 @@ public class PaxExamRuntime {
     
     private static Option[] defaultTestSystemOptions()
     {
+        ConfigurationManager cm = new ConfigurationManager();
+        String logging = cm.getProperty( Constants.EXAM_LOGGING_KEY, Constants.EXAM_LOGGING_PAX_LOGGING );
+        
         return new Option[] {
                 bootDelegationPackage( "sun.*" ),
                 frameworkStartLevel( Constants.START_LEVEL_TEST_BUNDLE ),
@@ -96,7 +100,10 @@ public class PaxExamRuntime {
                 url( "link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
                 url( "link:classpath:META-INF/links/org.ops4j.pax.extender.service.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
                 url( "link:classpath:META-INF/links/org.osgi.compendium.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
-                url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
+                
+                when( logging.equals( Constants.EXAM_LOGGING_PAX_LOGGING )).useOptions( 
+                    url( "link:classpath:META-INF/links/org.ops4j.pax.logging.api.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ) ),
+
                 url( "link:classpath:META-INF/links/org.ops4j.base.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
                 url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.core.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
                 url( "link:classpath:META-INF/links/org.ops4j.pax.swissbox.extender.link" ).startLevel( START_LEVEL_SYSTEM_BUNDLES ),
