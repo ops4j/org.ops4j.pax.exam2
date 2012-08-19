@@ -246,6 +246,6 @@ public class TomcatTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "TomcatContainer";
+        return "Tomcat";
     }    
 }

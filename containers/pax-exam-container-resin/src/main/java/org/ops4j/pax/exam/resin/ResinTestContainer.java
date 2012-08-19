@@ -198,6 +198,6 @@ public class ResinTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "ResinContainer";
+        return "Resin";
     }
 }

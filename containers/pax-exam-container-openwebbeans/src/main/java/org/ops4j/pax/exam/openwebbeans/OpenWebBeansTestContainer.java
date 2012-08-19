@@ -101,7 +101,7 @@ public class OpenWebBeansTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "WeldContainer";
+        return "OpenWebBeans";
     }
 
     public static CdiTestContainer getCdiContainer()

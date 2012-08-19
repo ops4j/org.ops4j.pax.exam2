@@ -977,7 +977,7 @@ public class GlassFishTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "GlassFishContainer:" + frameworkFactory.toString();
+        return "GlassFish:" + frameworkFactory.getClass().getSimpleName();
     }
 
     /**

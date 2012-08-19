@@ -80,12 +80,14 @@ public class ForkedTestContainer implements TestContainer
     private ForkedFrameworkFactory frameworkFactory;
     private RemoteFramework remoteFramework;
     private PlatformImpl platform;
+    private String name;
 
     public ForkedTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
     {
         this.system = system;
         this.frameworkFactory = new ForkedFrameworkFactory( frameworkFactory );
         this.platform = new PlatformImpl();
+        this.name = "Forked:" + frameworkFactory.getClass().getSimpleName();
     }
 
     public void call( TestAddress address )
@@ -358,5 +360,11 @@ public class ForkedTestContainer implements TestContainer
             start = org.ops4j.pax.exam.Constants.START_LEVEL_DEFAULT_PROVISION;
         }
         return start;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return name;
     }
 }

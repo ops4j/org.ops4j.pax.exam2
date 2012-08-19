@@ -68,4 +68,10 @@ public class RBCRemoteContainer implements TestContainer
     {
         return this;
     }
+    
+    @Override
+    public String toString()
+    {
+        return "Remote:" + m_target.toString();
+    }
 }

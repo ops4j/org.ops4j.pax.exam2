@@ -91,7 +91,7 @@ public class CandiTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "CandiContainer";
+        return "Candi";
     }
 
     public static ResinBeanContainer getCdiContainer()

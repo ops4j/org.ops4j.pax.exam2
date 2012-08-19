@@ -88,7 +88,7 @@ public class WeldTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "WeldContainer";
+        return "Weld";
     }
 
     public static WeldContainer getWeldContainer()

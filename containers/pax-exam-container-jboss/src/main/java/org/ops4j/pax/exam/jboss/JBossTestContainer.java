@@ -380,6 +380,6 @@ public class JBossTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "JBossContainer";
+        return "JBoss";
     }
 }
