@@ -25,15 +25,19 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Tests that we can invoke a single test method from a class by name.
- * Regression test for PAXEXAM-425.
+ * Tests that we can invoke a single test method from a class by name. Regression test for
+ * PAXEXAM-425.
  * 
  * @author Harald Wellmann
  */
 public class SingleMethodInvokerTest
 {
+    private static final Logger LOG = LoggerFactory.getLogger( SingleMethodInvokerTest.class );
+
     @Test
     public void invokeSingleTestMethod()
     {
@@ -43,9 +47,13 @@ public class SingleMethodInvokerTest
         JUnitCore junit = new JUnitCore();
         String method = "getInjectedServices";
         String klass = FilterTest.class.getName();
-        String testName = String.format("%s:%s.%s:Native:EquinoxFactory", method, klass, method);
+        String testName = String.format( "%s:%s.%s:Native:EquinoxFactory", method, klass, method );
         Request request = Request.method( FilterTest.class, testName );
         Result result = junit.run( request );
+        if( result.getFailureCount() > 0 )
+        {
+            LOG.error( result.getFailures().get( 0 ).getTrace() );
+        }
         assertThat( result.getFailureCount(), is( ( 0 ) ) );
     }
 }
