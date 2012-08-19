@@ -18,13 +18,6 @@
 
     <name>OPS4J Pax Exam Integration Tests</name>
 
-    <modules>
-        <module>cdi</module>
-        <module>javaee</module>
-        <module>osgi</module>
-        <module>web</module>
-    </modules>
-
     <profiles>
 
         <profile>
