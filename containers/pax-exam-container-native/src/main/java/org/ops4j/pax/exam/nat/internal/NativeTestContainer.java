@@ -389,7 +389,7 @@ public class NativeTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "NativeContainer:" + m_frameworkFactory.getClass().getSimpleName();
+        return "Native:" + m_frameworkFactory.getClass().getSimpleName();
     }
     
     
