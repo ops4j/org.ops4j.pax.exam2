@@ -17,12 +17,56 @@
     <packaging>pom</packaging>
 
     <name>OPS4J Pax Exam Integration Tests</name>
-    
+
     <modules>
         <module>cdi</module>
         <module>javaee</module>
         <module>osgi</module>
         <module>web</module>
     </modules>
+
+    <profiles>
+
+        <profile>
+            <id>cdi</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>cdi</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>javaee</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>javaee</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>osgi</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>osgi</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>web</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>web</module>
+            </modules>
+        </profile>
+
+    </profiles>
 
 </project>
