@@ -57,7 +57,7 @@
                                 <configuration>
                                     <profiles>
                                         <profile>tomcat</profile>
-                                        <profile>openwebbeans</profile>
+                                        <profile>owb-web</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/tomcat-openwebbeans</cloneProjectsTo>
                                 </configuration>
@@ -71,7 +71,7 @@
                                 <configuration>
                                     <profiles>
                                         <profile>tomcat</profile>
-                                        <profile>weld</profile>
+                                        <profile>weld-web</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/tomcat-weld</cloneProjectsTo>
                                 </configuration>
@@ -106,7 +106,7 @@
         </profile>
 
         <profile>
-            <id>weld</id>
+            <id>weld-web</id>
 
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -134,7 +134,7 @@
         </profile>
 
         <profile>
-            <id>openwebbeans</id>
+            <id>owb-web</id>
 
             <activation>
                 <activeByDefault>false</activeByDefault>
