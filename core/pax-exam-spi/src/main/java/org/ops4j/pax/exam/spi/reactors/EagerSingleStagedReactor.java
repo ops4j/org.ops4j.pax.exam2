@@ -54,17 +54,32 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
         m_targetContainer = containers;
         m_probes = mProbes;
 
+        int index = 0;
         for( TestContainer container : containers ) {
+            String caption = buildCaption(containers, container, index);
             for( TestProbeBuilder builder : mProbes ) {
                 // each probe has addresses.
                 for( TestAddress a : builder.getTests() ) {
                     // we need to create a new, because "a" exists for each test container
                     // this new address makes the test (reachable via getTargets() ) reachable directly.
-                    m_map.put( new DefaultTestAddress( a, container.toString() ), container );
+                    m_map.put( new DefaultTestAddress( a, caption ), container );
                 }
             }
+            index++;
         }
     }
+    
+    private String buildCaption( List<TestContainer> containers, TestContainer container, int index )
+    {
+        if (containers.size() == 1) {
+            return container.toString();
+        }
+        else {
+            return String.format("%s[%d]", container.toString(), index);
+        }
+    }
+
+    
     
     public void setUp()
     {

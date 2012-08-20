@@ -42,21 +42,34 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     {
         m_probes = mProbes;
         m_map = new HashMap<TestAddress, TestContainer>();
+        int index = 0;
         for ( TestContainer container : containers )
         {
+            String caption = buildCaption(containers, container, index);
             for ( TestProbeBuilder builder : m_probes )
             {
                 for ( TestAddress a : builder.getTests() )
                 {
-                    m_map.put( new DefaultTestAddress( a, container.toString() ), container );
+                    m_map.put( new DefaultTestAddress( a, caption ), container );
                 }
             }
+            index++;
         }
     }
     
+    private String buildCaption( List<TestContainer> containers, TestContainer container, int index )
+    {
+        if (containers.size() == 1) {
+            return container.toString();
+        }
+        else {
+            return String.format("%s[%d]", container.toString(), index);
+        }
+    }
+
     public void setUp()
     {
-        
+        // empty
     }
 
     public void invoke( TestAddress address )
@@ -91,30 +104,36 @@ public class AllConfinedStagedReactor implements StagedExamReactor
 
     public void tearDown()
     {
-        // does not do anything.
+        // empty
     }
 
     public void afterSuite()
     {
+        // empty
     }
 
     public void afterTest()
     {
+        // empty
     }
 
     public void beforeTest()
     {
+        // empty
     }
 
     public void afterClass()
     {
+        // empty
     }
 
     public void beforeClass()
     {
+        // empty
     }
 
     public void beforeSuite()
     {
+        // empty
     }
 }
