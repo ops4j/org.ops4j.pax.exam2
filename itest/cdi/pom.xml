@@ -21,12 +21,7 @@
     <profiles>
         
         <profile>
-            <id>hudson</id>
-            <activation>
-                <property>
-                    <name>env.WORKSPACE</name>
-                </property>
-            </activation>
+            <id>matrix</id>
             <modules>
                 <module>src/it/regression-deltaspike</module>
                 <module>src/it/regression-sample1</module>
@@ -34,8 +29,6 @@
             </modules>
         </profile>
 
-        
-        
         <profile>
             <id>invoker</id>
             <activation>
