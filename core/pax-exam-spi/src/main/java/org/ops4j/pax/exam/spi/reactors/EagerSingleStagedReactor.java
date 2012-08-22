@@ -18,7 +18,7 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
 
     final private List<TestContainer> m_targetContainer;
-    final private HashMap<TestAddress, TestContainer> m_map;
+    final private LinkedHashMap<TestAddress, TestContainer> m_map;
 
     /**
      * @param containers to be used
@@ -48,7 +48,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
      */
     public EagerSingleStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
-        m_map = new HashMap<TestAddress, TestContainer>();
+        m_map = new LinkedHashMap<TestAddress, TestContainer>();
         m_targetContainer = containers;
 
         for( TestContainer container : containers ) {
