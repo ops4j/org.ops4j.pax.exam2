@@ -141,6 +141,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         TinyBundle bundle = bundle(m_store).set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
 
         bundle.set( Constants.BUNDLE_SYMBOLICNAME,"" );
+        bundle.set( Constants.BUNDLE_MANIFESTVERSION, "2" );
         for( Object key : m_extraProperties.keySet() ) {
             bundle.set( (String) key, (String) m_extraProperties.get( key ) );
         }
