@@ -15,7 +15,7 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import org.ops4j.pax.exam.TestAddress;
@@ -31,7 +31,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
 {
 
     final private List<TestProbeProvider> m_probes;
-    final private HashMap<TestAddress, TestContainer> m_map;
+    final private LinkedHashMap<TestAddress, TestContainer> m_map;
 
     /**
      * @param containers to be used
@@ -40,7 +40,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     public AllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeProvider> mProbes )
     {
         m_probes = mProbes;
-        m_map = new HashMap<TestAddress, TestContainer>();
+        m_map = new LinkedHashMap<TestAddress, TestContainer>();
         // todo: don't do this here.
         for ( TestContainer container : containers )
         {

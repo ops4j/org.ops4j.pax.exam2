@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,8 +74,8 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     private static Logger LOG = LoggerFactory.getLogger( JUnit4TestRunner.class );
 
     final private StagedExamReactor m_reactor;
-    final private Map<TestAddress, FrameworkMethod> m_map = new HashMap<TestAddress, FrameworkMethod>();
-    final private Map<FrameworkMethod, TestAddress> m__childs = new HashMap<FrameworkMethod, TestAddress>();
+    final private Map<TestAddress, FrameworkMethod> m_map = new LinkedHashMap<TestAddress, FrameworkMethod>();
+    final private Map<FrameworkMethod, TestAddress> m__childs = new LinkedHashMap<FrameworkMethod, TestAddress>();
 
 	private ExamSystem m_system;
 
