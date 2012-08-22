@@ -16,6 +16,7 @@
 package org.ops4j.pax.exam.junit;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -27,6 +28,7 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.TYPE } )
+@Inherited
 public @interface ExamReactorStrategy
 {
 
