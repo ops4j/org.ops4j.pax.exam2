@@ -147,7 +147,7 @@
         <profile>
             <id>weld</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <pax.exam.container>weld</pax.exam.container>

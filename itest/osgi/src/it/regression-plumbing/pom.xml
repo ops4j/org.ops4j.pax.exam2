@@ -158,7 +158,7 @@
         <profile>
             <id>equinox</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <pax.exam.framework>equinox</pax.exam.framework>
