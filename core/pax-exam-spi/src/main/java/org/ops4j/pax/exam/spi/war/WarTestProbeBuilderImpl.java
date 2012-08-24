@@ -73,25 +73,22 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
         this.tempDir = Files.createTempDir();
     }
 
-    @SuppressWarnings( "rawtypes" )
     @Override
-    public TestAddress addTest( Class clazz, String methodName, Object... args )
+    public TestAddress addTest( Class<?> clazz, String methodName, Object... args )
     {
         TestAddress address = new DefaultTestAddress( clazz.getSimpleName() + "." + methodName, args );
         probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
         return address;
     }
 
-    @SuppressWarnings( "rawtypes" )
     @Override
-    public TestAddress addTest( Class clazz, Object... args )
+    public TestAddress addTest( Class<?> clazz, Object... args )
     {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings( "rawtypes" )
     @Override
-    public List<TestAddress> addTests( Class clazz, Method... m )
+    public List<TestAddress> addTests( Class<?> clazz, Method... m )
     {
         throw new UnsupportedOperationException();
     }
@@ -102,9 +99,8 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings( "rawtypes" )
     @Override
-    public TestProbeBuilder ignorePackageOf( Class... classes )
+    public TestProbeBuilder ignorePackageOf( Class<?>... classes )
     {
         throw new UnsupportedOperationException();
     }
