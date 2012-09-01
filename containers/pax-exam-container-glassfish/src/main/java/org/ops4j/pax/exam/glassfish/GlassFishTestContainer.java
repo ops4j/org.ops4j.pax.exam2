@@ -127,7 +127,7 @@ public class GlassFishTestContainer implements TestContainer
 {
     // TODO make this configurable
     public static final String GLASSFISH_DISTRIBUTION_URL =
-        "mvn:org.glassfish.main.distributions/glassfish/3.1.2/zip";
+        "mvn:org.glassfish.main.distributions/glassfish/3.1.2.2/zip";
 
     /** Configuration property key for GlassFish installation directory. */
     public static final String GLASSFISH_HOME_KEY = "pax.exam.glassfish.home";
