@@ -216,4 +216,8 @@
   <load-balancers></load-balancers>
   <lb-configs></lb-configs>
   <clusters></clusters>
+  <secure-admin special-admin-indicator="5102ed0c-e24e-4865-85bd-1d9779b40dee">
+    <secure-admin-principal dn="CN=localhost,OU=GlassFish,O=Oracle Corporation,L=Santa Clara,ST=California,C=US"></secure-admin-principal>
+    <secure-admin-principal dn="CN=localhost-instance,OU=GlassFish,O=Oracle Corporation,L=Santa Clara,ST=California,C=US"></secure-admin-principal>
+  </secure-admin>
 </domain>
