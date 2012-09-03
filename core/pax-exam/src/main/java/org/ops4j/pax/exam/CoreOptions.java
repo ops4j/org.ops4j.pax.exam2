@@ -47,6 +47,7 @@ import org.ops4j.pax.exam.options.TimeoutOption;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
 import org.ops4j.pax.exam.options.extra.AutoWrapOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
@@ -811,4 +812,9 @@ public class CoreOptions
     {
         return mavenWar().groupId( groupId ).artifactId( artifactId ).version( version ).type( "war" );
     }    
+    
+    public static WarProbeOption warProbe() 
+    {
+        return new WarProbeOption();
+    }
 }
