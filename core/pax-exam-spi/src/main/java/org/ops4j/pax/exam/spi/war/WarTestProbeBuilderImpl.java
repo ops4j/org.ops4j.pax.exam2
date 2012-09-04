@@ -16,48 +16,34 @@
  */
 package org.ops4j.pax.exam.spi.war;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 public class WarTestProbeBuilderImpl implements TestProbeBuilder
 {
-    private static final Logger LOG = LoggerFactory.getLogger( WarTestProbeBuilderImpl.class );
-
-    private List<File> metadataFiles;
-    private File tempDir;
     private WarProbeOption option;
     private final Map<TestAddress, TestInstantiationInstruction> probeCalls =
         new HashMap<TestAddress, TestInstantiationInstruction>();
 
     public WarTestProbeBuilderImpl()
     {
-        this( new WarProbeOption().autoClasspath() );
+        this( new WarProbeOption().classPathDefaultExcludes() );
     }
 
     public WarTestProbeBuilderImpl( WarProbeOption option )
     {
         this.option = option;
-        this.metadataFiles = new ArrayList<File>();
-        this.tempDir = Files.createTempDir();
     }
 
     @Override

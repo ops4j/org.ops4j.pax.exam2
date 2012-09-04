@@ -80,7 +80,7 @@ public class WarBuilder
                 sar.addClassPath( file );
             }
             URI warUri = sar.toURI();
-            LOG.info( "probe WAR at {}", warUri );
+            LOG.info( "WAR probe = {}", warUri );
             return warUri;
         }
         catch ( IOException exc )
@@ -139,6 +139,7 @@ public class WarBuilder
     private File getWebResourceDir() throws IOException
     {
         File webResourceDir = new File( tempDir, "webapp" );
+        LOG.info("building webapp in {}", webResourceDir);
         ZipExploder exploder = new ZipExploder();
         webResourceDir.mkdir();
 
@@ -192,6 +193,17 @@ public class WarBuilder
             }
         }
 
+        File resourceDir = new File( webResourceDir, "WEB-INF/classes" );
+        resourceDir.mkdir();
+        for (Class<?> klass : option.getClasses()) {
+            addClass(klass, resourceDir);
+        }
+        
+        for( String resource : option.getResources() )
+        {
+            addResource(resource, resourceDir);
+        }
+
         File beansXml = new File( webInfDir, "beans.xml" );
         if( !beansXml.exists() )
         {
@@ -199,14 +211,48 @@ public class WarBuilder
         }
         return webResourceDir;
     }
-    
-    private File toFile( String uriString ) {
+
+    private void addClass( Class<?> klass, File resourceDir ) throws IOException
+    {
+        String resource = "/" + klass.getName().replaceAll( "\\.", "/" ) + ".class";
+        addResource(resource, resourceDir);
+        for (Class<?> innerClass : klass.getClasses()) {
+            addClass(innerClass, resourceDir);
+        }
+    }
+
+    private void addResource( String resource, File resourceDir ) throws IOException
+    {
+        InputStream is = getClass().getResourceAsStream( "/" + resource );
+        File target = new File(resourceDir, resource );
+        target.getParentFile().mkdirs();
+        FileOutputStream os = new FileOutputStream(target);
+        StreamUtils.copyStream(is, os, true);
+    }
+
+    private File toFile( String uriString )
+    {
         try
         {
-            URI uri = new URI(uriString);
-            return new File(uri);
+            URI uri = new URI( uriString );
+            try
+            {
+                return new File( uri );
+            }
+            catch ( IllegalArgumentException exc )
+            {
+                InputStream is = uri.toURL().openStream();
+                File tempFile = File.createTempFile( "pax-exam", ".tmp" );
+                OutputStream os = new FileOutputStream( tempFile );
+                StreamUtils.copyStream( is, os, true );
+                return tempFile;
+            }
         }
         catch ( URISyntaxException exc )
+        {
+            throw new TestContainerException( exc );
+        }
+        catch ( IOException exc )
         {
             throw new TestContainerException( exc );
         }

@@ -42,6 +42,8 @@ public class WarProbeOption implements Option
 
     private List<String> overlays;
     private List<String> libraries;
+    private List<String> resources;
+    private List<Class<?>> classes;
     private List<String> metaInfResources;
     private List<String> webInfResources;
     private List<String> classpathFilters;
@@ -52,6 +54,8 @@ public class WarProbeOption implements Option
     {
         overlays = new ArrayList<String>();
         libraries = new ArrayList<String>();
+        classes = new ArrayList<Class<?>>();
+        resources = new ArrayList<String>();
         metaInfResources = new ArrayList<String>();
         webInfResources = new ArrayList<String>();
         classpathFilters = new ArrayList<String>();
@@ -87,6 +91,25 @@ public class WarProbeOption implements Option
         return this;
     }
 
+    public WarProbeOption classes( Class<?>... klass )
+    {
+        for( Class<?> c : klass )
+        {
+            String resource = c.getName().replaceAll( "\\.", "/" ) + ".class";
+            resources.add( resource );
+        }
+        return this;
+    }
+
+    public WarProbeOption resources( String... resourcePath )
+    {
+        for( String resource : resourcePath )
+        {
+            resources.add( resource );
+        }
+        return this;
+    }
+
     public WarProbeOption metaInfResource( String resourcePath )
     {
         metaInfResources.add( resourcePath );
@@ -112,13 +135,15 @@ public class WarProbeOption implements Option
         return this;
     }
 
-    public WarProbeOption autoClasspath()
+    public WarProbeOption classPathDefaultExcludes()
     {
+        useClasspath = true;
         return autoClasspath( true );
     }
 
-    public WarProbeOption classpathFilter( String... excludeRegExp )
+    public WarProbeOption exclude( String... excludeRegExp )
     {
+        useClasspath = true;
         for( String exclude : excludeRegExp )
         {
             classpathFilters.add( exclude );
@@ -158,6 +183,16 @@ public class WarProbeOption implements Option
 
     public List<String> getWebInfResources()
     {
-        return metaInfResources;
+        return webInfResources;
+    }
+
+    public List<String> getResources()
+    {
+        return resources;
+    }
+
+    public List<Class<?>> getClasses()
+    {
+        return classes;
     }
 }
