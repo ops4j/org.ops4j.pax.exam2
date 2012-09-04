@@ -139,7 +139,7 @@ public class WarBuilder
     private File getWebResourceDir() throws IOException
     {
         File webResourceDir = new File( tempDir, "webapp" );
-        LOG.info("building webapp in {}", webResourceDir);
+        LOG.debug("building webapp in {}", webResourceDir);
         ZipExploder exploder = new ZipExploder();
         webResourceDir.mkdir();
 
