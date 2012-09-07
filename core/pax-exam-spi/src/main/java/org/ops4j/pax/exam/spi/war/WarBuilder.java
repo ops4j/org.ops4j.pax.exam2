@@ -105,7 +105,7 @@ public class WarBuilder
         catch ( IllegalArgumentException exc )
         {
             InputStream is = uri.toURL().openStream();
-            File tempFile = File.createTempFile( "paxexam", ".tmp" );
+            File tempFile = File.createTempFile( "paxexam", ".jar" );
             OutputStream os = new FileOutputStream( tempFile );
             StreamUtils.copyStream( is, os, true );
             return tempFile;
