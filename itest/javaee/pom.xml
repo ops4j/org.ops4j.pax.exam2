@@ -25,6 +25,7 @@
             <modules>
                 <module>src/it/regression-javaee</module>
                 <module>src/it/regression-javaee-testng</module>
+                <module>src/it/regression-javaee-userprobe</module>
             </modules>
         </profile>
 

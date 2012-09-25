@@ -15,7 +15,7 @@
  *
  */
 
-package org.ops4j.pax.exam.regression.javaee;
+package org.ops4j.pax.exam.regression.javaee.userprobe;
 
 import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.maven;
@@ -33,27 +33,36 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample1.model.Book;
 import org.ops4j.pax.exam.sample1.service.LibraryService;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.ops4j.pax.exam.util.Transactional;
 
 @RunWith( PaxExam.class )
+@ExamReactorStrategy( PerSuite.class )
 public class UserDefinedProbeTest
 {
 
     @Inject
     private LibraryService service;
-    
+
     @ProbeBuilder
-    public TestProbeBuilder probe(TestProbeBuilder defaultProbe) {
-        return builder( warProbe().
-            library( "target/test-classes" ).
-            library( maven("org.ops4j.pax.exam.samples", "pax-exam-sample1-service", "3.0.0-SNAPSHOT") ).
-            library( maven("org.ops4j.pax.exam.samples", "pax-exam-sample1-model", "3.0.0-SNAPSHOT") ).
-            library( maven("org.ops4j.pax.exam", "pax-exam-servlet-bridge", "3.0.0-SNAPSHOT") ).
-            library( maven("org.ops4j.pax.exam", "pax-exam-cdi", "3.0.0-SNAPSHOT") ).
-            library( maven("org.ops4j.pax.exam", "pax-exam", "3.0.0-SNAPSHOT") ).
-            library( maven("org.ops4j.base", "ops4j-base-spi", "1.4.0") ).
-            library( maven("junit", "junit", "4.9") )
-            );
+    public TestProbeBuilder probe( TestProbeBuilder defaultProbe )
+    {
+        return builder( warProbe()
+            .
+            library( "target/test-classes" )
+            .
+            library(
+                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-service", "3.0.0-SNAPSHOT" ) )
+            .
+            library(
+                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-model", "3.0.0-SNAPSHOT" ) )
+            .
+            library( maven( "org.ops4j.pax.exam", "pax-exam-servlet-bridge", "3.0.0-SNAPSHOT" ) ).
+            library( maven( "org.ops4j.pax.exam", "pax-exam-cdi", "3.0.0-SNAPSHOT" ) ).
+            library( maven( "org.ops4j.pax.exam", "pax-exam", "3.0.0-SNAPSHOT" ) ).
+            library( maven( "org.ops4j.base", "ops4j-base-spi", "1.4.0" ) ).
+            library( maven( "junit", "junit", "4.9" ) ) );
     }
 
     @Test

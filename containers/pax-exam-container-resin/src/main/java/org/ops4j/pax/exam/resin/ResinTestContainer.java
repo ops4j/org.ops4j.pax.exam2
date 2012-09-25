@@ -166,6 +166,7 @@ public class ResinTestContainer implements TestContainer
     {
         LOG.info( "starting Resin");
         File tempDir = system.getTempFolder();
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         System.setProperty( "resin.home", system.getTempFolder().getPath() );
         resin = new ResinEmbed();
         resin.setRootDirectory( tempDir.getPath() );

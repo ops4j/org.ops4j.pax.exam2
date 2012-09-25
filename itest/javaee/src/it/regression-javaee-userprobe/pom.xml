@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>org.ops4j.pax.exam</groupId>
-    <artifactId>regression-javaee-userprobe</artifactId>
+    <artifactId>regression-userprobe</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam Java EE Container Regression Tests</name>
+    <name>OPS4J Pax Exam Java EE Regression Tests with User-Defined Probe</name>
 
     <dependencies>
         <dependency>
