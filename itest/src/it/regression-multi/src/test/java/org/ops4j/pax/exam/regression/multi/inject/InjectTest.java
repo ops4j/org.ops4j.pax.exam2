@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
@@ -48,7 +49,7 @@ public class InjectTest
     {
         return options(
             regressionDefaults(),
-            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", "2.4.0-SNAPSHOT"),
+            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion()),
             junitBundles() );
     }
 
