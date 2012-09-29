@@ -36,6 +36,8 @@ import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.ops4j.pax.swissbox.framework.RemoteFrameworkImpl;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wraps an OSGi {@link FrameworkFactory} to create and launch a framework in a forked Java virtual
@@ -48,6 +50,8 @@ import org.osgi.framework.launch.FrameworkFactory;
  */
 public class ForkedFrameworkFactory
 {
+    private static Logger LOG = LoggerFactory.getLogger( ForkedFrameworkFactory.class );
+
     // TODO make this configurable
     private static final long TIMEOUT = 60 * 1000;
     
@@ -102,6 +106,7 @@ public class ForkedFrameworkFactory
         // TODO make port range configurable
         FreePort freePort = new FreePort( 21000, 21099 );
         port = freePort.getPort();
+        LOG.debug("using RMI registry at port {}", port);
         
         String rmiName = "ExamRemoteFramework-" + UUID.randomUUID().toString();
 
