@@ -51,8 +51,6 @@ import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
 import org.ops4j.pax.exam.options.extra.AutoWrapOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
-import org.ops4j.pax.exam.options.extra.ExcludeDefaultRepositoriesOption;
-import org.ops4j.pax.exam.options.extra.LocalRepositoryOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOptionImpl;
 import org.ops4j.pax.exam.options.extra.VMOption;
@@ -64,9 +62,6 @@ import org.ops4j.store.StoreFactory;
 
 /**
  * Factory methods for core options.
- * <p>
- * Deprecated options are only supported by Pax Runner Container which is deprecated itself
- * and will be removed in Pax Exam 3.0.
  * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com
@@ -76,10 +71,8 @@ import org.ops4j.store.StoreFactory;
 public class CoreOptions
 {
 
-    private static final String DEFAULT_CONFIGURATION = "META-INF/maven/paxexam-config.args";
-
     /**
-     * Utility class. Ment to be used via the static factory methods.
+     * Utility class. Meant to be used via the static factory methods.
      */
     private CoreOptions()
     {
@@ -730,20 +723,6 @@ public class CoreOptions
     }
 
     /**
-     * Creates a {@link LocalRepositoryOption}.
-     *
-     * @param path localRepository path or url
-     *
-     * @return localRepository option
-     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
-     */
-    @Deprecated
-    public static LocalRepositoryOption localRepository( final String path )
-    {
-        return new LocalRepositoryOption( path );
-    }
-
-    /**
      * Creates a {@link RepositoryOption}.
      *
      * @param repositoryUrl repository url
@@ -753,18 +732,6 @@ public class CoreOptions
     public static RepositoryOption repository( final String repositoryUrl )
     {
         return new RepositoryOptionImpl( repositoryUrl );
-    }
-
-    /**
-     * Creates a {@link ExcludeDefaultRepositoriesOption}.
-     *
-     * @return option
-     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
-     */
-    @Deprecated
-    public static ExcludeDefaultRepositoriesOption excludeDefaultRepositories()
-    {
-        return new ExcludeDefaultRepositoriesOption();
     }
 
     /**
