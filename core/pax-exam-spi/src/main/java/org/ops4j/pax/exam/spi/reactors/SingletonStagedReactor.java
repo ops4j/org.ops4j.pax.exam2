@@ -18,8 +18,9 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
@@ -47,11 +48,11 @@ public class SingletonStagedReactor implements StagedExamReactor
 
     private List<TestContainer> testContainers;
     private List<TestProbeBuilder> probes;
-    private HashMap<TestAddress, TestContainer> testToContainerMap;
+    private Map<TestAddress, TestContainer> testToContainerMap;
 
     private SingletonStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
     {
-        testToContainerMap = new HashMap<TestAddress, TestContainer>();
+        testToContainerMap = new LinkedHashMap<TestAddress, TestContainer>();
         testContainers = containers;
         probes = mProbes;
     }

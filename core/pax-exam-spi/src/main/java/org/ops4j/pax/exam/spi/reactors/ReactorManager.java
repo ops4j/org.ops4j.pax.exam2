@@ -34,6 +34,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -114,7 +115,7 @@ public class ReactorManager
      * <p>
      * This map is not used when tests are executed directly, i.e. without invoker.
      */
-    private Map<TestAddress, Object> testAddressToMethodMap = new HashMap<TestAddress, Object>();
+    private Map<TestAddress, Object> testAddressToMethodMap = new LinkedHashMap<TestAddress, Object>();
 
     /**
      * Set of test classes in suite.

@@ -22,8 +22,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,7 +125,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * Maps method names to test addresses. The method names are qualified by class and container
      * names. Each method of the test class is cloned for each container.
      */
-    private Map<String, TestAddress> methodToAddressMap = new HashMap<String, TestAddress>();
+    private Map<String, TestAddress> methodToAddressMap = new LinkedHashMap<String, TestAddress>();
 
     /**
      * Reactor manager singleton.

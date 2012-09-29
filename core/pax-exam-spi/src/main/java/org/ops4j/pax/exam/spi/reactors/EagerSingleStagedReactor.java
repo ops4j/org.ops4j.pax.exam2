@@ -18,8 +18,9 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
@@ -42,7 +43,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
 
     final private List<TestContainer> m_targetContainer;
     final private List<TestProbeBuilder> m_probes;
-    final private HashMap<TestAddress, TestContainer> m_map;
+    final private Map<TestAddress, TestContainer> m_map;
 
     /**
      * @param containers to be used
@@ -50,7 +51,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
      */
     public EagerSingleStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
     {
-        m_map = new HashMap<TestAddress, TestContainer>();
+        m_map = new LinkedHashMap<TestAddress, TestContainer>();
         m_targetContainer = containers;
         m_probes = mProbes;
 

@@ -19,7 +19,7 @@ package org.ops4j.pax.exam.junit;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,7 +80,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     private boolean useProbeInvoker;
 
     private Map<FrameworkMethod, TestAddress> methodToTestAddressMap =
-        new HashMap<FrameworkMethod, TestAddress>();
+        new LinkedHashMap<FrameworkMethod, TestAddress>();
 
 
 

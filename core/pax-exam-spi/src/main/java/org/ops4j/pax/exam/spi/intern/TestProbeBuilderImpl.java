@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -55,7 +56,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     private static final String DEFAULT_PROBE_METHOD_NAME = "probe";
 
-    private final Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new HashMap<TestAddress, TestInstantiationInstruction>();
+    private final Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
     private final List<Class<?>> m_anchors;
     private final Properties m_extraProperties;
     private final Set<String> m_ignorePackages = new HashSet<String>();
