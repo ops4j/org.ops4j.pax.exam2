@@ -42,7 +42,7 @@ public class JUnitBundlesOption
             mavenBundle()
             .groupId( "org.apache.servicemix.bundles" )
             .artifactId( "org.apache.servicemix.bundles.junit" )
-            .version( "4.9_2" )
+            .version( "4.10_1" )
         );
         noUpdate();
         startLevel( START_LEVEL_SYSTEM_BUNDLES );
