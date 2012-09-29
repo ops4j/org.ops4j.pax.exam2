@@ -18,10 +18,12 @@ package org.ops4j.pax.exam.regression.multi.inject;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isPaxRunnerContainer;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import java.util.HashMap;
@@ -74,6 +76,8 @@ public class MultiConfigurationTest
     @Test
     public void getServiceFromInjectedBundleContext()
     {
+        assumeThat( isPaxRunnerContainer(), is(false) );
+        
         String language = System.getProperty( "pax.exam.language" );
         String expected = (language.equals( "en" )) ? "Hello Pax!" : "Pax Vobiscum!"; 
         assertThat( bundleContext, is( notNullValue() ) );

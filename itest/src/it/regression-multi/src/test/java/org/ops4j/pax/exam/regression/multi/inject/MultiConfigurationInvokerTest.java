@@ -17,6 +17,8 @@ package org.ops4j.pax.exam.regression.multi.inject;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isPaxRunnerContainer;
 
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -34,6 +36,8 @@ public class MultiConfigurationInvokerTest
     @Test
     public void invokeMultiConfigurationTest()
     {
+        assumeThat( isPaxRunnerContainer(), is(false) );
+
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( MultiConfigurationTest.class );
         assertThat( result.getRunCount(), is( ( 2 ) ) );
