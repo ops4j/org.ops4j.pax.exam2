@@ -700,14 +700,12 @@ public class CoreOptions
     /**
      * Creates a composite option of {@link RepositoryOption}s.
      *
-     * @param repositoryUrls virtual machine options (cannot be null or containing null entries)
+     * @param repositoryUrls Maven repository URLs
      *
-     * @return composite option of virtual machine options
+     * @return composite option of repository options
      *
      * @throws IllegalArgumentException - If urls array is null or contains null entries
-     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
-    @Deprecated
     public static Option repositories( final String... repositoryUrls )
     {
         validateNotEmptyContent( repositoryUrls, true, "Repository URLs" );
@@ -725,9 +723,7 @@ public class CoreOptions
      * @param repositoryOptions repository options
      *
      * @return composite option of repository options
-     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
-    @Deprecated
     public static Option repositories( final RepositoryOption... repositoryOptions )
     {
         return new DefaultCompositeOption( repositoryOptions );
@@ -753,9 +749,7 @@ public class CoreOptions
      * @param repositoryUrl repository url
      *
      * @return repository option
-     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
      */
-    @Deprecated
     public static RepositoryOption repository( final String repositoryUrl )
     {
         return new RepositoryOptionImpl( repositoryUrl );
