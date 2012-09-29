@@ -16,14 +16,13 @@
 package org.ops4j.pax.exam.regression.multi.repository;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
 import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.repository;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isPaxRunnerContainer;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
@@ -35,6 +34,7 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.swissbox.core.BundleUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -67,17 +67,7 @@ public class RepositoryTest
     @Test
     public void bundleFromExternalRepositoryIsResolved() throws Exception
     {
-        assumeThat(isPaxRunnerContainer(), is(true));
-
-        Bundle[] bundles = bundleContext.getBundles();
-        boolean demoBundleFound = false;
-        for ( Bundle bundle : bundles )
-        {
-            if( bundle.getSymbolicName().equals( "org.knopflerfish.bundle.demo1" ) )
-            {
-                demoBundleFound = true;
-            }
-        }
-        assertThat( demoBundleFound, is( true ) );
+        Bundle bundle = BundleUtils.getBundle( bundleContext, "org.knopflerfish.bundle.demo1" );
+        assertThat( bundle, is( notNullValue() ) );
     }
 }
