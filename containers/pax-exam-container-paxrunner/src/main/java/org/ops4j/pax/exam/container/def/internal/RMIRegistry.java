@@ -23,7 +23,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.net.FreePort;
 
 /**
  * Graceful RMI registry creation/reuse.
@@ -65,13 +64,15 @@ public class RMIRegistry {
      */
     public synchronized RMIRegistry selectGracefully()
     {
-        //if( ( m_port = select( m_defaultPort ) ) == UNSELECTED ) {
-        int alternativePort = new FreePort( m_altMin, m_altTo ).getPort();
-        if( ( m_port = select( alternativePort ) ) == UNSELECTED ) {
-            throw new IllegalStateException( "No port found for RMI at all. Even though " + alternativePort + " should have worked. Thats.. not. good. at. all." );
+        for ( int port = m_altMin; port <= m_altTo; port++) {
+            if( ( m_port = select( port ) ) != UNSELECTED ) {
+                break;
+            }
+        }
+        if( m_port == UNSELECTED ) {
+            throw new IllegalStateException( "No port found for RMI in range " + m_altMin + ":" + m_altTo );
         }
         printTakenStatus();
-        //}
 
         return this;
     }
