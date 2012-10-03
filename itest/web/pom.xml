@@ -25,6 +25,7 @@
             <modules>
                 <module>src/it/regression-web</module>
                 <module>src/it/regression-web-spring</module>
+                <module>src/it/regression-web-spring-userprobe</module>
             </modules>
         </profile>
 
