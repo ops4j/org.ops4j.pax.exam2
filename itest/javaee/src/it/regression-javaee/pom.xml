@@ -18,13 +18,20 @@
     <name>OPS4J Pax Exam Java EE Container Regression Tests</name>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-invoker-servlet</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-servlet-bridge</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
@@ -108,7 +115,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-ext</artifactId>
-            <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
 

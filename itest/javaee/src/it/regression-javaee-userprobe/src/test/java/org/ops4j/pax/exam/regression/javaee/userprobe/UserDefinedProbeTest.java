@@ -48,16 +48,12 @@ public class UserDefinedProbeTest
     @ProbeBuilder
     public TestProbeBuilder probe( TestProbeBuilder defaultProbe )
     {
-        return builder( warProbe()
-            .
-            library( "target/test-classes" )
-            .
+        return builder( warProbe().
+            library( "target/test-classes" ).
             library(
-                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-service", "3.0.0-SNAPSHOT" ) )
-            .
+                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-service", "3.0.0-SNAPSHOT" ) ).
             library(
-                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-model", "3.0.0-SNAPSHOT" ) )
-            .
+                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-model", "3.0.0-SNAPSHOT" ) ).
             library( maven( "org.ops4j.pax.exam", "pax-exam-servlet-bridge", "3.0.0-SNAPSHOT" ) ).
             library( maven( "org.ops4j.pax.exam", "pax-exam-cdi", "3.0.0-SNAPSHOT" ) ).
             library( maven( "org.ops4j.pax.exam", "pax-exam", "3.0.0-SNAPSHOT" ) ).
