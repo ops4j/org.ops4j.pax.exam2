@@ -27,6 +27,8 @@ public class TimeoutException
     extends TestContainerException
 {
 
+    private static final long serialVersionUID = 8862461468344204444L;
+
     /**
      * {@inheritDoc}
      */

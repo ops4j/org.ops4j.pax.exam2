@@ -82,7 +82,7 @@ public class Player {
         return new Player( m_factory, parts );
     }
 
-    public Player test( Class clazz, Object... args )
+    public Player test( Class<?> clazz, Object... args )
         throws Exception
     {
         m_builder.addTest( clazz, args );

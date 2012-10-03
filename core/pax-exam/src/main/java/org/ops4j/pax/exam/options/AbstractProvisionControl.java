@@ -23,10 +23,7 @@ package org.ops4j.pax.exam.options;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 04 27, 2009
  */
-public abstract class AbstractProvisionControl<T extends AbstractProvisionControl>
-    implements ProvisionControl<T>
-{
-
+public abstract class AbstractProvisionControl<T extends AbstractProvisionControl<T>> {
     /**
      * If the scanned bundles should be updated. Default behaviour is depending on used Test Container implementation.
      */
@@ -159,7 +156,8 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
             return false;
         if( getClass() != obj.getClass() )
             return false;
-        AbstractProvisionControl other = (AbstractProvisionControl) obj;
+        @SuppressWarnings( "unchecked" )
+        AbstractProvisionControl<T> other = (AbstractProvisionControl<T>) obj;
         if( m_shouldStart == null )
         {
             if( other.m_shouldStart != null )

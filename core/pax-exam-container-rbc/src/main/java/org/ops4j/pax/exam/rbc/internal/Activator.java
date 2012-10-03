@@ -48,8 +48,6 @@ public class Activator
 
     private static final int MAXRETRYCOUNT = 14;
     private static final String MSG_RETRY = "RBC bind stuff failed before. Will retry again perhaps.";
-    private static final int PORT_RBC_FROM = 22412;
-    private static final int PORT_RBC_TO = PORT_RBC_FROM + 100;
 
     /**
      * RMI registry.

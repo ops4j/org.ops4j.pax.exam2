@@ -19,7 +19,6 @@ package org.ops4j.pax.exam;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.IOException;
 
 /**
  * Hooks to inject certain activities into pax exam execution phases.

@@ -27,6 +27,8 @@ public class TestContainerException
     extends RuntimeException
 {
 
+    private static final long serialVersionUID = -2327575681804868547L;
+
     /**
      * {@inheritDoc}
      */

@@ -25,7 +25,7 @@ import static org.ops4j.lang.NullArgumentException.*;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 10, 2008
  */
-public class SystemPropertyOption implements ValueOption
+public class SystemPropertyOption implements ValueOption<String>
 {
 
     /**

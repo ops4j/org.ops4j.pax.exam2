@@ -41,7 +41,6 @@ public class RBCRemoteTarget implements TestContainer
     private static final Logger LOG = LoggerFactory.getLogger( RBCRemoteTarget.class );
 
     private RemoteBundleContextClient m_remoteBundleContextClient;
-    private RelativeTimeout m_timeout;
 
     /**
      * @param registry
@@ -50,7 +49,6 @@ public class RBCRemoteTarget implements TestContainer
      */
     public RBCRemoteTarget( String name, Integer registry, RelativeTimeout timeout )
     {
-        m_timeout = timeout;
         m_remoteBundleContextClient = new RemoteBundleContextClientImpl( name, registry, timeout);
     }
 

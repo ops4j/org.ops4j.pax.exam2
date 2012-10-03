@@ -23,7 +23,7 @@ package org.ops4j.pax.exam.options;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 27, 2009
  */
-public interface ProvisionControl<T extends ProvisionControl>
+public interface ProvisionControl<T extends ProvisionControl<?>>
 {
 
     /**

@@ -31,9 +31,9 @@ public class Probe
 
     private final String m_service;
     private final ProbeInvoker m_impl;
-    private final Dictionary m_dict;
+    private final Dictionary<?, ?> m_dict;
 
-    public Probe( String service, ProbeInvoker impl, Dictionary dict )
+    public Probe( String service, ProbeInvoker impl, Dictionary<?, ?> dict )
     {
         m_service = service;
         m_impl = impl;

@@ -25,7 +25,7 @@ import static org.ops4j.lang.NullArgumentException.*;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 26, 2009
  */
-public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionOption>
+public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionOption<T>>
     extends AbstractProvisionOption<T>
 {
 
@@ -108,7 +108,8 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
             return false;
         if( getClass() != obj.getClass() )
             return false;
-        AbstractUrlProvisionOption other = (AbstractUrlProvisionOption) obj;
+        @SuppressWarnings( "unchecked" )
+        AbstractUrlProvisionOption<T> other = (AbstractUrlProvisionOption<T>) obj;
         if( m_urlReference == null )
         {
             if( other.m_urlReference != null )

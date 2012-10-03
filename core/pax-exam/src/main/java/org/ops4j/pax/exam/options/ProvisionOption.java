@@ -25,7 +25,7 @@ import org.ops4j.pax.exam.Option;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public interface ProvisionOption<T extends ProvisionOption>
+public interface ProvisionOption<T extends ProvisionOption<?>>
     extends UrlReference, ProvisionControl<T>, Option
 {
 

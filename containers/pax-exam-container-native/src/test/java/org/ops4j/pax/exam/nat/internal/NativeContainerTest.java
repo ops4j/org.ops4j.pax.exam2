@@ -53,7 +53,7 @@ public class NativeContainerTest {
     {
         FrameworkFactory ff = mock( FrameworkFactory.class );
         Framework fw = mock( Framework.class );
-        when( ff.newFramework( Matchers.<Map>anyObject() ) ).thenReturn( fw );
+        when( ff.newFramework( Matchers.<Map<?,?>>anyObject() ) ).thenReturn( fw );
         ExamSystem system = mock (ExamSystem.class );
 
         NativeTestContainer container =  new NativeTestContainer( system, ff );

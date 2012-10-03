@@ -19,7 +19,6 @@ package org.ops4j.pax.exam;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 
 /**
  * An instance that drives cross cutting concerns when using Pax Exam.

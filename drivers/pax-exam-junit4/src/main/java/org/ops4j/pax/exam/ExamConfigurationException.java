@@ -20,6 +20,7 @@ package org.ops4j.pax.exam;
  */
 public class ExamConfigurationException extends Exception
 {
+    private static final long serialVersionUID = -978884675419908856L;
 
     public ExamConfigurationException( String msg )
     {

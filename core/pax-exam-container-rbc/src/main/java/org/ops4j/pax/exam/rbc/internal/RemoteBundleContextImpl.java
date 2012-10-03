@@ -17,12 +17,18 @@
  */
 package org.ops4j.pax.exam.rbc.internal;
 
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.Dictionary;
+
+import org.ops4j.pax.exam.RelativeTimeout;
+import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TimeoutException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -31,12 +37,6 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.startlevel.StartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.ops4j.lang.NullArgumentException.*;
-
-import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TimeoutException;
 
 /**
  * {@link RemoteBundleContext} implementaton.
@@ -47,6 +47,8 @@ import org.ops4j.pax.exam.TimeoutException;
  */
 public class RemoteBundleContextImpl
     implements RemoteBundleContext, Serializable {
+
+    private static final long serialVersionUID = 2520051681589147139L;
 
     /**
      * JCL Logger.
@@ -249,7 +251,7 @@ public class RemoteBundleContextImpl
         }
 
         // Don't start if bundle is a fragment bundle
-        Dictionary bundleHeaders = bundle.getHeaders();
+        Dictionary<?, ?> bundleHeaders = bundle.getHeaders();
         if( bundleHeaders.get( Constants.FRAGMENT_HOST ) != null ) {
             return;
         }

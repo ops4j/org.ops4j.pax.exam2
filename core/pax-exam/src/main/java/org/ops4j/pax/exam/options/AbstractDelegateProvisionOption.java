@@ -25,14 +25,14 @@ import static org.ops4j.lang.NullArgumentException.*;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegateProvisionOption>
+public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegateProvisionOption<?>>
     implements ProvisionOption<T>
 {
 
     /**
      * Wrapped provision option (cannot be null).
      */
-    private final ProvisionOption m_delegate;
+    private final ProvisionOption<?> m_delegate;
 
     /**
      * Constructor.
@@ -41,7 +41,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      *
      * @throws IllegalArgumentException - If delegate is null
      */
-    protected AbstractDelegateProvisionOption( final ProvisionOption delegate )
+    protected AbstractDelegateProvisionOption( final ProvisionOption<?> delegate )
     {
         validateNotNull( delegate, "Delegate" );
         m_delegate = delegate;
@@ -147,7 +147,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      *
      * @return wrapped provision option (cannot be null)
      */
-    public ProvisionOption getDelegate()
+    public ProvisionOption<?> getDelegate()
     {
         return m_delegate;
     }

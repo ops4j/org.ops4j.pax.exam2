@@ -26,7 +26,7 @@ import static org.ops4j.lang.NullArgumentException.*;
  * @since 0.3.0, December 08, 2008
  */
 public class SystemPackageOption
-    implements ValueOption
+    implements ValueOption<String>
 {
 
     /**
