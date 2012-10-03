@@ -66,8 +66,4 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
         LOG.info("running {} in reactor", method.getName());
         super.runChild( method, notifier );
     }
-    
-    public void setInjector(Injector injector) {
-        m_injector = injector;
-    }    
 }
