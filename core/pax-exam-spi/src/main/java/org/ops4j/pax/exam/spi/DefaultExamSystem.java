@@ -17,6 +17,10 @@
  */
 package org.ops4j.pax.exam.spi;
 
+import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.OptionUtils.expand;
+import static org.ops4j.pax.exam.OptionUtils.filter;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,16 +29,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
-import com.google.common.io.Files;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.options.FrameworkOption;
 import org.ops4j.pax.exam.options.TimeoutOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
@@ -43,8 +44,10 @@ import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.spi.war.WarTestProbeBuilderImpl;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.ops4j.pax.exam.OptionUtils.*;
+import com.google.common.io.Files;
 
 /**
  * {@literal DefaultExamSystem} represents the default implementation of {@link ExamSystem}.
@@ -247,15 +250,7 @@ public class DefaultExamSystem implements ExamSystem {
                 }
             }
             if( !found ) {
-                try {
-                    option.getClass().asSubclass( FrameworkOption.class );
-                    // false friend
-                    continue;
-                } catch( Exception e ) {
-
-                }
                 missing.add( option.getClass().getCanonicalName() );
-
             }
         }
         return missing;
