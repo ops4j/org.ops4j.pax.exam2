@@ -4,11 +4,13 @@
     <artifactId>pax-exam-samples</artifactId>
     <groupId>org.ops4j.pax.exam</groupId>
     <version>3.0.0-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
+ 
+  <groupId>org.ops4j.pax.exam.samples</groupId>
   <artifactId>pax-exam-sample5-mdb</artifactId>
-  <name>pax-exam-sample5-mdb</name>
-  <description>OPS4J Pax Exam Sample5 Message Driven Bean</description>
+ 
+  <name>OPS4J Pax Exam Sample5 Message Driven Bean</name>
+ 
   <dependencies>
       <dependency>
           <groupId>org.slf4j</groupId>

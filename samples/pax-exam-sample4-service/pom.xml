@@ -4,10 +4,12 @@
         <artifactId>pax-exam-samples</artifactId>
         <groupId>org.ops4j.pax.exam</groupId>
         <version>3.0.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
+    <groupId>org.ops4j.pax.exam.samples</groupId>
     <artifactId>pax-exam-sample4-service</artifactId>
+    
     <name>OPS4J Pax Exam Sample4 Service</name>
+    
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
