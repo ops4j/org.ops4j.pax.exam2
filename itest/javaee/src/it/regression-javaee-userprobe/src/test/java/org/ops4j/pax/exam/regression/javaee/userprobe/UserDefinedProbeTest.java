@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.warProbe;
 import static org.ops4j.pax.exam.spi.Probes.builder;
+import static org.ops4j.pax.exam.Info.*;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -51,13 +53,13 @@ public class UserDefinedProbeTest
         return builder( warProbe().
             library( "target/test-classes" ).
             library(
-                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-service", "3.0.0-SNAPSHOT" ) ).
+                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-service", getPaxExamVersion() ) ).
             library(
-                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-model", "3.0.0-SNAPSHOT" ) ).
-            library( maven( "org.ops4j.pax.exam", "pax-exam-servlet-bridge", "3.0.0-SNAPSHOT" ) ).
-            library( maven( "org.ops4j.pax.exam", "pax-exam-cdi", "3.0.0-SNAPSHOT" ) ).
-            library( maven( "org.ops4j.pax.exam", "pax-exam", "3.0.0-SNAPSHOT" ) ).
-            library( maven( "org.ops4j.base", "ops4j-base-spi", "1.4.0" ) ).
+                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample1-model", getPaxExamVersion() ) ).
+            library( maven( "org.ops4j.pax.exam", "pax-exam-servlet-bridge", getPaxExamVersion() ) ).
+            library( maven( "org.ops4j.pax.exam", "pax-exam-cdi", getPaxExamVersion() ) ).
+            library( maven( "org.ops4j.pax.exam", "pax-exam", getPaxExamVersion() ) ).
+            library( maven( "org.ops4j.base", "ops4j-base-spi", getOps4jBaseVersion() ) ).
             library( maven( "junit", "junit", "4.9" ) ) );
     }
 
