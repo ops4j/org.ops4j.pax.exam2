@@ -24,28 +24,28 @@ import java.lang.reflect.Field;
 
 import javax.inject.Inject;
 
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleReference;
 
 /**
- * Injects services into all fields of the given class annotated
- * with {@link Inject}. This includes the fields of all superclasses.
- * By default, the Injector will wait for a given timeout if no
+ * Injects services into all fields of the given class annotated with {@link Inject}. This includes
+ * the fields of all superclasses. By default, the Injector will wait for a given timeout if no
  * matching service is available.
  * <p>
- * If the field has no {@link @Filter} annotation, the service will
- * be looked up by type with a filter {@code (objectClass=<type>)}.
- * If the field has {@link @Filter} annotation with a non empty
- * value, this partial filter string will be taken to build a composite
- * filter of the form {@code (&(objectClass=<type>)<filter>)}.
+ * If the field has no {@link @Filter} annotation, the service will be looked up by type with a
+ * filter {@code (objectClass=<type>)}. If the field has {@link @Filter} annotation with a non empty
+ * value, this partial filter string will be taken to build a composite filter of the form
+ * {@code (&(objectClass=<type>)<filter>)}.
  * <p>
- * If there is more than one matching service, the first one 
- * obtained from the service registry will be injected. 
+ * If there is more than one matching service, the first one obtained from the service registry will
+ * be injected.
  * <p>
- * Fields of type {@link BundleContext} will be injected with the
- * BundleContext passed to this Injector.
+ * Fields of type {@link BundleContext} will be injected with the BundleContext passed to this
+ * Injector.
  * <p>
  * Constructor, setter or parameter injection is not supported.
  * 
@@ -54,17 +54,10 @@ import org.osgi.framework.BundleContext;
  */
 public class ServiceInjector implements Injector
 {
-    private BundleContext bc;
-    
-    public ServiceInjector(BundleContext bc)
-    {
-        this.bc = bc;
-    }
-    
     public void injectFields( Object target )
     {
         Class<?> targetClass = target.getClass();
-        while ( targetClass != Object.class )
+        while( targetClass != Object.class )
         {
             injectDeclaredFields( target, targetClass );
             targetClass = targetClass.getSuperclass();
@@ -73,11 +66,12 @@ public class ServiceInjector implements Injector
 
     private void injectDeclaredFields( Object target, Class<?> targetClass )
     {
-        for ( Field field : targetClass.getDeclaredFields() )
+        BundleContext context = getBundleContext( targetClass );
+        for( Field field : targetClass.getDeclaredFields() )
         {
             if( field.getAnnotation( Inject.class ) != null )
             {
-                injectField( bc, target, field );
+                injectField( context, target, field );
             }
         }
     }
@@ -86,15 +80,18 @@ public class ServiceInjector implements Injector
     {
         Class<?> type = field.getType();
         String filterString = "";
-        String timeoutProp = System.getProperty( EXAM_SERVICE_TIMEOUT_KEY, EXAM_SERVICE_TIMEOUT_DEFAULT );
+        String timeoutProp =
+            System.getProperty( EXAM_SERVICE_TIMEOUT_KEY, EXAM_SERVICE_TIMEOUT_DEFAULT );
         long timeout = Integer.parseInt( timeoutProp );
         Filter filter = field.getAnnotation( Filter.class );
-        if ( filter != null ) 
+        if( filter != null )
         {
             filterString = filter.value();
             timeout = filter.timeout();
         }
-        Object service = (BundleContext.class == type) ? bc : ServiceLookup.getService( bc, type, timeout, filterString );
+        Object service =
+            ( BundleContext.class == type ) ? bc : ServiceLookup.getService( bc, type, timeout,
+                filterString );
         try
         {
             if( field.isAccessible() )
@@ -119,4 +116,20 @@ public class ServiceInjector implements Injector
             throw new RuntimeException( exc );
         }
     }
+
+    private BundleContext getBundleContext( Class<?> klass )
+    {
+        BundleContext bc;
+        try
+        {
+            BundleReference bundleRef = BundleReference.class.cast( klass.getClassLoader() );
+            bc = bundleRef.getBundle().getBundleContext();
+            return bc;
+        }
+        catch ( ClassCastException exc )
+        {
+            throw new TestContainerException( "class " + klass.getName() + " is not loaded from an OSGi bundle" );
+        }
+    }
+
 }

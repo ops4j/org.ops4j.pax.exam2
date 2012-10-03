@@ -29,7 +29,7 @@ public class Activator implements BundleActivator
 
     public void start( BundleContext context ) throws Exception
     {
-        Injector injector = new ServiceInjector( context );
+        Injector injector = new ServiceInjector();
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put( "type", "default" );
         context.registerService( Injector.class.getName(), injector, props );
