@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.raw.extender.intern;
 
 import org.ops4j.pax.exam.util.Injector;
-import org.osgi.framework.BundleContext;
 
 /**
  * A no-op injector to be used when service injection is not required.
@@ -29,7 +28,7 @@ import org.osgi.framework.BundleContext;
 public class NoOpInjector implements Injector
 {
 
-    public void injectFields( BundleContext bc, Object target )
+    public void injectFields( Object target )
     {
         // empty
     }

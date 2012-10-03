@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.invoker.junit.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.isNotNull;
-import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
@@ -47,22 +46,22 @@ public class DelegatingTest
     public void switchRunner() {
         JUnitCore junit = new JUnitCore();
         Description method= Description.createTestDescription(SimpleTestHidden.class, "doNothing");
-        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, bc, injector);
+        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector);
         Request request = classRequest.filterWith(method);
         Result result = junit.run( request );
         assertTrue(result.getFailures().isEmpty());
         
-        verify( injector ).injectFields( same(bc), isNotNull() );
+        verify( injector ).injectFields( isNotNull() );
     }
 
     @Test
     public void wrapFailingTest() throws Throwable {
         JUnitCore junit = new JUnitCore();
         Description method= Description.createTestDescription(SimpleTestHidden.class, "failingTest");
-        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, bc, injector);
+        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector);
         Request request = classRequest.filterWith(method);
         Result result = junit.run( request );
         assertEquals(1, result.getFailures().size());
-        verify( injector ).injectFields( same(bc), isNotNull() );
+        verify( injector ).injectFields( isNotNull() );
     }
 }

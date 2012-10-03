@@ -38,20 +38,17 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
 {
     private static Logger LOG = LoggerFactory.getLogger( ContainerTestRunner.class );
 
-    private BundleContext m_ctx;
     private Injector m_injector;
     
     /**
      * Constructs a runner for the given class which will be injected with dependencies from
      * the given bundle context by the given injector
      * @param klass  test class to be run
-     * @param context    bundle context providing dependencies
      * @param injector   injector for injecting dependencies
      */
-    public ContainerTestRunner( Class<?> klass, BundleContext context, Injector injector ) throws InitializationError
+    public ContainerTestRunner( Class<?> klass, Injector injector ) throws InitializationError
     {
         super( klass );
-        m_ctx = context;
         m_injector = injector;        
     }
 
@@ -59,7 +56,7 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
     protected Object createTest() throws Exception
     {
         Object test = super.createTest();
-        m_injector.injectFields( m_ctx, test );
+        m_injector.injectFields( test );
         return test;
     }
     
@@ -68,10 +65,6 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
     {
         LOG.info("running {} in reactor", method.getName());
         super.runChild( method, notifier );
-    }
-    
-    public void setContext(BundleContext context) {
-        m_ctx = context;
     }
     
     public void setInjector(Injector injector) {

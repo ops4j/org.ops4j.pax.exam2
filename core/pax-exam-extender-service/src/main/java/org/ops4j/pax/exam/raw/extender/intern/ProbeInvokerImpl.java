@@ -116,7 +116,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         throws TestContainerException
     {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
-        m_injector.injectFields( m_ctx, testInstance );
+        m_injector.injectFields( testInstance );
         boolean cleanup = false;
         try {
             //runBefores( testInstance );

@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.spring.impl;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.ops4j.pax.exam.util.Injector;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
@@ -51,7 +50,7 @@ public class SpringInjector implements Injector
      * @param target an object with injection points
      */
     @Override
-    public void injectFields( BundleContext notUse, Object target )
+    public void injectFields( Object target )
     {
         beanFactory.autowireBean( target );
     }

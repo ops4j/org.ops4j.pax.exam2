@@ -48,7 +48,7 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Object createTest() throws Exception {
         Object test = super.createTest();
-        injector.injectFields(null, test);
+        injector.injectFields(test);
         return test;
     }
 

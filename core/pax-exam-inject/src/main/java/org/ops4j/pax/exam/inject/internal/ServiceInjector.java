@@ -54,17 +54,24 @@ import org.osgi.framework.BundleContext;
  */
 public class ServiceInjector implements Injector
 {
-    public void injectFields( BundleContext bc, Object target )
+    private BundleContext bc;
+    
+    public ServiceInjector(BundleContext bc)
+    {
+        this.bc = bc;
+    }
+    
+    public void injectFields( Object target )
     {
         Class<?> targetClass = target.getClass();
         while ( targetClass != Object.class )
         {
-            injectDeclaredFields( bc, target, targetClass );
+            injectDeclaredFields( target, targetClass );
             targetClass = targetClass.getSuperclass();
         }
     }
 
-    private void injectDeclaredFields( BundleContext bc, Object target, Class<?> targetClass )
+    private void injectDeclaredFields( Object target, Class<?> targetClass )
     {
         for ( Field field : targetClass.getDeclaredFields() )
         {

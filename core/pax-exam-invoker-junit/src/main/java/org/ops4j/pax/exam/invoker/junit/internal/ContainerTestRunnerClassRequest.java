@@ -34,29 +34,25 @@ public class ContainerTestRunnerClassRequest extends ClassRequest
 {
 
     private Class<?> testClass;
-    private BundleContext m_ctx;
     private Injector m_injector;
 
     /**
      * Constructs a request for the given class which will be injected with dependencies from
      * the given bundle context by the given injector
      * @param testClass  test class to be run
-     * @param context    bundle context providing dependencies
      * @param injector   injector for injecting dependencies
      */
-    public ContainerTestRunnerClassRequest( Class<?> testClass, BundleContext context,
-            Injector injector )
+    public ContainerTestRunnerClassRequest( Class<?> testClass, Injector injector )
     {
         super( testClass );
         this.testClass = testClass;
-        this.m_ctx = context;
         this.m_injector = injector;
     }
 
     @Override
     public Runner getRunner()
     {
-        RunnerBuilder builder = new ContainerTestRunnerBuilder( m_ctx, m_injector );
+        RunnerBuilder builder = new ContainerTestRunnerBuilder( m_injector );
         return builder.safeRunnerForClass( testClass );
     }
 }

@@ -17,9 +17,8 @@
  */
 package org.ops4j.pax.exam.util;
 
-import org.osgi.framework.BundleContext;
 
 public interface Injector
 {
-    void injectFields( BundleContext bc, Object target );
+    void injectFields( Object target );
 }

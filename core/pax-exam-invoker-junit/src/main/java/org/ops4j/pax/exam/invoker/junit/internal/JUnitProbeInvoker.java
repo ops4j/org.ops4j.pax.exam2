@@ -117,7 +117,7 @@ public class JUnitProbeInvoker implements ProbeInvoker
     private void invokeViaJUnit( final Class<?> testClass, final Method testMethod )
         throws TestContainerException
     {
-        Request classRequest = new ContainerTestRunnerClassRequest( testClass, m_ctx, m_injector );
+        Request classRequest = new ContainerTestRunnerClassRequest( testClass, m_injector );
         Description method = Description.createTestDescription( testClass, m_method );
         Request request = classRequest.filterWith( method );
         JUnitCore junit = new JUnitCore();

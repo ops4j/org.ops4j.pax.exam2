@@ -440,7 +440,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
         InjectorFactory injectorFactory =
             ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
         Injector injector = injectorFactory.createInjector();
-        injector.injectFields( null, testClassInstance );
+        injector.injectFields( testClassInstance );
     }
 
     /**

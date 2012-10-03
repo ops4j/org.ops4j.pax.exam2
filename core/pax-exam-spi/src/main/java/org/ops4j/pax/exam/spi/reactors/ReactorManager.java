@@ -494,7 +494,7 @@ public class ReactorManager
     public void inject( Object test )
     {
         Injector injector = findInjector();
-        injector.injectFields( null, test );
+        injector.injectFields( test );
     }
 
     /**
