@@ -36,6 +36,7 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 public class EquinoxReferenceTest {
 
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     @Test
     public void installAndStartReferenceBundle() throws BundleException, IOException {
         assumeTrue( isEquinox() );
