@@ -10,17 +10,16 @@
     </parent>
 
     <groupId>org.ops4j.pax.exam</groupId>
-    <artifactId>pax-exam-servlet-bridge</artifactId>
+    <artifactId>pax-exam-invoker-servlet</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - Servlet Bridge</name>
+    <name>OPS4J Pax Exam - Servlet Invoker</name>
 
     <properties>
-      <bundle.symbolicName>org.ops4j.pax.exam.servlet</bundle.symbolicName>
-      <bundle.namespace>org.ops4j.pax.exam.servlet</bundle.namespace>
+      <bundle.symbolicName>org.ops4j.pax.exam.invoker.servlet</bundle.symbolicName>
+      <bundle.namespace>org.ops4j.pax.exam.invoker.servlet</bundle.namespace>
     </properties>
     <dependencies>
-    <!--  Project Dependencies -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam</artifactId>
@@ -28,29 +27,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jta_1.1_spec</artifactId>
-            <scope>provided</scope>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
