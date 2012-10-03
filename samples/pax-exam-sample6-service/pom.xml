@@ -9,6 +9,8 @@
     </parent>
     <groupId>org.ops4j.pax.exam.samples</groupId>
     <artifactId>pax-exam-sample6-service</artifactId>
+    
+    <name>OPS4J Pax Exam Sample6 Service</name>
 
     <dependencies>
         <dependency>

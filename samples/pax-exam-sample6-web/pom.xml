@@ -11,6 +11,8 @@
     <artifactId>pax-exam-sample6-web</artifactId>
     <packaging>war</packaging>
 
+    <name>OPS4J Pax Exam Sample6 Service</name>
+
     <dependencies>
 
         <dependency>
