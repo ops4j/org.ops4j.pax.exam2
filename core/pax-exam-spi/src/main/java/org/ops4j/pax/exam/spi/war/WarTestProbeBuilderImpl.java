@@ -30,6 +30,11 @@ import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 
+/**
+ * Builds a WAR probe.
+ * @author Harald Wellmann
+ *
+ */
 public class WarTestProbeBuilderImpl implements TestProbeBuilder
 {
     private WarProbeOption option;

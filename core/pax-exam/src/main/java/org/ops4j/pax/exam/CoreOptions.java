@@ -756,17 +756,33 @@ public class CoreOptions
         return new WorkingDirectoryOption( directory );
     }
 
+    /**
+     * Deploys a WAR from the given URL.
+     * @param url URL of a WAR
+     * @return deployment option
+     */
     public static UrlDeploymentOption war( String url)
     {
         return new UrlDeploymentOption( url );
     }
 
+    /**
+     * Deploys a Maven WAR artifact. The Maven coordinates need to be added in fluent syntax. 
+     * @return Maven artifact option
+     */
     public static MavenArtifactDeploymentOption mavenWar()
     {
         return new MavenArtifactDeploymentOption().type( "war" );
     }
 
     
+    /**
+     * Deploys a Maven WAR artifact with the given  Maven coordinates.
+     * @param groupId group ID
+     * @param artifactId artifact ID
+     * @param version
+     * @return Maven artifact option
+     */
     public static MavenArtifactDeploymentOption mavenWar( final String groupId,
             final String artifactId,
             final String version )
@@ -774,6 +790,12 @@ public class CoreOptions
         return mavenWar().groupId( groupId ).artifactId( artifactId ).version( version ).type( "war" );
     }    
     
+    /**
+     * Creates an option for a user-defined WAR probe. This option needs to be customized in fluent 
+     * syntax.
+     * 
+     * @return WAR probe option
+     */
     public static WarProbeOption warProbe() 
     {
         return new WarProbeOption();

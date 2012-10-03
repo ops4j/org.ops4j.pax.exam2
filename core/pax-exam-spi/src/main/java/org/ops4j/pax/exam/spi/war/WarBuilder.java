@@ -39,26 +39,44 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
+/**
+ * Builds a WAR according to a {@link WarProbeOption}.
+ * @author Harald Wellmann
+ *
+ */
 public class WarBuilder
 {
     private static final Logger LOG = LoggerFactory.getLogger( WarBuilder.class );
 
+    /**
+     * Temporary directory for assembling the WAR probe.
+     */
     private File tempDir;
+    
+    /**
+     * Option used to configure the WAR.
+     */
     private WarProbeOption option;
 
+    /**
+     * Composite regular expression for filtering classpath components.
+     */
     private Pattern filterPattern;
 
-    public WarBuilder()
-    {
-        this( new WarProbeOption() );
-    }
-
+    /**
+     * Constructs a WAR builder for the given option.
+     * @param option WAR probe option
+     */
     public WarBuilder( WarProbeOption option )
     {
         this.option = option;
         this.tempDir = Files.createTempDir();
     }
 
+    /**
+     * Builds a WAR from the given option. 
+     * @return file URI referencing the WAR in a temporary directory
+     */
     public URI buildWar()
     {
         this.tempDir = Files.createTempDir();
