@@ -7,9 +7,8 @@
     <relativePath>..</relativePath>
   </parent>
   <artifactId>pax-exam-sample5-mdb</artifactId>
-
-  <name>OPS4J Pax Exam Sample5 Message Driven Bean</name>
-
+  <name>pax-exam-sample5-mdb</name>
+  <description>OPS4J Pax Exam Sample5 Message Driven Bean</description>
   <dependencies>
       <dependency>
           <groupId>org.slf4j</groupId>
