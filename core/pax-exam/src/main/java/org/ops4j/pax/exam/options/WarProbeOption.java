@@ -42,6 +42,7 @@ public class WarProbeOption implements Option
         "org.eclipse.osgi",
         "scattered-archive-api",
         "simple-glassfish-api",
+        "glassfish-embedded",
         "jersey-client",
         "pax-exam-container",
         "tinybundles",
