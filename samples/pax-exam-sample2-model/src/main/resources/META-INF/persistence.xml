@@ -24,6 +24,7 @@
       <property name="eclipselink.ddl-generation" value="create-tables" />
       <property name="eclipselink.logging.level" value="INFO" />
       <property name="hibernate.hbm2ddl.auto" value="create"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
     </properties>
   </persistence-unit>
 

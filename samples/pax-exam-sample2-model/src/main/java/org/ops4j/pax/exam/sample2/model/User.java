@@ -16,6 +16,7 @@
  */
 package org.ops4j.pax.exam.sample2.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +34,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "usr")
-public class User
+public class User implements Serializable
 {
-    
+    private static final long serialVersionUID = 1L;
+
     @Id
     private String id;
     

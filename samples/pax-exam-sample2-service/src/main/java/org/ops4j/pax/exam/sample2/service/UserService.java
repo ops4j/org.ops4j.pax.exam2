@@ -35,6 +35,11 @@ public class UserService {
     {
         return em.find( User.class, login );        
     }
+    
+    public long getNumUsers() {
+        String jpql = "select count(u) from User u";
+        return em.createQuery( jpql, Long.class ).getSingleResult();
+    }
 
     public User authenticate(String login, String password) {
         User user = em.find( User.class, login );

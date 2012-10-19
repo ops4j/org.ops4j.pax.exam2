@@ -29,7 +29,7 @@ import javax.persistence.Table;
 public class Rating
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     
     private int stars;

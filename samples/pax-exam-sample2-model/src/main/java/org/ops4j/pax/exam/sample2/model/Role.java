@@ -29,8 +29,7 @@ import javax.persistence.TableGenerator;
 public class Role {
  
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq")
-    @TableGenerator(name="seq", table = "jpa_sequence")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     
     private String name;
