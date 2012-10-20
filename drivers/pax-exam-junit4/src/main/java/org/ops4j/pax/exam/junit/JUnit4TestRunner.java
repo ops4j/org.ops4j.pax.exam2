@@ -26,6 +26,8 @@ import java.util.Set;
 
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
+import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -119,7 +121,9 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
         }
         catch ( Exception e )
         {
-            throw new TestContainerException( "Problem interacting with reactor.", e );
+            // rethrowing the exception does not help, we have to use the notifier here
+            Description description = Description.createSuiteDescription( testClass );
+            notifier.fireTestFailure( new Failure(description, e) );
         }
         finally
         {
