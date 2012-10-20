@@ -197,7 +197,7 @@ public class TomEETestContainer implements TestContainer
     public TestContainer start()
     {
         LOG.info( "starting TomEE" );
-        //System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
 
         File tempDir = system.getTempFolder();
         webappDir = new File( tempDir, "webapps" );
