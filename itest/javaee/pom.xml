@@ -58,6 +58,18 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>glassfish-embedded</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>glassfish-embedded</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/glassfish-embedded</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>jboss</id>
                                 <goals>
                                     <goal>run</goal>
