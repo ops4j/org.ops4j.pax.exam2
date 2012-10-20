@@ -22,12 +22,10 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder;
-import org.osgi.framework.launch.FrameworkFactory;
 
 /**
- * A {@link TestContainerFactory} for GlassFish test containers. This factory is published 
- * in META-INF/services.
+ * A {@link TestContainerFactory} for GlassFish test containers. This factory is published in
+ * META-INF/services.
  * 
  * @author Harald Wellmann
  * @since 3.0.0
@@ -36,14 +34,14 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class EmbeddedGlassFishTestContainerFactory implements TestContainerFactory
 {
     /**
-     * Creates a GlassFish test container for the given exam system.
-     * @return array with one element 
+     * Creates an Embedded GlassFish test container for the given exam system.
+     * 
+     * @return array with one element
      */
     public TestContainer[] create( ExamSystem system ) throws TestContainerException
     {
-        FrameworkFactory frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
         EmbeddedGlassFishTestContainer container =
-                new EmbeddedGlassFishTestContainer( system, frameworkFactory );
+            new EmbeddedGlassFishTestContainer( system );
         return new TestContainer[]{ container };
     }
 }

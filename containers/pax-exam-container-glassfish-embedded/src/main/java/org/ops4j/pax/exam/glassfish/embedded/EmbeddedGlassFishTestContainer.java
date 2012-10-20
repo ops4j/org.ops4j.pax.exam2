@@ -17,15 +17,6 @@
  */
 package org.ops4j.pax.exam.glassfish.embedded;
 
-import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
-import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
-import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
-import static org.ops4j.pax.exam.CoreOptions.systemPackages;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.swissbox.framework.ServiceLookup.getService;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,14 +24,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,13 +38,9 @@ import org.glassfish.embeddable.GlassFish;
 import org.glassfish.embeddable.GlassFishException;
 import org.glassfish.embeddable.GlassFishProperties;
 import org.glassfish.embeddable.GlassFishRuntime;
-import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
-import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.Info;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestAddress;
@@ -68,25 +48,8 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
-import org.ops4j.pax.exam.options.BootDelegationOption;
-import org.ops4j.pax.exam.options.FrameworkPropertyOption;
-import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
-import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.options.SystemPackageOption;
-import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
-import org.ops4j.pax.exam.options.ValueOption;
-import org.ops4j.pax.exam.util.PathUtils;
-import org.ops4j.pax.exam.zip.ZipInstaller;
 import org.ops4j.spi.ServiceProviderFinder;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.FrameworkEvent;
-import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.launch.Framework;
-import org.osgi.framework.launch.FrameworkFactory;
-import org.osgi.service.startlevel.StartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -95,53 +58,28 @@ import org.xml.sax.SAXException;
 /**
  * A {@link TestContainer} for the GlassFish 3.1 Java EE 6 application server.
  * <p>
- * This container support both OSGi and Java EE modes. You can provision OSGi bundles and deploy WAR
- * configuration modules via Pax Exam options.
+ * This container uses Embedded GlassFish and only Java EE mode, but not OSGi mode. You deploy WAR
+ * modules via Pax Exam options (but no OSGi bundles).
  * <p>
- * The test probe is an OSGi bundle in OSGi mode, built by TinyBundles from the root directory of
- * the current test class. In Java EE mode, the probe is a WAR built on the fly from the classpath
- * contents with some default exclusions.
+ * The test probe is a WAR built on the fly from the classpath contents with some default
+ * exclusions.
  * <p>
  * GlassFish logging is redirected from java.util.logging to SLF4J. The necessary artifacts are
  * provisioned by this container automatically.
- * <p>
- * The implementation is based on the Native Test Container. This container is launched in the
- * following steps:
- * <ul>
- * <li>Download and install GlassFish, if not present in the directory indicated by
- * pax.exam.glassfish.home.</li>
- * <li>Launch OSGi framework.</li>
- * <li>Install and start GlassFish bootstrap bundle.</li>
- * <li>Install and start user bundles and deploy user modules.</li>
- * </ul>
- * <p>
- * TODO Support Felix. At the moment, this container has only been tested on Equinox.
  * 
  * @author Harald Wellmann
  * @since 3.0.0
  */
 public class EmbeddedGlassFishTestContainer implements TestContainer
 {
-    // TODO make this configurable
-    public static final String GLASSFISH_DISTRIBUTION_URL =
-        "mvn:org.glassfish.main.distributions/glassfish/3.1.2.2/zip";
-
-    /** Configuration property key for GlassFish installation directory. */
-    public static final String GLASSFISH_HOME_KEY = "pax.exam.glassfish.home";
-
     /**
      * Configuration property key for GlassFish installation configuration file directory. The files
      * contained in this directory will be copied to the config directory of the GlassFish instance.
      */
     public static final String GLASSFISH_CONFIG_DIR_KEY = "pax.exam.glassfish.config.dir";
 
-    private static final Logger LOG = LoggerFactory.getLogger( EmbeddedGlassFishTestContainer.class );
-
-    /**
-     * Probe service property key. In OSGi mode, each test method is wrapped in a probe invoker
-     * service with a given signature property.
-     */
-    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
+    private static final Logger LOG = LoggerFactory
+        .getLogger( EmbeddedGlassFishTestContainer.class );
 
     /**
      * Name of the probe web application (in Java EE mode).
@@ -155,19 +93,9 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
         "/domain/configs/config/network-config/network-listeners/network-listener[@name='http-listener-1']/@port";
 
     /**
-     * Stack of installed bundles. On shutdown, the bundles are uninstalled in reverse order.
-     */
-    private Stack<Long> installed = new Stack<Long>();
-
-    /**
      * Stack of deployed modules. On shutdown, the modules are undeployed in reverse order.
      */
     private Stack<String> deployed = new Stack<String>();
-
-    /**
-     * OSGi framework factory located via Java SE ServiceLoader.
-     */
-    private FrameworkFactory frameworkFactory;
 
     /**
      * Pax Exam system with configuration options.
@@ -175,35 +103,15 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
     private ExamSystem system;
 
     /**
-     * OSGi framework.
-     */
-    private Framework framework;
-
-    /**
      * GlassFish OSGi service.
      */
     private GlassFish glassFish;
-
-    /**
-     * Are we running in Java EE mode (set in Exam configuration).
-     */
-    private boolean isJavaEE;
-
-    /**
-     * GlassFish runtime, obtained from GlassFish OSGi service.
-     */
-    private GlassFishRuntime glassFishRuntime;
 
     /**
      * Test directory which tracks all tests in the current suite. We need to register the context
      * URL of the probe web app as access point.
      */
     private TestDirectory testDirectory;
-
-    /**
-     * Copy of domain.xml in the GlassFish installation area.
-     */
-    private File configTarget;
 
     private String configDirName;
 
@@ -213,43 +121,29 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
      * @param system Pax Exam system configuration
      * @param frameworkFactory OSGi framework factory.
      */
-    public EmbeddedGlassFishTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
+    public EmbeddedGlassFishTestContainer( ExamSystem system )
     {
-        this.frameworkFactory = frameworkFactory;
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
-
     }
 
     /**
-     * Calls a test with the given address. In OSGi mode, this works just as in the Native
-     * Container. In Java EE mode, we lookup the test from the test directory and invoke it via
-     * probe invoker obtained from the Java SE service loader. (This invoker uses a servlet bridge,)
+     * Calls a test with the given address. In Java EE mode, we lookup the test from the test
+     * directory and invoke it via probe invoker obtained from the Java SE service loader. (This
+     * invoker uses a servlet bridge,)
      */
     public synchronized void call( TestAddress address )
     {
-        if( isJavaEE )
-        {
-            TestInstantiationInstruction instruction = testDirectory.lookup( address );
-            ProbeInvokerFactory probeInvokerFactory =
-                ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
-            ProbeInvoker invoker =
-                probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
-            invoker.call( address.arguments() );
-        }
-        else
-        {
-            Map<String, String> filterProps = new HashMap<String, String>();
-            filterProps.put( PROBE_SIGNATURE_KEY, address.root().identifier() );
-            ProbeInvoker service =
-                getService( framework.getBundleContext(), ProbeInvoker.class, filterProps );
-            service.call( address.arguments() );
-        }
+        TestInstantiationInstruction instruction = testDirectory.lookup( address );
+        ProbeInvokerFactory probeInvokerFactory =
+            ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
+        ProbeInvoker invoker =
+            probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
+        invoker.call( address.arguments() );
     }
 
     /**
-     * Installs a probe in the test container. In OSGi mode, this is a bundle which we can directly
-     * install from the given stream.
+     * Installs a probe in the test container.
      * <p>
      * In Java EE mode, the probe is a WAR, enriched by the Pax Exam servlet bridge which allows us
      * to invoke tests running within the container via an HTTP client.
@@ -259,15 +153,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
      * @return bundle ID, or -1 for WAR
      */
     public synchronized long install( String location, InputStream stream )
-    {
-        if( isJavaEE )
-        {
-            deployWarProbe( stream );
-        }
-        return -1;
-    }
-
-    private void deployWarProbe( InputStream stream )
     {
         try
         {
@@ -298,6 +183,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
         {
             throw new TestContainerException( exc );
         }
+        return -1;
     }
 
     public synchronized long install( InputStream stream )
@@ -371,7 +257,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
         try
         {
             glassFish.stop();
-            //glassFishRuntime.shutdown();
         }
         catch ( GlassFishException exc )
         {
@@ -400,39 +285,25 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
     }
 
     /**
-     * Sets the start level for the given bundle.
-     * 
-     * @param bundleId
-     * @param startLevel
-     * @throws TestContainerException
-     */
-    public void setBundleStartLevel( long bundleId, int startLevel ) throws TestContainerException
-    {
-        BundleContext context = framework.getBundleContext();
-        StartLevel sl = getService( context, StartLevel.class );
-        sl.setBundleStartLevel( context.getBundle( bundleId ), startLevel );
-    }
-
-    /**
-     * Starts the GlassFish container, first downloading and installing GlassFish, if required.
+     * Starts the GlassFish container.
      */
     public TestContainer start() throws TestContainerException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         ConfigurationManager cm = new ConfigurationManager();
-        String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
-        isJavaEE = Constants.EXAM_SYSTEM_JAVAEE.equals( systemType );
-        configDirName = cm.getProperty( GLASSFISH_CONFIG_DIR_KEY, "src/test/resources/glassfish-config" );
-        File domainConfig = new File(configDirName, "domain.xml");
+        configDirName =
+            cm.getProperty( GLASSFISH_CONFIG_DIR_KEY, "src/test/resources/glassfish-config" );
+        File domainConfig = new File( configDirName, "domain.xml" );
         GlassFishProperties gfProps = new GlassFishProperties();
-        if (domainConfig.exists()) {
-            gfProps.setConfigFileURI(domainConfig.toURI().toString());
+        if( domainConfig.exists() )
+        {
+            gfProps.setConfigFileURI( domainConfig.toURI().toString() );
         }
 
-        try {
-            glassFish = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
+        try
+        {
+            glassFish = GlassFishRuntime.bootstrap().newGlassFish( gfProps );
             glassFish.start();
-            //glassFishRuntime = glassFish.getService( GlassFishRuntime.class );
 
             // set access point in test directory
             String portNumber = getPortNumber( domainConfig );
@@ -492,8 +363,8 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
     {
         if( glassFish != null )
         {
-                cleanup();
-                system.clear();
+            cleanup();
+            system.clear();
         }
         else
         {
@@ -505,6 +376,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "GlassFish:" + frameworkFactory.getClass().getSimpleName();
+        return "EmbeddedGlassFish";
     }
 }
