@@ -153,6 +153,24 @@
         </profile>
 
         <profile>
+            <id>glassfish-embedded</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <pax.exam.container>glassfish-embedded</pax.exam.container>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-glassfish-embedded</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <id>jboss</id>
             <properties>
                 <pax.exam.container>jboss</pax.exam.container>
