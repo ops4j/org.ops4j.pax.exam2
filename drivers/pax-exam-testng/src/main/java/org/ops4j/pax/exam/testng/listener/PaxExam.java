@@ -346,6 +346,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
 
     /**
      * Checks if the current test method is transactional.
+     * 
      * @param testResult TestNG method and result wrapper
      * @return true if the method or the enclosing class is annotated with {@link Transactional}.
      */
@@ -368,8 +369,8 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
     }
 
     /**
-     * Runs a test method enclosed by a Java EE auto-rollback transaction obtained from the
-     * JNDI context.
+     * Runs a test method enclosed by a Java EE auto-rollback transaction obtained from the JNDI
+     * context.
      * 
      * @param callBack TestNG callback for test method
      * @param testResult test result container
@@ -380,7 +381,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
         try
         {
             InitialContext ctx = new InitialContext();
-            tx = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
+            tx = (UserTransaction) ctx.lookup( "java:comp/UserTransaction" );
             tx.begin();
             callBack.runTestMethod( testResult );
         }
@@ -398,17 +399,18 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
         }
         finally
         {
-            rollback(tx);
+            rollback( tx );
         }
     }
 
     /**
      * Rolls back the given transaction, if not null.
+     * 
      * @param tx transaction
      */
     private void rollback( UserTransaction tx )
     {
-        if (tx != null)
+        if( tx != null )
         {
             try
             {
@@ -515,6 +517,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
         }
 
         methodInterceptorCalled = true;
+        boolean mangleMethodNames = manager.getNumConfigurations() > 1;
         TestDirectory testDirectory = TestDirectory.getInstance();
         List<IMethodInstance> newInstances = new ArrayList<IMethodInstance>();
         Set<TestAddress> targets = reactor.getTargets();
@@ -523,14 +526,20 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
             ITestNGMethod frameworkMethod =
                 (ITestNGMethod) manager.lookupTestMethod( address.root() );
             Method javaMethod = frameworkMethod.getConstructorOrMethod().getMethod();
-            ReactorTestNGMethod reactorMethod =
-                new ReactorTestNGMethod( frameworkMethod, javaMethod, address );
-            MethodInstance newInstance = new MethodInstance( reactorMethod );
+
+            if( mangleMethodNames )
+            {
+                frameworkMethod =
+                    new ReactorTestNGMethod( frameworkMethod, javaMethod, address );
+            }
+
+            MethodInstance newInstance = new MethodInstance( frameworkMethod );
             newInstances.add( newInstance );
-            methodToAddressMap.put( reactorMethod.getMethodName(), address );
+            methodToAddressMap.put( frameworkMethod.getMethodName(), address );
             testDirectory.add( address, new TestInstantiationInstruction( frameworkMethod
                 .getRealClass().getName() + ";"
                     + javaMethod.getName() ) );
+
         }
         Collections.sort( newInstances, new IMethodInstanceComparator() );
         return newInstances;

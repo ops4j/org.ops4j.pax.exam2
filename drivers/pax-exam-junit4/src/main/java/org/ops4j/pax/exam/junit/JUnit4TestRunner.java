@@ -204,6 +204,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
     {
         Set<TestAddress> targets = reactor.getTargets();
         TestDirectory testDirectory = TestDirectory.getInstance();
+        boolean mangleMethodNames = manager.getNumConfigurations() > 1;
         for( TestAddress address : targets )
         {
             FrameworkMethod frameworkMethod =
@@ -213,7 +214,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner
 
             if( className.equals( getTestClass().getName() ) )
             {
-                FrameworkMethod method = new DecoratedFrameworkMethod( address, frameworkMethod );
+                FrameworkMethod method = mangleMethodNames ? new DecoratedFrameworkMethod( address, frameworkMethod ) : frameworkMethod;
                 testDirectory.add( address, new TestInstantiationInstruction( className + ";"
                         + methodName ) );
 

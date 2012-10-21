@@ -138,6 +138,8 @@ public class ReactorManager
 
     private AnnotationHandler annotationHandler;
 
+    private int numConfigurations;
+
     /**
      * Private constructor for singleton.
      */
@@ -245,6 +247,7 @@ public class ReactorManager
         throws IllegalAccessException, InvocationTargetException, IllegalArgumentException,
         IOException
     {
+        numConfigurations = 0;
         Method[] methods = testClass.getMethods();
         for( Method m : methods )
         {
@@ -252,8 +255,18 @@ public class ReactorManager
             {
                 // consider as option, so prepare that one:
                 reactor.addConfiguration( ( (Option[]) m.invoke( testClassInstance ) ) );
+                numConfigurations++;
             }
         }
+    }
+
+    /**
+     * Returns the number of configurations for the current reactor.
+     * @return number of configurations
+     */
+    public int getNumConfigurations()
+    {
+        return numConfigurations;
     }
 
     private boolean isConfiguration( Method m )
