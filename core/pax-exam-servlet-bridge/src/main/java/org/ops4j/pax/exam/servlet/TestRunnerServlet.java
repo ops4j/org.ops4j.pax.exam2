@@ -35,6 +35,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -91,9 +92,16 @@ public class TestRunnerServlet extends HttpServlet {
         JUnitCore core = new JUnitCore();
         Result result = core.run(request);
         List<Failure> failures = result.getFailures();
+        
+        /*
+         * The invoker may not be able to deserialize the original exception due to different
+         * classloaders. For this reason, we only take the stack trace and wrap it in
+         * a TestContainerException.
+         */
         ObjectOutputStream oos = new ObjectOutputStream(os);
         for (Failure failure : failures) {
-            oos.writeObject(failure.getException());
+            Exception exc = new TestContainerException(failure.getTrace());
+            oos.writeObject(exc);
         }
         if (failures.isEmpty()) {
             oos.writeObject("ok");
