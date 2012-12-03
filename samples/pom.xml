@@ -24,5 +24,7 @@
     <module>pax-exam-sample5-mdb</module>
     <module>pax-exam-sample6-service</module>
     <module>pax-exam-sample6-web</module>
+    <module>pax-exam-sample7-service</module>
+    <module>pax-exam-sample7-web</module>
   </modules>
 </project>
