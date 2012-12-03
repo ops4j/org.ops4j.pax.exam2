@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam;
 
-import org.osgi.framework.BundleContext;
 
 /**
  * @author Harald Wellmann
@@ -25,5 +24,5 @@ import org.osgi.framework.BundleContext;
  */
 public interface ProbeInvokerFactory {
 
-    ProbeInvoker createProbeInvoker( BundleContext context, String expr );
+    ProbeInvoker createProbeInvoker( Object context, String expr );
 }

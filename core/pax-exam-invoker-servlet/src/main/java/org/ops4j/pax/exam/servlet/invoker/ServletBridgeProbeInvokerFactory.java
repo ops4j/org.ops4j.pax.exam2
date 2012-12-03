@@ -22,13 +22,12 @@ import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
-import org.osgi.framework.BundleContext;
 
 public class ServletBridgeProbeInvokerFactory implements ProbeInvokerFactory
 {
 
     @Override
-    public ProbeInvoker createProbeInvoker( BundleContext context, String expr )
+    public ProbeInvoker createProbeInvoker( Object context, String expr )
     {
         URI uri = TestDirectory.getInstance().getAccessPoint();
         if (uri == null)

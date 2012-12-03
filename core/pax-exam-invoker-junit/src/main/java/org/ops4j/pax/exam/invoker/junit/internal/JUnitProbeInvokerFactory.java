@@ -29,8 +29,8 @@ import org.osgi.framework.BundleContext;
 public class JUnitProbeInvokerFactory implements ProbeInvokerFactory
 {
 
-    public ProbeInvoker createProbeInvoker( BundleContext context, String expr )
+    public ProbeInvoker createProbeInvoker( Object context, String expr )
     {
-        return new JUnitProbeInvoker( expr, context );
+        return new JUnitProbeInvoker( expr, (BundleContext) context );
     }
 }
