@@ -16,11 +16,13 @@
  */
 package org.superbiz.moviefun;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.io.Serializable;
 
 @Entity
 public class Movie implements Serializable {
@@ -33,7 +35,10 @@ public class Movie implements Serializable {
 
     private String director;
     private String title;
+    
+    @Column( name = "RELEASEYEAR")
     private int year;
+    
     private String genre;
     private int rating;
 

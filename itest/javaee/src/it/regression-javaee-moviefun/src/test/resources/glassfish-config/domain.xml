@@ -12,6 +12,7 @@
   <resources>
     <jdbc-resource pool-name="__TimerPool" jndi-name="jdbc/__TimerPool" object-type="system-admin"></jdbc-resource>
     <jdbc-resource pool-name="DerbyPool" jndi-name="jdbc/__default"></jdbc-resource>
+    <jdbc-resource pool-name="MovieDatabasePool" jndi-name="jdbc/movieDatabase"></jdbc-resource>
     <jdbc-connection-pool datasource-classname="org.apache.derby.jdbc.EmbeddedXADataSource" res-type="javax.sql.XADataSource" name="__TimerPool">
       <property name="databaseName" value="${com.sun.aas.instanceRoot}/lib/databases/ejbtimer"></property>
       <property name="connectionAttributes" value=";create=true"></property>
@@ -20,12 +21,17 @@
       <property name="databaseName" value="memory:default"></property>
       <property name="connectionAttributes" value=";create=true"></property>
     </jdbc-connection-pool>
+    <jdbc-connection-pool datasource-classname="org.apache.derby.jdbc.EmbeddedXADataSource" res-type="javax.sql.XADataSource" name="MovieDatabasePool">
+      <property name="databaseName" value="memory:movieDatabase"></property>
+      <property name="connectionAttributes" value=";create=true"></property>
+    </jdbc-connection-pool>
   </resources>
   <servers>
     <server name="server" config-ref="server-config">
       <application-ref ref="__admingui" virtual-servers="__asadmin"></application-ref>
       <resource-ref ref="jdbc/__TimerPool"></resource-ref>
       <resource-ref ref="jdbc/__default"></resource-ref>
+      <resource-ref ref="jdbc/movieDatabase"></resource-ref>
     </server>
   </servers>
   <nodes>
