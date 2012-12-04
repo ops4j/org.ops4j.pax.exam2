@@ -138,6 +138,14 @@ public class GlassFishTestContainer implements TestContainer
      */
     public static final String GLASSFISH_CONFIG_DIR_KEY = "pax.exam.glassfish.config.dir";
 
+    /**
+     * Configuration property key for overwriting domain.xml in an existing GlassFish installation.
+     * If the value is {@code true}, an existing file {@code domains/domain1/config/domain.xml} will
+     * be overwritten with the classpath resource {@code glassfish-config/domain.xml}, if present.
+     * The default value is {@code false}.
+     */
+    public static final String GLASSFISH_CONFIG_OVERWRITE_KEY = "pax.exam.glassfish.config.overwrite";
+
     private static final Logger LOG = LoggerFactory.getLogger( GlassFishTestContainer.class );
 
     /**
@@ -574,6 +582,7 @@ public class GlassFishTestContainer implements TestContainer
         String systemType = cm.getProperty( Constants.EXAM_SYSTEM_KEY );
         isJavaEE = Constants.EXAM_SYSTEM_JAVAEE.equals( systemType );
         glassFishHome = cm.getProperty( GLASSFISH_HOME_KEY );
+        boolean overwriteConfig = Boolean.parseBoolean( cm.getProperty( GLASSFISH_CONFIG_OVERWRITE_KEY, "false" ) );
 
         // try the property we had in 3.0.0.M1
         if( glassFishHome == null )
@@ -596,6 +605,9 @@ public class GlassFishTestContainer implements TestContainer
             if( bootBundle.exists() )
             {
                 LOG.info( "using GlassFish installation in {}", glassFishHome );
+                if (overwriteConfig) {
+                    installConfiguration();
+                }
             }
             else
             {
@@ -636,6 +648,7 @@ public class GlassFishTestContainer implements TestContainer
                 File targetFile = new File( configTargetDir, configFile.getName() );
                 try
                 {
+                    LOG.info( "copying {} to {}", configFile, targetFile );
                     FileUtils.copyFile( configFile, targetFile, null );
                 }
                 catch ( IOException exc )
