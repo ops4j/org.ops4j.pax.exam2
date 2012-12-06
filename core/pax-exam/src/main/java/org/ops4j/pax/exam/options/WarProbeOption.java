@@ -39,18 +39,28 @@ public class WarProbeOption implements Option
 {
     public static final String[] DEFAULT_CLASS_PATH_EXCLUDES = {
         ".cp",
-        "org.eclipse.osgi",
-        "scattered-archive-api",
-        "simple-glassfish-api",
+        "bndlib",
+        "geronimo-atinject_",
+        "geronimo-ejb_",
+        "geronimo-jcdi_",
+        "geronimo-jpa_",
         "glassfish-embedded",
-        "jersey-client",
-        "pax-exam-container",
-        "tinybundles",
-        "geronimo-atinject",
-        "servlet-api",
-        "tomcat-",
+        "javaee-api",
         "jboss-log",
-        "bndlib"
+        "jersey-client",
+        "jstl",
+        "myfaces",
+        "openejb",
+        "openwebbeans",
+        "org.eclipse.osgi",
+        "pax-exam-container",
+        "pax-url-aether",
+        "scattered-archive-api",
+        "servlet-api",
+        "simple-glassfish-api",
+        "sisu",
+        "tinybundles",
+        "tomcat",
     };
 
     private List<String> overlays;
