@@ -70,10 +70,10 @@ public class MockitoTest
             mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
             
             // Mockito with Hamcrest and Objenesis embedded
-            mavenBundle( "org.mockito", "mockito-all", "1.8.5" ),
+            mavenBundle( "org.mockito", "mockito-all", "1.9.5" ),
 
             // JUnit without Hamcrest
-            wrappedBundle( mavenBundle( "junit", "junit-dep", "4.9" ) ).exports( "*;version=4.9" ),
+            wrappedBundle( mavenBundle( "junit", "junit-dep", "4.10" ) ).exports( "*;version=4.10" ),
 
             
             systemProperty( "pax.exam.invoker" ).value( "junit" ),            
@@ -113,7 +113,7 @@ public class MockitoTest
             mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
 
             // Mockito without Hamcrest and Objenesis
-            mavenBundle( "org.mockito", "mockito-core", "1.8.5" ),
+            mavenBundle( "org.mockito", "mockito-core", "1.9.5" ),
 
             // Hamcrest with a version matching the range expected by Mockito
             mavenBundle( "org.hamcrest", "com.springsource.org.hamcrest.core", "1.1.0" ),
