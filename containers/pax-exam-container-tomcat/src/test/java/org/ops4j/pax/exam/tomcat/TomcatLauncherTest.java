@@ -25,6 +25,7 @@ import java.net.URL;
 
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.util.ContextName;
 import org.junit.After;
@@ -63,6 +64,10 @@ public class TomcatLauncherTest
         Tomcat tomcat = new Tomcat();
         tomcat.setBaseDir( baseDir.getPath() );
         tomcat.setPort(9080);
+        tomcat.enableNaming();
+        Connector connector = tomcat.getConnector();
+        // see https://issues.apache.org/bugzilla/show_bug.cgi?id=50360
+        connector.setProperty( "bindOnInit", "false" );
         Host host = tomcat.getHost();
         host.setDeployOnStartup( false );
         host.setAutoDeploy( false );
