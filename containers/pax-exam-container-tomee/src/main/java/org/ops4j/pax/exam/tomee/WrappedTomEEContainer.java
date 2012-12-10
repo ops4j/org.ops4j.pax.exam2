@@ -164,15 +164,6 @@ public class WrappedTomEEContainer {
 
         Connector connector = new Connector(Http11Protocol.class.getName());
         connector.setPort(configuration.getHttpPort());
-        
-        /*
-         * hwellmann: We need to set this property to avoid bind exceptions when restarting
-         * the container. There is no easy way to customize the original Container class other
-         * than using this modified copy.
-         */
-        connector.setProperty( "bindOnInit", "false" );
-        
-        
         connector.setAttribute("connectionTimeout", "3000");
         tomcat.getService().addConnector(connector);
         tomcat.setConnector(connector);
@@ -259,6 +250,7 @@ public class WrappedTomEEContainer {
 
     public void stop() throws Exception {
         tomcat.stop();
+        tomcat.destroy();
         deleteTree(base);
         OpenEJB.destroy();
     }
