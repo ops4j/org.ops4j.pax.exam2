@@ -178,6 +178,7 @@ public class TomcatTestContainer implements TestContainer
         try
         {
             tomcat.stop();
+            tomcat.destroy();
         }
         catch ( LifecycleException exc )
         {
@@ -220,8 +221,6 @@ public class TomcatTestContainer implements TestContainer
             int httpPort = 9080;
             Connector connector = tomcat.getConnector();
             connector.setPort( httpPort );
-            // see https://issues.apache.org/bugzilla/show_bug.cgi?id=50360
-            connector.setProperty( "bindOnInit", "false" );
             tomcat.start();
             testDirectory.setAccessPoint( new URI( "http://localhost:" + httpPort + "/Pax-Exam-Probe/" ) );
         }
