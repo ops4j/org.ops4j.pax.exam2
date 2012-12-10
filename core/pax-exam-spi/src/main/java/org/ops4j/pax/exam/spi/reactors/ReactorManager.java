@@ -222,7 +222,7 @@ public class ReactorManager
         }
         else if( EXAM_SYSTEM_JAVAEE.equals( systemType ) )
         {
-            system = DefaultExamSystem.create( new Option[]{ new WarProbeOption(), timeoutOption } );
+            system = DefaultExamSystem.create( new Option[]{ new WarProbeOption() } );
         }
         else
         {

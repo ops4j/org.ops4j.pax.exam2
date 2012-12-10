@@ -49,6 +49,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +157,9 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
     {
         try
         {
+            // just make sure we don't get an "option not recognized" warning
+            system.getOptions( WarProbeOption.class );
+
             LOG.info( "deploying probe" );
             Deployer deployer = glassFish.getDeployer();
 

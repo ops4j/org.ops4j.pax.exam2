@@ -79,6 +79,7 @@ import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.ValueOption;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.exam.zip.ZipInstaller;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -322,6 +323,9 @@ public class GlassFishTestContainer implements TestContainer
     {
         try
         {
+            // just make sure we don't get an "option not recognized" warning
+            system.getOptions( WarProbeOption.class );
+
             LOG.info( "deploying probe" );
             Deployer deployer = glassFish.getDeployer();
 

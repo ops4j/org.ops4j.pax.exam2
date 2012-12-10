@@ -47,6 +47,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +98,8 @@ public class TomEETestContainer implements TestContainer
 
     public synchronized long install( String location, InputStream stream )
     {
+        // just make sure we don't get an "option not recognized" warning
+        system.getOptions( WarProbeOption.class );
         deployModule( EXAM_APPLICATION_NAME, stream );
         return -1;
     }

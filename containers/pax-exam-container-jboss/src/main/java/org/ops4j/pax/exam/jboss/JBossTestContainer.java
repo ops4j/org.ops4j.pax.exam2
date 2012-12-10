@@ -56,6 +56,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
+import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.zip.ZipInstaller;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -110,6 +111,8 @@ public class JBossTestContainer implements TestContainer
 
     public synchronized long install( String location, InputStream stream )
     {
+        // just make sure we don't get an "option not recognized" warning
+        system.getOptions( WarProbeOption.class );
         deployModule( "Pax-Exam-Probe", stream);
         return -1;
     }
