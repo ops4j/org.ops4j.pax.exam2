@@ -17,14 +17,14 @@
  */
 package org.ops4j.pax.exam.tomee;
 
+import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.war;
 
 import java.io.IOException;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.spi.PaxExamRuntime;
-import org.ops4j.pax.exam.tomee.TomEETestContainer;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 
 public class TomEEDeploymentTest
 {
@@ -33,10 +33,9 @@ public class TomEEDeploymentTest
     public void deployWebapp() throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        ExamSystem system =
-            PaxExamRuntime.createServerSystem( war(
-                "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war" ).name(
-                "sample1" ) );
+        ExamSystem system = DefaultExamSystem.create( options( war(
+            "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war" ).name(
+            "sample1" ) ) );
         TomEETestContainer container = new TomEETestContainer( system );
         container.start();
         container.deployModules();

@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.tomcat;
 
+import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.war;
 
 import java.io.IOException;
@@ -25,6 +26,8 @@ import java.net.URL;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 public class TomcatTestContainerTest
@@ -33,7 +36,7 @@ public class TomcatTestContainerTest
     @Test
     public void launchTomcat() throws IOException
     {
-        ExamSystem system = PaxExamRuntime.createServerSystem( );
+        ExamSystem system = DefaultExamSystem.create( options() );
         TomcatTestContainer container = new TomcatTestContainer( system );
         container.start();
         container.stop();
@@ -43,7 +46,7 @@ public class TomcatTestContainerTest
     public void deployWebapp() throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        ExamSystem system = PaxExamRuntime.createServerSystem( war( "mvn:org.apache.wicket/wicket-examples/1.5.3/war" ).name( "wicket-examples" ) );
+        ExamSystem system = DefaultExamSystem.create( options( war( "mvn:org.apache.wicket/wicket-examples/1.5.3/war" ).name( "wicket-examples" ) ) );
         TomcatTestContainer container = new TomcatTestContainer( system );
         container.start();
         container.deployModules();
@@ -54,7 +57,7 @@ public class TomcatTestContainerTest
     public void deployWebappFromStream() throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        ExamSystem system = PaxExamRuntime.createServerSystem(  );
+        ExamSystem system = DefaultExamSystem.create( options() );
         TomcatTestContainer container = new TomcatTestContainer( system ) ;
         container.start();
         InputStream is = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war").openStream();

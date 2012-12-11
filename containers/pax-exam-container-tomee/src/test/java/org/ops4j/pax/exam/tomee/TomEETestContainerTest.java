@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.tomee;
 
+import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.war;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.net.URL;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.tomee.TomEETestContainer;
 
@@ -44,9 +46,8 @@ public class TomEETestContainerTest
     public void deployWebapp() throws IOException
     {
         System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        ExamSystem system =
-            PaxExamRuntime.createServerSystem( war(
-                "mvn:org.apache.wicket/wicket-examples/1.5.3/war" ).name( "wicket-examples" ) );
+        ExamSystem system = DefaultExamSystem.create( options( war(
+                "mvn:org.apache.wicket/wicket-examples/1.5.3/war" ).name( "wicket-examples" ) ) );
         TomEETestContainer container = new TomEETestContainer( system );
         container.start();
         container.deployModules();
