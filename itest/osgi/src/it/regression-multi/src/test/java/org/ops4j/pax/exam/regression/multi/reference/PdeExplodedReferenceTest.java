@@ -22,7 +22,7 @@ import static org.junit.Assume.assumeTrue;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.exam.CoreOptions.vmOptions;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isEquinox;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
@@ -52,7 +52,8 @@ public class PdeExplodedReferenceTest
             regressionDefaults(),
             url( "reference:file:" + baseDir + "/target/regression-pde-bundle" ),
             junitBundles(),
-            vmOptions( "-Dosgi.clean=true", "-Dosgi.dev=target/classes" ));
+            systemProperty( "osgi.clean" ).value( "true" ),
+            systemProperty( "osgi.dev" ).value( "target/classes" ));
     }
 
     @Test

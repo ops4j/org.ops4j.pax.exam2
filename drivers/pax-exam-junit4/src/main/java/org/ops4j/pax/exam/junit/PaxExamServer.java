@@ -25,6 +25,7 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 /**
@@ -83,7 +84,7 @@ public class PaxExamServer extends ExternalResource
     protected void before() throws Throwable
     {
         Option[] options = getConfigurationOptions();
-        ExamSystem system = PaxExamRuntime.createServerSystem( options );
+        ExamSystem system = DefaultExamSystem.create( options );
         testContainer = PaxExamRuntime.createContainer( system );
         testContainer.start();
     }

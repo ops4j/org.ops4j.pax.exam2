@@ -30,7 +30,7 @@ public class WabSampleIT
     public void checkPlainTextFromWabServlet()
     {
         Client client = Client.create();
-        WebResource resource = client.resource( "http://localhost:8080/wab/WABServlet" );
+        WebResource resource = client.resource( "http://localhost:8181/wab/WABServlet" );
         String response = resource.get( String.class );
         assertThat( response, containsString( "wab symbolic name : wab-sample" ) );
     }

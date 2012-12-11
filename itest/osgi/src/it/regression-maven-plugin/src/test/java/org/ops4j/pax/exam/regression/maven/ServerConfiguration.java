@@ -28,6 +28,7 @@ public class ServerConfiguration
     public Option[] configuration()
     {
         return options(
+            systemProperty("org.osgi.service.http.port").value("8181"),
             frameworkProperty( "osgi.console" ).value( "6666" ),
             
             mavenBundle( "org.ops4j.pax.web", "pax-web-spi" )
