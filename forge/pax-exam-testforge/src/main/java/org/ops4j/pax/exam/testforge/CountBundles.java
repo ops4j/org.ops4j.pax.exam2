@@ -29,7 +29,6 @@ import org.ops4j.pax.exam.TestContainerException;
  */
 public class CountBundles {
 
-    @SuppressWarnings( "unused" )
     public void probe( BundleContext ctx, Integer assume )
         throws InterruptedException, InvalidSyntaxException
     {

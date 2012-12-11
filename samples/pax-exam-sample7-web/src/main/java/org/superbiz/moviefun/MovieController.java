@@ -34,9 +34,12 @@ import java.util.ResourceBundle;
 
 @ManagedBean(name = "movieController")
 @SessionScoped
+@SuppressWarnings( "rawtypes" )
 public class MovieController implements Serializable {
 
 
+    private static final long serialVersionUID = 1L;
+    
     private Movie current;
     private DataModel items = null;
     @EJB
@@ -68,6 +71,7 @@ public class MovieController implements Serializable {
                     return getFacade().count();
                 }
 
+                @SuppressWarnings( "unchecked" )
                 @Override
                 public DataModel createPageDataModel() {
                     return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));

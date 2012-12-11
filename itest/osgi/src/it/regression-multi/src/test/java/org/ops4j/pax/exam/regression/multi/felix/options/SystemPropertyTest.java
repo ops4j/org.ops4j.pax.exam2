@@ -23,7 +23,8 @@ import static org.junit.Assume.assumeTrue;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isFelix;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isNativeContainer;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
@@ -33,14 +34,10 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.startlevel.StartLevel;
 
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class SystemPropertyTest
 {
     @Inject
@@ -58,13 +55,14 @@ public class SystemPropertyTest
     }
 
     @Test
+    @SuppressWarnings( "deprecation" )
     public void startLevel()
     {
         assumeTrue( isFelix() && !isNativeContainer() );
         
         assertThat( System.getProperty( "felix.startlevel.bundle" ), is("2"));
         assertThat( System.getProperty( "foo" ), is("bar"));
-        StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );
+        org.osgi.service.startlevel.StartLevel startLevel = ServiceLookup.getService( bc, org.osgi.service.startlevel.StartLevel.class );
         assertThat( startLevel, is( notNullValue() ) );
         assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 2 ) ) );
     }

@@ -28,7 +28,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -36,7 +35,6 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.Constants;
-import org.ops4j.pax.exam.regression.multi.RegressionConfiguration;
 import org.ops4j.pax.exam.regression.pde.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

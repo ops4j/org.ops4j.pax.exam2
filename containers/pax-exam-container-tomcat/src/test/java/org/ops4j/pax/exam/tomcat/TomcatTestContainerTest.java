@@ -26,9 +26,7 @@ import java.net.URL;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
-import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 public class TomcatTestContainerTest
 {

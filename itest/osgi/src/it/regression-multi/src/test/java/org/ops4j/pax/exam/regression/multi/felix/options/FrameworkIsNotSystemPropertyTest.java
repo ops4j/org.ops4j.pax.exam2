@@ -38,7 +38,6 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.startlevel.StartLevel;
 
 @RunWith( JUnit4TestRunner.class )
 @ExamReactorStrategy( PerMethod.class )
@@ -57,12 +56,14 @@ public class FrameworkIsNotSystemPropertyTest
             junitBundles() );
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     public void startLevel(  )
     {
         assumeTrue( isFelix() );
 
-        StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );
+        org.osgi.service.startlevel.StartLevel startLevel = 
+                ServiceLookup.getService( bc, org.osgi.service.startlevel.StartLevel.class );
         assertThat( startLevel, is( notNullValue() ) );
         assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 1 ) ) );
     }

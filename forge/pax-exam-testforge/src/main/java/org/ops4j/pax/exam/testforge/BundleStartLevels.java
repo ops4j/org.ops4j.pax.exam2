@@ -27,7 +27,6 @@ import org.ops4j.pax.exam.TestContainerException;
  */
 public class BundleStartLevels {
     
- @SuppressWarnings( "unused" )
     public void probe( BundleContext ctx, Integer desiredMinBundleState, Integer desiredMaxBundleState )
         throws InterruptedException, InvalidSyntaxException
     {

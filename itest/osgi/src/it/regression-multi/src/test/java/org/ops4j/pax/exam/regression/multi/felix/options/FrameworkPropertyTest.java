@@ -34,14 +34,10 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.startlevel.StartLevel;
 
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( PerMethod.class )
 public class FrameworkPropertyTest
 {
 
@@ -57,6 +53,7 @@ public class FrameworkPropertyTest
             junitBundles() );
     }
 
+    @SuppressWarnings( "deprecation" )
     @Test
     public void startLevel()
     {
@@ -66,7 +63,7 @@ public class FrameworkPropertyTest
         // Pax Runner does not clearly distinguish framework and system properties.
         assertThat( System.getProperty( "felix.startlevel.bundle" ), is( "4" ) );
 
-        StartLevel startLevel = ServiceLookup.getService( bc, StartLevel.class );
+        org.osgi.service.startlevel.StartLevel startLevel = ServiceLookup.getService( bc, org.osgi.service.startlevel.StartLevel.class );
         assertThat( startLevel, is( notNullValue() ) );
         assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 4 ) ) );
     }

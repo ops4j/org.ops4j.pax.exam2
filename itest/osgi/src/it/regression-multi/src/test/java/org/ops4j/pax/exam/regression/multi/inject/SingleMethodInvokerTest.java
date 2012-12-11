@@ -46,8 +46,6 @@ public class SingleMethodInvokerTest
 
         JUnitCore junit = new JUnitCore();
         String method = "getInjectedServices";
-        String klass = FilterTest.class.getName();
-        String testName = String.format( "%s:%s.%s:Native:EquinoxFactory", method, klass, method );
         Request request = Request.method( FilterTest.class, method );
         Result result = junit.run( request );
         if( result.getFailureCount() > 0 )

@@ -32,6 +32,11 @@ import java.util.ListIterator;
  */
 public class ActionServlet extends HttpServlet {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
     @EJB(name = "movies")
     private Movies moviesBean;
 
@@ -45,7 +50,8 @@ public class ActionServlet extends HttpServlet {
 		process(request, response);
 	}
 
-	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
+    private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		
 	    List<Movie> movies = null;

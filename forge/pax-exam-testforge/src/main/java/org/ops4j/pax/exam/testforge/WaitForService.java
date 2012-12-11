@@ -30,7 +30,6 @@ import org.ops4j.pax.exam.TestContainerException;
  */
 public class WaitForService {
 
-    @SuppressWarnings( "unused" )
     public void probe( BundleContext ctx, String servicename, Integer wait )
         throws InterruptedException, InvalidSyntaxException
     {

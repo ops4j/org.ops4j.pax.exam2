@@ -30,7 +30,6 @@ import org.ops4j.pax.exam.TestContainerException;
  */
 public class BundlesInState {
 
-    @SuppressWarnings( "unused" )
     public void probe( BundleContext ctx, Integer desiredMinBundleState, Integer desiredMaxBundleState )
         throws InterruptedException, InvalidSyntaxException
     {

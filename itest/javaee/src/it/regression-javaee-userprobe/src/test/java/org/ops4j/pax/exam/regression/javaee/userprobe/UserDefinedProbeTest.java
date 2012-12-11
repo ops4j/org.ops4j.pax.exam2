@@ -20,8 +20,9 @@ package org.ops4j.pax.exam.regression.javaee.userprobe;
 import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.warProbe;
+import static org.ops4j.pax.exam.Info.getOps4jBaseVersion;
+import static org.ops4j.pax.exam.Info.getPaxExamVersion;
 import static org.ops4j.pax.exam.spi.Probes.builder;
-import static org.ops4j.pax.exam.Info.*;
 
 import java.util.List;
 
@@ -29,7 +30,6 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;

@@ -38,8 +38,6 @@ import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
@@ -51,7 +49,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
 @RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( AllConfinedStagedReactorFactory.class )
 public class FragmentTest
 {
     @Inject

@@ -81,7 +81,7 @@ public class SingleClassProvider {
 	private long findSafe(Bundle bundle, String className) {
 		 try
 	        {
-	            Class clazz = bundle.loadClass(className);
+	            Class<?> clazz = bundle.loadClass(className);
 	            if (clazz.getClassLoader() == null)
 	            {
 	                return ( LOADED_FROM_BOOTCLASSLOADER );
