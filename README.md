@@ -32,13 +32,13 @@ Run Build:
 
 Run build with integration tests
 
-    mvn -P itest clean install
+    mvn -Pdefault,itest clean install
 
 ## Releases
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 2.4.0.
+The current release of Pax Exam is 2.6.0.
 
 ## Issue Tracking
 
