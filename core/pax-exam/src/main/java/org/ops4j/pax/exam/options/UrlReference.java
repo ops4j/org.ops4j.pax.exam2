@@ -19,16 +19,15 @@ package org.ops4j.pax.exam.options;
 
 /**
  * An URL Reference.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 26, 2009
  */
-public interface UrlReference
-{
+public interface UrlReference {
 
     /**
      * Getter.
-     *
+     * 
      * @return url (cannot be null)
      */
     String getURL();

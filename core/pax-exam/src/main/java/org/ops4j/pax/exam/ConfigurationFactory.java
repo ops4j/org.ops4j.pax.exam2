@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam;
 
-
 /**
  * @author Harald Wellmann
  * @since 3.0.0

@@ -70,10 +70,9 @@ import org.slf4j.LoggerFactory;
  * @author Harald Wellmann
  * @since Jan 7, 2010
  */
-public class NativeTestContainer implements TestContainer
-{
+public class NativeTestContainer implements TestContainer {
 
-    final private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
+    final private static Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
     final private static String PROBE_SIGNATURE_KEY = "Probe-Signature";
     final private Stack<Long> installed = new Stack<Long>();
 
@@ -82,349 +81,305 @@ public class NativeTestContainer implements TestContainer
 
     volatile Framework framework;
 
-    public NativeTestContainer( ExamSystem system, FrameworkFactory frameworkFactory ) throws IOException
-    {
+    public NativeTestContainer(ExamSystem system, FrameworkFactory frameworkFactory)
+        throws IOException {
         this.frameworkFactory = frameworkFactory;
         this.system = system;
     }
 
-    public synchronized void call( TestAddress address )
-    {
-        Map<String,String> props = new HashMap<String, String>();
+    public synchronized void call(TestAddress address) {
+        Map<String, String> props = new HashMap<String, String>();
         props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
-        ProbeInvoker service = ServiceLookup.getService( framework.getBundleContext(), ProbeInvoker.class, props );
-        service.call( address.arguments() );
+        ProbeInvoker service = ServiceLookup.getService(framework.getBundleContext(),
+            ProbeInvoker.class, props);
+        service.call(address.arguments());
     }
 
-    public synchronized long install( String location, InputStream stream )
-    {
-        try
-        {
-            Bundle b = framework.getBundleContext().installBundle( location, stream );
-            installed.push( b.getBundleId() );
-            LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
-            setBundleStartLevel( b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE );
+    public synchronized long install(String location, InputStream stream) {
+        try {
+            Bundle b = framework.getBundleContext().installBundle(location, stream);
+            installed.push(b.getBundleId());
+            LOG.debug("Installed bundle " + b.getSymbolicName() + " as Bundle ID "
+                + b.getBundleId());
+            setBundleStartLevel(b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE);
             b.start();
             return b.getBundleId();
-        } catch ( BundleException e )
-        {
+        }
+        catch (BundleException e) {
             e.printStackTrace();
         }
         return -1;
     }
-    
-    public synchronized long install( InputStream stream )
-    {
-        return install("local",stream);
+
+    public synchronized long install(InputStream stream) {
+        return install("local", stream);
     }
 
-    public synchronized void cleanup()
-    {
-        while ( (!installed.isEmpty()) )
-        {
-            try
-            {
+    public synchronized void cleanup() {
+        while ((!installed.isEmpty())) {
+            try {
                 Long id = installed.pop();
-                Bundle bundle = framework.getBundleContext().getBundle( id );
+                Bundle bundle = framework.getBundleContext().getBundle(id);
                 bundle.uninstall();
-                LOG.debug( "Uninstalled bundle " + id );
-            } catch ( BundleException e )
-            {
+                LOG.debug("Uninstalled bundle " + id);
+            }
+            catch (BundleException e) {
                 // Sometimes bundles go mad when install + uninstall happens too
                 // fast.
             }
         }
     }
 
-    public void setBundleStartLevel( long bundleId, int startLevel ) throws TestContainerException
-    {
-        StartLevel sl = ServiceLookup.getService( framework.getBundleContext(), StartLevel.class );
-        sl.setBundleStartLevel( framework.getBundleContext().getBundle( bundleId ), startLevel );
+    public void setBundleStartLevel(long bundleId, int startLevel) throws TestContainerException {
+        StartLevel sl = ServiceLookup.getService(framework.getBundleContext(), StartLevel.class);
+        sl.setBundleStartLevel(framework.getBundleContext().getBundle(bundleId), startLevel);
     }
 
-    public TestContainer start(  ) throws TestContainerException
-    {
+    public TestContainer start() throws TestContainerException {
         ClassLoader parent = null;
-        try
-        {
-            system = system.fork( new Option[] {
-                systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
-                systemPackage( "org.ops4j.pax.exam.options;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
-                systemPackage( "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
-                systemProperty( "java.protocol.handler.pkgs").value( "org.ops4j.pax.url" )
-            } );
+        try {
+            system = system.fork(new Option[] {
+                systemPackage("org.ops4j.pax.exam;version="
+                    + skipSnapshotFlag(Info.getPaxExamVersion())),
+                systemPackage("org.ops4j.pax.exam.options;version="
+                    + skipSnapshotFlag(Info.getPaxExamVersion())),
+                systemPackage("org.ops4j.pax.exam.util;version="
+                    + skipSnapshotFlag(Info.getPaxExamVersion())),
+                systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url") });
             Map<String, Object> p = createFrameworkProperties();
             if (LOG.isDebugEnabled()) {
-                logFrameworkProperties( p );
+                logFrameworkProperties(p);
                 logSystemProperties();
             }
             parent = Thread.currentThread().getContextClassLoader();
-            framework = frameworkFactory.newFramework( p );
+            framework = frameworkFactory.newFramework(p);
             framework.init();
-            installAndStartBundles( framework.getBundleContext() );
-        } catch ( Exception e )
-        {
-            throw new TestContainerException( "Problem starting test container.", e );
-        } finally
-        {
-            if ( parent != null )
-            {
-                Thread.currentThread().setContextClassLoader( parent );
+            installAndStartBundles(framework.getBundleContext());
+        }
+        catch (Exception e) {
+            throw new TestContainerException("Problem starting test container.", e);
+        }
+        finally {
+            if (parent != null) {
+                Thread.currentThread().setContextClassLoader(parent);
             }
         }
         return this;
     }
 
-    private void logFrameworkProperties( Map<String, Object> p )
-    {
-        LOG.debug( "==== Framework properties:" );
-        for (String key :  p.keySet()) {
-            LOG.debug( "{} = {}", key, p.get( key ) );
+    private void logFrameworkProperties(Map<String, Object> p) {
+        LOG.debug("==== Framework properties:");
+        for (String key : p.keySet()) {
+            LOG.debug("{} = {}", key, p.get(key));
         }
     }
 
-    private void logSystemProperties()
-    {
-        LOG.debug( "==== System properties:" );
-        SortedMap<Object,Object> map = new TreeMap<Object, Object>(System.getProperties());
+    private void logSystemProperties() {
+        LOG.debug("==== System properties:");
+        SortedMap<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
         for (Map.Entry<Object, Object> entry : map.entrySet()) {
-            LOG.debug( "{} = {}", entry.getKey(), entry.getValue()  );
+            LOG.debug("{} = {}", entry.getKey(), entry.getValue());
         }
     }
 
-    public TestContainer stop()
-    {
-        if ( framework != null )
-        {
-            try
-            {
+    public TestContainer stop() {
+        if (framework != null) {
+            try {
                 cleanup();
                 stopOrAbort();
                 framework = null;
                 system.clear();
             }
-            catch ( BundleException e )
-            {
-                LOG.warn( "Problem during stopping fw.", e );
-            } 
-            catch ( InterruptedException e )
-            {
-                LOG.warn( "InterruptedException during stopping fw.", e );
+            catch (BundleException e) {
+                LOG.warn("Problem during stopping fw.", e);
             }
-        } 
-        else
-        {
-            LOG.warn( "Framework does not exist. Called start() before ? " );
+            catch (InterruptedException e) {
+                LOG.warn("InterruptedException during stopping fw.", e);
+            }
+        }
+        else {
+            LOG.warn("Framework does not exist. Called start() before ? ");
         }
         return this;
     }
 
-    private void stopOrAbort() throws BundleException, InterruptedException
-    {
+    private void stopOrAbort() throws BundleException, InterruptedException {
         framework.stop();
         long timeout = system.getTimeout().getValue();
-        Thread stopper = new Stopper( timeout );
+        Thread stopper = new Stopper(timeout);
         stopper.start();
         stopper.join(timeout + 500);
-        
-        // If the framework is not stopped, then we're in trouble anyway, so we do not worry 
+
+        // If the framework is not stopped, then we're in trouble anyway, so we do not worry
         // about stopping the worker thread.
-        
-        if (framework.getState() != Framework.RESOLVED)
-        {
-            String message = "Framework has not yet stopped after " +
-                    timeout + " ms. waitForStop did not return";
-            throw new TestContainerException( message );            
+
+        if (framework.getState() != Framework.RESOLVED) {
+            String message = "Framework has not yet stopped after " + timeout
+                + " ms. waitForStop did not return";
+            throw new TestContainerException(message);
         }
     }
 
-    private Map<String, Object> createFrameworkProperties( ) throws IOException
-    {
+    private Map<String, Object> createFrameworkProperties() throws IOException {
         final Map<String, Object> p = new HashMap<String, Object>();
-        CleanCachesOption cleanCaches = system.getSingleOption( CleanCachesOption.class );
+        CleanCachesOption cleanCaches = system.getSingleOption(CleanCachesOption.class);
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
-            p.put( FRAMEWORK_STORAGE_CLEAN,  FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT );            
+            p.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
 
-        p.put( FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath() );
-        p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( system.getOptions( SystemPackageOption.class ) ) );
-        p.put( FRAMEWORK_BOOTDELEGATION, buildString( system.getOptions( BootDelegationOption.class ) ) );
-        
-        for ( FrameworkPropertyOption option : system.getOptions( FrameworkPropertyOption.class ) )
-        {
-            p.put( option.getKey(), option.getValue() );
+        p.put(FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath());
+        p.put(FRAMEWORK_SYSTEMPACKAGES_EXTRA,
+            buildString(system.getOptions(SystemPackageOption.class)));
+        p.put(FRAMEWORK_BOOTDELEGATION, buildString(system.getOptions(BootDelegationOption.class)));
+
+        for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
+            p.put(option.getKey(), option.getValue());
         }
 
-        for ( SystemPropertyOption option : system.getOptions( SystemPropertyOption.class ) )
-        {
-            System.setProperty( option.getKey(), option.getValue() );
+        for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {
+            System.setProperty(option.getKey(), option.getValue());
         }
-        
-        String repositories = buildString( system.getOptions ( RepositoryOption.class ));
-        if (! repositories.isEmpty()) {
+
+        String repositories = buildString(system.getOptions(RepositoryOption.class));
+        if (!repositories.isEmpty()) {
             System.setProperty("org.ops4j.pax.url.mvn.repositories", repositories);
         }
         return p;
     }
 
-    private String buildString( ValueOption<?>[] options )
-    {
-        return buildString( new String[0], options, new String[0] );
+    private String buildString(ValueOption<?>[] options) {
+        return buildString(new String[0], options, new String[0]);
     }
 
     @SuppressWarnings("unused")
-    private String buildString( String[] prepend, ValueOption<?>[] options )
-    {
-        return buildString( prepend, options, new String[0] );
+    private String buildString(String[] prepend, ValueOption<?>[] options) {
+        return buildString(prepend, options, new String[0]);
     }
 
     @SuppressWarnings("unused")
-    private String buildString( ValueOption<?>[] options, String[] append )
-    {
-        return buildString( new String[0], options, append );
+    private String buildString(ValueOption<?>[] options, String[] append) {
+        return buildString(new String[0], options, append);
     }
 
-    private String buildString( String[] prepend, ValueOption<?>[] options, String[] append )
-    {
+    private String buildString(String[] prepend, ValueOption<?>[] options, String[] append) {
         StringBuilder builder = new StringBuilder();
-        for ( String a : prepend )
-        {
-            builder.append( a );
-            builder.append( "," );
+        for (String a : prepend) {
+            builder.append(a);
+            builder.append(",");
         }
-        for ( ValueOption<?> option : options )
-        {
-            builder.append( option.getValue() );
-            builder.append( "," );
+        for (ValueOption<?> option : options) {
+            builder.append(option.getValue());
+            builder.append(",");
         }
-        for ( String a : append )
-        {
-            builder.append( a );
-            builder.append( "," );
+        for (String a : append) {
+            builder.append(a);
+            builder.append(",");
         }
-        if ( builder.length() > 0 )
-        {
-            return builder.substring( 0, builder.length() - 1 );
-        } else
-        {
+        if (builder.length() > 0) {
+            return builder.substring(0, builder.length() - 1);
+        }
+        else {
             return "";
         }
     }
 
-    private void installAndStartBundles( BundleContext context ) throws BundleException
-    {
+    private void installAndStartBundles(BundleContext context) throws BundleException {
         framework.start();
-        StartLevel sl = ServiceLookup.getService(  context, StartLevel.class );
-        for ( ProvisionOption<?> bundle : system.getOptions( ProvisionOption.class ) )
-        {
-            Bundle b = context.installBundle( bundle.getURL() );
-            int startLevel = getStartLevel( bundle );
-            sl.setBundleStartLevel( b, startLevel );
-            if ( bundle.shouldStart() )  
-            {
+        StartLevel sl = ServiceLookup.getService(context, StartLevel.class);
+        for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
+            Bundle b = context.installBundle(bundle.getURL());
+            int startLevel = getStartLevel(bundle);
+            sl.setBundleStartLevel(b, startLevel);
+            if (bundle.shouldStart()) {
                 b.start();
-                LOG.debug( "+ Install (start@{}) {}", startLevel, bundle );
+                LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
             }
-            else
-            {
-                LOG.debug( "+ Install (no start) {}", bundle );
+            else {
+                LOG.debug("+ Install (no start) {}", bundle);
             }
         }
 
-        FrameworkStartLevelOption startLevelOption = system.getSingleOption( FrameworkStartLevelOption.class );
-        int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption.getStartLevel();
-        LOG.debug( "Jump to startlevel: " + startLevel );
-        sl.setStartLevel( startLevel );
+        FrameworkStartLevelOption startLevelOption = system
+            .getSingleOption(FrameworkStartLevelOption.class);
+        int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption
+            .getStartLevel();
+        LOG.debug("Jump to startlevel: " + startLevel);
+        sl.setStartLevel(startLevel);
         // Work around for FELIX-2942
-        final CountDownLatch latch = new CountDownLatch( 1 );
-        context.addFrameworkListener( new FrameworkListener()
-        {
-            public void frameworkEvent( FrameworkEvent frameworkEvent )
-            {
-                switch (frameworkEvent.getType())
-                {
-                case FrameworkEvent.STARTLEVEL_CHANGED :
-                    latch.countDown();
+        final CountDownLatch latch = new CountDownLatch(1);
+        context.addFrameworkListener(new FrameworkListener() {
+
+            public void frameworkEvent(FrameworkEvent frameworkEvent) {
+                switch (frameworkEvent.getType()) {
+                    case FrameworkEvent.STARTLEVEL_CHANGED:
+                        latch.countDown();
                 }
             }
-        } );
-        try
-        {
+        });
+        try {
             final long timeout = system.getTimeout().getLowerValue();
-            if ( !latch.await( timeout, TimeUnit.MILLISECONDS )) {
-                 // Framework start level has not reached yet, so report an error to cause the test process to abort
-                final String message = "Framework is yet to reach target start level " + startLevel + " after " +
-                        timeout + " ms. Current start level is " + sl.getStartLevel();
+            if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
+                // Framework start level has not reached yet, so report an error to cause the test
+                // process to abort
+                final String message = "Framework is yet to reach target start level " + startLevel
+                    + " after " + timeout + " ms. Current start level is " + sl.getStartLevel();
                 throw new TestContainerException(message);
             }
-        } catch ( InterruptedException e )
-        {
-            throw new TestContainerException( e );
+        }
+        catch (InterruptedException e) {
+            throw new TestContainerException(e);
         }
     }
 
-
-    private int getStartLevel( ProvisionOption<?> bundle )
-    {
+    private int getStartLevel(ProvisionOption<?> bundle) {
         Integer start = bundle.getStartLevel();
-        if ( start == null )
-        {
+        if (start == null) {
             start = Constants.START_LEVEL_DEFAULT_PROVISION;
         }
         return start;
     }
 
-    private String skipSnapshotFlag( String version )
-    {
-        int idx = version.indexOf( "-" );
-        if ( idx >= 0 )
-        {
-            return version.substring( 0, idx );
-        } else
-        {
+    private String skipSnapshotFlag(String version) {
+        int idx = version.indexOf("-");
+        if (idx >= 0) {
+            return version.substring(0, idx);
+        }
+        else {
             return version;
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Native:" + frameworkFactory.getClass().getSimpleName();
     }
-    
-    
+
     /**
-     * Worker thread for shutting down the framework. 
-     * We'd expect Framework.waitForStop(timeout) to return after the given timeout, but this
-     * is not the case with Equinox (tested on 3.6.2 and 3.7.0), so we use this worker thread
-     * to avoid blocking the main thread.
+     * Worker thread for shutting down the framework. We'd expect Framework.waitForStop(timeout) to
+     * return after the given timeout, but this is not the case with Equinox (tested on 3.6.2 and
+     * 3.7.0), so we use this worker thread to avoid blocking the main thread.
      * 
      * @author Harald Wellmann
      */
-    private class Stopper extends Thread
-    {
+    private class Stopper extends Thread {
+
         private final long timeout;
 
-        private Stopper( long timeout )
-        {
+        private Stopper(long timeout) {
             this.timeout = timeout;
         }
 
         @Override
-        public void run()
-        {
-            try
-            {
-                FrameworkEvent frameworkEvent = framework.waitForStop( timeout );
-                if( frameworkEvent.getType() != FrameworkEvent.STOPPED )
-                {
-                    LOG.error( "Framework has not yet stopped after {} ms. " +
-                            "waitForStop returned: {}", timeout, frameworkEvent );
+        public void run() {
+            try {
+                FrameworkEvent frameworkEvent = framework.waitForStop(timeout);
+                if (frameworkEvent.getType() != FrameworkEvent.STOPPED) {
+                    LOG.error("Framework has not yet stopped after {} ms. "
+                        + "waitForStop returned: {}", timeout, frameworkEvent);
                 }
             }
-            catch ( InterruptedException exc )
-            {
-                LOG.error( "Stopper thread was interrupted" );
+            catch (InterruptedException exc) {
+                LOG.error("Stopper thread was interrupted");
             }
         }
     }

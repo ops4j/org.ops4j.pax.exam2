@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.regression.cdi.ice;
 
-public interface IceCreamService
-{
+public interface IceCreamService {
+
     String getFlavour();
 }

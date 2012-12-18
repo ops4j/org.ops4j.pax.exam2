@@ -32,10 +32,10 @@ import org.ops4j.pax.exam.sample2.movieimport.MovieDbImportService;
  * @since 04.03.11
  */
 public class DatabasePopulator {
-    
+
     @Inject
     private UserService userService;
-    
+
     @Inject
     private MovieService movieService;
 
@@ -43,14 +43,14 @@ public class DatabasePopulator {
     private MovieDbImportService importService;
 
     public List<Movie> populateDatabase() {
-        
-        User micha = userService.register( "micha", "Micha", "password" );
-        userService.register( "ollie", "Olliver", "password" );
-        userService.addFriend( micha, "ollie" );
-        
+
+        User micha = userService.register("micha", "Micha", "password");
+        userService.register("ollie", "Olliver", "password");
+        userService.addFriend(micha, "ollie");
+
         List<Integer> ids = asList(19995, 194, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609,
-                13, 20526, 11, 1893, 1892, 1894, 168, 193, 200, 157, 152, 201, 154, 12155, 58, 285,
-                118, 22, 392, 5255, 568, 9800, 497, 101, 120, 121, 122);
+            13, 20526, 11, 1893, 1892, 1894, 168, 193, 200, 157, 152, 201, 154, 12155, 58, 285,
+            118, 22, 392, 5255, 568, 9800, 497, 101, 120, 121, 122);
         List<Movie> result = new ArrayList<Movie>(ids.size());
         for (Integer id : ids) {
             result.add(importService.importMovie(id));

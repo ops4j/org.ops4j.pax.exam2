@@ -37,36 +37,32 @@ import org.osgi.framework.launch.FrameworkFactory;
  * @author Harald Wellmann
  * 
  */
-public class MvnUrlTest
-{
+public class MvnUrlTest {
 
     private HashMap<String, String> props;
 
     @Before
-    public void setUp()
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    public void setUp() {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         props = new HashMap<String, String>();
     }
 
     @Test
-    public void provisionMvnUrl() throws BundleException, IOException
-    {
+    public void provisionMvnUrl() throws BundleException, IOException {
         FrameworkFactory frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
-        Framework framework = frameworkFactory.newFramework( props );
-        provisionToFramework( framework );
+        Framework framework = frameworkFactory.newFramework(props);
+        provisionToFramework(framework);
     }
 
-    private void provisionToFramework( Framework framework ) throws BundleException, IOException
-    {
+    private void provisionToFramework(Framework framework) throws BundleException, IOException {
         framework.start();
         BundleContext bc = framework.getBundleContext();
-        assertNotNull( bc );
+        assertNotNull(bc);
 
         String url = "mvn:org.ops4j.base/ops4j-base-lang/1.2.3";
-        Bundle bundle = bc.installBundle( url );
-        assertNotNull( bundle );
-        assertEquals( "org.ops4j.base.lang", bundle.getSymbolicName() );
+        Bundle bundle = bc.installBundle(url);
+        assertNotNull(bundle);
+        assertEquals("org.ops4j.base.lang", bundle.getSymbolicName());
 
         bundle.start();
         bundle.uninstall();

@@ -4,28 +4,26 @@ package org.ops4j.pax.exam;
  *
  */
 public class ExceptionHelper {
-    
-    public static Throwable unwind( Throwable e )
-    {
+
+    public static Throwable unwind(Throwable e) {
         Throwable t = e.getCause();
-        if( t != null ) {
-            return unwind( t );
+        if (t != null) {
+            return unwind(t);
         }
         else {
             return e;
         }
     }
 
-    public static boolean hasThrowable( Throwable stack, Class<? extends Throwable> clazz )
-    {
-        if( stack == null ) {
+    public static boolean hasThrowable(Throwable stack, Class<? extends Throwable> clazz) {
+        if (stack == null) {
             return false;
         }
-        else if( stack.getClass().getName().equalsIgnoreCase( clazz.getName() ) ) {
+        else if (stack.getClass().getName().equalsIgnoreCase(clazz.getName())) {
             return true;
         }
         else {
-            return hasThrowable( stack.getCause(), clazz );
+            return hasThrowable(stack.getCause(), clazz);
         }
     }
 }

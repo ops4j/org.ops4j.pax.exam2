@@ -30,35 +30,31 @@ import org.ops4j.pax.exam.util.Transactional;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners( PaxExam.class )
-public class AuthorTest
-{
+@Listeners(PaxExam.class)
+public class AuthorTest {
 
     @Inject
     private LibraryService service;
 
     @Test
-    public void byAuthor()
-    {
-        List<Book> books = service.findBooksByAuthor( "Mann" );
-        assertEquals( 1, books.size() );
+    public void byAuthor() {
+        List<Book> books = service.findBooksByAuthor("Mann");
+        assertEquals(1, books.size());
 
-        Book book = books.get( 0 );
-        assertEquals( "Buddenbrooks", book.getTitle() );
+        Book book = books.get(0);
+        assertEquals("Buddenbrooks", book.getTitle());
     }
 
     @Test
     @Transactional
-    public void numAuthors()
-    {
-        assertEquals( 2, service.getNumAuthors() );
-        service.createAuthor( "Theodor", "Storm" );
-        assertEquals( 3, service.getNumAuthors() );
+    public void numAuthors() {
+        assertEquals(2, service.getNumAuthors());
+        service.createAuthor("Theodor", "Storm");
+        assertEquals(3, service.getNumAuthors());
     }
 
     @Test
-    public void numAuthorsAfterTransaction()
-    {
-        assertEquals( 2, service.getNumAuthors() );
+    public void numAuthorsAfterTransaction() {
+        assertEquals(2, service.getNumAuthors());
     }
 }

@@ -31,13 +31,12 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 
 /**
- * Check if we can install bundles from mvn: URLs into JBoss OSGi.
- * This currently does not work - JBoss OSGi does not seem to
- * recognize any custom protocol handlers, but this is a prerequisite
+ * Check if we can install bundles from mvn: URLs into JBoss OSGi. This currently does not work -
+ * JBoss OSGi does not seem to recognize any custom protocol handlers, but this is a prerequisite
  * for using the Native Test Container.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
 public class MvnUrlTest {
 
@@ -45,14 +44,14 @@ public class MvnUrlTest {
 
     @Before
     public void setUp() {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         props = new HashMap<String, String>();
     }
-    
+
     @Test
     public void jbosgiMvnUrl() throws BundleException, IOException {
         FrameworkFactory frameworkFactory = new FrameworkFactoryImpl();
-        Framework framework = frameworkFactory.newFramework( props );
+        Framework framework = frameworkFactory.newFramework(props);
         provisionMvnUrl(framework);
     }
 
@@ -60,12 +59,12 @@ public class MvnUrlTest {
         framework.start();
         BundleContext bc = framework.getBundleContext();
         assertNotNull(bc);
-        
+
         String url = "mvn:org.ops4j.base/ops4j-base-lang/1.2.3";
-        
+
         // throws java.lang.IllegalArgumentException: Null path
         Bundle bundle = bc.installBundle(url);
-        
+
         assertNotNull(bundle);
         assertEquals("org.ops4j.base.lang", bundle.getSymbolicName());
 

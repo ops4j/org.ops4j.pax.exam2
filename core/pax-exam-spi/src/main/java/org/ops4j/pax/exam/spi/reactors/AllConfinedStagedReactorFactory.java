@@ -26,11 +26,10 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
  * @deprecated Use {@link PerMethod} instead.
  */
 @Deprecated
-public class AllConfinedStagedReactorFactory implements StagedExamReactorFactory
-{
+public class AllConfinedStagedReactorFactory implements StagedExamReactorFactory {
+
     @Override
-    public StagedExamReactor create( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
-    {
-        return new AllConfinedStagedReactor( containers, mProbes );
+    public StagedExamReactor create(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+        return new AllConfinedStagedReactor(containers, mProbes);
     }
 }

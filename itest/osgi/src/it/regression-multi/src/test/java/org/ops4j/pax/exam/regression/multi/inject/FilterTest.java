@@ -30,33 +30,32 @@ import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( PaxExam.class )
-public class FilterTest
-{
+@RunWith(PaxExam.class)
+public class FilterTest {
 
     @Inject
     private BundleContext bundleContext;
 
-    @Inject @Filter("(language=la)")
+    @Inject
+    @Filter("(language=la)")
     private HelloService latinService;
 
-    @Inject @Filter("(language=en)")
+    @Inject
+    @Filter("(language=en)")
     private HelloService englishService;
 
     @Test
-    public void getServiceFromInjectedBundleContext()
-    {
-        assertThat( bundleContext, is( notNullValue() ) );
-        Object service = ServiceLookup.getService( bundleContext, HelloService.class );
-        assertThat( service, is( notNullValue() ) );
+    public void getServiceFromInjectedBundleContext() {
+        assertThat(bundleContext, is(notNullValue()));
+        Object service = ServiceLookup.getService(bundleContext, HelloService.class);
+        assertThat(service, is(notNullValue()));
     }
 
     @Test
-    public void getInjectedServices()
-    {
-        assertThat( latinService, is( notNullValue() ) );
-        assertThat( latinService.getMessage(), is( equalTo( "Pax Vobiscum!" ) ) );
-        assertThat( englishService, is( notNullValue() ) );
-        assertThat( englishService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
+    public void getInjectedServices() {
+        assertThat(latinService, is(notNullValue()));
+        assertThat(latinService.getMessage(), is(equalTo("Pax Vobiscum!")));
+        assertThat(englishService, is(notNullValue()));
+        assertThat(englishService.getMessage(), is(equalTo("Hello Pax!")));
     }
 }

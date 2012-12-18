@@ -24,53 +24,43 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TimeoutException;
 
 /**
- * Graceful delegator to underlying target instance.
- * All other TestContainer services are do nothing calls.
- *
+ * Graceful delegator to underlying target instance. All other TestContainer services are do nothing
+ * calls.
+ * 
  * @author Toni Menzel
  * @since Jan 26, 2010
  */
-public class RBCRemoteContainer implements TestContainer
-{
+public class RBCRemoteContainer implements TestContainer {
 
     final private TestContainer target;
 
-    public RBCRemoteContainer( final TestContainer target )
-    {
+    public RBCRemoteContainer(final TestContainer target) {
         this.target = target;
     }
 
-    public void call( TestAddress address )
-    {
-        target.call( address );
+    public void call(TestAddress address) {
+        target.call(address);
     }
 
-    public long install( String location, InputStream stream )
-    {
-        return target.install( location, stream );
-    }
-    
-    public long install( InputStream stream )
-    {
-        return install("local",stream);
+    public long install(String location, InputStream stream) {
+        return target.install(location, stream);
     }
 
-    public TestContainer start()
-        throws TimeoutException
-    {
+    public long install(InputStream stream) {
+        return install("local", stream);
+    }
+
+    public TestContainer start() throws TimeoutException {
         // do nothing
         return this;
     }
 
-    public TestContainer stop()
-        throws TimeoutException
-    {
+    public TestContainer stop() throws TimeoutException {
         return this;
     }
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Remote:" + target.toString();
     }
 }

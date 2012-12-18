@@ -43,7 +43,8 @@ public class JsfUtil {
         String msg = ex.getLocalizedMessage();
         if (msg != null && msg.length() > 0) {
             addErrorMessage(msg);
-        } else {
+        }
+        else {
             addErrorMessage(defaultMsg);
         }
     }
@@ -65,10 +66,12 @@ public class JsfUtil {
     }
 
     public static String getRequestParameter(String key) {
-        return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(key);
+        return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+            .get(key);
     }
 
-    public static Object getObjectFromRequestParameter(String requestParameterName, Converter converter, UIComponent component) {
+    public static Object getObjectFromRequestParameter(String requestParameterName,
+        Converter converter, UIComponent component) {
         String theId = JsfUtil.getRequestParameter(requestParameterName);
         return converter.getAsObject(FacesContext.getCurrentInstance(), component, theId);
     }

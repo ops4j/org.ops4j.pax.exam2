@@ -23,25 +23,23 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Actor extends Person {
-    
+
     @OneToMany(mappedBy = "actor")
     private List<Role> roles;
 
     /**
      * @return the roles
      */
-    public List<Role> getRoles()
-    {
+    public List<Role> getRoles() {
         return roles;
     }
 
     /**
-     * @param roles the roles to set
+     * @param roles
+     *            the roles to set
      */
-    public void setRoles( List<Role> roles )
-    {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
-    
-    
+
 }

@@ -20,17 +20,15 @@ import org.ops4j.pax.exam.cdi.impl.CdiInjector;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 
-public class CdiInjectorFactory implements InjectorFactory
-{
+public class CdiInjectorFactory implements InjectorFactory {
 
     @Override
-    public Injector createInjector()
-    {
+    public Injector createInjector() {
         return new CdiInjector();
     }
 
-	@Override
-	public void setContext(Object context) {
-		// not used
-	}
+    @Override
+    public void setContext(Object context) {
+        // not used
+    }
 }

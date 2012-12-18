@@ -19,39 +19,33 @@ package org.ops4j.pax.exam;
 
 /**
  * Denotes an exception occuring during using regression container that appears due to a timeout.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April, 23, 2009
  */
-public class TimeoutException
-    extends TestContainerException
-{
+public class TimeoutException extends TestContainerException {
 
     private static final long serialVersionUID = 8862461468344204444L;
 
     /**
      * {@inheritDoc}
      */
-    public TimeoutException( final String message )
-    {
-        super( message );
+    public TimeoutException(final String message) {
+        super(message);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TimeoutException( final String message,
-                             final Throwable cause )
-    {
-        super( message, cause );
+    public TimeoutException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TimeoutException( final Throwable cause )
-    {
-        super( cause );
+    public TimeoutException(final Throwable cause) {
+        super(cause);
     }
 
 }

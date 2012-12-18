@@ -27,23 +27,20 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
-@Import( ServiceSpringConfig.class )
-public class WebSpringConfig
-{
+@Import(ServiceSpringConfig.class)
+public class WebSpringConfig {
 
     @Bean
-    public LibraryController libraryController()
-    {
+    public LibraryController libraryController() {
         return new LibraryController();
     }
 
     @Bean
-    public ViewResolver viewResolver()
-    {
+    public ViewResolver viewResolver() {
         InternalResourceViewResolver bean = new InternalResourceViewResolver();
-        bean.setPrefix( "/jsp/" );
-        bean.setSuffix( ".jsp" );
-        bean.setViewClass( JstlView.class );
+        bean.setPrefix("/jsp/");
+        bean.setSuffix(".jsp");
+        bean.setViewClass(JstlView.class);
         return bean;
     }
 }

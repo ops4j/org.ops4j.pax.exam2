@@ -25,26 +25,24 @@ import org.ops4j.pax.exam.sample1.model.Author;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 @Singleton
 @Startup
-public class InitializerService
-{
-    private static Logger log = LoggerFactory.getLogger( LibraryService.class );
-      
+public class InitializerService {
+
+    private static Logger log = LoggerFactory.getLogger(LibraryService.class);
+
     @Inject
     private LibraryService libraryService;
-    
+
     @PostConstruct
     public void init() {
         log.info("filling library");
         if (libraryService.getNumBooks() != 0)
             return;
-        
+
         Author mann = libraryService.createAuthor("Thomas", "Mann");
         Author steinbeck = libraryService.createAuthor("John", "Steinbeck");
-        
+
         libraryService.createBook("Buddenbrooks", mann);
         libraryService.createBook("East of Eden", steinbeck);
     }

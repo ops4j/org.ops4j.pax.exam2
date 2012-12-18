@@ -34,12 +34,11 @@ import java.util.ResourceBundle;
 
 @ManagedBean(name = "movieController")
 @SessionScoped
-@SuppressWarnings( "rawtypes" )
+@SuppressWarnings("rawtypes")
 public class MovieController implements Serializable {
 
-
     private static final long serialVersionUID = 1L;
-    
+
     private Movie current;
     private DataModel items = null;
     @EJB
@@ -71,10 +70,11 @@ public class MovieController implements Serializable {
                     return getFacade().count();
                 }
 
-                @SuppressWarnings( "unchecked" )
+                @SuppressWarnings("unchecked")
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().findRange(
+                        new int[] { getPageFirstItem(), getPageFirstItem() + getPageSize() }));
                 }
             };
         }
@@ -101,10 +101,13 @@ public class MovieController implements Serializable {
     public String create() {
         try {
             getFacade().addMovie(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieCreated"));
+            JsfUtil
+                .addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieCreated"));
             return prepareCreate();
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+        }
+        catch (Exception e) {
+            JsfUtil.addErrorMessage(e,
+                ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
         }
     }
@@ -118,10 +121,13 @@ public class MovieController implements Serializable {
     public String update() {
         try {
             getFacade().editMovie(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieUpdated"));
+            JsfUtil
+                .addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieUpdated"));
             return "View";
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+        }
+        catch (Exception e) {
+            JsfUtil.addErrorMessage(e,
+                ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
         }
     }
@@ -140,7 +146,8 @@ public class MovieController implements Serializable {
         updateCurrentItem();
         if (selectedItemIndex >= 0) {
             return "View";
-        } else {
+        }
+        else {
             // all items were removed - go back to list
             recreateModel();
             return "List";
@@ -150,9 +157,12 @@ public class MovieController implements Serializable {
     private void performDestroy() {
         try {
             getFacade().deleteMovieId(current.getId());
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            JsfUtil
+                .addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieDeleted"));
+        }
+        catch (Exception e) {
+            JsfUtil.addErrorMessage(e,
+                ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
         }
     }
 
@@ -167,7 +177,8 @@ public class MovieController implements Serializable {
             }
         }
         if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
+            current = getFacade().findRange(new int[] { selectedItemIndex, selectedItemIndex + 1 })
+                .get(0);
         }
     }
 
@@ -209,8 +220,8 @@ public class MovieController implements Serializable {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MovieController controller = (MovieController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "movieController");
+            MovieController controller = (MovieController) facesContext.getApplication()
+                .getELResolver().getValue(facesContext.getELContext(), null, "movieController");
             return controller.ejbFacade.find(getKey(value));
         }
 
@@ -233,8 +244,11 @@ public class MovieController implements Serializable {
             if (object instanceof Movie) {
                 Movie o = (Movie) object;
                 return getStringKey(o.getId());
-            } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + MovieController.class.getName());
+            }
+            else {
+                throw new IllegalArgumentException("object " + object + " is of type "
+                    + object.getClass().getName() + "; expected type: "
+                    + MovieController.class.getName());
             }
         }
 

@@ -72,9 +72,9 @@ import org.slf4j.LoggerFactory;
  * @author Harald Wellmann
  * 
  */
-public class ForkedTestContainer implements TestContainer
-{
-    private static Logger LOG = LoggerFactory.getLogger( ForkedTestContainer.class );
+public class ForkedTestContainer implements TestContainer {
+
+    private static Logger LOG = LoggerFactory.getLogger(ForkedTestContainer.class);
 
     private ExamSystem system;
     private ForkedFrameworkFactory frameworkFactory;
@@ -82,289 +82,235 @@ public class ForkedTestContainer implements TestContainer
     private PlatformImpl platform;
     private String name;
 
-    public ForkedTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
-    {
+    public ForkedTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
-        this.frameworkFactory = new ForkedFrameworkFactory( frameworkFactory );
+        this.frameworkFactory = new ForkedFrameworkFactory(frameworkFactory);
         this.platform = new PlatformImpl();
         this.name = "Forked:" + frameworkFactory.getClass().getSimpleName();
     }
 
-    public void call( TestAddress address )
-    {
-        String filterExpression =
-            "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker)(Probe-Signature="
-                    + address.root().identifier() + "))";
-        try
-        {
-            remoteFramework.callService( filterExpression, "call" );
+    public void call(TestAddress address) {
+        String filterExpression = "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker)(Probe-Signature="
+            + address.root().identifier() + "))";
+        try {
+            remoteFramework.callService(filterExpression, "call");
         }
-        catch ( RemoteException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (RemoteException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( BundleException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    public long install( String location, InputStream stream )
-    {
-        try
-        {
-            return remoteFramework.installBundle( location );
+    public long install(String location, InputStream stream) {
+        try {
+            return remoteFramework.installBundle(location);
         }
-        catch ( RemoteException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (RemoteException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( BundleException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    public long install( InputStream stream )
-    {
-        try
-        {
-            long bundleId = remoteFramework.installBundle( "local", pack( stream ) );
-            remoteFramework.startBundle( bundleId );
+    public long install(InputStream stream) {
+        try {
+            long bundleId = remoteFramework.installBundle("local", pack(stream));
+            remoteFramework.startBundle(bundleId);
             return bundleId;
         }
-        catch ( RemoteException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (RemoteException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( BundleException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    public TestContainer start()
-    {
-        try
-        {
-            system = system.fork( new Option[]{
-                systemProperty( "java.protocol.handler.pkgs" ).value( "org.ops4j.pax.url" )
-            } );
+    public TestContainer start() {
+        try {
+            system = system.fork(new Option[] { systemProperty("java.protocol.handler.pkgs").value(
+                "org.ops4j.pax.url") });
             List<String> vmArgs = createVmArguments();
             Map<String, String> systemProperties = createSystemProperties();
             Map<String, Object> frameworkProperties = createFrameworkProperties();
-            remoteFramework = frameworkFactory.fork( vmArgs, systemProperties, frameworkProperties );
+            remoteFramework = frameworkFactory.fork(vmArgs, systemProperties, frameworkProperties);
             remoteFramework.init();
             installAndStartBundles();
         }
-        catch ( BundleException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( InterruptedException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (InterruptedException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( NotBoundException exc )
-        {
-            throw new TestContainerException( exc );
-        } catch( URISyntaxException e )
-        {
-            throw new TestContainerException( e );
+        catch (NotBoundException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (URISyntaxException e) {
+            throw new TestContainerException(e);
         }
         return this;
     }
 
-    public TestContainer stop()
-    {
-        try
-        {
+    public TestContainer stop() {
+        try {
             remoteFramework.stop();
             system.clear();
         }
-        catch ( RemoteException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (RemoteException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( BundleException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
         }
         frameworkFactory.join();
         system.clear();
         return this;
     }
 
-    private byte[] pack( InputStream stream )
-    {
+    private byte[] pack(InputStream stream) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try
-        {
-            StreamUtils.copyStream( stream, out, true );
+        try {
+            StreamUtils.copyStream(stream, out, true);
         }
-        catch ( IOException e )
-        {
+        catch (IOException e) {
 
         }
         return out.toByteArray();
     }
 
-    private Map<String, Object> createFrameworkProperties() throws IOException
-    {
+    private Map<String, Object> createFrameworkProperties() throws IOException {
         final Map<String, Object> p = new HashMap<String, Object>();
-        p.put( FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath() );
-        SystemPackageOption[] systemPackageOptions = system.getOptions( SystemPackageOption.class );
+        p.put(FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath());
+        SystemPackageOption[] systemPackageOptions = system.getOptions(SystemPackageOption.class);
         if (systemPackageOptions.length > 0) {
-            p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( systemPackageOptions ) );
+            p.put(FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString(systemPackageOptions));
         }
-        p.put( FRAMEWORK_BOOTDELEGATION,
-            buildString( system.getOptions( BootDelegationOption.class ) ) );
+        p.put(FRAMEWORK_BOOTDELEGATION, buildString(system.getOptions(BootDelegationOption.class)));
 
-        for ( FrameworkPropertyOption option : system.getOptions( FrameworkPropertyOption.class ) )
-        {
-            p.put( option.getKey(), option.getValue() );
+        for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
+            p.put(option.getKey(), option.getValue());
         }
 
-        for ( SystemPropertyOption option : system.getOptions( SystemPropertyOption.class ) )
-        {
-            System.setProperty( option.getKey(), option.getValue() );
+        for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {
+            System.setProperty(option.getKey(), option.getValue());
         }
         return p;
     }
-    
-    private List<String> createVmArguments()
-    {
-        VMOption[] options = system.getOptions( VMOption.class );
+
+    private List<String> createVmArguments() {
+        VMOption[] options = system.getOptions(VMOption.class);
         List<String> args = new ArrayList<String>();
-        for (VMOption option : options)
-        {
+        for (VMOption option : options) {
             args.add(option.getOption());
         }
         return args;
-        
+
     }
 
-    private Map<String, String> createSystemProperties()
-    {
+    private Map<String, String> createSystemProperties() {
         Map<String, String> p = new HashMap<String, String>();
-        for ( SystemPropertyOption option : system.getOptions( SystemPropertyOption.class ) )
-        {
-            p.put( option.getKey(), option.getValue() );
+        for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {
+            p.put(option.getKey(), option.getValue());
         }
-        
-        RepositoryOption[] repositories = system.getOptions ( RepositoryOption.class);
-        if (repositories.length != 0)
-        {
-            System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString( repositories ));
+
+        RepositoryOption[] repositories = system.getOptions(RepositoryOption.class);
+        if (repositories.length != 0) {
+            System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString(repositories));
         }
-        
+
         return p;
     }
 
-    private String buildString( ValueOption<?>[] options )
-    {
-        return buildString( new String[0], options, new String[0] );
+    private String buildString(ValueOption<?>[] options) {
+        return buildString(new String[0], options, new String[0]);
     }
 
-    private String buildString( String[] prepend, ValueOption<?>[] options, String[] append )
-    {
+    private String buildString(String[] prepend, ValueOption<?>[] options, String[] append) {
         StringBuilder builder = new StringBuilder();
-        for ( String a : prepend )
-        {
-            builder.append( a );
-            builder.append( "," );
+        for (String a : prepend) {
+            builder.append(a);
+            builder.append(",");
         }
-        for ( ValueOption<?> option : options )
-        {
-            builder.append( option.getValue() );
-            builder.append( "," );
+        for (ValueOption<?> option : options) {
+            builder.append(option.getValue());
+            builder.append(",");
         }
-        for ( String a : append )
-        {
-            builder.append( a );
-            builder.append( "," );
+        for (String a : append) {
+            builder.append(a);
+            builder.append(",");
         }
-        if( builder.length() > 0 )
-        {
-            return builder.substring( 0, builder.length() - 1 );
+        if (builder.length() > 0) {
+            return builder.substring(0, builder.length() - 1);
         }
-        else
-        {
+        else {
             return "";
         }
     }
 
-    private void installAndStartBundles() throws BundleException, RemoteException
-    {
+    private void installAndStartBundles() throws BundleException, RemoteException {
         remoteFramework.start();
-        for ( ProvisionOption<?> bundle : system.getOptions( ProvisionOption.class ) )
-        {
-            String localUrl = downloadBundle( bundle.getURL() );
-            long bundleId = remoteFramework.installBundle( localUrl );
-            int startLevel = getStartLevel( bundle );
-            remoteFramework.setBundleStartLevel( bundleId, startLevel );
-            if( bundle.shouldStart() )
-            {
-                remoteFramework.startBundle( bundleId );
-                LOG.debug( "+ Install (start@{}) {}", startLevel, bundle );
+        for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
+            String localUrl = downloadBundle(bundle.getURL());
+            long bundleId = remoteFramework.installBundle(localUrl);
+            int startLevel = getStartLevel(bundle);
+            remoteFramework.setBundleStartLevel(bundleId, startLevel);
+            if (bundle.shouldStart()) {
+                remoteFramework.startBundle(bundleId);
+                LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
             }
-            else
-            {
-                LOG.debug( "+ Install (no start) {}", bundle );
+            else {
+                LOG.debug("+ Install (no start) {}", bundle);
             }
         }
 
-        FrameworkStartLevelOption startLevelOption = system.getSingleOption( FrameworkStartLevelOption.class );
-        int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption.getStartLevel();
-        LOG.debug( "Jump to startlevel: " + startLevel );
-        remoteFramework.setFrameworkStartLevel( startLevel );
-        
+        FrameworkStartLevelOption startLevelOption = system
+            .getSingleOption(FrameworkStartLevelOption.class);
+        int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption
+            .getStartLevel();
+        LOG.debug("Jump to startlevel: " + startLevel);
+        remoteFramework.setFrameworkStartLevel(startLevel);
+
         // FIXME listen for a startup event instead of sleeping
-        try
-        {
-            Thread.sleep( 1000 );
+        try {
+            Thread.sleep(1000);
         }
-        catch ( InterruptedException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (InterruptedException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    private String downloadBundle( String url )
-    {
-        try
-        {
-            URL realUrl = new URL( url );
-            if (realUrl.getProtocol().equals( "reference" )) {
+    private String downloadBundle(String url) {
+        try {
+            URL realUrl = new URL(url);
+            if (realUrl.getProtocol().equals("reference")) {
                 return url;
             }
-            File localBundle =
-                platform.download( system.getTempFolder(), realUrl, url, false, true, true, false );
+            File localBundle = platform.download(system.getTempFolder(), realUrl, url, false, true,
+                true, false);
             return localBundle.toURI().toURL().toString();
         }
-        catch ( MalformedURLException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    private int getStartLevel( ProvisionOption<?> bundle )
-    {
+    private int getStartLevel(ProvisionOption<?> bundle) {
         Integer start = bundle.getStartLevel();
-        if( start == null )
-        {
+        if (start == null) {
             start = org.ops4j.pax.exam.Constants.START_LEVEL_DEFAULT_PROVISION;
         }
         return start;
     }
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 }

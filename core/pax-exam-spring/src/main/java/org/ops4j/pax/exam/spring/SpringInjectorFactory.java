@@ -24,22 +24,20 @@ import org.ops4j.pax.exam.util.InjectorFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-public class SpringInjectorFactory implements InjectorFactory
-{
+public class SpringInjectorFactory implements InjectorFactory {
+
     private ServletContext servletContext;
 
-    public void setContext( Object context )
-    {
+    public void setContext(Object context) {
         servletContext = (ServletContext) context;
     }
 
     @Override
-    public Injector createInjector()
-    {
+    public Injector createInjector() {
         assert servletContext != null;
         WebApplicationContext appContext = WebApplicationContextUtils
-            .getWebApplicationContext( servletContext );
-        SpringInjector injector = new SpringInjector( appContext.getAutowireCapableBeanFactory() );
+            .getWebApplicationContext(servletContext);
+        SpringInjector injector = new SpringInjector(appContext.getAutowireCapableBeanFactory());
 
         return injector;
     }

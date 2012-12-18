@@ -29,85 +29,82 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Stream related utilities.
- * TODO add units tests
- *
+ * Stream related utilities. TODO add units tests
+ * 
  * @author Alin Dreghiciu
  * @since August 19, 2007
  */
-public class StreamUtils
-{
+public class StreamUtils {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger( StreamUtils.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger(StreamUtils.class);
 
     /**
      * Utility class. Ment to be used via static methods.
      */
-    private StreamUtils()
-    {
+    private StreamUtils() {
         // utility class
     }
 
     /**
      * Copy a stream to a destination. It does not close the streams.
-     *
-     * @param in          the stream to copy from
-     * @param out         the stream to copy to
-     * @param progressBar download progress feedback. Can be null.
-     *
-     * @throws IOException re-thrown
+     * 
+     * @param in
+     *            the stream to copy from
+     * @param out
+     *            the stream to copy to
+     * @param progressBar
+     *            download progress feedback. Can be null.
+     * 
+     * @throws IOException
+     *             re-thrown
      */
-    public static void streamCopy( final InputStream in, final FileChannel out, final ProgressBar progressBar )
-        throws IOException
-    {
-        NullArgumentException.validateNotNull( in, "Input stream" );
-        NullArgumentException.validateNotNull( out, "Output stream" );
+    public static void streamCopy(final InputStream in, final FileChannel out,
+        final ProgressBar progressBar) throws IOException {
+        NullArgumentException.validateNotNull(in, "Input stream");
+        NullArgumentException.validateNotNull(out, "Output stream");
         final long start = System.currentTimeMillis();
         long bytes = 0;
         ProgressBar feedbackBar = progressBar;
-        if( feedbackBar == null )
-        {
+        if (feedbackBar == null) {
             feedbackBar = new NullProgressBar();
         }
-        try
-        {
+        try {
             ReadableByteChannel inChannel = Channels.newChannel(in);
             bytes = out.transferFrom(inChannel, 0, Integer.MAX_VALUE);
             inChannel.close();
         }
-        finally
-        {
-            feedbackBar.increment( bytes, bytes / Math.max( System.currentTimeMillis() - start, 1 ) );
+        finally {
+            feedbackBar.increment(bytes, bytes / Math.max(System.currentTimeMillis() - start, 1));
             feedbackBar.stop();
         }
     }
 
     /**
      * Copy a stream from an urlto a destination.
-     *
-     * @param url         the url to copy from
-     * @param out         the stream to copy to
-     * @param progressBar download progress feedback. Can be null.
-     *
-     * @throws IOException re-thrown
+     * 
+     * @param url
+     *            the url to copy from
+     * @param out
+     *            the stream to copy to
+     * @param progressBar
+     *            download progress feedback. Can be null.
+     * 
+     * @throws IOException
+     *             re-thrown
      */
-    public static void streamCopy( final URL url, final FileChannel out, final ProgressBar progressBar )
-        throws IOException
-    {
-        NullArgumentException.validateNotNull( url, "URL" );
+    public static void streamCopy(final URL url, final FileChannel out,
+        final ProgressBar progressBar) throws IOException {
+        NullArgumentException.validateNotNull(url, "URL");
         InputStream is = null;
-        try
-        {
+        try {
             is = url.openStream();
-            streamCopy( is, out, progressBar );
+            streamCopy(is, out, progressBar);
         }
-        finally
-        {
-            if( is != null )
-            {
+        finally {
+            if (is != null) {
                 is.close();
             }
         }
@@ -117,16 +114,17 @@ public class StreamUtils
     /**
      * Feddback for downloading process.
      */
-    public static interface ProgressBar
-    {
+    public static interface ProgressBar {
 
         /**
          * Callback on download progress.
-         *
-         * @param bytes download size from when the download started
-         * @param kbps  download speed
+         * 
+         * @param bytes
+         *            download size from when the download started
+         * @param kbps
+         *            download speed
          */
-        void increment( long bytes, long kbps );
+        void increment(long bytes, long kbps);
 
         /**
          * Callback when download finished.
@@ -137,17 +135,13 @@ public class StreamUtils
     /**
      * A progress bar that does nothing = does not display anything on console.
      */
-    public static class NullProgressBar
-        implements ProgressBar
-    {
+    public static class NullProgressBar implements ProgressBar {
 
-        public void increment( long bytes, long kbps )
-        {
+        public void increment(long bytes, long kbps) {
             // does nothing
         }
 
-        public void stop()
-        {
+        public void stop() {
             // does nothing
         }
 
@@ -156,9 +150,7 @@ public class StreamUtils
     /**
      * A progress bar that displayed detailed information about downloading of an artifact
      */
-    public static class FineGrainedProgressBar
-        implements ProgressBar
-    {
+    public static class FineGrainedProgressBar implements ProgressBar {
 
         int counter = 0;
         /**
@@ -166,20 +158,17 @@ public class StreamUtils
          */
         private final String downloadTargetName;
 
-        public FineGrainedProgressBar( final String downloadTargetName )
-        {
+        public FineGrainedProgressBar(final String downloadTargetName) {
             this.downloadTargetName = downloadTargetName;
-            Info.print( downloadTargetName + " : connecting...\r" );
+            Info.print(downloadTargetName + " : connecting...\r");
         }
 
-        public void increment( final long bytes, final long kbps )
-        {
-            Info.print( downloadTargetName + " : " + bytes + " bytes @ [ " + kbps + "kBps ]\r" );
+        public void increment(final long bytes, final long kbps) {
+            Info.print(downloadTargetName + " : " + bytes + " bytes @ [ " + kbps + "kBps ]\r");
             counter++;
         }
 
-        public void stop()
-        {
+        public void stop() {
             Info.println();
         }
 
@@ -188,9 +177,7 @@ public class StreamUtils
     /**
      * A progress bar that displayed corse grained information about downloading of an artifact
      */
-    public static class CoarseGrainedProgressBar
-        implements ProgressBar
-    {
+    public static class CoarseGrainedProgressBar implements ProgressBar {
 
         /**
          * Name of the downloaded artifact.
@@ -199,21 +186,18 @@ public class StreamUtils
         private long bytes;
         private long kbps;
 
-        public CoarseGrainedProgressBar( final String downloadTargetName )
-        {
+        public CoarseGrainedProgressBar(final String downloadTargetName) {
             this.downloadTargetName = downloadTargetName;
-            LOGGER.debug( downloadTargetName + " : downloading..." );
+            LOGGER.debug(downloadTargetName + " : downloading...");
         }
 
-        public void increment( final long bytes, final long kbps )
-        {
+        public void increment(final long bytes, final long kbps) {
             this.bytes = bytes;
             this.kbps = kbps;
         }
 
-        public void stop()
-        {
-            LOGGER.debug( downloadTargetName + " : " + bytes + " bytes @ [ " + kbps + "kBps ]" );
+        public void stop() {
+            LOGGER.debug(downloadTargetName + " : " + bytes + " bytes @ [ " + kbps + "kBps ]");
         }
 
     }

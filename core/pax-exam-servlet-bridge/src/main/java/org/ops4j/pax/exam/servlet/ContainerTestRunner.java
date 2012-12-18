@@ -35,11 +35,11 @@ import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.Transactional;
 
 public class ContainerTestRunner extends BlockJUnit4ClassRunner {
+
     private Injector injector;
     private boolean transactionalClass;
-    
-    public ContainerTestRunner(Class<?> klass, Injector injector)
-            throws InitializationError {
+
+    public ContainerTestRunner(Class<?> klass, Injector injector) throws InitializationError {
         super(klass);
         this.injector = injector;
         transactionalClass = klass.getAnnotation(Transactional.class) != null;
@@ -125,5 +125,4 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
         return new EachTestNotifier(notifier, description);
     }
 
-    
 }

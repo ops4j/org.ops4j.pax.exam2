@@ -27,63 +27,59 @@ import org.ops4j.pax.exam.sample2.movieimport.MovieDbException;
 
 @Stateless
 public class UserService {
-    
+
     @PersistenceContext
     private EntityManager em;
-    
-    public User findByLogin(String login)
-    {
-        return em.find( User.class, login );        
+
+    public User findByLogin(String login) {
+        return em.find(User.class, login);
     }
-    
+
     public long getNumUsers() {
         String jpql = "select count(u) from User u";
-        return em.createQuery( jpql, Long.class ).getSingleResult();
+        return em.createQuery(jpql, Long.class).getSingleResult();
     }
 
     public User authenticate(String login, String password) {
-        User user = em.find( User.class, login );
+        User user = em.find(User.class, login);
         if (user != null) {
             if (password.equals(user.getPassword())) {
                 return user;
             }
         }
         return null;
-    }    
-    
+    }
+
     public User register(String login, String name, String password) {
-        if (findByLogin( login ) != null)
-        {
-            throw new MovieDbException( "login is already taken"  );
+        if (findByLogin(login) != null) {
+            throw new MovieDbException("login is already taken");
         }
         User user = new User();
-        user.setId( login );
-        user.setName( name );
-        user.setPassword( password );
-        em.persist( user );
+        user.setId(login);
+        user.setName(name);
+        user.setPassword(password);
+        em.persist(user);
         return user;
-    }    
+    }
 
     public Rating rate(User user, Movie movie, int stars, String comment) {
         Rating rating = new Rating();
-        rating.setUser( user );
-        rating.setMovie( movie );
-        rating.setStars( stars );
-        rating.setComment( comment );
-        em.persist( rating );
+        rating.setUser(user);
+        rating.setMovie(movie);
+        rating.setStars(stars);
+        rating.setComment(comment);
+        em.persist(rating);
         return rating;
     }
 
-    public void addFriend(User user, String friendLogin)
-    {
-        User friend = findByLogin( friendLogin );
-        if (friend != null && !friend.equals( user )) {
-            user.getFriends().add( friend );
+    public void addFriend(User user, String friendLogin) {
+        User friend = findByLogin(friendLogin);
+        if (friend != null && !friend.equals(user)) {
+            user.getFriends().add(friend);
         }
     }
-    
-    public boolean areFriends(User currentUser, User otherUser)
-    {
-        return currentUser.getFriends().contains( otherUser );
+
+    public boolean areFriends(User currentUser, User otherUser) {
+        return currentUser.getFriends().contains(otherUser);
     }
 }

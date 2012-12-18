@@ -35,33 +35,14 @@ import org.ops4j.pax.exam.Option;
  * @author hwellmann
  * 
  */
-public class WarProbeOption implements Option
-{
-    public static final String[] DEFAULT_CLASS_PATH_EXCLUDES = {
-        ".cp",
-        "bndlib",
-        "geronimo-atinject_",
-        "geronimo-ejb_",
-        "geronimo-jcdi_",
-        "geronimo-jpa_",
-        "glassfish-embedded",
-        "javaee-api",
-        "jboss-log",
-        "jersey-client",
-        "jstl",
-        "myfaces",
-        "openejb",
-        "openwebbeans",
-        "org.eclipse.osgi",
-        "pax-exam-container",
-        "pax-url-aether",
-        "scattered-archive-api",
-        "servlet-api",
-        "simple-glassfish-api",
-        "sisu",
-        "tinybundles",
-        "tomcat",
-    };
+public class WarProbeOption implements Option {
+
+    public static final String[] DEFAULT_CLASS_PATH_EXCLUDES = { ".cp", "bndlib",
+        "geronimo-atinject_", "geronimo-ejb_", "geronimo-jcdi_", "geronimo-jpa_",
+        "glassfish-embedded", "javaee-api", "jboss-log", "jersey-client", "jstl", "myfaces",
+        "openejb", "openwebbeans", "org.eclipse.osgi", "pax-exam-container", "pax-url-aether",
+        "scattered-archive-api", "servlet-api", "simple-glassfish-api", "sisu", "tinybundles",
+        "tomcat", };
 
     private List<String> overlays;
     private List<String> libraries;
@@ -77,8 +58,7 @@ public class WarProbeOption implements Option
      * Creates an empty WAR probe option. Application code should not invoke this constructor. Use
      * {@link CoreOptions#warProbe()} instead.
      */
-    public WarProbeOption()
-    {
+    public WarProbeOption() {
         overlays = new ArrayList<String>();
         libraries = new ArrayList<String>();
         classes = new ArrayList<Class<?>>();
@@ -91,11 +71,11 @@ public class WarProbeOption implements Option
     /**
      * Sets the application name of this WAR.
      * 
-     * @param name application name
+     * @param name
+     *            application name
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption name( String name )
-    {
+    public WarProbeOption name(String name) {
         this.name = name;
         return this;
     }
@@ -106,12 +86,12 @@ public class WarProbeOption implements Option
      * Otherwise, the path is assumed to be a JAR, and its contents are copied to
      * {@code WEB-INF/lib}.
      * 
-     * @param libraryPath path to library
+     * @param libraryPath
+     *            path to library
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption library( String libraryPath )
-    {
-        libraries.add( new File( libraryPath ).toURI().toString() );
+    public WarProbeOption library(String libraryPath) {
+        libraries.add(new File(libraryPath).toURI().toString());
         return this;
     }
 
@@ -119,12 +99,12 @@ public class WarProbeOption implements Option
      * Adds the library from the URL to the WAR. The URL is assumed to reference a JAR. The JAR will
      * be downloaded if required and its contents will be copied to {@code WEB-INF/lib}.
      * 
-     * @param libraryURL URL referencing a library JAR
+     * @param libraryURL
+     *            URL referencing a library JAR
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption library( UrlReference libraryUrl )
-    {
-        libraries.add( libraryUrl.getURL() );
+    public WarProbeOption library(UrlReference libraryUrl) {
+        libraries.add(libraryUrl.getURL());
         return this;
     }
 
@@ -135,12 +115,12 @@ public class WarProbeOption implements Option
      * the root of the WAR. All overlays are copied in the given order. All overlay are copied
      * before any libraries, classes or resources.
      * 
-     * @param overlayPath path to overlay
+     * @param overlayPath
+     *            path to overlay
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption overlay( String overlayPath )
-    {
-        overlays.add( new File( overlayPath ).toURI().toString() );
+    public WarProbeOption overlay(String overlayPath) {
+        overlays.add(new File(overlayPath).toURI().toString());
         return this;
     }
 
@@ -150,27 +130,26 @@ public class WarProbeOption implements Option
      * required, and then its exploded contents are copied to the root of the WAR. All overlays are
      * copied in the given order. All overlay are copied before any libraries, classes or resources.
      * 
-     * @param overlayPath path to overlay
+     * @param overlayPath
+     *            path to overlay
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption overlay( UrlReference overlayUrl )
-    {
-        overlays.add( overlayUrl.getURL() );
+    public WarProbeOption overlay(UrlReference overlayUrl) {
+        overlays.add(overlayUrl.getURL());
         return this;
     }
 
     /**
      * Adds the given classes to the WAR in {@code WEB-INF/classes}.
      * 
-     * @param klass list of classes
+     * @param klass
+     *            list of classes
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption classes( Class<?>... klass )
-    {
-        for( Class<?> c : klass )
-        {
-            String resource = c.getName().replaceAll( "\\.", "/" ) + ".class";
-            resources.add( resource );
+    public WarProbeOption classes(Class<?>... klass) {
+        for (Class<?> c : klass) {
+            String resource = c.getName().replaceAll("\\.", "/") + ".class";
+            resources.add(resource);
         }
         return this;
     }
@@ -178,14 +157,13 @@ public class WarProbeOption implements Option
     /**
      * Adds the given resources from the current class path to the WAR in {@code WEB-INF/classes}.
      * 
-     * @param klass list of resource paths, relative to the class path root
+     * @param klass
+     *            list of resource paths, relative to the class path root
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption resources( String... resourcePath )
-    {
-        for( String resource : resourcePath )
-        {
-            resources.add( resource );
+    public WarProbeOption resources(String... resourcePath) {
+        for (String resource : resourcePath) {
+            resources.add(resource);
         }
         return this;
     }
@@ -193,41 +171,39 @@ public class WarProbeOption implements Option
     /**
      * Adds the given resourcs from the current class path to the WAR in {@code META-INF/}.
      * 
-     * @param klass list of resource paths, relative to the class path root
+     * @param klass
+     *            list of resource paths, relative to the class path root
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption metaInfResource( String resourcePath )
-    {
-        metaInfResources.add( resourcePath );
+    public WarProbeOption metaInfResource(String resourcePath) {
+        metaInfResources.add(resourcePath);
         return this;
     }
 
     /**
      * Adds the given resourcs from the current class path to the WAR in {@code WEB-INF/}.
      * 
-     * @param klass list of resource paths, relative to the class path root
+     * @param klass
+     *            list of resource paths, relative to the class path root
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption webInfResource( String resourcePath )
-    {
-        webInfResources.add( resourcePath );
+    public WarProbeOption webInfResource(String resourcePath) {
+        webInfResources.add(resourcePath);
         return this;
     }
 
     /**
      * Automatically add libraries and class folders from the current classpath.
      * 
-     * @param includeDefaultFilters should the default classpath excludes be applied?
+     * @param includeDefaultFilters
+     *            should the default classpath excludes be applied?
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption autoClasspath( boolean includeDefaultFilters )
-    {
+    public WarProbeOption autoClasspath(boolean includeDefaultFilters) {
         useClasspath = true;
-        if( includeDefaultFilters )
-        {
-            for( String filter : DEFAULT_CLASS_PATH_EXCLUDES )
-            {
-                classpathFilters.add( filter );
+        if (includeDefaultFilters) {
+            for (String filter : DEFAULT_CLASS_PATH_EXCLUDES) {
+                classpathFilters.add(filter);
             }
         }
         return this;
@@ -239,26 +215,24 @@ public class WarProbeOption implements Option
      * 
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption classPathDefaultExcludes()
-    {
+    public WarProbeOption classPathDefaultExcludes() {
         useClasspath = true;
-        return autoClasspath( true );
+        return autoClasspath(true);
     }
 
     /**
      * This option implies {@code autoClasspath(false)} and adds the given regular expressions to
      * the classpath filters.
      * 
-     * @param excludeRegExp list of regular expressions. Classpath libraries or folders matching any
-     *        of these will be excluded
+     * @param excludeRegExp
+     *            list of regular expressions. Classpath libraries or folders matching any of these
+     *            will be excluded
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption exclude( String... excludeRegExp )
-    {
+    public WarProbeOption exclude(String... excludeRegExp) {
         useClasspath = true;
-        for( String exclude : excludeRegExp )
-        {
-            classpathFilters.add( exclude );
+        for (String exclude : excludeRegExp) {
+            classpathFilters.add(exclude);
         }
         return this;
     }
@@ -267,10 +241,10 @@ public class WarProbeOption implements Option
      * Returns the application name of this WAR.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return application name
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -278,10 +252,10 @@ public class WarProbeOption implements Option
      * Shall libraries and class folders be added automatically from the current classpath?
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return
      */
-    public boolean isClassPathEnabled()
-    {
+    public boolean isClassPathEnabled() {
         return useClasspath;
     }
 
@@ -289,10 +263,10 @@ public class WarProbeOption implements Option
      * Returns the WEB-INF libraries.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return libraries (possibly empty but not null)
      */
-    public List<String> getLibraries()
-    {
+    public List<String> getLibraries() {
         return libraries;
     }
 
@@ -300,10 +274,10 @@ public class WarProbeOption implements Option
      * Returns the overlays.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return overlays (possibly empty but not null)
      */
-    public List<String> getOverlays()
-    {
+    public List<String> getOverlays() {
         return overlays;
     }
 
@@ -311,10 +285,10 @@ public class WarProbeOption implements Option
      * Returns the classpath filters.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return filters (possibly empty but not null)
      */
-    public List<String> getClassPathFilters()
-    {
+    public List<String> getClassPathFilters() {
         return classpathFilters;
     }
 
@@ -322,10 +296,10 @@ public class WarProbeOption implements Option
      * Returns the META-INF resources.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return resources (possibly empty but not null)
      */
-    public List<String> getMetaInfResources()
-    {
+    public List<String> getMetaInfResources() {
         return metaInfResources;
     }
 
@@ -333,10 +307,10 @@ public class WarProbeOption implements Option
      * Returns the WEB-INF resources.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return resources (possibly empty but not null)
      */
-    public List<String> getWebInfResources()
-    {
+    public List<String> getWebInfResources() {
         return webInfResources;
     }
 
@@ -344,10 +318,10 @@ public class WarProbeOption implements Option
      * Returns the classpath resources.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return resources (possibly empty but not null)
      */
-    public List<String> getResources()
-    {
+    public List<String> getResources() {
         return resources;
     }
 
@@ -355,10 +329,10 @@ public class WarProbeOption implements Option
      * Returns the classes to be added to WEB-INF/classes.
      * <p>
      * Internal API, do no use in application code.
+     * 
      * @return classes (possibly empty but not null)
      */
-    public List<Class<?>> getClasses()
-    {
+    public List<Class<?>> getClasses() {
         return classes;
     }
 }

@@ -26,30 +26,26 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-public class LibraryWebApplicationInitializer implements WebApplicationInitializer
-{
+public class LibraryWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup( ServletContext sc ) throws ServletException
-    {
+    public void onStartup(ServletContext sc) throws ServletException {
 
-        AnnotationConfigWebApplicationContext rootContext =
-            new AnnotationConfigWebApplicationContext();
-        rootContext.getEnvironment().addActiveProfile( "web" );
-        rootContext.register( WebSpringConfig.class );
-        sc.addListener( new ContextLoaderListener( rootContext ) );
+        AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
+        rootContext.getEnvironment().addActiveProfile("web");
+        rootContext.register(WebSpringConfig.class);
+        sc.addListener(new ContextLoaderListener(rootContext));
 
         // Create the dispatcher servlet's Spring application context
-        AnnotationConfigWebApplicationContext dispatcherContext =
-            new AnnotationConfigWebApplicationContext();
-        dispatcherContext.setParent( rootContext );
+        AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
+        dispatcherContext.setParent(rootContext);
         // Register and map the dispatcher servlet
-        ServletRegistration.Dynamic dispatcher = sc.addServlet( "dispatcher",
-            new DispatcherServlet( dispatcherContext ) );
-        dispatcher.setLoadOnStartup( 2 );
-        dispatcher.addMapping( "*.html" );
-        dispatcher.addMapping( "*.form" );
-        dispatcher.addMapping( "*.ajax" );
+        ServletRegistration.Dynamic dispatcher = sc.addServlet("dispatcher", new DispatcherServlet(
+            dispatcherContext));
+        dispatcher.setLoadOnStartup(2);
+        dispatcher.addMapping("*.html");
+        dispatcher.addMapping("*.form");
+        dispatcher.addMapping("*.ajax");
     }
 
 }

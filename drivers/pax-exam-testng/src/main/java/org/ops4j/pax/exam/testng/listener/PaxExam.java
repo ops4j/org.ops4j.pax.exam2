@@ -70,23 +70,21 @@ import org.testng.internal.NoOpTestClass;
  * test class with Pax Exam, add this class as a listener to your test class:
  * 
  * <pre>
- * &#064;Listeners( ExamTestNGListener.class )
- * public class MyTest
- * {
+ * 
+ * 
+ * &#064;Listeners(ExamTestNGListener.class)
+ * public class MyTest {
  * 
  *     &#064;BeforeMethod
- *     public void setUp()
- *     {
+ *     public void setUp() {
  *     }
  * 
  *     &#064;AfterMethod
- *     public void tearDown()
- *     {
+ *     public void tearDown() {
  *     }
  * 
  *     &#064;Test
- *     public void test1()
- *     {
+ *     public void test1() {
  *     }
  * }
  * </pre>
@@ -109,9 +107,9 @@ import org.testng.internal.NoOpTestClass;
  * @since 2.3.0
  * 
  */
-public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
-{
-    private static Logger LOG = LoggerFactory.getLogger( PaxExam.class );
+public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
+
+    private static Logger LOG = LoggerFactory.getLogger(PaxExam.class);
 
     public static final String PAX_EXAM_SUITE_NAME = "PaxExamInternal";
 
@@ -149,53 +147,49 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      */
     private Object currentTestClassInstance;
 
-    public PaxExam()
-    {
-        LOG.debug( "created ExamTestNGListener" );
+    public PaxExam() {
+        LOG.debug("created ExamTestNGListener");
     }
 
     /**
      * Are we running in the test container or directly under the driver?
      * 
-     * @param suite current test suite
+     * @param suite
+     *            current test suite
      * @return true if running in container
      */
-    private boolean isRunningInTestContainer( ISuite suite )
-    {
-        return suite.getName().equals( PAX_EXAM_SUITE_NAME );
+    private boolean isRunningInTestContainer(ISuite suite) {
+        return suite.getName().equals(PAX_EXAM_SUITE_NAME);
     }
 
     /**
      * Are we running in the test container or directly under the driver?
      * 
-     * @param method current test method
+     * @param method
+     *            current test method
      * @return true if running in container
      */
-    private boolean isRunningInTestContainer( ITestNGMethod method )
-    {
-        return method.getXmlTest().getSuite().getName().equals( PAX_EXAM_SUITE_NAME );
+    private boolean isRunningInTestContainer(ITestNGMethod method) {
+        return method.getXmlTest().getSuite().getName().equals(PAX_EXAM_SUITE_NAME);
     }
 
     /**
      * Called by TestNG before the suite starts. When running in the container, this is a no op.
      * Otherwise, we create and stage the reactor.
      * 
-     * @param suite test suite
+     * @param suite
+     *            test suite
      */
-    public void onStart( ISuite suite )
-    {
-        if( !isRunningInTestContainer( suite ) )
-        {
+    public void onStart(ISuite suite) {
+        if (!isRunningInTestContainer(suite)) {
             manager = ReactorManager.getInstance();
-            manager.setAnnotationHandler( new TestNGLegacyAnnotationHandler() );
-            try
-            {
-                reactor = stageReactor( suite );
-                manager.beforeSuite( reactor );
+            manager.setAnnotationHandler(new TestNGLegacyAnnotationHandler());
+            try {
+                reactor = stageReactor(suite);
+                manager.beforeSuite(reactor);
             }
-            catch ( Exception exc )
-            {
-                throw new TestContainerException( exc );
+            catch (Exception exc) {
+                throw new TestContainerException(exc);
             }
         }
     }
@@ -204,18 +198,16 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * Called by TestNG after the suite has finished. When running in the container, this is a no
      * op. Otherwise, we stop the reactor.
      * 
-     * @param suite test suite
+     * @param suite
+     *            test suite
      */
-    public void onFinish( ISuite suite )
-    {
-        if( !isRunningInTestContainer( suite ) )
-        {
+    public void onFinish(ISuite suite) {
+        if (!isRunningInTestContainer(suite)) {
             // fire an afterClass event for the last test class
-            if( currentTestClassInstance != null )
-            {
-                manager.afterClass( reactor, currentTestClassInstance.getClass() );
+            if (currentTestClassInstance != null) {
+                manager.afterClass(reactor, currentTestClassInstance.getClass());
             }
-            manager.afterSuite( reactor );
+            manager.afterSuite(reactor);
         }
     }
 
@@ -227,29 +219,26 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * <p>
      * Hack: As there is no way to intercept configuration methods, we disable them by reflection.
      * 
-     * @param suite test suite
+     * @param suite
+     *            test suite
      * @return staged reactor
      */
-    private synchronized StagedExamReactor stageReactor( ISuite suite )
-    {
-        try
-        {
+    private synchronized StagedExamReactor stageReactor(ISuite suite) {
+        try {
             List<ITestNGMethod> methods = suite.getAllMethods();
-            Class<?> testClass = methods.get( 0 ).getRealClass();
-            LOG.debug( "test class = {}", testClass );
-            disableConfigurationMethods( suite );
+            Class<?> testClass = methods.get(0).getRealClass();
+            LOG.debug("test class = {}", testClass);
+            disableConfigurationMethods(suite);
             Object testClassInstance = testClass.newInstance();
-            ExamReactor examReactor = manager.prepareReactor( testClass, testClassInstance );
-            useProbeInvoker = !manager.getSystemType().equals( Constants.EXAM_SYSTEM_CDI );
-            if( useProbeInvoker )
-            {
-                addTestsToReactor( examReactor, testClassInstance, methods );
+            ExamReactor examReactor = manager.prepareReactor(testClass, testClassInstance);
+            useProbeInvoker = !manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI);
+            if (useProbeInvoker) {
+                addTestsToReactor(examReactor, testClassInstance, methods);
             }
             return manager.stageReactor();
         }
-        catch ( Exception exc )
-        {
-            throw new TestContainerException( exc );
+        catch (Exception exc) {
+            throw new TestContainerException(exc);
         }
     }
 
@@ -262,18 +251,16 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * <p>
      * This is a rather ugly hack, but there does not seem to be any other way.
      * 
-     * @param suite test suite
+     * @param suite
+     *            test suite
      */
-    private void disableConfigurationMethods( ISuite suite )
-    {
+    private void disableConfigurationMethods(ISuite suite) {
         Set<ITestClass> seen = new HashSet<ITestClass>();
-        for( ITestNGMethod method : suite.getAllMethods() )
-        {
+        for (ITestNGMethod method : suite.getAllMethods()) {
             ITestClass testClass = method.getTestClass();
-            if( !seen.contains( testClass ) )
-            {
-                disableConfigurationMethods( testClass );
-                seen.add( testClass );
+            if (!seen.contains(testClass)) {
+                disableConfigurationMethods(testClass);
+                seen.add(testClass);
             }
         }
     }
@@ -285,38 +272,35 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * builder. It builds one probe containing all tests of the suite. This is why the
      * testClassInstance argument is just an arbitrary instance of one of the classes of the suite.
      * 
-     * @param reactor unstaged reactor
-     * @param testClassInstance not used
-     * @param methods all methods of the suite.
+     * @param reactor
+     *            unstaged reactor
+     * @param testClassInstance
+     *            not used
+     * @param methods
+     *            all methods of the suite.
      * @throws IOException
      * @throws ExamConfigurationException
      */
-    private void addTestsToReactor( ExamReactor reactor, Object testClassInstance,
-            List<ITestNGMethod> methods )
-        throws IOException, ExamConfigurationException
-    {
-        TestProbeBuilder probe = manager.createProbeBuilder( testClassInstance );
-        for( ITestNGMethod m : methods )
-        {
-            TestAddress address = probe.addTest( m.getRealClass(), m.getMethodName() );
-            manager.storeTestMethod( address, m );
+    private void addTestsToReactor(ExamReactor reactor, Object testClassInstance,
+        List<ITestNGMethod> methods) throws IOException, ExamConfigurationException {
+        TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
+        for (ITestNGMethod m : methods) {
+            TestAddress address = probe.addTest(m.getRealClass(), m.getMethodName());
+            manager.storeTestMethod(address, m);
         }
-        reactor.addProbe( probe );
+        reactor.addProbe(probe);
     }
 
     /**
      * Callback from TestNG which lets us intercept a test method invocation. The two cases of
      * running in the container or under the driver are handled in separate methods.
      */
-    public void run( IHookCallBack callBack, ITestResult testResult )
-    {
-        if( isRunningInTestContainer( testResult.getMethod() ) )
-        {
-            runInTestContainer( callBack, testResult );
+    public void run(IHookCallBack callBack, ITestResult testResult) {
+        if (isRunningInTestContainer(testResult.getMethod())) {
+            runInTestContainer(callBack, testResult);
         }
-        else
-        {
-            runByDriver( callBack, testResult );
+        else {
+            runByDriver(callBack, testResult);
         }
     }
 
@@ -326,20 +310,19 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * TODO Unlike JUnit, TestNG instantiates each test class only once, so maybe we should also
      * inject the dependencies just once.
      * 
-     * @param callBack TestNG callback for test method
-     * @param testResult test result container
+     * @param callBack
+     *            TestNG callback for test method
+     * @param testResult
+     *            test result container
      */
-    private void runInTestContainer( IHookCallBack callBack, ITestResult testResult )
-    {
+    private void runInTestContainer(IHookCallBack callBack, ITestResult testResult) {
         Object testClassInstance = testResult.getInstance();
-        inject( testClassInstance );
-        if( isTransactional( testResult ) )
-        {
-            runInTransaction( callBack, testResult );
+        inject(testClassInstance);
+        if (isTransactional(testResult)) {
+            runInTransaction(callBack, testResult);
         }
-        else
-        {
-            callBack.runTestMethod( testResult );
+        else {
+            callBack.runTestMethod(testResult);
         }
         return;
     }
@@ -347,21 +330,18 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
     /**
      * Checks if the current test method is transactional.
      * 
-     * @param testResult TestNG method and result wrapper
+     * @param testResult
+     *            TestNG method and result wrapper
      * @return true if the method or the enclosing class is annotated with {@link Transactional}.
      */
-    private boolean isTransactional( ITestResult testResult )
-    {
+    private boolean isTransactional(ITestResult testResult) {
         boolean transactional = false;
         Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
-        if( method.getAnnotation( Transactional.class ) != null )
-        {
+        if (method.getAnnotation(Transactional.class) != null) {
             transactional = true;
         }
-        else
-        {
-            if( method.getDeclaringClass().getAnnotation( Transactional.class ) != null )
-            {
+        else {
+            if (method.getDeclaringClass().getAnnotation(Transactional.class) != null) {
                 transactional = true;
             }
         }
@@ -372,61 +352,52 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * Runs a test method enclosed by a Java EE auto-rollback transaction obtained from the JNDI
      * context.
      * 
-     * @param callBack TestNG callback for test method
-     * @param testResult test result container
+     * @param callBack
+     *            TestNG callback for test method
+     * @param testResult
+     *            test result container
      */
-    private void runInTransaction( IHookCallBack callBack, ITestResult testResult )
-    {
+    private void runInTransaction(IHookCallBack callBack, ITestResult testResult) {
         UserTransaction tx = null;
-        try
-        {
+        try {
             InitialContext ctx = new InitialContext();
-            tx = (UserTransaction) ctx.lookup( "java:comp/UserTransaction" );
+            tx = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
             tx.begin();
-            callBack.runTestMethod( testResult );
+            callBack.runTestMethod(testResult);
         }
-        catch ( NamingException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (NamingException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( NotSupportedException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (NotSupportedException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( SystemException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (SystemException exc) {
+            throw new TestContainerException(exc);
         }
-        finally
-        {
-            rollback( tx );
+        finally {
+            rollback(tx);
         }
     }
 
     /**
      * Rolls back the given transaction, if not null.
      * 
-     * @param tx transaction
+     * @param tx
+     *            transaction
      */
-    private void rollback( UserTransaction tx )
-    {
-        if( tx != null )
-        {
-            try
-            {
+    private void rollback(UserTransaction tx) {
+        if (tx != null) {
+            try {
                 tx.rollback();
             }
-            catch ( IllegalStateException exc )
-            {
-                throw new TestContainerException( exc );
+            catch (IllegalStateException exc) {
+                throw new TestContainerException(exc);
             }
-            catch ( SecurityException exc )
-            {
-                throw new TestContainerException( exc );
+            catch (SecurityException exc) {
+                throw new TestContainerException(exc);
             }
-            catch ( SystemException exc )
-            {
-                throw new TestContainerException( exc );
+            catch (SystemException exc) {
+                throw new TestContainerException(exc);
             }
         }
     }
@@ -435,14 +406,14 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * Performs field injection on the given object. The injection method is looked up via the Java
      * SE service loader.
      * 
-     * @param testClassInstance test class instance
+     * @param testClassInstance
+     *            test class instance
      */
-    private void inject( Object testClassInstance )
-    {
-        InjectorFactory injectorFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
+    private void inject(Object testClassInstance) {
+        InjectorFactory injectorFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(InjectorFactory.class);
         Injector injector = injectorFactory.createInjector();
-        injector.injectFields( testClassInstance );
+        injector.injectFields(testClassInstance);
     }
 
     /**
@@ -457,45 +428,41 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * <p>
      * Otherwise, we directly run the test method.
      * 
-     * @param callBack TestNG callback for test method
-     * @param testResult test result container
+     * @param callBack
+     *            TestNG callback for test method
+     * @param testResult
+     *            test result container
      */
-    private void runByDriver( IHookCallBack callBack, ITestResult testResult )
-    {
-        LOG.info( "running {}", testResult.getName() );
+    private void runByDriver(IHookCallBack callBack, ITestResult testResult) {
+        LOG.info("running {}", testResult.getName());
         Object testClassInstance = testResult.getMethod().getInstance();
-        if( testClassInstance != currentTestClassInstance )
-        {
-            if( currentTestClassInstance != null )
-            {
-                manager.afterClass( reactor, currentTestClassInstance.getClass() );
+        if (testClassInstance != currentTestClassInstance) {
+            if (currentTestClassInstance != null) {
+                manager.afterClass(reactor, currentTestClassInstance.getClass());
             }
-            manager.beforeClass( reactor, testClassInstance );
+            manager.beforeClass(reactor, testClassInstance);
             currentTestClassInstance = testClassInstance;
         }
 
-        if( !useProbeInvoker )
-        {
-            callBack.runTestMethod( testResult );
+        if (!useProbeInvoker) {
+            callBack.runTestMethod(testResult);
             return;
         }
 
-        TestAddress address = methodToAddressMap.get( testResult.getName() );
+        TestAddress address = methodToAddressMap.get(testResult.getName());
         TestAddress root = address.root();
 
-        LOG.debug( "Invoke " + testResult.getName() + " @ " + address + " Arguments: "
-                + root.arguments() );
-        try
-        {
-            reactor.invoke( address );
-            testResult.setStatus( ITestResult.SUCCESS );
+        LOG.debug("Invoke " + testResult.getName() + " @ " + address + " Arguments: "
+            + root.arguments());
+        try {
+            reactor.invoke(address);
+            testResult.setStatus(ITestResult.SUCCESS);
         }
-        catch ( Exception e )
-        {
-            Throwable t = ExceptionHelper.unwind( e );
-            LOG.error( "Exception", e );
-            testResult.setStatus( ITestResult.FAILURE );
-            testResult.setThrowable( t );
+        catch (Exception e) {
+            Throwable t = ExceptionHelper.unwind(e);
+            LOG.error("Exception", e);
+            testResult.setStatus(ITestResult.FAILURE);
+            testResult.setThrowable(t);
         }
     }
 
@@ -508,11 +475,9 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
      * For some reason, TestNG invokes this callback twice. The second time over, we return the
      * unchanged method list.
      */
-    public List<IMethodInstance> intercept( List<IMethodInstance> methods, ITestContext context )
-    {
-        if( methodInterceptorCalled || !useProbeInvoker
-                || isRunningInTestContainer( context.getSuite() ) )
-        {
+    public List<IMethodInstance> intercept(List<IMethodInstance> methods, ITestContext context) {
+        if (methodInterceptorCalled || !useProbeInvoker
+            || isRunningInTestContainer(context.getSuite())) {
             return methods;
         }
 
@@ -521,63 +486,60 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable
         TestDirectory testDirectory = TestDirectory.getInstance();
         List<IMethodInstance> newInstances = new ArrayList<IMethodInstance>();
         Set<TestAddress> targets = reactor.getTargets();
-        for( TestAddress address : targets )
-        {
-            ITestNGMethod frameworkMethod =
-                (ITestNGMethod) manager.lookupTestMethod( address.root() );
+        for (TestAddress address : targets) {
+            ITestNGMethod frameworkMethod = (ITestNGMethod) manager
+                .lookupTestMethod(address.root());
             Method javaMethod = frameworkMethod.getConstructorOrMethod().getMethod();
 
-            if( mangleMethodNames )
-            {
-                frameworkMethod =
-                    new ReactorTestNGMethod( frameworkMethod, javaMethod, address );
+            if (mangleMethodNames) {
+                frameworkMethod = new ReactorTestNGMethod(frameworkMethod, javaMethod, address);
             }
 
-            MethodInstance newInstance = new MethodInstance( frameworkMethod );
-            newInstances.add( newInstance );
-            methodToAddressMap.put( frameworkMethod.getMethodName(), address );
-            testDirectory.add( address, new TestInstantiationInstruction( frameworkMethod
-                .getRealClass().getName() + ";"
-                    + javaMethod.getName() ) );
+            MethodInstance newInstance = new MethodInstance(frameworkMethod);
+            newInstances.add(newInstance);
+            methodToAddressMap.put(frameworkMethod.getMethodName(), address);
+            testDirectory.add(address, new TestInstantiationInstruction(frameworkMethod
+                .getRealClass().getName() + ";" + javaMethod.getName()));
 
         }
-        Collections.sort( newInstances, new IMethodInstanceComparator() );
+        Collections.sort(newInstances, new IMethodInstanceComparator());
         return newInstances;
     }
 
     /**
      * Disables BeforeMethod and AfterMethod configuration methods in the given test class.
      * 
-     * @param testClass TestNG test class wrapper
+     * @param testClass
+     *            TestNG test class wrapper
      */
-    private void disableConfigurationMethods( ITestClass testClass )
-    {
+    private void disableConfigurationMethods(ITestClass testClass) {
         NoOpTestClass instance = (NoOpTestClass) testClass;
         ITestNGMethod[] noMethods = new ITestNGMethod[0];
         Class<?> javaClass = NoOpTestClass.class;
-        setPrivateField( javaClass, instance, "m_beforeTestMethods", noMethods );
-        setPrivateField( javaClass, instance, "m_afterTestMethods", noMethods );
+        setPrivateField(javaClass, instance, "m_beforeTestMethods", noMethods);
+        setPrivateField(javaClass, instance, "m_afterTestMethods", noMethods);
     }
 
     /**
      * Sets a private field by injection
      * 
-     * @param klass Java class where the field is declared
-     * @param instance instance of (a subclass of) klass
-     * @param fieldName name of field to be set
-     * @param value new value for field
+     * @param klass
+     *            Java class where the field is declared
+     * @param instance
+     *            instance of (a subclass of) klass
+     * @param fieldName
+     *            name of field to be set
+     * @param value
+     *            new value for field
      */
-    private void setPrivateField( Class<?> klass, Object instance, String fieldName, Object value )
-    {
-        try
-        {
-            Field field = NoOpTestClass.class.getDeclaredField( fieldName );
-            field.setAccessible( true );
-            field.set( instance, value );
+    private void setPrivateField(Class<?> klass, Object instance, String fieldName, Object value) {
+        try {
+            Field field = NoOpTestClass.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(instance, value);
         }
-        catch ( Exception exc )
-        {
-            throw new TestContainerException( exc );
+        catch (Exception exc) {
+            throw new TestContainerException(exc);
         }
     }
 }

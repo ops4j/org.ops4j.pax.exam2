@@ -27,81 +27,74 @@ import org.ops4j.pax.exam.TestAddress;
  */
 public class DefaultTestAddress implements TestAddress {
 
-    private static Logger LOG = LoggerFactory.getLogger( DefaultTestAddress.class );
+    private static Logger LOG = LoggerFactory.getLogger(DefaultTestAddress.class);
 
     final private String sig;
     final private TestAddress root;
     final private String caption;
     final private Object[] args;
 
-    public DefaultTestAddress(String caption, Object... args )
-    {
-        this( null, caption, args );
+    public DefaultTestAddress(String caption, Object... args) {
+        this(null, caption, args);
     }
 
-    public DefaultTestAddress( final TestAddress parent, String caption, Object... args )
-    {
+    public DefaultTestAddress(final TestAddress parent, String caption, Object... args) {
         sig = calculate();
         if (parent != null) {
             this.caption = parent.caption() + ":" + caption;
             this.args = parent.arguments();
-        }else {
+        }
+        else {
             this.caption = caption;
             this.args = args;
         }
 
-        root = calculateRoot( parent );
-        LOG.debug( "NEW ADDRESS= " + sig + " parent=" + parent + " root=" + root + " args=" + args.toString());
+        root = calculateRoot(parent);
+        LOG.debug("NEW ADDRESS= " + sig + " parent=" + parent + " root=" + root + " args="
+            + args.toString());
     }
 
-    private String calculate()
-    {
+    private String calculate() {
         // TODO just a temporary provider. ID should be given from a passed in context.
         return "PaxExam-" + UUID.randomUUID().toString();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( caption == null ) ? 0 : caption.hashCode() );
+        result = prime * result + ((caption == null) ? 0 : caption.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         DefaultTestAddress other = (DefaultTestAddress) obj;
-        if( caption == null )
-        {
-            if( other.caption != null )
+        if (caption == null) {
+            if (other.caption != null)
                 return false;
         }
-        else if( !caption.equals( other.caption ) )
+        else if (!caption.equals(other.caption))
             return false;
         return true;
     }
 
-    public String identifier()
-    {
+    public String identifier() {
         return sig;
     }
 
-    public String caption()
-    {
+    public String caption() {
         return caption;
     }
 
-    private TestAddress calculateRoot( TestAddress parent )
-    {
-        if( parent != null ) {
+    private TestAddress calculateRoot(TestAddress parent) {
+        if (parent != null) {
             return parent.root();
         }
         else {
@@ -109,19 +102,16 @@ public class DefaultTestAddress implements TestAddress {
         }
     }
 
-    public TestAddress root()
-    {
+    public TestAddress root() {
         return root;
     }
 
-    public Object[] arguments()
-    {
+    public Object[] arguments() {
         return args;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "[TestAddress:" + sig + " root:" + root.identifier() + "]";
     }
 }

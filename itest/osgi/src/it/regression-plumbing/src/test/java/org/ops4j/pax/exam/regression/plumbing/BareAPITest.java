@@ -39,84 +39,85 @@ import static org.ops4j.pax.exam.spi.PaxExamRuntime.*;
  */
 public class BareAPITest {
 
-	@Test
-	public void bareRunTest() throws Exception {
-		Option[] options = new Option[] {
-                regressionDefaults(),
-	            mavenBundle( "org.apache.servicemix.bundles" , "org.apache.servicemix.bundles.junit", "4.9_2" ),
-				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
-						.value("DEBUG"),
-		};
+    @Test
+    public void bareRunTest() throws Exception {
+        Option[] options = new Option[] {
+            regressionDefaults(),
+            mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.junit",
+                "4.9_2"),
+            systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"), };
 
-		ExamSystem system = createTestSystem(options);
-		TestProbeProvider p = makeProbe(system);
+        ExamSystem system = createTestSystem(options);
+        TestProbeProvider p = makeProbe(system);
 
-		// the parse will split all single containers
-		for (TestContainer testContainer : getTestContainerFactory().create(
-				system)) {
-			try {
-				testContainer.start();
-				testContainer.install(p.getStream());
-				for (TestAddress test : p.getTests()) {
-					testContainer.call(test);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				testContainer.stop();
-			}
-		}
-		system.clear();
-	}
+        // the parse will split all single containers
+        for (TestContainer testContainer : getTestContainerFactory().create(system)) {
+            try {
+                testContainer.start();
+                testContainer.install(p.getStream());
+                for (TestAddress test : p.getTests()) {
+                    testContainer.call(test);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally {
+                testContainer.stop();
+            }
+        }
+        system.clear();
+    }
 
-	@Test
-	public void singleStepTest() throws Exception {
-		Option[] options = new Option[] {
-            mavenBundle( "org.apache.servicemix.bundles" , "org.apache.servicemix.bundles.junit", "4.9_2" ),
-				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
-						.value("DEBUG") };
-		ExamSystem system = createTestSystem(options);
-		TestProbeProvider p = makeProbe(system);
+    @Test
+    public void singleStepTest() throws Exception {
+        Option[] options = new Option[] {
+            mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.junit",
+                "4.9_2"),
+            systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG") };
+        ExamSystem system = createTestSystem(options);
+        TestProbeProvider p = makeProbe(system);
 
-		TestContainer[] containers = PaxExamRuntime.getTestContainerFactory().create(system);
+        TestContainer[] containers = PaxExamRuntime.getTestContainerFactory().create(system);
 
-		for (TestContainer testContainer : containers) {
-			testContainer.start();
-		}
-		try {
-			for (TestContainer testContainer : containers) {
-				testContainer.install(p.getStream());
-			}
+        for (TestContainer testContainer : containers) {
+            testContainer.start();
+        }
+        try {
+            for (TestContainer testContainer : containers) {
+                testContainer.install(p.getStream());
+            }
 
-			for (TestContainer testContainer : containers) {
-				for (TestAddress test : p.getTests()) {
-					testContainer.call(test);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			for (TestContainer testContainer : containers) {
-				testContainer.stop();
-			}
-		}
-	}
+            for (TestContainer testContainer : containers) {
+                for (TestAddress test : p.getTests()) {
+                    testContainer.call(test);
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            for (TestContainer testContainer : containers) {
+                testContainer.stop();
+            }
+        }
+    }
 
-	private TestProbeProvider makeProbe(ExamSystem system) throws IOException {
-		TestProbeBuilder probe = system.createProbe();
-		probe.addTests(SingleTestProbe.class,
-				getAllMethods(SingleTestProbe.class));
-		return probe.build();
-	}
+    private TestProbeProvider makeProbe(ExamSystem system) throws IOException {
+        TestProbeBuilder probe = system.createProbe();
+        probe.addTests(SingleTestProbe.class, getAllMethods(SingleTestProbe.class));
+        return probe.build();
+    }
 
-	private Method[] getAllMethods(Class<?> c) {
-		List<Method> methods = new ArrayList<Method>();
-		for (Method m : c.getDeclaredMethods()) {
-			if (m.getModifiers() == Modifier.PUBLIC) {
-				methods.add(m);
-			}
-		}
-		return methods.toArray(new Method[methods.size()]);
+    private Method[] getAllMethods(Class<?> c) {
+        List<Method> methods = new ArrayList<Method>();
+        for (Method m : c.getDeclaredMethods()) {
+            if (m.getModifiers() == Modifier.PUBLIC) {
+                methods.add(m);
+            }
+        }
+        return methods.toArray(new Method[methods.size()]);
 
-	}
+    }
 }

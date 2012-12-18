@@ -31,17 +31,15 @@ import org.ops4j.pax.exam.TestContainerFactory;
  * @since 3.0.0
  */
 @MetaInfServices
-public class EmbeddedGlassFishTestContainerFactory implements TestContainerFactory
-{
+public class EmbeddedGlassFishTestContainerFactory implements TestContainerFactory {
+
     /**
      * Creates an Embedded GlassFish test container for the given exam system.
      * 
      * @return array with one element
      */
-    public TestContainer[] create( ExamSystem system ) throws TestContainerException
-    {
-        EmbeddedGlassFishTestContainer container =
-            new EmbeddedGlassFishTestContainer( system );
-        return new TestContainer[]{ container };
+    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+        EmbeddedGlassFishTestContainer container = new EmbeddedGlassFishTestContainer(system);
+        return new TestContainer[] { container };
     }
 }

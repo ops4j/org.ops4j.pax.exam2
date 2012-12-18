@@ -23,14 +23,12 @@ import org.osgi.framework.BundleContext;
 
 /**
  * A {@link ProbeInvokerFactory} which creates {@link JUnitProbeInvoker}s.
- *
+ * 
  * @author Harald Wellmann
  */
-public class JUnitProbeInvokerFactory implements ProbeInvokerFactory
-{
+public class JUnitProbeInvokerFactory implements ProbeInvokerFactory {
 
-    public ProbeInvoker createProbeInvoker( Object context, String expr )
-    {
-        return new JUnitProbeInvoker( expr, (BundleContext) context );
+    public ProbeInvoker createProbeInvoker(Object context, String expr) {
+        return new JUnitProbeInvoker(expr, (BundleContext) context);
     }
 }

@@ -40,29 +40,26 @@ import org.ops4j.pax.exam.sample6.model.Author;
  * 
  */
 @Stateless
-public class LibraryClient implements Serializable
-{
+public class LibraryClient implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Inject
     private LibraryServiceNoTx libraryService;
 
-    @TransactionAttribute( TransactionAttributeType.SUPPORTS )
-    public void fillLibrary()
-    {
-        if( libraryService.getNumBooks() != 0 )
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void fillLibrary() {
+        if (libraryService.getNumBooks() != 0)
             return;
 
-        Author mann = libraryService.createAuthor( "Thomas", "Mann" );
-        Author steinbeck = libraryService.createAuthor( "John", "Steinbeck" );
+        Author mann = libraryService.createAuthor("Thomas", "Mann");
+        Author steinbeck = libraryService.createAuthor("John", "Steinbeck");
 
-        libraryService.createBook( "Buddenbrooks", mann );
-        libraryService.createBook( "East of Eden", steinbeck );
+        libraryService.createBook("Buddenbrooks", mann);
+        libraryService.createBook("East of Eden", steinbeck);
     }
 
-    public long getNumBooks()
-    {
+    public long getNumBooks() {
         return libraryService.getNumBooks();
     }
 }

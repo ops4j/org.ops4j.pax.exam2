@@ -32,18 +32,19 @@ import javax.persistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Provides a persistence context just for testing.
+ * 
  * @author Harald Wellmann
- *
+ * 
  */
 public class PersistenceContextProvider {
-    
-    private static Logger log = LoggerFactory.getLogger( PersistenceContextProvider.class );
+
+    private static Logger log = LoggerFactory.getLogger(PersistenceContextProvider.class);
 
     /**
      * Use a producer method so that CDI will find this EntityManager.
+     * 
      * @return
      * @throws IOException
      */
@@ -53,31 +54,28 @@ public class PersistenceContextProvider {
         log.debug("producing EntityManager");
         return emf.createEntityManager();
     }
-    
+
     @Produces
     @ApplicationScoped
     public EntityManagerFactory getEntityManagerFactory() {
         log.debug("producing EntityManagerFactory");
         Map<String, String> props = new HashMap<String, String>();
-        props.put("javax.persistence.jdbc.driver",
-                "org.apache.derby.jdbc.EmbeddedDriver");
-        props.put("javax.persistence.jdbc.url",
-                "jdbc:derby:target/libraryDb;create=true");
+        props.put("javax.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
+        props.put("javax.persistence.jdbc.url", "jdbc:derby:target/libraryDb;create=true");
         props.put("hibernate.hbm2ddl.auto", "create");
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory(
-                "library", props);
-        return emf;        
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("library", props);
+        return emf;
     }
-    
+
     public void closeEntityManager(@Disposes EntityManager em) {
         log.debug("disposing EntityManager");
         em.close();
     }
-    
+
     public void closeEntityManager(@Disposes EntityManagerFactory emf) {
         log.debug("disposing EntityManagerFactory");
         emf.close();
     }
-    
+
 }

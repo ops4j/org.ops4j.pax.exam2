@@ -55,14 +55,12 @@ import com.google.common.io.Files;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class TomcatTestContainer implements TestContainer
-{
-    private static final Logger LOG = LoggerFactory.getLogger( TomcatTestContainer.class );
+public class TomcatTestContainer implements TestContainer {
 
-    private static final String[] CONTEXT_XML = { 
-        "src/test/resources/META-INF/context.xml", 
-        "src/main/webapp/META-INF/context.xml", 
-    };
+    private static final Logger LOG = LoggerFactory.getLogger(TomcatTestContainer.class);
+
+    private static final String[] CONTEXT_XML = { "src/test/resources/META-INF/context.xml",
+        "src/main/webapp/META-INF/context.xml", };
 
     private Stack<String> deployed = new Stack<String>();
 
@@ -76,178 +74,147 @@ public class TomcatTestContainer implements TestContainer
 
     private File webappDir;
 
-    public TomcatTestContainer( ExamSystem system )
-    {
+    public TomcatTestContainer(ExamSystem system) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
     }
 
-    public synchronized void call( TestAddress address )
-    {
-        TestInstantiationInstruction instruction = testDirectory.lookup( address );
-        ProbeInvokerFactory probeInvokerFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
-        ProbeInvoker invoker =
-            probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
-        invoker.call( address.arguments() );
+    public synchronized void call(TestAddress address) {
+        TestInstantiationInstruction instruction = testDirectory.lookup(address);
+        ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
+        ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker(null, instruction.toString());
+        invoker.call(address.arguments());
     }
 
-    public synchronized long install( String location, InputStream stream )
-    {        
+    public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
-        system.getOptions( WarProbeOption.class );
-        copyContextXml( webappDir, EXAM_APPLICATION_NAME );
-        deployModule( EXAM_APPLICATION_NAME, stream );
+        system.getOptions(WarProbeOption.class);
+        copyContextXml(webappDir, EXAM_APPLICATION_NAME);
+        deployModule(EXAM_APPLICATION_NAME, stream);
         return -1;
     }
 
-    public synchronized long install( InputStream stream )
-    {
-        return install( "local", stream );
+    public synchronized long install(InputStream stream) {
+        return install("local", stream);
     }
 
-    public void deployModules()
-    {
-        UrlDeploymentOption[] deploymentOptions = system.getOptions( UrlDeploymentOption.class );
+    public void deployModules() {
+        UrlDeploymentOption[] deploymentOptions = system.getOptions(UrlDeploymentOption.class);
         int numModules = 0;
-        for( UrlDeploymentOption option : deploymentOptions )
-        {
+        for (UrlDeploymentOption option : deploymentOptions) {
             numModules++;
-            if( option.getName() == null )
-            {
-                option.name( "app" + numModules );
+            if (option.getName() == null) {
+                option.name("app" + numModules);
             }
-            deployModule( option );
+            deployModule(option);
         }
     }
 
-    private void deployModule( UrlDeploymentOption option )
-    {
-        try
-        {
-            URL applUrl = new URL( option.getURL() );
+    private void deployModule(UrlDeploymentOption option) {
+        try {
+            URL applUrl = new URL(option.getURL());
             deployModule(option.getName(), applUrl.openStream());
         }
-        catch ( MalformedURLException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (MalformedURLException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (IOException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
     }
-    
-    private void deployModule( String applicationName, InputStream stream)
-    {        
-        try
-        {
+
+    private void deployModule(String applicationName, InputStream stream) {
+        try {
             File warFile = new File(webappDir, applicationName + ".war");
-            StreamUtils.copyStream( stream, new FileOutputStream(warFile), true );
-            hostConfig.deployWAR( new ContextName( applicationName ), warFile);            
+            StreamUtils.copyStream(stream, new FileOutputStream(warFile), true);
+            hostConfig.deployWAR(new ContextName(applicationName), warFile);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        catch (IOException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
     }
-    
-    private void copyContextXml( File webappDir, String applicationName )
-    {
-        for( String fileName : CONTEXT_XML )
-        {
-            File contextXml = new File( fileName );
-            if( contextXml.exists() )
-            {
-                try
-                {
-                    File contextTarget = new File(hostConfig.getConfigBaseName(), applicationName + ".xml");
-                    Files.copy( contextXml, contextTarget );
+
+    private void copyContextXml(File webappDir, String applicationName) {
+        for (String fileName : CONTEXT_XML) {
+            File contextXml = new File(fileName);
+            if (contextXml.exists()) {
+                try {
+                    File contextTarget = new File(hostConfig.getConfigBaseName(), applicationName
+                        + ".xml");
+                    Files.copy(contextXml, contextTarget);
                     return;
                 }
-                catch ( IOException exc )
-                {
-                    throw new TestContainerException( exc );
+                catch (IOException exc) {
+                    throw new TestContainerException(exc);
                 }
             }
         }
     }
-    
 
-    public void cleanup()
-    {
+    public void cleanup() {
         undeployModules();
-        LOG.info( "stopping Tomcat");
-        try
-        {
+        LOG.info("stopping Tomcat");
+        try {
             tomcat.stop();
             tomcat.destroy();
         }
-        catch ( LifecycleException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (LifecycleException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    private void undeployModules()
-    {
-        while( !deployed.isEmpty() )
-        {
+    private void undeployModules() {
+        while (!deployed.isEmpty()) {
             String applicationName = deployed.pop();
-            hostConfig.unmanageApp( "/" + applicationName );
+            hostConfig.unmanageApp("/" + applicationName);
         }
     }
 
-    public TestContainer start() 
-    {
-        LOG.info( "starting Tomcat");        
-        
+    public TestContainer start() {
+        LOG.info("starting Tomcat");
+
         File tempDir = system.getTempFolder();
         webappDir = new File(tempDir, "webapps");
         webappDir.mkdirs();
-        
+
         tomcat = new Tomcat();
         tomcat.setBaseDir(tempDir.getPath());
         tomcat.enableNaming();
 
-       
         Host host = tomcat.getHost();
-        host.setDeployOnStartup( false );
-        host.setAutoDeploy( false );
-        host.setConfigClass( TomcatContextConfig.class.getName() );
+        host.setDeployOnStartup(false);
+        host.setAutoDeploy(false);
+        host.setConfigClass(TomcatContextConfig.class.getName());
         hostConfig = new TomcatHostConfig();
-        hostConfig.setUnpackWARs( true );
-        host.addLifecycleListener( hostConfig );
-        
-        try
-        {
+        hostConfig.setUnpackWARs(true);
+        host.addLifecycleListener(hostConfig);
+
+        try {
             int httpPort = 9080;
             Connector connector = tomcat.getConnector();
-            connector.setPort( httpPort );
+            connector.setPort(httpPort);
             tomcat.start();
-            testDirectory.setAccessPoint( new URI( "http://localhost:" + httpPort + "/Pax-Exam-Probe/" ) );
+            testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
+                + "/Pax-Exam-Probe/"));
         }
-        catch ( URISyntaxException exc )
-        {
-            new TestContainerException( exc );
+        catch (URISyntaxException exc) {
+            new TestContainerException(exc);
         }
-        catch ( LifecycleException exc )
-        {
-            new TestContainerException( exc );
+        catch (LifecycleException exc) {
+            new TestContainerException(exc);
         }
         return this;
     }
 
-    public TestContainer stop()
-    {
+    public TestContainer stop() {
         cleanup();
         system.clear();
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Tomcat";
-    }    
+    }
 }

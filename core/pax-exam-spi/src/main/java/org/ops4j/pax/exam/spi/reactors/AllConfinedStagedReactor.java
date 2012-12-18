@@ -29,37 +29,33 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 /**
  * This will use new containers for any regression (hence confined)
  */
-public class AllConfinedStagedReactor implements StagedExamReactor
-{
+public class AllConfinedStagedReactor implements StagedExamReactor {
 
     final private List<TestProbeBuilder> probes;
     final private Map<TestAddress, TestContainer> map;
 
     /**
-     * @param containers to be used
-     * @param mProbes probes to be installed
+     * @param containers
+     *            to be used
+     * @param mProbes
+     *            probes to be installed
      */
-    public AllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
-    {
+    public AllConfinedStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
         probes = mProbes;
         map = new LinkedHashMap<TestAddress, TestContainer>();
         int index = 0;
-        for ( TestContainer container : containers )
-        {
+        for (TestContainer container : containers) {
             String caption = buildCaption(containers, container, index);
-            for ( TestProbeBuilder builder : probes )
-            {
-                for ( TestAddress a : builder.getTests() )
-                {
-                    map.put( new DefaultTestAddress( a, caption ), container );
+            for (TestProbeBuilder builder : probes) {
+                for (TestAddress a : builder.getTests()) {
+                    map.put(new DefaultTestAddress(a, caption), container);
                 }
             }
             index++;
         }
     }
-    
-    private String buildCaption( List<TestContainer> containers, TestContainer container, int index )
-    {
+
+    private String buildCaption(List<TestContainer> containers, TestContainer container, int index) {
         if (containers.size() == 1) {
             return container.toString();
         }
@@ -68,73 +64,60 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         }
     }
 
-    public void setUp()
-    {
+    public void setUp() {
         // empty
     }
 
-    public void invoke( TestAddress address )
-            throws Exception
-    {
+    public void invoke(TestAddress address) throws Exception {
         assert (address != null) : "TestAddress must not be null.";
         // you can directly invoke:
-        TestContainer container = map.get( address );
-        if ( container == null )
-        {
-            throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
+        TestContainer container = map.get(address);
+        if (container == null) {
+            throw new IllegalArgumentException("TestAddress " + address
+                + " not from this reactor? Got it from getTargets() really?");
         }
-        container.start(  );
-        try
-        {
-            for ( TestProbeBuilder builder : probes )
-            {
-                container.install( builder.build().getStream() );
+        container.start();
+        try {
+            for (TestProbeBuilder builder : probes) {
+                container.install(builder.build().getStream());
             }
-            container.call( address );
-        } finally
-        {
+            container.call(address);
+        }
+        finally {
             container.stop();
         }
 
     }
 
-    public Set<TestAddress> getTargets()
-    {
+    public Set<TestAddress> getTargets() {
         return map.keySet();
     }
 
-    public void tearDown()
-    {
+    public void tearDown() {
         // empty
     }
 
-    public void afterSuite()
-    {
+    public void afterSuite() {
         // empty
     }
 
-    public void afterTest()
-    {
+    public void afterTest() {
         // empty
     }
 
-    public void beforeTest()
-    {
+    public void beforeTest() {
         // empty
     }
 
-    public void afterClass()
-    {
+    public void afterClass() {
         // empty
     }
 
-    public void beforeClass()
-    {
+    public void beforeClass() {
         // empty
     }
 
-    public void beforeSuite()
-    {
+    public void beforeSuite() {
         // empty
     }
 }

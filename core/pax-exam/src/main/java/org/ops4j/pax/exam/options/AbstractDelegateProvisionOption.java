@@ -21,13 +21,12 @@ import static org.ops4j.lang.NullArgumentException.*;
 
 /**
  * Abstract {@link ProvisionOption} that delegates to another provision option.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
 public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegateProvisionOption<?>>
-    implements ProvisionOption<T>
-{
+    implements ProvisionOption<T> {
 
     /**
      * Wrapped provision option (cannot be null).
@@ -36,63 +35,58 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
 
     /**
      * Constructor.
-     *
-     * @param delegate wrapped provision option (cannot be null)
-     *
-     * @throws IllegalArgumentException - If delegate is null
+     * 
+     * @param delegate
+     *            wrapped provision option (cannot be null)
+     * 
+     * @throws IllegalArgumentException
+     *             - If delegate is null
      */
-    protected AbstractDelegateProvisionOption( final ProvisionOption<?> delegate )
-    {
-        validateNotNull( delegate, "Delegate" );
+    protected AbstractDelegateProvisionOption(final ProvisionOption<?> delegate) {
+        validateNotNull(delegate, "Delegate");
         this.delegate = delegate;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getURL()
-    {
+    public String getURL() {
         return delegate.getURL();
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean shouldUpdate()
-    {
+    public boolean shouldUpdate() {
         return delegate.shouldUpdate();
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean shouldStart()
-    {
+    public boolean shouldStart() {
         return delegate.shouldStart();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Integer getStartLevel()
-    {
+    public Integer getStartLevel() {
         return delegate.getStartLevel();
     }
 
     /**
      * {@inheritDoc}
      */
-    public T update( final Boolean shouldUpdate )
-    {
-        delegate.update( shouldUpdate );
+    public T update(final Boolean shouldUpdate) {
+        delegate.update(shouldUpdate);
         return itself();
     }
 
     /**
      * {@inheritDoc}
      */
-    public T update()
-    {
+    public T update() {
         delegate.update();
         return itself();
     }
@@ -100,8 +94,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
     /**
      * {@inheritDoc}
      */
-    public T noUpdate()
-    {
+    public T noUpdate() {
         delegate.noUpdate();
         return itself();
     }
@@ -109,17 +102,15 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
     /**
      * {@inheritDoc}
      */
-    public T start( final Boolean shouldStart )
-    {
-        delegate.start( shouldStart );
+    public T start(final Boolean shouldStart) {
+        delegate.start(shouldStart);
         return itself();
     }
 
     /**
      * {@inheritDoc}
      */
-    public T start()
-    {
+    public T start() {
         delegate.start();
         return itself();
     }
@@ -127,8 +118,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
     /**
      * {@inheritDoc}
      */
-    public T noStart()
-    {
+    public T noStart() {
         delegate.noStart();
         return itself();
     }
@@ -136,28 +126,25 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
     /**
      * {@inheritDoc}
      */
-    public T startLevel( final Integer startLevel )
-    {
-        delegate.startLevel( startLevel );
+    public T startLevel(final Integer startLevel) {
+        delegate.startLevel(startLevel);
         return itself();
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return wrapped provision option (cannot be null)
      */
-    public ProvisionOption<?> getDelegate()
-    {
+    public ProvisionOption<?> getDelegate() {
         return delegate;
     }
 
     /**
      * Implemented by sub classes in order to return itself (this) for fluent api usage
-     *
+     * 
      * @return itself
      */
     protected abstract T itself();
-
 
 }

@@ -41,79 +41,61 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
 /**
  * Simple regression
  */
-public class ReactorAPITest
-{
+public class ReactorAPITest {
 
-    private TestContainerFactory getFactory()
-    {
+    private TestContainerFactory getFactory() {
         return getTestContainerFactory();
     }
 
     @Test
-    public void reactorRunAllConfinedTest()
-        throws Exception
-    {
-        reactorRun( new PerMethod() );
+    public void reactorRunAllConfinedTest() throws Exception {
+        reactorRun(new PerMethod());
     }
 
     @Test
-    public void reactorRunEagerTest()
-        throws Exception
-    {
-        reactorRun( new PerClass() );
+    public void reactorRunEagerTest() throws Exception {
+        reactorRun(new PerClass());
     }
 
-    public void reactorRun( StagedExamReactorFactory strategy )
-        throws Exception
-    {
+    public void reactorRun(StagedExamReactorFactory strategy) throws Exception {
         TestContainerFactory factory = getFactory();
-        Option[] options = new Option[]{
-            regressionDefaults()
-        };
+        Option[] options = new Option[] { regressionDefaults() };
 
-        ExamSystem system = PaxExamRuntime.createTestSystem( options );
-        ExamReactor reactor = new DefaultExamReactor( system, factory );
-        TestProbeBuilder probe = makeProbe( system );
+        ExamSystem system = PaxExamRuntime.createTestSystem(options);
+        ExamReactor reactor = new DefaultExamReactor(system, factory);
+        TestProbeBuilder probe = makeProbe(system);
 
-        reactor.addProbe( probe );
-        reactor.addConfiguration( options );
+        reactor.addProbe(probe);
+        reactor.addConfiguration(options);
 
-        StagedExamReactor stagedReactor = reactor.stage( strategy );
+        StagedExamReactor stagedReactor = reactor.stage(strategy);
         stagedReactor.beforeClass();
-        try
-        {
-            for( TestAddress call : stagedReactor.getTargets() )
-            {
-                stagedReactor.invoke( call );
+        try {
+            for (TestAddress call : stagedReactor.getTargets()) {
+                stagedReactor.invoke(call);
             }
 
         }
-        finally
-        {
+        finally {
             stagedReactor.afterClass();
             system.clear();
         }
 
     }
 
-    private TestProbeBuilder makeProbe( ExamSystem system )
-        throws IOException
-    {
+    private TestProbeBuilder makeProbe(ExamSystem system) throws IOException {
         TestProbeBuilder probe = system.createProbe();
-        probe.addTests( SingleTestProbe.class, getAllMethods( SingleTestProbe.class ) );
+        probe.addTests(SingleTestProbe.class, getAllMethods(SingleTestProbe.class));
         return probe;
     }
 
-    private Method[] getAllMethods( Class<?> c )
-    {
+    private Method[] getAllMethods(Class<?> c) {
         List<Method> methods = new ArrayList<Method>();
-        for( Method m : c.getDeclaredMethods() )
-        {
-            if( m.getModifiers() == Modifier.PUBLIC )
-            {
-                methods.add( m );
+        for (Method m : c.getDeclaredMethods()) {
+            if (m.getModifiers() == Modifier.PUBLIC) {
+                methods.add(m);
             }
         }
-        return methods.toArray( new Method[methods.size()] );
+        return methods.toArray(new Method[methods.size()]);
     }
 }

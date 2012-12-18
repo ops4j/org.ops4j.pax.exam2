@@ -16,5 +16,6 @@
 package org.ops4j.pax.exam.regression.pde;
 
 public interface HelloService {
+
     String getMessage();
 }

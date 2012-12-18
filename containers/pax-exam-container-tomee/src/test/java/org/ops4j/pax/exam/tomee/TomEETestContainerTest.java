@@ -30,39 +30,35 @@ import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.tomee.TomEETestContainer;
 
-public class TomEETestContainerTest
-{
+public class TomEETestContainerTest {
 
     @Test
-    public void launchTomEE() throws IOException
-    {
+    public void launchTomEE() throws IOException {
         ExamSystem system = PaxExamRuntime.createServerSystem();
-        TomEETestContainer container = new TomEETestContainer( system );
+        TomEETestContainer container = new TomEETestContainer(system);
         container.start();
         container.stop();
     }
 
     @Test
-    public void deployWebapp() throws IOException
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        ExamSystem system = DefaultExamSystem.create( options( war(
-                "mvn:org.apache.wicket/wicket-examples/1.5.3/war" ).name( "wicket-examples" ) ) );
-        TomEETestContainer container = new TomEETestContainer( system );
+    public void deployWebapp() throws IOException {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        ExamSystem system = DefaultExamSystem.create(options(war(
+            "mvn:org.apache.wicket/wicket-examples/1.5.3/war").name("wicket-examples")));
+        TomEETestContainer container = new TomEETestContainer(system);
         container.start();
         container.deployModules();
         container.stop();
     }
 
     @Test
-    public void deployWebappFromStream() throws IOException
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    public void deployWebappFromStream() throws IOException {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         ExamSystem system = PaxExamRuntime.createServerSystem();
-        TomEETestContainer container = new TomEETestContainer( system );
+        TomEETestContainer container = new TomEETestContainer(system);
         container.start();
-        InputStream is = new URL( "mvn:org.apache.wicket/wicket-examples/1.5.3/war" ).openStream();
-        container.install( is );
+        InputStream is = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war").openStream();
+        container.install(is);
         is.close();
         container.stop();
     }

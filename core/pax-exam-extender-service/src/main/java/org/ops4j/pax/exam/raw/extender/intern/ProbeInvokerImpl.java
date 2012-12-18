@@ -28,9 +28,9 @@ import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 /**
- * Turns a instruction into a service call.
- * Currently used with encoded instructions from org.ops4j.pax.exam.spi.container.ClassMethodTestAddress
- *
+ * Turns a instruction into a service call. Currently used with encoded instructions from
+ * org.ops4j.pax.exam.spi.container.ClassMethodTestAddress
+ * 
  * @author Toni Menzel
  * @since Dec 4, 2009
  */
@@ -39,152 +39,162 @@ public class ProbeInvokerImpl implements ProbeInvoker {
     private BundleContext ctx;
     private String clazz;
     private String method;
-    
+
     private Injector injector;
 
-    public ProbeInvokerImpl( String encodedInstruction, BundleContext bundleContext )
-    {
+    public ProbeInvokerImpl(String encodedInstruction, BundleContext bundleContext) {
         // parse class and method out of expression:
-        String[] parts = encodedInstruction.split( ";" );
-        clazz = parts[ 0 ];
-        method = parts[ 1 ];
+        String[] parts = encodedInstruction.split(";");
+        clazz = parts[0];
+        method = parts[1];
         ctx = bundleContext;
-        
+
         // acquire (optional) injector
         // TODO replace system property by core configuration option
-        //boolean inject = "true".equals(System.getProperty( "pax.exam.inject" ));
+        // boolean inject = "true".equals(System.getProperty( "pax.exam.inject" ));
         boolean inject = true;
         if (inject) {
-            injector = ServiceLookup.getService( ctx, Injector.class );
+            injector = ServiceLookup.getService(ctx, Injector.class);
         }
-        else  {
+        else {
             injector = new NoOpInjector();
         }
     }
 
-    public void call( Object... args )
-    {
+    public void call(Object... args) {
         Class<?> testClass;
         try {
-            testClass = ctx.getBundle().loadClass( clazz );
-        } catch( ClassNotFoundException e ) {
-            throw new TestContainerException( e );
+            testClass = ctx.getBundle().loadClass(clazz);
+        }
+        catch (ClassNotFoundException e) {
+            throw new TestContainerException(e);
         }
 
-        if( !( findAndInvoke( testClass, args ) ) ) {
-            throw new TestContainerException( " Test " + method + " not found in test class " + testClass.getName() );
+        if (!(findAndInvoke(testClass, args))) {
+            throw new TestContainerException(" Test " + method + " not found in test class "
+                + testClass.getName());
         }
     }
 
-    private boolean findAndInvoke( Class<?> testClass, Object... params )
+    private boolean findAndInvoke(Class<?> testClass, Object... params)
 
     {
         try {
-            // find matching method 
-            for( Method m : testClass.getMethods() ) {
-                if( m.getName().equals( method ) ) {
+            // find matching method
+            for (Method m : testClass.getMethods()) {
+                if (m.getName().equals(method)) {
                     // we assume its correct:
-                    injectContextAndInvoke( testClass.newInstance(), m, params );
+                    injectContextAndInvoke(testClass.newInstance(), m, params);
                     return true;
                 }
             }
 
-        } catch( NoClassDefFoundError e ) {
-            throw new TestContainerException( e );            
-        } catch( InstantiationException e ) {
-            throw new TestContainerException( e );
-        } catch( IllegalAccessException e ) {
-            throw new TestContainerException( e );
+        }
+        catch (NoClassDefFoundError e) {
+            throw new TestContainerException(e);
+        }
+        catch (InstantiationException e) {
+            throw new TestContainerException(e);
+        }
+        catch (IllegalAccessException e) {
+            throw new TestContainerException(e);
         }
         return false;
     }
 
     /**
      * Invokes the bundle context (if possible and required) and executes the regression method.
-     *
+     * 
      * TODO this is a trimmed down minimal version that does not support any junit before/afters or
-     * self made injection.
-     * The only thing you get here is a parameter injection for BundleContext types.
-     *
-     * @param testInstance an instance of the regression class
-     * @param testMethod   regression method
+     * self made injection. The only thing you get here is a parameter injection for BundleContext
+     * types.
+     * 
+     * @param testInstance
+     *            an instance of the regression class
+     * @param testMethod
+     *            regression method
      * @param params
-     *
-     * @throws TestContainerException    - Re-thrown from reflection invokation
+     * 
+     * @throws TestContainerException
+     *             - Re-thrown from reflection invokation
      */
-    private void injectContextAndInvoke( final Object testInstance, final Method testMethod, Object[] params )
-        throws TestContainerException
-    {
+    private void injectContextAndInvoke(final Object testInstance, final Method testMethod,
+        Object[] params) throws TestContainerException {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
-        injector.injectFields( testInstance );
+        injector.injectFields(testInstance);
         boolean cleanup = false;
         try {
-            //runBefores( testInstance );
-            if( paramTypes.length == 0 ) {
-                testMethod.invoke( testInstance );
+            // runBefores( testInstance );
+            if (paramTypes.length == 0) {
+                testMethod.invoke(testInstance);
             }
             else {
-                params = injectHook( testMethod, params );
-                testMethod.invoke( testInstance, params );
+                params = injectHook(testMethod, params);
+                testMethod.invoke(testInstance, params);
             }
 
             cleanup = true;
-            //runAfters( testInstance );
-        } catch(InvocationTargetException e) {
-            throw new TestContainerException( e );
+            // runAfters( testInstance );
+        }
+        catch (InvocationTargetException e) {
+            throw new TestContainerException(e);
 
-        } catch(IllegalAccessException e) {
-            throw new TestContainerException( e );
+        }
+        catch (IllegalAccessException e) {
+            throw new TestContainerException(e);
         }
         finally {
-            if( !cleanup ) {
+            if (!cleanup) {
                 try {
-                    //runAfters( testInstance );
-                } catch( Throwable throwable ) {
-                    //LOG.warn( "Got the exception when calling the runAfters. [Exception]: " + throwable );
+                    // runAfters( testInstance );
+                }
+                catch (Throwable throwable) {
+                    // LOG.warn( "Got the exception when calling the runAfters. [Exception]: " +
+                    // throwable );
                 }
             }
         }
     }
 
     /**
-     * This method practcally makes sure the method that is going to be invoked has the right types and instances injected as parameters.
-     *
-     * The following rules apply:
-     * You either have no arguments.
-     * You have arguments, then BundleContext must be your first.
-     * Parameters with @Inject Annotation must come next.
-     * All remaining arguments are set the params values.
-     *
-     * @param testMethod method in question
-     * @param params     derived from caller. Addditional injections may apply
-     *
+     * This method practcally makes sure the method that is going to be invoked has the right types
+     * and instances injected as parameters.
+     * 
+     * The following rules apply: You either have no arguments. You have arguments, then
+     * BundleContext must be your first. Parameters with @Inject Annotation must come next. All
+     * remaining arguments are set the params values.
+     * 
+     * @param testMethod
+     *            method in question
+     * @param params
+     *            derived from caller. Addditional injections may apply
+     * 
      * @return filled parameters ready for method invokation
      */
-    private Object[] injectHook( Method testMethod, Object[] params )
-    {
+    private Object[] injectHook(Method testMethod, Object[] params) {
         // skip all injections
         Class<?>[] paramTypes = testMethod.getParameterTypes();
-        Object[] ret = new Object[ paramTypes.length ];
+        Object[] ret = new Object[paramTypes.length];
         Annotation[][] paramAnnotations = testMethod.getParameterAnnotations();
         int paramCursor = 0;
 
-        for( int i = 0; i < ret.length; i++ ) {
-            if( i == 0 ) {
-                ret[ 0 ] = ctx;
+        for (int i = 0; i < ret.length; i++) {
+            if (i == 0) {
+                ret[0] = ctx;
             }
             else {
-                if( paramAnnotations[ i ].length > 0 ) {
+                if (paramAnnotations[i].length > 0) {
                     // skip
-                    throw new RuntimeException( "Parameter " + i + " on " + testMethod.getName() + " has Annotation. Not supported until Pax Exam 2.1" );
+                    throw new RuntimeException("Parameter " + i + " on " + testMethod.getName()
+                        + " has Annotation. Not supported until Pax Exam 2.1");
                 }
                 else {
-                    if( params.length > paramCursor ) {
-                        ret[ i ] = params[ paramCursor++ ];
+                    if (params.length > paramCursor) {
+                        ret[i] = params[paramCursor++];
                     }
                     else {
                         // set default to null
-                        ret[ i ] = null;
+                        ret[i] = null;
                     }
                 }
             }

@@ -36,23 +36,24 @@ import org.osgi.framework.launch.FrameworkFactory;
 // @MetaInfServices
 public class NativeTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create ( ExamSystem system ) throws TestContainerException
-    {
+    public TestContainer[] create(ExamSystem system) throws TestContainerException {
         List<TestContainer> containers = new ArrayList<TestContainer>();
-        Iterator<FrameworkFactory> factories = ServiceLoader.load( FrameworkFactory.class ).iterator();
+        Iterator<FrameworkFactory> factories = ServiceLoader.load(FrameworkFactory.class)
+            .iterator();
         boolean factoryFound = false;
-        while( factories.hasNext() ) {
+        while (factories.hasNext()) {
             try {
-				containers.add( new NativeTestContainer( system, factories.next() ) );
-				factoryFound = true;
-			} catch (IOException e) {
-				throw new TestContainerException("Problem initializing container.",e);
-			}
+                containers.add(new NativeTestContainer(system, factories.next()));
+                factoryFound = true;
+            }
+            catch (IOException e) {
+                throw new TestContainerException("Problem initializing container.", e);
+            }
         }
-        if ( !factoryFound )
-        {
-            throw new TestContainerException("No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath");            
+        if (!factoryFound) {
+            throw new TestContainerException(
+                "No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath");
         }
-        return containers.toArray( new TestContainer[containers.size()] );
-    }	
+        return containers.toArray(new TestContainer[containers.size()]);
+    }
 }

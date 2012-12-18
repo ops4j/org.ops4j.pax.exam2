@@ -38,20 +38,21 @@ import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
 
 /**
- * Base class for test runner servlets, providing the communication link
- * between the embedded test container and the test driver.
+ * Base class for test runner servlets, providing the communication link between the embedded test
+ * container and the test driver.
  * <p>
  * Derived classes shall provide a method of dependency injection.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
 @WebServlet(urlPatterns = "/testrunner")
 public class TestRunnerServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
 
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         String className = request.getParameter("class");
         String methodName = request.getParameter("method");
         try {
@@ -69,27 +70,25 @@ public class TestRunnerServlet extends HttpServlet {
     private void runSuite(OutputStream os, Class<?> clazz, String methodName) throws IOException {
 
         TestNG testNG = new TestNG();
-        testNG.setUseDefaultListeners( false );
+        testNG.setUseDefaultListeners(false);
         TestListenerAdapter listener = new TestListenerAdapter();
         XmlSuite suite = new XmlSuite();
-        suite.setName( "PaxExamInternal" );
+        suite.setName("PaxExamInternal");
         XmlTest xmlTest = new XmlTest(suite);
         XmlClass xmlClass = new XmlClass(clazz);
         xmlTest.getClasses().add(xmlClass);
         XmlInclude xmlInclude = new XmlInclude(methodName);
         xmlClass.getIncludedMethods().add(xmlInclude);
-        
-        testNG.setXmlSuites( Arrays.asList( suite ) );
+
+        testNG.setXmlSuites(Arrays.asList(suite));
         testNG.run();
-        
+
         ObjectOutputStream oos = new ObjectOutputStream(os);
-        for (ITestResult result : listener.getFailedTests())
-        {
-            oos.writeObject( result.getThrowable() );
+        for (ITestResult result : listener.getFailedTests()) {
+            oos.writeObject(result.getThrowable());
         }
-        if (listener.getFailedTests().isEmpty())
-        {
-            oos.writeObject("ok");            
+        if (listener.getFailedTests().isEmpty()) {
+            oos.writeObject("ok");
         }
     }
 }

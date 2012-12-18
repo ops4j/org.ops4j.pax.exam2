@@ -28,16 +28,16 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Author {
-    
+
     @Id
     @GeneratedValue
     @Column(name = "author_id")
     private int id;
-    
+
     private String firstName;
-    
+
     private String lastName;
-    
+
     @OneToMany(mappedBy = "author")
     private Set<Book> books = new HashSet<Book>();
 

@@ -19,13 +19,12 @@ package org.ops4j.pax.exam.rbc.internal;
 
 /**
  * Thrown when a particular sercice cannot be found.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 15, 2008
  */
-public class NoSuchServiceException
-    extends Exception
-{
+public class NoSuchServiceException extends Exception {
+
     private static final long serialVersionUID = 2694795422298434762L;
     /**
      * Class of the service that was not found. Cannot be null.
@@ -34,22 +33,21 @@ public class NoSuchServiceException
 
     /**
      * Constructor.
-     *
-     * @param serviceType class of the service that was not found (cannot be null)
+     * 
+     * @param serviceType
+     *            class of the service that was not found (cannot be null)
      */
-    public NoSuchServiceException( final Class<?> serviceType )
-    {
-        super( "No service of type [" + serviceType.getName() + "] found in the service registry" );
+    public NoSuchServiceException(final Class<?> serviceType) {
+        super("No service of type [" + serviceType.getName() + "] found in the service registry");
         this.serviceType = serviceType;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return class of the service that was not found
      */
-    public Class<?> getServiceType()
-    {
+    public Class<?> getServiceType() {
         return serviceType;
     }
 

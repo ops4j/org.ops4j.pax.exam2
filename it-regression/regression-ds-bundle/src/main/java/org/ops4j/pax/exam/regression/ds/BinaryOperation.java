@@ -16,7 +16,7 @@
  */
 package org.ops4j.pax.exam.regression.ds;
 
-public interface BinaryOperation
-{
-    int operate( int op1, int op2 );
+public interface BinaryOperation {
+
+    int operate(int op1, int op2);
 }

@@ -35,50 +35,42 @@ import org.slf4j.LoggerFactory;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class WeldTestContainer implements TestContainer
-{
-    private static final Logger LOG = LoggerFactory.getLogger( WeldTestContainer.class );
+public class WeldTestContainer implements TestContainer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WeldTestContainer.class);
 
     private Weld weld;
     private boolean isValid;
 
     private static WeldContainer weldContainer;
 
-    public WeldTestContainer( ExamSystem system )
-    {
+    public WeldTestContainer(ExamSystem system) {
     }
 
-    public void call( TestAddress address )
-    {
+    public void call(TestAddress address) {
     }
 
-    public long install( String location, InputStream stream )
-    {
+    public long install(String location, InputStream stream) {
         return -1;
     }
 
-    public long install( InputStream stream )
-    {
+    public long install(InputStream stream) {
         return -1;
     }
-    
-    public void afterDeployment(@Observes AfterDeploymentValidation event)
-    {
+
+    public void afterDeployment(@Observes AfterDeploymentValidation event) {
         isValid = true;
     }
 
-    public TestContainer start() throws TestContainerException
-    {
+    public TestContainer start() throws TestContainerException {
         LOG.debug("starting Weld container");
         weld = new Weld();
         weldContainer = weld.initialize();
         return this;
     }
 
-    public TestContainer stop()
-    {
-        if (weld != null && isValid) 
-        {
+    public TestContainer stop() {
+        if (weld != null && isValid) {
             LOG.debug("stopping Weld container");
             weld.shutdown();
         }
@@ -86,13 +78,11 @@ public class WeldTestContainer implements TestContainer
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Weld";
     }
 
-    public static WeldContainer getWeldContainer()
-    {
+    public static WeldContainer getWeldContainer() {
         return weldContainer;
     }
 }

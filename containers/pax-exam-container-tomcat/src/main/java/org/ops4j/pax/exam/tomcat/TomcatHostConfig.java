@@ -22,20 +22,18 @@ import java.io.File;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.util.ContextName;
 
-public class TomcatHostConfig extends HostConfig
-{
+public class TomcatHostConfig extends HostConfig {
+
     @Override
-    public void deployWAR( ContextName cn, File war )
-    {
-        setCopyXML( true );
-        super.deployWAR( cn, war );
-        addServiced( cn.getName() );
+    public void deployWAR(ContextName cn, File war) {
+        setCopyXML(true);
+        super.deployWAR(cn, war);
+        addServiced(cn.getName());
     }
-    
+
     @Override
-    public void unmanageApp( String contextName )
-    {
-        super.unmanageApp( contextName );
-        removeServiced( contextName );
+    public void unmanageApp(String contextName) {
+        super.unmanageApp(contextName);
+        removeServiced(contextName);
     }
 }

@@ -19,7 +19,7 @@
     <name>OPS4J Pax Exam Integration Tests for CDI</name>
 
     <profiles>
-        
+
         <profile>
             <id>matrix</id>
             <modules>

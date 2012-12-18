@@ -39,48 +39,35 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-public class MultiConfigurationTest
-{
+@RunWith(JUnit4TestRunner.class)
+public class MultiConfigurationTest {
 
     @Inject
     private BundleContext bundleContext;
 
+    @Configuration
+    public Option[] createConfiguration1() {
+        return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
+            + "/target/regression-pde-bundle.jar"),
+            systemProperty("pax.exam.language").value("la"), junitBundles());
+    }
 
     @Configuration
-    public Option[] createConfiguration1()
-    {
-        return options(
-            regressionDefaults(),
-            url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/target/regression-pde-bundle.jar" ),
-            systemProperty( "pax.exam.language" ).value( "la" ),
-            junitBundles() );
+    public Option[] createConfiguration2() {
+        return options(regressionDefaults(), systemProperty("pax.exam.language").value("en"),
+            url("reference:file:" + PathUtils.getBaseDir() + "/target/regression-pde-bundle.jar"),
+            junitBundles());
     }
-    
-    @Configuration
-    public Option[] createConfiguration2()
-    {
-        return options(
-            regressionDefaults(),
-            systemProperty( "pax.exam.language" ).value( "en" ),
-            url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/target/regression-pde-bundle.jar" ),
-            junitBundles() );
-    }
-    
-    
 
     @Test
-    public void getServiceFromInjectedBundleContext()
-    {
-        String language = System.getProperty( "pax.exam.language" );
-        String expected = (language.equals( "en" )) ? "Hello Pax!" : "Pax Vobiscum!"; 
-        assertThat( bundleContext, is( notNullValue() ) );
-        Map<String,String> props = new HashMap<String, String>();
-        props.put( "language", language );
-        HelloService service = ServiceLookup.getService( bundleContext, HelloService.class, props );
-        assertThat( service, is( notNullValue() ) );
-        assertThat( service.getMessage(), is(expected));
+    public void getServiceFromInjectedBundleContext() {
+        String language = System.getProperty("pax.exam.language");
+        String expected = (language.equals("en")) ? "Hello Pax!" : "Pax Vobiscum!";
+        assertThat(bundleContext, is(notNullValue()));
+        Map<String, String> props = new HashMap<String, String>();
+        props.put("language", language);
+        HelloService service = ServiceLookup.getService(bundleContext, HelloService.class, props);
+        assertThat(service, is(notNullValue()));
+        assertThat(service.getMessage(), is(expected));
     }
 }

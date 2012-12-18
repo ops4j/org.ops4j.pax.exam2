@@ -29,7 +29,6 @@ import org.ops4j.pax.exam.sample1.model.Book;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * 
  * @author Harald Wellmann
@@ -37,50 +36,45 @@ import org.slf4j.LoggerFactory;
  */
 @Stateless
 public class LibraryService {
-    
-    private static Logger log = LoggerFactory.getLogger( LibraryService.class );
-    
+
+    private static Logger log = LoggerFactory.getLogger(LibraryService.class);
+
     @PersistenceContext
     private EntityManager em;
-    
-    public List<Book> findBooks()
-    {
+
+    public List<Book> findBooks() {
         log.info("finding books");
         String jpql = "select b from Book b";
         TypedQuery<Book> query = em.createQuery(jpql, Book.class);
         List<Book> books = query.getResultList();
-        return books;       
+        return books;
     }
-    
-    public List<Book> findBooksByAuthor(String lastName)
-    {
+
+    public List<Book> findBooksByAuthor(String lastName) {
         String jpql = "select b from Book b where b.author.lastName = :lastName";
         TypedQuery<Book> query = em.createQuery(jpql, Book.class);
         query.setParameter("lastName", lastName);
         List<Book> books = query.getResultList();
-        return books;       
+        return books;
     }
-    
-    public List<Book> findBooksByTitle(String title)
-    {
+
+    public List<Book> findBooksByTitle(String title) {
         String jpql = "select b from Book b where b.title = :title";
         TypedQuery<Book> query = em.createQuery(jpql, Book.class);
         query.setParameter("title", title);
         List<Book> books = query.getResultList();
-        return books;       
+        return books;
     }
-    
-    public Author createAuthor(String firstName, String lastName)
-    {
+
+    public Author createAuthor(String firstName, String lastName) {
         Author author = new Author();
         author.setFirstName(firstName);
         author.setLastName(lastName);
         em.persist(author);
         return author;
     }
-    
-    public Book createBook(String title, Author author)
-    {
+
+    public Book createBook(String title, Author author) {
         Book book = new Book();
         book.setTitle(title);
         book.setAuthor(author);
@@ -88,16 +82,14 @@ public class LibraryService {
         em.persist(book);
         return book;
     }
-    
-    public long getNumBooks()
-    {
+
+    public long getNumBooks() {
         String jpql = "select count(b) from Book b";
         Long numBooks = (Long) em.createQuery(jpql).getSingleResult();
         return numBooks;
     }
 
-    public long getNumAuthors()
-    {
+    public long getNumAuthors() {
         String jpql = "select count(a) from Author a";
         Long numAuthors = (Long) em.createQuery(jpql).getSingleResult();
         return numAuthors;

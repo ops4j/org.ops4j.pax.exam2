@@ -24,14 +24,13 @@ import org.junit.Test;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
-public class WabSampleIT
-{
+public class WabSampleIT {
+
     @Test
-    public void checkPlainTextFromWabServlet()
-    {
+    public void checkPlainTextFromWabServlet() {
         Client client = Client.create();
-        WebResource resource = client.resource( "http://localhost:8181/wab/WABServlet" );
-        String response = resource.get( String.class );
-        assertThat( response, containsString( "wab symbolic name : wab-sample" ) );
+        WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
+        String response = resource.get(String.class);
+        assertThat(response, containsString("wab symbolic name : wab-sample"));
     }
 }

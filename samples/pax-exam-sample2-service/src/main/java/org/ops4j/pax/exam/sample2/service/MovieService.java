@@ -26,14 +26,13 @@ import javax.persistence.TypedQuery;
 import org.ops4j.pax.exam.sample2.model.Movie;
 
 @Stateless
-public class MovieService 
-{
+public class MovieService {
+
     @PersistenceContext
     private EntityManager em;
 
-    public Movie findById(int id)
-    {
-        Movie movie = em.find( Movie.class, id );
+    public Movie findById(int id) {
+        Movie movie = em.find(Movie.class, id);
         movie.getActors();
         movie.getRoles();
         movie.getRatings();
@@ -42,10 +41,10 @@ public class MovieService
 
     public List<Movie> findByTitleLike(String substring, int limit, int offset) {
         String jpql = "select m from Movie m where m.title like :substring order by m.title";
-        TypedQuery<Movie> query = em.createQuery( jpql, Movie.class );
+        TypedQuery<Movie> query = em.createQuery(jpql, Movie.class);
         query.setParameter("substring", "%" + substring + "%");
-        
-        List<Movie> movies = query.setFirstResult( offset ).setMaxResults( limit ).getResultList();
+
+        List<Movie> movies = query.setFirstResult(offset).setMaxResults(limit).getResultList();
         return movies;
     }
 }

@@ -23,7 +23,7 @@ public class MovieDbException extends RuntimeException {
     public MovieDbException(String message) {
         super(message);
     }
-    
+
     public MovieDbException(String message, Throwable cause) {
         super(message, cause);
     }

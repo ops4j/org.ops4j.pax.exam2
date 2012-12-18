@@ -27,17 +27,17 @@ import java.util.Set;
  */
 public interface TestProbeBuilder {
 
-    TestAddress addTest( Class<?> clazz, String methodName, Object... args );
+    TestAddress addTest(Class<?> clazz, String methodName, Object... args);
 
-    TestAddress addTest( Class<?> clazz, Object... args );
+    TestAddress addTest(Class<?> clazz, Object... args);
 
-    List<TestAddress> addTests( Class<?> clazz, Method... m );
+    List<TestAddress> addTests(Class<?> clazz, Method... m);
 
     Set<TestAddress> getTests();
 
-    TestProbeBuilder setHeader( String key, String value );
+    TestProbeBuilder setHeader(String key, String value);
 
-    TestProbeBuilder ignorePackageOf( Class<?>... classes );
+    TestProbeBuilder ignorePackageOf(Class<?>... classes);
 
     TestProbeProvider build();
 }

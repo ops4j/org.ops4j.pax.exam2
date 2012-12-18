@@ -29,32 +29,30 @@ import org.ops4j.pax.exam.junit.PaxExamServer;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
-public class ClassRuleExternalConfigurationTest
-{
+public class ClassRuleExternalConfigurationTest {
+
     @ClassRule
     public static PaxExamServer exam = new PaxExamServer(WabSampleConfiguration.class);
-    
+
     @Before
     public void waitForShutdown() throws InterruptedException {
-        assumeTrue( ! isKnopflerfish() );
-        Thread.sleep(3000);        
-    }
-    
-    @Test
-    public void checkWabSymbolicName()
-    {
-        Client client = Client.create();
-        WebResource resource = client.resource( "http://localhost:8181/wab/WABServlet" );
-        String response = resource.get( String.class );
-        assertThat( response, containsString( "wab symbolic name : wab-sample" ) );
+        assumeTrue(!isKnopflerfish());
+        Thread.sleep(3000);
     }
 
     @Test
-    public void checkWabVersion()
-    {
+    public void checkWabSymbolicName() {
         Client client = Client.create();
-        WebResource resource = client.resource( "http://localhost:8181/wab/WABServlet" );
-        String response = resource.get( String.class );
-        assertThat( response, containsString( "wab version :3.0.0" ) );
+        WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
+        String response = resource.get(String.class);
+        assertThat(response, containsString("wab symbolic name : wab-sample"));
+    }
+
+    @Test
+    public void checkWabVersion() {
+        Client client = Client.create();
+        WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
+        String response = resource.get(String.class);
+        assertThat(response, containsString("wab version :3.0.0"));
     }
 }

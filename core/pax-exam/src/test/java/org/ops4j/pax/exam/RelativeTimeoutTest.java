@@ -26,39 +26,39 @@ import org.junit.Test;
 /**
  * 
  * @author Toni Menzel (toni@okidokiteam.com)
- *
+ * 
  */
 public class RelativeTimeoutTest {
-	
-	@Test
-	public void testDefaults() {
-		RelativeTimeout rel = RelativeTimeout.TIMEOUT_DEFAULT;
-		assertThat( rel.isDefault(), is( equalTo(Boolean.TRUE))) ;
-		assertThat( rel.isNoWait(), is( equalTo(Boolean.FALSE))) ;
-		assertThat( rel.isNoTimeout(), is( equalTo(Boolean.FALSE))) ;
-	}
-	
-	@Test
-	public void testNoWait() {
-		RelativeTimeout rel = RelativeTimeout.TIMEOUT_NOWAIT;
-		assertThat( rel.isDefault(), is( equalTo(Boolean.FALSE))) ;
-		assertThat( rel.isNoWait(), is( equalTo(Boolean.TRUE))) ;
-		assertThat( rel.isNoTimeout(), is( equalTo(Boolean.FALSE))) ;
-	}
-	
-	@Test
-	public void testNoTimeout() {
-		RelativeTimeout rel = RelativeTimeout.TIMEOUT_NOTIMEOUT;
-		assertThat( rel.isDefault(), is( equalTo(Boolean.FALSE))) ;
-		assertThat( rel.isNoWait(), is( equalTo(Boolean.FALSE))) ;
-		assertThat( rel.isNoTimeout(), is( equalTo(Boolean.TRUE))) ;
-	}
-	
-	@Test
-	public void testEquality() {
-		RelativeTimeout rel1 = new RelativeTimeout(1000);
-		RelativeTimeout rel2 = new RelativeTimeout(1000);
-		
-		assertThat( rel1, is( equalTo(rel2))) ;
-	}
+
+    @Test
+    public void testDefaults() {
+        RelativeTimeout rel = RelativeTimeout.TIMEOUT_DEFAULT;
+        assertThat(rel.isDefault(), is(equalTo(Boolean.TRUE)));
+        assertThat(rel.isNoWait(), is(equalTo(Boolean.FALSE)));
+        assertThat(rel.isNoTimeout(), is(equalTo(Boolean.FALSE)));
+    }
+
+    @Test
+    public void testNoWait() {
+        RelativeTimeout rel = RelativeTimeout.TIMEOUT_NOWAIT;
+        assertThat(rel.isDefault(), is(equalTo(Boolean.FALSE)));
+        assertThat(rel.isNoWait(), is(equalTo(Boolean.TRUE)));
+        assertThat(rel.isNoTimeout(), is(equalTo(Boolean.FALSE)));
+    }
+
+    @Test
+    public void testNoTimeout() {
+        RelativeTimeout rel = RelativeTimeout.TIMEOUT_NOTIMEOUT;
+        assertThat(rel.isDefault(), is(equalTo(Boolean.FALSE)));
+        assertThat(rel.isNoWait(), is(equalTo(Boolean.FALSE)));
+        assertThat(rel.isNoTimeout(), is(equalTo(Boolean.TRUE)));
+    }
+
+    @Test
+    public void testEquality() {
+        RelativeTimeout rel1 = new RelativeTimeout(1000);
+        RelativeTimeout rel2 = new RelativeTimeout(1000);
+
+        assertThat(rel1, is(equalTo(rel2)));
+    }
 }

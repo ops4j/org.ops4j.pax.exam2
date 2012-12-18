@@ -20,13 +20,12 @@ package org.ops4j.pax.exam.options.extra;
 import org.ops4j.pax.exam.Option;
 
 /**
- * This is a flag-option that is being set or not.
- * If set (at least once) then an "--autoWrap" option will be activated.
- *
+ * This is a flag-option that is being set or not. If set (at least once) then an "--autoWrap"
+ * option will be activated.
+ * 
  * @author Toni Menzel (tonit)
  * @since Mar 5, 2009
  */
-public class AutoWrapOption implements Option
-{
+public class AutoWrapOption implements Option {
 
 }

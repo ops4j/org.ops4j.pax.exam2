@@ -30,18 +30,16 @@ import org.ops4j.pax.exam.TestContainer;
  * @phase post-integration-test
  * @description Stops a Pax Exam Forked Container started by the start-container goal.
  */
-public class StopContainerMojo extends AbstractMojo
-{
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
-        Object object = getPluginContext().get( TEST_CONTAINER_KEY );
-        if( object == null )
-        {
-            throw new MojoExecutionException(
-                "No Pax Exam container found. Did you run the start-container goal?" );
-        }
-        TestContainer testContainer = (TestContainer) object;
-        testContainer.stop();
-    }
+public class StopContainerMojo extends AbstractMojo {
+
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		Object object = getPluginContext().get(TEST_CONTAINER_KEY);
+		if (object == null) {
+			throw new MojoExecutionException(
+				"No Pax Exam container found. Did you run the start-container goal?");
+		}
+		TestContainer testContainer = (TestContainer) object;
+		testContainer.stop();
+	}
 }

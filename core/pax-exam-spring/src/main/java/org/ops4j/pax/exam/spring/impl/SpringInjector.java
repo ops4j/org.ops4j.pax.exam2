@@ -28,18 +28,17 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
  * @author Harald Wellmann
  * 
  */
-public class SpringInjector implements Injector
-{
+public class SpringInjector implements Injector {
 
     private AutowireCapableBeanFactory beanFactory;
 
     /**
      * Constructs a SpringInjection using a given bean factory.
      * 
-     * @param beanFactory Spring bean factory
+     * @param beanFactory
+     *            Spring bean factory
      */
-    public SpringInjector( AutowireCapableBeanFactory beanFactory )
-    {
+    public SpringInjector(AutowireCapableBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
@@ -47,11 +46,11 @@ public class SpringInjector implements Injector
      * Injects dependencies into the given target object whose lifecycle is not managed by Spring
      * itself.
      * 
-     * @param target an object with injection points
+     * @param target
+     *            an object with injection points
      */
     @Override
-    public void injectFields( Object target )
-    {
-        beanFactory.autowireBean( target );
+    public void injectFields(Object target) {
+        beanFactory.autowireBean(target);
     }
 }

@@ -26,12 +26,13 @@ import java.lang.annotation.Target;
  * @author Harald Wellmann
  * @since 2.3.0
  */
-@Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.FIELD )
-public @interface Filter
-{
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Filter {
+
     public static final long DEFAULT_TIMEOUT = 10000;
-    
+
     String value() default "";
+
     long timeout() default DEFAULT_TIMEOUT;
 }

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,8 +17,8 @@
     <name>OPS4J Pax Exam - Injection</name>
 
     <properties>
-      <bundle.symbolicName>org.ops4j.pax.exam.inject</bundle.symbolicName>
-      <bundle.namespace>org.ops4j.pax.exam.inject</bundle.namespace>
+        <bundle.symbolicName>org.ops4j.pax.exam.inject</bundle.symbolicName>
+        <bundle.namespace>org.ops4j.pax.exam.inject</bundle.namespace>
     </properties>
     <dependencies>
     <!--  Project Dependencies -->
@@ -38,8 +39,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>org.ops4j.pax.swissbox</groupId>
-          <artifactId>pax-swissbox-framework</artifactId>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-framework</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

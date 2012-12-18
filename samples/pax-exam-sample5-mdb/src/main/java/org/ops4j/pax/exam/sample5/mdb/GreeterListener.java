@@ -24,12 +24,12 @@ import javax.jms.MessageListener;
 @MessageDriven(mappedName = "jms/greeter")
 public class GreeterListener implements MessageListener {
 
-	@Inject
-	private MessageHandler handler;
-	
-	@Override
-	public void onMessage(Message msg) {
-		handler.handleMessage(msg);
-	}
+    @Inject
+    private MessageHandler handler;
+
+    @Override
+    public void onMessage(Message msg) {
+        handler.handleMessage(msg);
+    }
 
 }

@@ -21,13 +21,11 @@ import static org.ops4j.lang.NullArgumentException.*;
 
 /**
  * Option specifying a system package (package exported by system bundle).
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public class SystemPackageOption
-    implements ValueOption<String>
-{
+public class SystemPackageOption implements ValueOption<String> {
 
     /**
      * System package (cannot be null or empty).
@@ -36,34 +34,33 @@ public class SystemPackageOption
 
     /**
      * Constructor.
-     *
-     * @param pkg system package (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If package is null or empty
+     * 
+     * @param pkg
+     *            system package (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If package is null or empty
      */
-    public SystemPackageOption( final String pkg )
-    {
-        validateNotEmpty( pkg, true, "Package" );
+    public SystemPackageOption(final String pkg) {
+        validateNotEmpty(pkg, true, "Package");
         this.pkg = pkg;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return system package (cannot be null or empty)
      */
-    public String getPackage()
-    {
+    public String getPackage() {
         return pkg;
     }
-    
+
     /**
      * Getter.
-     *
+     * 
      * @return system package (cannot be null or empty)
      */
-    public String getValue()
-    {
+    public String getValue() {
         return getPackage();
     }
 
@@ -71,12 +68,11 @@ public class SystemPackageOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "SystemPackageOption" );
-        sb.append( "{package='" ).append( pkg ).append( '\'' );
-        sb.append( '}' );
+        sb.append("SystemPackageOption");
+        sb.append("{package='").append(pkg).append('\'');
+        sb.append('}');
         return sb.toString();
     }
 

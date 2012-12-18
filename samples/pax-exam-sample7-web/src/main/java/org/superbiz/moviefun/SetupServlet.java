@@ -31,11 +31,12 @@ import org.superbiz.moviefun.setup.Setup;
  * Servlet implementation class SetupServlet
  */
 public class SetupServlet extends HttpServlet {
-	
-	@Inject private Setup setup;
-	
-	private static final long serialVersionUID = 1L;
-       
+
+    @Inject
+    private Setup setup;
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -44,13 +45,14 @@ public class SetupServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Movie> addedMovies = setup.setup();
-		request.setAttribute("movies", addedMovies);
-		request.getRequestDispatcher("WEB-INF/setup.jsp").forward(request, response);
-	}
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        List<Movie> addedMovies = setup.setup();
+        request.setAttribute("movies", addedMovies);
+        request.getRequestDispatcher("WEB-INF/setup.jsp").forward(request, response);
+    }
 
 }

@@ -23,46 +23,41 @@ import org.ops4j.pax.exam.TestProbeProvider;
 public class SimpleMultiTest {
 
     @Test
-    public void bareRunTest()
-        throws Exception
-    {
-        Option[] options = new Option[]{
-        };	
+    public void bareRunTest() throws Exception {
+        Option[] options = new Option[] {};
         ExamSystem system = createTestSystem(options);
         TestProbeProvider p = makeProbe(system);
 
         // the parse will split all single containers
-        for( TestContainer testContainer : getTestContainerFactory().create( system ) ) {
+        for (TestContainer testContainer : getTestContainerFactory().create(system)) {
             try {
                 testContainer.start();
-                testContainer.install( p.getStream() );
-                for( TestAddress test : p.getTests() ) {
-                    testContainer.call( test );
+                testContainer.install(p.getStream());
+                for (TestAddress test : p.getTests()) {
+                    testContainer.call(test);
                 }
-            } finally {
+            }
+            finally {
                 testContainer.stop();
             }
         }
         system.clear();
     }
 
-    private TestProbeProvider makeProbe(ExamSystem system )
-        throws IOException
-    {
+    private TestProbeProvider makeProbe(ExamSystem system) throws IOException {
         TestProbeBuilder probe = system.createProbe();
-        probe.addTests( Probe.class, getAllMethods( Probe.class ) );
+        probe.addTests(Probe.class, getAllMethods(Probe.class));
         return probe.build();
     }
 
-    private Method[] getAllMethods( Class<?> c )
-    {
+    private Method[] getAllMethods(Class<?> c) {
         List<Method> methods = new ArrayList<Method>();
-        for( Method m : c.getDeclaredMethods() ) {
-            if( m.getModifiers() == Modifier.PUBLIC ) {
-                methods.add( m );
+        for (Method m : c.getDeclaredMethods()) {
+            if (m.getModifiers() == Modifier.PUBLIC) {
+                methods.add(m);
             }
         }
-        return methods.toArray( new Method[ methods.size() ] );
+        return methods.toArray(new Method[methods.size()]);
 
     }
 }

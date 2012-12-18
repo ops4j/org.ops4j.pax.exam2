@@ -26,10 +26,10 @@ import java.lang.annotation.Target;
 /**
  * Possibility to inject your own factory that might augment the "normal" factory.
  */
-@Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.TYPE } )
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
 @Inherited
-public @interface ExamFactory
-{
+public @interface ExamFactory {
+
     Class<? extends TestContainerFactory> value();
 }

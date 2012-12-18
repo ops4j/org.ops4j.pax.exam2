@@ -21,13 +21,11 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * Option specifying a timeout (in milliseconds).
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0 April 23, 2009
  */
-public class TimeoutOption
-    implements Option
-{
+public class TimeoutOption implements Option {
 
     /**
      * Timeout in milliseconds (cannot be null).
@@ -36,21 +34,20 @@ public class TimeoutOption
 
     /**
      * Constructor.
-     *
-     * @param timeoutInMillis timeout (in millis)
+     * 
+     * @param timeoutInMillis
+     *            timeout (in millis)
      */
-    public TimeoutOption( final long timeoutInMillis )
-    {
+    public TimeoutOption(final long timeoutInMillis) {
         timeout = timeoutInMillis;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return timeout in millis (cannot be null)
      */
-    public long getTimeout()
-    {
+    public long getTimeout() {
         return timeout;
     }
 
@@ -58,12 +55,9 @@ public class TimeoutOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
-        return new StringBuilder()
-            .append( this.getClass().getSimpleName() )
-            .append( "{timeout=" ).append( timeout ).append( '}' )
-            .toString();
+    public String toString() {
+        return new StringBuilder().append(this.getClass().getSimpleName()).append("{timeout=")
+            .append(timeout).append('}').toString();
     }
 
 }

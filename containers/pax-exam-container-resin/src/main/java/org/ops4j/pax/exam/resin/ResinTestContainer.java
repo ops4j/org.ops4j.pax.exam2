@@ -52,9 +52,9 @@ import com.caucho.resin.WebAppEmbed;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class ResinTestContainer implements TestContainer
-{
-    private static final Logger LOG = LoggerFactory.getLogger( ResinTestContainer.class );
+public class ResinTestContainer implements TestContainer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ResinTestContainer.class);
 
     private Stack<WebAppEmbed> deployed = new Stack<WebAppEmbed>();
 
@@ -66,142 +66,120 @@ public class ResinTestContainer implements TestContainer
 
     private ResinEmbed resin;
 
-    public ResinTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
-    {
+    public ResinTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
     }
 
-    public synchronized void call( TestAddress address )
-    {
-        TestInstantiationInstruction instruction = testDirectory.lookup( address );
-        ProbeInvokerFactory probeInvokerFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
-        ProbeInvoker invoker =
-            probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
-        invoker.call( address.arguments() );
+    public synchronized void call(TestAddress address) {
+        TestInstantiationInstruction instruction = testDirectory.lookup(address);
+        ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
+        ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker(null, instruction.toString());
+        invoker.call(address.arguments());
     }
 
-    public synchronized long install( String location, InputStream stream )
-    {
+    public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
-        system.getOptions( WarProbeOption.class );
-        deployModule( "Pax-Exam-Probe", stream);
+        system.getOptions(WarProbeOption.class);
+        deployModule("Pax-Exam-Probe", stream);
         return -1;
     }
 
-    public synchronized long install( InputStream stream )
-    {
-        return install( "local", stream );
+    public synchronized long install(InputStream stream) {
+        return install("local", stream);
     }
 
-    public void deployModules()
-    {
-        UrlDeploymentOption[] deploymentOptions = system.getOptions( UrlDeploymentOption.class );
+    public void deployModules() {
+        UrlDeploymentOption[] deploymentOptions = system.getOptions(UrlDeploymentOption.class);
         int numModules = 0;
-        for( UrlDeploymentOption option : deploymentOptions )
-        {
+        for (UrlDeploymentOption option : deploymentOptions) {
             numModules++;
-            if( option.getName() == null )
-            {
-                option.name( "app" + numModules );
+            if (option.getName() == null) {
+                option.name("app" + numModules);
             }
-            deployModule( option );
+            deployModule(option);
         }
     }
 
-    private void deployModule( UrlDeploymentOption option )
-    {
-        try
-        {
-            URL applUrl = new URL( option.getURL() );
+    private void deployModule(UrlDeploymentOption option) {
+        try {
+            URL applUrl = new URL(option.getURL());
             deployModule(option.getName(), applUrl.openStream());
         }
-        catch ( MalformedURLException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (MalformedURLException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (IOException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
     }
-    
-    private void deployModule( String applicationName, InputStream stream)
-    {
-        
-        try
-        {
-            File warFile = File.createTempFile( "paxexam", ".war" );
-            StreamUtils.copyStream( stream, new FileOutputStream(warFile), true );
+
+    private void deployModule(String applicationName, InputStream stream) {
+
+        try {
+            File warFile = File.createTempFile("paxexam", ".war");
+            StreamUtils.copyStream(stream, new FileOutputStream(warFile), true);
             ZipExploder exploder = new ZipExploder();
             File appDir = new File(webappDir, applicationName);
             appDir.mkdir();
-            exploder.processFile( warFile.getAbsolutePath(),  appDir.getAbsolutePath());
-            
+            exploder.processFile(warFile.getAbsolutePath(), appDir.getAbsolutePath());
+
             WebAppEmbed webapp = new WebAppEmbed("/" + applicationName, appDir.getAbsolutePath());
-            resin.addWebApp( webapp );
-            deployed.push( webapp );
+            resin.addWebApp(webapp);
+            deployed.push(webapp);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        catch (IOException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         undeployModules();
-        LOG.info( "stopping Resin");
+        LOG.info("stopping Resin");
         resin.stop();
     }
 
-    private void undeployModules()
-    {
-        while( !deployed.isEmpty() )
-        {
+    private void undeployModules() {
+        while (!deployed.isEmpty()) {
             WebAppEmbed webApp = deployed.pop();
-            resin.removeWebApp( webApp );
+            resin.removeWebApp(webApp);
         }
     }
 
-    public TestContainer start() 
-    {
-        LOG.info( "starting Resin");
+    public TestContainer start() {
+        LOG.info("starting Resin");
         File tempDir = system.getTempFolder();
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        System.setProperty( "resin.home", system.getTempFolder().getPath() );
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        System.setProperty("resin.home", system.getTempFolder().getPath());
         resin = new ResinEmbed();
-        resin.setRootDirectory( tempDir.getPath() );
+        resin.setRootDirectory(tempDir.getPath());
         int httpPort = 9080;
         HttpEmbed http = new HttpEmbed(httpPort);
-        
+
         resin.addPort(http);
         resin.start();
 
-        webappDir = new File( tempDir, "webapps" );
+        webappDir = new File(tempDir, "webapps");
         webappDir.mkdir();
-        try
-        {
-            testDirectory.setAccessPoint( new URI( "http://localhost:" + httpPort + "/Pax-Exam-Probe/" ) );
+        try {
+            testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
+                + "/Pax-Exam-Probe/"));
         }
-        catch ( URISyntaxException exc )
-        {
-            new TestContainerException( exc );
+        catch (URISyntaxException exc) {
+            new TestContainerException(exc);
         }
         return this;
     }
 
-    public TestContainer stop()
-    {
+    public TestContainer stop() {
         cleanup();
         system.clear();
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Resin";
     }
 }

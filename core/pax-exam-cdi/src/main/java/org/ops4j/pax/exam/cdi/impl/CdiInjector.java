@@ -31,23 +31,22 @@ import org.ops4j.pax.exam.util.Injector;
  * @author Harald Wellmann
  * 
  */
-public class CdiInjector implements Injector
-{
+public class CdiInjector implements Injector {
 
     /**
      * Injects dependencies into the given target object whose lifecycle is not managed by the
      * BeanManager itself.
      * 
-     * @param target an object with injection points
+     * @param target
+     *            an object with injection points
      */
-    @SuppressWarnings( { "rawtypes", "unchecked" } )
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public void injectFields( Object target )
-    {
+    public void injectFields(Object target) {
         BeanManager mgr = BeanManagerLookup.getBeanManager();
-        AnnotatedType annotatedType = mgr.createAnnotatedType( target.getClass() );
-        InjectionTarget injectionTarget = mgr.createInjectionTarget( annotatedType );
-        CreationalContext context = mgr.createCreationalContext( null );
-        injectionTarget.inject( target, context );
+        AnnotatedType annotatedType = mgr.createAnnotatedType(target.getClass());
+        InjectionTarget injectionTarget = mgr.createInjectionTarget(annotatedType);
+        CreationalContext context = mgr.createCreationalContext(null);
+        injectionTarget.inject(target, context);
     }
 }

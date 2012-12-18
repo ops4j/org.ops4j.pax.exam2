@@ -40,42 +40,39 @@ import org.junit.runner.Result;
  * @author Harald Wellmann
  * 
  */
-public class BeforeAfterInvokerTest
-{
+public class BeforeAfterInvokerTest {
+
     private Preferences prefs;
 
     @Test
-    public void beforeAfterMethodInvocationOrder() throws IOException, BackingStoreException
-    {
-        Assume.assumeThat( System.getProperty( "pax.exam.container" ), is("native") );
+    public void beforeAfterMethodInvocationOrder() throws IOException, BackingStoreException {
+        Assume.assumeThat(System.getProperty("pax.exam.container"), is("native"));
 
         BeforeAfterParent.clearMessages();
 
         JUnitCore junit = new JUnitCore();
-        Result run = junit.run( BeforeAfterTest.class );
-        assertEquals( 0, run.getFailureCount() );
+        Result run = junit.run(BeforeAfterTest.class);
+        assertEquals(0, run.getFailureCount());
 
-        prefs = Preferences.userNodeForPackage( BeforeAfterParent.class );
+        prefs = Preferences.userNodeForPackage(BeforeAfterParent.class);
 
-        int numMessages = prefs.getInt( "numMessages", 0 );
+        int numMessages = prefs.getInt("numMessages", 0);
         int messageNum = 0;
 
         // 2 tests * 1 framework * 5 messages per test
-        assertEquals( 10, numMessages );
+        assertEquals(10, numMessages);
 
-        for ( int testNum = 0; testNum < 2; testNum++ )
-        {
-            assertMessage( "Before in parent", messageNum++ );
-            assertMessage( "Before", messageNum++ );
-            assertMessage( "Test", messageNum++ );
-            assertMessage( "After", messageNum++ );
-            assertMessage( "After in parent", messageNum++ );
+        for (int testNum = 0; testNum < 2; testNum++) {
+            assertMessage("Before in parent", messageNum++);
+            assertMessage("Before", messageNum++);
+            assertMessage("Test", messageNum++);
+            assertMessage("After", messageNum++);
+            assertMessage("After in parent", messageNum++);
         }
     }
 
-    private void assertMessage( String expected, int messageNum )
-    {
-        String message = prefs.get( "message." + messageNum, "" );
-        assertEquals( expected, message );
+    private void assertMessage(String expected, int messageNum) {
+        String message = prefs.get("message." + messageNum, "");
+        assertEquals(expected, message);
     }
 }

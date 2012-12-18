@@ -26,12 +26,11 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 
 /**
- * A reactor implementation which keeps the same container(s) running for the entire test
- * suite. 
+ * A reactor implementation which keeps the same container(s) running for the entire test suite.
  * <p>
- * Since the test drivers create a new reactor per test class, this implementation delegates
- * to a {@link SingletonStagedReactor} which remembers its state and does not restart the
- * test containers.
+ * Since the test drivers create a new reactor per test class, this implementation delegates to a
+ * {@link SingletonStagedReactor} which remembers its state and does not restart the test
+ * containers.
  * 
  * @author Harald Wellmann
  * @since 3.0.0
@@ -40,46 +39,36 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
 
     private StagedExamReactor delegate;
 
-    public PerSuiteStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
-    {
-        this.delegate = SingletonStagedReactor.getInstance( containers, mProbes );
-    }
-    
-    public void invoke( TestAddress address )
-        throws Exception
-    {
-        delegate.invoke( address );
+    public PerSuiteStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+        this.delegate = SingletonStagedReactor.getInstance(containers, mProbes);
     }
 
-    public Set<TestAddress> getTargets()
-    {
+    public void invoke(TestAddress address) throws Exception {
+        delegate.invoke(address);
+    }
+
+    public Set<TestAddress> getTargets() {
         return delegate.getTargets();
     }
 
     @Override
-    public void afterSuite()
-    {
+    public void afterSuite() {
         delegate.afterSuite();
     }
 
-    public void afterTest()
-    {
+    public void afterTest() {
     }
 
-    public void beforeTest()
-    {
+    public void beforeTest() {
     }
 
-    public void afterClass()
-    {
+    public void afterClass() {
     }
 
-    public void beforeClass()
-    {
+    public void beforeClass() {
     }
 
-    public void beforeSuite()
-    {
+    public void beforeSuite() {
         delegate.beforeSuite();
     }
 }

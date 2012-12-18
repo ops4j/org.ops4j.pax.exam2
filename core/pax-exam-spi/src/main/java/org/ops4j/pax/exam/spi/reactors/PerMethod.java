@@ -17,16 +17,14 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-
 /**
- * This reactor factory creates a test reactor which restarts the test container for
- * each test method.
+ * This reactor factory creates a test reactor which restarts the test container for each test
+ * method.
  * 
  * @author Harald Wellmann
  * @since 3.0.0
  */
-@SuppressWarnings( "deprecation" )
-public class PerMethod extends AllConfinedStagedReactorFactory
-{
+@SuppressWarnings("deprecation")
+public class PerMethod extends AllConfinedStagedReactorFactory {
 
 }

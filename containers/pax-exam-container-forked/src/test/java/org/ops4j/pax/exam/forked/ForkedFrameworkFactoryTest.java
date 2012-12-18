@@ -32,37 +32,32 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.FrameworkFactory;
 
-public class ForkedFrameworkFactoryTest
-{
+public class ForkedFrameworkFactoryTest {
 
     @Test
-    public void forkEquinox()
-        throws BundleException, IOException, InterruptedException,
-               NotBoundException, URISyntaxException
-    {
-        ServiceLoader<FrameworkFactory> loader = ServiceLoader.load( FrameworkFactory.class );
+    public void forkEquinox() throws BundleException, IOException, InterruptedException,
+        NotBoundException, URISyntaxException {
+        ServiceLoader<FrameworkFactory> loader = ServiceLoader.load(FrameworkFactory.class);
         FrameworkFactory frameworkFactory = loader.iterator().next();
 
-        File storage = new File( "target/storage" );
+        File storage = new File("target/storage");
         storage.mkdir();
-        ForkedFrameworkFactory forkedFactory =
-            new ForkedFrameworkFactory( frameworkFactory );
+        ForkedFrameworkFactory forkedFactory = new ForkedFrameworkFactory(frameworkFactory);
 
-        Map<String,Object> frameworkProperties = new HashMap<String, Object>();
-        frameworkProperties.put( Constants.FRAMEWORK_STORAGE, storage.getAbsolutePath() );
-        RemoteFramework framework =
-            forkedFactory.fork( Collections.<String>emptyList(), Collections.<String, String> emptyMap(),
-                frameworkProperties );
+        Map<String, Object> frameworkProperties = new HashMap<String, Object>();
+        frameworkProperties.put(Constants.FRAMEWORK_STORAGE, storage.getAbsolutePath());
+        RemoteFramework framework = forkedFactory.fork(Collections.<String> emptyList(),
+            Collections.<String, String> emptyMap(), frameworkProperties);
         framework.start();
 
-        long bundleId =
-            framework.installBundle( "file:target/bundles/regression-pde-bundle-2.3.0.jar" );
-        framework.startBundle( bundleId );
+        long bundleId = framework
+            .installBundle("file:target/bundles/regression-pde-bundle-2.3.0.jar");
+        framework.startBundle(bundleId);
 
-        framework.callService( "(objectClass=org.ops4j.pax.exam.regression.pde.HelloService)",
-            "getMessage" );
+        framework.callService("(objectClass=org.ops4j.pax.exam.regression.pde.HelloService)",
+            "getMessage");
 
-        Thread.sleep( 3000 );
+        Thread.sleep(3000);
         framework.stop();
 
         forkedFactory.join();

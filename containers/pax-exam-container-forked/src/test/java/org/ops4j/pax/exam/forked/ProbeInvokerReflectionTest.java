@@ -24,24 +24,21 @@ import org.junit.Test;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 
-public class ProbeInvokerReflectionTest
-{
-    public static class MyProbeInvoker implements ProbeInvoker
-    {
+public class ProbeInvokerReflectionTest {
 
-        public void call( Object... args ) throws TestContainerException
-        {
-            System.out.println( "call() invoked" );
+    public static class MyProbeInvoker implements ProbeInvoker {
+
+        public void call(Object... args) throws TestContainerException {
+            System.out.println("call() invoked");
         }
 
     }
 
     @Test
     public void callInvokerByReflection() throws SecurityException, NoSuchMethodException,
-        IllegalArgumentException, IllegalAccessException, InvocationTargetException
-    {
+        IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         Object target = new MyProbeInvoker();
-        Method method = target.getClass().getMethod( "call", Object[].class );
-        method.invoke( target, (Object) new Object[]{} );
+        Method method = target.getClass().getMethod("call", Object[].class);
+        method.invoke(target, (Object) new Object[] {});
     }
 }

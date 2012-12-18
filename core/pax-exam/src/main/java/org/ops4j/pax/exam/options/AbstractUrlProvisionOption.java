@@ -21,13 +21,12 @@ import static org.ops4j.lang.NullArgumentException.*;
 
 /**
  * Option specifying a provision url.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 26, 2009
  */
-public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionOption<T>>
-    extends AbstractProvisionOption<T>
-{
+public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionOption<T>> extends
+    AbstractProvisionOption<T> {
 
     /**
      * Provision url (cannot be null).
@@ -36,44 +35,44 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
 
     /**
      * Constructor.
-     *
-     * @param url provision url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If url is null or empty
+     * 
+     * @param url
+     *            provision url (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null or empty
      */
-    public AbstractUrlProvisionOption( final String url )
-    {
-        this( new RawUrlReference( url ) );
+    public AbstractUrlProvisionOption(final String url) {
+        this(new RawUrlReference(url));
     }
 
     /**
      * Constructor.
-     *
-     * @param url provision url (cannot be null)
-     *
-     * @throws IllegalArgumentException - If url is null
+     * 
+     * @param url
+     *            provision url (cannot be null)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null
      */
-    public AbstractUrlProvisionOption( final UrlReference url )
-    {
-        validateNotNull( url, "URL" );
+    public AbstractUrlProvisionOption(final UrlReference url) {
+        validateNotNull(url, "URL");
         urlReference = url;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getURL()
-    {
+    public String getURL() {
         return urlReference.getURL();
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return url reference
      */
-    public UrlReference getUrlReference()
-    {
+    public UrlReference getUrlReference() {
         return urlReference;
     }
 
@@ -81,41 +80,37 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( this.getClass().getSimpleName() );
-        sb.append( "{url='" ).append( urlReference ).append( '\'' );
-        sb.append( '}' );
+        sb.append(this.getClass().getSimpleName());
+        sb.append("{url='").append(urlReference).append('\'');
+        sb.append('}');
         return sb.toString();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ( ( urlReference == null ) ? 0 : urlReference.hashCode() );
+        result = prime * result + ((urlReference == null) ? 0 : urlReference.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( !super.equals( obj ) )
+        if (!super.equals(obj))
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
-        @SuppressWarnings( "unchecked" )
+        @SuppressWarnings("unchecked")
         AbstractUrlProvisionOption<T> other = (AbstractUrlProvisionOption<T>) obj;
-        if( urlReference == null )
-        {
-            if( other.urlReference != null )
+        if (urlReference == null) {
+            if (other.urlReference != null)
                 return false;
         }
-        else if( !urlReference.equals( other.urlReference ) )
+        else if (!urlReference.equals(other.urlReference))
             return false;
         return true;
     }

@@ -32,9 +32,8 @@ import org.superbiz.moviefun.Movie;
 import org.superbiz.moviefun.Movies;
 import org.superbiz.moviefun.setup.Setup;
 
-@RunWith( PaxExam.class )
-public class MoviesEJBTest
-{
+@RunWith(PaxExam.class)
+public class MoviesEJBTest {
 
     @Inject
     private Movies movies;
@@ -44,38 +43,36 @@ public class MoviesEJBTest
 
     @Before
     @After
-    public void clean()
-    {
+    public void clean() {
         movies.clean();
     }
 
     @Test
-    public void shouldBeAbleToAddAMovie() throws Exception
-    {
-        assertNotNull( "Verify that the ejb was injected", movies );
-        assertNotNull( "Verify that the setup CDI bean was injected", setup );
+    public void shouldBeAbleToAddAMovie() throws Exception {
+        assertNotNull("Verify that the ejb was injected", movies);
+        assertNotNull("Verify that the setup CDI bean was injected", setup);
 
         setup.setup();
 
-        assertEquals( 7, movies.getMovies().size() );
+        assertEquals(7, movies.getMovies().size());
 
         Movie movie = new Movie();
-        movie.setDirector( "Michael Bay" );
-        movie.setGenre( "Action" );
-        movie.setRating( 9 );
-        movie.setTitle( "Bad Boys" );
-        movie.setYear( 1995 );
-        movies.addMovie( movie );
+        movie.setDirector("Michael Bay");
+        movie.setGenre("Action");
+        movie.setRating(9);
+        movie.setTitle("Bad Boys");
+        movie.setYear(1995);
+        movies.addMovie(movie);
 
-        assertEquals( 8, movies.count() );
-        List<Movie> moviesFound = movies.findByTitle( "Bad Boys" );
+        assertEquals(8, movies.count());
+        List<Movie> moviesFound = movies.findByTitle("Bad Boys");
 
-        assertEquals( 1, moviesFound.size() );
-        assertEquals( "Michael Bay", moviesFound.get( 0 ).getDirector() );
-        assertEquals( "Action", moviesFound.get( 0 ).getGenre() );
-        assertEquals( 9, moviesFound.get( 0 ).getRating() );
-        assertEquals( "Bad Boys", moviesFound.get( 0 ).getTitle() );
-        assertEquals( 1995, moviesFound.get( 0 ).getYear() );
+        assertEquals(1, moviesFound.size());
+        assertEquals("Michael Bay", moviesFound.get(0).getDirector());
+        assertEquals("Action", moviesFound.get(0).getGenre());
+        assertEquals(9, moviesFound.get(0).getRating());
+        assertEquals("Bad Boys", moviesFound.get(0).getTitle());
+        assertEquals(1995, moviesFound.get(0).getYear());
     }
 
 }

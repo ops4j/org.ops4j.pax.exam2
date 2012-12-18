@@ -21,13 +21,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Another SingleTestProbe.
  */
-public class Probe2
-{
+public class Probe2 {
 
-    private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
+    private static Logger LOG = LoggerFactory.getLogger(SingleTestProbe.class);
 
-    public void myOwnClass()
-    {
+    public void myOwnClass() {
         LOG.info("Hello");
     }
 }

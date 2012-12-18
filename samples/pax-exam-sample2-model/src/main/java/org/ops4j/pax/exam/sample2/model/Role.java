@@ -26,13 +26,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "role")
 public class Role {
- 
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    
+
     private String name;
-    
+
     @ManyToOne
     private Actor actor;
 
@@ -42,66 +42,61 @@ public class Role {
     /**
      * @return the id
      */
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
-    public void setId( int id )
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
     /**
      * @return the name
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
-    public void setName( String name )
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
     /**
      * @return the actor
      */
-    public Actor getActor()
-    {
+    public Actor getActor() {
         return actor;
     }
 
     /**
-     * @param actor the actor to set
+     * @param actor
+     *            the actor to set
      */
-    public void setActor( Actor actor )
-    {
+    public void setActor(Actor actor) {
         this.actor = actor;
     }
 
     /**
      * @return the movie
      */
-    public Movie getMovie()
-    {
+    public Movie getMovie() {
         return movie;
     }
 
     /**
-     * @param movie the movie to set
+     * @param movie
+     *            the movie to set
      */
-    public void setMovie( Movie movie )
-    {
+    public void setMovie(Movie movie) {
         this.movie = movie;
     }
 
-    
 }

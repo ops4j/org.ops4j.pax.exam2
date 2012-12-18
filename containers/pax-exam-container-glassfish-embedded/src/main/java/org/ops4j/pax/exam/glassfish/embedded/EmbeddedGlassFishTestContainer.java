@@ -71,16 +71,15 @@ import org.xml.sax.SAXException;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class EmbeddedGlassFishTestContainer implements TestContainer
-{
+public class EmbeddedGlassFishTestContainer implements TestContainer {
+
     /**
      * Configuration property key for GlassFish installation configuration file directory. The files
      * contained in this directory will be copied to the config directory of the GlassFish instance.
      */
     public static final String GLASSFISH_CONFIG_DIR_KEY = "pax.exam.glassfish.config.dir";
 
-    private static final Logger LOG = LoggerFactory
-        .getLogger( EmbeddedGlassFishTestContainer.class );
+    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedGlassFishTestContainer.class);
 
     /**
      * Name of the probe web application (in Java EE mode).
@@ -90,8 +89,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
     /**
      * XPath to read the HTTP port from the domain.xml configuration file.
      */
-    private static final String HTTP_PORT_XPATH =
-        "/domain/configs/config/network-config/network-listeners/network-listener[@name='http-listener-1']/@port";
+    private static final String HTTP_PORT_XPATH = "/domain/configs/config/network-config/network-listeners/network-listener[@name='http-listener-1']/@port";
 
     /**
      * Stack of deployed modules. On shutdown, the modules are undeployed in reverse order.
@@ -119,11 +117,12 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
     /**
      * Creates a GlassFish container, running on top of an OSGi framework.
      * 
-     * @param system Pax Exam system configuration
-     * @param frameworkFactory OSGi framework factory.
+     * @param system
+     *            Pax Exam system configuration
+     * @param frameworkFactory
+     *            OSGi framework factory.
      */
-    public EmbeddedGlassFishTestContainer( ExamSystem system )
-    {
+    public EmbeddedGlassFishTestContainer(ExamSystem system) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
     }
@@ -133,14 +132,12 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
      * directory and invoke it via probe invoker obtained from the Java SE service loader. (This
      * invoker uses a servlet bridge,)
      */
-    public synchronized void call( TestAddress address )
-    {
-        TestInstantiationInstruction instruction = testDirectory.lookup( address );
-        ProbeInvokerFactory probeInvokerFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
-        ProbeInvoker invoker =
-            probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
-        invoker.call( address.arguments() );
+    public synchronized void call(TestAddress address) {
+        TestInstantiationInstruction instruction = testDirectory.lookup(address);
+        ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
+        ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker(null, instruction.toString());
+        invoker.call(address.arguments());
     }
 
     /**
@@ -149,18 +146,18 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
      * In Java EE mode, the probe is a WAR, enriched by the Pax Exam servlet bridge which allows us
      * to invoke tests running within the container via an HTTP client.
      * 
-     * @param location bundle location, not used for WAR probes
-     * @param stream input stream containing probe
+     * @param location
+     *            bundle location, not used for WAR probes
+     * @param stream
+     *            input stream containing probe
      * @return bundle ID, or -1 for WAR
      */
-    public synchronized long install( String location, InputStream stream )
-    {
-        try
-        {
+    public synchronized long install(String location, InputStream stream) {
+        try {
             // just make sure we don't get an "option not recognized" warning
-            system.getOptions( WarProbeOption.class );
+            system.getOptions(WarProbeOption.class);
 
-            LOG.info( "deploying probe" );
+            LOG.info("deploying probe");
             Deployer deployer = glassFish.getDeployer();
 
             /*
@@ -172,27 +169,24 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
              * "Pax-Exam-Probe" );
              */
 
-            File tempFile = File.createTempFile( "pax-exam", ".war" );
+            File tempFile = File.createTempFile("pax-exam", ".war");
             tempFile.deleteOnExit();
-            StreamUtils.copyStream( stream, new FileOutputStream( tempFile ), true );
-            deployer.deploy( tempFile, "--name", PROBE_APPLICATION_NAME, "--contextroot",
-                PROBE_APPLICATION_NAME );
-            deployed.push( PROBE_APPLICATION_NAME );
+            StreamUtils.copyStream(stream, new FileOutputStream(tempFile), true);
+            deployer.deploy(tempFile, "--name", PROBE_APPLICATION_NAME, "--contextroot",
+                PROBE_APPLICATION_NAME);
+            deployed.push(PROBE_APPLICATION_NAME);
         }
-        catch ( GlassFishException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (GlassFishException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
         return -1;
     }
 
-    public synchronized long install( InputStream stream )
-    {
-        return install( "local", stream );
+    public synchronized long install(InputStream stream) {
+        return install("local", stream);
     }
 
     /**
@@ -200,125 +194,106 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
      * application name, names app1, app2 etc. are generated on the fly. The context root defaults
      * to the application name if not set in the option.
      */
-    public void deployModules()
-    {
-        UrlDeploymentOption[] deploymentOptions = system.getOptions( UrlDeploymentOption.class );
+    public void deployModules() {
+        UrlDeploymentOption[] deploymentOptions = system.getOptions(UrlDeploymentOption.class);
         int numModules = 0;
-        for( UrlDeploymentOption option : deploymentOptions )
-        {
+        for (UrlDeploymentOption option : deploymentOptions) {
             numModules++;
-            if( option.getName() == null )
-            {
-                option.name( "app" + numModules );
+            if (option.getName() == null) {
+                option.name("app" + numModules);
             }
-            deployModule( option );
+            deployModule(option);
         }
     }
 
     /**
      * Deploys the module specified by the given option.
      * 
-     * @param option deployment option
+     * @param option
+     *            deployment option
      */
-    private void deployModule( UrlDeploymentOption option )
-    {
-        try
-        {
+    private void deployModule(UrlDeploymentOption option) {
+        try {
             String url = option.getURL();
-            LOG.info( "deploying module {}", url );
-            URI uri = new URL( url ).toURI();
+            LOG.info("deploying module {}", url);
+            URI uri = new URL(url).toURI();
             String applicationName = option.getName();
             String contextRoot = option.getContextRoot();
-            if( contextRoot == null )
-            {
+            if (contextRoot == null) {
                 contextRoot = applicationName;
             }
             Deployer deployer = glassFish.getDeployer();
-            deployer.deploy( uri, "--name", applicationName, "--contextroot", applicationName );
-            deployed.push( applicationName );
-            LOG.info( "deployed module {}", url );
+            deployer.deploy(uri, "--name", applicationName, "--contextroot", applicationName);
+            deployed.push(applicationName);
+            LOG.info("deployed module {}", url);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( GlassFishException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (GlassFishException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( URISyntaxException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (URISyntaxException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
     /**
      * Undeploys all modules and shuts down the GlassFish runtime.
      */
-    public synchronized void cleanup()
-    {
+    public synchronized void cleanup() {
         undeployModules();
-        try
-        {
+        try {
             glassFish.stop();
         }
-        catch ( GlassFishException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (GlassFishException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
     /**
      * Undeploys all deployed modules in reverse order.
      */
-    private void undeployModules()
-    {
-        try
-        {
+    private void undeployModules() {
+        try {
             Deployer deployer = glassFish.getDeployer();
-            while( !deployed.isEmpty() )
-            {
+            while (!deployed.isEmpty()) {
                 String applicationName = deployed.pop();
-                deployer.undeploy( applicationName );
+                deployer.undeploy(applicationName);
             }
         }
-        catch ( GlassFishException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (GlassFishException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
     /**
      * Starts the GlassFish container.
      */
-    public TestContainer start() throws TestContainerException
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    public TestContainer start() throws TestContainerException {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         ConfigurationManager cm = new ConfigurationManager();
-        configDirName =
-            cm.getProperty( GLASSFISH_CONFIG_DIR_KEY, "src/test/resources/glassfish-config" );
-        File domainConfig = new File( configDirName, "domain.xml" );
+        configDirName = cm.getProperty(GLASSFISH_CONFIG_DIR_KEY,
+            "src/test/resources/glassfish-config");
+        File domainConfig = new File(configDirName, "domain.xml");
         GlassFishProperties gfProps = new GlassFishProperties();
-        if( domainConfig.exists() )
-        {
-            gfProps.setConfigFileURI( domainConfig.toURI().toString() );
+        if (domainConfig.exists()) {
+            gfProps.setConfigFileURI(domainConfig.toURI().toString());
         }
 
-        try
-        {
-            glassFish = GlassFishRuntime.bootstrap().newGlassFish( gfProps );
+        try {
+            glassFish = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
             glassFish.start();
 
             // set access point in test directory
-            String portNumber = getPortNumber( domainConfig );
-            testDirectory.setAccessPoint( new URI( "http://localhost:" + portNumber
-                    + "/Pax-Exam-Probe/" ) );
+            String portNumber = getPortNumber(domainConfig);
+            testDirectory.setAccessPoint(new URI("http://localhost:" + portNumber
+                + "/Pax-Exam-Probe/"));
 
             deployModules();
         }
-        catch ( Exception e )
-        {
-            throw new TestContainerException( "Problem starting test container.", e );
+        catch (Exception e) {
+            throw new TestContainerException("Problem starting test container.", e);
         }
         return this;
     }
@@ -329,57 +304,47 @@ public class EmbeddedGlassFishTestContainer implements TestContainer
      * @param domainConfig
      * @return
      */
-    private String getPortNumber( File domainConfig )
-    {
-        try
-        {
+    private String getPortNumber(File domainConfig) {
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder;
             builder = factory.newDocumentBuilder();
-            Document doc = builder.parse( domainConfig );
+            Document doc = builder.parse(domainConfig);
             XPathFactory xpf = XPathFactory.newInstance();
             XPath xPath = xpf.newXPath();
-            String port = xPath.evaluate( HTTP_PORT_XPATH, doc );
+            String port = xPath.evaluate(HTTP_PORT_XPATH, doc);
             return port;
         }
-        catch ( ParserConfigurationException exc )
-        {
-            throw new IllegalArgumentException( exc );
+        catch (ParserConfigurationException exc) {
+            throw new IllegalArgumentException(exc);
         }
-        catch ( SAXException exc )
-        {
-            throw new IllegalArgumentException( exc );
+        catch (SAXException exc) {
+            throw new IllegalArgumentException(exc);
         }
-        catch ( IOException exc )
-        {
-            throw new IllegalArgumentException( exc );
+        catch (IOException exc) {
+            throw new IllegalArgumentException(exc);
         }
-        catch ( XPathExpressionException exc )
-        {
-            throw new IllegalArgumentException( exc );
+        catch (XPathExpressionException exc) {
+            throw new IllegalArgumentException(exc);
         }
     }
 
     /**
      * Stops the test container gracefully, undeploying all modules and uninstalling all bundles.
      */
-    public TestContainer stop()
-    {
-        if( glassFish != null )
-        {
+    public TestContainer stop() {
+        if (glassFish != null) {
             cleanup();
             system.clear();
         }
-        else
-        {
-            LOG.warn( "Framework does not exist. Called start() before ? " );
+        else {
+            LOG.warn("Framework does not exist. Called start() before ? ");
         }
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "EmbeddedGlassFish";
     }
 }

@@ -34,26 +34,23 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( PerMethod.class )
-public class ReferenceJarTest
-{
+@RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(PerMethod.class)
+public class ReferenceJarTest {
+
     @Inject
     private BundleContext bc;
 
-    @Configuration( )
-    public Option[] config()
-    {
-        return options(
-            mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", "2.3.0" ),
-            junitBundles() );
+    @Configuration()
+    public Option[] config() {
+        return options(mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", "2.3.0"),
+            junitBundles());
     }
 
     @Test
-    public void getHelloService()
-    {
-        Object service =
-            ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
-        assertThat( service, is( notNullValue() ) );
+    public void getHelloService() {
+        Object service = ServiceLookup.getService(bc,
+            "org.ops4j.pax.exam.regression.pde.HelloService");
+        assertThat(service, is(notNullValue()));
     }
 }

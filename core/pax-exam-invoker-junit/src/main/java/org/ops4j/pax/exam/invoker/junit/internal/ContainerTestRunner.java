@@ -28,42 +28,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A JUnit {@link Runner} which is aware of an {@link Injector}
- * and a {@link BundleContext} for injecting dependencies from the OSGi service registry.
+ * A JUnit {@link Runner} which is aware of an {@link Injector} and a {@link BundleContext} for
+ * injecting dependencies from the OSGi service registry.
  * 
  * @author Harald Wellmann
  * 
  */
-public class ContainerTestRunner extends BlockJUnit4ClassRunner
-{
-    private static Logger LOG = LoggerFactory.getLogger( ContainerTestRunner.class );
+public class ContainerTestRunner extends BlockJUnit4ClassRunner {
+
+    private static Logger LOG = LoggerFactory.getLogger(ContainerTestRunner.class);
 
     private Injector injector;
-    
+
     /**
-     * Constructs a runner for the given class which will be injected with dependencies from
-     * the given bundle context by the given injector
-     * @param klass  test class to be run
-     * @param injector   injector for injecting dependencies
+     * Constructs a runner for the given class which will be injected with dependencies from the
+     * given bundle context by the given injector
+     * 
+     * @param klass
+     *            test class to be run
+     * @param injector
+     *            injector for injecting dependencies
      */
-    public ContainerTestRunner( Class<?> klass, Injector injector ) throws InitializationError
-    {
-        super( klass );
-        this.injector = injector;        
+    public ContainerTestRunner(Class<?> klass, Injector injector) throws InitializationError {
+        super(klass);
+        this.injector = injector;
     }
 
     @Override
-    protected Object createTest() throws Exception
-    {
+    protected Object createTest() throws Exception {
         Object test = super.createTest();
-        injector.injectFields( test );
+        injector.injectFields(test);
         return test;
     }
-    
+
     @Override
-    protected void runChild( FrameworkMethod method, RunNotifier notifier )
-    {
+    protected void runChild(FrameworkMethod method, RunNotifier notifier) {
         LOG.info("running {} in reactor", method.getName());
-        super.runChild( method, notifier );
+        super.runChild(method, notifier);
     }
 }

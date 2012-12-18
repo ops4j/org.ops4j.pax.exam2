@@ -31,17 +31,16 @@ public class Director extends Actor {
     /**
      * @return the movies
      */
-    public List<Movie> getMovies()
-    {
+    public List<Movie> getMovies() {
         return movies;
     }
 
     /**
-     * @param movies the movies to set
+     * @param movies
+     *            the movies to set
      */
-    public void setMovies( List<Movie> movies )
-    {
+    public void setMovies(List<Movie> movies) {
         this.movies = movies;
     }
-    
+
 }

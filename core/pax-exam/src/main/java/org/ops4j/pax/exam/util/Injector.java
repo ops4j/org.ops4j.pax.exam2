@@ -17,8 +17,7 @@
  */
 package org.ops4j.pax.exam.util;
 
+public interface Injector {
 
-public interface Injector
-{
-    void injectFields( Object target );
+    void injectFields(Object target);
 }

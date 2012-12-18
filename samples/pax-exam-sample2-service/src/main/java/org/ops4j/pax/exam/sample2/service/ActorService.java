@@ -23,14 +23,13 @@ import javax.persistence.PersistenceContext;
 import org.ops4j.pax.exam.sample2.model.Actor;
 
 @Stateless
-public class ActorService 
-{
+public class ActorService {
+
     @PersistenceContext
     private EntityManager em;
 
-    public Actor findById(int id)
-    {
-        Actor actor = em.find( Actor.class, id );
+    public Actor findById(int id) {
+        Actor actor = em.find(Actor.class, id);
         actor.getRoles();
         return actor;
     }

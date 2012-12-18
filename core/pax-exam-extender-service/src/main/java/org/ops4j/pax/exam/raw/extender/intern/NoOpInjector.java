@@ -25,11 +25,9 @@ import org.ops4j.pax.exam.util.Injector;
  * @author Harald Wellmann
  * @since 2.3.0, August 2011
  */
-public class NoOpInjector implements Injector
-{
+public class NoOpInjector implements Injector {
 
-    public void injectFields( Object target )
-    {
+    public void injectFields(Object target) {
         // empty
     }
 }

@@ -22,6 +22,7 @@ import org.junit.runners.model.RunnerBuilder;
 import org.ops4j.pax.exam.util.Injector;
 
 public class ContainerTestRunnerBuilder extends RunnerBuilder {
+
     private Injector injector;
 
     public ContainerTestRunnerBuilder(Injector injector) {

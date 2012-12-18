@@ -26,22 +26,19 @@ import org.ops4j.pax.exam.ProbeInvoker;
  * @author Toni Menzel
  * @since Jan 10, 2010
  */
-public class Probe
-{
+public class Probe {
 
     private final String service;
     private final ProbeInvoker impl;
     private final Dictionary<?, ?> dict;
 
-    public Probe( String service, ProbeInvoker impl, Dictionary<?, ?> dict )
-    {
+    public Probe(String service, ProbeInvoker impl, Dictionary<?, ?> dict) {
         this.service = service;
         this.impl = impl;
         this.dict = dict;
     }
 
-    public ServiceRegistration register( BundleContext ctx )
-    {
-        return ctx.registerService( service, impl, dict );
+    public ServiceRegistration register(BundleContext ctx) {
+        return ctx.registerService(service, impl, dict);
     }
 }

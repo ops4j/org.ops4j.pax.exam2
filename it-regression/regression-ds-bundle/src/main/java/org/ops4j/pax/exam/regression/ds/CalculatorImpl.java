@@ -16,22 +16,19 @@
  */
 package org.ops4j.pax.exam.regression.ds;
 
-public class CalculatorImpl implements Calculator
-{
+public class CalculatorImpl implements Calculator {
+
     private BinaryOperation addition;
 
-    protected void setAddition( BinaryOperation addition )
-    {
+    protected void setAddition(BinaryOperation addition) {
         this.addition = addition;
     }
 
-    protected void unsetAddition( BinaryOperation addition )
-    {
+    protected void unsetAddition(BinaryOperation addition) {
         this.addition = null;
     }
 
-    public int add( int op1, int op2 )
-    {
-        return addition.operate( op1, op2 );
+    public int add(int op1, int op2) {
+        return addition.operate(op1, op2);
     }
 }

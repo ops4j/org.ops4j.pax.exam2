@@ -21,13 +21,11 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.war.WarTestProbeBuilderImpl;
 
-public class Probes
-{
-    public static TestProbeBuilder builder( Option option )
-    {
-        if (option instanceof WarProbeOption)
-        {
-            return new WarTestProbeBuilderImpl((WarProbeOption)option);
+public class Probes {
+
+    public static TestProbeBuilder builder(Option option) {
+        if (option instanceof WarProbeOption) {
+            return new WarTestProbeBuilderImpl((WarProbeOption) option);
         }
         return null;
     }

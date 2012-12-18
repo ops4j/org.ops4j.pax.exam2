@@ -8,20 +8,18 @@ import org.ops4j.pax.exam.Option;
  * @author Toni Menzel (tonit)
  * @since Mar 18, 2009
  */
-public class MavenPluginGeneratedConfigOption implements Option
-{
+public class MavenPluginGeneratedConfigOption implements Option {
 
     private URL url;
 
-    public MavenPluginGeneratedConfigOption( URL url )
+    public MavenPluginGeneratedConfigOption(URL url)
 
     {
-        validateNotNull( url, "url" );
+        validateNotNull(url, "url");
         this.url = url;
     }
 
-    public URL getURL()
-    {
+    public URL getURL() {
         return url;
     }
 

@@ -30,9 +30,7 @@ import javax.persistence.metamodel.EntityType;
 import java.util.List;
 
 @Stateless(name = "Movies")
-@WebService(portName = "MoviesPort",
-        serviceName = "MoviesWebService",
-        targetNamespace = "http://superbiz.org/wsdl")
+@WebService(portName = "MoviesPort", serviceName = "MoviesWebService", targetNamespace = "http://superbiz.org/wsdl")
 public class MoviesImpl implements Movies, MoviesRemote {
 
     @PersistenceContext(unitName = "movie-unit")
@@ -43,7 +41,8 @@ public class MoviesImpl implements Movies, MoviesRemote {
         return entityManager.find(Movie.class, id);
     }
 
-    @Override public void clean() {
+    @Override
+    public void clean() {
         entityManager.createQuery("delete from Movie").executeUpdate();
     }
 

@@ -48,7 +48,7 @@ import org.osgi.framework.Constants;
 
 /**
  * Default implementation allows you to dynamically create a probe from current classpath.
- *
+ * 
  * @author Toni Menzel
  * @since Dec 2, 2009
  */
@@ -62,185 +62,168 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private final Set<String> ignorePackages = new HashSet<String>();
     private final Store<InputStream> store;
 
-    public TestProbeBuilderImpl( Store<InputStream> store )
-        throws IOException
-    {
+    public TestProbeBuilderImpl(Store<InputStream> store) throws IOException {
         anchors = new ArrayList<Class<?>>();
         this.store = store;
-        extraProperties = new Properties( );
+        extraProperties = new Properties();
     }
 
-    public TestAddress addTest( Class<?> clazz, String methodName, Object... args )
-    {
-        TestAddress address = new DefaultTestAddress( clazz.getName() + "." + methodName, args );
-        probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
-        addAnchor( clazz );
+    public TestAddress addTest(Class<?> clazz, String methodName, Object... args) {
+        TestAddress address = new DefaultTestAddress(clazz.getName() + "." + methodName, args);
+        probeCalls.put(address,
+            new TestInstantiationInstruction(clazz.getName() + ";" + methodName));
+        addAnchor(clazz);
         return address;
     }
 
-    public TestAddress addTest( Class<?> clazz, Object... args )
-    {
-        return addTest( clazz, DEFAULT_PROBE_METHOD_NAME, args );
+    public TestAddress addTest(Class<?> clazz, Object... args) {
+        return addTest(clazz, DEFAULT_PROBE_METHOD_NAME, args);
     }
 
-    public List<TestAddress> addTests( Class<?> clazz, Method... methods )
-    {
+    public List<TestAddress> addTests(Class<?> clazz, Method... methods) {
         List<TestAddress> list = new ArrayList<TestAddress>();
-        for( Method method : methods ) {
-            list.add( addTest( clazz, method.getName() ) );
+        for (Method method : methods) {
+            list.add(addTest(clazz, method.getName()));
         }
         return list;
     }
 
-    public TestProbeBuilder addAnchor( Class<?> clazz )
-    {
-        anchors.add( clazz );
+    public TestProbeBuilder addAnchor(Class<?> clazz) {
+        anchors.add(clazz);
         return this;
     }
 
-    public TestProbeBuilder setHeader( String key, String value )
-    {
-        extraProperties.put( key, value );
+    public TestProbeBuilder setHeader(String key, String value) {
+        extraProperties.put(key, value);
         return this;
     }
 
     // when your testclass contains clutter in non-test methods,
     // bnd generates too many impports.
     // This makes packages optional.
-    public TestProbeBuilder ignorePackageOf( Class<?>... classes )
-    {
-        for( Class<?> c : classes ) {
-            ignorePackages.add( c.getPackage().getName() );
+    public TestProbeBuilder ignorePackageOf(Class<?>... classes) {
+        for (Class<?> c : classes) {
+            ignorePackages.add(c.getPackage().getName());
         }
 
         return this;
     }
 
-    public TestProbeProvider build()
-    {
-        if( anchors.size() == 0 ) {
-            throw new TestContainerException( "No tests added to setup!" );
+    public TestProbeProvider build() {
+        if (anchors.size() == 0) {
+            throw new TestContainerException("No tests added to setup!");
         }
 
-        constructProbeTag( extraProperties );
+        constructProbeTag(extraProperties);
         try {
-            TinyBundle bundle = prepareProbeBundle( createExtraIgnores() );
-            return new DefaultTestProbeProvider(
-                getTests(),
-                store,
-                store.store( bundle.build( withClassicBuilder() ) )
-            );
+            TinyBundle bundle = prepareProbeBundle(createExtraIgnores());
+            return new DefaultTestProbeProvider(getTests(), store, store.store(bundle
+                .build(withClassicBuilder())));
 
-        } catch( IOException e ) {
-            throw new TestContainerException( e );
+        }
+        catch (IOException e) {
+            throw new TestContainerException(e);
         }
     }
 
-    private TinyBundle prepareProbeBundle( Properties p )
-        throws IOException
-    {
-        TinyBundle bundle = bundle(store).set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
+    private TinyBundle prepareProbeBundle(Properties p) throws IOException {
+        TinyBundle bundle = bundle(store).set(Constants.DYNAMICIMPORT_PACKAGE, "*");
 
-        bundle.set( Constants.BUNDLE_SYMBOLICNAME,"" );
-        bundle.set( Constants.BUNDLE_MANIFESTVERSION, "2" );
-        for( Object key : extraProperties.keySet() ) {
-            bundle.set( (String) key, (String) extraProperties.get( key ) );
+        bundle.set(Constants.BUNDLE_SYMBOLICNAME, "");
+        bundle.set(Constants.BUNDLE_MANIFESTVERSION, "2");
+        for (Object key : extraProperties.keySet()) {
+            bundle.set((String) key, (String) extraProperties.get(key));
         }
-        for( Object key : p.keySet() ) {
-            bundle.set( (String) key, (String) p.get( key ) );
+        for (Object key : p.keySet()) {
+            bundle.set((String) key, (String) p.get(key));
         }
 
         Map<String, URL> map = collectResources();
-        for( String item : map.keySet() ) {
-            bundle.add( item, map.get( item ) );
+        for (String item : map.keySet()) {
+            bundle.add(item, map.get(item));
         }
         return bundle;
     }
 
-    private Map<String, URL> collectResources()
-        throws IOException
-    {
+    private Map<String, URL> collectResources() throws IOException {
         ContentCollector collector = selectCollector();
         Map<String, URL> map = new HashMap<String, URL>();
-        collector.collect( map );
+        collector.collect(map);
         return map;
     }
 
-    static String convertClassToPath( Class<?> c )
-    {
-        return c.getName().replace( ".", File.separator ) + ".class";
+    static String convertClassToPath(Class<?> c) {
+        return c.getName().replace(".", File.separator) + ".class";
     }
 
     /**
-     * @param clazz to find the root classes folder for.
-     *
+     * @param clazz
+     *            to find the root classes folder for.
+     * 
      * @return A File instance being the exact folder on disk or null, if it hasn't been found.
-     *
-     * @throws java.io.IOException if a problem occurs (method crawls folders on disk..)
+     * 
+     * @throws java.io.IOException
+     *             if a problem occurs (method crawls folders on disk..)
      */
-    public static File findClassesFolder( Class<?> clazz )
-        throws IOException
-    {
+    public static File findClassesFolder(Class<?> clazz) throws IOException {
         ClassLoader classLoader = clazz.getClassLoader();
-        String clazzPath = convertClassToPath( clazz );
-        URL url = classLoader.getResource( clazzPath );
-        if( url == null || !"file".equals( url.getProtocol() ) ) {
+        String clazzPath = convertClassToPath(clazz);
+        URL url = classLoader.getResource(clazzPath);
+        if (url == null || !"file".equals(url.getProtocol())) {
             return null;
-        } else {
+        }
+        else {
             try {
-                File file = new File( url.toURI() );
+                File file = new File(url.toURI());
                 String fullPath = file.getCanonicalPath();
-                String parentDirPath = fullPath.substring( 0, fullPath.length() - clazzPath.length() );
-                return new File( parentDirPath );
-            } catch ( URISyntaxException e ) {
+                String parentDirPath = fullPath
+                    .substring(0, fullPath.length() - clazzPath.length());
+                return new File(parentDirPath);
+            }
+            catch (URISyntaxException e) {
                 // this should not happen as the uri was obtained from getResource
-                throw new TestContainerException( e );
+                throw new TestContainerException(e);
             }
         }
     }
 
-    private ContentCollector selectCollector()
-        throws IOException
-    {
-        File root = findClassesFolder( anchors.get( 0 ) );
+    private ContentCollector selectCollector() throws IOException {
+        File root = findClassesFolder(anchors.get(0));
 
-        if( root != null ) {
-            return new CompositeCollector( new CollectFromBase( root ), new CollectFromItems( anchors ) );
+        if (root != null) {
+            return new CompositeCollector(new CollectFromBase(root), new CollectFromItems(anchors));
         }
         else {
-            return new CollectFromItems( anchors );
+            return new CollectFromItems(anchors);
         }
     }
 
-    public Set<TestAddress> getTests()
-    {
+    public Set<TestAddress> getTests() {
         return probeCalls.keySet();
     }
 
-    private Properties createExtraIgnores()
-    {
+    private Properties createExtraIgnores() {
         Properties extraProperties = new Properties();
         StringBuilder sb = new StringBuilder();
-        for( String p : ignorePackages ) {
-            if( sb.length() > 0 ) {
-                sb.append( "," );
+        for (String p : ignorePackages) {
+            if (sb.length() > 0) {
+                sb.append(",");
             }
-            sb.append( p );
+            sb.append(p);
         }
-        extraProperties.put( "Ignore-Package", sb.toString() );
+        extraProperties.put("Ignore-Package", sb.toString());
         return extraProperties;
     }
 
-    private void constructProbeTag( Properties p )
-    {
+    private void constructProbeTag(Properties p) {
         // construct out of added Tests
         StringBuilder sbKeyChain = new StringBuilder();
 
-        for( TestAddress address : probeCalls.keySet() ) {
-            sbKeyChain.append( address.identifier() );
-            sbKeyChain.append( "," );
-            p.put( address.identifier(), probeCalls.get( address ).toString() );
+        for (TestAddress address : probeCalls.keySet()) {
+            sbKeyChain.append(address.identifier());
+            sbKeyChain.append(",");
+            p.put(address.identifier(), probeCalls.get(address).toString());
         }
-        p.put( PROBE_EXECUTABLE, sbKeyChain.toString() );
+        p.put(PROBE_EXECUTABLE, sbKeyChain.toString());
     }
 }

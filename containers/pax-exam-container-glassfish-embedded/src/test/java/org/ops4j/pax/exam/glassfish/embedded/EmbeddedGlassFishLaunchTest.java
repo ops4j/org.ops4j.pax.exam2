@@ -28,41 +28,39 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmbeddedGlassFishLaunchTest
-{
-    private static Logger log = LoggerFactory.getLogger( EmbeddedGlassFishLaunchTest.class );
-    
+public class EmbeddedGlassFishLaunchTest {
+
+    private static Logger log = LoggerFactory.getLogger(EmbeddedGlassFishLaunchTest.class);
+
     @Test
-    public void launchGlassFish() throws Exception
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        System.setProperty( "java.util.logging.config.file",
-            "src/test/resources/glassfish-config/logging.properties" );
+    public void launchGlassFish() throws Exception {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        System.setProperty("java.util.logging.config.file",
+            "src/test/resources/glassfish-config/logging.properties");
 
         GlassFishProperties gfProps = new GlassFishProperties();
-        File domainXml = new File( "src/test/resources/glassfish-config/domain.xml" );
-        gfProps.setConfigFileURI( domainXml.getAbsoluteFile().toURI().toString() );
+        File domainXml = new File("src/test/resources/glassfish-config/domain.xml");
+        gfProps.setConfigFileURI(domainXml.getAbsoluteFile().toURI().toString());
 
-        GlassFish gf = GlassFishRuntime.bootstrap().newGlassFish( gfProps );
+        GlassFish gf = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
         gf.start();
 
         Deployer deployer = gf.getDeployer();
-        for( String appName : deployer.getDeployedApplications() )
-        {
-            log.info( "undeploying " + appName );
-            deployer.undeploy( appName );
+        for (String appName : deployer.getDeployedApplications()) {
+            log.info("undeploying " + appName);
+            deployer.undeploy(appName);
         }
 
-        URI sampleWarUri = new URI( "mvn:org.apache.wicket/wicket-examples/1.5.3/war" );
+        URI sampleWarUri = new URI("mvn:org.apache.wicket/wicket-examples/1.5.3/war");
         String sampleAppName = "wicket-examples";
 
-        log.info( "deploying " + sampleAppName );
-        deployer.deploy( sampleWarUri, "--name", sampleAppName, "--contextroot", sampleAppName );
+        log.info("deploying " + sampleAppName);
+        deployer.deploy(sampleWarUri, "--name", sampleAppName, "--contextroot", sampleAppName);
 
-        log.info( "undeploying " + sampleAppName );
-        deployer.undeploy( sampleAppName );
+        log.info("undeploying " + sampleAppName);
+        deployer.undeploy(sampleAppName);
 
-        log.info( "stopping GlassFish" );
+        log.info("stopping GlassFish");
         gf.stop();
     }
 }

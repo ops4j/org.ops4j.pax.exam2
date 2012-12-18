@@ -33,31 +33,29 @@ import org.junit.runner.Result;
  * 
  * @author Harald Wellmann
  */
-public class MultiConfigurationInvokerTest
-{
+public class MultiConfigurationInvokerTest {
+
     @Test
-    public void invokeMultiConfigurationTest()
-    {
+    public void invokeMultiConfigurationTest() {
         JUnitCore junit = new JUnitCore();
-        Result result = junit.run( MultiConfigurationTest.class );
-        assertThat( result.getRunCount(), is( ( 2 ) ) );
-        assertThat( result.getFailureCount(), is( ( 0 ) ) );
+        Result result = junit.run(MultiConfigurationTest.class);
+        assertThat(result.getRunCount(), is((2)));
+        assertThat(result.getFailureCount(), is((0)));
     }
 
     @Test
-    public void invokeSingleTestMethod()
-    {
-        assumeTrue( isNativeContainer() );
-        assumeTrue( isEquinox() );
+    public void invokeSingleTestMethod() {
+        assumeTrue(isNativeContainer());
+        assumeTrue(isEquinox());
 
         JUnitCore junit = new JUnitCore();
         String method = "getServiceFromInjectedBundleContext";
         String klass = MultiConfigurationTest.class.getName();
         // when there is more than one configuration, test method names are mangled
-        String testName = String.format( "%s:%s.%s:Native:EquinoxFactory[1]", method, klass, method );
-        Request request = Request.method( MultiConfigurationTest.class, testName );
-        Result result = junit.run( request );
-        assertThat( result.getRunCount(), is( ( 1 ) ) );
-        assertThat( result.getFailureCount(), is( ( 0 ) ) );
+        String testName = String.format("%s:%s.%s:Native:EquinoxFactory[1]", method, klass, method);
+        Request request = Request.method(MultiConfigurationTest.class, testName);
+        Result result = junit.run(request);
+        assertThat(result.getRunCount(), is((1)));
+        assertThat(result.getFailureCount(), is((0)));
     }
 }

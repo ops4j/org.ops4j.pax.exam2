@@ -21,6 +21,7 @@ import java.util.List;
 
 @Remote
 public interface MoviesRemote {
+
     int count();
 
     List<Movie> findRange(int[] range);

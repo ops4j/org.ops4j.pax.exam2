@@ -41,18 +41,19 @@ import com.google.common.io.Files;
 
 /**
  * Builds a WAR according to a {@link WarProbeOption}.
+ * 
  * @author Harald Wellmann
- *
+ * 
  */
-public class WarBuilder
-{
-    private static final Logger LOG = LoggerFactory.getLogger( WarBuilder.class );
+public class WarBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WarBuilder.class);
 
     /**
      * Temporary directory for assembling the WAR probe.
      */
     private File tempDir;
-    
+
     /**
      * Option used to configure the WAR.
      */
@@ -65,255 +66,212 @@ public class WarBuilder
 
     /**
      * Constructs a WAR builder for the given option.
-     * @param option WAR probe option
+     * 
+     * @param option
+     *            WAR probe option
      */
-    public WarBuilder( WarProbeOption option )
-    {
+    public WarBuilder(WarProbeOption option) {
         this.option = option;
         this.tempDir = Files.createTempDir();
     }
 
     /**
-     * Builds a WAR from the given option. 
+     * Builds a WAR from the given option.
+     * 
      * @return file URI referencing the WAR in a temporary directory
      */
-    public URI buildWar()
-    {
+    public URI buildWar() {
         this.tempDir = Files.createTempDir();
-        if( option.getName() == null )
-        {
-            option.name( UUID.randomUUID().toString() );
+        if (option.getName() == null) {
+            option.name(UUID.randomUUID().toString());
         }
         processClassPath();
-        try
-        {
+        try {
             File webResourceDir = getWebResourceDir();
-            ScatteredArchive sar =
-                new ScatteredArchive( option.getName(), Type.WAR, webResourceDir );
-            for( String library : option.getLibraries() )
-            {
+            ScatteredArchive sar = new ScatteredArchive(option.getName(), Type.WAR, webResourceDir);
+            for (String library : option.getLibraries()) {
 
-                File file = toLocalFile( library );
-                LOG.debug( "including library {}", file );
-                sar.addClassPath( file );
+                File file = toLocalFile(library);
+                LOG.debug("including library {}", file);
+                sar.addClassPath(file);
             }
             URI warUri = sar.toURI();
-            LOG.info( "WAR probe = {}", warUri );
+            LOG.info("WAR probe = {}", warUri);
             return warUri;
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    private File toLocalFile( String anyUri ) throws IOException
-    {
+    private File toLocalFile(String anyUri) throws IOException {
         URI uri = null;
-        try
-        {
-            uri = new URI( anyUri );
-            File file = new File( uri );
+        try {
+            uri = new URI(anyUri);
+            File file = new File(uri);
             return file;
         }
-        catch ( URISyntaxException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (URISyntaxException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( IllegalArgumentException exc )
-        {
+        catch (IllegalArgumentException exc) {
             InputStream is = uri.toURL().openStream();
-            File tempFile = File.createTempFile( "paxexam", ".jar" );
-            OutputStream os = new FileOutputStream( tempFile );
-            StreamUtils.copyStream( is, os, true );
+            File tempFile = File.createTempFile("paxexam", ".jar");
+            OutputStream os = new FileOutputStream(tempFile);
+            StreamUtils.copyStream(is, os, true);
             return tempFile;
         }
     }
 
-    private void processClassPath()
-    {
-        if( option.isClassPathEnabled() )
-        {
+    private void processClassPath() {
+        if (option.isClassPathEnabled()) {
             buildClassPathPattern();
-            String classpath = System.getProperty( "java.class.path" );
-            String[] pathElems = classpath.split( File.pathSeparator );
+            String classpath = System.getProperty("java.class.path");
+            String[] pathElems = classpath.split(File.pathSeparator);
 
-            for( String pathElem : pathElems )
-            {
-                File file = new File( pathElem );
-                if( file.exists() )
-                {
+            for (String pathElem : pathElems) {
+                File file = new File(pathElem);
+                if (file.exists()) {
                     String path = file.getAbsolutePath();
-                    Matcher matcher = filterPattern.matcher( path );
-                    if( !matcher.find() )
-                    {
-                        option.library( path );
+                    Matcher matcher = filterPattern.matcher(path);
+                    if (!matcher.find()) {
+                        option.library(path);
                     }
                 }
             }
         }
     }
 
-    private File getWebResourceDir() throws IOException
-    {
-        File webResourceDir = new File( tempDir, "webapp" );
+    private File getWebResourceDir() throws IOException {
+        File webResourceDir = new File(tempDir, "webapp");
         LOG.debug("building webapp in {}", webResourceDir);
         ZipExploder exploder = new ZipExploder();
         webResourceDir.mkdir();
 
-        if( option.getOverlays().isEmpty() )
-        {
-            option.overlay( "src/main/webapp" );
+        if (option.getOverlays().isEmpty()) {
+            option.overlay("src/main/webapp");
         }
-        for( String overlay : option.getOverlays() )
-        {
-            File file = toFile( overlay );
-            if( file.exists() )
-            {
-                if( file.isDirectory() )
-                {
-                    copyDirectory( file, webResourceDir );
+        for (String overlay : option.getOverlays()) {
+            File file = toFile(overlay);
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    copyDirectory(file, webResourceDir);
                 }
-                else
-                {
-                    exploder.processFile( file.getAbsolutePath(), webResourceDir.getAbsolutePath() );
+                else {
+                    exploder.processFile(file.getAbsolutePath(), webResourceDir.getAbsolutePath());
                 }
             }
         }
 
-        File metaInfDir = new File( webResourceDir, "META-INF" );
+        File metaInfDir = new File(webResourceDir, "META-INF");
         metaInfDir.mkdir();
-        for( String metaInfResource : option.getMetaInfResources() )
-        {
-            File source = new File( metaInfResource );
-            if( source.isDirectory() )
-            {
-                copyDirectory( source, metaInfDir );
+        for (String metaInfResource : option.getMetaInfResources()) {
+            File source = new File(metaInfResource);
+            if (source.isDirectory()) {
+                copyDirectory(source, metaInfDir);
             }
-            else
-            {
-                Files.copy( source, new File( metaInfDir, source.getName() ) );
+            else {
+                Files.copy(source, new File(metaInfDir, source.getName()));
             }
         }
 
-        File webInfDir = new File( webResourceDir, "WEB-INF" );
+        File webInfDir = new File(webResourceDir, "WEB-INF");
         webInfDir.mkdir();
-        for( String webInfResource : option.getWebInfResources() )
-        {
-            File source = new File( webInfResource );
-            if( source.isDirectory() )
-            {
-                copyDirectory( source, webInfDir );
+        for (String webInfResource : option.getWebInfResources()) {
+            File source = new File(webInfResource);
+            if (source.isDirectory()) {
+                copyDirectory(source, webInfDir);
             }
-            else
-            {
-                Files.copy( source, new File( webInfDir, source.getName() ) );
+            else {
+                Files.copy(source, new File(webInfDir, source.getName()));
             }
         }
 
-        File resourceDir = new File( webResourceDir, "WEB-INF/classes" );
+        File resourceDir = new File(webResourceDir, "WEB-INF/classes");
         resourceDir.mkdir();
         for (Class<?> klass : option.getClasses()) {
             addClass(klass, resourceDir);
         }
-        
-        for( String resource : option.getResources() )
-        {
+
+        for (String resource : option.getResources()) {
             addResource(resource, resourceDir);
         }
 
-        File beansXml = new File( webInfDir, "beans.xml" );
-        if( !beansXml.exists() )
-        {
+        File beansXml = new File(webInfDir, "beans.xml");
+        if (!beansXml.exists()) {
             beansXml.createNewFile();
         }
         return webResourceDir;
     }
 
-    private void addClass( Class<?> klass, File resourceDir ) throws IOException
-    {
-        String resource = "/" + klass.getName().replaceAll( "\\.", "/" ) + ".class";
+    private void addClass(Class<?> klass, File resourceDir) throws IOException {
+        String resource = "/" + klass.getName().replaceAll("\\.", "/") + ".class";
         addResource(resource, resourceDir);
         for (Class<?> innerClass : klass.getClasses()) {
             addClass(innerClass, resourceDir);
         }
     }
 
-    private void addResource( String resource, File resourceDir ) throws IOException
-    {
-        InputStream is = getClass().getResourceAsStream( "/" + resource );
-        File target = new File(resourceDir, resource );
+    private void addResource(String resource, File resourceDir) throws IOException {
+        InputStream is = getClass().getResourceAsStream("/" + resource);
+        File target = new File(resourceDir, resource);
         target.getParentFile().mkdirs();
         FileOutputStream os = new FileOutputStream(target);
         StreamUtils.copyStream(is, os, true);
     }
 
-    private File toFile( String uriString )
-    {
-        try
-        {
-            URI uri = new URI( uriString );
-            try
-            {
-                return new File( uri );
+    private File toFile(String uriString) {
+        try {
+            URI uri = new URI(uriString);
+            try {
+                return new File(uri);
             }
-            catch ( IllegalArgumentException exc )
-            {
+            catch (IllegalArgumentException exc) {
                 InputStream is = uri.toURL().openStream();
-                File tempFile = File.createTempFile( "pax-exam", ".tmp" );
-                OutputStream os = new FileOutputStream( tempFile );
-                StreamUtils.copyStream( is, os, true );
+                File tempFile = File.createTempFile("pax-exam", ".tmp");
+                OutputStream os = new FileOutputStream(tempFile);
+                StreamUtils.copyStream(is, os, true);
                 return tempFile;
             }
         }
-        catch ( URISyntaxException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (URISyntaxException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    private void copyDirectory( File fromDir, File toDir ) throws IOException
-    {
-        for( File file : fromDir.listFiles() )
-        {
-            if( file.isDirectory() )
-            {
-                File targetDir = new File( toDir, file.getName() );
+    private void copyDirectory(File fromDir, File toDir) throws IOException {
+        for (File file : fromDir.listFiles()) {
+            if (file.isDirectory()) {
+                File targetDir = new File(toDir, file.getName());
                 targetDir.mkdir();
-                copyDirectory( file, targetDir );
+                copyDirectory(file, targetDir);
             }
-            else
-            {
-                Files.copy( file, new File( toDir, file.getName() ) );
+            else {
+                Files.copy(file, new File(toDir, file.getName()));
             }
         }
     }
 
-    private void buildClassPathPattern()
-    {
+    private void buildClassPathPattern() {
         List<String> classpathFilters = option.getClassPathFilters();
-        if( classpathFilters.isEmpty() )
-        {
-            filterPattern = Pattern.compile( "^$" );
+        if (classpathFilters.isEmpty()) {
+            filterPattern = Pattern.compile("^$");
             return;
         }
 
         StringBuilder buffer = new StringBuilder();
-        for( int i = 0; i < classpathFilters.size(); i++ )
-        {
-            if( i > 0 )
-            {
-                buffer.append( "|" );
+        for (int i = 0; i < classpathFilters.size(); i++) {
+            if (i > 0) {
+                buffer.append("|");
             }
-            buffer.append( "(" );
-            buffer.append( classpathFilters.get( i ) );
-            buffer.append( ")" );
+            buffer.append("(");
+            buffer.append(classpathFilters.get(i));
+            buffer.append(")");
         }
         String disjunction = buffer.toString();
-        filterPattern = Pattern.compile( disjunction );
+        filterPattern = Pattern.compile(disjunction);
     }
 }

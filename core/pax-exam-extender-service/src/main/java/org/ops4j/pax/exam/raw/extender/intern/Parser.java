@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  * @since Jan 10, 2010
  */
 public class Parser {
+
     final private Logger LOG = LoggerFactory.getLogger(Probe.class);
 
     final private Probe[] probes;
@@ -60,23 +61,24 @@ public class Parser {
     private Probe make(BundleContext ctx, String sig, String expr) {
         // should be a service really
         // turn this expression into a service detail later
-        LOG.debug("Registering Service: " + ProbeInvoker.class.getName() + " with Probe-Signature=\"" + sig + "\" and expression=\"" + expr + "\"");
+        LOG.debug("Registering Service: " + ProbeInvoker.class.getName()
+            + " with Probe-Signature=\"" + sig + "\" and expression=\"" + expr + "\"");
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put("Probe-Signature", sig);
-        return new Probe(ProbeInvoker.class.getName(), createInvoker( ctx, expr ), props);
+        return new Probe(ProbeInvoker.class.getName(), createInvoker(ctx, expr), props);
     }
 
-    private ProbeInvoker createInvoker( BundleContext ctx, String expr )
-    {
+    private ProbeInvoker createInvoker(BundleContext ctx, String expr) {
         String invokerType = System.getProperty("pax.exam.invoker");
         if (invokerType == null) {
             return new ProbeInvokerImpl(expr, ctx);
         }
         else {
-            Map<String,String> props = new HashMap<String, String>();
-            props.put( "driver", invokerType );
-            ProbeInvokerFactory factory = ServiceLookup.getService( ctx, ProbeInvokerFactory.class, props );
-            return factory.createProbeInvoker( ctx, expr );
+            Map<String, String> props = new HashMap<String, String>();
+            props.put("driver", invokerType);
+            ProbeInvokerFactory factory = ServiceLookup.getService(ctx, ProbeInvokerFactory.class,
+                props);
+            return factory.createProbeInvoker(ctx, expr);
         }
     }
 

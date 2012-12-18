@@ -24,56 +24,49 @@ import org.testng.ITestNGMethod;
 import org.testng.internal.ClonedMethod;
 import org.testng.internal.ConstructorOrMethod;
 
-public class ReactorTestNGMethod extends ClonedMethod
-{
+public class ReactorTestNGMethod extends ClonedMethod {
 
     private static final long serialVersionUID = 1L;
     private TestAddress address;
 
-    public ReactorTestNGMethod( ITestNGMethod method, Method javaMethod, TestAddress address )
-    {
-        super( method, javaMethod );
+    public ReactorTestNGMethod(ITestNGMethod method, Method javaMethod, TestAddress address) {
+        super(method, javaMethod);
         this.address = address;
-    }
-    
-    @Override
-    public String getMethodName()
-    {
-        return String.format("%s:%s", super.getMethodName(), address.caption()); 
-    }
-    
-    @Override
-    public ConstructorOrMethod getConstructorOrMethod()
-    {
-        return new ConstructorOrMethod( getMethod() );
     }
 
     @Override
-    public int hashCode()
-    {
+    public String getMethodName() {
+        return String.format("%s:%s", super.getMethodName(), address.caption());
+    }
+
+    @Override
+    public ConstructorOrMethod getConstructorOrMethod() {
+        return new ConstructorOrMethod(getMethod());
+    }
+
+    @Override
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( address == null ) ? 0 : address.hashCode() );
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         ReactorTestNGMethod other = (ReactorTestNGMethod) obj;
-        if( address == null )
-        {
-            if( other.address != null )
+        if (address == null) {
+            if (other.address != null)
                 return false;
         }
-        else if( !address.equals( other.address ) )
+        else if (!address.equals(other.address))
             return false;
         return true;
-    }    
+    }
 }

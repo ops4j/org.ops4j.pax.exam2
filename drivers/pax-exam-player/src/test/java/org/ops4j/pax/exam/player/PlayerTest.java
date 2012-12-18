@@ -34,87 +34,74 @@ import org.osgi.service.log.LogService;
  * An entire test harness in a tweet.
  */
 public class PlayerTest {
-    
+
     private static final int NUM_EXAM_BUNDLES = 13;
-    
+
     /**
      * WARNING: Do NOT use the same as PaxExamRuntime, or the test will fail.
      */
     private static final String PAX_LOGGING_VERSION = "1.6.1";
 
-    @Test( expected = TestContainerException.class )
-    public void noTestAdded()
-        throws Exception
-    {
+    @Test(expected = TestContainerException.class)
+    public void noTestAdded() throws Exception {
         new Player().play();
 
     }
 
     @Test
-    public void minimalWait()
-        throws Exception
-    {
-        new Player().test( WaitForService.class, ProbeInvoker.class.getName(), 5000 ).play();
+    public void minimalWait() throws Exception {
+        new Player().test(WaitForService.class, ProbeInvoker.class.getName(), 5000).play();
 
     }
 
     @Test
-    public void count()
-        throws Exception
-    {
+    public void count() throws Exception {
         System.setProperty("osgi.console", "6666");
-        new Player().test( CountBundles.class, NUM_EXAM_BUNDLES ).play();
+        new Player().test(CountBundles.class, NUM_EXAM_BUNDLES).play();
 
     }
 
     @Test
-    public void twoTests()
-        throws Exception
-    {
-        new Player().test( WaitForService.class, ProbeInvoker.class.getName(), 5000 ).test( CountBundles.class, NUM_EXAM_BUNDLES ).play();
+    public void twoTests() throws Exception {
+        new Player().test(WaitForService.class, ProbeInvoker.class.getName(), 5000)
+            .test(CountBundles.class, NUM_EXAM_BUNDLES).play();
 
     }
 
     @Test
-    public void play1()
-        throws Exception
-    {
-        new Player().with(
-            options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( PAX_LOGGING_VERSION ).start()
-            )
-        ).test( WaitForService.class, LogService.class.getName(), 5000 ).play();
+    public void play1() throws Exception {
+        new Player()
+            .with(
+                options(mavenBundle().groupId("org.ops4j.pax.logging")
+                    .artifactId("pax-logging-service").version(PAX_LOGGING_VERSION).start()))
+            .test(WaitForService.class, LogService.class.getName(), 5000).play();
 
     }
 
-    @Test( expected = AssertionFailedError.class )
-    public void missing()
-        throws Exception
-    {
-        new Player().with(
-            options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( PAX_LOGGING_VERSION )
-            )
-        ).test( WaitForService.class, LogService.class.getName() ).play();
+    @Test(expected = AssertionFailedError.class)
+    public void missing() throws Exception {
+        new Player()
+            .with(
+                options(mavenBundle().groupId("org.ops4j.pax.logging")
+                    .artifactId("pax-logging-api").version(PAX_LOGGING_VERSION)))
+            .test(WaitForService.class, LogService.class.getName()).play();
 
     }
 
     @Test
-    public void play2()
-        throws Exception
-    {
-        new Player().with(
-            options(
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-api" ).version( PAX_LOGGING_VERSION ),
-                mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( PAX_LOGGING_VERSION )
-            )
-        ).test( getClass(), LogService.class.getName() ).play();
+    public void play2() throws Exception {
+        new Player()
+            .with(
+                options(mavenBundle().groupId("org.ops4j.pax.logging")
+                    .artifactId("pax-logging-api").version(PAX_LOGGING_VERSION),
+                    mavenBundle().groupId("org.ops4j.pax.logging")
+                        .artifactId("pax-logging-service").version(PAX_LOGGING_VERSION)))
+            .test(getClass(), LogService.class.getName()).play();
     }
 
-    public void probe( BundleContext ctx, String s )
-    {
-        for (Bundle b: ctx.getBundles()) {
-            System.out.println( b.getSymbolicName() + " " + b.getState() );
+    public void probe(BundleContext ctx, String s) {
+        for (Bundle b : ctx.getBundles()) {
+            System.out.println(b.getSymbolicName() + " " + b.getState());
 
         }
     }

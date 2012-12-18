@@ -24,19 +24,16 @@ import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator
-{
+public class Activator implements BundleActivator {
 
-    public void start( BundleContext context ) throws Exception
-    {
-        ProbeInvokerFactory factory = new JUnitProbeInvokerFactory( );
+    public void start(BundleContext context) throws Exception {
+        ProbeInvokerFactory factory = new JUnitProbeInvokerFactory();
         Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put( "driver", "junit" );
-        context.registerService( ProbeInvokerFactory.class.getName(), factory, props );
+        props.put("driver", "junit");
+        context.registerService(ProbeInvokerFactory.class.getName(), factory, props);
     }
 
-    public void stop( BundleContext context ) throws Exception
-    {
+    public void stop(BundleContext context) throws Exception {
         // empty
     }
 }

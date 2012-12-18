@@ -27,64 +27,54 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Author
-{
+public class Author {
 
     @Id
     @GeneratedValue
-    @Column( name = "author_id" )
+    @Column(name = "author_id")
     private int id;
 
     private String firstName;
 
     private String lastName;
 
-    @OneToMany( mappedBy = "author" )
+    @OneToMany(mappedBy = "author")
     private Set<Book> books = new HashSet<Book>();
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId( int id )
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getFirstName()
-    {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName( String firstName )
-    {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getLastName()
-    {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setLastName( String lastName )
-    {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public Set<Book> getBooks()
-    {
+    public Set<Book> getBooks() {
         return books;
     }
 
-    public void setBooks( Set<Book> books )
-    {
+    public void setBooks(Set<Book> books) {
         this.books = books;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + id;
@@ -92,16 +82,15 @@ public class Author
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         Author other = (Author) obj;
-        if( id != other.id )
+        if (id != other.id)
             return false;
         return true;
     }

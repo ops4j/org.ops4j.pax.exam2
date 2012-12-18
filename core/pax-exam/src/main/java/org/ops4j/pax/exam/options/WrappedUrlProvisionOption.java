@@ -21,13 +21,12 @@ import static org.osgi.framework.Constants.*;
 
 /**
  * Option specifying a provision url that will wrap (osgify) another bundle.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 27, 2008
  */
-public class WrappedUrlProvisionOption
-    extends AbstractUrlProvisionOption<WrappedUrlProvisionOption>
-{
+public class WrappedUrlProvisionOption extends
+    AbstractUrlProvisionOption<WrappedUrlProvisionOption> {
 
     /**
      * Wrapped jar bundle symbolic name. Can be null.
@@ -53,111 +52,96 @@ public class WrappedUrlProvisionOption
 
     /**
      * Constructor.
-     *
-     * @param url wrapped jar url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If url is null or empty
+     * 
+     * @param url
+     *            wrapped jar url (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null or empty
      */
-    public WrappedUrlProvisionOption( final String url )
-    {
-        super( url );
+    public WrappedUrlProvisionOption(final String url) {
+        super(url);
     }
 
     /**
      * Constructor.
-     *
-     * @param url wrapped jar url (cannot be null)
-     *
-     * @throws IllegalArgumentException - If url is null
+     * 
+     * @param url
+     *            wrapped jar url (cannot be null)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null
      */
-    public WrappedUrlProvisionOption( final UrlReference url )
-    {
-        super( url );
+    public WrappedUrlProvisionOption(final UrlReference url) {
+        super(url);
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getURL()
-    {
+    public String getURL() {
         final StringBuilder options = new StringBuilder();
-        if( overwriteMode != null )
-        {
-            if( options.length() > 0 )
-            {
-                options.append( "&" );
+        if (overwriteMode != null) {
+            if (options.length() > 0) {
+                options.append("&");
             }
-            options.append( "overwrite=" ).append( overwriteMode );
+            options.append("overwrite=").append(overwriteMode);
         }
-        if( bundleSymbolicName != null )
-        {
-            if( options.length() > 0 )
-            {
-                options.append( "&" );
+        if (bundleSymbolicName != null) {
+            if (options.length() > 0) {
+                options.append("&");
             }
-            options.append( BUNDLE_SYMBOLICNAME ).append( "=" ).append( bundleSymbolicName );
+            options.append(BUNDLE_SYMBOLICNAME).append("=").append(bundleSymbolicName);
         }
-        if( bundleVersion != null )
-        {
-            if( options.length() > 0 )
-            {
-                options.append( "&" );
+        if (bundleVersion != null) {
+            if (options.length() > 0) {
+                options.append("&");
             }
-            options.append( BUNDLE_VERSION ).append( "=" ).append( bundleVersion );
+            options.append(BUNDLE_VERSION).append("=").append(bundleVersion);
         }
-        if( imports != null && imports.length > 0 )
-        {
-            if( options.length() > 0 )
-            {
-                options.append( "&" );
+        if (imports != null && imports.length > 0) {
+            if (options.length() > 0) {
+                options.append("&");
             }
-            options.append( IMPORT_PACKAGE ).append( "=" );
-            for( String entry : imports )
-            {
-                options.append( entry ).append( "," );
+            options.append(IMPORT_PACKAGE).append("=");
+            for (String entry : imports) {
+                options.append(entry).append(",");
             }
-            options.delete( options.length() - 1, options.length() );
+            options.delete(options.length() - 1, options.length());
         }
-        if( exports != null && exports.length > 0 )
-        {
-            if( options.length() > 0 )
-            {
-                options.append( "&" );
+        if (exports != null && exports.length > 0) {
+            if (options.length() > 0) {
+                options.append("&");
             }
-            options.append( EXPORT_PACKAGE ).append( "=" );
-            for( String entry : exports )
-            {
-                options.append( entry ).append( "," );
+            options.append(EXPORT_PACKAGE).append("=");
+            for (String entry : exports) {
+                options.append(entry).append(",");
             }
-            options.delete( options.length() - 1, options.length() );
+            options.delete(options.length() - 1, options.length());
         }
-        if( instructions != null && instructions.length > 0 )
-        {
-            for( String entry : instructions )
-            {
-                if( options.length() > 0 )
-                {
-                    options.append( "&" );
+        if (instructions != null && instructions.length > 0) {
+            for (String entry : instructions) {
+                if (options.length() > 0) {
+                    options.append("&");
                 }
-                options.append( entry );
+                options.append(entry);
             }
         }
-        if( options.length() > 0 )
-        {
-            options.insert( 0, "$" );
+        if (options.length() > 0) {
+            options.insert(0, "$");
         }
         return "wrap:" + super.getURL() + options.toString();
     }
 
     /**
      * Sets wrapped jar bundle symbolic name.
-     *
-     * @param bundleSymbolicName bundle symbolic name
-     *
+     * 
+     * @param bundleSymbolicName
+     *            bundle symbolic name
+     * 
      * @return itself
      */
-    public WrappedUrlProvisionOption bundleSymbolicName( final String bundleSymbolicName )
-    {
+    public WrappedUrlProvisionOption bundleSymbolicName(final String bundleSymbolicName) {
         this.bundleSymbolicName = bundleSymbolicName;
 
         return this;
@@ -165,13 +149,13 @@ public class WrappedUrlProvisionOption
 
     /**
      * Sets wrapped jar bundle version.
-     *
-     * @param bundleVersion bundle symbolic name
-     *
+     * 
+     * @param bundleVersion
+     *            bundle symbolic name
+     * 
      * @return itself
      */
-    public WrappedUrlProvisionOption bundleVersion( final String bundleVersion )
-    {
+    public WrappedUrlProvisionOption bundleVersion(final String bundleVersion) {
         this.bundleVersion = bundleVersion;
 
         return this;
@@ -179,13 +163,13 @@ public class WrappedUrlProvisionOption
 
     /**
      * Sets wrapped jar imports.
-     *
-     * @param imports BND style imports
-     *
+     * 
+     * @param imports
+     *            BND style imports
+     * 
      * @return itself
      */
-    public WrappedUrlProvisionOption imports( final String... imports )
-    {
+    public WrappedUrlProvisionOption imports(final String... imports) {
         this.imports = imports;
 
         return this;
@@ -193,13 +177,13 @@ public class WrappedUrlProvisionOption
 
     /**
      * Sets wrapped jar exports.
-     *
-     * @param exports BND style exports
-     *
+     * 
+     * @param exports
+     *            BND style exports
+     * 
      * @return itself
      */
-    public WrappedUrlProvisionOption exports( final String... exports )
-    {
+    public WrappedUrlProvisionOption exports(final String... exports) {
         this.exports = exports;
 
         return this;
@@ -207,13 +191,13 @@ public class WrappedUrlProvisionOption
 
     /**
      * Sets wrapped jar manifest overwrite mode.
-     *
-     * @param mode overwrite mode
-     *
+     * 
+     * @param mode
+     *            overwrite mode
+     * 
      * @return itself
      */
-    public WrappedUrlProvisionOption overwriteManifest( final OverwriteMode mode )
-    {
+    public WrappedUrlProvisionOption overwriteManifest(final OverwriteMode mode) {
         overwriteMode = mode;
 
         return this;
@@ -221,13 +205,13 @@ public class WrappedUrlProvisionOption
 
     /**
      * Sets wrapped jar raw BND instructions.
-     *
-     * @param instructions BND instructions
-     *
+     * 
+     * @param instructions
+     *            BND instructions
+     * 
      * @return itself
      */
-    public WrappedUrlProvisionOption instructions( final String... instructions )
-    {
+    public WrappedUrlProvisionOption instructions(final String... instructions) {
         this.instructions = instructions;
 
         return this;
@@ -236,16 +220,15 @@ public class WrappedUrlProvisionOption
     /**
      * {@inheritDoc}
      */
-    protected WrappedUrlProvisionOption itself()
-    {
+    protected WrappedUrlProvisionOption itself() {
         return this;
     }
 
     /**
-     * Strategy to use regarding manifest rewrite, for a jar that is already a bundle (has osgi manifest attributes).
+     * Strategy to use regarding manifest rewrite, for a jar that is already a bundle (has osgi
+     * manifest attributes).
      */
-    public static enum OverwriteMode
-    {
+    public static enum OverwriteMode {
 
         /**
          * Keep existing manifest.

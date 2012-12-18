@@ -23,19 +23,16 @@ import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 
-public class ServletBridgeProbeInvokerFactory implements ProbeInvokerFactory
-{
+public class ServletBridgeProbeInvokerFactory implements ProbeInvokerFactory {
 
     @Override
-    public ProbeInvoker createProbeInvoker( Object context, String expr )
-    {
+    public ProbeInvoker createProbeInvoker(Object context, String expr) {
         URI uri = TestDirectory.getInstance().getAccessPoint();
-        if (uri == null)
-        {
-            throw new TestContainerException( "servlet container context root is undefined" );
+        if (uri == null) {
+            throw new TestContainerException("servlet container context root is undefined");
         }
         String accessPoint = uri.toString();
         String encodedInstruction = expr + ";" + accessPoint;
-        return new ServletBridgeProbeInvoker( encodedInstruction );
+        return new ServletBridgeProbeInvoker(encodedInstruction);
     }
 }

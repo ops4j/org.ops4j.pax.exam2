@@ -31,12 +31,11 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 
 /**
- * Check if we can install bundles from reference: URLs into JBoss OSGi.
- * This currently does not work - JBoss OSGi does not recognize the 
- * reference: protocol.
+ * Check if we can install bundles from reference: URLs into JBoss OSGi. This currently does not
+ * work - JBoss OSGi does not recognize the reference: protocol.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
 public class ReferenceUrlTest {
 
@@ -44,14 +43,14 @@ public class ReferenceUrlTest {
 
     @Before
     public void setUp() {
-        //System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+        // System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
         props = new HashMap<String, String>();
     }
-    
+
     @Test
     public void jbosgiReferenceUrl() throws BundleException, IOException {
         FrameworkFactory frameworkFactory = new FrameworkFactoryImpl();
-        Framework framework = frameworkFactory.newFramework( props );
+        Framework framework = frameworkFactory.newFramework(props);
         provisionReferenceUrl(framework);
     }
 
@@ -59,12 +58,12 @@ public class ReferenceUrlTest {
         framework.start();
         BundleContext bc = framework.getBundleContext();
         assertNotNull(bc);
-        
+
         String url = "reference:file:/home/hwellmann/.m2/repository/org/ops4j/base/ops4j-base-lang/1.2.3/ops4j-base-lang-1.2.3.jar";
-        
+
         // throws java.lang.IllegalArgumentException: Null path
         Bundle bundle = bc.installBundle(url);
-        
+
         assertNotNull(bundle);
         assertEquals("org.ops4j.base.lang", bundle.getSymbolicName());
 

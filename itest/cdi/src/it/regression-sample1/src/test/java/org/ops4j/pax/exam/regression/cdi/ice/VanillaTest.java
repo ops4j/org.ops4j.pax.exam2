@@ -33,9 +33,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith( PaxExam.class )
-public class VanillaTest
-{
+@RunWith(PaxExam.class)
+public class VanillaTest {
+
     @Inject
     @Vanilla
     private IceCreamService vanilla;
@@ -50,56 +50,51 @@ public class VanillaTest
     @Inject
     @Any
     private Instance<IceCreamService> allFlavours;
-    
-    @Inject @Any
+
+    @Inject
+    @Any
     private Instance<Object> instance;
-    
+
     @Test
-    public void checkVanillaFlavour()
-    {
-        assertThat( vanilla.getFlavour(), is( "Vanilla" ) );
+    public void checkVanillaFlavour() {
+        assertThat(vanilla.getFlavour(), is("Vanilla"));
     }
 
     @Test
-    public void checkChocolateFlavour()
-    {
-        assertThat( chocolate.getFlavour(), is( "Chocolate" ) );
+    public void checkChocolateFlavour() {
+        assertThat(chocolate.getFlavour(), is("Chocolate"));
     }
 
     @Test
-    public void checkDefaultFlavour()
-    {
-        assertThat( defaultFlavour.getFlavour(), is( "Vanilla" ) );
+    public void checkDefaultFlavour() {
+        assertThat(defaultFlavour.getFlavour(), is("Vanilla"));
     }
 
     @Test
-    public void checkAllFlavours()
-    {
-        List<String> expectedFlavours =
-            new ArrayList<String>( Arrays.asList( "Vanilla", "Chocolate" ) );
-        assertThat( allFlavours.isUnsatisfied(), is( false ) );
-        assertThat( allFlavours.isAmbiguous(), is( true ) );
+    public void checkAllFlavours() {
+        List<String> expectedFlavours = new ArrayList<String>(Arrays.asList("Vanilla", "Chocolate"));
+        assertThat(allFlavours.isUnsatisfied(), is(false));
+        assertThat(allFlavours.isAmbiguous(), is(true));
         int numFlavours = 0;
         Iterator<IceCreamService> it = allFlavours.iterator();
-        while( it.hasNext() )
-        {
+        while (it.hasNext()) {
             numFlavours++;
             String flavour = it.next().getFlavour();
-            expectedFlavours.remove( flavour );
+            expectedFlavours.remove(flavour);
         }
-        assertThat( numFlavours, is( 2 ) );
-        assertThat( expectedFlavours.isEmpty(), is( true ) );
+        assertThat(numFlavours, is(2));
+        assertThat(expectedFlavours.isEmpty(), is(true));
     }
-    
-    @SuppressWarnings( "serial" )
+
+    @SuppressWarnings("serial")
     @Test
-    public void checkInstance()
-    {
-        AnnotationLiteral<Chocolate> qualifier = new AnnotationLiteral<Chocolate>() {};
-        Instance<IceCreamService> chocolateInstance = allFlavours.select( qualifier );
+    public void checkInstance() {
+        AnnotationLiteral<Chocolate> qualifier = new AnnotationLiteral<Chocolate>() {
+        };
+        Instance<IceCreamService> chocolateInstance = allFlavours.select(qualifier);
         IceCreamService iceCreamService = chocolateInstance.get();
         assertThat(iceCreamService.getFlavour(), is("Chocolate"));
-        
-        instance.select( IceCreamService.class, qualifier ).get();
+
+        instance.select(IceCreamService.class, qualifier).get();
     }
 }

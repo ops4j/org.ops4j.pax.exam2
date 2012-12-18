@@ -28,54 +28,49 @@ import org.ops4j.pax.exam.sample4.model.Author;
 import org.ops4j.pax.exam.sample4.model.Book;
 
 public class LibraryService implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     @Inject
     private EntityManager em;
-    
-    public void fillLibrary()
-    {
+
+    public void fillLibrary() {
         if (getNumBooks() != 0)
             return;
-        
+
         Author mann = createAuthor("Thomas", "Mann");
         Author steinbeck = createAuthor("John", "Steinbeck");
-        
+
         createBook("Buddenbrooks", mann);
         createBook("East of Eden", steinbeck);
     }
-    
-    public List<Book> findBooks()
-    {
+
+    public List<Book> findBooks() {
         em.getTransaction().begin();
         String jpql = "select b from Book b";
         TypedQuery<Book> query = em.createQuery(jpql, Book.class);
         List<Book> books = query.getResultList();
         em.getTransaction().commit();
-        return books;       
+        return books;
     }
-    
-    public List<Book> findBooksByAuthor(String lastName)
-    {
+
+    public List<Book> findBooksByAuthor(String lastName) {
         String jpql = "select b from Book b where b.author.lastName = :lastName";
         TypedQuery<Book> query = em.createQuery(jpql, Book.class);
         query.setParameter("lastName", lastName);
         List<Book> books = query.getResultList();
-        return books;       
+        return books;
     }
-    
-    public List<Book> findBooksByTitle(String title)
-    {
+
+    public List<Book> findBooksByTitle(String title) {
         String jpql = "select b from Book b where b.title = :title";
         TypedQuery<Book> query = em.createQuery(jpql, Book.class);
         query.setParameter("title", title);
         List<Book> books = query.getResultList();
-        return books;       
+        return books;
     }
-    
-    public Author createAuthor(String firstName, String lastName)
-    {
+
+    public Author createAuthor(String firstName, String lastName) {
         em.getTransaction().begin();
         Author author = new Author();
         author.setFirstName(firstName);
@@ -85,9 +80,8 @@ public class LibraryService implements Serializable {
         em.getTransaction().commit();
         return author;
     }
-    
-    public Book createBook(String title, Author author)
-    {
+
+    public Book createBook(String title, Author author) {
         em.getTransaction().begin();
         Book book = new Book();
         book.setTitle(title);
@@ -98,16 +92,14 @@ public class LibraryService implements Serializable {
         em.getTransaction().commit();
         return book;
     }
-    
-    public long getNumBooks()
-    {
+
+    public long getNumBooks() {
         String jpql = "select count(b) from Book b";
         Long numBooks = (Long) em.createQuery(jpql).getSingleResult();
         return numBooks;
     }
 
-    public long getNumAuthors()
-    {
+    public long getNumAuthors() {
         String jpql = "select count(a) from Author a";
         Long numAuthors = (Long) em.createQuery(jpql).getSingleResult();
         return numAuthors;

@@ -36,10 +36,10 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 public class EquinoxReferenceTest {
 
-    @SuppressWarnings( { "unchecked", "rawtypes" } )
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void installAndStartReferenceBundle() throws BundleException, IOException {
-        assumeTrue( isEquinox() );
+        assumeTrue(isEquinox());
         assumeTrue(System.getProperty("java.protocol.handler.pkgs") == null);
 
         Map<String, String> props = new HashMap<String, String>();
@@ -47,22 +47,24 @@ public class EquinoxReferenceTest {
         props.put("osgi.dev", "target/classes");
 
         FrameworkFactory frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
-        Framework framework = frameworkFactory.newFramework( props );
+        Framework framework = frameworkFactory.newFramework(props);
         framework.start();
         BundleContext bc = framework.getBundleContext();
         assertNotNull(bc);
 
-        String reference = "reference:file:" + PathUtils.getBaseDir() +
-                "/target/regression-pde-bundle";
+        String reference = "reference:file:" + PathUtils.getBaseDir()
+            + "/target/regression-pde-bundle";
         Bundle bundle = bc.installBundle(reference);
         assertNotNull(bundle);
         assertEquals("org.ops4j.pax.exam.regression.pde", bundle.getSymbolicName());
 
         bundle.start();
-        ServiceReference serviceRef = bc.getServiceReference("org.ops4j.pax.exam.regression.pde.HelloService");
+        ServiceReference serviceRef = bc
+            .getServiceReference("org.ops4j.pax.exam.regression.pde.HelloService");
         Object service = bc.getService(serviceRef);
         assertNotNull(service);
-        assertEquals("org.ops4j.pax.exam.regression.pde.impl.EnglishHelloService", service.getClass().getName());
+        assertEquals("org.ops4j.pax.exam.regression.pde.impl.EnglishHelloService", service
+            .getClass().getName());
 
         bundle.uninstall();
         framework.stop();

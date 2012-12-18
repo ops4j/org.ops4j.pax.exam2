@@ -78,7 +78,8 @@ public class WrappedTomEEContainer {
     protected Configuration configuration;
     private File base;
     private Map<String, String> moduleIds = new HashMap<String, String>(); // TODO: manage multimap
-    private Map<String, AppContext> appContexts = new HashMap<String, AppContext>(); // TODO: manage multimap
+    private Map<String, AppContext> appContexts = new HashMap<String, AppContext>(); // TODO: manage
+                                                                                     // multimap
     private Map<String, AppInfo> infos = new HashMap<String, AppInfo>(); // TODO: manage multimap
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
@@ -96,7 +97,8 @@ public class WrappedTomEEContainer {
 
         if (configuration.isQuickSession()) {
             tomcat = new TomcatWithFastSessionIDs();
-        } else {
+        }
+        else {
             tomcat = new Tomcat();
         }
     }
@@ -131,10 +133,12 @@ public class WrappedTomEEContainer {
             final FileOutputStream fos = new FileOutputStream(new File(conf, "server.xml"));
             try {
                 IO.copy(configuration.getServerXmlFile(), fos);
-            } finally {
+            }
+            finally {
                 IO.close(fos);
             }
-        } else {
+        }
+        else {
             copyFileTo(conf, "server.xml");
         }
         final Properties props = configuration.getProperties();
@@ -142,21 +146,21 @@ public class WrappedTomEEContainer {
             final FileWriter systemProperties = new FileWriter(new File(conf, "system.properties"));
             try {
                 props.store(systemProperties, "");
-            } finally {
+            }
+            finally {
                 IO.close(systemProperties);
             }
         }
 
         // Need to use JULI so log messages from the tests are visible
         // using openejb logging conf in embedded mode
-        /* if we use our config (Logger.configure()) don't override it
-        copyFileTo(conf, "logging.properties");
-        System.setProperty("java.util.logging.manager", "org.apache.juli.ClassLoaderLogManager");
-        final File logging = new File(conf, "logging.properties");
-        if (logging.exists()) {
-            System.setProperty("java.util.logging.config.file", logging.getAbsolutePath());
-        }
-        */
+        /*
+         * if we use our config (Logger.configure()) don't override it copyFileTo(conf,
+         * "logging.properties"); System.setProperty("java.util.logging.manager",
+         * "org.apache.juli.ClassLoaderLogManager"); final File logging = new File(conf,
+         * "logging.properties"); if (logging.exists()) {
+         * System.setProperty("java.util.logging.config.file", logging.getAbsolutePath()); }
+         */
         System.setProperty("catalina.base", base.getAbsolutePath());
 
         // Trigger loading of catalina.properties
@@ -185,9 +189,8 @@ public class WrappedTomEEContainer {
 
         tomcat.start();
 
-
-//        bootstrap = new Bootstrap();
-//        bootstrap.start();
+        // bootstrap = new Bootstrap();
+        // bootstrap.start();
 
         // Bootstrap OpenEJB
         Properties properties = new Properties();
@@ -202,7 +205,9 @@ public class WrappedTomEEContainer {
 
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            Properties tomcatServerInfo = IO.readProperties(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"), new Properties());
+            Properties tomcatServerInfo = IO.readProperties(
+                classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"),
+                new Properties());
 
             String serverNumber = tomcatServerInfo.getProperty("server.number");
             if (serverNumber == null) {
@@ -221,17 +226,18 @@ public class WrappedTomEEContainer {
             if (serverBuilt != null) {
                 System.setProperty("tomcat.built", serverBuilt);
             }
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             // no-op
         }
 
         SystemInstance.init(System.getProperties());
-        SystemInstance.get().setComponent(StandardServer.class, (StandardServer) tomcat.getServer());
+        SystemInstance.get()
+            .setComponent(StandardServer.class, (StandardServer) tomcat.getServer());
 
         TomcatLoader loader = new TomcatLoader();
         loader.initDefaults(properties);
         loader.initialize(properties);
-
 
         assembler = SystemInstance.get().getComponent(Assembler.class);
         configurationFactory = new ConfigurationFactory();
@@ -240,10 +246,12 @@ public class WrappedTomEEContainer {
     private String getBaseDir() {
         try {
             final String dir = configuration.getDir();
-            if (dir != null) return dir;
+            if (dir != null)
+                return dir;
             final File file = File.createTempFile("apache-tomee", "-home");
             return file.getAbsolutePath();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new TomEERuntimeException(e);
         }
     }
@@ -255,11 +263,13 @@ public class WrappedTomEEContainer {
         OpenEJB.destroy();
     }
 
-    public AppContext deploy(String name, File file) throws OpenEJBException, IOException, NamingException {
+    public AppContext deploy(String name, File file) throws OpenEJBException, IOException,
+        NamingException {
         return deploy(name, file, false);
     }
 
-    public AppContext deploy(String name, File file, boolean overrideName) throws OpenEJBException, IOException, NamingException {
+    public AppContext deploy(String name, File file, boolean overrideName) throws OpenEJBException,
+        IOException, NamingException {
         final AppContext context;
         final AppInfo appInfo;
         if (WebAppDeployer.Helper.isWebApp(file)) {
@@ -268,14 +278,18 @@ public class WrappedTomEEContainer {
                 contextRoot = name;
             }
 
-            appInfo = SystemInstance.get().getComponent(WebAppDeployer.class).deploy(contextRoot, file);
+            appInfo = SystemInstance.get().getComponent(WebAppDeployer.class)
+                .deploy(contextRoot, file);
 
             if (appInfo != null) {
-                context = SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(appInfo.appId);
-            } else {
+                context = SystemInstance.get().getComponent(ContainerSystem.class)
+                    .getAppContext(appInfo.appId);
+            }
+            else {
                 context = null;
             }
-        } else {
+        }
+        else {
             appInfo = configurationFactory.configureApplication(file);
             if (overrideName) {
                 appInfo.appId = name;
@@ -321,7 +335,8 @@ public class WrappedTomEEContainer {
         int space = name.lastIndexOf(" ");
         if (idx >= 0 && space < idx) {
             return name.substring(idx);
-        } else if (idx < 0 && space < 0) {
+        }
+        else if (idx < 0 && space < 0) {
             return name;
         }
         return defaultValue;
@@ -384,8 +399,10 @@ public class WrappedTomEEContainer {
     private void copyTemplateTo(File targetDir, String filename) throws Exception {
         Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
         Velocity.setProperty(Velocity.RESOURCE_LOADER, "class");
-        Velocity.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
-        Velocity.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
+        Velocity.setProperty("class.resource.loader.description",
+            "Velocity Classpath Resource Loader");
+        Velocity
+            .setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
         Velocity.init();
         Template template = Velocity.getTemplate("/org/apache/tomee/configs/" + filename);
         VelocityContext context = new VelocityContext();
@@ -402,7 +419,8 @@ public class WrappedTomEEContainer {
         if (is != null) { // should be null since we are using default conf
             try {
                 IO.copy(is, new File(targetDir, filename));
-            } finally {
+            }
+            finally {
                 IO.close(is);
             }
         }

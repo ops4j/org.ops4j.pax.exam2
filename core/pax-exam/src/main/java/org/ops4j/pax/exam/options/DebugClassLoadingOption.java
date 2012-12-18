@@ -21,23 +21,20 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * Options enabling framework specific class loading debugging.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 1.2.0, September 22, 2009
  */
-public class DebugClassLoadingOption
-    implements Option
-{
+public class DebugClassLoadingOption implements Option {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( DebugClassLoadingOption.class.getSimpleName() );
-        sb.append( "{on}" );
+        sb.append(DebugClassLoadingOption.class.getSimpleName());
+        sb.append("{on}");
         return sb.toString();
     }
 

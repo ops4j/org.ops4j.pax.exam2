@@ -34,24 +34,22 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Harald Wellmann
  */
-public class SingleMethodInvokerTest
-{
-    private static final Logger LOG = LoggerFactory.getLogger( SingleMethodInvokerTest.class );
+public class SingleMethodInvokerTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SingleMethodInvokerTest.class);
 
     @Test
-    public void invokeSingleTestMethod()
-    {
-        assumeTrue( isNativeContainer() );
-        assumeTrue( isEquinox() );
+    public void invokeSingleTestMethod() {
+        assumeTrue(isNativeContainer());
+        assumeTrue(isEquinox());
 
         JUnitCore junit = new JUnitCore();
         String method = "getInjectedServices";
-        Request request = Request.method( FilterTest.class, method );
-        Result result = junit.run( request );
-        if( result.getFailureCount() > 0 )
-        {
-            LOG.error( result.getFailures().get( 0 ).getTrace() );
+        Request request = Request.method(FilterTest.class, method);
+        Result result = junit.run(request);
+        if (result.getFailureCount() > 0) {
+            LOG.error(result.getFailures().get(0).getTrace());
         }
-        assertThat( result.getFailureCount(), is( ( 0 ) ) );
+        assertThat(result.getFailureCount(), is((0)));
     }
 }

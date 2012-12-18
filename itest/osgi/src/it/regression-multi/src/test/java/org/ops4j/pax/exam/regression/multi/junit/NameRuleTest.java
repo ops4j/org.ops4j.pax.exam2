@@ -34,22 +34,20 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
 @RunWith(JUnit4TestRunner.class)
-@ExamReactorStrategy( PerMethod.class )
+@ExamReactorStrategy(PerMethod.class)
 public class NameRuleTest {
-    
-   @Rule
-   public TestName name = new TestName();
-   
-   @Configuration
-   public Option[] config() {
-       return options(
-           regressionDefaults(),
-           junitBundles());
-   }
-   
-   @Test
-   public void doTest1() throws Exception {
-       assertThat(name.getMethodName(), is(equalTo("doTest1")));
-       assertNotNull("Expected a non null methodName at this point", name.getMethodName());
-   }
+
+    @Rule
+    public TestName name = new TestName();
+
+    @Configuration
+    public Option[] config() {
+        return options(regressionDefaults(), junitBundles());
+    }
+
+    @Test
+    public void doTest1() throws Exception {
+        assertThat(name.getMethodName(), is(equalTo("doTest1")));
+        assertNotNull("Expected a non null methodName at this point", name.getMethodName());
+    }
 }

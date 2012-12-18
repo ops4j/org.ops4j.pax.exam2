@@ -18,9 +18,9 @@
 package org.ops4j.pax.exam;
 
 /**
- * Test pointer to an executable test.
- * TestAddresses are graph based, so they have a parent and zero-to-many children.
- *
+ * Test pointer to an executable test. TestAddresses are graph based, so they have a parent and
+ * zero-to-many children.
+ * 
  * @author Toni Menzel
  * @since Jan 11, 2010
  */
@@ -28,8 +28,9 @@ public interface TestAddress {
 
     /**
      * Identifier of a single addressable test.
-     *
-     * @return identifier that is associated with this address. Basically its the persistent representation.
+     * 
+     * @return identifier that is associated with this address. Basically its the persistent
+     *         representation.
      */
     public String identifier();
 
@@ -39,20 +40,19 @@ public interface TestAddress {
     public String caption();
 
     /**
-     * Test Addresses are built from other test addresses, so they build a compound tree.
-     * This returns the root of the tree.
-     * Sub-Addresses (so, TestAddresses that have a root()) refer usually to one identical test deployed on different test containers.
-     *
+     * Test Addresses are built from other test addresses, so they build a compound tree. This
+     * returns the root of the tree. Sub-Addresses (so, TestAddresses that have a root()) refer
+     * usually to one identical test deployed on different test containers.
+     * 
      * @return root of this address (where this was built from).
      */
     public TestAddress root();
 
     /**
      * Test Addresses can have default argument values.
-     *
+     * 
      * @return the arguments passed to this address by default.
      */
     public Object[] arguments();
-
 
 }

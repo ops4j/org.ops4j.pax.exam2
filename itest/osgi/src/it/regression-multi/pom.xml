@@ -182,7 +182,7 @@
                     </systemProperties>
                     <excludes>
                       <!-- This test works locally but not on our slow Hudson server -->
-                      <exclude>**/ServiceTimeoutInvokerTest.java</exclude>
+                        <exclude>**/ServiceTimeoutInvokerTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

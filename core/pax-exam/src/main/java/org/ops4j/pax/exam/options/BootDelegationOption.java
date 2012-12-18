@@ -20,13 +20,13 @@ package org.ops4j.pax.exam.options;
 import static org.ops4j.lang.NullArgumentException.*;
 
 /**
- * Options specifying a boot delegation package (package for which framework will delegate to the system classloader).
- *
+ * Options specifying a boot delegation package (package for which framework will delegate to the
+ * system classloader).
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public class BootDelegationOption implements ValueOption<String>
-{
+public class BootDelegationOption implements ValueOption<String> {
 
     /**
      * Boot delegation package (cannot be null or empty).
@@ -35,34 +35,33 @@ public class BootDelegationOption implements ValueOption<String>
 
     /**
      * Constructor
-     *
-     * @param pkg boot delegation package (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If package is null or empty
+     * 
+     * @param pkg
+     *            boot delegation package (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If package is null or empty
      */
-    public BootDelegationOption( final String pkg )
-    {
-        validateNotEmpty( pkg, true, "Package" );
+    public BootDelegationOption(final String pkg) {
+        validateNotEmpty(pkg, true, "Package");
         this.pkg = pkg;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return boot delegation package (cannot be null or empty)
      */
-    public String getPackage()
-    {
+    public String getPackage() {
         return pkg;
     }
-    
+
     /**
      * Getter.
-     *
+     * 
      * @return boot delegation package (cannot be null or empty)
      */
-    public String getValue()
-    {
+    public String getValue() {
         return getPackage();
     }
 
@@ -70,44 +69,38 @@ public class BootDelegationOption implements ValueOption<String>
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "BootDelegationOption" );
-        sb.append( "{package='" ).append( pkg ).append( '\'' );
-        sb.append( '}' );
+        sb.append("BootDelegationOption");
+        sb.append("{package='").append(pkg).append('\'');
+        sb.append('}');
         return sb.toString();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( pkg == null ) ? 0 : pkg.hashCode() );
+        result = prime * result + ((pkg == null) ? 0 : pkg.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         BootDelegationOption other = (BootDelegationOption) obj;
-        if( pkg == null )
-        {
-            if( other.pkg != null )
+        if (pkg == null) {
+            if (other.pkg != null)
                 return false;
         }
-        else if( !pkg.equals( other.pkg ) )
+        else if (!pkg.equals(other.pkg))
             return false;
         return true;
     }
-    
-    
 
 }

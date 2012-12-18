@@ -19,43 +19,42 @@ package org.ops4j.pax.exam.options;
 
 /**
  * Option specifying a provision url.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public class UrlProvisionOption
-    extends AbstractUrlProvisionOption<UrlProvisionOption>
-{
+public class UrlProvisionOption extends AbstractUrlProvisionOption<UrlProvisionOption> {
 
     /**
      * Constructor.
-     *
-     * @param url provision url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If url is null or empty
+     * 
+     * @param url
+     *            provision url (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null or empty
      */
-    public UrlProvisionOption( final String url )
-    {
-        super( url );
+    public UrlProvisionOption(final String url) {
+        super(url);
     }
 
     /**
      * Constructor.
-     *
-     * @param url provision url (cannot be null)
-     *
-     * @throws IllegalArgumentException - If url is null
+     * 
+     * @param url
+     *            provision url (cannot be null)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null
      */
-    public UrlProvisionOption( final UrlReference url )
-    {
-        super( url );
+    public UrlProvisionOption(final UrlReference url) {
+        super(url);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected UrlProvisionOption itself()
-    {
+    protected UrlProvisionOption itself() {
         return this;
     }
 

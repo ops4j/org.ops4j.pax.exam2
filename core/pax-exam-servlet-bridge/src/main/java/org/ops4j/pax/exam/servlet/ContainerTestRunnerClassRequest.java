@@ -27,8 +27,7 @@ public class ContainerTestRunnerClassRequest extends ClassRequest {
     private Class<?> testClass;
     private Injector injector;
 
-    public ContainerTestRunnerClassRequest(Class<?> testClass, 
-            Injector injector) {
+    public ContainerTestRunnerClassRequest(Class<?> testClass, Injector injector) {
         super(testClass);
         this.testClass = testClass;
         this.injector = injector;

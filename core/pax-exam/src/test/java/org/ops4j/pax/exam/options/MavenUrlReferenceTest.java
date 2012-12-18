@@ -23,81 +23,49 @@ import org.junit.Test;
 
 /**
  * Unit Tests for {@link MavenArtifactUrlReference}.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 26, 2009
  */
-public class MavenUrlReferenceTest
-{
+public class MavenUrlReferenceTest {
 
     @Test
-    public void specifyTypeWithVersion()
-    {
-        assertThat(
-            "Maven url",
-            new MavenArtifactUrlReference().groupId( "foo" ).artifactId( "bar" ).version( "1.0" ).type( "xml" )
-                .getURL(),
-            is( equalTo( "mvn:foo/bar/1.0/xml" ) )
-        );
+    public void specifyTypeWithVersion() {
+        assertThat("Maven url", new MavenArtifactUrlReference().groupId("foo").artifactId("bar")
+            .version("1.0").type("xml").getURL(), is(equalTo("mvn:foo/bar/1.0/xml")));
     }
 
     @Test
-    public void specifyTypeWithoutVersion()
-    {
-        assertThat(
-            "Maven url",
-            new MavenArtifactUrlReference().groupId( "foo" ).artifactId( "bar" ).type( "xml" )
-                .getURL(),
-            is( equalTo( "mvn:foo/bar//xml" ) )
-        );
+    public void specifyTypeWithoutVersion() {
+        assertThat("Maven url", new MavenArtifactUrlReference().groupId("foo").artifactId("bar")
+            .type("xml").getURL(), is(equalTo("mvn:foo/bar//xml")));
     }
 
     @Test
-    public void specifyClasifier()
-    {
-        assertThat(
-            "Maven url",
-            new MavenArtifactUrlReference().groupId( "foo" ).artifactId( "bar" )
-                .classifier( "classifier" )
-                .getURL(),
-            is( equalTo( "mvn:foo/bar///classifier" ) )
-        );
+    public void specifyClasifier() {
+        assertThat("Maven url", new MavenArtifactUrlReference().groupId("foo").artifactId("bar")
+            .classifier("classifier").getURL(), is(equalTo("mvn:foo/bar///classifier")));
     }
 
     @Test
-    public void specifyClasifierWithVersion()
-    {
-        assertThat(
-            "Maven url",
-            new MavenArtifactUrlReference().groupId( "foo" ).artifactId( "bar" ).version( "1.0" )
-                .classifier( "classifier" )
-                .getURL(),
-            is( equalTo( "mvn:foo/bar/1.0//classifier" ) )
-        );
+    public void specifyClasifierWithVersion() {
+        assertThat("Maven url", new MavenArtifactUrlReference().groupId("foo").artifactId("bar")
+            .version("1.0").classifier("classifier").getURL(),
+            is(equalTo("mvn:foo/bar/1.0//classifier")));
     }
 
     @Test
-    public void specifyClasifierWithType()
-    {
-        assertThat(
-            "Maven url",
-            new MavenArtifactUrlReference().groupId( "foo" ).artifactId( "bar" ).type( "xml" )
-                .classifier( "classifier" )
-                .getURL(),
-            is( equalTo( "mvn:foo/bar//xml/classifier" ) )
-        );
+    public void specifyClasifierWithType() {
+        assertThat("Maven url", new MavenArtifactUrlReference().groupId("foo").artifactId("bar")
+            .type("xml").classifier("classifier").getURL(),
+            is(equalTo("mvn:foo/bar//xml/classifier")));
     }
 
     @Test
-    public void specifyClasifierWithVersionAndType()
-    {
-        assertThat(
-            "Maven url",
-            new MavenArtifactUrlReference().groupId( "foo" ).artifactId( "bar" ).version( "1.0" ).type( "xml" )
-                .classifier( "classifier" )
-                .getURL(),
-            is( equalTo( "mvn:foo/bar/1.0/xml/classifier" ) )
-        );
+    public void specifyClasifierWithVersionAndType() {
+        assertThat("Maven url", new MavenArtifactUrlReference().groupId("foo").artifactId("bar")
+            .version("1.0").type("xml").classifier("classifier").getURL(),
+            is(equalTo("mvn:foo/bar/1.0/xml/classifier")));
     }
 
 }

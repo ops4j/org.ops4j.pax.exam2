@@ -23,16 +23,14 @@ import java.util.Set;
 
 /**
  * High Level Access to the Probe (bundle) as well as its {@link TestAddress}es you can invoke.
- *
+ * 
  * @author Toni Menzel
  * @since Jan 29, 2010
  */
-public interface TestProbeProvider
-{
+public interface TestProbeProvider {
 
     Set<TestAddress> getTests();
 
-    InputStream getStream()
-        throws IOException;
+    InputStream getStream() throws IOException;
 
 }

@@ -35,63 +35,57 @@ import org.testng.TestNG;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class SuiteTest implements Notifier, Remote
-{
+public class SuiteTest implements Notifier, Remote {
+
     private List<String> messages;
 
     @Override
-    public void send( String msg ) throws RemoteException
-    {
-        System.out.println( "received: " + msg );
-        messages.add( msg );
+    public void send(String msg) throws RemoteException {
+        System.out.println("received: " + msg);
+        messages.add(msg);
     }
 
     @BeforeMethod
-    public void setUp()
-    {
+    public void setUp() {
         messages = new ArrayList<String>();
     }
-    
+
     @Test
-    public void runSuiteWithPerSuiteStrategy() throws Exception
-    {
-        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerSuite" );
-        checkNumberOfRestartsInSuite( 1 );
+    public void runSuiteWithPerSuiteStrategy() throws Exception {
+        System.setProperty(Constants.EXAM_REACTOR_STRATEGY_KEY, "PerSuite");
+        checkNumberOfRestartsInSuite(1);
     }
 
     @Test
-    public void runSuiteWithPerClassStrategy() throws Exception
-    {
-        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerClass" );
-        checkNumberOfRestartsInSuite( 2 );
+    public void runSuiteWithPerClassStrategy() throws Exception {
+        System.setProperty(Constants.EXAM_REACTOR_STRATEGY_KEY, "PerClass");
+        checkNumberOfRestartsInSuite(2);
     }
 
     @Test
-    public void runSuiteWithPerMethodStrategy() throws Exception
-    {
-        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerMethod" );
-        checkNumberOfRestartsInSuite( 3 );
+    public void runSuiteWithPerMethodStrategy() throws Exception {
+        System.setProperty(Constants.EXAM_REACTOR_STRATEGY_KEY, "PerMethod");
+        checkNumberOfRestartsInSuite(3);
     }
 
-    private void checkNumberOfRestartsInSuite( int numRestarts ) throws Exception
-    {
-        FreePort freePort = new FreePort( 20000, 21000 );
+    private void checkNumberOfRestartsInSuite(int numRestarts) throws Exception {
+        FreePort freePort = new FreePort(20000, 21000);
 
         int rmiPort = freePort.getPort();
-        System.setProperty( "pax.exam.regression.rmi", Integer.toString( rmiPort ) );
-        Registry registry = LocateRegistry.createRegistry( rmiPort );
-        Remote remote = UnicastRemoteObject.exportObject( this, 0 );
-        registry.rebind( "PaxExamNotifier", remote );
+        System.setProperty("pax.exam.regression.rmi", Integer.toString(rmiPort));
+        Registry registry = LocateRegistry.createRegistry(rmiPort);
+        Remote remote = UnicastRemoteObject.exportObject(this, 0);
+        registry.rebind("PaxExamNotifier", remote);
 
         TestNG testNG = new TestNG();
-        testNG.setVerbose( 0 );
-        testNG.setTestClasses( new Class[]{ FilterTest.class, InjectTest.class } );
+        testNG.setVerbose(0);
+        testNG.setTestClasses(new Class[] { FilterTest.class, InjectTest.class });
         testNG.run();
 
-        registry.unbind( "PaxExamNotifier" );
-        UnicastRemoteObject.unexportObject( this, true );
-        UnicastRemoteObject.unexportObject( registry, true );
+        registry.unbind("PaxExamNotifier");
+        UnicastRemoteObject.unexportObject(this, true);
+        UnicastRemoteObject.unexportObject(registry, true);
 
-        assertThat( messages.size(), is( numRestarts ) );
+        assertThat(messages.size(), is(numRestarts));
     }
 }

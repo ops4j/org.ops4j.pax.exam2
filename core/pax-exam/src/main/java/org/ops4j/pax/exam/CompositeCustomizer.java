@@ -22,38 +22,31 @@ import java.io.InputStream;
 
 /**
  * Composite of {@link Customizer}s.
- *
+ * 
  * Used to treat many {@link Customizer}s as a single {@link Customizer}.
- *
+ * 
  * @author Toni Menzel
  */
-public class CompositeCustomizer extends Customizer
-{
+public class CompositeCustomizer extends Customizer {
 
     private final Customizer[] customizers;
 
-    public CompositeCustomizer( Customizer[] customizers )
-    {
+    public CompositeCustomizer(Customizer[] customizers) {
         this.customizers = customizers;
     }
 
     @Override
-    public void customizeEnvironment( File workingFolder )
-    {
-        for( Customizer cust : customizers )
-        {
-            cust.customizeEnvironment( workingFolder );
+    public void customizeEnvironment(File workingFolder) {
+        for (Customizer cust : customizers) {
+            cust.customizeEnvironment(workingFolder);
         }
     }
 
     @Override
-    public InputStream customizeTestProbe( InputStream testProbe )
-        throws Exception
-    {
+    public InputStream customizeTestProbe(InputStream testProbe) throws Exception {
         InputStream inputStream = testProbe;
-        for( Customizer cust : customizers )
-        {
-            inputStream = cust.customizeTestProbe( inputStream );
+        for (Customizer cust : customizers) {
+            inputStream = cust.customizeTestProbe(inputStream);
         }
         return inputStream;
     }

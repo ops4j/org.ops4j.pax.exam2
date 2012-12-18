@@ -24,8 +24,7 @@ package org.ops4j.pax.exam;
  * @author Harald Wellmann
  * @since 0.5.0, April 22, 2009
  */
-public interface Constants
-{
+public interface Constants {
 
     /**
      * The start level at which Pax Exam system bundles are to be started.
@@ -60,7 +59,7 @@ public interface Constants
      * Manifest header specifying the string of executable services.
      */
     static final String PROBE_EXECUTABLE = "PaxExam-Executable";
-    
+
     /** Name of configuration properties file. */
     static final String EXAM_PROPERTIES_FILE = "exam.properties";
 
@@ -92,7 +91,7 @@ public interface Constants
      * Default reactor strategy. Legal values are {@code PerSuite, PerClass, PerMethod}.
      */
     static final String EXAM_REACTOR_STRATEGY_KEY = "pax.exam.reactor.strategy";
-    
+
     static final String EXAM_REACTOR_STRATEGY_PER_SUITE = "PerSuite";
     static final String EXAM_REACTOR_STRATEGY_PER_CLASS = "PerClass";
     static final String EXAM_REACTOR_STRATEGY_PER_METHOD = "PerMethod";
@@ -101,24 +100,24 @@ public interface Constants
      * Timeout for service lookup in milliseconds.
      */
     static final String EXAM_SERVICE_TIMEOUT_KEY = "pax.exam.service.timeout";
-    
+
     /**
      * Default value for service lookup timeout (10 seconds).
      */
     static final String EXAM_SERVICE_TIMEOUT_DEFAULT = "10000";
-    
+
     /**
      * The logging system to be provisioned by Pax Exam.
      */
     static final String EXAM_LOGGING_KEY = "pax.exam.logging";
-    
+
     /**
      * Provision Pax Logging as logging system. (Default value).
      */
     static final String EXAM_LOGGING_PAX_LOGGING = "pax-logging";
-    
+
     /**
      * Do not provision any logging system and leave it to the user.
      */
-    static final String EXAM_LOGGING_NONE = "none";    
+    static final String EXAM_LOGGING_NONE = "none";
 }

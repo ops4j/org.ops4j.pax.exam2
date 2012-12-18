@@ -20,5 +20,6 @@ package org.ops4j.pax.exam.cdi.spi;
 import javax.enterprise.inject.spi.BeanManager;
 
 public interface BeanManagerProvider {
-	BeanManager getBeanManager();
+
+    BeanManager getBeanManager();
 }

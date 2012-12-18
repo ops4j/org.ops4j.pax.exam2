@@ -21,14 +21,12 @@ import static org.ops4j.lang.NullArgumentException.*;
 
 /**
  * Option specifying provisioning from an maven url (Pax URL mvn: handler).
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public class MavenArtifactProvisionOption
-    extends AbstractProvisionOption<MavenArtifactProvisionOption>
-    implements MavenUrlReference
-{
+public class MavenArtifactProvisionOption extends
+    AbstractProvisionOption<MavenArtifactProvisionOption> implements MavenUrlReference {
 
     /**
      * Maven artifact.
@@ -42,28 +40,26 @@ public class MavenArtifactProvisionOption
     /**
      * Constructor.
      */
-    public MavenArtifactProvisionOption()
-    {
+    public MavenArtifactProvisionOption() {
         artifact = new MavenArtifactUrlReference();
     }
 
     /**
      * Constructor based on a mevn artifact option.
-     *
-     * @param artifact maven artifact (cannot be null)
+     * 
+     * @param artifact
+     *            maven artifact (cannot be null)
      */
-    public MavenArtifactProvisionOption( final MavenUrlReference artifact )
-    {
-        validateNotNull( artifact, "Maven artifact" );
+    public MavenArtifactProvisionOption(final MavenUrlReference artifact) {
+        validateNotNull(artifact, "Maven artifact");
         this.artifact = artifact;
     }
 
     /**
      * {@inheritDoc}
      */
-    public MavenArtifactProvisionOption groupId( final String groupId )
-    {
-        artifact.groupId( groupId );
+    public MavenArtifactProvisionOption groupId(final String groupId) {
+        artifact.groupId(groupId);
         updateUsed = false;
         return itself();
     }
@@ -71,53 +67,48 @@ public class MavenArtifactProvisionOption
     /**
      * {@inheritDoc}
      */
-    public MavenArtifactProvisionOption artifactId( final String artifactId )
-    {
-        artifact.artifactId( artifactId );
+    public MavenArtifactProvisionOption artifactId(final String artifactId) {
+        artifact.artifactId(artifactId);
         return itself();
     }
 
     /**
      * {@inheritDoc}
      */
-    public MavenArtifactProvisionOption type( final String type )
-    {
-        artifact.type( type );
+    public MavenArtifactProvisionOption type(final String type) {
+        artifact.type(type);
         return itself();
     }
 
     /**
      * {@inheritDoc}
      */
-    public MavenArtifactProvisionOption classifier( String classifier )
-    {
-        artifact.classifier( classifier );
+    public MavenArtifactProvisionOption classifier(String classifier) {
+        artifact.classifier(classifier);
         return itself();
     }
 
     /**
      * {@inheritDoc}
      */
-    public MavenArtifactProvisionOption version( final String version )
-    {
-        artifact.version( version );
+    public MavenArtifactProvisionOption version(final String version) {
+        artifact.version(version);
         return itself();
     }
 
     /**
      * {@inheritDoc}
      */
-    public MavenArtifactProvisionOption version( final MavenArtifactUrlReference.VersionResolver resolver )
-    {
-        artifact.version( resolver );
+    public MavenArtifactProvisionOption version(
+        final MavenArtifactUrlReference.VersionResolver resolver) {
+        artifact.version(resolver);
         return itself();
     }
 
     /**
      * {@inheritDoc}
      */
-    public MavenArtifactProvisionOption versionAsInProject()
-    {
+    public MavenArtifactProvisionOption versionAsInProject() {
         artifact.versionAsInProject();
         return itself();
     }
@@ -125,37 +116,31 @@ public class MavenArtifactProvisionOption
     /**
      * {@inheritDoc}
      */
-    public Boolean isSnapshot()
-    {
+    public Boolean isSnapshot() {
         return artifact.isSnapshot();
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getURL()
-    {
+    public String getURL() {
         return artifact.getURL();
     }
 
     /**
-     * {@inheritDoc}
-     * Keep track if the user used the update method, so we do not override the value when handling automatic update on
-     * SNAPSHOT versions.
+     * {@inheritDoc} Keep track if the user used the update method, so we do not override the value
+     * when handling automatic update on SNAPSHOT versions.
      */
     @Override
-    public MavenArtifactProvisionOption update( final Boolean shouldUpdate )
-    {
+    public MavenArtifactProvisionOption update(final Boolean shouldUpdate) {
         updateUsed = true;
-        return super.update( shouldUpdate );
+        return super.update(shouldUpdate);
     }
 
     @Override
-    public boolean shouldUpdate()
-    {
-        if( !updateUsed )
-        {
-            super.update( isSnapshot() != null && isSnapshot() );
+    public boolean shouldUpdate() {
+        if (!updateUsed) {
+            super.update(isSnapshot() != null && isSnapshot());
         }
         return super.shouldUpdate();
     }
@@ -164,47 +149,42 @@ public class MavenArtifactProvisionOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return artifact.toString();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected MavenArtifactProvisionOption itself()
-    {
+    protected MavenArtifactProvisionOption itself() {
         return this;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ( ( artifact == null ) ? 0 : artifact.hashCode() );
-        result = prime * result + ( updateUsed ? 1231 : 1237 );
+        result = prime * result + ((artifact == null) ? 0 : artifact.hashCode());
+        result = prime * result + (updateUsed ? 1231 : 1237);
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( !super.equals( obj ) )
+        if (!super.equals(obj))
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         MavenArtifactProvisionOption other = (MavenArtifactProvisionOption) obj;
-        if( artifact == null )
-        {
-            if( other.artifact != null )
+        if (artifact == null) {
+            if (other.artifact != null)
                 return false;
         }
-        else if( !artifact.equals( other.artifact ) )
+        else if (!artifact.equals(other.artifact))
             return false;
-        if( updateUsed != other.updateUsed )
+        if (updateUsed != other.updateUsed)
             return false;
         return true;
     }

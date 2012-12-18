@@ -21,74 +21,69 @@ package org.ops4j.pax.exam.options;
  * 
  * @author Harald Wellmann
  */
-public class UrlDeploymentOption implements DeploymentOption, UrlReference
-{
+public class UrlDeploymentOption implements DeploymentOption, UrlReference {
+
     private UrlReference urlReference;
     private String name;
     private String contextRoot;
-    
+
     /**
      * Constructor.
-     *
-     * @param url provision url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If url is null or empty
+     * 
+     * @param url
+     *            provision url (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null or empty
      */
-    public UrlDeploymentOption( final String url )
-    {
-        this.urlReference = new RawUrlReference( url );
+    public UrlDeploymentOption(final String url) {
+        this.urlReference = new RawUrlReference(url);
     }
 
     /**
      * Constructor.
-     *
-     * @param url provision url (cannot be null)
-     *
-     * @throws IllegalArgumentException - If url is null
+     * 
+     * @param url
+     *            provision url (cannot be null)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null
      */
-    public UrlDeploymentOption( final UrlReference url )
-    {
+    public UrlDeploymentOption(final UrlReference url) {
         this.urlReference = url;
     }
-    
-    public UrlReference getUrlReference()
-    {
+
+    public UrlReference getUrlReference() {
         return urlReference;
     }
-    
-    public UrlDeploymentOption name( String name )
-    {
+
+    public UrlDeploymentOption name(String name) {
         this.name = name;
         return this;
     }
-    
-    public String getName() 
-    {
+
+    public String getName() {
         return name;
     }
 
-    public UrlDeploymentOption contextRoot( String contextRoot )
-    {
+    public UrlDeploymentOption contextRoot(String contextRoot) {
         this.contextRoot = contextRoot;
         return this;
     }
-    
-    public String getContextRoot()
-    {
+
+    public String getContextRoot() {
         return contextRoot;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected UrlDeploymentOption itself()
-    {
+    protected UrlDeploymentOption itself() {
         return this;
     }
 
     @Override
-    public String getURL()
-    {
+    public String getURL() {
         return urlReference.getURL();
     }
 

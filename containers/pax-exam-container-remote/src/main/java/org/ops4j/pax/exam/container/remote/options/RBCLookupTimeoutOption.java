@@ -21,24 +21,23 @@ import org.ops4j.pax.exam.options.TimeoutOption;
 
 /**
  * Option specifying the timeout (in milliseconds) while looking up the container process.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0 December 10, 2008
  */
-public class RBCLookupTimeoutOption
-    extends TimeoutOption
-{
+public class RBCLookupTimeoutOption extends TimeoutOption {
 
     /**
      * Constructor.
-     *
-     * @param timeoutInMillis timeout (in millis) to look up the server part
-     *
-     * @throws IllegalArgumentException - If timeout is null
+     * 
+     * @param timeoutInMillis
+     *            timeout (in millis) to look up the server part
+     * 
+     * @throws IllegalArgumentException
+     *             - If timeout is null
      */
-    public RBCLookupTimeoutOption( final long timeoutInMillis )
-    {
-        super( timeoutInMillis );
+    public RBCLookupTimeoutOption(final long timeoutInMillis) {
+        super(timeoutInMillis);
     }
 
 }

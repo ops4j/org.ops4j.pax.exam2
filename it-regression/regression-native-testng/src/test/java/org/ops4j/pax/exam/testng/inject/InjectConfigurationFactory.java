@@ -26,19 +26,15 @@ import org.ops4j.pax.exam.ConfigurationFactory;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.util.PathUtils;
 
-public class InjectConfigurationFactory implements ConfigurationFactory
-{
+public class InjectConfigurationFactory implements ConfigurationFactory {
 
     @Override
-    public Option[] createConfiguration()
-    {
-        return options(
-            mavenBundle( "org.testng", "testng", "6.3.1" ),
-            url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/target/regression-pde-bundle/" ),
-                    
-            systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("WARN"),
-            systemProperty("osgi.console").value("6666") );
+    public Option[] createConfiguration() {
+        return options(mavenBundle("org.testng", "testng", "6.3.1"), url("reference:file:"
+            + PathUtils.getBaseDir() + "/target/regression-pde-bundle/"),
+
+        systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("WARN"),
+            systemProperty("osgi.console").value("6666"));
     }
 
 }

@@ -21,12 +21,11 @@ import static org.ops4j.lang.NullArgumentException.*;
 
 /**
  * Option specifying a framework property.
- *
+ * 
  * @author Harald Wellmann
  * @since 2.3.0, August 2011
  */
-public class FrameworkPropertyOption implements ValueOption<Object>
-{
+public class FrameworkPropertyOption implements ValueOption<Object> {
 
     /**
      * System property key (cannot be null or empty).
@@ -39,50 +38,50 @@ public class FrameworkPropertyOption implements ValueOption<Object>
 
     /**
      * Constructor.
-     *
-     * @param key system property key (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If key is null or empty
+     * 
+     * @param key
+     *            system property key (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If key is null or empty
      */
-    public FrameworkPropertyOption( final String key )
-    {
+    public FrameworkPropertyOption(final String key) {
         this.key = key;
         value = "";
     }
 
     /**
      * Sets the system property value.
-     *
-     * @param value system property value (cannot be null, can be empty)
-     *
+     * 
+     * @param value
+     *            system property value (cannot be null, can be empty)
+     * 
      * @return itself, for fluent api usage
-     *
-     * @throws IllegalArgumentException - If value is null
+     * 
+     * @throws IllegalArgumentException
+     *             - If value is null
      */
-    public FrameworkPropertyOption value( final Object value )
-    {
-        validateNotNull( value, "Value" );
+    public FrameworkPropertyOption value(final Object value) {
+        validateNotNull(value, "Value");
         this.value = value;
         return this;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return system property key (cannot be null or empty)
      */
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return system property value (cannot be null, can be empty)
      */
-    public Object getValue()
-    {
+    public Object getValue() {
         return value;
     }
 
@@ -90,13 +89,12 @@ public class FrameworkPropertyOption implements ValueOption<Object>
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "FrameworkPropertyOption" );
-        sb.append( "{key='" ).append( key ).append( '\'' );
-        sb.append( ", value='" ).append( value ).append( '\'' );
-        sb.append( '}' );
+        sb.append("FrameworkPropertyOption");
+        sb.append("{key='").append(key).append('\'');
+        sb.append(", value='").append(value).append('\'');
+        sb.append('}');
         return sb.toString();
     }
 

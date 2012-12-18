@@ -21,17 +21,15 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * An option composed of other options.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public interface CompositeOption
-    extends Option
-{
+public interface CompositeOption extends Option {
 
     /**
      * Getter.
-     *
+     * 
      * @return composed options (cannot be null)
      */
     Option[] getOptions();

@@ -45,20 +45,20 @@ public class AuthorTest {
     public void setUp() {
         if (getNumBooks() != 0)
             return;
-        
+
         Author mann = new Author();
         mann.setFirstName("Thomas");
         mann.setLastName("Mann");
-        
+
         Author steinbeck = new Author();
         steinbeck.setFirstName("John");
         steinbeck.setLastName("Steinbeck");
-        
+
         Book buddenbrooks = new Book();
         buddenbrooks.setTitle("Buddenbrooks");
         buddenbrooks.setAuthor(mann);
         mann.getBooks().add(buddenbrooks);
-        
+
         Book eden = new Book();
         eden.setTitle("East of Eden");
         eden.setAuthor(steinbeck);
@@ -84,10 +84,9 @@ public class AuthorTest {
         assertEquals("Buddenbrooks", book.getTitle());
     }
 
-    public long getNumBooks()
-    {
+    public long getNumBooks() {
         String jpql = "select count(b) from Book b";
         Long numBooks = (Long) em.createQuery(jpql).getSingleResult();
         return numBooks;
-    }    
+    }
 }

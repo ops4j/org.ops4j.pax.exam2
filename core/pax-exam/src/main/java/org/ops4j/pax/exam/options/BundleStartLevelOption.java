@@ -21,13 +21,11 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * Option specifying initial bundle start level.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 23, 2009
  */
-public class BundleStartLevelOption
-    implements Option
-{
+public class BundleStartLevelOption implements Option {
 
     /**
      * Start level.
@@ -36,27 +34,26 @@ public class BundleStartLevelOption
 
     /**
      * Constructor.
-     *
-     * @param startLevel initial bundle start level (must be bigger then zero)
-     *
-     * @throws IllegalArgumentException - If start level is <= 0
+     * 
+     * @param startLevel
+     *            initial bundle start level (must be bigger then zero)
+     * 
+     * @throws IllegalArgumentException
+     *             - If start level is <= 0
      */
-    public BundleStartLevelOption( final int startLevel )
-    {
-        if( startLevel <= 0 )
-        {
-            throw new IllegalArgumentException( "Start level must be bigger then zero" );
+    public BundleStartLevelOption(final int startLevel) {
+        if (startLevel <= 0) {
+            throw new IllegalArgumentException("Start level must be bigger then zero");
         }
         this.startLevel = startLevel;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return startlevel (bigger then zero)
      */
-    public int getStartLevel()
-    {
+    public int getStartLevel() {
         return startLevel;
     }
 
@@ -64,12 +61,9 @@ public class BundleStartLevelOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
-        return new StringBuilder()
-            .append( BundleStartLevelOption.class.getSimpleName() )
-            .append( "{startlevel='" ).append( startLevel ).append( "\'}" )
-            .toString();
+    public String toString() {
+        return new StringBuilder().append(BundleStartLevelOption.class.getSimpleName())
+            .append("{startlevel='").append(startLevel).append("\'}").toString();
     }
 
 }

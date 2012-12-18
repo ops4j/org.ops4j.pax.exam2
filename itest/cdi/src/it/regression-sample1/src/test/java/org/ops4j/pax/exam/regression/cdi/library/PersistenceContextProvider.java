@@ -26,19 +26,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-
 /**
  * Provides a persistence context just for testing.
+ * 
  * @author hwellmann
- *
+ * 
  */
 public class PersistenceContextProvider {
 
     protected EntityManager em;
 
-    
     /**
      * Use a producer method so that CDI will find this EntityManager.
+     * 
      * @return
      * @throws IOException
      */
@@ -52,16 +52,13 @@ public class PersistenceContextProvider {
 
     private void createEntityManager() {
         Map<String, String> props = new HashMap<String, String>();
-        props.put("javax.persistence.jdbc.driver",
-                "org.apache.derby.jdbc.EmbeddedDriver");
-        props.put("javax.persistence.jdbc.url",
-                "jdbc:derby:target/jeeunitDb;create=true");
+        props.put("javax.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
+        props.put("javax.persistence.jdbc.url", "jdbc:derby:target/jeeunitDb;create=true");
         props.put("javax.persistence.jdbc.user", "jeeunit");
         props.put("javax.persistence.jdbc.password", "jeeunit");
         props.put("hibernate.hbm2ddl.auto", "create");
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory(
-                "library", props);
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("library", props);
         em = emf.createEntityManager();
     }
 }

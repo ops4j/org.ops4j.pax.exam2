@@ -24,19 +24,16 @@ import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator
-{
+public class Activator implements BundleActivator {
 
-    public void start( BundleContext context ) throws Exception
-    {
+    public void start(BundleContext context) throws Exception {
         Injector injector = new ServiceInjector();
         Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put( "type", "default" );
-        context.registerService( Injector.class.getName(), injector, props );
+        props.put("type", "default");
+        context.registerService(Injector.class.getName(), injector, props);
     }
 
-    public void stop( BundleContext context ) throws Exception
-    {
+    public void stop(BundleContext context) throws Exception {
         // empty
     }
 }

@@ -41,7 +41,7 @@ public class MovieDbImportService {
 
     @PersistenceContext
     private EntityManager em;
-    
+
     @Inject
     private MovieDbApiClient client;
 
@@ -49,7 +49,7 @@ public class MovieDbImportService {
     private MovieDbLocalStorage localStorage;
 
     public Map<Integer, String> importMovies(Map<Integer, Integer> ranges) {
-        final Map<Integer,String> movies=new LinkedHashMap<Integer, String>();
+        final Map<Integer, String> movies = new LinkedHashMap<Integer, String>();
         for (Map.Entry<Integer, Integer> entry : ranges.entrySet()) {
             for (int id = entry.getKey(); id <= entry.getValue(); id++) {
                 String result = importMovieFailsafe(id);
@@ -63,7 +63,8 @@ public class MovieDbImportService {
         try {
             Movie movie = doImportMovie(id);
             return movie.getTitle();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return e.getMessage();
         }
     }
@@ -76,13 +77,14 @@ public class MovieDbImportService {
         logger.info("Importing movie " + movieId);
 
         Movie movie = new Movie();
-        movie.setId( movieId );
+        movie.setId(movieId);
 
         Map<String, ?> data = loadMovieData(movieId);
-        if (data.containsKey("not_found")) throw new RuntimeException("Data for Movie "+movieId+" not found.");
+        if (data.containsKey("not_found"))
+            throw new RuntimeException("Data for Movie " + movieId + " not found.");
         movieDbJsonMapper.mapToMovie(data, movie);
         relatePersonsToMovie(movie, data);
-        em.persist( movie );
+        em.persist(movie);
         return movie;
     }
 
@@ -98,52 +100,49 @@ public class MovieDbImportService {
     }
 
     private void relatePersonsToMovie(Movie movie, Map<String, ?> data) {
-        @SuppressWarnings("unchecked") Collection<Map<String, ?>> cast = (Collection<Map<String, ?>>) data.get("cast");
+        @SuppressWarnings("unchecked")
+        Collection<Map<String, ?>> cast = (Collection<Map<String, ?>>) data.get("cast");
         for (Map<String, ?> entry : cast) {
             Integer id = (Integer) entry.get("id");
             String jobName = (String) entry.get("job");
-            if ("Actor".equals( jobName ))
-            {
+            if ("Actor".equals(jobName)) {
                 Actor actor = new Actor();
                 actor.setId(id);
                 doImportPerson(actor);
                 Role role = new Role();
-                role.setActor( actor );
-                role.setMovie( movie );
-                role.setName( (String) entry.get("character"));
-                em.persist( role );
-                movie.getRoles().add( role );
+                role.setActor(actor);
+                role.setMovie(movie);
+                role.setName((String) entry.get("character"));
+                em.persist(role);
+                movie.getRoles().add(role);
             }
-            else if ("Director".equals( jobName ))
-            {
+            else if ("Director".equals(jobName)) {
                 Director director = new Director();
                 director.setId(id);
                 director.getMovies().add(movie);
                 doImportPerson(director);
-                movie.setDirector( director );
+                movie.setDirector(director);
             }
-            else
-            {
-                if (logger.isInfoEnabled()) logger.info("Could not add person with job "+jobName+" "+entry);
-                continue;                
+            else {
+                if (logger.isInfoEnabled())
+                    logger.info("Could not add person with job " + jobName + " " + entry);
+                continue;
             }
         }
     }
-    
+
     private void doImportPerson(Person person) {
         String personId = Integer.toString(person.getId());
         logger.info("Importing person " + personId);
         Map<String, ?> data = loadPersonData(personId);
-        if (data.containsKey("not_found")) throw new RuntimeException("Data for Person "+personId+" not found.");
+        if (data.containsKey("not_found"))
+            throw new RuntimeException("Data for Person " + personId + " not found.");
         movieDbJsonMapper.mapToPerson(data, person);
         Person persistentPerson = em.find(Person.class, person.getId());
-        if (persistentPerson == null)
-        {
-            em.persist( person );
+        if (persistentPerson == null) {
+            em.persist(person);
         }
     }
-
-    
 
     private Map<String, ?> loadPersonData(String personId) {
         if (localStorage.hasPerson(personId)) {

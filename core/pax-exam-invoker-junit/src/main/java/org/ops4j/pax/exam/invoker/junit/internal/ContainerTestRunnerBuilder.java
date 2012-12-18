@@ -21,25 +21,26 @@ import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
 import org.ops4j.pax.exam.util.Injector;
 
-public class ContainerTestRunnerBuilder extends RunnerBuilder
-{
+public class ContainerTestRunnerBuilder extends RunnerBuilder {
+
     private Injector injector;
 
     /**
-     * Constructs a request for the given class which will be injected with dependencies from
-     * the given bundle context by the given injector
-     * @param testClass  test class to be run
-     * @param injector   injector for injecting dependencies
+     * Constructs a request for the given class which will be injected with dependencies from the
+     * given bundle context by the given injector
+     * 
+     * @param testClass
+     *            test class to be run
+     * @param injector
+     *            injector for injecting dependencies
      */
-    public ContainerTestRunnerBuilder( Injector injector )
-    {
+    public ContainerTestRunnerBuilder(Injector injector) {
         this.injector = injector;
     }
 
     @Override
-    public Runner runnerForClass( Class<?> testClass ) throws Throwable
-    {
-        return new ContainerTestRunner( testClass, injector );
+    public Runner runnerForClass(Class<?> testClass) throws Throwable {
+        return new ContainerTestRunner(testClass, injector);
     }
 
 }

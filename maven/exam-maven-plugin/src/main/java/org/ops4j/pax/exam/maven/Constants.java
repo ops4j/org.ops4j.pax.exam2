@@ -16,11 +16,11 @@
  */
 package org.ops4j.pax.exam.maven;
 
-public class Constants
-{
-    /**
-     * Key for storing and looking up the Pax Exam container in the Maven plugin context.
-     * Used for communication between the mojos of this Maven plugin.
-     */
-    public static final String TEST_CONTAINER_KEY = "exam.testContainer";
+public class Constants {
+
+	/**
+	 * Key for storing and looking up the Pax Exam container in the Maven plugin context. Used for
+	 * communication between the mojos of this Maven plugin.
+	 */
+	public static final String TEST_CONTAINER_KEY = "exam.testContainer";
 }

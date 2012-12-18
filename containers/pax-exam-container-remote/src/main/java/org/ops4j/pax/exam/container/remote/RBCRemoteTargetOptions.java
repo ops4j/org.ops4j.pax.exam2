@@ -24,31 +24,31 @@ import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
  * @author Toni Menzel
  * @since Jan 25, 2010
  */
-public class RBCRemoteTargetOptions
-{
+public class RBCRemoteTargetOptions {
 
     /**
      * Creates a {@link org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption}.
-     *
-     * @param timeoutInMillis timeout in millis
-     *
+     * 
+     * @param timeoutInMillis
+     *            timeout in millis
+     * 
      * @return timeout option
      */
-    public static RBCLookupTimeoutOption waitForRBCFor( final Integer timeoutInMillis )
-    {
-        return new RBCLookupTimeoutOption( timeoutInMillis );
+    public static RBCLookupTimeoutOption waitForRBCFor(final Integer timeoutInMillis) {
+        return new RBCLookupTimeoutOption(timeoutInMillis);
     }
 
     /**
      * Creates a {@link org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption}.
-     *
-     * @param host to use for rmi rgistry
-     * @param port port where the rbc server is listening at
-     *
+     * 
+     * @param host
+     *            to use for rmi rgistry
+     * @param port
+     *            port where the rbc server is listening at
+     * 
      * @return port option
      */
-    public static RBCPortOption location( String host, final Integer port )
-    {
-        return new RBCPortOption( host, port );
+    public static RBCPortOption location(String host, final Integer port) {
+        return new RBCPortOption(host, port);
     }
 }

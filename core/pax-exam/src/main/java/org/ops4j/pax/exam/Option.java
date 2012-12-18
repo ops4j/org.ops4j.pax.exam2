@@ -19,11 +19,10 @@ package org.ops4j.pax.exam;
 
 /**
  * Marker interface for integration regression user specified optons.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public interface Option
-{
-    
+public interface Option {
+
 }

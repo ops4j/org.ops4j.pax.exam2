@@ -42,113 +42,98 @@ import org.ops4j.pax.exam.spi.PaxExamRuntime;
  * @requiresDependencyResolution test
  * @description Starts Pax Exam in server mode
  */
-public class StartContainerMojo extends AbstractMojo
-{
+public class StartContainerMojo extends AbstractMojo {
 
-    /**
-     * Fully qualified name of a Java class with a {@code @Configuration} method, providing the test
-     * container configuration.
-     * 
-     * @parameter
-     * @required
-     */
-    private String configClass;
+	/**
+	 * Fully qualified name of a Java class with a {@code @Configuration} method, providing the test
+	 * container configuration.
+	 * 
+	 * @parameter
+	 * @required
+	 */
+	private String configClass;
 
-    /**
-     * Test classpath.
-     * 
-     * @parameter expression="${project.testClasspathElements}"
-     * @required
-     */
-    protected List<String> classpathElements;
+	/**
+	 * Test classpath.
+	 * 
+	 * @parameter expression="${project.testClasspathElements}"
+	 * @required
+	 */
+	protected List<String> classpathElements;
 
-    private ClasspathClassLoader testClassLoader;
+	private ClasspathClassLoader testClassLoader;
 
-    private TestContainer testContainer;
+	private TestContainer testContainer;
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
-        /*
-         * The test classpath of the project using this plugin is not visible to the classloader of
-         * this plugin, but it may be needed to loaded classes and resources, e.g. from
-         * META-INF/services. So we build our own class loader for the test classpath.
-         */
-        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            ClasspathClassLoader cl = getTestClassLoader();
-            Thread.currentThread().setContextClassLoader( cl );
-            run( cl );
-        }
-        catch ( Exception e )
-        {
-            getLog().error( e );
-            throw new MojoExecutionException( "Failed to start Pax Exam server for "
-                    + configClass, e );
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( ccl );
-        }
-    }
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		/*
+		 * The test classpath of the project using this plugin is not visible to the classloader of
+		 * this plugin, but it may be needed to loaded classes and resources, e.g. from
+		 * META-INF/services. So we build our own class loader for the test classpath.
+		 */
+		ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+		try {
+			ClasspathClassLoader cl = getTestClassLoader();
+			Thread.currentThread().setContextClassLoader(cl);
+			run(cl);
+		}
+		catch (Exception e) {
+			getLog().error(e);
+			throw new MojoExecutionException("Failed to start Pax Exam server for " + configClass,
+				e);
+		}
+		finally {
+			Thread.currentThread().setContextClassLoader(ccl);
+		}
+	}
 
-    @SuppressWarnings( { "rawtypes", "unchecked" } )
-    private void run( ClassLoader ccl ) throws Exception
-    {
-        /*
-         * Make sure we can load use Pax URL protocol handles defined as client project
-         * dependencies. 
-         */
-        URL.setURLStreamHandlerFactory( new PaxUrlStreamHandlerFactory( ccl ) );
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void run(ClassLoader ccl) throws Exception {
+		/*
+		 * Make sure we can load use Pax URL protocol handles defined as client project
+		 * dependencies.
+		 */
+		URL.setURLStreamHandlerFactory(new PaxUrlStreamHandlerFactory(ccl));
 
-        Option[] options = getConfigurationOptions();
+		Option[] options = getConfigurationOptions();
 
-        
-        ExamSystem system = DefaultExamSystem.create( options ); 
-        testContainer = PaxExamRuntime.createContainer( system );
-        testContainer.start();
+		ExamSystem system = DefaultExamSystem.create(options);
+		testContainer = PaxExamRuntime.createContainer(system);
+		testContainer.start();
 
-        Map context = getPluginContext();
-        context.put( TEST_CONTAINER_KEY, testContainer );
-    }
+		Map context = getPluginContext();
+		context.put(TEST_CONTAINER_KEY, testContainer);
+	}
 
-    private Option[] getConfigurationOptions() throws Exception
-    {
-        Class<?> klass = Class.forName( configClass, true, testClassLoader );
-        Method m = getConfigurationMethod( klass );
-        Object configClassInstance = klass.newInstance();
-        Option[] options = (Option[]) m.invoke( configClassInstance );
-        return options;
-    }
+	private Option[] getConfigurationOptions() throws Exception {
+		Class<?> klass = Class.forName(configClass, true, testClassLoader);
+		Method m = getConfigurationMethod(klass);
+		Object configClassInstance = klass.newInstance();
+		Option[] options = (Option[]) m.invoke(configClassInstance);
+		return options;
+	}
 
-    private Method getConfigurationMethod( Class<?> klass )
-    {
-        Method[] methods = klass.getMethods();
-        for( Method m : methods )
-        {
-            Configuration conf = m.getAnnotation( Configuration.class );
-            if( conf != null )
-            {
-                return m;
-            }
-        }
-        throw new IllegalArgumentException( klass.getName() + " has no @Configuration method" );
-    }
+	private Method getConfigurationMethod(Class<?> klass) {
+		Method[] methods = klass.getMethods();
+		for (Method m : methods) {
+			Configuration conf = m.getAnnotation(Configuration.class);
+			if (conf != null) {
+				return m;
+			}
+		}
+		throw new IllegalArgumentException(klass.getName() + " has no @Configuration method");
+	}
 
-    protected ClasspathClassLoader getTestClassLoader()
-    {
-        if( testClassLoader == null )
-        {
-            try
-            {
-                testClassLoader = new ClasspathClassLoader( classpathElements );
-            }
-            catch ( MalformedURLException exc )
-            {
-                throw new IllegalStateException( "error in classpath", exc );
-            }
-        }
-        return testClassLoader;
-    }
+	protected ClasspathClassLoader getTestClassLoader() {
+		if (testClassLoader == null) {
+			try {
+				testClassLoader = new ClasspathClassLoader(classpathElements);
+			}
+			catch (MalformedURLException exc) {
+				throw new IllegalStateException("error in classpath", exc);
+			}
+		}
+		return testClassLoader;
+	}
 }

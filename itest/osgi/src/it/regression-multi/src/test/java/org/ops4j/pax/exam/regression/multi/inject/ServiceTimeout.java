@@ -31,20 +31,18 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
  * Service lookup for injecting a non-existing service should time out.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
-@RunWith( PaxExam.class )
-@ExamReactorStrategy( PerClass.class )
-public class ServiceTimeout 
-{
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerClass.class)
+public class ServiceTimeout {
 
     @Inject
     private Driver missingService;
 
     @Test
-    public void getInjectedService()
-    {
+    public void getInjectedService() {
         missingService.getMajorVersion();
-        fail( "this method should never run" );
+        fail("this method should never run");
     }
 }

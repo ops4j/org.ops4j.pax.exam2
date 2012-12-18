@@ -23,39 +23,36 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 
-public class WabSampleConfiguration
-{
+public class WabSampleConfiguration {
+
     @Configuration
-    public Option[] configuration()
-    {
-        return options(
-            frameworkProperty( "felix.bootdelegation.implicit" ).value( "false" ),
-            frameworkProperty( "osgi.console" ).value( "6666" ),
-            frameworkProperty( "org.osgi.service.http.port" ).value("8181"),
+    public Option[] configuration() {
+        return options(frameworkProperty("felix.bootdelegation.implicit").value("false"),
+            frameworkProperty("osgi.console").value("6666"),
+            frameworkProperty("org.osgi.service.http.port").value("8181"),
 
-            mavenBundle( "org.ops4j.pax.web", "pax-web-spi" ).version( "2.0.2" ),
-            mavenBundle( "org.ops4j.pax.web", "pax-web-api" ).version( "2.0.2" ),
-            mavenBundle( "org.ops4j.pax.web", "pax-web-extender-war" ).version( "2.0.2" ),
-            mavenBundle( "org.ops4j.pax.web", "pax-web-extender-whiteboard" ).version( "2.0.2" ),
-            mavenBundle( "org.ops4j.pax.web", "pax-web-jetty" ).version( "2.0.2" ),
-            mavenBundle( "org.ops4j.pax.web", "pax-web-runtime" ).version( "2.0.2" ),
-            mavenBundle( "org.ops4j.pax.web", "pax-web-jsp" ).version( "2.0.2" ),
-            mavenBundle( "org.eclipse.jdt.core.compiler", "ecj" ).version( "3.5.1" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-util" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-io" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-http" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-continuation" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-server" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-security" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-xml" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.eclipse.jetty", "jetty-servlet" ).version( "8.1.4.v20120524" ),
-            mavenBundle( "org.apache.geronimo.specs", "geronimo-servlet_3.0_spec" ).version( "1.0" ),
-            mavenBundle( "org.osgi", "org.osgi.compendium", "4.3.0" ),
+            mavenBundle("org.ops4j.pax.web", "pax-web-spi").version("2.0.2"),
+            mavenBundle("org.ops4j.pax.web", "pax-web-api").version("2.0.2"),
+            mavenBundle("org.ops4j.pax.web", "pax-web-extender-war").version("2.0.2"),
+            mavenBundle("org.ops4j.pax.web", "pax-web-extender-whiteboard").version("2.0.2"),
+            mavenBundle("org.ops4j.pax.web", "pax-web-jetty").version("2.0.2"),
+            mavenBundle("org.ops4j.pax.web", "pax-web-runtime").version("2.0.2"),
+            mavenBundle("org.ops4j.pax.web", "pax-web-jsp").version("2.0.2"),
+            mavenBundle("org.eclipse.jdt.core.compiler", "ecj").version("3.5.1"),
+            mavenBundle("org.eclipse.jetty", "jetty-util").version("8.1.4.v20120524"),
+            mavenBundle("org.eclipse.jetty", "jetty-io").version("8.1.4.v20120524"),
+            mavenBundle("org.eclipse.jetty", "jetty-http").version("8.1.4.v20120524"),
+            mavenBundle("org.eclipse.jetty", "jetty-continuation").version("8.1.4.v20120524"),
+            mavenBundle("org.eclipse.jetty", "jetty-server").version("8.1.4.v20120524"),
+            mavenBundle("org.eclipse.jetty", "jetty-security").version("8.1.4.v20120524"),
+            mavenBundle("org.eclipse.jetty", "jetty-xml").version("8.1.4.v20120524"),
+            mavenBundle("org.eclipse.jetty", "jetty-servlet").version("8.1.4.v20120524"),
+            mavenBundle("org.apache.geronimo.specs", "geronimo-servlet_3.0_spec").version("1.0"),
+            mavenBundle("org.osgi", "org.osgi.compendium", "4.3.0"),
 
-            mavenBundle( "org.slf4j", "slf4j-api", "1.6.4" ),
-            mavenBundle( "org.slf4j", "slf4j-simple", "1.6.4" ).noStart(),
+            mavenBundle("org.slf4j", "slf4j-api", "1.6.4"),
+            mavenBundle("org.slf4j", "slf4j-simple", "1.6.4").noStart(),
 
-            mavenBundle( "org.apache.geronimo.samples.osgi", "wab-sample", "3.0.0" )
-           );
+            mavenBundle("org.apache.geronimo.samples.osgi", "wab-sample", "3.0.0"));
     }
 }

@@ -24,12 +24,10 @@ import org.ops4j.pax.exam.CompositeCustomizer;
  * @author Toni Menzel
  * @since Feb 27, 2010
  */
-public class CompositeCustomizerTest
-{
+public class CompositeCustomizerTest {
 
     @Test
-    public void create()
-    {
-        new CompositeCustomizer( null );
+    public void create() {
+        new CompositeCustomizer(null);
     }
 }

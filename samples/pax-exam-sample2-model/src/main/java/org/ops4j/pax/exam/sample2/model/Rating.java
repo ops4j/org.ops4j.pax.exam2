@@ -26,14 +26,14 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "rating")
-public class Rating
-{
+public class Rating {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    
+
     private int stars;
-    
+
     @Lob
     private String comment;
 
@@ -41,74 +41,79 @@ public class Rating
     private User user;
     @ManyToOne
     private Movie movie;
+
     /**
      * @return the id
      */
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
+
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
-    public void setId( int id )
-    {
+    public void setId(int id) {
         this.id = id;
     }
+
     /**
      * @return the stars
      */
-    public int getStars()
-    {
+    public int getStars() {
         return stars;
     }
+
     /**
-     * @param stars the stars to set
+     * @param stars
+     *            the stars to set
      */
-    public void setStars( int stars )
-    {
+    public void setStars(int stars) {
         this.stars = stars;
     }
+
     /**
      * @return the comment
      */
-    public String getComment()
-    {
+    public String getComment() {
         return comment;
     }
+
     /**
-     * @param comment the comment to set
+     * @param comment
+     *            the comment to set
      */
-    public void setComment( String comment )
-    {
+    public void setComment(String comment) {
         this.comment = comment;
     }
+
     /**
      * @return the user
      */
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
+
     /**
-     * @param user the user to set
+     * @param user
+     *            the user to set
      */
-    public void setUser( User user )
-    {
+    public void setUser(User user) {
         this.user = user;
     }
+
     /**
      * @return the movie
      */
-    public Movie getMovie()
-    {
+    public Movie getMovie() {
         return movie;
     }
+
     /**
-     * @param movie the movie to set
+     * @param movie
+     *            the movie to set
      */
-    public void setMovie( Movie movie )
-    {
+    public void setMovie(Movie movie) {
         this.movie = movie;
     }
 }

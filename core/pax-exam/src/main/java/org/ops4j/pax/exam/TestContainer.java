@@ -21,12 +21,13 @@ package org.ops4j.pax.exam;
 import java.io.InputStream;
 
 /**
- * Management of an OSGi framework that can be used as a integration test container.
- * Each container is also a test target.
- *
- * When constucting TestContainers, it is good practice to not put the parsing part (from Option[]) into the implementation.
- * Instead, make the native container construction really simple and tied to the underlying container.
- *
+ * Management of an OSGi framework that can be used as a integration test container. Each container
+ * is also a test target.
+ * 
+ * When constucting TestContainers, it is good practice to not put the parsing part (from Option[])
+ * into the implementation. Instead, make the native container construction really simple and tied
+ * to the underlying container.
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
@@ -35,41 +36,49 @@ public interface TestContainer {
 
     /**
      * Starts the test container.
-     *
+     * 
      * @return this for fluent api
-     *
-     * @throws TimeoutException - if timeout occured and the test container cannot be started
+     * 
+     * @throws TimeoutException
+     *             - if timeout occured and the test container cannot be started
      */
-    TestContainer start( ) throws TimeoutException;
+    TestContainer start() throws TimeoutException;
 
     /**
-     * @param stream stream the content
-     *
+     * @param stream
+     *            stream the content
+     * 
      * @return Bundle ID
      */
-    long install( InputStream stream );
-    
+    long install(InputStream stream);
+
     /**
-     * @param location update location of the installed stream. (used on bundle.update())
-     * @param stream stream the content
-     *
+     * @param location
+     *            update location of the installed stream. (used on bundle.update())
+     * @param stream
+     *            stream the content
+     * 
      * @return Bundle ID
      */
-    long install( String location, InputStream stream );
+    long install(String location, InputStream stream);
 
     /**
-     * @param address the target to be called.
-     *
-     * @throws TestContainerException exception
+     * @param address
+     *            the target to be called.
+     * 
+     * @throws TestContainerException
+     *             exception
      */
-    void call( TestAddress address ) throws TestContainerException;
+    void call(TestAddress address) throws TestContainerException;
 
     /**
-     * Stops the regression container. Implementations should take care of calling cleanup() internally, too.
-     *
+     * Stops the regression container. Implementations should take care of calling cleanup()
+     * internally, too.
+     * 
      * @return this for fluent api
-     *
-     * @throws TimeoutException - if timeout occured and the regression container cannot be stopped
+     * 
+     * @throws TimeoutException
+     *             - if timeout occured and the regression container cannot be stopped
      */
     TestContainer stop() throws TimeoutException;
 

@@ -31,13 +31,13 @@ import javax.jms.TextMessage;
 @Singleton
 @Startup
 public class GreeterMessageSender {
-    
-    @Resource(mappedName= "jms/cf")
+
+    @Resource(mappedName = "jms/cf")
     private ConnectionFactory cf;
-    
+
     @Resource(mappedName = "jms/greeter")
     private Queue queue;
-    
+
     @PostConstruct
     public void init() {
         try {
@@ -56,7 +56,7 @@ public class GreeterMessageSender {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
 
 }

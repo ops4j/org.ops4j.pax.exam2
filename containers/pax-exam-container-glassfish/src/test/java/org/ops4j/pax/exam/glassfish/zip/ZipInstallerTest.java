@@ -15,33 +15,29 @@ import org.ops4j.pax.exam.zip.ZipInstaller;
 
 import com.google.common.io.Files;
 
-public class ZipInstallerTest
-{
+public class ZipInstallerTest {
 
     private File installDir;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         installDir = Files.createTempDir();
     }
 
     @After
-    public void tearDown() throws IOException
-    {
-        FileUtils.delete( installDir );
+    public void tearDown() throws IOException {
+        FileUtils.delete(installDir);
     }
 
     @Test
-    public void downloadAndInstall() throws IOException
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    public void downloadAndInstall() throws IOException {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
-        URL url = new URL( "mvn:org.ops4j.base/ops4j-base-io/1.2.3/jar/sources" );
-        ZipInstaller installer = new ZipInstaller( url, installDir.getAbsolutePath() );
+        URL url = new URL("mvn:org.ops4j.base/ops4j-base-io/1.2.3/jar/sources");
+        ZipInstaller installer = new ZipInstaller(url, installDir.getAbsolutePath());
         installer.downloadAndInstall();
 
-        assertThat( new File( installDir, "META-INF/MANIFEST.MF" ).exists(), is( true ) );
-        assertThat( new File( installDir, "org/ops4j/io/ZipLister.java" ).exists(), is( true ) );
+        assertThat(new File(installDir, "META-INF/MANIFEST.MF").exists(), is(true));
+        assertThat(new File(installDir, "org/ops4j/io/ZipLister.java").exists(), is(true));
     }
 }

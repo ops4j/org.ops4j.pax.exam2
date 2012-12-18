@@ -52,83 +52,67 @@ import org.osgi.framework.BundleReference;
  * @author Harald Wellmann
  * @since 2.3.0, August 2011
  */
-public class ServiceInjector implements Injector
-{
-    public void injectFields( Object target )
-    {
+public class ServiceInjector implements Injector {
+
+    public void injectFields(Object target) {
         Class<?> targetClass = target.getClass();
-        while( targetClass != Object.class )
-        {
-            injectDeclaredFields( target, targetClass );
+        while (targetClass != Object.class) {
+            injectDeclaredFields(target, targetClass);
             targetClass = targetClass.getSuperclass();
         }
     }
 
-    private void injectDeclaredFields( Object target, Class<?> targetClass )
-    {
-        BundleContext context = getBundleContext( targetClass );
-        for( Field field : targetClass.getDeclaredFields() )
-        {
-            if( field.getAnnotation( Inject.class ) != null )
-            {
-                injectField( context, target, field );
+    private void injectDeclaredFields(Object target, Class<?> targetClass) {
+        BundleContext context = getBundleContext(targetClass);
+        for (Field field : targetClass.getDeclaredFields()) {
+            if (field.getAnnotation(Inject.class) != null) {
+                injectField(context, target, field);
             }
         }
     }
 
-    private void injectField( BundleContext bc, Object target, Field field )
-    {
+    private void injectField(BundleContext bc, Object target, Field field) {
         Class<?> type = field.getType();
         String filterString = "";
-        String timeoutProp =
-            System.getProperty( EXAM_SERVICE_TIMEOUT_KEY, EXAM_SERVICE_TIMEOUT_DEFAULT );
-        long timeout = Integer.parseInt( timeoutProp );
-        Filter filter = field.getAnnotation( Filter.class );
-        if( filter != null )
-        {
+        String timeoutProp = System.getProperty(EXAM_SERVICE_TIMEOUT_KEY,
+            EXAM_SERVICE_TIMEOUT_DEFAULT);
+        long timeout = Integer.parseInt(timeoutProp);
+        Filter filter = field.getAnnotation(Filter.class);
+        if (filter != null) {
             filterString = filter.value();
             timeout = filter.timeout();
         }
-        Object service =
-            ( BundleContext.class == type ) ? bc : ServiceLookup.getService( bc, type, timeout,
-                filterString );
-        try
-        {
-            if( field.isAccessible() )
-            {
-                field.set( target, service );
+        Object service = (BundleContext.class == type) ? bc : ServiceLookup.getService(bc, type,
+            timeout, filterString);
+        try {
+            if (field.isAccessible()) {
+                field.set(target, service);
             }
-            else
-            {
-                field.setAccessible( true );
-                try
-                {
-                    field.set( target, service );
+            else {
+                field.setAccessible(true);
+                try {
+                    field.set(target, service);
                 }
-                finally
-                {
-                    field.setAccessible( false );
+                finally {
+                    field.setAccessible(false);
                 }
             }
         }
-        catch ( IllegalAccessException exc )
-        {
-            throw new RuntimeException( exc );
+        catch (IllegalAccessException exc) {
+            throw new RuntimeException(exc);
         }
     }
 
-    private BundleContext getBundleContext( Class<?> klass )
-    {
+    private BundleContext getBundleContext(Class<?> klass) {
         BundleContext bc;
-        try
-        {
-            BundleReference bundleRef = BundleReference.class.cast( klass.getClassLoader() );
+        try {
+            BundleReference bundleRef = BundleReference.class.cast(klass.getClassLoader());
             bc = bundleRef.getBundle().getBundleContext();
             return bc;
         }
-        catch ( ClassCastException exc )
-        {
-            throw new TestContainerException( "class " + klass.getName() + " is not loaded from an OSGi bundle" );
+        catch (ClassCastException exc) {
+            throw new TestContainerException("class " + klass.getName()
+                + " is not loaded from an OSGi bundle");
         }
     }
 

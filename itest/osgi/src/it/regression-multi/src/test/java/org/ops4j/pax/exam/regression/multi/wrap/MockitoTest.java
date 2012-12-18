@@ -43,10 +43,10 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
  * <ul>
  * <li>how to use the {@code wrappedBundle()} option</li>
  * <li>how to set the version of exported packages with {@code wrappedBundle()}.</li>
- * <li>how to use both Mockito and JUnit and avoid a conflict with the Hamcrest library which is embedded in each of the
- * two by default.</li>
- * <li>how to suppress classloader issues caused by CGLIB proxies in Mockito and implicit 
- * boot delegation in Felix</li>
+ * <li>how to use both Mockito and JUnit and avoid a conflict with the Hamcrest library which is
+ * embedded in each of the two by default.</li>
+ * <li>how to suppress classloader issues caused by CGLIB proxies in Mockito and implicit boot
+ * delegation in Felix</li>
  * 
  * </ul>
  * See PAXEXAM-274.
@@ -54,104 +54,100 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
  * @author Harald Wellmann
  * 
  */
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( PerMethod.class )
-public class MockitoTest
-{
+@RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(PerMethod.class)
+public class MockitoTest {
 
     @Configuration
-    public Option[] config1()
-    {
+    public Option[] config1() {
         return options(
-            
-            regressionDefaults(),
 
-            // A simple test bundle 
-            mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
-            
+        regressionDefaults(),
+
+            // A simple test bundle
+            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion()),
+
             // Mockito with Hamcrest and Objenesis embedded
-            mavenBundle( "org.mockito", "mockito-all", "1.9.5" ),
+            mavenBundle("org.mockito", "mockito-all", "1.9.5"),
 
             // JUnit without Hamcrest
-            wrappedBundle( mavenBundle( "junit", "junit-dep", "4.10" ) ).exports( "*;version=4.10" ),
+            wrappedBundle(mavenBundle("junit", "junit-dep", "4.10")).exports("*;version=4.10"),
 
-            
-            systemProperty( "pax.exam.invoker" ).value( "junit" ),            
+            systemProperty("pax.exam.invoker").value("junit"),
             mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-junit", Info.getPaxExamVersion()),
             /*
-             * Felix has implicit boot delegation enabled by default, which causes the following 
-             * exception: 
+             * Felix has implicit boot delegation enabled by default, which causes the following
+             * exception:
              * 
-             * loader constraint violation in interface itable initialization: 
-             * when resolving method "org.ops4j.pax.exam.regression.pde.HelloService$$EnhancerByMockitoWithCGLIB$$451e2809.newInstance(Lorg/mockito/cglib/proxy/Callback;)Ljava/lang/Object;" 
-             * the class loader (instance of org/mockito/internal/creation/jmock/SearchingClassLoader) of the current class, 
-             * org/ops4j/pax/exam/regression/pde/HelloService$$EnhancerByMockitoWithCGLIB$$451e2809, 
-             * and the class loader (instance of org/apache/felix/framework/ModuleImpl$ModuleClassLoaderJava5) 
-             * for interface org/mockito/cglib/proxy/Factory have different Class objects for the type 
+             * loader constraint violation in interface itable initialization: when resolving method
+             * "org.ops4j.pax.exam.regression.pde.HelloService$$EnhancerByMockitoWithCGLIB$$451e2809.newInstance(Lorg/mockito/cglib/proxy/Callback;)Ljava/lang/Object;"
+             * the class loader (instance of
+             * org/mockito/internal/creation/jmock/SearchingClassLoader) of the current class,
+             * org/ops4j/pax/exam/regression/pde/HelloService$$EnhancerByMockitoWithCGLIB$$451e2809,
+             * and the class loader (instance of
+             * org/apache/felix/framework/ModuleImpl$ModuleClassLoaderJava5) for interface
+             * org/mockito/cglib/proxy/Factory have different Class objects for the type
              * org/mockito/cglib/proxy/Callback used in the signature
              * 
              * The bundle classloader of regression-pde-bundle loads org.mockito.cglib.proxy.Factory
              * via boot delegation from the app class loader, which conflicts with the class loaded
              * by the Mockito bundle class loader.
              * 
-             * See ModuleImpl.doImplicitBootDelegation() in Felix. 
+             * See ModuleImpl.doImplicitBootDelegation() in Felix.
              */
-            frameworkProperty( "felix.bootdelegation.implicit" ).value( "false" )
+            frameworkProperty("felix.bootdelegation.implicit").value("false")
 
         );
 
     }
 
     @Configuration
-    public Option[] config2()
-    {
+    public Option[] config2() {
         return options(
 
-            regressionDefaults(),
+        regressionDefaults(),
 
-            // A simple test bundle 
-            mavenBundle( "org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion() ),
+        // A simple test bundle
+            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion()),
 
             // Mockito without Hamcrest and Objenesis
-            mavenBundle( "org.mockito", "mockito-core", "1.9.5" ),
+            mavenBundle("org.mockito", "mockito-core", "1.9.5"),
 
             // Hamcrest with a version matching the range expected by Mockito
-            mavenBundle( "org.hamcrest", "com.springsource.org.hamcrest.core", "1.1.0" ),
+            mavenBundle("org.hamcrest", "com.springsource.org.hamcrest.core", "1.1.0"),
 
             // Objenesis with a version matching the range expected by Mockito
-            wrappedBundle( mavenBundle( "org.objenesis", "objenesis", "1.2" ) ).exports( "*;version=1.2" ),
+            wrappedBundle(mavenBundle("org.objenesis", "objenesis", "1.2"))
+                .exports("*;version=1.2"),
 
             // The default JUnit bundle also exports Hamcrest, but with an (incorrect) version of
             // 4.9 which does not match the Mockito import.
             junitBundles(),
 
             // see config1()
-            frameworkProperty( "felix.bootdelegation.implicit" ).value( "false" ) );
+            frameworkProperty("felix.bootdelegation.implicit").value("false"));
     }
 
-    
     /**
-     * This test does not produce the boot delegation issue, since the mocked
-     * interface is loaded via the system class loader.
+     * This test does not produce the boot delegation issue, since the mocked interface is loaded
+     * via the system class loader.
      */
     @Test
-    @SuppressWarnings( "unchecked" )
-    public void createMock()
-    {
-        List<String> list = mock( List.class );
-        when( list.size() ).thenReturn( 0 );
+    @SuppressWarnings("unchecked")
+    public void createMock() {
+        List<String> list = mock(List.class);
+        when(list.size()).thenReturn(0);
         int size = list.size();
-        assertEquals( 0, size );
+        assertEquals(0, size);
     }
 
     /**
-     * Here we mock an interface from our test bundle.
-     * Set felix.bootdelegation.implicit = true to fail this test.
+     * Here we mock an interface from our test bundle. Set felix.bootdelegation.implicit = true to
+     * fail this test.
      */
     @Test
-    public void bootDelegation()
-    {
-        HelloService service = mock( HelloService.class );
+    public void bootDelegation() {
+        HelloService service = mock(HelloService.class);
         service.getMessage();
     }
 }

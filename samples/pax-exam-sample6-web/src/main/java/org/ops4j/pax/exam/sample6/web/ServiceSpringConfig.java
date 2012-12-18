@@ -31,34 +31,30 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableTransactionManagement( proxyTargetClass = true )
-@Import( DataSourceSpringConfig.class )
-public class ServiceSpringConfig
-{
+@EnableTransactionManagement(proxyTargetClass = true)
+@Import(DataSourceSpringConfig.class)
+public class ServiceSpringConfig {
 
     @Inject
     private DataSource dataSource;
 
     @Bean
-    public PlatformTransactionManager transactionManager()
-    {
-        return new JpaTransactionManager( entityManagerFactory() );
+    public PlatformTransactionManager transactionManager() {
+        return new JpaTransactionManager(entityManagerFactory());
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory()
-    {
+    public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-        bean.setDataSource( dataSource );
-        bean.setPersistenceProvider( new HibernatePersistence() );
-        bean.setPersistenceXmlLocation( "classpath:META-INF/persistence.xml" );
+        bean.setDataSource(dataSource);
+        bean.setPersistenceProvider(new HibernatePersistence());
+        bean.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
         bean.afterPropertiesSet();
         return bean.getObject();
     }
 
     @Bean
-    public LibraryService libraryService()
-    {
+    public LibraryService libraryService() {
         return new LibraryService();
     }
 }

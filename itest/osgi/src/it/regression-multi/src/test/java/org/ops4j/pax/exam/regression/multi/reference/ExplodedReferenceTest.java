@@ -35,27 +35,23 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-public class ExplodedReferenceTest
-{
+@RunWith(JUnit4TestRunner.class)
+public class ExplodedReferenceTest {
+
     @Inject
     private BundleContext bc;
-    
-    @Configuration( )
-    public Option[] config()
-    {
+
+    @Configuration()
+    public Option[] config() {
         String baseDir = PathUtils.getBaseDir();
-        return options(
-            regressionDefaults(),
-            url( "reference:file:" + baseDir + "/target/regression-pde-bundle" ),
-            junitBundles(),
-            cleanCaches() );
+        return options(regressionDefaults(), url("reference:file:" + baseDir
+            + "/target/regression-pde-bundle"), junitBundles(), cleanCaches());
     }
 
     @Test
-    public void getHelloService()
-    {
-        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
-        assertThat( service, is( notNullValue() ) );
+    public void getHelloService() {
+        Object service = ServiceLookup.getService(bc,
+            "org.ops4j.pax.exam.regression.pde.HelloService");
+        assertThat(service, is(notNullValue()));
     }
 }

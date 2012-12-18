@@ -16,7 +16,6 @@
  */
 package org.ops4j.pax.exam.regression.cdi.ice;
 
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -33,9 +32,9 @@ import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners( PaxExam.class )
-public class VanillaTest
-{
+@Listeners(PaxExam.class)
+public class VanillaTest {
+
     @Inject
     @Vanilla
     private IceCreamService vanilla;
@@ -52,39 +51,33 @@ public class VanillaTest
     private Instance<IceCreamService> allFlavours;
 
     @Test
-    public void checkVanillaFlavour()
-    {
-        assertThat( vanilla.getFlavour(), is( "Vanilla" ) );
+    public void checkVanillaFlavour() {
+        assertThat(vanilla.getFlavour(), is("Vanilla"));
     }
 
     @Test
-    public void checkChocolateFlavour()
-    {
-        assertThat( chocolate.getFlavour(), is( "Chocolate" ) );
+    public void checkChocolateFlavour() {
+        assertThat(chocolate.getFlavour(), is("Chocolate"));
     }
 
     @Test
-    public void checkDefaultFlavour()
-    {
-        assertThat( defaultFlavour.getFlavour(), is( "Vanilla" ) );
+    public void checkDefaultFlavour() {
+        assertThat(defaultFlavour.getFlavour(), is("Vanilla"));
     }
 
     @Test
-    public void checkAllFlavours()
-    {
-        List<String> expectedFlavours =
-            new ArrayList<String>( Arrays.asList( "Vanilla", "Chocolate" ) );
-        assertThat( allFlavours.isUnsatisfied(), is( false ) );
-        assertThat( allFlavours.isAmbiguous(), is(  true ) );
+    public void checkAllFlavours() {
+        List<String> expectedFlavours = new ArrayList<String>(Arrays.asList("Vanilla", "Chocolate"));
+        assertThat(allFlavours.isUnsatisfied(), is(false));
+        assertThat(allFlavours.isAmbiguous(), is(true));
         int numFlavours = 0;
         Iterator<IceCreamService> it = allFlavours.iterator();
-        while( it.hasNext() )
-        {
+        while (it.hasNext()) {
             numFlavours++;
             String flavour = it.next().getFlavour();
-            expectedFlavours.remove( flavour );
+            expectedFlavours.remove(flavour);
         }
-        assertThat( numFlavours, is( 2 ) );
-        assertThat( expectedFlavours.isEmpty(), is( true ) );
+        assertThat(numFlavours, is(2));
+        assertThat(expectedFlavours.isEmpty(), is(true));
     }
 }

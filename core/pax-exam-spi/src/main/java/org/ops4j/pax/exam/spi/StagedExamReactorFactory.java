@@ -22,7 +22,7 @@ import java.util.List;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 
-public interface StagedExamReactorFactory
-{
-    StagedExamReactor create( List<TestContainer> factory, List<TestProbeBuilder> probes );
+public interface StagedExamReactorFactory {
+
+    StagedExamReactor create(List<TestContainer> factory, List<TestProbeBuilder> probes);
 }

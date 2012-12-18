@@ -29,11 +29,12 @@ public interface ContentCollector {
 
     /**
      * Puts resources into given map.
-     *
-     * @param map to be filled.
-     *
-     * @throws java.io.IOException problems
+     * 
+     * @param map
+     *            to be filled.
+     * 
+     * @throws java.io.IOException
+     *             problems
      */
-    void collect( Map<String, URL> map )
-        throws IOException;
+    void collect(Map<String, URL> map) throws IOException;
 }

@@ -37,34 +37,30 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-public class FrameworkPropertyTest
-{
+@RunWith(JUnit4TestRunner.class)
+public class FrameworkPropertyTest {
 
     @Inject
     private BundleContext bc;
-    
+
     @Configuration
-    public Option[] config()
-    {
-        return options(
-            regressionDefaults(),
-            frameworkProperty( "felix.startlevel.bundle" ).value( "4" ),
-            junitBundles() );
+    public Option[] config() {
+        return options(regressionDefaults(), frameworkProperty("felix.startlevel.bundle")
+            .value("4"), junitBundles());
     }
 
-    @SuppressWarnings( "deprecation" )
+    @SuppressWarnings("deprecation")
     @Test
-    public void startLevel()
-    {
-        assumeTrue( isFelix() && !isNativeContainer() );
+    public void startLevel() {
+        assumeTrue(isFelix() && !isNativeContainer());
 
         // Framework properties are currently translated into vmOptions for Pax Runner.
         // Pax Runner does not clearly distinguish framework and system properties.
-        assertThat( System.getProperty( "felix.startlevel.bundle" ), is( "4" ) );
+        assertThat(System.getProperty("felix.startlevel.bundle"), is("4"));
 
-        org.osgi.service.startlevel.StartLevel startLevel = ServiceLookup.getService( bc, org.osgi.service.startlevel.StartLevel.class );
-        assertThat( startLevel, is( notNullValue() ) );
-        assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 4 ) ) );
+        org.osgi.service.startlevel.StartLevel startLevel = ServiceLookup.getService(bc,
+            org.osgi.service.startlevel.StartLevel.class);
+        assertThat(startLevel, is(notNullValue()));
+        assertThat(startLevel.getInitialBundleStartLevel(), is(equalTo(4)));
     }
 }

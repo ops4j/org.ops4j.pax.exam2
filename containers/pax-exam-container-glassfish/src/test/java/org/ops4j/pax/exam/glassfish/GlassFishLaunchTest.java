@@ -40,119 +40,109 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 import com.google.common.io.Files;
 
-public class GlassFishLaunchTest
-{
+public class GlassFishLaunchTest {
 
     private FrameworkFactory frameworkFactory;
     private String glassFishHome;
     private String instanceRoot;
-    
+
     @Before
-    public void setUp() throws IOException
-    {
-        GlassFishTestContainer gftc = new GlassFishTestContainer( null, null );
+    public void setUp() throws IOException {
+        GlassFishTestContainer gftc = new GlassFishTestContainer(null, null);
         gftc.installContainer();
     }
 
     @Test
-    public void launchGlassFish() throws Exception
-    {
-        System.setProperty( "java.util.logging.config.file", "src/test/resources/glassfish-config/logging.properties" );
+    public void launchGlassFish() throws Exception {
+        System.setProperty("java.util.logging.config.file",
+            "src/test/resources/glassfish-config/logging.properties");
         ConfigurationManager cm = new ConfigurationManager();
-        glassFishHome = cm.getProperty( GlassFishTestContainer.GLASSFISH_HOME_KEY );
+        glassFishHome = cm.getProperty(GlassFishTestContainer.GLASSFISH_HOME_KEY);
 
         setSystemProperties();
         Map<String, String> frameworkProps = createFrameworkProperties();
-        
-        FileUtils.copyFile( new File("src/test/resources/glassfish-config/domain.xml"), 
-            new File(instanceRoot, "config/domain.xml"), null );       
+
+        FileUtils.copyFile(new File("src/test/resources/glassfish-config/domain.xml"), new File(
+            instanceRoot, "config/domain.xml"), null);
 
         frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
-        Framework framework = frameworkFactory.newFramework( frameworkProps );
+        Framework framework = frameworkFactory.newFramework(frameworkProps);
         framework.init();
 
         BundleContext bc = framework.getBundleContext();
         String gfBundleUrl = "file:" + glassFishHome + "/glassfish/modules/glassfish.jar";
-        Bundle gfBundle = bc.installBundle( gfBundleUrl );
+        Bundle gfBundle = bc.installBundle(gfBundleUrl);
         framework.start();
         gfBundle.start();
 
-        if( isFelix() )
-        {
-            startShellBundles( bc );
+        if (isFelix()) {
+            startShellBundles(bc);
         }
-        GlassFish gf = ServiceLookup.getService( bc, GlassFish.class );
+        GlassFish gf = ServiceLookup.getService(bc, GlassFish.class);
 
         Deployer deployer = gf.getDeployer();
-        for( String appName : deployer.getDeployedApplications() )
-        {
-            System.out.println( "undeploying " + appName );
-            deployer.undeploy( appName );
+        for (String appName : deployer.getDeployedApplications()) {
+            System.out.println("undeploying " + appName);
+            deployer.undeploy(appName);
         }
 
-        URI sampleWarUri = new URI( "mvn:org.apache.wicket/wicket-examples/1.5.3/war" );
+        URI sampleWarUri = new URI("mvn:org.apache.wicket/wicket-examples/1.5.3/war");
         String sampleAppName = "wicket-examples";
 
-        System.out.println( "deploying " + sampleAppName );
-        //deployer.deploy( sampleWarUri, "--name", sampleAppName, "--contextroot", sampleAppName );
-        deployer.deploy( sampleWarUri.toURL().openStream(), "--name", sampleAppName, "--contextroot", sampleAppName );
+        System.out.println("deploying " + sampleAppName);
+        // deployer.deploy( sampleWarUri, "--name", sampleAppName, "--contextroot", sampleAppName );
+        deployer.deploy(sampleWarUri.toURL().openStream(), "--name", sampleAppName,
+            "--contextroot", sampleAppName);
         delay();
 
-        System.out.println( "undeploying " + sampleAppName );
-        deployer.undeploy( sampleAppName );
+        System.out.println("undeploying " + sampleAppName);
+        deployer.undeploy(sampleAppName);
         delay();
 
-        System.out.println( "stopping GlassFish" );
+        System.out.println("stopping GlassFish");
         gf.stop();
         delay();
 
-        System.out.println( "stopping framework" );
+        System.out.println("stopping framework");
         framework.stop();
     }
 
-    private void delay() throws InterruptedException
-    {
-        Thread.sleep( 2500 );
+    private void delay() throws InterruptedException {
+        Thread.sleep(2500);
     }
 
-    private void setSystemProperties()
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        System.setProperty( "com.sun.aas.installRoot", glassFishHome + "/glassfish" );
+    private void setSystemProperties() {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        System.setProperty("com.sun.aas.installRoot", glassFishHome + "/glassfish");
         instanceRoot = glassFishHome + "/glassfish/domains/domain1";
-        System.setProperty( "com.sun.aas.instanceRoot", instanceRoot );
-        System.setProperty( "osgi.console", "6666" );
+        System.setProperty("com.sun.aas.instanceRoot", instanceRoot);
+        System.setProperty("osgi.console", "6666");
     }
 
-    private Map<String, String> createFrameworkProperties()
-    {
+    private Map<String, String> createFrameworkProperties() {
         Map<String, String> frameworkProps = new HashMap<String, String>();
-        frameworkProps.put( "org.osgi.framework.storage", Files.createTempDir().getAbsolutePath() );
-        frameworkProps.put( "org.osgi.framework.bundle.parent", "framework" );
-        frameworkProps.put( "org.osgi.framework.startlevel.beginning", "5" );
-        frameworkProps.put( Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
-            "org.glassfish.embeddable;version=3.1,org.glassfish.embeddable.spi;version=3.1" );
-        frameworkProps.put( "osgi.compatibility.bootdelegation", "false" );
+        frameworkProps.put("org.osgi.framework.storage", Files.createTempDir().getAbsolutePath());
+        frameworkProps.put("org.osgi.framework.bundle.parent", "framework");
+        frameworkProps.put("org.osgi.framework.startlevel.beginning", "5");
+        frameworkProps.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
+            "org.glassfish.embeddable;version=3.1,org.glassfish.embeddable.spi;version=3.1");
+        frameworkProps.put("osgi.compatibility.bootdelegation", "false");
 
-        frameworkProps.put( "osgi.resolver.preferSystemPackages", "false" );
+        frameworkProps.put("osgi.resolver.preferSystemPackages", "false");
         return frameworkProps;
     }
 
-    private void startShellBundles( BundleContext bc ) throws BundleException
-    {
-        for( Bundle bundle : bc.getBundles() )
-        {
+    private void startShellBundles(BundleContext bc) throws BundleException {
+        for (Bundle bundle : bc.getBundles()) {
             String name = bundle.getSymbolicName();
-            if( name.startsWith( "org.apache.felix.gogo" )
-                    || name.startsWith( "org.apache.felix.shell.remote" ) )
-            {
+            if (name.startsWith("org.apache.felix.gogo")
+                || name.startsWith("org.apache.felix.shell.remote")) {
                 bundle.start();
             }
         }
     }
 
-    private boolean isFelix()
-    {
-        return frameworkFactory.getClass().getName().contains( "felix" );
+    private boolean isFelix() {
+        return frameworkFactory.getClass().getName().contains("felix");
     }
 }

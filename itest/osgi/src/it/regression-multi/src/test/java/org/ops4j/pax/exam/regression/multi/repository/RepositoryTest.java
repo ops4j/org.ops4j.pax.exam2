@@ -39,35 +39,31 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
- * Tests the repository() option for using external Maven repositories. 
- * NOTE: This test is not fail-safe. If the bundle happens to be in the local repository 
- * already, the test passes, even though remote access may be broken.
+ * Tests the repository() option for using external Maven repositories. NOTE: This test is not
+ * fail-safe. If the bundle happens to be in the local repository already, the test passes, even
+ * though remote access may be broken.
  * 
  * @author Harald Wellmann
  */
-@RunWith( PaxExam.class )
-@ExamReactorStrategy( PerClass.class )
-public class RepositoryTest
-{
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerClass.class)
+public class RepositoryTest {
 
     @Inject
     private BundleContext bundleContext;
 
     @Configuration
-    public static Option[] configuration() throws Exception
-    {
-        return options( //
+    public static Option[] configuration() throws Exception {
+        return options(
+            //
             regressionDefaults(),
-            repository( "http://www.knopflerfish.org/maven2" ).id("knopflerfish"),
-            cleanCaches(),
-            mavenBundle( "org.knopflerfish.bundle", "demo1", "2.0.0" ),
-            junitBundles() );
+            repository("http://www.knopflerfish.org/maven2").id("knopflerfish"), cleanCaches(),
+            mavenBundle("org.knopflerfish.bundle", "demo1", "2.0.0"), junitBundles());
     }
 
     @Test
-    public void bundleFromExternalRepositoryIsResolved() throws Exception
-    {
-        Bundle bundle = BundleUtils.getBundle( bundleContext, "org.knopflerfish.bundle.demo1" );
-        assertThat( bundle, is( notNullValue() ) );
+    public void bundleFromExternalRepositoryIsResolved() throws Exception {
+        Bundle bundle = BundleUtils.getBundle(bundleContext, "org.knopflerfish.bundle.demo1");
+        assertThat(bundle, is(notNullValue()));
     }
 }

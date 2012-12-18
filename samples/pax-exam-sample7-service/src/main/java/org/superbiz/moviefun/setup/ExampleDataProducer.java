@@ -26,17 +26,18 @@ import org.superbiz.moviefun.Movie;
 
 @ApplicationScoped
 public class ExampleDataProducer {
-	@Produces
-	@Examples 
-	public List<Movie> createSampleMovies() {
-		List<Movie> sampleMovies = new ArrayList<Movie>();
-		sampleMovies.add(new Movie("Wedding Crashers", "David Dobkin", "Comedy", 7, 2005));
-		sampleMovies.add(new Movie("Starsky & Hutch", "Todd Phillips", "Action", 6, 2004));
-		sampleMovies.add(new Movie("Shanghai Knights", "David Dobkin", "Action", 6, 2003));
-		sampleMovies.add(new Movie("I-Spy", "Betty Thomas", "Adventure", 5, 2002));
-		sampleMovies.add(new Movie("The Royal Tenenbaums", "Wes Anderson", "Comedy", 8, 2001));
-		sampleMovies.add(new Movie("Zoolander", "Ben Stiller", "Comedy", 6, 2001));
-		sampleMovies.add(new Movie("Shanghai Noon", "Tom Dey", "Comedy", 7, 2000));
-		return sampleMovies;
-	}
+
+    @Produces
+    @Examples
+    public List<Movie> createSampleMovies() {
+        List<Movie> sampleMovies = new ArrayList<Movie>();
+        sampleMovies.add(new Movie("Wedding Crashers", "David Dobkin", "Comedy", 7, 2005));
+        sampleMovies.add(new Movie("Starsky & Hutch", "Todd Phillips", "Action", 6, 2004));
+        sampleMovies.add(new Movie("Shanghai Knights", "David Dobkin", "Action", 6, 2003));
+        sampleMovies.add(new Movie("I-Spy", "Betty Thomas", "Adventure", 5, 2002));
+        sampleMovies.add(new Movie("The Royal Tenenbaums", "Wes Anderson", "Comedy", 8, 2001));
+        sampleMovies.add(new Movie("Zoolander", "Ben Stiller", "Comedy", 6, 2001));
+        sampleMovies.add(new Movie("Shanghai Noon", "Tom Dey", "Comedy", 7, 2000));
+        return sampleMovies;
+    }
 }

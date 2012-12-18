@@ -41,31 +41,25 @@ import org.osgi.framework.BundleContext;
  * 
  * @see ShutdownTimeoutInvokerTest
  * @author Harald Wellmann
- *
+ * 
  */
-@RunWith( JUnit4TestRunner.class )
-public class ShutdownTimeoutTestWrapped
-{
+@RunWith(JUnit4TestRunner.class)
+public class ShutdownTimeoutTestWrapped {
+
     @Inject
     private BundleContext bc;
 
-    @Configuration( )
-    public Option[] config()
-    {
-        return options(
-            regressionDefaults(),
-            url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/target/regression-pde-bundle.jar" ),
-            systemTimeout( 3000 ),
-            systemProperty( "pax.exam.regression.blockOnStop" ).value( "true" ),
-            junitBundles() );
+    @Configuration()
+    public Option[] config() {
+        return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
+            + "/target/regression-pde-bundle.jar"), systemTimeout(3000),
+            systemProperty("pax.exam.regression.blockOnStop").value("true"), junitBundles());
     }
 
     @Test
-    public void getHelloService()
-    {
-        Object service =
-            ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
-        assertThat( service, is( notNullValue() ) );
+    public void getHelloService() {
+        Object service = ServiceLookup.getService(bc,
+            "org.ops4j.pax.exam.regression.pde.HelloService");
+        assertThat(service, is(notNullValue()));
     }
 }

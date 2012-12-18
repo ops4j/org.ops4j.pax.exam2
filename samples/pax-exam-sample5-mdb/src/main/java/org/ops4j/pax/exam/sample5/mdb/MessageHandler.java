@@ -20,5 +20,5 @@ import javax.jms.Message;
 
 public interface MessageHandler {
 
-	void handleMessage(Message msg);
+    void handleMessage(Message msg);
 }

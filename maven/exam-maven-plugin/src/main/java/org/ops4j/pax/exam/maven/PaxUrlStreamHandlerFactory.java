@@ -22,67 +22,59 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * URL handler lookup by package name uses the application class loader by default, which does
- * not work in a Maven plugin context where the Pax URL dependencies are not on the Maven 
- * class path.
+ * URL handler lookup by package name uses the application class loader by default, which does not
+ * work in a Maven plugin context where the Pax URL dependencies are not on the Maven class path.
  * <p>
  * For this reason, we install this {@code URLStreamHandleFactory} which loads Pax URL protocol
  * handlers from a custom classloader.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
-public class PaxUrlStreamHandlerFactory implements URLStreamHandlerFactory
-{
-    /**
-     * Default protocol supported by the JRE, to be ignored by this factory.
-     */
-    private static List<String> ignoredProtocols = Arrays.asList("http", "https", "ftp", "jar", "file" );
-    
-    private ClassLoader classLoader;
+public class PaxUrlStreamHandlerFactory implements URLStreamHandlerFactory {
 
-    public PaxUrlStreamHandlerFactory( ClassLoader classLoader )
-    {
-        this.classLoader = classLoader;
-    }
+	/**
+	 * Default protocol supported by the JRE, to be ignored by this factory.
+	 */
+	private static List<String> ignoredProtocols = Arrays.asList("http", "https", "ftp", "jar",
+		"file");
 
-    @Override
-    public URLStreamHandler createURLStreamHandler( String protocol )
-    {
-        if (ignoredProtocols.contains( protocol )) {
-            return null;
-        }
-        
-        String className = String.format( "org.ops4j.pax.url.%s.Handler", protocol );
-        Class<?> handlerClass = loadHandlerClass( className );
-        if (handlerClass == null) {
-            return null;
-        }
-        
-        try
-        {
-            return (URLStreamHandler) handlerClass.newInstance();
-        }
-        catch ( InstantiationException exc )
-        {
-            throw new IllegalArgumentException( "cannot instantiate " + className, exc );
-        }
-        catch ( IllegalAccessException exc )
-        {
-            throw new IllegalArgumentException( "cannot instantiate " + className, exc );
-        }
-    }
+	private ClassLoader classLoader;
 
-    private Class<?> loadHandlerClass( String className )
-    {
-        try
-        {
-            Class<?> handlerClass = Class.forName( className, true, classLoader );
-            return handlerClass;
-        }
-        catch ( ClassNotFoundException e )
-        {
-            return null;
-        }
-    }
+	public PaxUrlStreamHandlerFactory(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+
+	@Override
+	public URLStreamHandler createURLStreamHandler(String protocol) {
+		if (ignoredProtocols.contains(protocol)) {
+			return null;
+		}
+
+		String className = String.format("org.ops4j.pax.url.%s.Handler", protocol);
+		Class<?> handlerClass = loadHandlerClass(className);
+		if (handlerClass == null) {
+			return null;
+		}
+
+		try {
+			return (URLStreamHandler) handlerClass.newInstance();
+		}
+		catch (InstantiationException exc) {
+			throw new IllegalArgumentException("cannot instantiate " + className, exc);
+		}
+		catch (IllegalAccessException exc) {
+			throw new IllegalArgumentException("cannot instantiate " + className, exc);
+		}
+	}
+
+	private Class<?> loadHandlerClass(String className) {
+		try {
+			Class<?> handlerClass = Class.forName(className, true, classLoader);
+			return handlerClass;
+		}
+		catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
 }

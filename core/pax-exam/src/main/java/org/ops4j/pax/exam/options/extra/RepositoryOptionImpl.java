@@ -22,13 +22,12 @@ import static org.ops4j.lang.NullArgumentException.*;
 
 /**
  * {@link RepositoryOption} implementation.
- *
+ * 
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 19, 2008
  */
-public class RepositoryOptionImpl implements RepositoryOption
-{
+public class RepositoryOptionImpl implements RepositoryOption {
 
     /**
      * Repository url (cannot be null or empty).
@@ -42,22 +41,23 @@ public class RepositoryOptionImpl implements RepositoryOption
      * MArks repository as allowing releases.
      */
     private boolean allowReleases;
-    
+
     /**
-     * Defines repository identifier to be referenced in Maven settings. 
+     * Defines repository identifier to be referenced in Maven settings.
      */
     private String id;
 
     /**
      * Constructor.
-     *
-     * @param repositoryUrl repository url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If repository url is null or empty
+     * 
+     * @param repositoryUrl
+     *            repository url (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If repository url is null or empty
      */
-    public RepositoryOptionImpl( final String repositoryUrl )
-    {
-        validateNotEmpty( repositoryUrl, "Repository URL" );
+    public RepositoryOptionImpl(final String repositoryUrl) {
+        validateNotEmpty(repositoryUrl, "Repository URL");
 
         this.repositoryUrl = repositoryUrl;
         allowSnapshots = false;
@@ -67,8 +67,7 @@ public class RepositoryOptionImpl implements RepositoryOption
     /**
      * {@inheritDoc}
      */
-    public RepositoryOptionImpl allowSnapshots()
-    {
+    public RepositoryOptionImpl allowSnapshots() {
         allowSnapshots = true;
         return this;
     }
@@ -76,45 +75,41 @@ public class RepositoryOptionImpl implements RepositoryOption
     /**
      * {@inheritDoc}
      */
-    public RepositoryOptionImpl disableReleases()
-    {
+    public RepositoryOptionImpl disableReleases() {
         allowReleases = false;
         return this;
     }
-    
-    public RepositoryOption id(String id)
-    {
+
+    public RepositoryOption id(String id) {
         this.id = id;
         return this;
     }
 
     /**
      * Returns the full repository url.
-     *
-     * @return the full repository as given plus eventual snapshot/release tags (cannot be null or empty)
-     *
-     * @throws IllegalStateException - if both snapshots and releases are not allowed
+     * 
+     * @return the full repository as given plus eventual snapshot/release tags (cannot be null or
+     *         empty)
+     * 
+     * @throws IllegalStateException
+     *             - if both snapshots and releases are not allowed
      */
-    public String getRepository()
-    {
-        if( !allowReleases && !allowSnapshots )
-        {
-            throw new IllegalStateException( "Does not make sense to disallow both releases and snapshots." );
+    public String getRepository() {
+        if (!allowReleases && !allowSnapshots) {
+            throw new IllegalStateException(
+                "Does not make sense to disallow both releases and snapshots.");
         }
         final StringBuilder repositoryUrl = new StringBuilder();
-        repositoryUrl.append( this.repositoryUrl );
-        if( allowSnapshots )
-        {
-            repositoryUrl.append( "@snapshots" );
+        repositoryUrl.append(this.repositoryUrl);
+        if (allowSnapshots) {
+            repositoryUrl.append("@snapshots");
         }
-        if( !allowReleases )
-        {
-            repositoryUrl.append( "@noreleases" );
+        if (!allowReleases) {
+            repositoryUrl.append("@noreleases");
         }
-        if ( id != null )
-        {
-            repositoryUrl.append( "@id=" );            
-            repositoryUrl.append( id );            
+        if (id != null) {
+            repositoryUrl.append("@id=");
+            repositoryUrl.append(id);
         }
         return repositoryUrl.toString();
     }
@@ -123,17 +118,15 @@ public class RepositoryOptionImpl implements RepositoryOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "RepositoryOptionImpl" );
-        sb.append( "{url=" ).append( getRepository() );
-        sb.append( '}' );
+        sb.append("RepositoryOptionImpl");
+        sb.append("{url=").append(getRepository());
+        sb.append('}');
         return sb.toString();
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return getRepository();
     }
 }

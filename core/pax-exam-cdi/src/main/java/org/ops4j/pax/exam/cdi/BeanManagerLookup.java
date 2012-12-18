@@ -26,30 +26,28 @@ import javax.naming.NamingException;
 
 import org.ops4j.pax.exam.cdi.spi.BeanManagerProvider;
 
-
 /**
  * Locates a CDI BeanManager, either via JNDI or using the Java SE ServiceLoader.
+ * 
  * @author Harald Wellmann
- *
+ * 
  */
 public class BeanManagerLookup {
 
     private static final String BEAN_MANAGER_JNDI = "java:comp/BeanManager";
     private static final String BEAN_MANAGER_JNDI_FALLBACK = "java:comp/env/BeanManager";
 
-    
     /**
-     * Tries to look up bean manager first from JNDI, and failing that
-     * from any service providers that might be registered using
-     * META-INF/services.
+     * Tries to look up bean manager first from JNDI, and failing that from any service providers
+     * that might be registered using META-INF/services.
      * 
      * @return bean manager, or null
      */
-    public static BeanManager getBeanManager() {        
+    public static BeanManager getBeanManager() {
         BeanManager mgr = getBeanManagerFromJndi();
         if (mgr == null) {
             ServiceLoader<BeanManagerProvider> loader = ServiceLoader
-                    .load(BeanManagerProvider.class);
+                .load(BeanManagerProvider.class);
             Iterator<BeanManagerProvider> it = loader.iterator();
 
             while (mgr == null && it.hasNext()) {
@@ -61,21 +59,21 @@ public class BeanManagerLookup {
         return mgr;
     }
 
-    private static BeanManager getBeanManagerFromJndi()
-    {
+    private static BeanManager getBeanManagerFromJndi() {
         BeanManager mgr = getBeanManagerFromJndi(BEAN_MANAGER_JNDI);
         if (mgr == null) {
-            mgr = getBeanManagerFromJndi(BEAN_MANAGER_JNDI_FALLBACK);            
+            mgr = getBeanManagerFromJndi(BEAN_MANAGER_JNDI_FALLBACK);
         }
         return mgr;
     }
 
     private static BeanManager getBeanManagerFromJndi(String name) {
-        BeanManager mgr; 
+        BeanManager mgr;
         try {
             InitialContext ctx = new InitialContext();
             mgr = (BeanManager) ctx.lookup(name);
-        } catch (NamingException e) {
+        }
+        catch (NamingException e) {
             mgr = null;
         }
         return mgr;

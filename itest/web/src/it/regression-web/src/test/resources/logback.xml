@@ -17,27 +17,27 @@
 <configuration>
 
   <!--  log to System.out on console  -->
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-    </encoder>
-  </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
   
   <!--  log to file test.log  -->
-  <appender name="TEST_LOG" class="ch.qos.logback.core.FileAppender">
-    <file>test.log</file>
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-    </encoder>
-  </appender>
-  
-  <root level="INFO">
-    <appender-ref ref="STDOUT"/>
-    <appender-ref ref="TEST_LOG"/>
-  </root>
-  <logger name="org.ops4j.pax.exam" level="INFO"/> 
-  <logger name="org.apache.catalina" level="INFO"/> 
-  <logger name="org.apache.tomcat" level="INFO"/> 
-  <logger name="org.apache.tomcat.util" level="INFO"/> 
-  
+    <appender name="TEST_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>test.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="TEST_LOG" />
+    </root>
+    <logger name="org.ops4j.pax.exam" level="INFO" />
+    <logger name="org.apache.catalina" level="INFO" />
+    <logger name="org.apache.tomcat" level="INFO" />
+    <logger name="org.apache.tomcat.util" level="INFO" />
+
 </configuration>

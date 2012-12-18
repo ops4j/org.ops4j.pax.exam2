@@ -34,34 +34,35 @@ import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DelegatingTest
-{
+public class DelegatingTest {
+
     @Mock
     private Injector injector;
-    
+
     @Mock
     private BundleContext bc;
-    
+
     @Test
     public void switchRunner() {
         JUnitCore junit = new JUnitCore();
-        Description method= Description.createTestDescription(SimpleTestHidden.class, "doNothing");
+        Description method = Description.createTestDescription(SimpleTestHidden.class, "doNothing");
         Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector);
         Request request = classRequest.filterWith(method);
-        Result result = junit.run( request );
+        Result result = junit.run(request);
         assertTrue(result.getFailures().isEmpty());
-        
-        verify( injector ).injectFields( isNotNull() );
+
+        verify(injector).injectFields(isNotNull());
     }
 
     @Test
     public void wrapFailingTest() throws Throwable {
         JUnitCore junit = new JUnitCore();
-        Description method= Description.createTestDescription(SimpleTestHidden.class, "failingTest");
+        Description method = Description.createTestDescription(SimpleTestHidden.class,
+            "failingTest");
         Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector);
         Request request = classRequest.filterWith(method);
-        Result result = junit.run( request );
+        Result result = junit.run(request);
         assertEquals(1, result.getFailures().size());
-        verify( injector ).injectFields( isNotNull() );
+        verify(injector).injectFields(isNotNull());
     }
 }

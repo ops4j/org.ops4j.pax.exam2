@@ -5,25 +5,19 @@ import static org.junit.Assert.fail;
 import org.osgi.framework.BundleContext;
 
 /**
- * Created by IntelliJ IDEA.
- * User: tonit
- * Date: 3/11/11
- * Time: 9:07 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: tonit Date: 3/11/11 Time: 9:07 PM To change this template use
+ * File | Settings | File Templates.
  */
 public class Probe {
 
-    public void probe()
-    {
+    public void probe() {
     }
 
-    public void withBCTest( BundleContext ctx )
-    {
+    public void withBCTest(BundleContext ctx) {
     }
 
-    @SuppressWarnings( "unused" )
-    private void neverCall()
-    {
-        fail( "Don't parseForTests me !" );
+    @SuppressWarnings("unused")
+    private void neverCall() {
+        fail("Don't parseForTests me !");
     }
 }

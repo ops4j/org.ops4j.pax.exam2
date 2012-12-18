@@ -8,13 +8,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.*;
 
-public class OptionTest
-{
+public class OptionTest {
+
     @Test
-    public void compositeEquality() 
-    {
+    public void compositeEquality() {
         Option composite1 = composite(RegressionConfiguration.regressionDefaults());
         Option composite2 = composite(RegressionConfiguration.regressionDefaults());
-        assertThat( composite1, is( equalTo( composite2 )));
+        assertThat(composite1, is(equalTo(composite2)));
     }
 }

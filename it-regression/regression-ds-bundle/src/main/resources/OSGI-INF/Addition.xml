@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.0.0" name="Addition">
-   <implementation class="org.ops4j.pax.exam.regression.ds.Addition"/>
-   <service>
-     <provide interface="org.ops4j.pax.exam.regression.ds.BinaryOperation"/>
-   </service> 
+    <implementation class="org.ops4j.pax.exam.regression.ds.Addition" />
+    <service>
+        <provide interface="org.ops4j.pax.exam.regression.ds.BinaryOperation" />
+    </service>
 </scr:component>

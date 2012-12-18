@@ -26,12 +26,10 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
  * @deprecated Use {@link PerClass} instead.
  */
 @Deprecated
-public class EagerSingleStagedReactorFactory implements StagedExamReactorFactory
-{
+public class EagerSingleStagedReactorFactory implements StagedExamReactorFactory {
 
     @Override
-    public StagedExamReactor create( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
-    {
-        return new EagerSingleStagedReactor( containers, mProbes );
+    public StagedExamReactor create(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+        return new EagerSingleStagedReactor(containers, mProbes);
     }
 }

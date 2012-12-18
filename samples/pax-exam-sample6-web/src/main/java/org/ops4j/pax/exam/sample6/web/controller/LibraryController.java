@@ -28,20 +28,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class LibraryController
-{
+public class LibraryController {
 
     @Inject
     private LibraryService libraryService;
 
-    @RequestMapping( "/books.html" )
-    public ModelAndView showBooks()
-    {
+    @RequestMapping("/books.html")
+    public ModelAndView showBooks() {
         libraryService.fillLibrary();
 
         List<Book> books = libraryService.findBooks();
-        ModelAndView mav = new ModelAndView( "books" );
-        mav.addObject( "books", books );
+        ModelAndView mav = new ModelAndView("books");
+        mav.addObject("books", books);
         return mav;
     }
 }

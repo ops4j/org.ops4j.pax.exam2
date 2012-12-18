@@ -36,14 +36,16 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 /**
- * Fully functional alternative Pax Exam Driver.
- * This lets your write fully functional setup-tests "in a tweet".
- *
+ * Fully functional alternative Pax Exam Driver. This lets your write fully functional setup-tests
+ * "in a tweet".
+ * 
  * Example :
+ * 
  * <pre>
- *      new Player( new NativeTestContainerFactory() ).with( new PaxLoggingParts( "1.3.RC4" ) ).play( new BundleCheck().allResolved() );
+ * new Player(new NativeTestContainerFactory()).with(new PaxLoggingParts(&quot;1.3.RC4&quot;)).play(
+ *     new BundleCheck().allResolved());
  * </pre>
- *
+ * 
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since April, 1st, 2011
  */
@@ -54,62 +56,51 @@ public class Player {
     final private Option[] parts;
     final private TestProbeBuilder builder;
     final private ExamSystem testSystem;
-   
-    public Player( TestContainerFactory containerFactory, Option... parts )
-        throws IOException
-    {
+
+    public Player(TestContainerFactory containerFactory, Option... parts) throws IOException {
         this.testSystem = createTestSystem();
         this.factory = containerFactory;
         this.parts = parts;
         this.builder = testSystem.createProbe();
     }
 
-    public Player( TestContainerFactory containerFactory )
-        throws IOException
-    {
-        this( containerFactory, new Option[ 0 ] );
+    public Player(TestContainerFactory containerFactory) throws IOException {
+        this(containerFactory, new Option[0]);
     }
 
-    public Player()
-        throws IOException
-    {
-        this( getTestContainerFactory() );
+    public Player() throws IOException {
+        this(getTestContainerFactory());
     }
 
-    public Player with( Option... parts )
-        throws IOException
-    {
-        return new Player( factory, parts );
+    public Player with(Option... parts) throws IOException {
+        return new Player(factory, parts);
     }
 
-    public Player test( Class<?> clazz, Object... args )
-        throws Exception
-    {
-        builder.addTest( clazz, args );
+    public Player test(Class<?> clazz, Object... args) throws Exception {
+        builder.addTest(clazz, args);
         return this;
     }
 
-    public void play() throws IOException
-    {
-        play( DEFAULT_STRATEGY );
+    public void play() throws IOException {
+        play(DEFAULT_STRATEGY);
     }
 
-    public void play( StagedExamReactorFactory strategy ) throws IOException
-    {
-        ExamReactor reactor = new DefaultExamReactor( testSystem, factory );
-        reactor.addConfiguration(  parts  );
-        reactor.addProbe( builder );
+    public void play(StagedExamReactorFactory strategy) throws IOException {
+        ExamReactor reactor = new DefaultExamReactor(testSystem, factory);
+        reactor.addConfiguration(parts);
+        reactor.addProbe(builder);
 
-        StagedExamReactor stagedReactor = reactor.stage( strategy );
+        StagedExamReactor stagedReactor = reactor.stage(strategy);
         stagedReactor.beforeClass();
 
-        for( TestAddress target : stagedReactor.getTargets() ) {
+        for (TestAddress target : stagedReactor.getTargets()) {
             try {
-                stagedReactor.invoke( target );
-            } catch( Exception e ) {
-                Throwable t = ExceptionHelper.unwind( e );
+                stagedReactor.invoke(target);
+            }
+            catch (Exception e) {
+                Throwable t = ExceptionHelper.unwind(e);
                 t.printStackTrace();
-                fail( t.getMessage() );
+                fail(t.getMessage());
             }
         }
         stagedReactor.afterClass();

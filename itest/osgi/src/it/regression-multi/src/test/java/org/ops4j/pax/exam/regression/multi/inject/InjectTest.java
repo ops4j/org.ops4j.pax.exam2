@@ -27,17 +27,15 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.regression.pde.HelloService;
 
-@RunWith( PaxExam.class )
-public class InjectTest
-{
+@RunWith(PaxExam.class)
+public class InjectTest {
 
     @Inject
     private HelloService helloService;
 
     @Test
-    public void getInjectedService()
-    {
-        assertThat( helloService, is( notNullValue() ) );
-        assertThat( helloService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
+    public void getInjectedService() {
+        assertThat(helloService, is(notNullValue()));
+        assertThat(helloService.getMessage(), is(equalTo("Hello Pax!")));
     }
 }

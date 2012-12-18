@@ -23,20 +23,21 @@ import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * Simple pre-build test to be used with Pax Exam Player.
- *
- * This Counts all bundles and compares it to the given integer value parameter.
- * The parameter "assume" is mandatory.
+ * 
+ * This Counts all bundles and compares it to the given integer value parameter. The parameter
+ * "assume" is mandatory.
  */
 public class CountBundles {
 
-    public void probe( BundleContext ctx, Integer assume )
-        throws InterruptedException, InvalidSyntaxException
-    {
-        if( assume == null ) { throw new TestContainerException( "Argument assume (integer) is mandatory." ); }
+    public void probe(BundleContext ctx, Integer assume) throws InterruptedException,
+        InvalidSyntaxException {
+        if (assume == null) {
+            throw new TestContainerException("Argument assume (integer) is mandatory.");
+        }
 
         int bundles = ctx.getBundles().length;
-        if( bundles != assume ) {
-            throw new TestContainerException( "Assumed " + assume + " bundles. But have " + bundles );
+        if (bundles != assume) {
+            throw new TestContainerException("Assumed " + assume + " bundles. But have " + bundles);
         }
     }
 }

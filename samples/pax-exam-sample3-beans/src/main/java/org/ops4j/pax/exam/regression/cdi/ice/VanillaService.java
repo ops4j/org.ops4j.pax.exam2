@@ -19,12 +19,11 @@ package org.ops4j.pax.exam.regression.cdi.ice;
 
 import javax.enterprise.inject.Default;
 
-@Vanilla @Default
-public class VanillaService implements IceCreamService
-{
+@Vanilla
+@Default
+public class VanillaService implements IceCreamService {
 
-    public String getFlavour()
-    {
+    public String getFlavour() {
         return "Vanilla";
     }
 }

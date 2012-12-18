@@ -30,50 +30,40 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.util.PathUtils;
 
-public class BeforeAfterParent
-{
+public class BeforeAfterParent {
+
     @Configuration
-    public Option[] config()
-    {
-        return options(
-            regressionDefaults(),
-            url( "reference:file:" + PathUtils.getBaseDir() +
-                    "/target/regression-pde-bundle.jar" ),
-            junitBundles() );
+    public Option[] config() {
+        return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
+            + "/target/regression-pde-bundle.jar"), junitBundles());
     }
 
     @Before
-    public void before()
-    {
-        addMessage( "Before in parent" );
+    public void before() {
+        addMessage("Before in parent");
     }
 
     @After
-    public void after()
-    {
-        addMessage( "After in parent" );
+    public void after() {
+        addMessage("After in parent");
     }
 
-    public static void clearMessages() throws BackingStoreException
-    {
-        Preferences prefs = Preferences.userNodeForPackage( BeforeAfterParent.class );
+    public static void clearMessages() throws BackingStoreException {
+        Preferences prefs = Preferences.userNodeForPackage(BeforeAfterParent.class);
         prefs.clear();
         prefs.sync();
     }
 
-    public static void addMessage( String message )
-    {
-        Preferences prefs = Preferences.userNodeForPackage( BeforeAfterParent.class );
-        int numMessages = prefs.getInt( "numMessages", 0 );
-        prefs.put( "message." + numMessages, message );
-        prefs.putInt( "numMessages", ++numMessages );
-        try
-        {
+    public static void addMessage(String message) {
+        Preferences prefs = Preferences.userNodeForPackage(BeforeAfterParent.class);
+        int numMessages = prefs.getInt("numMessages", 0);
+        prefs.put("message." + numMessages, message);
+        prefs.putInt("numMessages", ++numMessages);
+        try {
             prefs.sync();
         }
-        catch ( BackingStoreException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (BackingStoreException exc) {
+            throw new TestContainerException(exc);
         }
     }
 }

@@ -36,38 +36,34 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
  */
 public abstract class BaseStagedReactorTest {
 
-    abstract protected StagedExamReactor getReactor( List<TestContainer> containers, List<TestProbeBuilder> providers );
+    abstract protected StagedExamReactor getReactor(List<TestContainer> containers,
+        List<TestProbeBuilder> providers);
 
     @Test
-    public void testEmptyContainersAndBuilders() throws IOException
-    {
+    public void testEmptyContainersAndBuilders() throws IOException {
         List<TestContainer> containers = new ArrayList<TestContainer>();
         List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
 
-        StagedExamReactor reactor = getReactor( containers, providers );
-        assertThat( reactor.getTargets().size(), is( 0 ) );
+        StagedExamReactor reactor = getReactor(containers, providers);
+        assertThat(reactor.getTargets().size(), is(0));
     }
 
-    @Test( expected = AssertionError.class )
-    public void testInvokeNull()
-        throws Exception
-    {
+    @Test(expected = AssertionError.class)
+    public void testInvokeNull() throws Exception {
         List<TestContainer> containers = new ArrayList<TestContainer>();
         List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
 
-        StagedExamReactor reactor = getReactor( containers, providers );
-        reactor.invoke( null );
+        StagedExamReactor reactor = getReactor(containers, providers);
+        reactor.invoke(null);
     }
 
-    @Test( expected = IllegalArgumentException.class )
-    public void testInvokeInvalid()
-        throws Exception
-    {
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvokeInvalid() throws Exception {
         List<TestContainer> containers = new ArrayList<TestContainer>();
         List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
 
-        StagedExamReactor reactor = getReactor( containers, providers );
-        TestAddress dummy = mock( TestAddress.class );
-        reactor.invoke( dummy );
+        StagedExamReactor reactor = getReactor(containers, providers);
+        TestAddress dummy = mock(TestAddress.class);
+        reactor.invoke(dummy);
     }
 }

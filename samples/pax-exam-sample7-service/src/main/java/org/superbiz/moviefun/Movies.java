@@ -21,6 +21,7 @@ import java.util.List;
 
 @Local
 public interface Movies {
+
     int count();
 
     List<Movie> findRange(int[] range);

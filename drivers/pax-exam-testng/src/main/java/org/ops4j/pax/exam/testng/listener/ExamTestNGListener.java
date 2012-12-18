@@ -17,15 +17,13 @@
  */
 package org.ops4j.pax.exam.testng.listener;
 
-
 /**
  * TestNG driver for Pax Exam.
- *  
+ * 
  * @author Harald Wellmann
  * @since 2.3.0
  * @deprecated use {@link PaxExam} instead
  */
 @Deprecated
-public class ExamTestNGListener extends PaxExam
-{
+public class ExamTestNGListener extends PaxExam {
 }

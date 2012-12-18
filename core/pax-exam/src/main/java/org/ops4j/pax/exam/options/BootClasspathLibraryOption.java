@@ -22,13 +22,11 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * Option specifying a library that will be made available in teh boot classpath.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 29, 2009
  */
-public class BootClasspathLibraryOption
-    implements Option
-{
+public class BootClasspathLibraryOption implements Option {
 
     /**
      * Library url (cannot be null).
@@ -41,79 +39,76 @@ public class BootClasspathLibraryOption
 
     /**
      * Constructor.
-     *
-     * @param libraryUrl library url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If url is null or empty
+     * 
+     * @param libraryUrl
+     *            library url (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null or empty
      */
-    public BootClasspathLibraryOption( final String libraryUrl )
-    {
-        this( new RawUrlReference( libraryUrl ) );
+    public BootClasspathLibraryOption(final String libraryUrl) {
+        this(new RawUrlReference(libraryUrl));
     }
 
     /**
      * Constructor.
-     *
-     * @param libraryUrl library url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If url is null
+     * 
+     * @param libraryUrl
+     *            library url (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If url is null
      */
-    public BootClasspathLibraryOption( final UrlReference libraryUrl )
-    {
-        validateNotNull( libraryUrl, "URL" );
+    public BootClasspathLibraryOption(final UrlReference libraryUrl) {
+        validateNotNull(libraryUrl, "URL");
         this.libraryUrl = libraryUrl;
         append = true;
     }
 
     /**
      * To be used to specify that this library should be in the classpath before framework library.
-     *
+     * 
      * @return itself, for fluent api usage
      */
-    public BootClasspathLibraryOption beforeFramework()
-    {
+    public BootClasspathLibraryOption beforeFramework() {
         append = false;
         return itself();
     }
 
     /**
      * To be used to specify that this library should be in the classpath after framework library.
-     *
+     * 
      * @return itself, for fluent api usage
      */
-    public BootClasspathLibraryOption afterFramework()
-    {
+    public BootClasspathLibraryOption afterFramework() {
         append = true;
         return itself();
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return library url
      */
-    public UrlReference getLibraryUrl()
-    {
+    public UrlReference getLibraryUrl() {
         return libraryUrl;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return true if the library should be before framework library in the classpath.
      */
-    public boolean isBeforeFramework()
-    {
+    public boolean isBeforeFramework() {
         return !append;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return true if the library should be after framework library in the classpath.
      */
-    public boolean isAfterFramework()
-    {
+    public boolean isAfterFramework() {
         return append;
     }
 
@@ -121,21 +116,19 @@ public class BootClasspathLibraryOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "BootClasspathOption" );
-        sb.append( "{url=" ).append( libraryUrl );
-        sb.append( ", append=" ).append( append );
-        sb.append( '}' );
+        sb.append("BootClasspathOption");
+        sb.append("{url=").append(libraryUrl);
+        sb.append(", append=").append(append);
+        sb.append('}');
         return sb.toString();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected BootClasspathLibraryOption itself()
-    {
+    protected BootClasspathLibraryOption itself() {
         return this;
     }
 

@@ -35,14 +35,14 @@ public class NoReferenceTest {
 
     @Test
     public void exceptionWithoutCustomHandler() throws BundleException, IOException {
-        assumeTrue( isEquinox() );
+        assumeTrue(isEquinox());
         assumeTrue(System.getProperty("java.protocol.handler.pkgs") == null);
-        
+
         expectedException.expect(MalformedURLException.class);
         expectedException.expectMessage("unknown protocol");
 
-        String reference = "reference:file:" + PathUtils.getBaseDir() +
-                "/target/regression-pde-bundle";
+        String reference = "reference:file:" + PathUtils.getBaseDir()
+            + "/target/regression-pde-bundle";
         new URL(reference);
     }
 }

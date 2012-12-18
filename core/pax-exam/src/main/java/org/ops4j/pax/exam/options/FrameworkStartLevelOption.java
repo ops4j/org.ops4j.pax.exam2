@@ -21,13 +21,11 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * Option specifying framework start level.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 23, 2009
  */
-public class FrameworkStartLevelOption
-    implements Option
-{
+public class FrameworkStartLevelOption implements Option {
 
     /**
      * Start level.
@@ -36,27 +34,26 @@ public class FrameworkStartLevelOption
 
     /**
      * Constructor.
-     *
-     * @param startLevel framework start level (must be bigger then zero)
-     *
-     * @throws IllegalArgumentException - If start level is <= 0
+     * 
+     * @param startLevel
+     *            framework start level (must be bigger then zero)
+     * 
+     * @throws IllegalArgumentException
+     *             - If start level is <= 0
      */
-    public FrameworkStartLevelOption( final int startLevel )
-    {
-        if( startLevel <= 0 )
-        {
-            throw new IllegalArgumentException( "Start level must be bigger then zero" );
+    public FrameworkStartLevelOption(final int startLevel) {
+        if (startLevel <= 0) {
+            throw new IllegalArgumentException("Start level must be bigger then zero");
         }
         this.startLevel = startLevel;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return startlevel (bigger then zero)
      */
-    public int getStartLevel()
-    {
+    public int getStartLevel() {
         return startLevel;
     }
 
@@ -64,17 +61,13 @@ public class FrameworkStartLevelOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
-        return new StringBuilder()
-            .append( FrameworkStartLevelOption.class.getSimpleName() )
-            .append( "{startlevel='" ).append( startLevel ).append( "\'}" )
-            .toString();
+    public String toString() {
+        return new StringBuilder().append(FrameworkStartLevelOption.class.getSimpleName())
+            .append("{startlevel='").append(startLevel).append("\'}").toString();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + startLevel;
@@ -82,16 +75,15 @@ public class FrameworkStartLevelOption
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         FrameworkStartLevelOption other = (FrameworkStartLevelOption) obj;
-        if( startLevel != other.startLevel )
+        if (startLevel != other.startLevel)
             return false;
         return true;
     }

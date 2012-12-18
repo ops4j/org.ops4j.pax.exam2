@@ -36,17 +36,15 @@ import org.ops4j.pax.exam.sample2.service.DatabasePopulator;
  * 
  * @author Harald Wellmann
  */
-@RunWith( PaxExam.class )
-public class DatabasePopulatorRunner
-{
+@RunWith(PaxExam.class)
+public class DatabasePopulatorRunner {
 
     @Inject
     private DatabasePopulator populator;
 
     @Test
-    public void populateDatabase()
-    {
+    public void populateDatabase() {
         List<Movie> movies = populator.populateDatabase();
-        assertThat( movies.isEmpty(), is( false ) );
+        assertThat(movies.isEmpty(), is(false));
     }
 }

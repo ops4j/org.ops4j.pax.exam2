@@ -24,7 +24,7 @@ import org.ops4j.pax.exam.Option;
  * @since Jan 25, 2010
  */
 public class RBCPortOption implements Option {
-  
+
     private Integer port;
     private String host;
 

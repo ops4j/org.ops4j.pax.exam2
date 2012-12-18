@@ -26,11 +26,10 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 /**
  * Define the invokation strategy.
  */
-@Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.TYPE } )
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
 @Inherited
-public @interface ExamReactorStrategy
-{
+public @interface ExamReactorStrategy {
 
     Class<? extends StagedExamReactorFactory>[] value() default { PerMethod.class };
 }

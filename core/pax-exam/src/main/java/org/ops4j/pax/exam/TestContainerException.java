@@ -19,39 +19,33 @@ package org.ops4j.pax.exam;
 
 /**
  * Denotes an exception occuring during using regression container.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 15, 2008
  */
-public class TestContainerException
-    extends RuntimeException
-{
+public class TestContainerException extends RuntimeException {
 
     private static final long serialVersionUID = -2327575681804868547L;
 
     /**
      * {@inheritDoc}
      */
-    public TestContainerException( final String message )
-    {
-        super( message );
+    public TestContainerException(final String message) {
+        super(message);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TestContainerException( final String message,
-                                   final Throwable cause )
-    {
-        super( message, cause );
+    public TestContainerException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TestContainerException( final Throwable cause )
-    {
-        super( cause );
+    public TestContainerException(final Throwable cause) {
+        super(cause);
     }
 
 }

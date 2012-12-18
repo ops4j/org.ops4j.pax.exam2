@@ -30,15 +30,14 @@ import org.ops4j.store.Store;
 /**
  * Static local provider.
  */
-public class DefaultTestProbeProvider implements TestProbeProvider
-{
+public class DefaultTestProbeProvider implements TestProbeProvider {
+
     private Set<TestAddress> tests;
     private Handle probe;
     private Store<InputStream> store;
     private String formattedInfo = "";
 
-    public DefaultTestProbeProvider( Set<TestAddress> tests, Store<InputStream> store, Handle probe )
-    {
+    public DefaultTestProbeProvider(Set<TestAddress> tests, Store<InputStream> store, Handle probe) {
         this.tests = tests;
         this.store = store;
         this.probe = probe;
@@ -47,62 +46,53 @@ public class DefaultTestProbeProvider implements TestProbeProvider
         formattedInfo = constuctInfo();
     }
 
-    public Set<TestAddress> getTests()
-    {
+    public Set<TestAddress> getTests() {
         return tests;
     }
 
-    public InputStream getStream()
-        throws IOException
-    {
-        return store.load( probe );
+    public InputStream getStream() throws IOException {
+        return store.load(probe);
     }
 
-    public String toString()
-    {
+    public String toString() {
         return formattedInfo;
     }
 
     // TODO: use some flat JSON Tree Model so we don't have to mess with formatting here.
-    private String constuctInfo()
-    {
+    private String constuctInfo() {
         JarInputStream in = null;
         String info = "";
-        try
-        {
+        try {
             info += "[Probe ID: " + probe.getIdentification() + "]\n";
-            info += "[Probe Location: " + store.getLocation( probe ).toASCIIString() + "]\n";
+            info += "[Probe Location: " + store.getLocation(probe).toASCIIString() + "]\n";
 
-            in = new JarInputStream( store.load( probe ) );
+            in = new JarInputStream(store.load(probe));
             Manifest man = in.getManifest();
             Attributes mainAttributes = man.getMainAttributes();
 
             info += "[Tests: " + "\n";
-            for( TestAddress t : tests )
-            {
+            for (TestAddress t : tests) {
                 info += "    SIG=" + t + "\n";
             }
             info += "]" + "\n";
 
             info += "[Headers: " + "\n";
-            for( Object key : mainAttributes.keySet() )
-            {
-                info += "    " + key + "=" + mainAttributes.get( key ) + "\n";
+            for (Object key : mainAttributes.keySet()) {
+                info += "    " + key + "=" + mainAttributes.get(key) + "\n";
             }
             info += "]" + "\n";
 
             // surround
             info = "\n--\n" + info + "--\n";
-        } catch( IOException e )
-        {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } finally
-        {
-            try
-            {
+        }
+        finally {
+            try {
                 in.close();
-            } catch( IOException e )
-            {
+            }
+            catch (IOException e) {
                 //
             }
         }

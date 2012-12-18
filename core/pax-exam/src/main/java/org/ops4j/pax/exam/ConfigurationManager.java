@@ -33,52 +33,43 @@ import org.ops4j.util.property.PropertiesPropertyResolver;
  * @author Harald Wellmann
  * @since Dec 2011
  */
-public class ConfigurationManager
-{
+public class ConfigurationManager {
+
     private PropertiesPropertyResolver resolver;
 
-    public ConfigurationManager()
-    {
+    public ConfigurationManager() {
         Properties props = new Properties();
         URL url = null;
-        String configurationLocation = System.getProperty( Constants.EXAM_CONFIGURATION_KEY );
-        try
-        {
-            if( configurationLocation == null )
-            {
-                url = getClass().getResource( Constants.EXAM_PROPERTIES_PATH );
+        String configurationLocation = System.getProperty(Constants.EXAM_CONFIGURATION_KEY);
+        try {
+            if (configurationLocation == null) {
+                url = getClass().getResource(Constants.EXAM_PROPERTIES_PATH);
             }
-            else
-            {
-                url = new URL( configurationLocation );
+            else {
+                url = new URL(configurationLocation);
             }
-            InputStream is = (url == null) ? null :  url.openStream();
-            if( is != null )
-            {
-                props.load( is );
+            InputStream is = (url == null) ? null : url.openStream();
+            if (is != null) {
+                props.load(is);
                 is.close();
-                resolver = new PropertiesPropertyResolver( props );
+                resolver = new PropertiesPropertyResolver(props);
             }
-            resolver = new PropertiesPropertyResolver( System.getProperties(), resolver );
+            resolver = new PropertiesPropertyResolver(System.getProperties(), resolver);
         }
-        catch ( MalformedURLException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    public String getProperty( String key )
-    {
-        return resolver.get( key );
+    public String getProperty(String key) {
+        return resolver.get(key);
     }
 
-    public String getProperty( String key, String defaultValue )
-    {
-        String value = resolver.get( key );
+    public String getProperty(String key, String defaultValue) {
+        String value = resolver.get(key);
         return (value == null) ? defaultValue : value;
     }
 }

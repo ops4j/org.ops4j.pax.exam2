@@ -39,68 +39,61 @@ import org.ops4j.pax.exam.regression.pde.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SuiteTest implements Notifier, Remote
-{
-    private static Logger LOG = LoggerFactory.getLogger( SuiteTest.class );
+public class SuiteTest implements Notifier, Remote {
+
+    private static Logger LOG = LoggerFactory.getLogger(SuiteTest.class);
 
     private List<String> messages;
 
     @Override
-    public void send( String msg ) throws RemoteException
-    {
-        System.out.println( "received: " + msg );
-        messages.add( msg );
+    public void send(String msg) throws RemoteException {
+        System.out.println("received: " + msg);
+        messages.add(msg);
     }
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         messages = new ArrayList<String>();
     }
 
     @Test
-    public void runSuiteWithPerClassStrategy() throws Exception
-    {
-        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerClass" );
-        checkNumberOfRestartsInSuite( 2 );
+    public void runSuiteWithPerClassStrategy() throws Exception {
+        System.setProperty(Constants.EXAM_REACTOR_STRATEGY_KEY, "PerClass");
+        checkNumberOfRestartsInSuite(2);
     }
 
     @Test
-    public void runSuiteWithPerMethodStrategy() throws Exception
-    {
-        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerMethod" );
-        checkNumberOfRestartsInSuite( 3 );
+    public void runSuiteWithPerMethodStrategy() throws Exception {
+        System.setProperty(Constants.EXAM_REACTOR_STRATEGY_KEY, "PerMethod");
+        checkNumberOfRestartsInSuite(3);
     }
 
     @Test
-    public void runSuiteWithPerSuiteStrategy() throws Exception
-    {
-        System.setProperty( Constants.EXAM_REACTOR_STRATEGY_KEY, "PerSuite" );
-        checkNumberOfRestartsInSuite( 1 );
+    public void runSuiteWithPerSuiteStrategy() throws Exception {
+        System.setProperty(Constants.EXAM_REACTOR_STRATEGY_KEY, "PerSuite");
+        checkNumberOfRestartsInSuite(1);
     }
 
-    private void checkNumberOfRestartsInSuite( int numRestarts ) throws Exception
-    {
-        FreePort freePort = new FreePort( 20000, 21000 );
+    private void checkNumberOfRestartsInSuite(int numRestarts) throws Exception {
+        FreePort freePort = new FreePort(20000, 21000);
 
         int rmiPort = freePort.getPort();
-        System.setProperty( "pax.exam.regression.rmi", Integer.toString( rmiPort ) );
-        Registry registry = LocateRegistry.createRegistry( rmiPort );
-        Remote remote = UnicastRemoteObject.exportObject( this, 0 );
-        registry.rebind( "PaxExamNotifier", remote );
+        System.setProperty("pax.exam.regression.rmi", Integer.toString(rmiPort));
+        Registry registry = LocateRegistry.createRegistry(rmiPort);
+        Remote remote = UnicastRemoteObject.exportObject(this, 0);
+        registry.rebind("PaxExamNotifier", remote);
 
         JUnitCore junit = new JUnitCore();
-        Result result = junit.run( FilterTest.class, InjectTest.class );
-        for( Failure failure : result.getFailures() )
-        {
-            LOG.error( "failure in nested test", failure.getException() );
+        Result result = junit.run(FilterTest.class, InjectTest.class);
+        for (Failure failure : result.getFailures()) {
+            LOG.error("failure in nested test", failure.getException());
         }
-        assertThat( result.getFailureCount(), is( 0 ) );
+        assertThat(result.getFailureCount(), is(0));
 
-        registry.unbind( "PaxExamNotifier" );
-        UnicastRemoteObject.unexportObject( this, true );
-        UnicastRemoteObject.unexportObject( registry, true );
+        registry.unbind("PaxExamNotifier");
+        UnicastRemoteObject.unexportObject(this, true);
+        UnicastRemoteObject.unexportObject(registry, true);
 
-        assertThat( messages.size(), is( numRestarts ) );
+        assertThat(messages.size(), is(numRestarts));
     }
 }

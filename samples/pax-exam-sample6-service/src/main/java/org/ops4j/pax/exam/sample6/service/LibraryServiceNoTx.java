@@ -44,81 +44,73 @@ import org.ops4j.pax.exam.sample6.model.Book;
  * 
  */
 @Stateless
-public class LibraryServiceNoTx implements Serializable
-{
+public class LibraryServiceNoTx implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @PersistenceContext
     private EntityManager em;
 
-    @TransactionAttribute( TransactionAttributeType.SUPPORTS )
-    public void fillLibrary()
-    {
-        if( getNumBooks() != 0 )
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void fillLibrary() {
+        if (getNumBooks() != 0)
             return;
 
-        Author mann = createAuthor( "Thomas", "Mann" );
-        Author steinbeck = createAuthor( "John", "Steinbeck" );
+        Author mann = createAuthor("Thomas", "Mann");
+        Author steinbeck = createAuthor("John", "Steinbeck");
 
-        createBook( "Buddenbrooks", mann );
-        createBook( "East of Eden", steinbeck );
+        createBook("Buddenbrooks", mann);
+        createBook("East of Eden", steinbeck);
     }
 
     @TransactionAttribute
-    public List<Book> findBooksByAuthor( String lastName )
-    {
+    public List<Book> findBooksByAuthor(String lastName) {
         String jpql = "select b from Book b where b.author.lastName = :lastName";
-        TypedQuery<Book> query = em.createQuery( jpql, Book.class );
-        query.setParameter( "lastName", lastName );
+        TypedQuery<Book> query = em.createQuery(jpql, Book.class);
+        query.setParameter("lastName", lastName);
         List<Book> books = query.getResultList();
         return books;
     }
 
     @TransactionAttribute
-    public List<Book> findBooksByTitle( String title )
-    {
+    public List<Book> findBooksByTitle(String title) {
         String jpql = "select b from Book b where b.title = :title";
-        TypedQuery<Book> query = em.createQuery( jpql, Book.class );
-        query.setParameter( "title", title );
+        TypedQuery<Book> query = em.createQuery(jpql, Book.class);
+        query.setParameter("title", title);
         List<Book> books = query.getResultList();
         return books;
     }
 
-    @TransactionAttribute( TransactionAttributeType.REQUIRES_NEW )
-    public Author createAuthor( String firstName, String lastName )
-    {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Author createAuthor(String firstName, String lastName) {
         Author author = new Author();
-        author.setFirstName( firstName );
-        author.setLastName( lastName );
-        em.persist( author );
+        author.setFirstName(firstName);
+        author.setLastName(lastName);
+        em.persist(author);
         return author;
     }
 
-    @TransactionAttribute( TransactionAttributeType.REQUIRES_NEW )
-    public Book createBook( String title, Author author )
-    {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Book createBook(String title, Author author) {
         Book book = new Book();
-        book.setTitle( title );
-        book.setAuthor( author );
-        author.getBooks().add( book );
-        em.persist( book );
+        book.setTitle(title);
+        book.setAuthor(author);
+        author.getBooks().add(book);
+        em.persist(book);
         return book;
     }
 
     @TransactionAttribute
-    public long getNumBooks()
-    {
+    public long getNumBooks() {
         String jpql = "select count(b) from Book b";
-        Long numBooks = (Long) em.createQuery( jpql ).getSingleResult();
+        Long numBooks = (Long) em.createQuery(jpql).getSingleResult();
         return numBooks;
     }
 
     @TransactionAttribute
-    public long getNumAuthors()
-    {
+    public long getNumAuthors() {
         String jpql = "select count(a) from Author a";
-        Long numAuthors = (Long) em.createQuery( jpql ).getSingleResult();
+        Long numAuthors = (Long) em.createQuery(jpql).getSingleResult();
         return numAuthors;
     }
 }

@@ -25,13 +25,11 @@ import org.ops4j.pax.exam.OptionUtils;
 
 /**
  * Default implementation of (@link CompositeOption}.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public class DefaultCompositeOption
-    implements CompositeOption
-{
+public class DefaultCompositeOption implements CompositeOption {
 
     /**
      * Composite options (cannot be null).
@@ -40,43 +38,40 @@ public class DefaultCompositeOption
 
     /**
      * Constructor.
-     *
-     * @param options composite options (can be null or no option specified)
+     * 
+     * @param options
+     *            composite options (can be null or no option specified)
      */
-    public DefaultCompositeOption( final Option... options )
-    {
+    public DefaultCompositeOption(final Option... options) {
         this.options = new ArrayList<Option>();
-        add( options );
+        add(options);
     }
 
     /**
      * Constructor.
      */
-    public DefaultCompositeOption()
-    {
-        this( new Option[0] );
+    public DefaultCompositeOption() {
+        this(new Option[0]);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Option[] getOptions()
-    {
-        return OptionUtils.expand( options.toArray( new Option[options.size()] ) );
+    public Option[] getOptions() {
+        return OptionUtils.expand(options.toArray(new Option[options.size()]));
     }
 
     /**
      * Adds options.
-     *
-     * @param options composite options to be added (can be null or no options specified)
-     *
+     * 
+     * @param options
+     *            composite options to be added (can be null or no options specified)
+     * 
      * @return itself, for fluent api usage
      */
-    public DefaultCompositeOption add( final Option... options )
-    {
-        if( options != null )
-        {
-            this.options.addAll( Arrays.asList( options ) );
+    public DefaultCompositeOption add(final Option... options) {
+        if (options != null) {
+            this.options.addAll(Arrays.asList(options));
         }
         return this;
     }
@@ -85,43 +80,38 @@ public class DefaultCompositeOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "DefaultCompositeOption" );
-        sb.append( "{options=" ).append( options );
-        sb.append( '}' );
+        sb.append("DefaultCompositeOption");
+        sb.append("{options=").append(options);
+        sb.append('}');
         return sb.toString();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( options == null ) ? 0 : options.hashCode() );
+        result = prime * result + ((options == null) ? 0 : options.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         DefaultCompositeOption other = (DefaultCompositeOption) obj;
-        if( options == null )
-        {
-            if( other.options != null )
+        if (options == null) {
+            if (other.options != null)
                 return false;
         }
-        else if( !options.equals( other.options ) )
+        else if (!options.equals(other.options))
             return false;
         return true;
     }
-
 
 }

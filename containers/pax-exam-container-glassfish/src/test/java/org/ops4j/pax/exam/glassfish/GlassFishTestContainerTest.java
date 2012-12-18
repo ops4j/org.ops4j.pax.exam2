@@ -42,45 +42,40 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.osgi.framework.BundleContext;
 
-@RunWith( PaxExam.class )
-@ExamReactorStrategy( PerClass.class )
-public class GlassFishTestContainerTest
-{
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerClass.class)
+public class GlassFishTestContainerTest {
+
     @Inject
     private BundleContext bc;
 
     @Inject
     private GlassFish gf;
 
-    @Configuration( )
-    public Option[] config()
-    {
+    @Configuration()
+    public Option[] config() {
         return options(
-            systemProperty( "osgi.console" ).value( "6666" ),
-            mavenWar( "org.ops4j.pax.exam.samples", "pax-exam-sample1-web", 
-                Info.getPaxExamVersion() ).name( "sample1" ),
-            junitBundles() );
+            systemProperty("osgi.console").value("6666"),
+            mavenWar("org.ops4j.pax.exam.samples", "pax-exam-sample1-web", Info.getPaxExamVersion())
+                .name("sample1"), junitBundles());
     }
 
     @Test
-    public void getBundleContext()
-    {
-        assertThat( bc, is( notNullValue() ) );
+    public void getBundleContext() {
+        assertThat(bc, is(notNullValue()));
     }
 
     @Test
-    public void getGlassFish()
-    {
-        assertThat( gf, is( notNullValue() ) );
+    public void getGlassFish() {
+        assertThat(gf, is(notNullValue()));
     }
 
     @Test
-    public void getDeployedApplications() throws GlassFishException
-    {
+    public void getDeployedApplications() throws GlassFishException {
         Deployer deployer = gf.getDeployer();
         Iterator<String> applications = deployer.getDeployedApplications().iterator();
-        assertThat( applications.hasNext(), is(true));
+        assertThat(applications.hasNext(), is(true));
         String applicationName = applications.next();
-        assertThat( applicationName, is("sample1"));
+        assertThat(applicationName, is("sample1"));
     }
 }

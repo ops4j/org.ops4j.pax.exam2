@@ -31,44 +31,41 @@ import org.osgi.framework.BundleContext;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners({PaxExam.class})
-public class TestNGExamTest
-{
+@Listeners({ PaxExam.class })
+public class TestNGExamTest {
+
     @Inject
     private BundleContext bc;
-    
+
     @Configuration
-    public Option[] config()
-    {
+    public Option[] config() {
         return options(
-            
-            mavenBundle( "org.testng", "testng", "6.3.1" ),
-            
-            /*
-             * The following are optional direct and transitive dependencies
-             * of TestNG which do not seem to be required unless you want
-             * to use command line parameters, Guice injection or YAML suites.
-             */
-            
-            //mavenBundle( "com.beust", "jcommander", "1.12" ),
-            //mavenBundle( "org.beanshell", "com.springsource.bsh", "2.0.0.b4" ),
-            //mavenBundle("org.apache.geronimo.specs", "geronimo-servlet_2.5_spec", "1.2"),
-            //mavenBundle("com.google.inject", "guice", "2.0"),
-            //wrappedBundle(mavenBundle("org.yaml", "snakeyaml", "1.6")),
 
-            systemProperty( "osgi.console" ).value( "6666" ) );
+        mavenBundle("org.testng", "testng", "6.3.1"),
+
+        /*
+         * The following are optional direct and transitive dependencies of TestNG which do not seem
+         * to be required unless you want to use command line parameters, Guice injection or YAML
+         * suites.
+         */
+
+        // mavenBundle( "com.beust", "jcommander", "1.12" ),
+        // mavenBundle( "org.beanshell", "com.springsource.bsh", "2.0.0.b4" ),
+        // mavenBundle("org.apache.geronimo.specs", "geronimo-servlet_2.5_spec", "1.2"),
+        // mavenBundle("com.google.inject", "guice", "2.0"),
+        // wrappedBundle(mavenBundle("org.yaml", "snakeyaml", "1.6")),
+
+            systemProperty("osgi.console").value("6666"));
     }
 
     @Test
-    public void helloTestNG()
-    {
+    public void helloTestNG() {
         assertNotNull(bc);
-        System.out.println( "Hello TestNG!" );
+        System.out.println("Hello TestNG!");
     }
 
     @Test
-    public void helloPaxExam()
-    {
-        System.out.println( "Hello Pax Exam!" );
+    public void helloPaxExam() {
+        System.out.println("Hello Pax Exam!");
     }
 }

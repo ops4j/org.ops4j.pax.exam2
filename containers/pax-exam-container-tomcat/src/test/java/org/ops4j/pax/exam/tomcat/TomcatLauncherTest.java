@@ -36,53 +36,49 @@ import org.ops4j.io.StreamUtils;
 
 import com.google.common.io.Files;
 
-public class TomcatLauncherTest
-{
+public class TomcatLauncherTest {
 
     private File tempDir;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         tempDir = Files.createTempDir();
     }
 
     @After
-    public void tearDown()
-    {
-        FileUtils.delete( tempDir );
+    public void tearDown() {
+        FileUtils.delete(tempDir);
     }
 
     @Test
-    public void launchTomcat() throws InterruptedException, IOException, LifecycleException
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    public void launchTomcat() throws InterruptedException, IOException, LifecycleException {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         String tempDir = Files.createTempDir().getAbsolutePath();
         File baseDir = new File(tempDir, "tomcat");
         File webappDir = new File(baseDir, "webapps");
         webappDir.mkdirs();
         Tomcat tomcat = new Tomcat();
-        tomcat.setBaseDir( baseDir.getPath() );
+        tomcat.setBaseDir(baseDir.getPath());
         tomcat.setPort(9080);
         tomcat.enableNaming();
         Connector connector = tomcat.getConnector();
         // see https://issues.apache.org/bugzilla/show_bug.cgi?id=50360
-        connector.setProperty( "bindOnInit", "false" );
+        connector.setProperty("bindOnInit", "false");
         Host host = tomcat.getHost();
-        host.setDeployOnStartup( false );
-        host.setAutoDeploy( false );
-        host.setConfigClass( TomcatContextConfig.class.getName() );
+        host.setDeployOnStartup(false);
+        host.setAutoDeploy(false);
+        host.setConfigClass(TomcatContextConfig.class.getName());
         TomcatHostConfig hostConfig = new TomcatHostConfig();
-        host.addLifecycleListener( hostConfig );
+        host.addLifecycleListener(hostConfig);
         tomcat.start();
-        
-        File warTarget = new File( webappDir, "/wicket-examples.war");
+
+        File warTarget = new File(webappDir, "/wicket-examples.war");
         InputStream is = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war").openStream();
         FileOutputStream os = new FileOutputStream(warTarget);
-        StreamUtils.copyStream( is, os, true );
-        
-        hostConfig.deployWAR( new ContextName( "/wicket-examples" ), warTarget);
-        hostConfig.unmanageApp( "/wicket-examples" );
+        StreamUtils.copyStream(is, os, true);
+
+        hostConfig.deployWAR(new ContextName("/wicket-examples"), warTarget);
+        hostConfig.unmanageApp("/wicket-examples");
         tomcat.stop();
     }
 }

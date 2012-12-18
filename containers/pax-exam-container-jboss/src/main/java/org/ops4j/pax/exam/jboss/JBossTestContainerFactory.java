@@ -28,13 +28,10 @@ import org.ops4j.pax.exam.TestContainerFactory;
  * @since 3.0.0
  */
 @MetaInfServices
-public class JBossTestContainerFactory implements TestContainerFactory
-{
+public class JBossTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create( ExamSystem system ) throws TestContainerException
-    {
-        JBossTestContainer container =
-                new JBossTestContainer( system, null );
-        return new TestContainer[]{ container };
+    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+        JBossTestContainer container = new JBossTestContainer(system, null);
+        return new TestContainer[] { container };
     }
 }

@@ -26,14 +26,14 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class Book {
-    
+
     @Id
     @GeneratedValue
     @Column(name = "book_id")
     private int id;
-    
+
     private String title;
-    
+
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;

@@ -35,45 +35,41 @@ import com.caucho.resin.ResinEmbed;
 import com.caucho.resin.WebAppEmbed;
 import com.google.common.io.Files;
 
-public class ResinLauncherTest
-{
+public class ResinLauncherTest {
 
     private File tempDir;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         tempDir = Files.createTempDir();
     }
 
     @After
-    public void tearDown()
-    {
-        FileUtils.delete( tempDir );
+    public void tearDown() {
+        FileUtils.delete(tempDir);
     }
 
     @Test
-    public void launchResin() throws InterruptedException, IOException
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    public void launchResin() throws InterruptedException, IOException {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         String tempDir = Files.createTempDir().getAbsolutePath();
-        System.setProperty( "resin.home", tempDir );
+        System.setProperty("resin.home", tempDir);
         ResinEmbed resin = new ResinEmbed();
-        resin.setRootDirectory( tempDir );
-        HttpEmbed http = new HttpEmbed( 9080 );
-        File webappDir = new File( tempDir, "dump" );
-        URL applUrl = new URL( "mvn:org.mortbay.jetty.testwars/test-war-dump/8.1.4.v20120524/war" );
-        ZipInstaller installer = new ZipInstaller( applUrl, webappDir.getAbsolutePath() );
+        resin.setRootDirectory(tempDir);
+        HttpEmbed http = new HttpEmbed(9080);
+        File webappDir = new File(tempDir, "dump");
+        URL applUrl = new URL("mvn:org.mortbay.jetty.testwars/test-war-dump/8.1.4.v20120524/war");
+        ZipInstaller installer = new ZipInstaller(applUrl, webappDir.getAbsolutePath());
         installer.downloadAndInstall();
-        WebAppEmbed webApp = new WebAppEmbed( "/dump", webappDir.getAbsolutePath() );
-        resin.addPort( http );
+        WebAppEmbed webApp = new WebAppEmbed("/dump", webappDir.getAbsolutePath());
+        resin.addPort(http);
         resin.start();
 
-        resin.addWebApp( webApp );
-        resin.removeWebApp( webApp );
+        resin.addWebApp(webApp);
+        resin.removeWebApp(webApp);
         resin.stop();
 
         // check that resin does not pollute our current directory
-        assertThat( new File( "resin-data" ).exists(), is( false ) );
+        assertThat(new File("resin-data").exists(), is(false));
     }
 }

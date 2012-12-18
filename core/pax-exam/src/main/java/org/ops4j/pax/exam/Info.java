@@ -22,14 +22,13 @@ import java.util.Properties;
 
 /**
  * A helper class to find versioning and other meta information about this pax exam delivery.
- *
+ * 
  * Fully static
- *
+ * 
  * @author Toni Menzel (tonit)
  * @since Jul 25, 2008
  */
-public class Info
-{
+public class Info {
 
     /**
      * Snapshot constant to avaoid typos in analysing code.
@@ -69,19 +68,15 @@ public class Info
      */
     private static boolean paxSwissboxSnapshotVersion;
 
-    static
-    {
+    static {
         String _paxExamVersion = "";
         String _paxUrlVersion = "";
         String _ops4jBaseVersion = "";
         String _paxSwissboxVersion = "";
-        try
-        {
+        try {
             final InputStream is = Info.class.getClassLoader().getResourceAsStream(
-                "META-INF/pax-exam-version.properties"
-                );
-            if (is != null)
-            {
+                "META-INF/pax-exam-version.properties");
+            if (is != null) {
                 final Properties properties = new Properties();
                 properties.load(is);
                 _paxExamVersion = properties.getProperty("pax.exam.version", "").trim();
@@ -89,8 +84,8 @@ public class Info
                 _ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
                 _paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
             }
-        } catch (Exception ignore)
-        {
+        }
+        catch (Exception ignore) {
             // use default versions
         }
         paxExamVersion = _paxExamVersion;
@@ -106,34 +101,31 @@ public class Info
     /**
      * No instances should be made (does not make sense).
      */
-    private Info()
-    {
+    private Info() {
 
     }
 
     /**
      * Discovers the Pax Exam version. If version cannot be determined returns an empty string.
-     *
+     * 
      * @return pax exam version
      */
-    public static String getPaxExamVersion()
-    {
+    public static String getPaxExamVersion() {
         return paxExamVersion;
     }
 
     /**
      * Discovers the Pax Url version. If version cannot be determined returns an empty string.
-     *
+     * 
      * @return pax url version
      */
-    public static String getPaxUrlVersion()
-    {
+    public static String getPaxUrlVersion() {
         return paxUrlVersion;
     }
 
     /**
      * Discovers the Ops4j base version. If version cannot be determined returns an empty string.
-     *
+     * 
      * @return the ops4j base version.
      */
     public static String getOps4jBaseVersion() {
@@ -142,7 +134,7 @@ public class Info
 
     /**
      * Discovers the Pax Swissbox version. If version cannot be determined returns an empty string.
-     *
+     * 
      * @return pax swissbox version
      */
     public static String getPaxSwissboxVersion() {
@@ -151,27 +143,25 @@ public class Info
 
     /**
      * Getter.
-     *
+     * 
      * @return true if pax exam is a snapshot version, false otherwise
      */
-    public static boolean isPaxExamSnapshotVersion()
-    {
+    public static boolean isPaxExamSnapshotVersion() {
         return paxExamSnapshotVersion;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return true if pax url is a snapshot version, false otherwise
      */
-    public static boolean isPaxUrlSnapshotVersion()
-    {
+    public static boolean isPaxUrlSnapshotVersion() {
         return paxUrlSnapshotVersion;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return true if ops4j base is a snapshot version, false otherwise
      */
     public static boolean isOps4jBaseSnapshotVersion() {
@@ -180,7 +170,7 @@ public class Info
 
     /**
      * Getter.
-     *
+     * 
      * @return true if pax swissbox is a snapshot version, false otherwise.
      */
     public static boolean isPaxSwissboxSnapshotVersion() {
@@ -190,22 +180,21 @@ public class Info
     /**
      * Display ops4j logo to console.
      */
-    public static void showLogo()
-    {
-        System.out.println( "__________                 ___________" );
-        System.out.println( "\\______   \\_____  ___  ___ \\_   _____/__  ________    _____" );
-        System.out.println( " |     ___/\\__  \\ \\  \\/  /  |    __)_\\  \\/  /\\__  \\  /     \\" );
-        System.out.println( " |    |     / __ \\_>    <   |        \\>    <  / __ \\|  Y Y  \\" );
-        System.out.println( " |____|    (____  /__/\\_ \\ /_______  /__/\\_ \\(____  /__|_|  /" );
-        System.out.println( "                \\/      \\/         \\/      \\/     \\/      \\/" );
+    public static void showLogo() {
+        System.out.println("__________                 ___________");
+        System.out.println("\\______   \\_____  ___  ___ \\_   _____/__  ________    _____");
+        System.out.println(" |     ___/\\__  \\ \\  \\/  /  |    __)_\\  \\/  /\\__  \\  /     \\");
+        System.out.println(" |    |     / __ \\_>    <   |        \\>    <  / __ \\|  Y Y  \\");
+        System.out.println(" |____|    (____  /__/\\_ \\ /_______  /__/\\_ \\(____  /__|_|  /");
+        System.out.println("                \\/      \\/         \\/      \\/     \\/      \\/");
 
         System.out.println();
-        final String logo = "Pax Exam " + Info.getPaxExamVersion() + " from OPS4J - http://www.ops4j.org";
-        System.out.println( logo );
-        System.out.println(
-            "---------------------------------------------------------------------------------------------------------"
-                .substring( 0, logo.length() )
-        );
+        final String logo = "Pax Exam " + Info.getPaxExamVersion()
+            + " from OPS4J - http://www.ops4j.org";
+        System.out.println(logo);
+        System.out
+            .println("---------------------------------------------------------------------------------------------------------"
+                .substring(0, logo.length()));
         System.out.println();
     }
 }

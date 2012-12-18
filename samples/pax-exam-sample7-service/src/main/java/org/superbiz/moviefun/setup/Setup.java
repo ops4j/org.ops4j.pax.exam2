@@ -25,15 +25,18 @@ import org.superbiz.moviefun.Movie;
 import org.superbiz.moviefun.Movies;
 
 public class Setup {
-	
-	@Inject @Examples private List<Movie> exampleMovies;
-	@EJB private Movies moviesBean;
-	
-	public List<Movie> setup() {
-		for (Movie movie : exampleMovies) {
-			moviesBean.addMovie(movie);
-		}
-		
-		return exampleMovies;
-	}
+
+    @Inject
+    @Examples
+    private List<Movie> exampleMovies;
+    @EJB
+    private Movies moviesBean;
+
+    public List<Movie> setup() {
+        for (Movie movie : exampleMovies) {
+            moviesBean.addMovie(movie);
+        }
+
+        return exampleMovies;
+    }
 }

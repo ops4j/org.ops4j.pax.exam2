@@ -39,27 +39,25 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class NativeContainerTest {
 
     @Test
-    public void emptySetup() throws IOException
-    {
-        FrameworkFactory ff = mock( FrameworkFactory.class );
-        ExamSystem system = mock (ExamSystem.class );
-		NativeTestContainer container = new NativeTestContainer( system, ff );
-        assertThat( container, is( notNullValue() ) );
-        verifyNoMoreInteractions( ff );
+    public void emptySetup() throws IOException {
+        FrameworkFactory ff = mock(FrameworkFactory.class);
+        ExamSystem system = mock(ExamSystem.class);
+        NativeTestContainer container = new NativeTestContainer(system, ff);
+        assertThat(container, is(notNullValue()));
+        verifyNoMoreInteractions(ff);
     }
 
-    //@Test
-    public void starting() throws IOException
-    {
-        FrameworkFactory ff = mock( FrameworkFactory.class );
-        Framework fw = mock( Framework.class );
-        when( ff.newFramework( Matchers.<Map<?,?>>anyObject() ) ).thenReturn( fw );
-        ExamSystem system = mock (ExamSystem.class );
+    // @Test
+    public void starting() throws IOException {
+        FrameworkFactory ff = mock(FrameworkFactory.class);
+        Framework fw = mock(Framework.class);
+        when(ff.newFramework(Matchers.<Map<?, ?>> anyObject())).thenReturn(fw);
+        ExamSystem system = mock(ExamSystem.class);
 
-        NativeTestContainer container =  new NativeTestContainer( system, ff );
+        NativeTestContainer container = new NativeTestContainer(system, ff);
         container.start();
-        verifyNoMoreInteractions( ff );
-        verifyNoMoreInteractions( fw );
+        verifyNoMoreInteractions(ff);
+        verifyNoMoreInteractions(fw);
 
     }
 }

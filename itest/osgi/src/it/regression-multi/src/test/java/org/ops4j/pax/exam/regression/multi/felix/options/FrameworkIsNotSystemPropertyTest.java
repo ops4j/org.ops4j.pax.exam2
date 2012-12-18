@@ -39,32 +39,27 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( PerMethod.class )
-public class FrameworkIsNotSystemPropertyTest
-{
-    @Inject 
+@RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(PerMethod.class)
+public class FrameworkIsNotSystemPropertyTest {
+
+    @Inject
     private BundleContext bc;
-    
+
     @Configuration
-    public Option[] config()
-    {
-        return options(
-            regressionDefaults(),
-            cleanCaches(),
-            systemProperty( "felix.startlevel.bundle" ).value( "4" ),
-            junitBundles() );
+    public Option[] config() {
+        return options(regressionDefaults(), cleanCaches(),
+            systemProperty("felix.startlevel.bundle").value("4"), junitBundles());
     }
 
-    @SuppressWarnings( "deprecation" )
+    @SuppressWarnings("deprecation")
     @Test
-    public void startLevel(  )
-    {
-        assumeTrue( isFelix() );
+    public void startLevel() {
+        assumeTrue(isFelix());
 
-        org.osgi.service.startlevel.StartLevel startLevel = 
-                ServiceLookup.getService( bc, org.osgi.service.startlevel.StartLevel.class );
-        assertThat( startLevel, is( notNullValue() ) );
-        assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 1 ) ) );
+        org.osgi.service.startlevel.StartLevel startLevel = ServiceLookup.getService(bc,
+            org.osgi.service.startlevel.StartLevel.class);
+        assertThat(startLevel, is(notNullValue()));
+        assertThat(startLevel.getInitialBundleStartLevel(), is(equalTo(1)));
     }
 }

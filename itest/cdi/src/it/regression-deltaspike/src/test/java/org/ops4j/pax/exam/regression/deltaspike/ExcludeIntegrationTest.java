@@ -42,103 +42,94 @@ import org.ops4j.pax.exam.junit.PaxExam;
  * <p>
  * All we need is an exam.properties resource on the classpath setting {@code pax.exam.system = cdi}.
  */
-@RunWith( PaxExam.class )
-public class ExcludeIntegrationTest
-{
+@RunWith(PaxExam.class)
+public class ExcludeIntegrationTest {
 
     /**
      * check project-stage to ensure the correct config for the other tests in this class
      */
     @Test
-    public void checkProjectStage()
-    {
-        Assert.assertEquals( ProjectStage.IntegrationTest, ProjectStageProducer.getInstance()
-            .getProjectStage() );
+    public void checkProjectStage() {
+        Assert.assertEquals(ProjectStage.IntegrationTest, ProjectStageProducer.getInstance()
+            .getProjectStage());
     }
 
     /**
      * check if this package is included at all
      */
     @Test
-    public void simpleCheckOfBeansInPackage()
-    {
-        AlwaysActiveBean testBean =
-            BeanProvider.getContextualReference( AlwaysActiveBean.class, true );
+    public void simpleCheckOfBeansInPackage() {
+        AlwaysActiveBean testBean = BeanProvider.getContextualReference(AlwaysActiveBean.class,
+            true);
 
-        Assert.assertNotNull( testBean );
+        Assert.assertNotNull(testBean);
     }
 
     /**
      * bean is excluded in any case
      */
     @Test
-    public void excludeWithoutCondition()
-    {
-        NoBean noBean = BeanProvider.getContextualReference( NoBean.class, true );
+    public void excludeWithoutCondition() {
+        NoBean noBean = BeanProvider.getContextualReference(NoBean.class, true);
 
-        Assert.assertNull( noBean );
+        Assert.assertNull(noBean);
     }
 
     /**
      * bean excluded in case of project-stage integration-test
      */
     @Test
-    public void excludeInCaseOfProjectStageIntegrationTest()
-    {
-        StdBean stdBean = BeanProvider.getContextualReference( StdBean.class, true );
+    public void excludeInCaseOfProjectStageIntegrationTest() {
+        StdBean stdBean = BeanProvider.getContextualReference(StdBean.class, true);
 
-        Assert.assertNull( stdBean );
+        Assert.assertNull(stdBean);
     }
 
     /**
      * bean included in case of project-stage integration-test
      */
     @Test
-    public void includedInCaseOfProjectStageIntegrationTest()
-    {
-        IntegrationTestBean integrationTestBean =
-            BeanProvider.getContextualReference( IntegrationTestBean.class, true );
+    public void includedInCaseOfProjectStageIntegrationTest() {
+        IntegrationTestBean integrationTestBean = BeanProvider.getContextualReference(
+            IntegrationTestBean.class, true);
 
-        Assert.assertNotNull( integrationTestBean );
+        Assert.assertNotNull(integrationTestBean);
     }
 
     /**
      * beans de-/activated via expressions
      */
     @Test
-    public void excludedIfExpressionMatch()
-    {
-        ProdDbBean prodDbBean = BeanProvider.getContextualReference( ProdDbBean.class, true );
+    public void excludedIfExpressionMatch() {
+        ProdDbBean prodDbBean = BeanProvider.getContextualReference(ProdDbBean.class, true);
 
-        Assert.assertNull( prodDbBean );
+        Assert.assertNull(prodDbBean);
 
-        IntegrationTestDbBean integrationTestDbBean =
-            BeanProvider.getContextualReference( IntegrationTestDbBean.class, true );
+        IntegrationTestDbBean integrationTestDbBean = BeanProvider.getContextualReference(
+            IntegrationTestDbBean.class, true);
 
-        Assert.assertNotNull( integrationTestDbBean );
+        Assert.assertNotNull(integrationTestDbBean);
     }
 
     /**
      * bean excluded based on a custom expression syntax
      */
     @Test
-    public void excludedBasedOnCustomExpressionSyntax()
-    {
-        CustomExpressionBasedNoBean noBean =
-            BeanProvider.getContextualReference( CustomExpressionBasedNoBean.class, true );
+    public void excludedBasedOnCustomExpressionSyntax() {
+        CustomExpressionBasedNoBean noBean = BeanProvider.getContextualReference(
+            CustomExpressionBasedNoBean.class, true);
 
-        Assert.assertNull( noBean );
+        Assert.assertNull(noBean);
     }
 
     /**
      * bean included based on a custom expression syntax
      */
     @Test
-    public void includedBasedOnCustomExpressionSyntax()
-    {
-        CustomExpressionBasedBean bean =
-            BeanProvider.getContextualReference( CustomExpressionBasedBean.class, true );
+    public void includedBasedOnCustomExpressionSyntax() {
+        CustomExpressionBasedBean bean = BeanProvider.getContextualReference(
+            CustomExpressionBasedBean.class, true);
 
-        Assert.assertNotNull( bean );
+        Assert.assertNotNull(bean);
     }
 }

@@ -26,16 +26,14 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 @Listeners(PaxExam.class)
-public class InjectTest
-{
+public class InjectTest {
 
     @Inject
     private HelloService helloService;
 
     @Test
-    public void getInjectedService()
-    {
-        assertNotNull( helloService );
-        assertEquals( helloService.getMessage(), "Hello Pax!"  );
+    public void getInjectedService() {
+        assertNotNull(helloService);
+        assertEquals(helloService.getMessage(), "Hello Pax!");
     }
 }

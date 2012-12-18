@@ -111,7 +111,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <profile>
             <id>felix</id>
             <activation>
@@ -261,13 +261,13 @@
 
         <profile>
             <id>tomee</id>
-            
+
             <properties>
                 <pax.exam.container>tomee</pax.exam.container>
             </properties>
-            
+
             <dependencies>
-                
+
                 <dependency>
                     <groupId>org.ops4j.pax.exam</groupId>
                     <artifactId>pax-exam-container-tomee</artifactId>
@@ -285,8 +285,8 @@
             </dependencies>
         </profile>
 
-        
-        
+
+
     </profiles>
 
 

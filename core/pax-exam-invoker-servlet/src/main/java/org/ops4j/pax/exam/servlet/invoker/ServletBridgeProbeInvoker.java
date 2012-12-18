@@ -42,79 +42,65 @@ import com.sun.jersey.api.client.WebResource;
  * @author Harald Wellmann
  * @since 3.0.0, Jan 2011
  */
-public class ServletBridgeProbeInvoker implements ProbeInvoker
-{
+public class ServletBridgeProbeInvoker implements ProbeInvoker {
+
     private String clazz;
     private String method;
     private WebResource testRunner;
 
-    public ServletBridgeProbeInvoker( String encodedInstruction )
-    {
-        try
-        {
+    public ServletBridgeProbeInvoker(String encodedInstruction) {
+        try {
             // parse class and method out of expression:
-            String[] parts = encodedInstruction.split( ";" );
-            if( parts.length != 3 )
-            {
-                throw new TestContainerException( "invalid test instruction: " + encodedInstruction );
+            String[] parts = encodedInstruction.split(";");
+            if (parts.length != 3) {
+                throw new TestContainerException("invalid test instruction: " + encodedInstruction);
             }
             clazz = parts[0];
             method = parts[1];
-            URI contextRoot = new URI( parts[2] );
-            this.testRunner = getTestRunner( contextRoot );
+            URI contextRoot = new URI(parts[2]);
+            this.testRunner = getTestRunner(contextRoot);
         }
-        catch ( URISyntaxException exc )
-        {
-            throw new TestContainerException( exc );
+        catch (URISyntaxException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    public void call( Object... args )
-    {
+    public void call(Object... args) {
         Class<?> testClass;
-        try
-        {
-            testClass = getClass().getClassLoader().loadClass( clazz );
+        try {
+            testClass = getClass().getClassLoader().loadClass(clazz);
         }
-        catch ( ClassNotFoundException e )
-        {
-            throw new TestContainerException( e );
+        catch (ClassNotFoundException e) {
+            throw new TestContainerException(e);
         }
 
-        if( !( findAndInvoke( testClass ) ) )
-        {
-            throw new TestContainerException( " Test " + method + " not found in test class "
-                    + testClass.getName() );
+        if (!(findAndInvoke(testClass))) {
+            throw new TestContainerException(" Test " + method + " not found in test class "
+                + testClass.getName());
         }
     }
 
-    private boolean findAndInvoke( Class<?> testClass )
+    private boolean findAndInvoke(Class<?> testClass)
 
     {
-        try
-        {
+        try {
             // find matching method
-            for( Method m : testClass.getMethods() )
-            {
-                if( m.getName().equals( method ) )
-                {
+            for (Method m : testClass.getMethods()) {
+                if (m.getName().equals(method)) {
                     // we assume its correct:
-                    invokeViaJUnit( testClass, m );
+                    invokeViaJUnit(testClass, m);
                     return true;
                 }
             }
         }
-        catch ( NoClassDefFoundError e )
-        {
-            throw new TestContainerException( e );
+        catch (NoClassDefFoundError e) {
+            throw new TestContainerException(e);
         }
-        catch ( IOException e )
-        {
-            throw new TestContainerException( e );
+        catch (IOException e) {
+            throw new TestContainerException(e);
         }
-        catch ( ClassNotFoundException e )
-        {
-            throw new TestContainerException( e );
+        catch (ClassNotFoundException e) {
+            throw new TestContainerException(e);
         }
         return false;
     }
@@ -132,34 +118,29 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void invokeViaJUnit( final Class<?> testClass, final Method testMethod )
-        throws IOException, ClassNotFoundException
-    {
-        InputStream is = testRunner.queryParam( "class", testClass.getName() )
-            .queryParam( "method", testMethod.getName() ).get( InputStream.class );
+    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod)
+        throws IOException, ClassNotFoundException {
+        InputStream is = testRunner.queryParam("class", testClass.getName())
+            .queryParam("method", testMethod.getName()).get(InputStream.class);
 
-        ObjectInputStream ois = new ObjectInputStream( is );
+        ObjectInputStream ois = new ObjectInputStream(is);
         Object object = ois.readObject();
-        if( object instanceof Throwable )
-        {
+        if (object instanceof Throwable) {
             Throwable t = (Throwable) object;
-            throw new TestContainerException( t );
+            throw new TestContainerException(t);
         }
-        else if( object instanceof String )
-        {
+        else if (object instanceof String) {
             // ok
         }
-        else
-        {
+        else {
             throw new IllegalStateException();
         }
     }
 
-    private WebResource getTestRunner( URI contextRoot )
-    {
-        URI uri = contextRoot.resolve( "testrunner" );
+    private WebResource getTestRunner(URI contextRoot) {
+        URI uri = contextRoot.resolve("testrunner");
         Client client = Client.create();
-        return client.resource( uri );
+        return client.resource(uri);
     }
 
 }

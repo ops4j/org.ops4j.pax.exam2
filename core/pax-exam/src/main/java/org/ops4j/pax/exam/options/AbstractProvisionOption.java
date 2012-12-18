@@ -19,13 +19,11 @@ package org.ops4j.pax.exam.options;
 
 /**
  * Convenience abstract implementation of {@link ProvisionOption}.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public abstract class AbstractProvisionOption<T extends AbstractProvisionOption<T>>
-    extends AbstractProvisionControl<T>
-    implements ProvisionOption<T>
-{
+public abstract class AbstractProvisionOption<T extends AbstractProvisionOption<T>> extends
+    AbstractProvisionControl<T> implements ProvisionOption<T> {
 
 }

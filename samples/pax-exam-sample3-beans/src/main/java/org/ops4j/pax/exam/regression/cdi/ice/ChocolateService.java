@@ -17,13 +17,10 @@
  */
 package org.ops4j.pax.exam.regression.cdi.ice;
 
-
 @Chocolate
-public class ChocolateService implements IceCreamService
-{
+public class ChocolateService implements IceCreamService {
 
-    public String getFlavour()
-    {
+    public String getFlavour() {
         return "Chocolate";
     }
 }

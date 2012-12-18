@@ -30,21 +30,19 @@ import org.ops4j.pax.exam.sample1.service.LibraryService;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
 
-@RunWith( PaxExam.class )
-@ExamReactorStrategy( PerSuite.class )
-public class TitleTest
-{
+@RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
+public class TitleTest {
 
     @Inject
     private LibraryService service;
 
     @Test
-    public void byTitle()
-    {
-        List<Book> books = service.findBooksByTitle( "East of Eden" );
-        assertEquals( 1, books.size() );
+    public void byTitle() {
+        List<Book> books = service.findBooksByTitle("East of Eden");
+        assertEquals(1, books.size());
 
-        Book book = books.get( 0 );
-        assertEquals( "Steinbeck", book.getAuthor().getLastName() );
+        Book book = books.get(0);
+        assertEquals("Steinbeck", book.getAuthor().getLastName());
     }
 }

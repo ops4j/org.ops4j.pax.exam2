@@ -77,9 +77,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Harald Wellmann
  */
-public class ReactorManager
-{
-    private static Logger LOG = LoggerFactory.getLogger( ReactorManager.class );
+public class ReactorManager {
+
+    private static Logger LOG = LoggerFactory.getLogger(ReactorManager.class);
 
     /** Singleton instance of this manager. */
     private static ReactorManager instance;
@@ -143,30 +143,25 @@ public class ReactorManager
     /**
      * Private constructor for singleton.
      */
-    private ReactorManager()
-    {
-        try
-        {
+    private ReactorManager() {
+        try {
             cm = new ConfigurationManager();
             system = createExamSystem();
-            reactorStrategies = new HashMap<String, StagedExamReactorFactory>( 3 );
-            reactorStrategies.put( EXAM_REACTOR_STRATEGY_PER_SUITE, new PerSuite() );
-            reactorStrategies.put( EXAM_REACTOR_STRATEGY_PER_CLASS, new PerClass() );
-            reactorStrategies.put( EXAM_REACTOR_STRATEGY_PER_METHOD, new PerMethod() );
+            reactorStrategies = new HashMap<String, StagedExamReactorFactory>(3);
+            reactorStrategies.put(EXAM_REACTOR_STRATEGY_PER_SUITE, new PerSuite());
+            reactorStrategies.put(EXAM_REACTOR_STRATEGY_PER_CLASS, new PerClass());
+            reactorStrategies.put(EXAM_REACTOR_STRATEGY_PER_METHOD, new PerMethod());
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "cannot create Exam system", exc );
+        catch (IOException exc) {
+            throw new TestContainerException("cannot create Exam system", exc);
         }
     }
 
     /**
      * Returns the singleton ReactorManager instance.
      */
-    public static synchronized ReactorManager getInstance()
-    {
-        if( instance == null )
-        {
+    public static synchronized ReactorManager getInstance() {
+        if (instance == null) {
             instance = new ReactorManager();
         }
         return instance;
@@ -185,14 +180,13 @@ public class ReactorManager
      * @throws InvocationTargetException
      * @throws IllegalArgumentException
      */
-    public synchronized ExamReactor prepareReactor( Class<?> testClass, Object testClassInstance )
+    public synchronized ExamReactor prepareReactor(Class<?> testClass, Object testClassInstance)
         throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-        InvocationTargetException, IOException
-    {
+        InvocationTargetException, IOException {
         this.testClass = testClass;
-        this.reactor = createReactor( testClass );
-        testClasses.add( testClass );
-        addConfigurationsToReactor( testClass, testClassInstance );
+        this.reactor = createReactor(testClass);
+        testClasses.add(testClass);
+        addConfigurationsToReactor(testClass, testClassInstance);
         return reactor;
     }
 
@@ -205,30 +199,25 @@ public class ReactorManager
      * @throws IllegalAccessException
      */
     public StagedExamReactor stageReactor() throws IOException, InstantiationException,
-        IllegalAccessException
-    {
-        StagedExamReactor stagedReactor = reactor.stage( getStagingFactory( testClass ) );
+        IllegalAccessException {
+        StagedExamReactor stagedReactor = reactor.stage(getStagingFactory(testClass));
         return stagedReactor;
     }
 
-    private ExamSystem createExamSystem() throws IOException
-    {
-        systemType = cm.getProperty( EXAM_SYSTEM_KEY, EXAM_SYSTEM_TEST );
-        String timeout = cm.getProperty( EXAM_SERVICE_TIMEOUT_KEY, EXAM_SERVICE_TIMEOUT_DEFAULT );
-        Option timeoutOption = new SystemPropertyOption( EXAM_SERVICE_TIMEOUT_KEY ).value( timeout );
-        if( EXAM_SYSTEM_DEFAULT.equals( systemType ) )
-        {
-            system = DefaultExamSystem.create( new Option[] { timeoutOption } );
+    private ExamSystem createExamSystem() throws IOException {
+        systemType = cm.getProperty(EXAM_SYSTEM_KEY, EXAM_SYSTEM_TEST);
+        String timeout = cm.getProperty(EXAM_SERVICE_TIMEOUT_KEY, EXAM_SERVICE_TIMEOUT_DEFAULT);
+        Option timeoutOption = new SystemPropertyOption(EXAM_SERVICE_TIMEOUT_KEY).value(timeout);
+        if (EXAM_SYSTEM_DEFAULT.equals(systemType)) {
+            system = DefaultExamSystem.create(new Option[] { timeoutOption });
         }
-        else if( EXAM_SYSTEM_JAVAEE.equals( systemType ) )
-        {
-            system = DefaultExamSystem.create( new Option[]{ new WarProbeOption() } );
+        else if (EXAM_SYSTEM_JAVAEE.equals(systemType)) {
+            system = DefaultExamSystem.create(new Option[] { new WarProbeOption() });
         }
-        else
-        {
-            system = PaxExamRuntime.createTestSystem( timeoutOption );
+        else {
+            system = PaxExamRuntime.createTestSystem(timeoutOption);
         }
-        injectDependencies = EXAM_SYSTEM_CDI.equals( systemType );
+        injectDependencies = EXAM_SYSTEM_CDI.equals(systemType);
         return system;
     }
 
@@ -243,18 +232,15 @@ public class ReactorManager
      * @throws IllegalArgumentException
      * @throws IOException
      */
-    private void addConfigurationsToReactor( Class<?> testClass, Object testClassInstance )
+    private void addConfigurationsToReactor(Class<?> testClass, Object testClassInstance)
         throws IllegalAccessException, InvocationTargetException, IllegalArgumentException,
-        IOException
-    {
+        IOException {
         numConfigurations = 0;
         Method[] methods = testClass.getMethods();
-        for( Method m : methods )
-        {
-            if( isConfiguration( m ) )
-            {
+        for (Method m : methods) {
+            if (isConfiguration(m)) {
                 // consider as option, so prepare that one:
-                reactor.addConfiguration( ( (Option[]) m.invoke( testClassInstance ) ) );
+                reactor.addConfiguration(((Option[]) m.invoke(testClassInstance)));
                 numConfigurations++;
             }
         }
@@ -262,17 +248,16 @@ public class ReactorManager
 
     /**
      * Returns the number of configurations for the current reactor.
+     * 
      * @return number of configurations
      */
-    public int getNumConfigurations()
-    {
+    public int getNumConfigurations() {
         return numConfigurations;
     }
 
-    private boolean isConfiguration( Method m )
-    {
-        Configuration conf = m.getAnnotation( Configuration.class );
-        return (conf != null) || annotationHandler.isConfiguration( m );
+    private boolean isConfiguration(Method m) {
+        Configuration conf = m.getAnnotation(Configuration.class);
+        return (conf != null) || annotationHandler.isConfiguration(m);
     }
 
     /**
@@ -284,40 +269,33 @@ public class ReactorManager
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    private StagedExamReactorFactory getStagingFactory( Class<?> testClass )
-        throws InstantiationException, IllegalAccessException
-    {
-        ExamReactorStrategy strategy = testClass.getAnnotation( ExamReactorStrategy.class );
-        String strategyName = cm.getProperty( EXAM_REACTOR_STRATEGY_KEY );
+    private StagedExamReactorFactory getStagingFactory(Class<?> testClass)
+        throws InstantiationException, IllegalAccessException {
+        ExamReactorStrategy strategy = testClass.getAnnotation(ExamReactorStrategy.class);
+        String strategyName = cm.getProperty(EXAM_REACTOR_STRATEGY_KEY);
         StagedExamReactorFactory fact;
-        if( strategy != null )
-        {
+        if (strategy != null) {
             fact = strategy.value()[0].newInstance();
             return fact;
         }
 
-        fact = annotationHandler.createStagedReactorFactory( testClass );
-        if( fact != null )
-        {
+        fact = annotationHandler.createStagedReactorFactory(testClass);
+        if (fact != null) {
             return fact;
         }
 
-        if( strategyName == null )
-        {
-            if( systemType.equals( EXAM_SYSTEM_CDI ) || systemType.equals( EXAM_SYSTEM_JAVAEE ) )
-            {
+        if (strategyName == null) {
+            if (systemType.equals(EXAM_SYSTEM_CDI) || systemType.equals(EXAM_SYSTEM_JAVAEE)) {
                 strategyName = EXAM_REACTOR_STRATEGY_PER_SUITE;
             }
-            else
-            {
+            else {
                 // OSGi default from Pax Exam 2.x
                 strategyName = EXAM_REACTOR_STRATEGY_PER_METHOD;
             }
         }
-        fact = reactorStrategies.get( strategyName );
-        if( fact == null )
-        {
-            throw new IllegalArgumentException( "unknown reactor strategy " + strategyName );
+        fact = reactorStrategies.get(strategyName);
+        if (fact == null) {
+            throw new IllegalArgumentException("unknown reactor strategy " + strategyName);
         }
         return fact;
     }
@@ -330,10 +308,9 @@ public class ReactorManager
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    private DefaultExamReactor createReactor( Class<?> testClass )
-        throws InstantiationException, IllegalAccessException
-    {
-        return new DefaultExamReactor( system, createsTestContainerFactory( testClass ) );
+    private DefaultExamReactor createReactor(Class<?> testClass) throws InstantiationException,
+        IllegalAccessException {
+        return new DefaultExamReactor(system, createsTestContainerFactory(testClass));
     }
 
     /**
@@ -346,22 +323,19 @@ public class ReactorManager
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private TestContainerFactory createsTestContainerFactory( Class<?> testClass )
-        throws IllegalAccessException, InstantiationException
-    {
-        ExamFactory f = testClass.getAnnotation( ExamFactory.class );
+    private TestContainerFactory createsTestContainerFactory(Class<?> testClass)
+        throws IllegalAccessException, InstantiationException {
+        ExamFactory f = testClass.getAnnotation(ExamFactory.class);
 
         TestContainerFactory fact;
-        if( f != null )
-        {
+        if (f != null) {
             fact = f.value().newInstance();
             return fact;
         }
 
-        fact = annotationHandler.createTestContainerFactory( testClass );
+        fact = annotationHandler.createTestContainerFactory(testClass);
 
-        if( fact == null )
-        {
+        if (fact == null) {
             // default:
             fact = PaxExamRuntime.getTestContainerFactory();
         }
@@ -377,107 +351,93 @@ public class ReactorManager
      * @throws IOException
      * @throws ExamConfigurationException
      */
-    public TestProbeBuilder createProbeBuilder( Object testClassInstance ) throws IOException,
-        ExamConfigurationException
-    {
-        if( defaultProbeBuilder == null )
-        {
+    public TestProbeBuilder createProbeBuilder(Object testClassInstance) throws IOException,
+        ExamConfigurationException {
+        if (defaultProbeBuilder == null) {
             defaultProbeBuilder = system.createProbe();
         }
-        TestProbeBuilder probeBuilder = overwriteWithUserDefinition( testClass, testClassInstance );
+        TestProbeBuilder probeBuilder = overwriteWithUserDefinition(testClass, testClassInstance);
         return probeBuilder;
     }
 
-    private TestProbeBuilder overwriteWithUserDefinition( Class<?> testClass, Object instance )
-        throws ExamConfigurationException
-    {
+    private TestProbeBuilder overwriteWithUserDefinition(Class<?> testClass, Object instance)
+        throws ExamConfigurationException {
         Method[] methods = testClass.getMethods();
-        for( Method m : methods )
-        {
-            if( isProbeBuilder( m ) )
-            {
-                LOG.debug( "User defined probe hook found: " + m.getName() );
+        for (Method m : methods) {
+            if (isProbeBuilder(m)) {
+                LOG.debug("User defined probe hook found: " + m.getName());
                 TestProbeBuilder probeBuilder;
-                try
-                {
-                    probeBuilder = (TestProbeBuilder) m.invoke( instance, defaultProbeBuilder );
+                try {
+                    probeBuilder = (TestProbeBuilder) m.invoke(instance, defaultProbeBuilder);
                 }
-                catch ( Exception e )
-                {
-                    throw new ExamConfigurationException( "Invoking custom probe hook "
-                            + m.getName() + " failed", e );
+                catch (Exception e) {
+                    throw new ExamConfigurationException("Invoking custom probe hook "
+                        + m.getName() + " failed", e);
                 }
-                if( probeBuilder != null )
-                {
+                if (probeBuilder != null) {
                     return probeBuilder;
                 }
-                else
-                {
-                    throw new ExamConfigurationException( "Invoking custom probe hook "
-                            + m.getName() + " succeeded but returned null" );
+                else {
+                    throw new ExamConfigurationException("Invoking custom probe hook "
+                        + m.getName() + " succeeded but returned null");
                 }
             }
         }
-        LOG.debug( "No User defined probe hook found" );
+        LOG.debug("No User defined probe hook found");
         return defaultProbeBuilder;
     }
 
-    private boolean isProbeBuilder( Method m )
-    {
-        ProbeBuilder builder = m.getAnnotation( ProbeBuilder.class );
-        return (builder != null) || annotationHandler.isProbeBuilder( m );
+    private boolean isProbeBuilder(Method m) {
+        ProbeBuilder builder = m.getAnnotation(ProbeBuilder.class);
+        return (builder != null) || annotationHandler.isProbeBuilder(m);
     }
 
     /**
      * @return the systemType
      */
-    public String getSystemType()
-    {
+    public String getSystemType() {
         return systemType;
     }
 
     /**
      * Looks up a test method for a given address.
      * 
-     * @param address test method address used by probe
+     * @param address
+     *            test method address used by probe
      * @return test method wrapper - the type is only known to the test driver.
      */
-    public Object lookupTestMethod( TestAddress address )
-    {
-        return testAddressToMethodMap.get( address );
+    public Object lookupTestMethod(TestAddress address) {
+        return testAddressToMethodMap.get(address);
     }
 
     /**
      * Stores the test method wrapper for a given test address
      * 
-     * @param address test method address used by probe
-     * @param testMethod test method wrapper - the type is only known to the test driver
+     * @param address
+     *            test method address used by probe
+     * @param testMethod
+     *            test method wrapper - the type is only known to the test driver
      */
-    public void storeTestMethod( TestAddress address, Object testMethod )
-    {
-        testAddressToMethodMap.put( address, testMethod );
+    public void storeTestMethod(TestAddress address, Object testMethod) {
+        testAddressToMethodMap.put(address, testMethod);
     }
 
-    public void beforeSuite( StagedExamReactor stagedReactor )
-    {
+    public void beforeSuite(StagedExamReactor stagedReactor) {
         stagedReactor.beforeSuite();
         suiteStarted = true;
         waitForAfterSuiteEvent = true;
     }
 
-    public void afterSuite( StagedExamReactor stagedReactor )
-    {
+    public void afterSuite(StagedExamReactor stagedReactor) {
         waitForAfterSuiteEvent = false;
         stagedReactor.afterSuite();
     }
 
-    public void afterClass( StagedExamReactor stagedReactor, Class<?> klass )
-    {
+    public void afterClass(StagedExamReactor stagedReactor, Class<?> klass) {
         stagedReactor.afterClass();
-        testClasses.remove( klass );
-        if( !waitForAfterSuiteEvent && testClasses.isEmpty() )
-        {
-            LOG.info( "suite finished" );
+        testClasses.remove(klass);
+        if (!waitForAfterSuiteEvent && testClasses.isEmpty()) {
+            LOG.info("suite finished");
             stagedReactor.afterSuite();
             suiteStarted = false;
             testClasses.clear();
@@ -485,16 +445,13 @@ public class ReactorManager
         }
     }
 
-    public void beforeClass( StagedExamReactor stagedReactor, Object testClassInstance )
-    {
-        if( !suiteStarted )
-        {
+    public void beforeClass(StagedExamReactor stagedReactor, Object testClassInstance) {
+        if (!suiteStarted) {
             suiteStarted = true;
             stagedReactor.beforeSuite();
         }
-        if( injectDependencies )
-        {
-            inject( testClassInstance );
+        if (injectDependencies) {
+            inject(testClassInstance);
         }
         stagedReactor.beforeClass();
     }
@@ -502,12 +459,12 @@ public class ReactorManager
     /**
      * Performs field injection on the given test class instance.
      * 
-     * @param test test class instance
+     * @param test
+     *            test class instance
      */
-    public void inject( Object test )
-    {
+    public void inject(Object test) {
         Injector injector = findInjector();
-        injector.injectFields( test );
+        injector.injectFields(test);
     }
 
     /**
@@ -515,18 +472,17 @@ public class ReactorManager
      * 
      * @return
      */
-    private Injector findInjector()
-    {
-        InjectorFactory injectorFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
+    private Injector findInjector() {
+        InjectorFactory injectorFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(InjectorFactory.class);
         return injectorFactory.createInjector();
     }
 
     /**
-     * @param annotationHandler the annotationHandler to set
+     * @param annotationHandler
+     *            the annotationHandler to set
      */
-    public void setAnnotationHandler( AnnotationHandler annotationHandler )
-    {
+    public void setAnnotationHandler(AnnotationHandler annotationHandler) {
         this.annotationHandler = annotationHandler;
     }
 

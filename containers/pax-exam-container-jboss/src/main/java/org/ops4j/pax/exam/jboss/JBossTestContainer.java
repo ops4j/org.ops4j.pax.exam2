@@ -69,13 +69,12 @@ import org.xml.sax.SAXException;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class JBossTestContainer implements TestContainer
-{
-    // TODO make this configurable
-    public static final String JBOSS_DISTRIBUTION_URL =
-        "mvn:org.jboss.as/jboss-as-dist/7.1.1.Final/zip";
+public class JBossTestContainer implements TestContainer {
 
-    private static final Logger LOG = LoggerFactory.getLogger( JBossTestContainer.class );
+    // TODO make this configurable
+    public static final String JBOSS_DISTRIBUTION_URL = "mvn:org.jboss.as/jboss-as-dist/7.1.1.Final/zip";
+
+    private static final Logger LOG = LoggerFactory.getLogger(JBossTestContainer.class);
 
     final private Stack<String> deployed = new Stack<String>();
 
@@ -93,237 +92,191 @@ public class JBossTestContainer implements TestContainer
 
     private String mgmtPort;
 
-    public JBossTestContainer( ExamSystem system, FrameworkFactory frameworkFactory )
-    {
+    public JBossTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
     }
 
-    public synchronized void call( TestAddress address )
-    {
-        TestInstantiationInstruction instruction = testDirectory.lookup( address );
-        ProbeInvokerFactory probeInvokerFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
-        ProbeInvoker invoker =
-            probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
-        invoker.call( address.arguments() );
+    public synchronized void call(TestAddress address) {
+        TestInstantiationInstruction instruction = testDirectory.lookup(address);
+        ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
+        ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker(null, instruction.toString());
+        invoker.call(address.arguments());
     }
 
-    public synchronized long install( String location, InputStream stream )
-    {
+    public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
-        system.getOptions( WarProbeOption.class );
-        deployModule( "Pax-Exam-Probe", stream);
+        system.getOptions(WarProbeOption.class);
+        deployModule("Pax-Exam-Probe", stream);
         return -1;
     }
 
-    public synchronized long install( InputStream stream )
-    {
-        return install( "local", stream );
+    public synchronized long install(InputStream stream) {
+        return install("local", stream);
     }
 
-    public void deployModules()
-    {
-        UrlDeploymentOption[] deploymentOptions = system.getOptions( UrlDeploymentOption.class );
+    public void deployModules() {
+        UrlDeploymentOption[] deploymentOptions = system.getOptions(UrlDeploymentOption.class);
         int numModules = 0;
-        for( UrlDeploymentOption option : deploymentOptions )
-        {
+        for (UrlDeploymentOption option : deploymentOptions) {
             numModules++;
-            if( option.getName() == null )
-            {
-                option.name( "app" + numModules );
+            if (option.getName() == null) {
+                option.name("app" + numModules);
             }
-            deployModule( option );
+            deployModule(option);
         }
     }
 
-    private void deployModule( UrlDeploymentOption option )
-    {
-        try
-        {
-            URL applUrl = new URL( option.getURL() );
+    private void deployModule(UrlDeploymentOption option) {
+        try {
+            URL applUrl = new URL(option.getURL());
             deployModule(option.getName(), applUrl.openStream());
         }
-        catch ( MalformedURLException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (MalformedURLException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (IOException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
     }
-    
-    private void deployModule( String applicationName, InputStream stream)
-    {
-        
-        try
-        {
+
+    private void deployModule(String applicationName, InputStream stream) {
+
+        try {
             String warName = applicationName + ".war";
             InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
-            DeploymentPlan plan = builder.add( warName, stream ).deploy( warName ).build();
-            ServerDeploymentPlanResult result = deploymentManager.execute( plan ).get();
-            UUID actionId = plan.getDeploymentActions().get( 0 ).getId();
-            ServerDeploymentActionResult actionResult = result.getDeploymentActionResult( actionId );
+            DeploymentPlan plan = builder.add(warName, stream).deploy(warName).build();
+            ServerDeploymentPlanResult result = deploymentManager.execute(plan).get();
+            UUID actionId = plan.getDeploymentActions().get(0).getId();
+            ServerDeploymentActionResult actionResult = result.getDeploymentActionResult(actionId);
 
-            if( actionResult.getResult() != Result.EXECUTED )
-            {
-                throw new TestContainerException( "problem deploying " + applicationName );
+            if (actionResult.getResult() != Result.EXECUTED) {
+                throw new TestContainerException("problem deploying " + applicationName);
             }
-            deployed.push( warName );
+            deployed.push(warName);
         }
-        catch ( ExecutionException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        catch (ExecutionException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
-        catch ( InterruptedException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        catch (InterruptedException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         undeployModules();
         server.stop();
     }
 
-    private void undeployModules()
-    {
-        while( !deployed.isEmpty() )
-        {
+    private void undeployModules() {
+        while (!deployed.isEmpty()) {
             String applicationName = deployed.pop();
-            undeployModule( applicationName );
+            undeployModule(applicationName);
         }
     }
 
-    private void undeployModule( String applName )
-    {
+    private void undeployModule(String applName) {
         InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
-        DeploymentPlan plan = builder.undeploy( applName ).andRemoveUndeployed().build();
+        DeploymentPlan plan = builder.undeploy(applName).andRemoveUndeployed().build();
         ServerDeploymentPlanResult result;
-        try
-        {
-            result = deploymentManager.execute( plan ).get();
+        try {
+            result = deploymentManager.execute(plan).get();
         }
-        catch ( InterruptedException exc )
-        {
-            throw new TestContainerException( "problem undeploying " + applName, exc );
+        catch (InterruptedException exc) {
+            throw new TestContainerException("problem undeploying " + applName, exc);
         }
-        catch ( ExecutionException exc )
-        {
-            throw new TestContainerException( "problem undeploying " + applName, exc );
+        catch (ExecutionException exc) {
+            throw new TestContainerException("problem undeploying " + applName, exc);
         }
-        UUID actionId = plan.getDeploymentActions().get( 0 ).getId();
-        ServerDeploymentActionResult actionResult = result.getDeploymentActionResult( actionId );
+        UUID actionId = plan.getDeploymentActions().get(0).getId();
+        ServerDeploymentActionResult actionResult = result.getDeploymentActionResult(actionId);
 
-        if( actionResult.getResult() != Result.EXECUTED )
-        {
-            throw new TestContainerException( "problem undeploying " + applName );
+        if (actionResult.getResult() != Result.EXECUTED) {
+            throw new TestContainerException("problem undeploying " + applName);
         }
     }
 
-    public TestContainer start() throws TestContainerException
-    {
+    public TestContainer start() throws TestContainerException {
         installContainer();
         File tempDir = system.getTempFolder();
-        File dataDir = new File( tempDir, "data" );
+        File dataDir = new File(tempDir, "data");
         dataDir.mkdir();
-        File configDir = new File( "src/test/resources/jboss-config" );
+        File configDir = new File("src/test/resources/jboss-config");
         File configFile = new File(configDir, "standalone.xml");
-        if (!configFile.exists())
-        {
-            throw new TestContainerException( configFile + " does not exist" );
+        if (!configFile.exists()) {
+            throw new TestContainerException(configFile + " does not exist");
         }
-        parseServerConfiguration( configFile );
-        System.setProperty( "jboss.server.config.dir", configDir.getAbsolutePath() );
-        System.setProperty( "jboss.server.data.dir", dataDir.getAbsolutePath() );
-        server =
-            EmbeddedServerFactory.create( new File( jBossHome ), 
-                System.getProperties(),
-                System.getenv(),
-                // packages to be loaded from system class loader
-                "org.jboss.logmanager", 
-                "org.jboss.logging", 
-                "org.jboss.threads",
-                "org.slf4j",
-                "org.slf4j.cal10n", 
-                "ch.qos.cal10n" );
-        try
-        {
+        parseServerConfiguration(configFile);
+        System.setProperty("jboss.server.config.dir", configDir.getAbsolutePath());
+        System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
+        server = EmbeddedServerFactory.create(new File(jBossHome), System.getProperties(),
+            System.getenv(),
+            // packages to be loaded from system class loader
+            "org.jboss.logmanager", "org.jboss.logging", "org.jboss.threads", "org.slf4j",
+            "org.slf4j.cal10n", "ch.qos.cal10n");
+        try {
             server.start();
-            deploymentManager =
-                ServerDeploymentManager.Factory.create( InetAddress.getByName( "localhost" ), Integer.parseInt( mgmtPort ) );
-            testDirectory.setAccessPoint( new URI( "http://localhost:" + httpPort + "/Pax-Exam-Probe/" ) );
+            deploymentManager = ServerDeploymentManager.Factory.create(
+                InetAddress.getByName("localhost"), Integer.parseInt(mgmtPort));
+            testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
+                + "/Pax-Exam-Probe/"));
             deployModules();
         }
-        catch ( ServerStartException exc )
-        {
-            throw new TestContainerException( "Problem starting test container.", exc );
+        catch (ServerStartException exc) {
+            throw new TestContainerException("Problem starting test container.", exc);
         }
-        catch ( URISyntaxException exc )
-        {
-            throw new TestContainerException( "Problem starting test container.", exc );
+        catch (URISyntaxException exc) {
+            throw new TestContainerException("Problem starting test container.", exc);
         }
-        catch ( UnknownHostException exc )
-        {
-            throw new TestContainerException( "Problem starting test container.", exc );
+        catch (UnknownHostException exc) {
+            throw new TestContainerException("Problem starting test container.", exc);
         }
         return this;
     }
 
-    public void installContainer()
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        System.setProperty( "java.util.logging.manager", "org.jboss.logmanager.LogManager" );
+    public void installContainer() {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         ConfigurationManager cm = new ConfigurationManager();
-        jBossHome = cm.getProperty( "pax.exam.jboss.home" );
-        if( jBossHome == null )
-        {
+        jBossHome = cm.getProperty("pax.exam.jboss.home");
+        if (jBossHome == null) {
             throw new TestContainerException(
-                "System property pax.exam.jboss.home must be set to JBoss AS install root" );
+                "System property pax.exam.jboss.home must be set to JBoss AS install root");
         }
         File installDir = new File(jBossHome);
-        if( installDir.exists() )
-        {
-            File moduleLoader = new File( installDir, "jboss-modules.jar" );
-            if( moduleLoader.exists() )
-            {
-                LOG.info( "using JBoss AS installation in {}", jBossHome );
+        if (installDir.exists()) {
+            File moduleLoader = new File(installDir, "jboss-modules.jar");
+            if (moduleLoader.exists()) {
+                LOG.info("using JBoss AS installation in {}", jBossHome);
             }
-            else
-            {
-                String msg =
-                    String.format( "%s exists, but %s does not. " +
-                            "This does not look like a valid JBoss AS installation.",
-                        jBossHome, moduleLoader );
-                throw new TestContainerException( msg );
+            else {
+                String msg = String.format("%s exists, but %s does not. "
+                    + "This does not look like a valid JBoss AS installation.", jBossHome,
+                    moduleLoader);
+                throw new TestContainerException(msg);
             }
         }
-        else
-        {
-            LOG.info( "installing JBoss AS in {}", jBossHome );
-            try
-            {
-                URL url = new URL( JBOSS_DISTRIBUTION_URL );
+        else {
+            LOG.info("installing JBoss AS in {}", jBossHome);
+            try {
+                URL url = new URL(JBOSS_DISTRIBUTION_URL);
                 File installParent = installDir.getParentFile();
-                File tempInstall = new File( installParent, UUID.randomUUID().toString() );
-                ZipInstaller installer = new ZipInstaller( url, tempInstall.getAbsolutePath() );
+                File tempInstall = new File(installParent, UUID.randomUUID().toString());
+                ZipInstaller installer = new ZipInstaller(url, tempInstall.getAbsolutePath());
                 installer.downloadAndInstall();
                 File unpackedRoot = tempInstall.listFiles()[0];
-                unpackedRoot.renameTo( installDir );
+                unpackedRoot.renameTo(installDir);
             }
-            catch ( MalformedURLException exc )
-            {
-                throw new TestContainerException( exc );
+            catch (MalformedURLException exc) {
+                throw new TestContainerException(exc);
             }
-            catch ( IOException exc )
-            {
-                throw new TestContainerException( "error during JBoss AS installation", exc );                
+            catch (IOException exc) {
+                throw new TestContainerException("error during JBoss AS installation", exc);
             }
         }
     }
-    
+
     private void parseServerConfiguration(File serverConfig) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -350,39 +303,31 @@ public class JBossTestContainer implements TestContainer
             throw new IllegalArgumentException(exc);
         }
     }
-  
-    
-    
-    public String substituteProperties(String value)
-    {
+
+    public String substituteProperties(String value) {
         String result = value;
-        if (value.startsWith("${") && value.endsWith( "}" ))
-        {
-            String propWithDefault = value.substring( 2, value.length()-1 );
-            int colon = propWithDefault.indexOf( ':' );
+        if (value.startsWith("${") && value.endsWith("}")) {
+            String propWithDefault = value.substring(2, value.length() - 1);
+            int colon = propWithDefault.indexOf(':');
             String defaultValue = "";
             String propertyKey = propWithDefault;
-            if (colon >= 0)
-            {
-                propertyKey = propWithDefault.substring( 0, colon );
-                defaultValue = propWithDefault.substring( colon+1 );
+            if (colon >= 0) {
+                propertyKey = propWithDefault.substring(0, colon);
+                defaultValue = propWithDefault.substring(colon + 1);
             }
-            result = System.getProperty( propertyKey, defaultValue );
+            result = System.getProperty(propertyKey, defaultValue);
         }
         return result;
     }
-    
 
-    public TestContainer stop()
-    {
+    public TestContainer stop() {
         cleanup();
         system.clear();
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "JBoss";
     }
 }

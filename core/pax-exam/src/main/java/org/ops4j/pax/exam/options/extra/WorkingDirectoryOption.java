@@ -4,22 +4,19 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * Option to overwrite --workingDirectory default.
- *
+ * 
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0 December 10, 2008
  */
-public class WorkingDirectoryOption implements Option
-{
+public class WorkingDirectoryOption implements Option {
 
     final private String workingDirectory;
 
-    public WorkingDirectoryOption( String directory )
-    {
+    public WorkingDirectoryOption(String directory) {
         workingDirectory = directory;
     }
 
-    public String getWorkingDirectory()
-    {
+    public String getWorkingDirectory() {
         return workingDirectory;
     }
 }

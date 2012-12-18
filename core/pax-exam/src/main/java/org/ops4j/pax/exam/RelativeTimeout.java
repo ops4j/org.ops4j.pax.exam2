@@ -20,28 +20,28 @@ package org.ops4j.pax.exam;
 import java.io.Serializable;
 
 /**
- * Timout type that is being used in exam to specify a single timeout value but control different timout points in the system with that value.
- * In most cases, clients will just use the value directly as time in milliseconds.
- *
- * However, this type also says that the value is just a (possibly user specified) "hint" and not mean the exaclt value.
- * You can see it as a relative timeout value.
- *
+ * Timout type that is being used in exam to specify a single timeout value but control different
+ * timout points in the system with that value. In most cases, clients will just use the value
+ * directly as time in milliseconds.
+ * 
+ * However, this type also says that the value is just a (possibly user specified) "hint" and not
+ * mean the exaclt value. You can see it as a relative timeout value.
+ * 
  * @author Toni Menzel (toni@okidokiteam.com)
  */
 public class RelativeTimeout implements Serializable {
 
     private static final long serialVersionUID = 3490846022856083260L;
-    public final static RelativeTimeout TIMEOUT_NOWAIT = new RelativeTimeout( 0L );
-    public final static RelativeTimeout TIMEOUT_NOTIMEOUT = new RelativeTimeout( Long.MAX_VALUE );
+    public final static RelativeTimeout TIMEOUT_NOWAIT = new RelativeTimeout(0L);
+    public final static RelativeTimeout TIMEOUT_NOTIMEOUT = new RelativeTimeout(Long.MAX_VALUE);
 
-    public final static RelativeTimeout TIMEOUT_DEFAULT = new RelativeTimeout( 1000L * 180L );
+    public final static RelativeTimeout TIMEOUT_DEFAULT = new RelativeTimeout(1000L * 180L);
 
     final private long value;
     final private long lower;
     final private long upper;
 
-    public RelativeTimeout( final long time )
-    {
+    public RelativeTimeout(final long time) {
         value = time;
         lower = time / 2;
         upper = time * 2;
@@ -50,60 +50,53 @@ public class RelativeTimeout implements Serializable {
     /**
      * @return Default Timeout value.
      */
-    public long getValue()
-    {
+    public long getValue() {
         return value;
     }
 
     /**
      * @return Tendentiative lower timeout value. This is relative to {@link #getValue()}
      */
-    public long getLowerValue()
-    {
+    public long getLowerValue() {
         return lower;
     }
 
     /**
      * @return Tendentiative higher timeout value. This is relative to {@link #getValue()}
      */
-    public long getUpperValue()
-    {
+    public long getUpperValue() {
         return upper;
     }
 
-    public boolean isNoWait()
-    {
-        return this.equals( TIMEOUT_NOWAIT );
+    public boolean isNoWait() {
+        return this.equals(TIMEOUT_NOWAIT);
     }
 
-    public boolean isNoTimeout()
-    {
-        return this.equals( TIMEOUT_NOTIMEOUT );
+    public boolean isNoTimeout() {
+        return this.equals(TIMEOUT_NOTIMEOUT);
     }
 
-    public boolean isDefault()
-    {
-        return this.equals( TIMEOUT_DEFAULT );
+    public boolean isDefault() {
+        return this.equals(TIMEOUT_DEFAULT);
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( obj instanceof RelativeTimeout ) {
-            return ( (RelativeTimeout) obj ).getValue() == getValue();
+    public boolean equals(Object obj) {
+        if (obj instanceof RelativeTimeout) {
+            return ((RelativeTimeout) obj).getValue() == getValue();
         }
-        else { return false; }
+        else {
+            return false;
+        }
     }
 
     @Override
-    public int hashCode()
-    {
-        return getClass().getName().hashCode() + new Long( value ).hashCode();
+    public int hashCode() {
+        return getClass().getName().hashCode() + new Long(value).hashCode();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "[ RelativeTimeout value = " + value + " ]";
     }
 

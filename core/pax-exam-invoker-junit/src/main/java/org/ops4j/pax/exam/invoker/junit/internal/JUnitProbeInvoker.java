@@ -43,8 +43,7 @@ import org.osgi.framework.BundleContext;
  * @author Harald Wellmann
  * @since 2.3.0, August 2011
  */
-public class JUnitProbeInvoker implements ProbeInvoker
-{
+public class JUnitProbeInvoker implements ProbeInvoker {
 
     private BundleContext ctx;
     private String clazz;
@@ -52,53 +51,45 @@ public class JUnitProbeInvoker implements ProbeInvoker
 
     private Injector injector;
 
-    public JUnitProbeInvoker( String encodedInstruction, BundleContext bundleContext )
-    {
+    public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext) {
         // parse class and method out of expression:
-        String[] parts = encodedInstruction.split( ";" );
+        String[] parts = encodedInstruction.split(";");
         clazz = parts[0];
         method = parts[1];
         ctx = bundleContext;
-        injector = ServiceLookup.getService( ctx, Injector.class );
+        injector = ServiceLookup.getService(ctx, Injector.class);
     }
 
-    public void call( Object... args )
-    {
+    public void call(Object... args) {
         Class<?> testClass;
-        try
-        {
-            testClass = ctx.getBundle().loadClass( clazz );
+        try {
+            testClass = ctx.getBundle().loadClass(clazz);
         }
-        catch ( ClassNotFoundException e )
-        {
-            throw new TestContainerException( e );
+        catch (ClassNotFoundException e) {
+            throw new TestContainerException(e);
         }
 
-        if( !( findAndInvoke( testClass ) ) )
-        {
-            throw new TestContainerException( " Test " + method + " not found in test class " + testClass.getName() );
+        if (!(findAndInvoke(testClass))) {
+            throw new TestContainerException(" Test " + method + " not found in test class "
+                + testClass.getName());
         }
     }
 
-    private boolean findAndInvoke( Class<?> testClass )
+    private boolean findAndInvoke(Class<?> testClass)
 
     {
-        try
-        {
+        try {
             // find matching method
-            for ( Method m : testClass.getMethods() )
-            {
-                if( m.getName().equals( method ) )
-                {
+            for (Method m : testClass.getMethods()) {
+                if (m.getName().equals(method)) {
                     // we assume its correct:
-                    invokeViaJUnit( testClass, m );
+                    invokeViaJUnit(testClass, m);
                     return true;
                 }
             }
         }
-        catch ( NoClassDefFoundError e )
-        {
-            throw new TestContainerException( e );
+        catch (NoClassDefFoundError e) {
+            throw new TestContainerException(e);
         }
         return false;
     }
@@ -107,25 +98,23 @@ public class JUnitProbeInvoker implements ProbeInvoker
      * Invokes a given method of a given test class via {@link JUnitCore} and injects dependencies
      * into the instantiated test class.
      * <p>
-     * This requires building a {@code Request} which is aware of an {@code Injector} and a 
+     * This requires building a {@code Request} which is aware of an {@code Injector} and a
      * {@code BundleContext}.
      * 
      * @param testClass
      * @param testMethod
      * @throws TestContainerException
      */
-    private void invokeViaJUnit( final Class<?> testClass, final Method testMethod )
-        throws TestContainerException
-    {
-        Request classRequest = new ContainerTestRunnerClassRequest( testClass, injector );
-        Description methodDescription = Description.createTestDescription( testClass, method );
-        Request request = classRequest.filterWith( methodDescription );
+    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod)
+        throws TestContainerException {
+        Request classRequest = new ContainerTestRunnerClassRequest(testClass, injector);
+        Description methodDescription = Description.createTestDescription(testClass, method);
+        Request request = classRequest.filterWith(methodDescription);
         JUnitCore junit = new JUnitCore();
-        Result result = junit.run( request );
+        Result result = junit.run(request);
         List<Failure> failures = result.getFailures();
-        if( !failures.isEmpty() )
-        {
-            throw new TestContainerException( failures.toString(), failures.get( 0 ).getException() );
+        if (!failures.isEmpty()) {
+            throw new TestContainerException(failures.toString(), failures.get(0).getException());
         }
     }
 }

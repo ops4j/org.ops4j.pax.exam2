@@ -32,10 +32,9 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-@ExamReactorStrategy( PerMethod.class )
-public class BeforeAfterTest extends BeforeAfterParent
-{
+@RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(PerMethod.class)
+public class BeforeAfterTest extends BeforeAfterParent {
 
     @Inject
     private BundleContext bundleContext;
@@ -44,31 +43,27 @@ public class BeforeAfterTest extends BeforeAfterParent
     private HelloService helloService;
 
     @Before
-    public void setUp()
-    {
-        addMessage( "Before" );        
-        assertThat( bundleContext, is( notNullValue() ) );
+    public void setUp() {
+        addMessage("Before");
+        assertThat(bundleContext, is(notNullValue()));
     }
 
     @After
-    public void tearDown()
-    {
-        addMessage( "After" );        
-        assertThat( bundleContext, is( notNullValue() ) );
+    public void tearDown() {
+        addMessage("After");
+        assertThat(bundleContext, is(notNullValue()));
     }
 
     @Test
-    public void getInjectedService()
-    {
-        addMessage( "Test" );        
-        assertThat( helloService, is( notNullValue() ) );
-        assertThat( helloService.getMessage(), is( equalTo( "Hello Pax!" ) ) );
+    public void getInjectedService() {
+        addMessage("Test");
+        assertThat(helloService, is(notNullValue()));
+        assertThat(helloService.getMessage(), is(equalTo("Hello Pax!")));
     }
 
     @Test
-    public void injectedBundleContext()
-    {
-        addMessage( "Test" );        
-        assertThat( bundleContext, is( notNullValue() ) );
+    public void injectedBundleContext() {
+        addMessage("Test");
+        assertThat(bundleContext, is(notNullValue()));
     }
 }

@@ -21,26 +21,30 @@ import java.util.Set;
 import org.ops4j.pax.exam.TestAddress;
 
 /**
- * Separates logical regression invocations from underlying reactor strategy.
- * You get an instance from {@link org.ops4j.pax.exam.spi.ExamReactor}
+ * Separates logical regression invocations from underlying reactor strategy. You get an instance
+ * from {@link org.ops4j.pax.exam.spi.ExamReactor}
  */
 public interface StagedExamReactor {
 
     public Set<TestAddress> getTargets();
 
     /**
-     * Invoke an actual regression. The reactor implementation will take care of (perhaps) instantiating a TestContainer or
-     * reusing an existing one and passing the parseForTests.
-     *
-     * @param address reference to a concrete, single regression.
-     * @throws Exception in case of a problem.
+     * Invoke an actual regression. The reactor implementation will take care of (perhaps)
+     * instantiating a TestContainer or reusing an existing one and passing the parseForTests.
+     * 
+     * @param address
+     *            reference to a concrete, single regression.
+     * @throws Exception
+     *             in case of a problem.
      */
-    void invoke( TestAddress address ) throws Exception;
-    
+    void invoke(TestAddress address) throws Exception;
 
     void beforeSuite();
+
     void beforeClass();
+
     void afterClass();
+
     void afterSuite();
 
 }

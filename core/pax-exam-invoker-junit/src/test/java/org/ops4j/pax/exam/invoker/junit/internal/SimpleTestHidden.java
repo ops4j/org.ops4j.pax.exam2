@@ -21,8 +21,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-public class SimpleTestHidden
-{
+public class SimpleTestHidden {
 
     @Test
     public void doNothing() {

@@ -17,12 +17,11 @@
  */
 package org.ops4j.pax.exam;
 
-
 /**
  * @author Harald Wellmann
  * @since 2.3.0, August 2011
  */
 public interface ProbeInvokerFactory {
 
-    ProbeInvoker createProbeInvoker( Object context, String expr );
+    ProbeInvoker createProbeInvoker(Object context, String expr);
 }

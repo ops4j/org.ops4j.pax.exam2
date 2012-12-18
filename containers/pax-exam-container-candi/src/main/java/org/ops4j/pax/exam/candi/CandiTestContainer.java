@@ -35,9 +35,9 @@ import com.caucho.resin.ResinBeanContainer;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class CandiTestContainer implements TestContainer
-{
-    private static final Logger LOG = LoggerFactory.getLogger( CandiTestContainer.class );
+public class CandiTestContainer implements TestContainer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CandiTestContainer.class);
 
     private boolean isValid;
 
@@ -45,31 +45,25 @@ public class CandiTestContainer implements TestContainer
 
     private BeanContainerRequest request;
 
-    public CandiTestContainer( ExamSystem system )
-    {
+    public CandiTestContainer(ExamSystem system) {
     }
 
-    public void call( TestAddress address )
-    {
+    public void call(TestAddress address) {
     }
 
-    public long install( String location, InputStream stream )
-    {
+    public long install(String location, InputStream stream) {
         return -1;
     }
 
-    public long install( InputStream stream )
-    {
+    public long install(InputStream stream) {
         return -1;
     }
-    
-    public void afterDeployment(@Observes AfterDeploymentValidation event)
-    {
+
+    public void afterDeployment(@Observes AfterDeploymentValidation event) {
         isValid = true;
     }
 
-    public TestContainer start()
-    {
+    public TestContainer start() {
         LOG.debug("starting CanDI container");
         container = new ResinBeanContainer();
         container.start();
@@ -77,25 +71,21 @@ public class CandiTestContainer implements TestContainer
         return this;
     }
 
-    public TestContainer stop()
-    {
-        if (container != null && isValid) 
-        {
+    public TestContainer stop() {
+        if (container != null && isValid) {
             LOG.debug("stopping CanDI container");
-            container.completeRequest( request );
+            container.completeRequest(request);
             container.close();
         }
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Candi";
     }
 
-    public static ResinBeanContainer getCdiContainer()
-    {
+    public static ResinBeanContainer getCdiContainer() {
         return container;
     }
 }

@@ -37,33 +37,28 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-public class SystemPropertyTest
-{
+@RunWith(JUnit4TestRunner.class)
+public class SystemPropertyTest {
+
     @Inject
     private BundleContext bc;
-    
+
     @Configuration
-    public Option[] config()
-    {
-        return options(
-            regressionDefaults(),
-            systemProperty( "felix.startlevel.bundle" ).value( "2" ),
-            systemProperty( "foo" ).value( "bar" ),
-            junitBundles()
-            );
+    public Option[] config() {
+        return options(regressionDefaults(), systemProperty("felix.startlevel.bundle").value("2"),
+            systemProperty("foo").value("bar"), junitBundles());
     }
 
     @Test
-    @SuppressWarnings( "deprecation" )
-    public void startLevel()
-    {
-        assumeTrue( isFelix() && !isNativeContainer() );
-        
-        assertThat( System.getProperty( "felix.startlevel.bundle" ), is("2"));
-        assertThat( System.getProperty( "foo" ), is("bar"));
-        org.osgi.service.startlevel.StartLevel startLevel = ServiceLookup.getService( bc, org.osgi.service.startlevel.StartLevel.class );
-        assertThat( startLevel, is( notNullValue() ) );
-        assertThat( startLevel.getInitialBundleStartLevel(), is( equalTo( 2 ) ) );
+    @SuppressWarnings("deprecation")
+    public void startLevel() {
+        assumeTrue(isFelix() && !isNativeContainer());
+
+        assertThat(System.getProperty("felix.startlevel.bundle"), is("2"));
+        assertThat(System.getProperty("foo"), is("bar"));
+        org.osgi.service.startlevel.StartLevel startLevel = ServiceLookup.getService(bc,
+            org.osgi.service.startlevel.StartLevel.class);
+        assertThat(startLevel, is(notNullValue()));
+        assertThat(startLevel.getInitialBundleStartLevel(), is(equalTo(2)));
     }
 }

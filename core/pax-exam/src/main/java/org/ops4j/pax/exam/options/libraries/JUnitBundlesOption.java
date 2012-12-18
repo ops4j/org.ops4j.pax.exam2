@@ -23,41 +23,34 @@ import org.ops4j.pax.exam.options.AbstractDelegateProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 
 /**
- * Option specifying junit bundles (osgi-fyed JUnit).
- * By default uses junit bundle published by SpringSource, version 4.4.0 (can be changed).
- *
+ * Option specifying junit bundles (osgi-fyed JUnit). By default uses junit bundle published by
+ * SpringSource, version 4.4.0 (can be changed).
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
-public class JUnitBundlesOption
-    extends AbstractDelegateProvisionOption<JUnitBundlesOption>
-{
+public class JUnitBundlesOption extends AbstractDelegateProvisionOption<JUnitBundlesOption> {
 
     /**
      * Constructor.
      */
-    public JUnitBundlesOption()
-    {
-        super(
-            mavenBundle()
-            .groupId( "org.apache.servicemix.bundles" )
-            .artifactId( "org.apache.servicemix.bundles.junit" )
-            .version( "4.10_1" )
-        );
+    public JUnitBundlesOption() {
+        super(mavenBundle().groupId("org.apache.servicemix.bundles")
+            .artifactId("org.apache.servicemix.bundles.junit").version("4.10_1"));
         noUpdate();
-        startLevel( START_LEVEL_SYSTEM_BUNDLES );
+        startLevel(START_LEVEL_SYSTEM_BUNDLES);
     }
 
     /**
      * Sets the junit version.
-     *
-     * @param version junit version.
-     *
+     * 
+     * @param version
+     *            junit version.
+     * 
      * @return itself, for fluent api usage
      */
-    public JUnitBundlesOption version( final String version )
-    {
-        ( (MavenArtifactProvisionOption) getDelegate() ).version( version );
+    public JUnitBundlesOption version(final String version) {
+        ((MavenArtifactProvisionOption) getDelegate()).version(version);
         return this;
     }
 
@@ -65,20 +58,18 @@ public class JUnitBundlesOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "JUnitBundlesOption" );
-        sb.append( "{url=" ).append( getURL() );
-        sb.append( '}' );
+        sb.append("JUnitBundlesOption");
+        sb.append("{url=").append(getURL());
+        sb.append('}');
         return sb.toString();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected JUnitBundlesOption itself()
-    {
+    protected JUnitBundlesOption itself() {
         return this;
     }
 

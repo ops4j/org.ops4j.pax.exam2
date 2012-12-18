@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package org.ops4j.pax.exam.regression.multi.cm;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -37,37 +38,32 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 @RunWith(JUnit4TestRunner.class)
 @ExamReactorStrategy
-public class ConfigurationAdminTest
-{
+public class ConfigurationAdminTest {
+
     private static final String EQUINOX_MIRROR = "http://download.eclipse.org/equinox/drops/R-3.7-201106131736/";
     private static final String DEBUG_OPTIONS = "0.org.eclipse.osgi.framework.debug.FrameworkDebugOptions";
 
     @Inject
     private ConfigurationAdmin configAdmin;
-    
-    @Configuration( )
-    public Option[] config()
-    {
-        return options(
-            regressionDefaults(),
-            bundle(EQUINOX_MIRROR + "org.eclipse.equinox.cm_1.0.300.v20110502.jar"),
-            bundle(EQUINOX_MIRROR + "org.eclipse.osgi.services_3.3.0.v20110513.jar"),
-            junitBundles());
+
+    @Configuration()
+    public Option[] config() {
+        return options(regressionDefaults(), bundle(EQUINOX_MIRROR
+            + "org.eclipse.equinox.cm_1.0.300.v20110502.jar"), bundle(EQUINOX_MIRROR
+            + "org.eclipse.osgi.services_3.3.0.v20110513.jar"), junitBundles());
     }
 
-    
-    
     @Test
     public void testConfigAdmin() throws IOException {
         assertThat(configAdmin, is(notNullValue()));
-        org.osgi.service.cm.Configuration config = configAdmin.getConfiguration( DEBUG_OPTIONS );
+        org.osgi.service.cm.Configuration config = configAdmin.getConfiguration(DEBUG_OPTIONS);
         assertThat(config, is(notNullValue()));
         config.update();
-        
-        @SuppressWarnings( "unchecked" )
+
+        @SuppressWarnings("unchecked")
         Dictionary<String, String> dictionary = config.getProperties();
-        
+
         assertThat(dictionary, is(notNullValue()));
-        assertThat(dictionary.get( "service.pid"), is(DEBUG_OPTIONS) );
+        assertThat(dictionary.get("service.pid"), is(DEBUG_OPTIONS));
     }
 }

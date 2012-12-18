@@ -22,13 +22,11 @@ import org.ops4j.pax.exam.Option;
 
 /**
  * Option specifying a raw virtual machine option.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0 December 10, 2008
  */
-public class VMOption
-    implements Option
-{
+public class VMOption implements Option {
 
     /**
      * Virtual machine option. Cannot be null or empty.
@@ -37,24 +35,24 @@ public class VMOption
 
     /**
      * Constructor.
-     *
-     * @param option virtual machine option (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If option is null or empty
+     * 
+     * @param option
+     *            virtual machine option (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If option is null or empty
      */
-    public VMOption( final String option )
-    {
-        validateNotEmpty( option, true, "VM option" );
+    public VMOption(final String option) {
+        validateNotEmpty(option, true, "VM option");
         this.option = option;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return virtual machine option (cannot be null or empty)
      */
-    public String getOption()
-    {
+    public String getOption() {
         return option;
     }
 
@@ -62,12 +60,11 @@ public class VMOption
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "VMOption" );
-        sb.append( "{option='" ).append( option ).append( '\'' );
-        sb.append( '}' );
+        sb.append("VMOption");
+        sb.append("{option='").append(option).append('\'');
+        sb.append('}');
         return sb.toString();
     }
 }

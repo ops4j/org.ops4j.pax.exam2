@@ -37,30 +37,26 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.swissbox.framework.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
-@RunWith( JUnit4TestRunner.class )
-public class PdeExplodedReferenceTest
-{
+@RunWith(JUnit4TestRunner.class)
+public class PdeExplodedReferenceTest {
 
     @Inject
     private BundleContext bc;
-    
-    @Configuration( )
-    public Option[] config()
-    {
+
+    @Configuration()
+    public Option[] config() {
         String baseDir = PathUtils.getBaseDir();
-        return options(
-            regressionDefaults(),
-            url( "reference:file:" + baseDir + "/target/regression-pde-bundle" ),
-            junitBundles(),
-            systemProperty( "osgi.clean" ).value( "true" ),
-            systemProperty( "osgi.dev" ).value( "target/classes" ));
+        return options(regressionDefaults(), url("reference:file:" + baseDir
+            + "/target/regression-pde-bundle"), junitBundles(),
+            systemProperty("osgi.clean").value("true"),
+            systemProperty("osgi.dev").value("target/classes"));
     }
 
     @Test
-    public void getHelloService()
-    {
-        assumeTrue( isEquinox() );
-        Object service = ServiceLookup.getService( bc, "org.ops4j.pax.exam.regression.pde.HelloService" );
-        assertThat( service, is( notNullValue() ) );
+    public void getHelloService() {
+        assumeTrue(isEquinox());
+        Object service = ServiceLookup.getService(bc,
+            "org.ops4j.pax.exam.regression.pde.HelloService");
+        assertThat(service, is(notNullValue()));
     }
 }

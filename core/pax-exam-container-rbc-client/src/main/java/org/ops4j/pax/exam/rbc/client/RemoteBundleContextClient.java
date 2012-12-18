@@ -25,21 +25,21 @@ import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 15, 2008
  */
 public interface RemoteBundleContextClient {
 
-    public long install( String location, InputStream stream );
+    public long install(String location, InputStream stream);
 
     public void cleanup();
 
     /**
      * {@inheritDoc}
      */
-    public void setBundleStartLevel( final long bundleId, final int startLevel );
+    public void setBundleStartLevel(final long bundleId, final int startLevel);
 
     /**
      * {@inheritDoc}
@@ -54,10 +54,10 @@ public interface RemoteBundleContextClient {
     /**
      * {@inheritDoc}
      */
-    public void waitForState( final long bundleId, final int state,  final RelativeTimeout timeout );
+    public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout);
 
     /**
      * {@inheritDoc}
      */
-    public void call( TestAddress address );
+    public void call(TestAddress address);
 }

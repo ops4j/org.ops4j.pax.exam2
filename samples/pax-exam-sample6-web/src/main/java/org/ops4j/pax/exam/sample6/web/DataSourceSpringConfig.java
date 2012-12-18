@@ -28,36 +28,31 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Import( { JndiDataSourceSpringConfig.class, EmbeddedDataSourceSpringConfig.class } )
-public class DataSourceSpringConfig
-{
+@Import({ JndiDataSourceSpringConfig.class, EmbeddedDataSourceSpringConfig.class })
+public class DataSourceSpringConfig {
 
     @Configuration
-    @Profile( "web" )
-    public static class JndiDataSourceSpringConfig
-    {
+    @Profile("web")
+    public static class JndiDataSourceSpringConfig {
 
-        @Resource( mappedName = "jdbc/library" )
+        @Resource(mappedName = "jdbc/library")
         private DataSource dataSource;
 
         @Bean
-        public DataSource dataSource()
-        {
+        public DataSource dataSource() {
             return dataSource;
         }
     }
 
     @Configuration
-    @Profile( "test" )
-    public static class EmbeddedDataSourceSpringConfig
-    {
+    @Profile("test")
+    public static class EmbeddedDataSourceSpringConfig {
 
         @Bean
-        public DataSource dataSource()
-        {
+        public DataSource dataSource() {
             EmbeddedDataSource dataSource = new EmbeddedDataSource();
-            dataSource.setDatabaseName( "memory:library" );
-            dataSource.setCreateDatabase( "create" );
+            dataSource.setDatabaseName("memory:library");
+            dataSource.setCreateDatabase("create");
             return dataSource;
         }
     }

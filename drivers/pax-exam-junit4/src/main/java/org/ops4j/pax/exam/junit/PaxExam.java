@@ -16,11 +16,9 @@
  */
 package org.ops4j.pax.exam.junit;
 
-public class PaxExam extends JUnit4TestRunner
-{
+public class PaxExam extends JUnit4TestRunner {
 
-    public PaxExam( Class<?> klass ) throws Exception
-    {
-        super( klass );
+    public PaxExam(Class<?> klass) throws Exception {
+        super(klass);
     }
 }

@@ -29,32 +29,31 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 @Listeners(PaxExam.class)
-public class FilterTest
-{
+public class FilterTest {
 
     @Inject
     private BundleContext bundleContext;
 
-    @Inject @Filter("(language=la)")
+    @Inject
+    @Filter("(language=la)")
     private HelloService latinService;
 
-    @Inject @Filter("(language=en)")
+    @Inject
+    @Filter("(language=en)")
     private HelloService englishService;
 
     @Test
-    public void getServiceFromInjectedBundleContext()
-    {
-        assertNotNull( bundleContext );
-        Object service = ServiceLookup.getService( bundleContext, HelloService.class );
-        assertNotNull( service  );
+    public void getServiceFromInjectedBundleContext() {
+        assertNotNull(bundleContext);
+        Object service = ServiceLookup.getService(bundleContext, HelloService.class);
+        assertNotNull(service);
     }
 
     @Test
-    public void getInjectedServices()
-    {
-        assertNotNull( latinService );
-        assertEquals( latinService.getMessage(), "Pax Vobiscum!"  );
-        assertNotNull( englishService  );
-        assertEquals( englishService.getMessage(), "Hello Pax!" );
+    public void getInjectedServices() {
+        assertNotNull(latinService);
+        assertEquals(latinService.getMessage(), "Pax Vobiscum!");
+        assertNotNull(englishService);
+        assertEquals(englishService.getMessage(), "Hello Pax!");
     }
 }

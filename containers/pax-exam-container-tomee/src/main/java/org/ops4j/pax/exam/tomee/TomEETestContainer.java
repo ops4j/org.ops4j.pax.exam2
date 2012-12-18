@@ -56,8 +56,8 @@ import org.slf4j.LoggerFactory;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class TomEETestContainer implements TestContainer
-{
+public class TomEETestContainer implements TestContainer {
+
     /**
      * Configuration property key for TomEE configuration file directory. The files contained in
      * this directory will be used to configure the TomEE instance.
@@ -68,7 +68,7 @@ public class TomEETestContainer implements TestContainer
 
     public static final String TOMEE_STOP_PORT_KEY = "pax.exam.tomee.stop.port";
 
-    private static final Logger LOG = LoggerFactory.getLogger( TomEETestContainer.class );
+    private static final Logger LOG = LoggerFactory.getLogger(TomEETestContainer.class);
 
     private Stack<String> deployed = new Stack<String>();
 
@@ -80,185 +80,153 @@ public class TomEETestContainer implements TestContainer
 
     private File webappDir;
 
-    public TomEETestContainer( ExamSystem system )
-    {
+    public TomEETestContainer(ExamSystem system) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
     }
 
-    public synchronized void call( TestAddress address )
-    {
-        TestInstantiationInstruction instruction = testDirectory.lookup( address );
-        ProbeInvokerFactory probeInvokerFactory =
-            ServiceProviderFinder.loadUniqueServiceProvider( ProbeInvokerFactory.class );
-        ProbeInvoker invoker =
-            probeInvokerFactory.createProbeInvoker( null, instruction.toString() );
-        invoker.call( address.arguments() );
+    public synchronized void call(TestAddress address) {
+        TestInstantiationInstruction instruction = testDirectory.lookup(address);
+        ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
+        ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker(null, instruction.toString());
+        invoker.call(address.arguments());
     }
 
-    public synchronized long install( String location, InputStream stream )
-    {
+    public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
-        system.getOptions( WarProbeOption.class );
-        deployModule( EXAM_APPLICATION_NAME, stream );
+        system.getOptions(WarProbeOption.class);
+        deployModule(EXAM_APPLICATION_NAME, stream);
         return -1;
     }
 
-    public synchronized long install( InputStream stream )
-    {
-        return install( "local", stream );
+    public synchronized long install(InputStream stream) {
+        return install("local", stream);
     }
 
-    public void deployModules()
-    {
-        UrlDeploymentOption[] deploymentOptions = system.getOptions( UrlDeploymentOption.class );
+    public void deployModules() {
+        UrlDeploymentOption[] deploymentOptions = system.getOptions(UrlDeploymentOption.class);
         int numModules = 0;
-        for( UrlDeploymentOption option : deploymentOptions )
-        {
+        for (UrlDeploymentOption option : deploymentOptions) {
             numModules++;
-            if( option.getName() == null )
-            {
-                option.name( "app" + numModules );
+            if (option.getName() == null) {
+                option.name("app" + numModules);
             }
-            deployModule( option );
+            deployModule(option);
         }
     }
 
-    private void deployModule( UrlDeploymentOption option )
-    {
-        try
-        {
-            URL applUrl = new URL( option.getURL() );
-            deployModule( option.getName(), applUrl.openStream() );
+    private void deployModule(UrlDeploymentOption option) {
+        try {
+            URL applUrl = new URL(option.getURL());
+            deployModule(option.getName(), applUrl.openStream());
         }
-        catch ( MalformedURLException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (MalformedURLException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + option, exc );
+        catch (IOException exc) {
+            throw new TestContainerException("Problem deploying " + option, exc);
         }
     }
 
-    private void deployModule( String applicationName, InputStream stream )
-    {
-        try
-        {
-            File warFile = new File( webappDir, applicationName + ".war" );
-            StreamUtils.copyStream( stream, new FileOutputStream( warFile ), true );
-            tomee.deploy( applicationName, warFile );
+    private void deployModule(String applicationName, InputStream stream) {
+        try {
+            File warFile = new File(webappDir, applicationName + ".war");
+            StreamUtils.copyStream(stream, new FileOutputStream(warFile), true);
+            tomee.deploy(applicationName, warFile);
         }
-        catch ( IOException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        catch (IOException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
-        catch ( NamingException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        catch (NamingException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
-        catch ( OpenEJBException exc )
-        {
-            throw new TestContainerException( "Problem deploying " + applicationName, exc );
+        catch (OpenEJBException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         undeployModules();
-        LOG.info( "stopping TomEE" );
-        try
-        {
+        LOG.info("stopping TomEE");
+        try {
             tomee.stop();
         }
-        catch ( Exception exc )
-        {
-            throw new TestContainerException( exc );
+        catch (Exception exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    private void undeployModules()
-    {
-        while( !deployed.isEmpty() )
-        {
+    private void undeployModules() {
+        while (!deployed.isEmpty()) {
             String applicationName = deployed.pop();
-            try
-            {
-                tomee.undeploy( applicationName );
+            try {
+                tomee.undeploy(applicationName);
             }
-            catch ( UndeployException exc )
-            {
-                throw new TestContainerException( exc );
+            catch (UndeployException exc) {
+                throw new TestContainerException(exc);
             }
-            catch ( NoSuchApplicationException exc )
-            {
-                throw new TestContainerException( exc );
+            catch (NoSuchApplicationException exc) {
+                throw new TestContainerException(exc);
             }
         }
     }
 
-    public TestContainer start()
-    {
-        LOG.info( "starting TomEE" );
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
+    public TestContainer start() {
+        LOG.info("starting TomEE");
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
         File tempDir = system.getTempFolder();
-        webappDir = new File( tempDir, "webapps" );
+        webappDir = new File(tempDir, "webapps");
         webappDir.mkdirs();
 
         ConfigurationManager cm = new ConfigurationManager();
-        String configDirName =
-            cm.getProperty( TOMEE_CONFIG_DIR_KEY, "src/test/resources/tomee-config" );
-        String httpPortString = cm.getProperty( TOMEE_HTTP_PORT_KEY, "9080" );
-        String stopPortString = cm.getProperty( TOMEE_STOP_PORT_KEY, "9005" );
-        int httpPort = Integer.parseInt( httpPortString );
-        int stopPort = Integer.parseInt( stopPortString );
+        String configDirName = cm.getProperty(TOMEE_CONFIG_DIR_KEY,
+            "src/test/resources/tomee-config");
+        String httpPortString = cm.getProperty(TOMEE_HTTP_PORT_KEY, "9080");
+        String stopPortString = cm.getProperty(TOMEE_STOP_PORT_KEY, "9005");
+        int httpPort = Integer.parseInt(httpPortString);
+        int stopPort = Integer.parseInt(stopPortString);
 
-        File tomeeXml = new File( configDirName, "tomee.xml" );
-        File serverXml = new File( configDirName, "server.xml" );
+        File tomeeXml = new File(configDirName, "tomee.xml");
+        File serverXml = new File(configDirName, "server.xml");
 
         Configuration tomeeConfig = new Configuration();
-        tomeeConfig.setHttpPort( httpPort );
-        tomeeConfig.setStopPort( stopPort );
+        tomeeConfig.setHttpPort(httpPort);
+        tomeeConfig.setStopPort(stopPort);
         Properties props = new Properties();
 
-        if( tomeeXml.exists() )
-        {
-            props.setProperty( "openejb.configuration", tomeeXml.getAbsolutePath() );
-            props.setProperty( "openejb.configuration.class", Tomee.class.getName() );
+        if (tomeeXml.exists()) {
+            props.setProperty("openejb.configuration", tomeeXml.getAbsolutePath());
+            props.setProperty("openejb.configuration.class", Tomee.class.getName());
         }
-        tomeeConfig.setProperties( props );
-        
-        if( serverXml.exists() )
-        {
-            tomeeConfig.setServerXml( serverXml.getAbsolutePath() );
+        tomeeConfig.setProperties(props);
+
+        if (serverXml.exists()) {
+            tomeeConfig.setServerXml(serverXml.getAbsolutePath());
         }
 
         tomee = new WrappedTomEEContainer();
-        tomee.setup( tomeeConfig );
-        try
-        {
+        tomee.setup(tomeeConfig);
+        try {
             tomee.start();
-            testDirectory.setAccessPoint( new URI( "http://localhost:" + httpPort
-                    + "/Pax-Exam-Probe/" ) );
+            testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
+                + "/Pax-Exam-Probe/"));
         }
-        catch ( Exception exc )
-        {
-            throw new TestContainerException( exc );
+        catch (Exception exc) {
+            throw new TestContainerException(exc);
         }
         return this;
     }
 
-    public TestContainer stop()
-    {
+    public TestContainer stop() {
         cleanup();
         system.clear();
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "TomEE";
     }
 }

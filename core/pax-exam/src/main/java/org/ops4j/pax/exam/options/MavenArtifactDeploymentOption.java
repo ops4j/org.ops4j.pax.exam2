@@ -19,105 +19,89 @@ package org.ops4j.pax.exam.options;
 
 import static org.ops4j.lang.NullArgumentException.validateNotNull;
 
-public class MavenArtifactDeploymentOption extends UrlDeploymentOption implements MavenUrlReference
-{
+public class MavenArtifactDeploymentOption extends UrlDeploymentOption implements MavenUrlReference {
+
     private MavenUrlReference artifact;
-    
-    public MavenArtifactDeploymentOption()
-    {
+
+    public MavenArtifactDeploymentOption() {
         // FIXME
         super("file:/dummy");
         this.artifact = new MavenArtifactUrlReference();
     }
 
-    public MavenArtifactDeploymentOption( final MavenUrlReference artifact )
-    {
+    public MavenArtifactDeploymentOption(final MavenUrlReference artifact) {
         super(artifact);
-        validateNotNull( artifact, "Maven artifact" );
+        validateNotNull(artifact, "Maven artifact");
         this.artifact = artifact;
     }
 
-    
-    public String getURL()
-    {
+    public String getURL() {
         return artifact.getURL();
     }
 
-    public MavenArtifactDeploymentOption groupId( String groupId )
-    {
-        artifact.groupId( groupId );
+    public MavenArtifactDeploymentOption groupId(String groupId) {
+        artifact.groupId(groupId);
         return this;
     }
 
-    public MavenArtifactDeploymentOption artifactId( String artifactId )
-    {
-        artifact.artifactId( artifactId );
+    public MavenArtifactDeploymentOption artifactId(String artifactId) {
+        artifact.artifactId(artifactId);
         return this;
     }
 
-    public MavenArtifactDeploymentOption type( String type )
-    {
-        artifact.type( type );
+    public MavenArtifactDeploymentOption type(String type) {
+        artifact.type(type);
         return this;
     }
 
-    public MavenArtifactDeploymentOption classifier( String classifier )
-    {
-        artifact.classifier( classifier );
+    public MavenArtifactDeploymentOption classifier(String classifier) {
+        artifact.classifier(classifier);
         return this;
     }
 
-    public MavenArtifactDeploymentOption version( String version )
-    {
-        artifact.version( version );
+    public MavenArtifactDeploymentOption version(String version) {
+        artifact.version(version);
         return this;
     }
 
-    public MavenArtifactDeploymentOption version( VersionResolver resolver )
-    {
-        artifact.version( resolver );
+    public MavenArtifactDeploymentOption version(VersionResolver resolver) {
+        artifact.version(resolver);
         return this;
     }
 
-    public MavenArtifactDeploymentOption versionAsInProject()
-    {
+    public MavenArtifactDeploymentOption versionAsInProject() {
         artifact.versionAsInProject();
         return this;
     }
 
-    public Boolean isSnapshot()
-    {
+    public Boolean isSnapshot() {
         return artifact.isSnapshot();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( artifact == null ) ? 0 : artifact.hashCode() );
+        result = prime * result + ((artifact == null) ? 0 : artifact.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         MavenArtifactDeploymentOption other = (MavenArtifactDeploymentOption) obj;
-        if( artifact == null )
-        {
-            if( other.artifact != null )
+        if (artifact == null) {
+            if (other.artifact != null)
                 return false;
         }
-        else if( !artifact.equals( other.artifact ) )
+        else if (!artifact.equals(other.artifact))
             return false;
         return true;
     }
-    
-    
+
 }

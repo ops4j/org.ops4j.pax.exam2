@@ -26,17 +26,15 @@ import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
 
-public class TomEEDeploymentTest
-{
+public class TomEEDeploymentTest {
 
     @Test
-    public void deployWebapp() throws IOException
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        ExamSystem system = DefaultExamSystem.create( options( war(
-            "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war" ).name(
-            "sample1" ) ) );
-        TomEETestContainer container = new TomEETestContainer( system );
+    public void deployWebapp() throws IOException {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        ExamSystem system = DefaultExamSystem.create(options(war(
+            "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war").name(
+            "sample1")));
+        TomEETestContainer container = new TomEETestContainer(system);
         container.start();
         container.deployModules();
         container.stop();

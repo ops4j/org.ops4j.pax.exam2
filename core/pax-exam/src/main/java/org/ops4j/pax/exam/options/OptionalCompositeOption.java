@@ -20,15 +20,13 @@ package org.ops4j.pax.exam.options;
 import org.ops4j.pax.exam.Option;
 
 /**
- * Composite option that will include the options that makes up the composite only in case that a boolean condition is
- * true.
- *
+ * Composite option that will include the options that makes up the composite only in case that a
+ * boolean condition is true.
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 20, 2009
  */
-public class OptionalCompositeOption
-    implements CompositeOption
-{
+public class OptionalCompositeOption implements CompositeOption {
 
     /**
      * Boolean condition to evaluate. Cannot be null;
@@ -41,95 +39,86 @@ public class OptionalCompositeOption
 
     /**
      * Constructor.
-     *
-     * @param condition condition to evaluate
+     * 
+     * @param condition
+     *            condition to evaluate
      */
-    public OptionalCompositeOption( final Condition condition )
-    {
+    public OptionalCompositeOption(final Condition condition) {
         this.condition = condition;
         composite = new DefaultCompositeOption();
     }
 
     /**
      * Convenience constructor.
-     *
-     * @param condition boolean condition to evaluate
+     * 
+     * @param condition
+     *            boolean condition to evaluate
      */
-    public OptionalCompositeOption( final boolean condition )
-    {
-        this( new BooleanCondition( condition ) );
+    public OptionalCompositeOption(final boolean condition) {
+        this(new BooleanCondition(condition));
     }
 
     /**
      * Adds options to be used in case that condition evaluates to true.
-     *
-     * @param options to use
-     *
+     * 
+     * @param options
+     *            to use
+     * 
      * @return this for fluent api
      */
-    public OptionalCompositeOption useOptions( final Option... options )
-    {
-        composite.add( options );
+    public OptionalCompositeOption useOptions(final Option... options) {
+        composite.add(options);
         return this;
     }
 
     /**
-     * If condition is true will return the composite options. Otherwise will return an empty array of options.
-     * {@inheritDoc}
+     * If condition is true will return the composite options. Otherwise will return an empty array
+     * of options. {@inheritDoc}
      */
-    public Option[] getOptions()
-    {
-        if( condition.evaluate() )
-        {
+    public Option[] getOptions() {
+        if (condition.evaluate()) {
             return composite.getOptions();
         }
         return new Option[0];
     }
 
-    
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( composite == null ) ? 0 : composite.hashCode() );
-        result = prime * result + ( ( condition == null ) ? 0 : condition.hashCode() );
+        result = prime * result + ((composite == null) ? 0 : composite.hashCode());
+        result = prime * result + ((condition == null) ? 0 : condition.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         OptionalCompositeOption other = (OptionalCompositeOption) obj;
-        if( composite == null )
-        {
-            if( other.composite != null )
+        if (composite == null) {
+            if (other.composite != null)
                 return false;
         }
-        else if( !composite.equals( other.composite ) )
+        else if (!composite.equals(other.composite))
             return false;
-        if( condition == null )
-        {
-            if( other.condition != null )
+        if (condition == null) {
+            if (other.condition != null)
                 return false;
         }
-        else if( !condition.equals( other.condition ) )
+        else if (!condition.equals(other.condition))
             return false;
         return true;
     }
 
-
     /**
      * Condition to be evaluated.
      */
-    public static interface Condition
-    {
+    public static interface Condition {
 
         /**
          * @return true when the composite option sshould be used
@@ -141,9 +130,7 @@ public class OptionalCompositeOption
     /**
      * Boolean based {@link Condition} implementation.
      */
-    public static class BooleanCondition
-        implements Condition
-    {
+    public static class BooleanCondition implements Condition {
 
         /**
          * Boolean condition.
@@ -152,42 +139,39 @@ public class OptionalCompositeOption
 
         /**
          * Constructor.
-         *
-         * @param condition boolean consition
+         * 
+         * @param condition
+         *            boolean consition
          */
-        public BooleanCondition( final boolean condition )
-        {
+        public BooleanCondition(final boolean condition) {
             this.condition = condition;
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean evaluate()
-        {
+        public boolean evaluate() {
             return condition;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ( condition ? 1231 : 1237 );
+            result = prime * result + (condition ? 1231 : 1237);
             return result;
         }
 
         @Override
-        public boolean equals( Object obj )
-        {
-            if( this == obj )
+        public boolean equals(Object obj) {
+            if (this == obj)
                 return true;
-            if( obj == null )
+            if (obj == null)
                 return false;
-            if( getClass() != obj.getClass() )
+            if (getClass() != obj.getClass())
                 return false;
             BooleanCondition other = (BooleanCondition) obj;
-            if( condition != other.condition )
+            if (condition != other.condition)
                 return false;
             return true;
         }

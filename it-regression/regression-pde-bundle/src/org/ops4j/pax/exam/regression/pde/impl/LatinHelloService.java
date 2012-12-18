@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.regression.pde.impl;
 import org.ops4j.pax.exam.regression.pde.HelloService;
 
 public class LatinHelloService implements HelloService {
-    
+
     public String getMessage() {
         return "Pax Vobiscum!";
     }

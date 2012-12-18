@@ -24,27 +24,29 @@ import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * Simple pre-build test to be used with Pax Exam Player.
- *
+ * 
  * Takes an Interface Name as argument and tries to acquire that service in certain timespan.
  * 
  */
 public class WaitForService {
 
-    public void probe( BundleContext ctx, String servicename, Integer wait )
-        throws InterruptedException, InvalidSyntaxException
-    {
-        if( wait == null ) { wait = 1000; }
-        ServiceTracker tracker = new ServiceTracker( ctx, servicename, null );
-        tracker.open( true );
+    public void probe(BundleContext ctx, String servicename, Integer wait)
+        throws InterruptedException, InvalidSyntaxException {
+        if (wait == null) {
+            wait = 1000;
+        }
+        ServiceTracker tracker = new ServiceTracker(ctx, servicename, null);
+        tracker.open(true);
         long start = System.currentTimeMillis();
 
-        while( ( ( tracker.getTrackingCount() ) == 0 ) && ( start + wait > System.currentTimeMillis() ) ) {
-            Thread.sleep( 100 );
+        while (((tracker.getTrackingCount()) == 0) && (start + wait > System.currentTimeMillis())) {
+            Thread.sleep(100);
         }
         int c = tracker.getTrackingCount();
         tracker.close();
-        if( c == 0 ) {
-            throw new TestContainerException( "Service " + servicename + " has not been available in time." );
+        if (c == 0) {
+            throw new TestContainerException("Service " + servicename
+                + " has not been available in time.");
         }
     }
 }

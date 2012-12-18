@@ -42,10 +42,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author tonit
  */
-public class DefaultExamReactor implements ExamReactor
-{
+public class DefaultExamReactor implements ExamReactor {
 
-    private static Logger LOG = LoggerFactory.getLogger( DefaultExamReactor.class );
+    private static Logger LOG = LoggerFactory.getLogger(DefaultExamReactor.class);
 
     final private List<Option[]> configurations;
     final private List<TestProbeBuilder> probes;
@@ -53,52 +52,43 @@ public class DefaultExamReactor implements ExamReactor
 
     final private ExamSystem system;
 
-    public DefaultExamReactor( ExamSystem system, TestContainerFactory factory )
-    {
+    public DefaultExamReactor(ExamSystem system, TestContainerFactory factory) {
         this.system = system;
         this.configurations = new ArrayList<Option[]>();
         this.probes = new ArrayList<TestProbeBuilder>();
         this.testContainerFactory = factory;
     }
 
-    synchronized public void addConfiguration( Option[] configuration )
-    {
-        configurations.add( configuration );
+    synchronized public void addConfiguration(Option[] configuration) {
+        configurations.add(configuration);
     }
 
-    synchronized public void addProbe( TestProbeBuilder builder )
-    {
-        probes.add( builder );
+    synchronized public void addProbe(TestProbeBuilder builder) {
+        probes.add(builder);
     }
 
-    synchronized public StagedExamReactor stage( StagedExamReactorFactory factory )
-        throws IOException
-    {
-        LOG.debug( "Staging reactor with probes: " + probes.size() + " using strategy: "
-                + factory );
+    synchronized public StagedExamReactor stage(StagedExamReactorFactory factory)
+        throws IOException {
+        LOG.debug("Staging reactor with probes: " + probes.size() + " using strategy: " + factory);
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
-        if( configurations.isEmpty() )
-        {
-            List<ConfigurationFactory> configurationFactories =
-                ServiceProviderFinder.findServiceProviders( ConfigurationFactory.class );
-            for( ConfigurationFactory cf : configurationFactories )
-            {
+        if (configurations.isEmpty()) {
+            List<ConfigurationFactory> configurationFactories = ServiceProviderFinder
+                .findServiceProviders(ConfigurationFactory.class);
+            for (ConfigurationFactory cf : configurationFactories) {
                 Option[] configuration = cf.createConfiguration();
-                addConfiguration( configuration );
+                addConfiguration(configuration);
             }
         }
-        if( configurations.isEmpty() )
-        {
-            LOG.debug( "No configuration given. Setting an empty one." );
-            configurations.add( options() );
+        if (configurations.isEmpty()) {
+            LOG.debug("No configuration given. Setting an empty one.");
+            configurations.add(options());
         }
-        for( Option[] config : configurations )
-        {
-            containers.addAll( Arrays.asList( testContainerFactory.create( system.fork( config ) ) ) );
+        for (Option[] config : configurations) {
+            containers.addAll(Arrays.asList(testContainerFactory.create(system.fork(config))));
         }
 
-        return factory.create( containers, probes );
+        return factory.create(containers, probes);
     }
 
 }

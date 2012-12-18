@@ -26,9 +26,8 @@ import java.lang.annotation.Target;
  * @deprecated Use {@link org.ops4j.pax.exam.ProbeBuilder}.
  */
 @Deprecated
-@Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.METHOD } )
-public @interface ProbeBuilder
-{
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD })
+public @interface ProbeBuilder {
 
 }

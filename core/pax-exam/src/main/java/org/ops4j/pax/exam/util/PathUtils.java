@@ -18,10 +18,11 @@ package org.ops4j.pax.exam.util;
 public class PathUtils {
 
     /**
-     * Returns the base directory of the current Maven project, used by tests that require absolute paths.
+     * Returns the base directory of the current Maven project, used by tests that require absolute
+     * paths.
      * <p>
-     * This works both when running under Surefire and when runnning a JUnit test from Eclipse, assuming the JUnit
-     * launcher default was not changed by the user.
+     * This works both when running under Surefire and when runnning a JUnit test from Eclipse,
+     * assuming the JUnit launcher default was not changed by the user.
      * 
      * @return base directory of current project
      */
@@ -29,7 +30,7 @@ public class PathUtils {
         // 'basedir' is set by Maven Surefire. It always points to the current subproject,
         // even in reactor builds.
         String baseDir = System.getProperty("basedir");
-        
+
         // if 'basedir' is not set, try the current directory
         if (baseDir == null) {
             baseDir = System.getProperty("user.dir");

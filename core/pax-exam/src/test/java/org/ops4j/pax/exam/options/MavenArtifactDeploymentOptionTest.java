@@ -24,14 +24,13 @@ import static org.ops4j.pax.exam.CoreOptions.mavenWar;
 
 import org.junit.Test;
 
-public class MavenArtifactDeploymentOptionTest
-{
+public class MavenArtifactDeploymentOptionTest {
+
     @Test
-    public void checkMavenWarUrl()
-    {
-        MavenArtifactDeploymentOption option =
-            mavenWar( "org.apache.wicket", "wicket-examples", "1.3.0" ).type( "war" );
-        assertThat( option.getURL(), is( "mvn:org.apache.wicket/wicket-examples/1.3.0/war" ) );
-        assertThat( option, is( instanceOf( DeploymentOption.class ) ) );
+    public void checkMavenWarUrl() {
+        MavenArtifactDeploymentOption option = mavenWar("org.apache.wicket", "wicket-examples",
+            "1.3.0").type("war");
+        assertThat(option.getURL(), is("mvn:org.apache.wicket/wicket-examples/1.3.0/war"));
+        assertThat(option, is(instanceOf(DeploymentOption.class)));
     }
 }

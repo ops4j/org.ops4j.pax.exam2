@@ -29,15 +29,12 @@ public class PaxLoggingParts implements CompositeOption {
 
     private String version;
 
-    PaxLoggingParts( String version )
-    {
+    PaxLoggingParts(String version) {
         this.version = version;
     }
 
-    public Option[] getOptions()
-    {
-        return options(
-            mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( version )
-        );
+    public Option[] getOptions() {
+        return options(mavenBundle().groupId("org.ops4j.pax.logging")
+            .artifactId("pax-logging-service").version(version));
     }
 }

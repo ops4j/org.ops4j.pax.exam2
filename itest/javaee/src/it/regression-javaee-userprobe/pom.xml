@@ -133,7 +133,7 @@
                         <configuration>
                             <forkMode>once</forkMode>
                             <excludes>
-                              <exclude>**/perclass/*.java</exclude>
+                                <exclude>**/perclass/*.java</exclude>
                             </excludes>
                         </configuration>
                     </execution>

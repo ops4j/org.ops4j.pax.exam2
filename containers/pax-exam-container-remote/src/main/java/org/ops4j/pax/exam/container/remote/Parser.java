@@ -23,58 +23,49 @@ import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Minimal parser for the rbcremote fragment.
- */ 
-public class Parser
-{
+ */
+public class Parser {
+
     private String host;
 
     private Integer port;
 
     private long timeout;
 
-    public Parser( Option[] options )
-    {
-        extractArguments( filter( RBCPortOption.class, options ) );
-        extractArguments( filter( RBCLookupTimeoutOption.class, options ) );
+    public Parser(Option[] options) {
+        extractArguments(filter(RBCPortOption.class, options));
+        extractArguments(filter(RBCLookupTimeoutOption.class, options));
         assert port != null : "Port should never be null.";
         assert host != null : "Host should never be null.";
 
     }
 
-    private void extractArguments( RBCLookupTimeoutOption[] options )
-    {
-        for( RBCLookupTimeoutOption op : options )
-        {
+    private void extractArguments(RBCLookupTimeoutOption[] options) {
+        for (RBCLookupTimeoutOption op : options) {
             timeout = op.getTimeout();
         }
     }
 
-    private void extractArguments( RBCPortOption[] rbcPortOptions )
-    {
-        for( RBCPortOption op : rbcPortOptions )
-        {
+    private void extractArguments(RBCPortOption[] rbcPortOptions) {
+        for (RBCPortOption op : rbcPortOptions) {
             host = op.getHost();
             port = op.getPort();
         }
     }
 
-    public String getHost()
-    {
+    public String getHost() {
         return host;
     }
 
-    public Integer getRMIPort()
-    {
+    public Integer getRMIPort() {
         return port;
     }
 
-    public long getRMILookupTimpout()
-    {
+    public long getRMILookupTimpout() {
         return timeout;
     }
 
-    public Integer getPort()
-    {
+    public Integer getPort() {
         return port;
     }
 }

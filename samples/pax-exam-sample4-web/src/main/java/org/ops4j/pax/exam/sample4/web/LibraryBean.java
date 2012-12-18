@@ -26,22 +26,21 @@ import javax.inject.Named;
 import org.ops4j.pax.exam.sample4.model.Book;
 import org.ops4j.pax.exam.sample4.service.LibraryService;
 
-
 @RequestScoped
 @Named("library")
-public class LibraryBean
-{
+public class LibraryBean {
+
     @Inject
     private LibraryService libraryService;
-    
+
     private List<Book> books;
-    
+
     @PostConstruct
     public void init() {
         libraryService.fillLibrary();
         books = libraryService.findBooks();
     }
-    
+
     public List<Book> getBooks() {
         return books;
     }

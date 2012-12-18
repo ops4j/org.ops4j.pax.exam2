@@ -30,29 +30,29 @@ import org.osgi.framework.BundleContext;
  * @author Harald Wellmann
  * 
  */
-public class ContainerTestRunnerClassRequest extends ClassRequest
-{
+public class ContainerTestRunnerClassRequest extends ClassRequest {
 
     private Class<?> testClass;
     private Injector injector;
 
     /**
-     * Constructs a request for the given class which will be injected with dependencies from
-     * the given bundle context by the given injector
-     * @param testClass  test class to be run
-     * @param injector   injector for injecting dependencies
+     * Constructs a request for the given class which will be injected with dependencies from the
+     * given bundle context by the given injector
+     * 
+     * @param testClass
+     *            test class to be run
+     * @param injector
+     *            injector for injecting dependencies
      */
-    public ContainerTestRunnerClassRequest( Class<?> testClass, Injector injector )
-    {
-        super( testClass );
+    public ContainerTestRunnerClassRequest(Class<?> testClass, Injector injector) {
+        super(testClass);
         this.testClass = testClass;
         this.injector = injector;
     }
 
     @Override
-    public Runner getRunner()
-    {
-        RunnerBuilder builder = new ContainerTestRunnerBuilder( injector );
-        return builder.safeRunnerForClass( testClass );
+    public Runner getRunner() {
+        RunnerBuilder builder = new ContainerTestRunnerBuilder(injector);
+        return builder.safeRunnerForClass(testClass);
     }
 }

@@ -27,29 +27,28 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 /**
- * Checks that injection of a non-existing service times out, and that the default timeout
- * can be changed by setting the configuration property pax.exam.service.timeout.
+ * Checks that injection of a non-existing service times out, and that the default timeout can be
+ * changed by setting the configuration property pax.exam.service.timeout.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
-public class ServiceTimeoutInvokerTest
-{
+public class ServiceTimeoutInvokerTest {
 
     /**
      * The default service lookup timeout is 10 s, but we changed it to 5 s in exam.properties,
      */
-    @Test( timeout = 8000 )
-    public void checkServiceLookupTimeout()
-    {
+    @Test(timeout = 8000)
+    public void checkServiceLookupTimeout() {
         // Equinox and Knopflerfish do not shutdown cleanly after an exception during startup,
         // so we restrict this test to Felix.
-        assumeTrue( isFelix() );
-        
+        assumeTrue(isFelix());
+
         JUnitCore junit = new JUnitCore();
-        Result run = junit.run( ServiceTimeout.class );
-        assertThat( run.getFailureCount(), is( 1 ) );
-        Failure failure = run.getFailures().get( 0 );
-        assertThat( failure.getMessage(), JUnitMatchers.containsString( "gave up waiting for service" ) );
+        Result run = junit.run(ServiceTimeout.class);
+        assertThat(run.getFailureCount(), is(1));
+        Failure failure = run.getFailures().get(0);
+        assertThat(failure.getMessage(),
+            JUnitMatchers.containsString("gave up waiting for service"));
     }
 }

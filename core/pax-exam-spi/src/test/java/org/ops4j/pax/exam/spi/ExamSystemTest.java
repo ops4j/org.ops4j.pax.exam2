@@ -4,9 +4,9 @@ import java.io.IOException;
 import org.junit.Test;
 
 public class ExamSystemTest {
-	
-	@Test
-	public void testSimple() throws IOException {
-		//Files.deleteRecursively(file);
-	}
+
+    @Test
+    public void testSimple() throws IOException {
+        // Files.deleteRecursively(file);
+    }
 }

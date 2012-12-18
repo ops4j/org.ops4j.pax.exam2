@@ -29,16 +29,13 @@ public class CompositeCollector implements ContentCollector {
 
     final private ContentCollector[] collectors;
 
-    public CompositeCollector( ContentCollector... collectors )
-    {
+    public CompositeCollector(ContentCollector... collectors) {
         this.collectors = collectors;
     }
 
-    public void collect( Map<String, URL> map )
-        throws IOException
-    {
-        for( ContentCollector c : collectors ) {
-            c.collect( map );
+    public void collect(Map<String, URL> map) throws IOException {
+        for (ContentCollector c : collectors) {
+            c.collect(map);
         }
     }
 }

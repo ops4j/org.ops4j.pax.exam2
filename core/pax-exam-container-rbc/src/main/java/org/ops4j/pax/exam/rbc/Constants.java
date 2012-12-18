@@ -19,15 +19,14 @@ package org.ops4j.pax.exam.rbc;
 
 /**
  * Static constants related to remote bundle context.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 11, 2008
  */
 public interface Constants {
 
     /**
-     * Name of the system (framework) property that specifies the RMI registry
-     * port.
+     * Name of the system (framework) property that specifies the RMI registry port.
      */
     String RMI_PORT_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.port";
 

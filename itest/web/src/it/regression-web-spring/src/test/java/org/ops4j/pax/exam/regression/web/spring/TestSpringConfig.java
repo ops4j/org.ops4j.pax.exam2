@@ -30,36 +30,32 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
-public class TestSpringConfig
-{
+public class TestSpringConfig {
+
     @Bean
-    public DataSource dataSource()
-    {
+    public DataSource dataSource() {
         EmbeddedDataSource dataSource = new EmbeddedDataSource();
-        dataSource.setDatabaseName( "memory:library" );
-        dataSource.setCreateDatabase( "create" );
+        dataSource.setDatabaseName("memory:library");
+        dataSource.setCreateDatabase("create");
         return dataSource;
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager()
-    {
-        return new JpaTransactionManager( entityManagerFactory() );
+    public PlatformTransactionManager transactionManager() {
+        return new JpaTransactionManager(entityManagerFactory());
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory()
-    {
+    public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-        bean.setDataSource( dataSource() );
-        bean.setPersistenceXmlLocation( "classpath:META-INF/persistence.xml" );
+        bean.setDataSource(dataSource());
+        bean.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
         bean.afterPropertiesSet();
         return bean.getObject();
     }
 
     @Bean
-    public LibraryService libraryService()
-    {
+    public LibraryService libraryService() {
         return new LibraryService();
     }
 }

@@ -21,24 +21,19 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 
 /**
- * External TestProbe.
- * Assemble yourself using:
- * createProbe().addTest( SingleTestProbe.class )
+ * External TestProbe. Assemble yourself using: createProbe().addTest( SingleTestProbe.class )
  */
-public class SingleTestProbe
-{
+public class SingleTestProbe {
 
-    private static Logger LOG = LoggerFactory.getLogger( SingleTestProbe.class );
+    private static Logger LOG = LoggerFactory.getLogger(SingleTestProbe.class);
 
-    public void withoutBCTest()
-    {
-        LOG.info( "INSIDE OSGI " + SingleTestProbe.class.getName() + " Method withoutBCTest" );
-        LOG.info( "Environment: " + System.getenv( "foo" ) );
+    public void withoutBCTest() {
+        LOG.info("INSIDE OSGI " + SingleTestProbe.class.getName() + " Method withoutBCTest");
+        LOG.info("Environment: " + System.getenv("foo"));
     }
 
-    @SuppressWarnings( "unused" )
-    private void neverCall()
-    {
-        fail( "Don't call me !" );
+    @SuppressWarnings("unused")
+    private void neverCall() {
+        fail("Don't call me !");
     }
 }

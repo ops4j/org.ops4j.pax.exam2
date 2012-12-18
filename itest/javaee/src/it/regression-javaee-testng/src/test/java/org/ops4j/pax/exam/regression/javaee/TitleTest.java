@@ -30,33 +30,29 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-@Listeners( PaxExam.class )
-public class TitleTest
-{
+@Listeners(PaxExam.class)
+public class TitleTest {
 
     @Inject
     private LibraryService service;
-    
+
     @BeforeMethod
-    public void setUp()
-    {
-        System.out.println("********** beforeMethod");        
+    public void setUp() {
+        System.out.println("********** beforeMethod");
     }
 
     @AfterMethod
-    public void tearDown()
-    {
-        System.out.println("********** afterMethod");        
+    public void tearDown() {
+        System.out.println("********** afterMethod");
     }
 
     @Test
-    public void byTitle()
-    {
+    public void byTitle() {
         System.out.println("********** byTitle");
-        List<Book> books = service.findBooksByTitle( "East of Eden" );
-        assertEquals( 1, books.size() );
+        List<Book> books = service.findBooksByTitle("East of Eden");
+        assertEquals(1, books.size());
 
-        Book book = books.get( 0 );
-        assertEquals( "Steinbeck", book.getAuthor().getLastName() );
+        Book book = books.get(0);
+        assertEquals("Steinbeck", book.getAuthor().getLastName());
     }
 }

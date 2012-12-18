@@ -37,48 +37,45 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample6.model.Book;
 import org.ops4j.pax.exam.sample6.service.LibraryService;
 
-@RunWith( PaxExam.class )
-public class UserProbeTest
-{
+@RunWith(PaxExam.class)
+public class UserProbeTest {
+
     @Inject
     private LibraryService service;
 
     @ProbeBuilder
-    public TestProbeBuilder probe( TestProbeBuilder defaultProbe )
-    {
-        System.setProperty( "java.protocol.handler.pkgs", "org.ops4j.pax.url" );
-        return builder( warProbe().library( "target/test-classes" ).
-            overlay(
-                maven( "org.ops4j.pax.exam.samples", "pax-exam-sample6-web", getPaxExamVersion() )
-                    .type( "war" ) ).
-            library( maven( "org.ops4j.pax.exam", "pax-exam-servlet-bridge", getPaxExamVersion() ) ).
-            library( maven( "org.ops4j.pax.exam", "pax-exam-spring", getPaxExamVersion() ) ).
-            library( maven( "org.ops4j.pax.exam", "pax-exam", getPaxExamVersion() ) ).
-            library( maven( "org.ops4j.base", "ops4j-base-spi", getOps4jBaseVersion() ) ).
-            library( maven( "junit", "junit", "4.9" ) ) );
+    public TestProbeBuilder probe(TestProbeBuilder defaultProbe) {
+        System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
+        return builder(warProbe()
+            .library("target/test-classes")
+            .overlay(
+                maven("org.ops4j.pax.exam.samples", "pax-exam-sample6-web", getPaxExamVersion())
+                    .type("war"))
+            .library(maven("org.ops4j.pax.exam", "pax-exam-servlet-bridge", getPaxExamVersion()))
+            .library(maven("org.ops4j.pax.exam", "pax-exam-spring", getPaxExamVersion()))
+            .library(maven("org.ops4j.pax.exam", "pax-exam", getPaxExamVersion()))
+            .library(maven("org.ops4j.base", "ops4j-base-spi", getOps4jBaseVersion()))
+            .library(maven("junit", "junit", "4.9")));
     }
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         service.fillLibrary();
     }
 
     @Test
-    public void byAuthor()
-    {
-        List<Book> books = service.findBooksByAuthor( "Mann" );
-        assertEquals( 1, books.size() );
+    public void byAuthor() {
+        List<Book> books = service.findBooksByAuthor("Mann");
+        assertEquals(1, books.size());
 
-        Book book = books.get( 0 );
-        assertEquals( "Buddenbrooks", book.getTitle() );
+        Book book = books.get(0);
+        assertEquals("Buddenbrooks", book.getTitle());
     }
 
     @Test
-    public void numAuthors()
-    {
-        assertEquals( 2, service.getNumAuthors() );
-        service.createAuthor( "Theodor", "Storm" );
-        assertEquals( 3, service.getNumAuthors() );
+    public void numAuthors() {
+        assertEquals(2, service.getNumAuthors());
+        service.createAuthor("Theodor", "Storm");
+        assertEquals(3, service.getNumAuthors());
     }
 }

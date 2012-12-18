@@ -16,9 +16,9 @@
  */
 package org.ops4j.pax.exam.util;
 
+public interface InjectorFactory {
 
-public interface InjectorFactory
-{
-	void setContext(Object context);
+    void setContext(Object context);
+
     Injector createInjector();
 }

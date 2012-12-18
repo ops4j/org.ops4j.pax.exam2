@@ -21,12 +21,11 @@ import static org.ops4j.lang.NullArgumentException.*;
 
 /**
  * Option specifying a system property.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 10, 2008
  */
-public class SystemPropertyOption implements ValueOption<String>
-{
+public class SystemPropertyOption implements ValueOption<String> {
 
     /**
      * System property key (cannot be null or empty).
@@ -39,50 +38,50 @@ public class SystemPropertyOption implements ValueOption<String>
 
     /**
      * Constructor.
-     *
-     * @param key system property key (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If key is null or empty
+     * 
+     * @param key
+     *            system property key (cannot be null or empty)
+     * 
+     * @throws IllegalArgumentException
+     *             - If key is null or empty
      */
-    public SystemPropertyOption( final String key )
-    {
+    public SystemPropertyOption(final String key) {
         this.key = key;
         value = "";
     }
 
     /**
      * Sets the system property value.
-     *
-     * @param value system property value (cannot be null, can be empty)
-     *
+     * 
+     * @param value
+     *            system property value (cannot be null, can be empty)
+     * 
      * @return itself, for fluent api usage
-     *
-     * @throws IllegalArgumentException - If value is null
+     * 
+     * @throws IllegalArgumentException
+     *             - If value is null
      */
-    public SystemPropertyOption value( final String value )
-    {
-        validateNotNull( value, "Value" );
+    public SystemPropertyOption value(final String value) {
+        validateNotNull(value, "Value");
         this.value = value;
         return this;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return system property key (cannot be null or empty)
      */
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
     /**
      * Getter.
-     *
+     * 
      * @return system property value (cannot be null, can be empty)
      */
-    public String getValue()
-    {
+    public String getValue() {
         return value;
     }
 
@@ -90,49 +89,44 @@ public class SystemPropertyOption implements ValueOption<String>
      * {@inheritDoc}
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "SystemPropertyOption" );
-        sb.append( "{key='" ).append( key ).append( '\'' );
-        sb.append( ", value='" ).append( value ).append( '\'' );
-        sb.append( '}' );
+        sb.append("SystemPropertyOption");
+        sb.append("{key='").append(key).append('\'');
+        sb.append(", value='").append(value).append('\'');
+        sb.append('}');
         return sb.toString();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( key == null ) ? 0 : key.hashCode() );
-        result = prime * result + ( ( value == null ) ? 0 : value.hashCode() );
+        result = prime * result + ((key == null) ? 0 : key.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         SystemPropertyOption other = (SystemPropertyOption) obj;
-        if( key == null )
-        {
-            if( other.key != null )
+        if (key == null) {
+            if (other.key != null)
                 return false;
         }
-        else if( !key.equals( other.key ) )
+        else if (!key.equals(other.key))
             return false;
-        if( value == null )
-        {
-            if( other.value != null )
+        if (value == null) {
+            if (other.value != null)
                 return false;
         }
-        else if( !value.equals( other.value ) )
+        else if (!value.equals(other.value))
             return false;
         return true;
     }

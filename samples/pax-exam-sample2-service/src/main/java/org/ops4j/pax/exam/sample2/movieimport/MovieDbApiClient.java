@@ -32,8 +32,7 @@ public class MovieDbApiClient {
     public MovieDbApiClient() {
         this("926d2a79e82920b62f03b1cb57e532e6");
     }
-    
-    
+
     public MovieDbApiClient(String apiKey) {
         this.apiKey = apiKey;
         mapper = new ObjectMapper();
@@ -47,9 +46,11 @@ public class MovieDbApiClient {
     private Map<String, ?> loadJsonData(String id, String url) {
         try {
             List<?> value = mapper.readValue(new URL(url), List.class);
-            if (value.isEmpty() || value.get(0).equals("Nothing found.")) return Collections.singletonMap("not_found",System.currentTimeMillis());
+            if (value.isEmpty() || value.get(0).equals("Nothing found."))
+                return Collections.singletonMap("not_found", System.currentTimeMillis());
             return (Map<String, ?>) value.get(0);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException("Failed to get data from " + url, e);
         }
     }

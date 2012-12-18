@@ -20,23 +20,24 @@ package org.ops4j.pax.exam;
 
 /**
  * {@link TestContainer} factory.
- *
+ * 
  * @author Toni Menzel (toni@okidokiteam.com)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 09, 2008
  */
-public interface TestContainerFactory
-{
+public interface TestContainerFactory {
 
     /**
      * Creates a one or more {@link TestContainer}. Depending on the underlying implementation.
-     *
-     * @param system System that you want to materialize the containers from
-     *
+     * 
+     * @param system
+     *            System that you want to materialize the containers from
+     * 
      * @return created test container(s)
-     *
-     * @throws TestContainerException fail if incompatible options are being passed in.
+     * 
+     * @throws TestContainerException
+     *             fail if incompatible options are being passed in.
      */
-    TestContainer[] create( ExamSystem system )  throws TestContainerException;
+    TestContainer[] create(ExamSystem system) throws TestContainerException;
 
 }

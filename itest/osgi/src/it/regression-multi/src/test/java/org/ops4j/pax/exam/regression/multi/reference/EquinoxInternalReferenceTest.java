@@ -28,23 +28,21 @@ import org.junit.Test;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.BundleException;
 
-public class EquinoxInternalReferenceTest
-{
+public class EquinoxInternalReferenceTest {
 
     @Test
-    public void equinoxInternalReferenceHandler() throws BundleException, IOException
-    {
-        assumeTrue( isEquinox() );
+    public void equinoxInternalReferenceHandler() throws BundleException, IOException {
+        assumeTrue(isEquinox());
 
-        System.setProperty( "java.protocol.handler.pkgs",
-            "org.eclipse.osgi.framework.internal.protocol" );
-        String reference = "reference:file:" + PathUtils.getBaseDir() +
-                "/target/regression-pde-bundle";
-        URL url = new URL( reference );
-        assertEquals( "reference", url.getProtocol() );
+        System.setProperty("java.protocol.handler.pkgs",
+            "org.eclipse.osgi.framework.internal.protocol");
+        String reference = "reference:file:" + PathUtils.getBaseDir()
+            + "/target/regression-pde-bundle";
+        URL url = new URL(reference);
+        assertEquals("reference", url.getProtocol());
         InputStream is = url.openStream();
-        assertNotNull( is );
-        assertEquals( "org.eclipse.osgi.framework.internal.core.ReferenceInputStream", is
-            .getClass().getName() );
+        assertNotNull(is);
+        assertEquals("org.eclipse.osgi.framework.internal.core.ReferenceInputStream", is.getClass()
+            .getName());
     }
 }

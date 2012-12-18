@@ -26,24 +26,24 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 /**
- * User entity. Note that {@code USER} is a reserved word in Derby SQL, so we override
- * the default table name.
+ * User entity. Note that {@code USER} is a reserved word in Derby SQL, so we override the default
+ * table name.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
 @Entity
 @Table(name = "usr")
-public class User implements Serializable
-{
+public class User implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
-    
+
     private String name;
     private String password;
-    
+
     @ManyToMany
     private List<User> friends = new ArrayList<User>();
 
@@ -53,80 +53,75 @@ public class User implements Serializable
     /**
      * @return the id
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
-    public void setId( String id )
-    {
+    public void setId(String id) {
         this.id = id;
     }
 
     /**
      * @return the name
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
-    public void setName( String name )
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
     /**
      * @return the password
      */
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
     /**
-     * @param password the password to set
+     * @param password
+     *            the password to set
      */
-    public void setPassword( String password )
-    {
+    public void setPassword(String password) {
         this.password = password;
     }
 
     /**
      * @return the friends
      */
-    public List<User> getFriends()
-    {
+    public List<User> getFriends() {
         return friends;
     }
 
     /**
-     * @param friends the friends to set
+     * @param friends
+     *            the friends to set
      */
-    public void setFriends( List<User> friends )
-    {
+    public void setFriends(List<User> friends) {
         this.friends = friends;
     }
 
     /**
      * @return the ratings
      */
-    public List<Rating> getRatings()
-    {
+    public List<Rating> getRatings() {
         return ratings;
     }
 
     /**
-     * @param ratings the ratings to set
+     * @param ratings
+     *            the ratings to set
      */
-    public void setRatings( List<Rating> ratings )
-    {
+    public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
     }
 }

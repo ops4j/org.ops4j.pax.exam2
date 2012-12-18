@@ -27,17 +27,16 @@ import org.ops4j.pax.exam.options.CompositeOption;
 
 /**
  * Annotation marking Pax Exam configuration method.
- *
+ * 
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, October 14, 2008
  * @deprecated Use {@link org.ops4j.pax.exam.Configuration}.
  */
 @Deprecated
-@Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.METHOD, ElementType.TYPE } )
-public @interface Configuration
-{
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface Configuration {
 
     Class<? extends CompositeOption>[] extend() default { DefaultCompositeOption.class };
 }

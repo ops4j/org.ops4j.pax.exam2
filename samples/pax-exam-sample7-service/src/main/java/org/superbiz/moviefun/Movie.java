@@ -35,13 +35,12 @@ public class Movie implements Serializable {
 
     private String director;
     private String title;
-    
-    @Column( name = "RELEASEYEAR")
+
+    @Column(name = "RELEASEYEAR")
     private int year;
-    
+
     private String genre;
     private int rating;
-
 
     public Movie() {
     }

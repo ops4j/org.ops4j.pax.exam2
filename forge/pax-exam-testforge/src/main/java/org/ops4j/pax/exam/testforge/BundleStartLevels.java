@@ -26,19 +26,22 @@ import org.ops4j.pax.exam.TestContainerException;
  * 
  */
 public class BundleStartLevels {
-    
-    public void probe( BundleContext ctx, Integer desiredMinBundleState, Integer desiredMaxBundleState )
-        throws InterruptedException, InvalidSyntaxException
-    {
-        if( desiredMinBundleState == null ) { throw new TestContainerException( "Argument desiredBundleState (integer) is mandatory." ); }
-        if( desiredMaxBundleState == null ) {
+
+    public void probe(BundleContext ctx, Integer desiredMinBundleState,
+        Integer desiredMaxBundleState) throws InterruptedException, InvalidSyntaxException {
+        if (desiredMinBundleState == null) {
+            throw new TestContainerException("Argument desiredBundleState (integer) is mandatory.");
+        }
+        if (desiredMaxBundleState == null) {
             desiredMaxBundleState = desiredMinBundleState;
         }
 
-        for( Bundle b : ctx.getBundles() ) {
+        for (Bundle b : ctx.getBundles()) {
             final Integer state = b.getState();
-            if( state < desiredMinBundleState || state > desiredMaxBundleState ) {
-                throw new TestContainerException( "Bundle " + b.getBundleId() + "(" + b.getSymbolicName() + ") State: " + state + " is not between state: " + desiredMinBundleState + ":" + desiredMaxBundleState );
+            if (state < desiredMinBundleState || state > desiredMaxBundleState) {
+                throw new TestContainerException("Bundle " + b.getBundleId() + "("
+                    + b.getSymbolicName() + ") State: " + state + " is not between state: "
+                    + desiredMinBundleState + ":" + desiredMaxBundleState);
             }
         }
     }

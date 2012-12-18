@@ -16,11 +16,9 @@
  */
 package org.ops4j.pax.exam.regression.ds;
 
-public class Addition implements BinaryOperation
-{
+public class Addition implements BinaryOperation {
 
-    public int operate( int op1, int op2 )
-    {
+    public int operate(int op1, int op2) {
         return op1 + op2;
     }
 }

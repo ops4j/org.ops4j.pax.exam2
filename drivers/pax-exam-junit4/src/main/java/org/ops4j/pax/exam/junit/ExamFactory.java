@@ -25,12 +25,13 @@ import org.ops4j.pax.exam.TestContainerFactory;
 
 /**
  * Possibility to inject your own factory that might augment the "normal" factory.
+ * 
  * @deprecated Use {@link org.ops4j.pax.exam.ExamFactory}.
  */
 @Deprecated
-@Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.TYPE } )
-public @interface ExamFactory
-{
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+public @interface ExamFactory {
+
     Class<? extends TestContainerFactory> value();
 }

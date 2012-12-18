@@ -33,21 +33,19 @@ import org.junit.runner.notification.Failure;
  * @author Harald Wellmann
  * 
  */
-public class ShutdownTimeoutInvokerTest
-{
-    @Test
-    public void exceptionOnShutdownTimeout() throws IOException, BackingStoreException
-    {
-        Assume.assumeThat( System.getProperty( "pax.exam.container" ), is("native") );
-        Assume.assumeThat( System.getProperty( "pax.exam.framework" ), is("equinox") );
-        
-        JUnitCore junit = new JUnitCore();
-        Result result = junit.run( ShutdownTimeoutTestWrapped.class );
-        assertEquals( 1, result.getFailureCount() );
+public class ShutdownTimeoutInvokerTest {
 
-        for ( Failure failure : result.getFailures() )
-        {
-            assertTrue( failure.getMessage().startsWith( "Framework has not yet stopped" ) );
+    @Test
+    public void exceptionOnShutdownTimeout() throws IOException, BackingStoreException {
+        Assume.assumeThat(System.getProperty("pax.exam.container"), is("native"));
+        Assume.assumeThat(System.getProperty("pax.exam.framework"), is("equinox"));
+
+        JUnitCore junit = new JUnitCore();
+        Result result = junit.run(ShutdownTimeoutTestWrapped.class);
+        assertEquals(1, result.getFailureCount());
+
+        for (Failure failure : result.getFailures()) {
+            assertTrue(failure.getMessage().startsWith("Framework has not yet stopped"));
         }
     }
 }

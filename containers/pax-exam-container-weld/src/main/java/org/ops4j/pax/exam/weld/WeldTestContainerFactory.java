@@ -28,12 +28,10 @@ import org.ops4j.pax.exam.TestContainerFactory;
  * @since 3.0.0
  */
 @MetaInfServices
-public class WeldTestContainerFactory implements TestContainerFactory
-{
+public class WeldTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create( ExamSystem system ) throws TestContainerException
-    {
-        WeldTestContainer container = new WeldTestContainer( system );
-        return new TestContainer[]{ container };
+    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+        WeldTestContainer container = new WeldTestContainer(system);
+        return new TestContainer[] { container };
     }
 }

@@ -35,39 +35,33 @@ import org.slf4j.LoggerFactory;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-public class OpenWebBeansTestContainer implements TestContainer
-{
-    private static final Logger LOG = LoggerFactory.getLogger( OpenWebBeansTestContainer.class );
+public class OpenWebBeansTestContainer implements TestContainer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenWebBeansTestContainer.class);
 
     private boolean isValid;
 
     private static CdiTestContainer container;
 
-    public OpenWebBeansTestContainer( ExamSystem system )
-    {
+    public OpenWebBeansTestContainer(ExamSystem system) {
     }
 
-    public void call( TestAddress address )
-    {
+    public void call(TestAddress address) {
     }
 
-    public long install( String location, InputStream stream )
-    {
+    public long install(String location, InputStream stream) {
         return -1;
     }
 
-    public long install( InputStream stream )
-    {
+    public long install(InputStream stream) {
         return -1;
     }
-    
-    public void afterDeployment(@Observes AfterDeploymentValidation event)
-    {
+
+    public void afterDeployment(@Observes AfterDeploymentValidation event) {
         isValid = true;
     }
 
-    public TestContainer start()
-    {
+    public TestContainer start() {
         LOG.debug("starting OpenWebBeans container");
         container = CdiTestContainerLoader.getCdiContainer();
         try {
@@ -80,32 +74,26 @@ public class OpenWebBeansTestContainer implements TestContainer
         return this;
     }
 
-    public TestContainer stop()
-    {
-        if (container != null && isValid) 
-        {
+    public TestContainer stop() {
+        if (container != null && isValid) {
             LOG.debug("stopping OpenWebBeans container");
-            try
-            {
+            try {
                 container.stopContexts();
                 container.shutdownContainer();
             }
-            catch ( Exception exc )
-            {
-                throw new TestContainerException( exc );
+            catch (Exception exc) {
+                throw new TestContainerException(exc);
             }
         }
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "OpenWebBeans";
     }
 
-    public static CdiTestContainer getCdiContainer()
-    {
+    public static CdiTestContainer getCdiContainer() {
         return container;
     }
 }

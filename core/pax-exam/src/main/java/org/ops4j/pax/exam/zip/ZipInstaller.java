@@ -27,38 +27,34 @@ import org.ops4j.io.ZipExploder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ZipInstaller
-{
-    private static final Logger LOG = LoggerFactory.getLogger( ZipInstaller.class );
+public class ZipInstaller {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ZipInstaller.class);
 
     private URL zipUrl;
     private String installRoot;
 
-    public ZipInstaller( URL zipUrl, String installRoot )
-    {
+    public ZipInstaller(URL zipUrl, String installRoot) {
         this.zipUrl = zipUrl;
         this.installRoot = installRoot;
     }
 
-    public void downloadAndInstall() throws IOException
-    {
-        File installDir = new File( installRoot );
+    public void downloadAndInstall() throws IOException {
+        File installDir = new File(installRoot);
         installDir.mkdirs();
 
-        File tempFile = File.createTempFile( "pax-exam", ".zip" );
+        File tempFile = File.createTempFile("pax-exam", ".zip");
         FileOutputStream os = null;
-        LOG.info( "downloading {} to {}", zipUrl, tempFile );
-        try
-        {
-            os = new FileOutputStream( tempFile );
-            StreamUtils.copyStream( zipUrl.openStream(), os, true );
+        LOG.info("downloading {} to {}", zipUrl, tempFile);
+        try {
+            os = new FileOutputStream(tempFile);
+            StreamUtils.copyStream(zipUrl.openStream(), os, true);
 
-            LOG.info( "unzipping into {}", installRoot );
+            LOG.info("unzipping into {}", installRoot);
             ZipExploder exploder = new ZipExploder();
-            exploder.processFile( tempFile.getAbsolutePath(), installRoot );
+            exploder.processFile(tempFile.getAbsolutePath(), installRoot);
         }
-        finally
-        {
+        finally {
             tempFile.delete();
         }
     }

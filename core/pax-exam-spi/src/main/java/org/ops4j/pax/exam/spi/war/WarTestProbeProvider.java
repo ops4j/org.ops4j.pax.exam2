@@ -28,28 +28,25 @@ import org.ops4j.pax.exam.TestProbeProvider;
  * Provides a WAR probe as an input stream.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
-public class WarTestProbeProvider implements TestProbeProvider
-{
+public class WarTestProbeProvider implements TestProbeProvider {
+
     private URI warUri;
     private Set<TestAddress> testAddresses;
-    
-    public WarTestProbeProvider(URI uri, Set<TestAddress> testAddresses)
-    {
+
+    public WarTestProbeProvider(URI uri, Set<TestAddress> testAddresses) {
         this.warUri = uri;
         this.testAddresses = testAddresses;
     }
 
     @Override
-    public Set<TestAddress> getTests()
-    {
+    public Set<TestAddress> getTests() {
         return testAddresses;
     }
 
     @Override
-    public InputStream getStream() throws IOException
-    {
+    public InputStream getStream() throws IOException {
         return warUri.toURL().openStream();
     }
 }

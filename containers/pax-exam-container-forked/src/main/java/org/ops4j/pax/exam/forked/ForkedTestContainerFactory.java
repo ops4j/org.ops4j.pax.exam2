@@ -35,20 +35,18 @@ import org.osgi.framework.launch.FrameworkFactory;
  * 
  */
 // @MetaInfServices
-public class ForkedTestContainerFactory implements TestContainerFactory
-{
+public class ForkedTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create( final ExamSystem system )
-    {
+    public TestContainer[] create(final ExamSystem system) {
         List<FrameworkFactory> frameworkFactories = findFrameworkFactories();
         if (frameworkFactories.isEmpty()) {
             throw new TestContainerException(
-                    "No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath" );            
+                "No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath");
         }
         TestContainer[] containers = new TestContainer[frameworkFactories.size()];
         int index = 0;
-        for (FrameworkFactory frameworkFactory : frameworkFactories ) {
-            containers[index++] = new ForkedTestContainer( system, frameworkFactory ) ;
+        for (FrameworkFactory frameworkFactory : frameworkFactories) {
+            containers[index++] = new ForkedTestContainer(system, frameworkFactory);
         }
         return containers;
     }

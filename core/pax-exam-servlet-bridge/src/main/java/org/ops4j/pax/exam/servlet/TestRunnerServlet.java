@@ -43,29 +43,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for test runner servlets, providing the communication link
- * between the embedded test container and the test driver.
+ * Base class for test runner servlets, providing the communication link between the embedded test
+ * container and the test driver.
  * <p>
  * Derived classes shall provide a method of dependency injection.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
 @WebServlet(urlPatterns = "/testrunner")
 public class TestRunnerServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
-    
+
     private static Logger log = LoggerFactory.getLogger(TestRunnerServlet.class);
-    
+
     @Override
-    public void init( ServletConfig config ) throws ServletException
-    {
-        super.init( config );
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
         log.info("TestRunnerServlet loaded");
     }
 
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         String className = request.getParameter("class");
         String methodName = request.getParameter("method");
         try {
@@ -82,7 +82,8 @@ public class TestRunnerServlet extends HttpServlet {
 
     private void runSuite(OutputStream os, Class<?> clazz, String methodName) throws IOException {
 
-        InjectorFactory injectorFactory = ServiceProviderFinder.loadUniqueServiceProvider( InjectorFactory.class );
+        InjectorFactory injectorFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(InjectorFactory.class);
         injectorFactory.setContext(getServletContext());
         Injector injector = injectorFactory.createInjector();
         Request classRequest = new ContainerTestRunnerClassRequest(clazz, injector);
@@ -92,11 +93,11 @@ public class TestRunnerServlet extends HttpServlet {
         JUnitCore core = new JUnitCore();
         Result result = core.run(request);
         List<Failure> failures = result.getFailures();
-        
+
         /*
          * The invoker may not be able to deserialize the original exception due to different
-         * classloaders. For this reason, we only take the stack trace and wrap it in
-         * a TestContainerException.
+         * classloaders. For this reason, we only take the stack trace and wrap it in a
+         * TestContainerException.
          */
         ObjectOutputStream oos = new ObjectOutputStream(os);
         for (Failure failure : failures) {

@@ -21,30 +21,30 @@ import org.ops4j.pax.exam.options.ValueOption;
 
 /**
  * Option specifiying a Maven repository.
- *
+ * 
  * @author Toni Menzel (tonit)
  * @author Harald Wellmann
  * @since 0.3.0, December 19, 2008
  */
-public interface RepositoryOption extends ValueOption<String>
-{
+public interface RepositoryOption extends ValueOption<String> {
 
     /**
      * Mark repository as allowing snapshots.
-     *
+     * 
      * @return this for fluent API
      */
     RepositoryOption allowSnapshots();
 
     /**
      * Mark repository as not allowing releases.
-     *
+     * 
      * @return this for fluent API
      */
     RepositoryOption disableReleases();
 
     /**
-     * Defines repository identifier to be referenced in Maven settings. 
+     * Defines repository identifier to be referenced in Maven settings.
+     * 
      * @return this for fluent API
      */
     RepositoryOption id(String id);

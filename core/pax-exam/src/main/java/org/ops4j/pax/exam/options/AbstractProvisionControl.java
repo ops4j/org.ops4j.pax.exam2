@@ -19,29 +19,32 @@ package org.ops4j.pax.exam.options;
 
 /**
  * Abstract implementation of {@link ProvisionControl}.
- *
+ * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 04 27, 2009
  */
 public abstract class AbstractProvisionControl<T extends AbstractProvisionControl<T>> {
+
     /**
-     * If the scanned bundles should be updated. Default behaviour is depending on used Test Container implementation.
+     * If the scanned bundles should be updated. Default behaviour is depending on used Test
+     * Container implementation.
      */
     private Boolean shouldUpdate;
     /**
-     * If the scanned bundles should be started. Default behaviour is depending on used Test Container implementation.
+     * If the scanned bundles should be started. Default behaviour is depending on used Test
+     * Container implementation.
      */
     private Boolean shouldStart;
     /**
-     * Start level of scanned bundles. Default behaviour is depending on used Test Container implementation.
+     * Start level of scanned bundles. Default behaviour is depending on used Test Container
+     * implementation.
      */
     private Integer startLevel;
 
     /**
      * Constructor.
      */
-    public AbstractProvisionControl()
-    {
+    public AbstractProvisionControl() {
         shouldUpdate = true;
         shouldStart = true;
     }
@@ -49,16 +52,14 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
     /**
      * {@inheritDoc}
      */
-    public boolean shouldUpdate()
-    {
+    public boolean shouldUpdate() {
         return shouldUpdate;
     }
 
     /**
      * {@inheritDoc}
      */
-    public T update( final Boolean shouldUpdate )
-    {
+    public T update(final Boolean shouldUpdate) {
         this.shouldUpdate = shouldUpdate;
         return itself();
     }
@@ -66,32 +67,28 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
     /**
      * {@inheritDoc}
      */
-    public T update()
-    {
-        return update( true );
+    public T update() {
+        return update(true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public T noUpdate()
-    {
-        return update( false );
+    public T noUpdate() {
+        return update(false);
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean shouldStart()
-    {
+    public boolean shouldStart() {
         return shouldStart;
     }
 
     /**
      * {@inheritDoc}
      */
-    public T start( final Boolean shouldStart )
-    {
+    public T start(final Boolean shouldStart) {
         this.shouldStart = shouldStart;
         return itself();
     }
@@ -99,89 +96,78 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
     /**
      * {@inheritDoc}
      */
-    public T start()
-    {
-        return start( true );
+    public T start() {
+        return start(true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public T noStart()
-    {
-        return start( false );
+    public T noStart() {
+        return start(false);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Integer getStartLevel()
-    {
+    public Integer getStartLevel() {
         return startLevel;
     }
 
     /**
      * {@inheritDoc}
      */
-    public T startLevel( final Integer startLevel )
-    {
+    public T startLevel(final Integer startLevel) {
         this.startLevel = startLevel;
         return itself();
     }
 
     /**
      * Implemented by sub classes in order to return itself (this) for fluent api usage
-     *
+     * 
      * @return itself
      */
     protected abstract T itself();
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( shouldStart == null ) ? 0 : shouldStart.hashCode() );
-        result = prime * result + ( ( shouldUpdate == null ) ? 0 : shouldUpdate.hashCode() );
-        result = prime * result + ( ( startLevel == null ) ? 0 : startLevel.hashCode() );
+        result = prime * result + ((shouldStart == null) ? 0 : shouldStart.hashCode());
+        result = prime * result + ((shouldUpdate == null) ? 0 : shouldUpdate.hashCode());
+        result = prime * result + ((startLevel == null) ? 0 : startLevel.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( obj == null )
+        if (obj == null)
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
-        @SuppressWarnings( "unchecked" )
+        @SuppressWarnings("unchecked")
         AbstractProvisionControl<T> other = (AbstractProvisionControl<T>) obj;
-        if( shouldStart == null )
-        {
-            if( other.shouldStart != null )
+        if (shouldStart == null) {
+            if (other.shouldStart != null)
                 return false;
         }
-        else if( !shouldStart.equals( other.shouldStart ) )
+        else if (!shouldStart.equals(other.shouldStart))
             return false;
-        if( shouldUpdate == null )
-        {
-            if( other.shouldUpdate != null )
+        if (shouldUpdate == null) {
+            if (other.shouldUpdate != null)
                 return false;
         }
-        else if( !shouldUpdate.equals( other.shouldUpdate ) )
+        else if (!shouldUpdate.equals(other.shouldUpdate))
             return false;
-        if( startLevel == null )
-        {
-            if( other.startLevel != null )
+        if (startLevel == null) {
+            if (other.startLevel != null)
                 return false;
         }
-        else if( !startLevel.equals( other.startLevel ) )
+        else if (!startLevel.equals(other.startLevel))
             return false;
         return true;
     }
-    
-    
 
 }

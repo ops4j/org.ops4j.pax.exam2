@@ -20,63 +20,56 @@ import org.junit.runners.model.FrameworkMethod;
 import org.ops4j.pax.exam.TestAddress;
 
 /**
- * Decorates a framework method with a test address. The caption of the test address
- * is appended to the user visible framework method name, using a colon as a separator.
+ * Decorates a framework method with a test address. The caption of the test address is appended to
+ * the user visible framework method name, using a colon as a separator.
  * <p>
- * The background is that each method from the test class may be executed in multiple 
- * different configurations or containers.
+ * The background is that each method from the test class may be executed in multiple different
+ * configurations or containers.
  * <p>
- * TODO Can we tweak the names so that we can run a single configuration of a given method
- * from Eclipse? This works for the Parameterized runner, but maybe this is hard-coded in
- * Eclipse...
+ * TODO Can we tweak the names so that we can run a single configuration of a given method from
+ * Eclipse? This works for the Parameterized runner, but maybe this is hard-coded in Eclipse...
  * 
  * @author Harald Wellmann
- *
+ * 
  */
-class DecoratedFrameworkMethod extends FrameworkMethod
-{
+class DecoratedFrameworkMethod extends FrameworkMethod {
+
     private final TestAddress address;
     private final FrameworkMethod frameworkMethod;
 
-    DecoratedFrameworkMethod( TestAddress address,
-            FrameworkMethod frameworkMethod )
-    {
-        super( frameworkMethod.getMethod() );
+    DecoratedFrameworkMethod(TestAddress address, FrameworkMethod frameworkMethod) {
+        super(frameworkMethod.getMethod());
         this.address = address;
         this.frameworkMethod = frameworkMethod;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return frameworkMethod.getName() + ":" + address.caption();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ( ( address == null ) ? 0 : address.hashCode() );
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if( !super.equals( obj ) )
+        if (!super.equals(obj))
             return false;
-        if( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         DecoratedFrameworkMethod other = (DecoratedFrameworkMethod) obj;
-        if( address == null )
-        {
-            if( other.address != null )
+        if (address == null) {
+            if (other.address != null)
                 return false;
         }
-        else if( !address.equals( other.address ) )
+        else if (!address.equals(other.address))
             return false;
         return true;
     }

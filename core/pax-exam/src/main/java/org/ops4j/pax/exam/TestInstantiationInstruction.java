@@ -18,14 +18,14 @@
 package org.ops4j.pax.exam;
 
 /**
- * Instruction that can be used on the "in child osgi container" side to instantiate (e.g. locate) a test.
+ * Instruction that can be used on the "in child osgi container" side to instantiate (e.g. locate) a
+ * test.
  */
 public class TestInstantiationInstruction {
 
     final private String instruction;
 
-    public TestInstantiationInstruction( String s )
-    {
+    public TestInstantiationInstruction(String s) {
         instruction = s;
     }
 

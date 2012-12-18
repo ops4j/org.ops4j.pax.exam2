@@ -29,16 +29,15 @@ import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
 
 /**
- *
+ * 
  * TODO Needs JavaDoc
  * 
  * @author Toni Menzel
  * @since Jan 25, 2010
  */
-public class RBCRemoteTarget implements TestContainer
-{
+public class RBCRemoteTarget implements TestContainer {
 
-    private static final Logger LOG = LoggerFactory.getLogger( RBCRemoteTarget.class );
+    private static final Logger LOG = LoggerFactory.getLogger(RBCRemoteTarget.class);
 
     private RemoteBundleContextClient remoteBundleContextClient;
 
@@ -47,56 +46,46 @@ public class RBCRemoteTarget implements TestContainer
      * @param name
      * @param timeout
      */
-    public RBCRemoteTarget( String name, Integer registry, RelativeTimeout timeout )
-    {
-        remoteBundleContextClient = new RemoteBundleContextClientImpl( name, registry, timeout);
+    public RBCRemoteTarget(String name, Integer registry, RelativeTimeout timeout) {
+        remoteBundleContextClient = new RemoteBundleContextClientImpl(name, registry, timeout);
     }
 
     /**
-     * This access is kind of sneaky. Need to improve here. Usually this kind of raw access should not be allowed.
-     *
+     * This access is kind of sneaky. Need to improve here. Usually this kind of raw access should
+     * not be allowed.
+     * 
      * @return underlying access
      */
-    public RemoteBundleContextClient getClientRBC()
-    {
+    public RemoteBundleContextClient getClientRBC() {
         return remoteBundleContextClient;
     }
 
-    public void call( TestAddress address )
-    {
-        LOG.debug( "call [" + address + "]" );
-        remoteBundleContextClient.call( address );
+    public void call(TestAddress address) {
+        LOG.debug("call [" + address + "]");
+        remoteBundleContextClient.call(address);
     }
 
-    public TestContainer start()
-        throws TimeoutException
-    {
+    public TestContainer start() throws TimeoutException {
         return this;
     }
 
-     public long install( String location, InputStream probe ) throws TestContainerException
-    {
-        LOG.debug( "Preparing and Installing bundle (from stream ).." );
-    
+    public long install(String location, InputStream probe) throws TestContainerException {
+        LOG.debug("Preparing and Installing bundle (from stream )..");
+
         long id = 0;
-        id = remoteBundleContextClient.install( location, probe );
-        LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
+        id = remoteBundleContextClient.install(location, probe);
+        LOG.debug("Installed bundle (from stream)" + " as ID: " + id);
         return id;
     }
-    
-    public long install( InputStream probe )
-        throws TestContainerException
-    {
+
+    public long install(InputStream probe) throws TestContainerException {
         return install("local", probe);
     }
 
-    public TestContainer stop()
-        throws TimeoutException
-    {
+    public TestContainer stop() throws TimeoutException {
         remoteBundleContextClient.cleanup();
 
         return this;
     }
 
-  
 }

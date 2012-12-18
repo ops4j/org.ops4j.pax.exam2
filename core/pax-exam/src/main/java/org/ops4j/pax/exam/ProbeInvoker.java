@@ -25,11 +25,12 @@ public interface ProbeInvoker {
 
     /**
      * Executes the regression method.
-     *
-     * @param args Arguments to the called address.
-     *
-     * @throws TestContainerException - Something to care about..
+     * 
+     * @param args
+     *            Arguments to the called address.
+     * 
+     * @throws TestContainerException
+     *             - Something to care about..
      */
-    void call( Object... args )
-        throws TestContainerException;
+    void call(Object... args) throws TestContainerException;
 }

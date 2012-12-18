@@ -25,13 +25,13 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
 /**
  * Define the invocation strategy.
+ * 
  * @deprecated Use {@link org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy}.
  */
 @Deprecated
-@Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.TYPE } )
-public @interface ExamReactorStrategy
-{
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+public @interface ExamReactorStrategy {
 
     Class<? extends StagedExamReactorFactory>[] value() default { PerMethod.class };
 }

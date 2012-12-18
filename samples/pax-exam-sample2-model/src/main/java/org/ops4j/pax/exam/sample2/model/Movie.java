@@ -30,32 +30,32 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "movie")
-public class Movie  {
-    
+public class Movie {
+
     @Id
     private int id;
-    
+
     private String imdbId;
     private String youtubeId;
     private String title;
 
     @Lob
     private String description;
-    
+
     private String language;
     private String tagline;
     private String trailer;
     private Integer runtime;
     private String homepage;
     private String imageUrl;
-    
+
     @ManyToOne
     private Director director;
-    
+
     @ManyToMany
     @JoinTable(name = "movie_person")
     private List<Actor> actors = new ArrayList<Actor>();
-    
+
     @OneToMany(mappedBy = "movie")
     private List<Role> roles = new ArrayList<Role>();
 
@@ -65,242 +65,226 @@ public class Movie  {
     /**
      * @return the id
      */
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
-    public void setId( int id )
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
     /**
      * @return the imdbId
      */
-    public String getImdbId()
-    {
+    public String getImdbId() {
         return imdbId;
     }
 
     /**
-     * @param imdbId the imdbId to set
+     * @param imdbId
+     *            the imdbId to set
      */
-    public void setImdbId( String imdbId )
-    {
+    public void setImdbId(String imdbId) {
         this.imdbId = imdbId;
     }
 
     /**
      * @return the youtubeId
      */
-    public String getYoutubeId()
-    {
+    public String getYoutubeId() {
         return youtubeId;
     }
 
     /**
-     * @param youtubeId the youtubeId to set
+     * @param youtubeId
+     *            the youtubeId to set
      */
-    public void setYoutubeId( String youtubeId )
-    {
+    public void setYoutubeId(String youtubeId) {
         this.youtubeId = youtubeId;
     }
 
     /**
      * @return the title
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
     /**
-     * @param title the title to set
+     * @param title
+     *            the title to set
      */
-    public void setTitle( String title )
-    {
+    public void setTitle(String title) {
         this.title = title;
     }
 
     /**
      * @return the description
      */
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     /**
-     * @param description the description to set
+     * @param description
+     *            the description to set
      */
-    public void setDescription( String description )
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
     /**
      * @return the language
      */
-    public String getLanguage()
-    {
+    public String getLanguage() {
         return language;
     }
 
     /**
-     * @param language the language to set
+     * @param language
+     *            the language to set
      */
-    public void setLanguage( String language )
-    {
+    public void setLanguage(String language) {
         this.language = language;
     }
 
     /**
      * @return the tagline
      */
-    public String getTagline()
-    {
+    public String getTagline() {
         return tagline;
     }
 
     /**
-     * @param tagline the tagline to set
+     * @param tagline
+     *            the tagline to set
      */
-    public void setTagline( String tagline )
-    {
+    public void setTagline(String tagline) {
         this.tagline = tagline;
     }
 
     /**
      * @return the trailer
      */
-    public String getTrailer()
-    {
+    public String getTrailer() {
         return trailer;
     }
 
     /**
-     * @param trailer the trailer to set
+     * @param trailer
+     *            the trailer to set
      */
-    public void setTrailer( String trailer )
-    {
+    public void setTrailer(String trailer) {
         this.trailer = trailer;
     }
 
     /**
      * @return the runtime
      */
-    public Integer getRuntime()
-    {
+    public Integer getRuntime() {
         return runtime;
     }
 
     /**
-     * @param runtime the runtime to set
+     * @param runtime
+     *            the runtime to set
      */
-    public void setRuntime( Integer runtime )
-    {
+    public void setRuntime(Integer runtime) {
         this.runtime = runtime;
     }
 
     /**
      * @return the homepage
      */
-    public String getHomepage()
-    {
+    public String getHomepage() {
         return homepage;
     }
 
     /**
-     * @param homepage the homepage to set
+     * @param homepage
+     *            the homepage to set
      */
-    public void setHomepage( String homepage )
-    {
+    public void setHomepage(String homepage) {
         this.homepage = homepage;
     }
 
     /**
      * @return the imageUrl
      */
-    public String getImageUrl()
-    {
+    public String getImageUrl() {
         return imageUrl;
     }
 
     /**
-     * @param imageUrl the imageUrl to set
+     * @param imageUrl
+     *            the imageUrl to set
      */
-    public void setImageUrl( String imageUrl )
-    {
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
     /**
      * @return the actors
      */
-    public List<Actor> getActors()
-    {
+    public List<Actor> getActors() {
         return actors;
     }
 
     /**
-     * @param actors the actors to set
+     * @param actors
+     *            the actors to set
      */
-    public void setActors( List<Actor> actors )
-    {
+    public void setActors(List<Actor> actors) {
         this.actors = actors;
     }
 
     /**
      * @return the roles
      */
-    public List<Role> getRoles()
-    {
+    public List<Role> getRoles() {
         return roles;
     }
 
     /**
-     * @param roles the roles to set
+     * @param roles
+     *            the roles to set
      */
-    public void setRoles( List<Role> roles )
-    {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
     /**
      * @return the ratings
      */
-    public List<Rating> getRatings()
-    {
+    public List<Rating> getRatings() {
         return ratings;
     }
 
     /**
-     * @param ratings the ratings to set
+     * @param ratings
+     *            the ratings to set
      */
-    public void setRatings( List<Rating> ratings )
-    {
+    public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
     }
 
     /**
      * @return the director
      */
-    public Director getDirector()
-    {
+    public Director getDirector() {
         return director;
     }
 
     /**
-     * @param director the director to set
+     * @param director
+     *            the director to set
      */
-    public void setDirector( Director director )
-    {
+    public void setDirector(Director director) {
         this.director = director;
     }
-    
-    
+
 }

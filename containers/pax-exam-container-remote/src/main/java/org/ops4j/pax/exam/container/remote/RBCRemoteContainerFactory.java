@@ -25,17 +25,14 @@ import org.ops4j.pax.exam.TestContainerFactory;
  * @author Toni Menzel
  * @since Jan 26, 2010
  */
-public class RBCRemoteContainerFactory implements TestContainerFactory
-{
+public class RBCRemoteContainerFactory implements TestContainerFactory {
 
     /**
-     * {@inheritDoc}
-     * Not used yet.
+     * {@inheritDoc} Not used yet.
      */
-    public TestContainer[] create( final ExamSystem system )
-    {
-        return new TestContainer[]{
-            
+    public TestContainer[] create(final ExamSystem system) {
+        return new TestContainer[] {
+
         };
     }
 }

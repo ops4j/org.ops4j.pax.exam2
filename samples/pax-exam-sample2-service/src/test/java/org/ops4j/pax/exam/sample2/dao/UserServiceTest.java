@@ -31,19 +31,18 @@ import org.ops4j.pax.exam.util.Transactional;
 
 @RunWith(PaxExam.class)
 @Transactional
-public class UserServiceTest
-{
+public class UserServiceTest {
+
     @Inject
     private UserService userService;
-    
+
     @Test
-    public void authenticateValidUser()
-    {
-        userService.register( "bilbo", "Bilbo Baggins", "treasure" );
-        User user = userService.authenticate( "bilbo", "treasure" );
-        assertThat( user, is( notNullValue()));
-        assertThat(user.getId(), is("bilbo") );
-        assertThat(user.getName(), is("Bilbo Baggins") );
-        assertThat(user.getPassword(), is("treasure") );
+    public void authenticateValidUser() {
+        userService.register("bilbo", "Bilbo Baggins", "treasure");
+        User user = userService.authenticate("bilbo", "treasure");
+        assertThat(user, is(notNullValue()));
+        assertThat(user.getId(), is("bilbo"));
+        assertThat(user.getName(), is("Bilbo Baggins"));
+        assertThat(user.getPassword(), is("treasure"));
     }
 }

@@ -29,7 +29,7 @@ public abstract class PaginationHelper {
 
     public abstract int getItemsCount();
 
-    @SuppressWarnings( "rawtypes" )
+    @SuppressWarnings("rawtypes")
     public abstract DataModel createPageDataModel();
 
     public int getPageFirstItem() {

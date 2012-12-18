@@ -29,8 +29,8 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 public class AllConfinedStagedReactorTest extends BaseStagedReactorTest {
 
     @Override
-    protected StagedExamReactor getReactor( List<TestContainer> containers, List<TestProbeBuilder> providers )
-    {
-        return new AllConfinedStagedReactor( containers,providers);
+    protected StagedExamReactor getReactor(List<TestContainer> containers,
+        List<TestProbeBuilder> providers) {
+        return new AllConfinedStagedReactor(containers, providers);
     }
 }
