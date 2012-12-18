@@ -36,29 +36,29 @@ import org.osgi.framework.BundleContext;
  */
 public class ProbeInvokerImpl implements ProbeInvoker {
 
-    private BundleContext m_ctx;
-    private String m_clazz;
-    private String m_method;
+    private BundleContext ctx;
+    private String clazz;
+    private String method;
     
-    private Injector m_injector;
+    private Injector injector;
 
     public ProbeInvokerImpl( String encodedInstruction, BundleContext bundleContext )
     {
         // parse class and method out of expression:
         String[] parts = encodedInstruction.split( ";" );
-        m_clazz = parts[ 0 ];
-        m_method = parts[ 1 ];
-        m_ctx = bundleContext;
+        clazz = parts[ 0 ];
+        method = parts[ 1 ];
+        ctx = bundleContext;
         
         // acquire (optional) injector
         // TODO replace system property by core configuration option
         //boolean inject = "true".equals(System.getProperty( "pax.exam.inject" ));
         boolean inject = true;
         if (inject) {
-            m_injector = ServiceLookup.getService( m_ctx, Injector.class );
+            injector = ServiceLookup.getService( ctx, Injector.class );
         }
         else  {
-            m_injector = new NoOpInjector();
+            injector = new NoOpInjector();
         }
     }
 
@@ -66,13 +66,13 @@ public class ProbeInvokerImpl implements ProbeInvoker {
     {
         Class<?> testClass;
         try {
-            testClass = m_ctx.getBundle().loadClass( m_clazz );
+            testClass = ctx.getBundle().loadClass( clazz );
         } catch( ClassNotFoundException e ) {
             throw new TestContainerException( e );
         }
 
         if( !( findAndInvoke( testClass, args ) ) ) {
-            throw new TestContainerException( " Test " + m_method + " not found in test class " + testClass.getName() );
+            throw new TestContainerException( " Test " + method + " not found in test class " + testClass.getName() );
         }
     }
 
@@ -82,7 +82,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         try {
             // find matching method 
             for( Method m : testClass.getMethods() ) {
-                if( m.getName().equals( m_method ) ) {
+                if( m.getName().equals( method ) ) {
                     // we assume its correct:
                     injectContextAndInvoke( testClass.newInstance(), m, params );
                     return true;
@@ -116,7 +116,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         throws TestContainerException
     {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
-        m_injector.injectFields( testInstance );
+        injector.injectFields( testInstance );
         boolean cleanup = false;
         try {
             //runBefores( testInstance );
@@ -171,7 +171,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
 
         for( int i = 0; i < ret.length; i++ ) {
             if( i == 0 ) {
-                ret[ 0 ] = m_ctx;
+                ret[ 0 ] = ctx;
             }
             else {
                 if( paramAnnotations[ i ].length > 0 ) {

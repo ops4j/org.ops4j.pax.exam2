@@ -57,7 +57,7 @@ public class RemoteBundleContextImpl
     /**
      * Bundle context (cannot be null).
      */
-    private final transient BundleContext m_bundleContext;
+    private final transient BundleContext bundleContext;
 
     /**
      * Constructor.
@@ -69,7 +69,7 @@ public class RemoteBundleContextImpl
     public RemoteBundleContextImpl( final BundleContext bundleContext )
     {
         validateNotNull( bundleContext, "Bundle context" );
-        m_bundleContext = bundleContext;
+        this.bundleContext = bundleContext;
     }
 
     /**
@@ -98,7 +98,7 @@ public class RemoteBundleContextImpl
         throws BundleException
     {
         LOG.trace( "Install bundle from URL [" + bundleUrl + "]" );
-        return m_bundleContext.installBundle( bundleUrl ).getBundleId();
+        return bundleContext.installBundle( bundleUrl ).getBundleId();
     }
 
     /**
@@ -109,7 +109,7 @@ public class RemoteBundleContextImpl
         LOG.trace( "Install bundle [ location=" + bundleLocation + "] from byte array" );
         final ByteArrayInputStream inp = new ByteArrayInputStream( bundle );
         try {
-            return m_bundleContext.installBundle( bundleLocation, inp ).getBundleId();
+            return bundleContext.installBundle( bundleLocation, inp ).getBundleId();
         } finally {
             try {
                 inp.close();
@@ -124,7 +124,7 @@ public class RemoteBundleContextImpl
     {
         LOG.trace( "Uninstall bundle [" + id + "] " );
         try {
-            m_bundleContext.getBundle( id ).uninstall();
+            bundleContext.getBundle( id ).uninstall();
         } catch( BundleException e ) {
             LOG.error( "Problem uninstalling " + id, e );
         }
@@ -136,7 +136,7 @@ public class RemoteBundleContextImpl
     public void startBundle( long bundleId )
         throws BundleException
     {
-        startBundle( m_bundleContext.getBundle( bundleId ) );
+        startBundle( bundleContext.getBundle( bundleId ) );
     }
 
     /**
@@ -145,7 +145,7 @@ public class RemoteBundleContextImpl
     public void stopBundle( long bundleId )
         throws BundleException
     {
-        m_bundleContext.getBundle( bundleId ).stop();
+        bundleContext.getBundle( bundleId ).stop();
 
     }
 
@@ -157,7 +157,7 @@ public class RemoteBundleContextImpl
     {
         try {
             final StartLevel startLevelService = getService( StartLevel.class, null, RelativeTimeout.TIMEOUT_NOWAIT );
-            startLevelService.setBundleStartLevel( m_bundleContext.getBundle( bundleId ), startLevel );
+            startLevelService.setBundleStartLevel( bundleContext.getBundle( bundleId ), startLevel );
         } catch( NoSuchServiceException e ) {
             throw new BundleException( "Cannot get the start level service to set bundle start level" );
         }
@@ -170,7 +170,7 @@ public class RemoteBundleContextImpl
                               final int state,
                               final RelativeTimeout timeout )
     {
-        Bundle bundle = m_bundleContext.getBundle( bundleId );
+        Bundle bundle = bundleContext.getBundle( bundleId );
         if( bundle == null || (timeout.isNoWait() && ( bundle == null || bundle.getState() < state ) ) ) {
             throw new TimeoutException(
                 "There is no waiting timeout set and bundle has state '" + bundleStateToString( bundle )
@@ -179,7 +179,7 @@ public class RemoteBundleContextImpl
         }
         long startedTrying = System.currentTimeMillis();
         do {
-            bundle = m_bundleContext.getBundle( bundleId );
+            bundle = bundleContext.getBundle( bundleId );
             try {
                 Thread.sleep( 50 );
             } catch( InterruptedException e ) {
@@ -221,13 +221,13 @@ public class RemoteBundleContextImpl
         long start = System.currentTimeMillis();
         do {
             try {
-                ServiceReference[] reference = m_bundleContext.getServiceReferences( serviceType.getName(), filter );
+                ServiceReference[] reference = bundleContext.getServiceReferences( serviceType.getName(), filter );
                 if( reference != null && reference.length > 0 ) {
-                    return ( (T) m_bundleContext.getService( reference[ 0 ] ) );
+                    return ( (T) bundleContext.getService( reference[ 0 ] ) );
                 }
                 Thread.sleep( 200 );
             } catch( Exception e ) {
-                LOG.error( "Some problem during looking up service from framework: " + m_bundleContext, e );
+                LOG.error( "Some problem during looking up service from framework: " + bundleContext, e );
             }
             // wait a bit
         } while( ( timeout.isNoTimeout() || ( System.currentTimeMillis() ) < start + timeout.getValue() ) );

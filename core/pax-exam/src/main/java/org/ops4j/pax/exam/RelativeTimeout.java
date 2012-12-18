@@ -36,15 +36,15 @@ public class RelativeTimeout implements Serializable {
 
     public final static RelativeTimeout TIMEOUT_DEFAULT = new RelativeTimeout( 1000L * 180L );
 
-    final private long m_value;
-    final private long m_lower;
-    final private long m_upper;
+    final private long value;
+    final private long lower;
+    final private long upper;
 
     public RelativeTimeout( final long time )
     {
-        m_value = time;
-        m_lower = time / 2;
-        m_upper = time * 2;
+        value = time;
+        lower = time / 2;
+        upper = time * 2;
     }
 
     /**
@@ -52,7 +52,7 @@ public class RelativeTimeout implements Serializable {
      */
     public long getValue()
     {
-        return m_value;
+        return value;
     }
 
     /**
@@ -60,7 +60,7 @@ public class RelativeTimeout implements Serializable {
      */
     public long getLowerValue()
     {
-        return m_lower;
+        return lower;
     }
 
     /**
@@ -68,7 +68,7 @@ public class RelativeTimeout implements Serializable {
      */
     public long getUpperValue()
     {
-        return m_upper;
+        return upper;
     }
 
     public boolean isNoWait()
@@ -98,13 +98,13 @@ public class RelativeTimeout implements Serializable {
     @Override
     public int hashCode()
     {
-        return getClass().getName().hashCode() + new Long( m_value ).hashCode();
+        return getClass().getName().hashCode() + new Long( value ).hashCode();
     }
 
     @Override
     public String toString()
     {
-        return "[ RelativeTimeout value = " + m_value + " ]";
+        return "[ RelativeTimeout value = " + value + " ]";
     }
 
 }

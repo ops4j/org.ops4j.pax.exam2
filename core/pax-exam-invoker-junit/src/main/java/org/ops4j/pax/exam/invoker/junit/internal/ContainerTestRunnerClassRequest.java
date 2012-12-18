@@ -34,7 +34,7 @@ public class ContainerTestRunnerClassRequest extends ClassRequest
 {
 
     private Class<?> testClass;
-    private Injector m_injector;
+    private Injector injector;
 
     /**
      * Constructs a request for the given class which will be injected with dependencies from
@@ -46,13 +46,13 @@ public class ContainerTestRunnerClassRequest extends ClassRequest
     {
         super( testClass );
         this.testClass = testClass;
-        this.m_injector = injector;
+        this.injector = injector;
     }
 
     @Override
     public Runner getRunner()
     {
-        RunnerBuilder builder = new ContainerTestRunnerBuilder( m_injector );
+        RunnerBuilder builder = new ContainerTestRunnerBuilder( injector );
         return builder.safeRunnerForClass( testClass );
     }
 }

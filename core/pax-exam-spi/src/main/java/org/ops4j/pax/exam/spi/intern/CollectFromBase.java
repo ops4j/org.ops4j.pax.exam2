@@ -11,17 +11,17 @@ import org.ops4j.pax.exam.spi.ContentCollector;
  */
 public class CollectFromBase implements ContentCollector {
 
-    private File m_base;
+    private File base;
 
     public CollectFromBase( File base )
     {
-        m_base = base;
+        this.base = base;
     }
 
     public void collect( Map<String, URL> map )
         throws IOException
     {
-        collectFromBase( map, m_base );
+        collectFromBase( map, base );
     }
 
     private void collectFromBase( Map<String, URL> map, File dir )
@@ -33,7 +33,7 @@ public class CollectFromBase implements ContentCollector {
                     collectFromBase( map, f );
                 }
                 else if( !f.isHidden() ) {
-                    map.put( normalize( m_base, f ), f.toURI().toURL() );
+                    map.put( normalize( base, f ), f.toURI().toURL() );
                 }
             }
         }

@@ -33,20 +33,20 @@ public class RepositoryOptionImpl implements RepositoryOption
     /**
      * Repository url (cannot be null or empty).
      */
-    private final String m_repositoryUrl;
+    private final String repositoryUrl;
     /**
      * Marks repository as allowing snapshots.
      */
-    private boolean m_allowSnapshots;
+    private boolean allowSnapshots;
     /**
      * MArks repository as allowing releases.
      */
-    private boolean m_allowReleases;
+    private boolean allowReleases;
     
     /**
      * Defines repository identifier to be referenced in Maven settings. 
      */
-    private String m_id;
+    private String id;
 
     /**
      * Constructor.
@@ -59,9 +59,9 @@ public class RepositoryOptionImpl implements RepositoryOption
     {
         validateNotEmpty( repositoryUrl, "Repository URL" );
 
-        m_repositoryUrl = repositoryUrl;
-        m_allowSnapshots = false;
-        m_allowReleases = true;
+        this.repositoryUrl = repositoryUrl;
+        allowSnapshots = false;
+        allowReleases = true;
     }
 
     /**
@@ -69,7 +69,7 @@ public class RepositoryOptionImpl implements RepositoryOption
      */
     public RepositoryOptionImpl allowSnapshots()
     {
-        m_allowSnapshots = true;
+        allowSnapshots = true;
         return this;
     }
 
@@ -78,13 +78,13 @@ public class RepositoryOptionImpl implements RepositoryOption
      */
     public RepositoryOptionImpl disableReleases()
     {
-        m_allowReleases = false;
+        allowReleases = false;
         return this;
     }
     
     public RepositoryOption id(String id)
     {
-        m_id = id;
+        this.id = id;
         return this;
     }
 
@@ -97,24 +97,24 @@ public class RepositoryOptionImpl implements RepositoryOption
      */
     public String getRepository()
     {
-        if( !m_allowReleases && !m_allowSnapshots )
+        if( !allowReleases && !allowSnapshots )
         {
             throw new IllegalStateException( "Does not make sense to disallow both releases and snapshots." );
         }
         final StringBuilder repositoryUrl = new StringBuilder();
-        repositoryUrl.append( m_repositoryUrl );
-        if( m_allowSnapshots )
+        repositoryUrl.append( this.repositoryUrl );
+        if( allowSnapshots )
         {
             repositoryUrl.append( "@snapshots" );
         }
-        if( !m_allowReleases )
+        if( !allowReleases )
         {
             repositoryUrl.append( "@noreleases" );
         }
-        if ( m_id != null )
+        if ( id != null )
         {
             repositoryUrl.append( "@id=" );            
-            repositoryUrl.append( m_id );            
+            repositoryUrl.append( id );            
         }
         return repositoryUrl.toString();
     }

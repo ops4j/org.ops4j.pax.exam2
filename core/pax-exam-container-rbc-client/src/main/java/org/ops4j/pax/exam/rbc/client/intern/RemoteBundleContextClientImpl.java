@@ -47,7 +47,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     // TODO duplicate
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
 
-    private RemoteBundleContext m_remoteBundleContext = null;
+    private RemoteBundleContext remoteBundleContext = null;
 
     /**
      * JCL logger.
@@ -57,16 +57,16 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     /**
      * Timeout for looking up the remote bundle context via RMI.
      */
-    final private RelativeTimeout m_rmiLookupTimeout;
+    final private RelativeTimeout rmiLookupTimeout;
     /**
      * Remote bundle context instance.
      */
-    // private RemoteBundleContext m_remoteBundleContext;
+    // private RemoteBundleContext remoteBundleContext;
 
-    final private Integer m_registry;
+    final private Integer registry;
 
-    final private Stack<Long> m_installed;
-    final private String m_name;
+    final private Stack<Long> installed;
+    final private String name;
 
     /**
      * Constructor.
@@ -81,10 +81,10 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     {
         assert registry != null : "registry should not be null";
 
-        m_registry = registry;
-        m_name = name;
-        m_rmiLookupTimeout = timeout;
-        m_installed = new Stack<Long>();
+        this.registry = registry;
+        this.name = name;
+        rmiLookupTimeout = timeout;
+        installed = new Stack<Long>();
     }
 
     /**
@@ -132,12 +132,12 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     {
         // turn this into a local url because we don't want pass the stream any further.
         try {
-            //URI location = m_store.getLocation( m_store.store( stream ) );
+            //URI location = store.getLocation( store.store( stream ) );
             // pack as bytecode
             byte[] packed = pack( stream );
 
             long id = getRemoteBundleContext().installBundle( location, packed );
-            m_installed.push( id );
+            installed.push( id );
             getRemoteBundleContext().startBundle( id );
             return id;
         } catch( IOException e ) {
@@ -162,8 +162,8 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     public void cleanup()
     {
         try {
-            while( !m_installed.isEmpty() ) {
-                Long id = m_installed.pop();
+            while( !installed.isEmpty() ) {
+                Long id = installed.pop();
                 getRemoteBundleContext().uninstallBundle( id );
             }
         } catch( IOException e ) {
@@ -244,12 +244,12 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
      */
     private synchronized RemoteBundleContext getRemoteBundleContext()
     {
-        if( m_remoteBundleContext == null ) {
+        if( remoteBundleContext == null ) {
 
             //!! Absolutely necesary for RMI class loading to work
             // TODO maybe use ContextClassLoaderUtils.doWithClassLoader
             Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-            LOG.info( "Waiting for remote bundle context.. on " + m_registry + " name: " + m_name + " timout: " + m_rmiLookupTimeout );
+            LOG.info( "Waiting for remote bundle context.. on " + registry + " name: " + name + " timout: " + rmiLookupTimeout );
             // TODO create registry here
             Throwable reason = null;
             long startedTrying = System.currentTimeMillis();
@@ -257,36 +257,36 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             try {
                 do {
                     try {
-                        Registry reg = LocateRegistry.getRegistry( m_registry );
-                        m_remoteBundleContext = (RemoteBundleContext) reg.lookup( m_name );
+                        Registry reg = LocateRegistry.getRegistry( registry );
+                        remoteBundleContext = (RemoteBundleContext) reg.lookup( name );
                     } catch( Exception e ) {
                         reason = e;
                     }
 
                 }
-                while( m_remoteBundleContext == null && ( m_rmiLookupTimeout.isNoTimeout() || System.currentTimeMillis() < startedTrying + m_rmiLookupTimeout.getValue() ) );
+                while( remoteBundleContext == null && ( rmiLookupTimeout.isNoTimeout() || System.currentTimeMillis() < startedTrying + rmiLookupTimeout.getValue() ) );
             } catch( Exception e ) {
 
                 //throw new RuntimeException( "Cannot get the remote bundle context", e );
             }
-            if( m_remoteBundleContext == null ) {
+            if( remoteBundleContext == null ) {
                 throw new RuntimeException( "Cannot get the remote bundle context", reason );
             }
             LOG.debug( "Remote bundle context found after " + ( System.currentTimeMillis() - startedTrying ) + " millis" );
         }
-        return m_remoteBundleContext;
+        return remoteBundleContext;
 
     }
 
     public void call( TestAddress address )
     {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier() + ")";
-        ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, m_rmiLookupTimeout );
+        ProbeInvoker service = getService( ProbeInvoker.class, filterExpression, rmiLookupTimeout );
         service.call( address.arguments() );
     }
 
     public String getName()
     {
-        return m_name;
+        return name;
     }
 }

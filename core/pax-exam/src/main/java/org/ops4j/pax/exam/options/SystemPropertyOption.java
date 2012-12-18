@@ -31,11 +31,11 @@ public class SystemPropertyOption implements ValueOption<String>
     /**
      * System property key (cannot be null or empty).
      */
-    private final String m_key;
+    private final String key;
     /**
      * System property value (can be null or empty).
      */
-    private String m_value;
+    private String value;
 
     /**
      * Constructor.
@@ -46,8 +46,8 @@ public class SystemPropertyOption implements ValueOption<String>
      */
     public SystemPropertyOption( final String key )
     {
-        m_key = key;
-        m_value = "";
+        this.key = key;
+        value = "";
     }
 
     /**
@@ -62,7 +62,7 @@ public class SystemPropertyOption implements ValueOption<String>
     public SystemPropertyOption value( final String value )
     {
         validateNotNull( value, "Value" );
-        m_value = value;
+        this.value = value;
         return this;
     }
 
@@ -73,7 +73,7 @@ public class SystemPropertyOption implements ValueOption<String>
      */
     public String getKey()
     {
-        return m_key;
+        return key;
     }
 
     /**
@@ -83,7 +83,7 @@ public class SystemPropertyOption implements ValueOption<String>
      */
     public String getValue()
     {
-        return m_value;
+        return value;
     }
 
     /**
@@ -94,8 +94,8 @@ public class SystemPropertyOption implements ValueOption<String>
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( "SystemPropertyOption" );
-        sb.append( "{key='" ).append( m_key ).append( '\'' );
-        sb.append( ", value='" ).append( m_value ).append( '\'' );
+        sb.append( "{key='" ).append( key ).append( '\'' );
+        sb.append( ", value='" ).append( value ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }
@@ -105,8 +105,8 @@ public class SystemPropertyOption implements ValueOption<String>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_key == null ) ? 0 : m_key.hashCode() );
-        result = prime * result + ( ( m_value == null ) ? 0 : m_value.hashCode() );
+        result = prime * result + ( ( key == null ) ? 0 : key.hashCode() );
+        result = prime * result + ( ( value == null ) ? 0 : value.hashCode() );
         return result;
     }
 
@@ -120,19 +120,19 @@ public class SystemPropertyOption implements ValueOption<String>
         if( getClass() != obj.getClass() )
             return false;
         SystemPropertyOption other = (SystemPropertyOption) obj;
-        if( m_key == null )
+        if( key == null )
         {
-            if( other.m_key != null )
+            if( other.key != null )
                 return false;
         }
-        else if( !m_key.equals( other.m_key ) )
+        else if( !key.equals( other.key ) )
             return false;
-        if( m_value == null )
+        if( value == null )
         {
-            if( other.m_value != null )
+            if( other.value != null )
                 return false;
         }
-        else if( !m_value.equals( other.m_value ) )
+        else if( !value.equals( other.value ) )
             return false;
         return true;
     }

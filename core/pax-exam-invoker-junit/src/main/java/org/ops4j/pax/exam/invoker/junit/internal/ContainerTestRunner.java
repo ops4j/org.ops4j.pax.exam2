@@ -38,7 +38,7 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
 {
     private static Logger LOG = LoggerFactory.getLogger( ContainerTestRunner.class );
 
-    private Injector m_injector;
+    private Injector injector;
     
     /**
      * Constructs a runner for the given class which will be injected with dependencies from
@@ -49,14 +49,14 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner
     public ContainerTestRunner( Class<?> klass, Injector injector ) throws InitializationError
     {
         super( klass );
-        m_injector = injector;        
+        this.injector = injector;        
     }
 
     @Override
     protected Object createTest() throws Exception
     {
         Object test = super.createTest();
-        m_injector.injectFields( test );
+        injector.injectFields( test );
         return test;
     }
     

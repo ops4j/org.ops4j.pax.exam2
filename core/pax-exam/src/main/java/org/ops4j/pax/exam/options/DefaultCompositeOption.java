@@ -36,7 +36,7 @@ public class DefaultCompositeOption
     /**
      * Composite options (cannot be null).
      */
-    private final List<Option> m_options;
+    private final List<Option> options;
 
     /**
      * Constructor.
@@ -45,7 +45,7 @@ public class DefaultCompositeOption
      */
     public DefaultCompositeOption( final Option... options )
     {
-        m_options = new ArrayList<Option>();
+        this.options = new ArrayList<Option>();
         add( options );
     }
 
@@ -62,7 +62,7 @@ public class DefaultCompositeOption
      */
     public Option[] getOptions()
     {
-        return OptionUtils.expand( m_options.toArray( new Option[m_options.size()] ) );
+        return OptionUtils.expand( options.toArray( new Option[options.size()] ) );
     }
 
     /**
@@ -76,7 +76,7 @@ public class DefaultCompositeOption
     {
         if( options != null )
         {
-            m_options.addAll( Arrays.asList( options ) );
+            this.options.addAll( Arrays.asList( options ) );
         }
         return this;
     }
@@ -89,7 +89,7 @@ public class DefaultCompositeOption
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( "DefaultCompositeOption" );
-        sb.append( "{options=" ).append( m_options );
+        sb.append( "{options=" ).append( options );
         sb.append( '}' );
         return sb.toString();
     }
@@ -99,7 +99,7 @@ public class DefaultCompositeOption
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_options == null ) ? 0 : m_options.hashCode() );
+        result = prime * result + ( ( options == null ) ? 0 : options.hashCode() );
         return result;
     }
 
@@ -113,12 +113,12 @@ public class DefaultCompositeOption
         if( getClass() != obj.getClass() )
             return false;
         DefaultCompositeOption other = (DefaultCompositeOption) obj;
-        if( m_options == null )
+        if( options == null )
         {
-            if( other.m_options != null )
+            if( other.options != null )
                 return false;
         }
-        else if( !m_options.equals( other.m_options ) )
+        else if( !options.equals( other.options ) )
             return false;
         return true;
     }

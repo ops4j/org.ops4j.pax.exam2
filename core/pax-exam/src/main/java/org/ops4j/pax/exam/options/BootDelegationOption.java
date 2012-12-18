@@ -31,7 +31,7 @@ public class BootDelegationOption implements ValueOption<String>
     /**
      * Boot delegation package (cannot be null or empty).
      */
-    private final String m_package;
+    private final String pkg;
 
     /**
      * Constructor
@@ -43,7 +43,7 @@ public class BootDelegationOption implements ValueOption<String>
     public BootDelegationOption( final String pkg )
     {
         validateNotEmpty( pkg, true, "Package" );
-        m_package = pkg;
+        this.pkg = pkg;
     }
 
     /**
@@ -53,7 +53,7 @@ public class BootDelegationOption implements ValueOption<String>
      */
     public String getPackage()
     {
-        return m_package;
+        return pkg;
     }
     
     /**
@@ -74,7 +74,7 @@ public class BootDelegationOption implements ValueOption<String>
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( "BootDelegationOption" );
-        sb.append( "{package='" ).append( m_package ).append( '\'' );
+        sb.append( "{package='" ).append( pkg ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }
@@ -84,7 +84,7 @@ public class BootDelegationOption implements ValueOption<String>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_package == null ) ? 0 : m_package.hashCode() );
+        result = prime * result + ( ( pkg == null ) ? 0 : pkg.hashCode() );
         return result;
     }
 
@@ -98,12 +98,12 @@ public class BootDelegationOption implements ValueOption<String>
         if( getClass() != obj.getClass() )
             return false;
         BootDelegationOption other = (BootDelegationOption) obj;
-        if( m_package == null )
+        if( pkg == null )
         {
-            if( other.m_package != null )
+            if( other.pkg != null )
                 return false;
         }
-        else if( !m_package.equals( other.m_package ) )
+        else if( !pkg.equals( other.pkg ) )
             return false;
         return true;
     }

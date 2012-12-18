@@ -22,14 +22,14 @@ package org.ops4j.pax.exam;
  */
 public class TestInstantiationInstruction {
 
-    final private String m_instruction;
+    final private String instruction;
 
     public TestInstantiationInstruction( String s )
     {
-        m_instruction = s;
+        instruction = s;
     }
 
     public String toString() {
-        return m_instruction;
+        return instruction;
     }
 }

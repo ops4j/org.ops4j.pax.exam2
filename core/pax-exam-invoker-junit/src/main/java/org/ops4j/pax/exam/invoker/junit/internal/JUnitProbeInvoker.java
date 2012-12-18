@@ -46,20 +46,20 @@ import org.osgi.framework.BundleContext;
 public class JUnitProbeInvoker implements ProbeInvoker
 {
 
-    private BundleContext m_ctx;
-    private String m_clazz;
-    private String m_method;
+    private BundleContext ctx;
+    private String clazz;
+    private String method;
 
-    private Injector m_injector;
+    private Injector injector;
 
     public JUnitProbeInvoker( String encodedInstruction, BundleContext bundleContext )
     {
         // parse class and method out of expression:
         String[] parts = encodedInstruction.split( ";" );
-        m_clazz = parts[0];
-        m_method = parts[1];
-        m_ctx = bundleContext;
-        m_injector = ServiceLookup.getService( m_ctx, Injector.class );
+        clazz = parts[0];
+        method = parts[1];
+        ctx = bundleContext;
+        injector = ServiceLookup.getService( ctx, Injector.class );
     }
 
     public void call( Object... args )
@@ -67,7 +67,7 @@ public class JUnitProbeInvoker implements ProbeInvoker
         Class<?> testClass;
         try
         {
-            testClass = m_ctx.getBundle().loadClass( m_clazz );
+            testClass = ctx.getBundle().loadClass( clazz );
         }
         catch ( ClassNotFoundException e )
         {
@@ -76,7 +76,7 @@ public class JUnitProbeInvoker implements ProbeInvoker
 
         if( !( findAndInvoke( testClass ) ) )
         {
-            throw new TestContainerException( " Test " + m_method + " not found in test class " + testClass.getName() );
+            throw new TestContainerException( " Test " + method + " not found in test class " + testClass.getName() );
         }
     }
 
@@ -88,7 +88,7 @@ public class JUnitProbeInvoker implements ProbeInvoker
             // find matching method
             for ( Method m : testClass.getMethods() )
             {
-                if( m.getName().equals( m_method ) )
+                if( m.getName().equals( method ) )
                 {
                     // we assume its correct:
                     invokeViaJUnit( testClass, m );
@@ -117,9 +117,9 @@ public class JUnitProbeInvoker implements ProbeInvoker
     private void invokeViaJUnit( final Class<?> testClass, final Method testMethod )
         throws TestContainerException
     {
-        Request classRequest = new ContainerTestRunnerClassRequest( testClass, m_injector );
-        Description method = Description.createTestDescription( testClass, m_method );
-        Request request = classRequest.filterWith( method );
+        Request classRequest = new ContainerTestRunnerClassRequest( testClass, injector );
+        Description methodDescription = Description.createTestDescription( testClass, method );
+        Request request = classRequest.filterWith( methodDescription );
         JUnitCore junit = new JUnitCore();
         Result result = junit.run( request );
         List<Failure> failures = result.getFailures();

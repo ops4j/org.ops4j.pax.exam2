@@ -32,7 +32,7 @@ public class TimeoutOption
     /**
      * Timeout in milliseconds (cannot be null).
      */
-    private final long m_timeout;
+    private final long timeout;
 
     /**
      * Constructor.
@@ -41,7 +41,7 @@ public class TimeoutOption
      */
     public TimeoutOption( final long timeoutInMillis )
     {
-        m_timeout = timeoutInMillis;
+        timeout = timeoutInMillis;
     }
 
     /**
@@ -51,7 +51,7 @@ public class TimeoutOption
      */
     public long getTimeout()
     {
-        return m_timeout;
+        return timeout;
     }
 
     /**
@@ -62,7 +62,7 @@ public class TimeoutOption
     {
         return new StringBuilder()
             .append( this.getClass().getSimpleName() )
-            .append( "{timeout=" ).append( m_timeout ).append( '}' )
+            .append( "{timeout=" ).append( timeout ).append( '}' )
             .toString();
     }
 

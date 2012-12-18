@@ -27,17 +27,17 @@ import static org.ops4j.pax.exam.CoreOptions.*;
  */
 public class PaxLoggingParts implements CompositeOption {
 
-    private String m_version;
+    private String version;
 
     PaxLoggingParts( String version )
     {
-        m_version = version;
+        this.version = version;
     }
 
     public Option[] getOptions()
     {
         return options(
-            mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( m_version )
+            mavenBundle().groupId( "org.ops4j.pax.logging" ).artifactId( "pax-logging-service" ).version( version )
         );
     }
 }

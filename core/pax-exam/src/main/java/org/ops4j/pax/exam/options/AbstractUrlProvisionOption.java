@@ -32,7 +32,7 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
     /**
      * Provision url (cannot be null).
      */
-    private final UrlReference m_urlReference;
+    private final UrlReference urlReference;
 
     /**
      * Constructor.
@@ -56,7 +56,7 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
     public AbstractUrlProvisionOption( final UrlReference url )
     {
         validateNotNull( url, "URL" );
-        m_urlReference = url;
+        urlReference = url;
     }
 
     /**
@@ -64,7 +64,7 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
      */
     public String getURL()
     {
-        return m_urlReference.getURL();
+        return urlReference.getURL();
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
      */
     public UrlReference getUrlReference()
     {
-        return m_urlReference;
+        return urlReference;
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( this.getClass().getSimpleName() );
-        sb.append( "{url='" ).append( m_urlReference ).append( '\'' );
+        sb.append( "{url='" ).append( urlReference ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }
@@ -95,7 +95,7 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
     {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ( ( m_urlReference == null ) ? 0 : m_urlReference.hashCode() );
+        result = prime * result + ( ( urlReference == null ) ? 0 : urlReference.hashCode() );
         return result;
     }
 
@@ -110,12 +110,12 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
             return false;
         @SuppressWarnings( "unchecked" )
         AbstractUrlProvisionOption<T> other = (AbstractUrlProvisionOption<T>) obj;
-        if( m_urlReference == null )
+        if( urlReference == null )
         {
-            if( other.m_urlReference != null )
+            if( other.urlReference != null )
                 return false;
         }
-        else if( !m_urlReference.equals( other.m_urlReference ) )
+        else if( !urlReference.equals( other.urlReference ) )
             return false;
         return true;
     }

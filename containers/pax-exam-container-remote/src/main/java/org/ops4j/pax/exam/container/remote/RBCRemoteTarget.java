@@ -40,7 +40,7 @@ public class RBCRemoteTarget implements TestContainer
 
     private static final Logger LOG = LoggerFactory.getLogger( RBCRemoteTarget.class );
 
-    private RemoteBundleContextClient m_remoteBundleContextClient;
+    private RemoteBundleContextClient remoteBundleContextClient;
 
     /**
      * @param registry
@@ -49,7 +49,7 @@ public class RBCRemoteTarget implements TestContainer
      */
     public RBCRemoteTarget( String name, Integer registry, RelativeTimeout timeout )
     {
-        m_remoteBundleContextClient = new RemoteBundleContextClientImpl( name, registry, timeout);
+        remoteBundleContextClient = new RemoteBundleContextClientImpl( name, registry, timeout);
     }
 
     /**
@@ -59,13 +59,13 @@ public class RBCRemoteTarget implements TestContainer
      */
     public RemoteBundleContextClient getClientRBC()
     {
-        return m_remoteBundleContextClient;
+        return remoteBundleContextClient;
     }
 
     public void call( TestAddress address )
     {
         LOG.debug( "call [" + address + "]" );
-        m_remoteBundleContextClient.call( address );
+        remoteBundleContextClient.call( address );
     }
 
     public TestContainer start()
@@ -79,7 +79,7 @@ public class RBCRemoteTarget implements TestContainer
         LOG.debug( "Preparing and Installing bundle (from stream ).." );
     
         long id = 0;
-        id = m_remoteBundleContextClient.install( location, probe );
+        id = remoteBundleContextClient.install( location, probe );
         LOG.debug( "Installed bundle (from stream)" + " as ID: " + id );
         return id;
     }
@@ -93,7 +93,7 @@ public class RBCRemoteTarget implements TestContainer
     public TestContainer stop()
         throws TimeoutException
     {
-        m_remoteBundleContextClient.cleanup();
+        remoteBundleContextClient.cleanup();
 
         return this;
     }

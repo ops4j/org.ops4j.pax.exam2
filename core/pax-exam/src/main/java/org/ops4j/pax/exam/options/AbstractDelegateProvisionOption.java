@@ -32,7 +32,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
     /**
      * Wrapped provision option (cannot be null).
      */
-    private final ProvisionOption<?> m_delegate;
+    private final ProvisionOption<?> delegate;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
     protected AbstractDelegateProvisionOption( final ProvisionOption<?> delegate )
     {
         validateNotNull( delegate, "Delegate" );
-        m_delegate = delegate;
+        this.delegate = delegate;
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public String getURL()
     {
-        return m_delegate.getURL();
+        return delegate.getURL();
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public boolean shouldUpdate()
     {
-        return m_delegate.shouldUpdate();
+        return delegate.shouldUpdate();
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public boolean shouldStart()
     {
-        return m_delegate.shouldStart();
+        return delegate.shouldStart();
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public Integer getStartLevel()
     {
-        return m_delegate.getStartLevel();
+        return delegate.getStartLevel();
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public T update( final Boolean shouldUpdate )
     {
-        m_delegate.update( shouldUpdate );
+        delegate.update( shouldUpdate );
         return itself();
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public T update()
     {
-        m_delegate.update();
+        delegate.update();
         return itself();
     }
 
@@ -102,7 +102,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public T noUpdate()
     {
-        m_delegate.noUpdate();
+        delegate.noUpdate();
         return itself();
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public T start( final Boolean shouldStart )
     {
-        m_delegate.start( shouldStart );
+        delegate.start( shouldStart );
         return itself();
     }
 
@@ -120,7 +120,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public T start()
     {
-        m_delegate.start();
+        delegate.start();
         return itself();
     }
 
@@ -129,7 +129,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public T noStart()
     {
-        m_delegate.noStart();
+        delegate.noStart();
         return itself();
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public T startLevel( final Integer startLevel )
     {
-        m_delegate.startLevel( startLevel );
+        delegate.startLevel( startLevel );
         return itself();
     }
 
@@ -149,7 +149,7 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
      */
     public ProvisionOption<?> getDelegate()
     {
-        return m_delegate;
+        return delegate;
     }
 
     /**

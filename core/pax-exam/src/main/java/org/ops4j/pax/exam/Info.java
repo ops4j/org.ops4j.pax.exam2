@@ -39,42 +39,42 @@ public class Info
     /**
      * Pax Exam version.
      */
-    private static final String m_paxExamVersion;
+    private static final String paxExamVersion;
     /**
      * Pax URL version.
      */
-    private static final String m_paxUrlVersion;
+    private static final String paxUrlVersion;
     /**
      * Ops4J Base libraries version
      */
-    private static final String m_ops4jBaseVersion;
+    private static final String ops4jBaseVersion;
     /**
      * Pax Swissbox libraries version
      */
-    private static final String m_paxSwissboxVersion;
+    private static final String paxSwissboxVersion;
     /**
      * True if pax exam is a snapshot version.
      */
-    private static boolean m_paxExamSnapshotVersion;
+    private static boolean paxExamSnapshotVersion;
     /**
      * True if pax url is a snapshot version.
      */
-    private static boolean m_paxUrlSnapshotVersion;
+    private static boolean paxUrlSnapshotVersion;
     /**
      * True if ops4j base is a snapshot verison.
      */
-    private static boolean m_ops4jBaseSnapshotVersion;
+    private static boolean ops4jBaseSnapshotVersion;
     /**
      * True if pax swissbox is a snapshot version.
      */
-    private static boolean m_paxSwissboxSnapshotVersion;
+    private static boolean paxSwissboxSnapshotVersion;
 
     static
     {
-        String paxExamVersion = "";
-        String paxUrlVersion = "";
-        String ops4jBaseVersion = "";
-        String paxSwissboxVersion = "";
+        String _paxExamVersion = "";
+        String _paxUrlVersion = "";
+        String _ops4jBaseVersion = "";
+        String _paxSwissboxVersion = "";
         try
         {
             final InputStream is = Info.class.getClassLoader().getResourceAsStream(
@@ -84,23 +84,23 @@ public class Info
             {
                 final Properties properties = new Properties();
                 properties.load(is);
-                paxExamVersion = properties.getProperty("pax.exam.version", "").trim();
-                paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
-                ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
-                paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
+                _paxExamVersion = properties.getProperty("pax.exam.version", "").trim();
+                _paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
+                _ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
+                _paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
             }
         } catch (Exception ignore)
         {
             // use default versions
         }
-        m_paxExamVersion = paxExamVersion;
-        m_paxUrlVersion = paxUrlVersion;
-        m_ops4jBaseVersion = ops4jBaseVersion;
-        m_paxSwissboxVersion = paxSwissboxVersion;
-        m_paxExamSnapshotVersion = paxExamVersion.endsWith(SNAPSHOT);
-        m_paxUrlSnapshotVersion = paxUrlVersion.endsWith(SNAPSHOT);
-        m_ops4jBaseSnapshotVersion = ops4jBaseVersion.endsWith(SNAPSHOT);
-        m_paxSwissboxSnapshotVersion = paxSwissboxVersion.endsWith(SNAPSHOT);
+        paxExamVersion = _paxExamVersion;
+        paxUrlVersion = _paxUrlVersion;
+        ops4jBaseVersion = _ops4jBaseVersion;
+        paxSwissboxVersion = _paxSwissboxVersion;
+        paxExamSnapshotVersion = _paxExamVersion.endsWith(SNAPSHOT);
+        paxUrlSnapshotVersion = _paxUrlVersion.endsWith(SNAPSHOT);
+        ops4jBaseSnapshotVersion = _ops4jBaseVersion.endsWith(SNAPSHOT);
+        paxSwissboxSnapshotVersion = _paxSwissboxVersion.endsWith(SNAPSHOT);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Info
      */
     public static String getPaxExamVersion()
     {
-        return m_paxExamVersion;
+        return paxExamVersion;
     }
 
     /**
@@ -128,7 +128,7 @@ public class Info
      */
     public static String getPaxUrlVersion()
     {
-        return m_paxUrlVersion;
+        return paxUrlVersion;
     }
 
     /**
@@ -137,7 +137,7 @@ public class Info
      * @return the ops4j base version.
      */
     public static String getOps4jBaseVersion() {
-        return m_ops4jBaseVersion;
+        return ops4jBaseVersion;
     }
 
     /**
@@ -146,7 +146,7 @@ public class Info
      * @return pax swissbox version
      */
     public static String getPaxSwissboxVersion() {
-        return m_paxSwissboxVersion;
+        return paxSwissboxVersion;
     }
 
     /**
@@ -156,7 +156,7 @@ public class Info
      */
     public static boolean isPaxExamSnapshotVersion()
     {
-        return m_paxExamSnapshotVersion;
+        return paxExamSnapshotVersion;
     }
 
     /**
@@ -166,7 +166,7 @@ public class Info
      */
     public static boolean isPaxUrlSnapshotVersion()
     {
-        return m_paxUrlSnapshotVersion;
+        return paxUrlSnapshotVersion;
     }
 
     /**
@@ -175,7 +175,7 @@ public class Info
      * @return true if ops4j base is a snapshot version, false otherwise
      */
     public static boolean isOps4jBaseSnapshotVersion() {
-        return m_ops4jBaseSnapshotVersion;
+        return ops4jBaseSnapshotVersion;
     }
 
     /**
@@ -184,7 +184,7 @@ public class Info
      * @return true if pax swissbox is a snapshot version, false otherwise.
      */
     public static boolean isPaxSwissboxSnapshotVersion() {
-        return m_paxSwissboxSnapshotVersion;
+        return paxSwissboxSnapshotVersion;
     }
 
     /**

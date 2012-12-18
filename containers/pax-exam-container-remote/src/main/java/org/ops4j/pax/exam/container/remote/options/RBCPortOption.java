@@ -25,22 +25,22 @@ import org.ops4j.pax.exam.Option;
  */
 public class RBCPortOption implements Option {
   
-    private Integer m_port;
-    private String m_host;
+    private Integer port;
+    private String host;
 
     public RBCPortOption(String host, Integer port) {
         assert host != null : "Host should never be null.";
         assert port != null : "Port should never be null.";
 
-        m_host = host;
-        m_port = port;
+        this.host = host;
+        this.port = port;
     }
 
     public String getHost() {
-        return m_host;
+        return host;
     }
 
     public Integer getPort() {
-        return m_port;
+        return port;
     }
 }

@@ -164,17 +164,17 @@ public class StreamUtils
         /**
          * Name of the downloaded artifact.
          */
-        private final String m_downloadTargetName;
+        private final String downloadTargetName;
 
         public FineGrainedProgressBar( final String downloadTargetName )
         {
-            m_downloadTargetName = downloadTargetName;
+            this.downloadTargetName = downloadTargetName;
             Info.print( downloadTargetName + " : connecting...\r" );
         }
 
         public void increment( final long bytes, final long kbps )
         {
-            Info.print( m_downloadTargetName + " : " + bytes + " bytes @ [ " + kbps + "kBps ]\r" );
+            Info.print( downloadTargetName + " : " + bytes + " bytes @ [ " + kbps + "kBps ]\r" );
             counter++;
         }
 
@@ -195,25 +195,25 @@ public class StreamUtils
         /**
          * Name of the downloaded artifact.
          */
-        private final String m_downloadTargetName;
-        private long m_bytes;
-        private long m_kbps;
+        private final String downloadTargetName;
+        private long bytes;
+        private long kbps;
 
         public CoarseGrainedProgressBar( final String downloadTargetName )
         {
-            m_downloadTargetName = downloadTargetName;
+            this.downloadTargetName = downloadTargetName;
             LOGGER.debug( downloadTargetName + " : downloading..." );
         }
 
         public void increment( final long bytes, final long kbps )
         {
-            m_bytes = bytes;
-            m_kbps = kbps;
+            this.bytes = bytes;
+            this.kbps = kbps;
         }
 
         public void stop()
         {
-            LOGGER.debug( m_downloadTargetName + " : " + m_bytes + " bytes @ [ " + m_kbps + "kBps ]" );
+            LOGGER.debug( downloadTargetName + " : " + bytes + " bytes @ [ " + kbps + "kBps ]" );
         }
 
     }

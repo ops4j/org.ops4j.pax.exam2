@@ -35,7 +35,7 @@ public class Activator implements BundleActivator {
     /**
      * Bundle watcher of web.xml.
      */
-    private BundleWatcher<ManifestEntry> m_probeWatcher;
+    private BundleWatcher<ManifestEntry> probeWatcher;
 
     /**
      * {@inheritDoc}
@@ -43,7 +43,7 @@ public class Activator implements BundleActivator {
     public void start( BundleContext bundleContext )
         throws Exception
     {
-        m_probeWatcher = new BundleWatcher<ManifestEntry>(
+        probeWatcher = new BundleWatcher<ManifestEntry>(
             bundleContext,
             new BundleManifestScanner(
                 new RegexKeyManifestFilter(
@@ -52,7 +52,7 @@ public class Activator implements BundleActivator {
             ),
             new TestBundleObserver()
         );
-        m_probeWatcher.start();
+        probeWatcher.start();
     }
 
     /**
@@ -61,6 +61,6 @@ public class Activator implements BundleActivator {
     public void stop( BundleContext bundleContext )
         throws Exception
     {
-        m_probeWatcher.stop();
+        probeWatcher.stop();
     }
 }

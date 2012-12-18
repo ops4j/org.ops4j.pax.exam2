@@ -33,18 +33,18 @@ public class MavenArtifactProvisionOption
     /**
      * Maven artifact.
      */
-    private final MavenUrlReference m_artifact;
+    private final MavenUrlReference artifact;
     /**
      * True if the user used update method.
      */
-    private boolean m_updateUsed;
+    private boolean updateUsed;
 
     /**
      * Constructor.
      */
     public MavenArtifactProvisionOption()
     {
-        m_artifact = new MavenArtifactUrlReference();
+        artifact = new MavenArtifactUrlReference();
     }
 
     /**
@@ -55,7 +55,7 @@ public class MavenArtifactProvisionOption
     public MavenArtifactProvisionOption( final MavenUrlReference artifact )
     {
         validateNotNull( artifact, "Maven artifact" );
-        m_artifact = artifact;
+        this.artifact = artifact;
     }
 
     /**
@@ -63,8 +63,8 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption groupId( final String groupId )
     {
-        m_artifact.groupId( groupId );
-        m_updateUsed = false;
+        artifact.groupId( groupId );
+        updateUsed = false;
         return itself();
     }
 
@@ -73,7 +73,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption artifactId( final String artifactId )
     {
-        m_artifact.artifactId( artifactId );
+        artifact.artifactId( artifactId );
         return itself();
     }
 
@@ -82,7 +82,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption type( final String type )
     {
-        m_artifact.type( type );
+        artifact.type( type );
         return itself();
     }
 
@@ -91,7 +91,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption classifier( String classifier )
     {
-        m_artifact.classifier( classifier );
+        artifact.classifier( classifier );
         return itself();
     }
 
@@ -100,7 +100,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption version( final String version )
     {
-        m_artifact.version( version );
+        artifact.version( version );
         return itself();
     }
 
@@ -109,7 +109,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption version( final MavenArtifactUrlReference.VersionResolver resolver )
     {
-        m_artifact.version( resolver );
+        artifact.version( resolver );
         return itself();
     }
 
@@ -118,7 +118,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption versionAsInProject()
     {
-        m_artifact.versionAsInProject();
+        artifact.versionAsInProject();
         return itself();
     }
 
@@ -127,7 +127,7 @@ public class MavenArtifactProvisionOption
      */
     public Boolean isSnapshot()
     {
-        return m_artifact.isSnapshot();
+        return artifact.isSnapshot();
     }
 
     /**
@@ -135,7 +135,7 @@ public class MavenArtifactProvisionOption
      */
     public String getURL()
     {
-        return m_artifact.getURL();
+        return artifact.getURL();
     }
 
     /**
@@ -146,14 +146,14 @@ public class MavenArtifactProvisionOption
     @Override
     public MavenArtifactProvisionOption update( final Boolean shouldUpdate )
     {
-        m_updateUsed = true;
+        updateUsed = true;
         return super.update( shouldUpdate );
     }
 
     @Override
     public boolean shouldUpdate()
     {
-        if( !m_updateUsed )
+        if( !updateUsed )
         {
             super.update( isSnapshot() != null && isSnapshot() );
         }
@@ -166,7 +166,7 @@ public class MavenArtifactProvisionOption
     @Override
     public String toString()
     {
-        return m_artifact.toString();
+        return artifact.toString();
     }
 
     /**
@@ -182,8 +182,8 @@ public class MavenArtifactProvisionOption
     {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ( ( m_artifact == null ) ? 0 : m_artifact.hashCode() );
-        result = prime * result + ( m_updateUsed ? 1231 : 1237 );
+        result = prime * result + ( ( artifact == null ) ? 0 : artifact.hashCode() );
+        result = prime * result + ( updateUsed ? 1231 : 1237 );
         return result;
     }
 
@@ -197,14 +197,14 @@ public class MavenArtifactProvisionOption
         if( getClass() != obj.getClass() )
             return false;
         MavenArtifactProvisionOption other = (MavenArtifactProvisionOption) obj;
-        if( m_artifact == null )
+        if( artifact == null )
         {
-            if( other.m_artifact != null )
+            if( other.artifact != null )
                 return false;
         }
-        else if( !m_artifact.equals( other.m_artifact ) )
+        else if( !artifact.equals( other.artifact ) )
             return false;
-        if( m_updateUsed != other.m_updateUsed )
+        if( updateUsed != other.updateUsed )
             return false;
         return true;
     }

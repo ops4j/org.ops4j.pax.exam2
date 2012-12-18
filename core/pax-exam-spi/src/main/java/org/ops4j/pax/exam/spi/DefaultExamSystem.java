@@ -59,14 +59,14 @@ public class DefaultExamSystem implements ExamSystem {
 
     private static final Logger LOG = LoggerFactory.getLogger( DefaultExamSystem.class );
 
-    final private Store<InputStream> m_store;
-    final private File m_configDirectory;
-    final private Option[] m_combinedOptions;
-    final private Stack<ExamSystem> m_subsystems;
-    final private RelativeTimeout m_timeout;
-    final private Set<Class<?>> m_requestedOptionTypes = new HashSet<Class<?>>();
-    final private CleanCachesOption m_clean;
-    final private File m_cache;
+    final private Store<InputStream> store;
+    final private File configDirectory;
+    final private Option[] combinedOptions;
+    final private Stack<ExamSystem> subsystems;
+    final private RelativeTimeout timeout;
+    final private Set<Class<?>> requestedOptionTypes = new HashSet<Class<?>>();
+    final private CleanCachesOption clean;
+    final private File cache;
 
     /**
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults.
@@ -94,8 +94,8 @@ public class DefaultExamSystem implements ExamSystem {
     public ExamSystem fork( Option[] options )
         throws IOException
     {
-        ExamSystem sys = new DefaultExamSystem( combine( m_combinedOptions, options ) );
-        m_subsystems.add( sys );
+        ExamSystem sys = new DefaultExamSystem( combine( combinedOptions, options ) );
+        subsystems.add( sys );
         return sys;
     }
 
@@ -111,29 +111,29 @@ public class DefaultExamSystem implements ExamSystem {
     private DefaultExamSystem( Option[] options )
         throws IOException
     {
-        m_subsystems = new Stack<ExamSystem>();
-        m_combinedOptions = expand( options );
-        m_configDirectory = new File( System.getProperty( "user.home" ) + "/.pax/exam/" );
-        m_configDirectory.mkdirs();
+        subsystems = new Stack<ExamSystem>();
+        combinedOptions = expand( options );
+        configDirectory = new File( System.getProperty( "user.home" ) + "/.pax/exam/" );
+        configDirectory.mkdirs();
 
         WorkingDirectoryOption work = getSingleOption( WorkingDirectoryOption.class );
         if( work != null ) {
-            m_cache = createTemp( new File( work.getWorkingDirectory() ) );
+            cache = createTemp( new File( work.getWorkingDirectory() ) );
         }
         else {
-            m_cache = createTemp( null );
+            cache = createTemp( null );
         }
 
-        m_store = new TemporaryStore( m_cache, false );
+        store = new TemporaryStore( cache, false );
 
         TimeoutOption timeoutOption = getSingleOption( TimeoutOption.class );
         if( timeoutOption != null ) {
-            m_timeout = new RelativeTimeout( timeoutOption.getTimeout() );
+            timeout = new RelativeTimeout( timeoutOption.getTimeout() );
         }
         else {
-            m_timeout = RelativeTimeout.TIMEOUT_DEFAULT;
+            timeout = RelativeTimeout.TIMEOUT_DEFAULT;
         }
-        m_clean = getSingleOption( CleanCachesOption.class );
+        clean = getSingleOption( CleanCachesOption.class );
 
     }
 
@@ -163,8 +163,8 @@ public class DefaultExamSystem implements ExamSystem {
      */
     public <T extends Option> T getSingleOption( final Class<T> optionType )
     {
-        m_requestedOptionTypes.add( optionType );
-        T[] filter = filter( optionType, m_combinedOptions );
+        requestedOptionTypes.add( optionType );
+        T[] filter = filter( optionType, combinedOptions );
 
         if( filter.length > 0 ) {
             return filter[ filter.length-1 ];
@@ -176,8 +176,8 @@ public class DefaultExamSystem implements ExamSystem {
 
     public <T extends Option> T[] getOptions( final Class<T> optionType )
     {
-        m_requestedOptionTypes.add( optionType );
-        return filter( optionType, m_combinedOptions );
+        requestedOptionTypes.add( optionType );
+        return filter( optionType, combinedOptions );
     }
 
     /**
@@ -186,7 +186,7 @@ public class DefaultExamSystem implements ExamSystem {
      */
     public File getConfigFolder()
     {
-        return m_configDirectory;
+        return configDirectory;
     }
 
     /**
@@ -195,7 +195,7 @@ public class DefaultExamSystem implements ExamSystem {
      */
     public File getTempFolder()
     {
-        return m_cache;
+        return cache;
     }
 
     /**
@@ -203,7 +203,7 @@ public class DefaultExamSystem implements ExamSystem {
      */
     public RelativeTimeout getTimeout()
     {
-        return m_timeout;
+        return timeout;
     }
 
     /**
@@ -214,11 +214,11 @@ public class DefaultExamSystem implements ExamSystem {
         try {
             warnUnusedOptions();
 
-            if( m_clean == null || m_clean.getValue() == Boolean.TRUE ) {
-                for( ExamSystem sys : m_subsystems ) {
+            if( clean == null || clean.getValue() == Boolean.TRUE ) {
+                for( ExamSystem sys : subsystems ) {
                     sys.clear();
                 }
-                FileUtils.delete( m_cache.getCanonicalFile() );
+                FileUtils.delete( cache.getCanonicalFile() );
 
             }
         } catch( IOException e ) {
@@ -228,7 +228,7 @@ public class DefaultExamSystem implements ExamSystem {
 
     private void warnUnusedOptions()
     {
-        if( m_subsystems.isEmpty() ) {
+        if( subsystems.isEmpty() ) {
             for( String skipped : findOptionTypes() ) {
                 LOG.warn( "Option " + skipped + " has not been recognized." );
             }
@@ -238,9 +238,9 @@ public class DefaultExamSystem implements ExamSystem {
     private Set<String> findOptionTypes()
     {
         Set<String> missing = new HashSet<String>();
-        for( Option option : m_combinedOptions ) {
+        for( Option option : combinedOptions ) {
             boolean found = false;
-            for( Class<?> c : m_requestedOptionTypes ) {
+            for( Class<?> c : requestedOptionTypes ) {
                 try {
                     option.getClass().asSubclass( c );
                     found = true;
@@ -263,7 +263,7 @@ public class DefaultExamSystem implements ExamSystem {
         if( warProbeOption == null )
         {
             LOG.debug( "creating default probe" );
-            TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl( m_store );
+            TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl( store );
             testProbeBuilder.setHeader( "Bundle-SymbolicName", "PAXEXAM-PROBE-"
                     + createID( "created probe" ) );
             return testProbeBuilder;
@@ -282,7 +282,7 @@ public class DefaultExamSystem implements ExamSystem {
 
     public String toString()
     {
-        return "ExamSystem:options=" + m_combinedOptions.length + ";queried=" + m_requestedOptionTypes.size();
+        return "ExamSystem:options=" + combinedOptions.length + ";queried=" + requestedOptionTypes.size();
     }
 
     @Override
@@ -290,7 +290,7 @@ public class DefaultExamSystem implements ExamSystem {
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode( m_combinedOptions );
+        result = prime * result + Arrays.hashCode( combinedOptions );
         return result;
     }
 
@@ -304,7 +304,7 @@ public class DefaultExamSystem implements ExamSystem {
         if( getClass() != obj.getClass() )
             return false;
         DefaultExamSystem other = (DefaultExamSystem) obj;
-        if( !Arrays.equals( m_combinedOptions, other.m_combinedOptions ) )
+        if( !Arrays.equals( combinedOptions, other.combinedOptions ) )
             return false;
         return true;
     }    

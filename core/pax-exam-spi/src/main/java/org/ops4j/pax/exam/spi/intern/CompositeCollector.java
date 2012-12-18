@@ -27,17 +27,17 @@ import org.ops4j.pax.exam.spi.ContentCollector;
  */
 public class CompositeCollector implements ContentCollector {
 
-    final private ContentCollector[] m_collectors;
+    final private ContentCollector[] collectors;
 
     public CompositeCollector( ContentCollector... collectors )
     {
-        m_collectors = collectors;
+        this.collectors = collectors;
     }
 
     public void collect( Map<String, URL> map )
         throws IOException
     {
-        for( ContentCollector c : m_collectors ) {
+        for( ContentCollector c : collectors ) {
             c.collect( map );
         }
     }

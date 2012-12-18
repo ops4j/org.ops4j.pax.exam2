@@ -50,18 +50,18 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 public class Player {
 
     private static final StagedExamReactorFactory DEFAULT_STRATEGY = new PerClass();
-    final private TestContainerFactory m_factory;
-    final private Option[] m_parts;
-    final private TestProbeBuilder m_builder;
-    final private ExamSystem m_testSystem;
+    final private TestContainerFactory factory;
+    final private Option[] parts;
+    final private TestProbeBuilder builder;
+    final private ExamSystem testSystem;
    
     public Player( TestContainerFactory containerFactory, Option... parts )
         throws IOException
     {
-        m_testSystem = createTestSystem();
-        m_factory = containerFactory;
-        m_parts = parts;
-        m_builder = m_testSystem.createProbe();
+        this.testSystem = createTestSystem();
+        this.factory = containerFactory;
+        this.parts = parts;
+        this.builder = testSystem.createProbe();
     }
 
     public Player( TestContainerFactory containerFactory )
@@ -79,13 +79,13 @@ public class Player {
     public Player with( Option... parts )
         throws IOException
     {
-        return new Player( m_factory, parts );
+        return new Player( factory, parts );
     }
 
     public Player test( Class<?> clazz, Object... args )
         throws Exception
     {
-        m_builder.addTest( clazz, args );
+        builder.addTest( clazz, args );
         return this;
     }
 
@@ -96,9 +96,9 @@ public class Player {
 
     public void play( StagedExamReactorFactory strategy ) throws IOException
     {
-        ExamReactor reactor = new DefaultExamReactor( m_testSystem, m_factory );
-        reactor.addConfiguration(  m_parts  );
-        reactor.addProbe( m_builder );
+        ExamReactor reactor = new DefaultExamReactor( testSystem, factory );
+        reactor.addConfiguration(  parts  );
+        reactor.addProbe( builder );
 
         StagedExamReactor stagedReactor = reactor.stage( strategy );
         stagedReactor.beforeClass();

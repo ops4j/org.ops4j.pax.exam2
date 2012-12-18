@@ -32,7 +32,7 @@ public class FrameworkStartLevelOption
     /**
      * Start level.
      */
-    private final int m_startLevel;
+    private final int startLevel;
 
     /**
      * Constructor.
@@ -47,7 +47,7 @@ public class FrameworkStartLevelOption
         {
             throw new IllegalArgumentException( "Start level must be bigger then zero" );
         }
-        m_startLevel = startLevel;
+        this.startLevel = startLevel;
     }
 
     /**
@@ -57,7 +57,7 @@ public class FrameworkStartLevelOption
      */
     public int getStartLevel()
     {
-        return m_startLevel;
+        return startLevel;
     }
 
     /**
@@ -68,7 +68,7 @@ public class FrameworkStartLevelOption
     {
         return new StringBuilder()
             .append( FrameworkStartLevelOption.class.getSimpleName() )
-            .append( "{startlevel='" ).append( m_startLevel ).append( "\'}" )
+            .append( "{startlevel='" ).append( startLevel ).append( "\'}" )
             .toString();
     }
 
@@ -77,7 +77,7 @@ public class FrameworkStartLevelOption
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + m_startLevel;
+        result = prime * result + startLevel;
         return result;
     }
 
@@ -91,7 +91,7 @@ public class FrameworkStartLevelOption
         if( getClass() != obj.getClass() )
             return false;
         FrameworkStartLevelOption other = (FrameworkStartLevelOption) obj;
-        if( m_startLevel != other.m_startLevel )
+        if( startLevel != other.startLevel )
             return false;
         return true;
     }

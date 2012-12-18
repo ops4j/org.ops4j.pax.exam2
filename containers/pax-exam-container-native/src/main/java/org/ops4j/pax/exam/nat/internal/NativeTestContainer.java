@@ -75,24 +75,24 @@ public class NativeTestContainer implements TestContainer
 
     final private static Logger LOG = LoggerFactory.getLogger( NativeTestContainer.class );
     final private static String PROBE_SIGNATURE_KEY = "Probe-Signature";
-    final private Stack<Long> m_installed = new Stack<Long>();
+    final private Stack<Long> installed = new Stack<Long>();
 
-    final private FrameworkFactory m_frameworkFactory;
-    private ExamSystem m_system;
+    final private FrameworkFactory frameworkFactory;
+    private ExamSystem system;
 
-    volatile Framework m_framework;
+    volatile Framework framework;
 
     public NativeTestContainer( ExamSystem system, FrameworkFactory frameworkFactory ) throws IOException
     {
-        m_frameworkFactory = frameworkFactory;
-        m_system = system;
+        this.frameworkFactory = frameworkFactory;
+        this.system = system;
     }
 
     public synchronized void call( TestAddress address )
     {
         Map<String,String> props = new HashMap<String, String>();
         props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
-        ProbeInvoker service = ServiceLookup.getService( m_framework.getBundleContext(), ProbeInvoker.class, props );
+        ProbeInvoker service = ServiceLookup.getService( framework.getBundleContext(), ProbeInvoker.class, props );
         service.call( address.arguments() );
     }
 
@@ -100,8 +100,8 @@ public class NativeTestContainer implements TestContainer
     {
         try
         {
-            Bundle b = m_framework.getBundleContext().installBundle( location, stream );
-            m_installed.push( b.getBundleId() );
+            Bundle b = framework.getBundleContext().installBundle( location, stream );
+            installed.push( b.getBundleId() );
             LOG.debug( "Installed bundle " + b.getSymbolicName() + " as Bundle ID " + b.getBundleId() );
             setBundleStartLevel( b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE );
             b.start();
@@ -120,12 +120,12 @@ public class NativeTestContainer implements TestContainer
 
     public synchronized void cleanup()
     {
-        while ( (!m_installed.isEmpty()) )
+        while ( (!installed.isEmpty()) )
         {
             try
             {
-                Long id = m_installed.pop();
-                Bundle bundle = m_framework.getBundleContext().getBundle( id );
+                Long id = installed.pop();
+                Bundle bundle = framework.getBundleContext().getBundle( id );
                 bundle.uninstall();
                 LOG.debug( "Uninstalled bundle " + id );
             } catch ( BundleException e )
@@ -138,8 +138,8 @@ public class NativeTestContainer implements TestContainer
 
     public void setBundleStartLevel( long bundleId, int startLevel ) throws TestContainerException
     {
-        StartLevel sl = ServiceLookup.getService( m_framework.getBundleContext(), StartLevel.class );
-        sl.setBundleStartLevel( m_framework.getBundleContext().getBundle( bundleId ), startLevel );
+        StartLevel sl = ServiceLookup.getService( framework.getBundleContext(), StartLevel.class );
+        sl.setBundleStartLevel( framework.getBundleContext().getBundle( bundleId ), startLevel );
     }
 
     public TestContainer start(  ) throws TestContainerException
@@ -147,7 +147,7 @@ public class NativeTestContainer implements TestContainer
         ClassLoader parent = null;
         try
         {
-            m_system = m_system.fork( new Option[] {
+            system = system.fork( new Option[] {
                 systemPackage( "org.ops4j.pax.exam;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
                 systemPackage( "org.ops4j.pax.exam.options;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
                 systemPackage( "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag( Info.getPaxExamVersion() ) ),
@@ -159,9 +159,9 @@ public class NativeTestContainer implements TestContainer
                 logSystemProperties();
             }
             parent = Thread.currentThread().getContextClassLoader();
-            m_framework = m_frameworkFactory.newFramework( p );
-            m_framework.init();
-            installAndStartBundles( m_framework.getBundleContext() );
+            framework = frameworkFactory.newFramework( p );
+            framework.init();
+            installAndStartBundles( framework.getBundleContext() );
         } catch ( Exception e )
         {
             throw new TestContainerException( "Problem starting test container.", e );
@@ -194,14 +194,14 @@ public class NativeTestContainer implements TestContainer
 
     public TestContainer stop()
     {
-        if ( m_framework != null )
+        if ( framework != null )
         {
             try
             {
                 cleanup();
                 stopOrAbort();
-                m_framework = null;
-                m_system.clear();
+                framework = null;
+                system.clear();
             }
             catch ( BundleException e )
             {
@@ -221,8 +221,8 @@ public class NativeTestContainer implements TestContainer
 
     private void stopOrAbort() throws BundleException, InterruptedException
     {
-        m_framework.stop();
-        long timeout = m_system.getTimeout().getValue();
+        framework.stop();
+        long timeout = system.getTimeout().getValue();
         Thread stopper = new Stopper( timeout );
         stopper.start();
         stopper.join(timeout + 500);
@@ -230,7 +230,7 @@ public class NativeTestContainer implements TestContainer
         // If the framework is not stopped, then we're in trouble anyway, so we do not worry 
         // about stopping the worker thread.
         
-        if (m_framework.getState() != Framework.RESOLVED)
+        if (framework.getState() != Framework.RESOLVED)
         {
             String message = "Framework has not yet stopped after " +
                     timeout + " ms. waitForStop did not return";
@@ -241,26 +241,26 @@ public class NativeTestContainer implements TestContainer
     private Map<String, Object> createFrameworkProperties( ) throws IOException
     {
         final Map<String, Object> p = new HashMap<String, Object>();
-        CleanCachesOption cleanCaches = m_system.getSingleOption( CleanCachesOption.class );
+        CleanCachesOption cleanCaches = system.getSingleOption( CleanCachesOption.class );
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
             p.put( FRAMEWORK_STORAGE_CLEAN,  FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT );            
         }
 
-        p.put( FRAMEWORK_STORAGE, m_system.getTempFolder().getAbsolutePath() );
-        p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( m_system.getOptions( SystemPackageOption.class ) ) );
-        p.put( FRAMEWORK_BOOTDELEGATION, buildString( m_system.getOptions( BootDelegationOption.class ) ) );
+        p.put( FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath() );
+        p.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString( system.getOptions( SystemPackageOption.class ) ) );
+        p.put( FRAMEWORK_BOOTDELEGATION, buildString( system.getOptions( BootDelegationOption.class ) ) );
         
-        for ( FrameworkPropertyOption option : m_system.getOptions( FrameworkPropertyOption.class ) )
+        for ( FrameworkPropertyOption option : system.getOptions( FrameworkPropertyOption.class ) )
         {
             p.put( option.getKey(), option.getValue() );
         }
 
-        for ( SystemPropertyOption option : m_system.getOptions( SystemPropertyOption.class ) )
+        for ( SystemPropertyOption option : system.getOptions( SystemPropertyOption.class ) )
         {
             System.setProperty( option.getKey(), option.getValue() );
         }
         
-        String repositories = buildString( m_system.getOptions ( RepositoryOption.class ));
+        String repositories = buildString( system.getOptions ( RepositoryOption.class ));
         if (! repositories.isEmpty()) {
             System.setProperty("org.ops4j.pax.url.mvn.repositories", repositories);
         }
@@ -313,9 +313,9 @@ public class NativeTestContainer implements TestContainer
 
     private void installAndStartBundles( BundleContext context ) throws BundleException
     {
-        m_framework.start();
+        framework.start();
         StartLevel sl = ServiceLookup.getService(  context, StartLevel.class );
-        for ( ProvisionOption<?> bundle : m_system.getOptions( ProvisionOption.class ) )
+        for ( ProvisionOption<?> bundle : system.getOptions( ProvisionOption.class ) )
         {
             Bundle b = context.installBundle( bundle.getURL() );
             int startLevel = getStartLevel( bundle );
@@ -331,7 +331,7 @@ public class NativeTestContainer implements TestContainer
             }
         }
 
-        FrameworkStartLevelOption startLevelOption = m_system.getSingleOption( FrameworkStartLevelOption.class );
+        FrameworkStartLevelOption startLevelOption = system.getSingleOption( FrameworkStartLevelOption.class );
         int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption.getStartLevel();
         LOG.debug( "Jump to startlevel: " + startLevel );
         sl.setStartLevel( startLevel );
@@ -350,7 +350,7 @@ public class NativeTestContainer implements TestContainer
         } );
         try
         {
-            final long timeout = m_system.getTimeout().getLowerValue();
+            final long timeout = system.getTimeout().getLowerValue();
             if ( !latch.await( timeout, TimeUnit.MILLISECONDS )) {
                  // Framework start level has not reached yet, so report an error to cause the test process to abort
                 final String message = "Framework is yet to reach target start level " + startLevel + " after " +
@@ -389,7 +389,7 @@ public class NativeTestContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "Native:" + m_frameworkFactory.getClass().getSimpleName();
+        return "Native:" + frameworkFactory.getClass().getSimpleName();
     }
     
     
@@ -415,7 +415,7 @@ public class NativeTestContainer implements TestContainer
         {
             try
             {
-                FrameworkEvent frameworkEvent = m_framework.waitForStop( timeout );
+                FrameworkEvent frameworkEvent = framework.waitForStop( timeout );
                 if( frameworkEvent.getType() != FrameworkEvent.STOPPED )
                 {
                     LOG.error( "Framework has not yet stopped after {} ms. " +

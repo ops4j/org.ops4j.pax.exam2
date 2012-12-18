@@ -29,10 +29,10 @@ public class DefaultTestAddress implements TestAddress {
 
     private static Logger LOG = LoggerFactory.getLogger( DefaultTestAddress.class );
 
-    final private String m_sig;
-    final private TestAddress m_root;
-    final private String m_caption;
-    final private Object[] m_args;
+    final private String sig;
+    final private TestAddress root;
+    final private String caption;
+    final private Object[] args;
 
     public DefaultTestAddress(String caption, Object... args )
     {
@@ -41,17 +41,17 @@ public class DefaultTestAddress implements TestAddress {
 
     public DefaultTestAddress( final TestAddress parent, String caption, Object... args )
     {
-        m_sig = calculate();
+        sig = calculate();
         if (parent != null) {
-            m_caption = parent.caption() + ":" + caption;
-            m_args = parent.arguments();
+            this.caption = parent.caption() + ":" + caption;
+            this.args = parent.arguments();
         }else {
-            m_caption = caption;
-            m_args = args;
+            this.caption = caption;
+            this.args = args;
         }
 
-        m_root = calculateRoot( parent );
-        LOG.debug( "NEW ADDRESS= " + m_sig + " parent=" + parent + " root=" + m_root + " args=" + args.toString());
+        root = calculateRoot( parent );
+        LOG.debug( "NEW ADDRESS= " + sig + " parent=" + parent + " root=" + root + " args=" + args.toString());
     }
 
     private String calculate()
@@ -65,7 +65,7 @@ public class DefaultTestAddress implements TestAddress {
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_caption == null ) ? 0 : m_caption.hashCode() );
+        result = prime * result + ( ( caption == null ) ? 0 : caption.hashCode() );
         return result;
     }
 
@@ -79,24 +79,24 @@ public class DefaultTestAddress implements TestAddress {
         if( getClass() != obj.getClass() )
             return false;
         DefaultTestAddress other = (DefaultTestAddress) obj;
-        if( m_caption == null )
+        if( caption == null )
         {
-            if( other.m_caption != null )
+            if( other.caption != null )
                 return false;
         }
-        else if( !m_caption.equals( other.m_caption ) )
+        else if( !caption.equals( other.caption ) )
             return false;
         return true;
     }
 
     public String identifier()
     {
-        return m_sig;
+        return sig;
     }
 
     public String caption()
     {
-        return m_caption;
+        return caption;
     }
 
     private TestAddress calculateRoot( TestAddress parent )
@@ -111,17 +111,17 @@ public class DefaultTestAddress implements TestAddress {
 
     public TestAddress root()
     {
-        return m_root;
+        return root;
     }
 
     public Object[] arguments()
     {
-        return m_args;
+        return args;
     }
 
     @Override
     public String toString()
     {
-        return "[TestAddress:" + m_sig + " root:" + m_root.identifier() + "]";
+        return "[TestAddress:" + sig + " root:" + root.identifier() + "]";
     }
 }

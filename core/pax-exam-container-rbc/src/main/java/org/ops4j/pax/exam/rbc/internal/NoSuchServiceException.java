@@ -30,7 +30,7 @@ public class NoSuchServiceException
     /**
      * Class of the service that was not found. Cannot be null.
      */
-    private final Class<?> m_serviceType;
+    private final Class<?> serviceType;
 
     /**
      * Constructor.
@@ -40,7 +40,7 @@ public class NoSuchServiceException
     public NoSuchServiceException( final Class<?> serviceType )
     {
         super( "No service of type [" + serviceType.getName() + "] found in the service registry" );
-        m_serviceType = serviceType;
+        this.serviceType = serviceType;
     }
 
     /**
@@ -50,7 +50,7 @@ public class NoSuchServiceException
      */
     public Class<?> getServiceType()
     {
-        return m_serviceType;
+        return serviceType;
     }
 
 }

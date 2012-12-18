@@ -45,14 +45,14 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
     /**
      * Holder for regression runner registrations per bundle.
      */
-    private final Map<Bundle, Registration> m_registrations;
+    private final Map<Bundle, Registration> registrations;
 
     /**
      * Constructor.
      */
     TestBundleObserver()
     {
-        m_registrations = new HashMap<Bundle, Registration>();
+        registrations = new HashMap<Bundle, Registration>();
     }
 
     /**
@@ -79,7 +79,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
             {
                 final BundleContext bundleContext = BundleUtils.getBundleContext( bundle );
                 final ServiceRegistration serviceRegistration = p.register( bundleContext );
-                m_registrations.put( bundle, new Registration( p, serviceRegistration ) );
+                registrations.put( bundle, new Registration( p, serviceRegistration ) );
             }
 
         }
@@ -92,7 +92,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry>
     public void removingEntries( final Bundle bundle,
                                  final List<ManifestEntry> manifestEntries )
     {
-        final Registration registration = m_registrations.remove( bundle );
+        final Registration registration = registrations.remove( bundle );
         if( registration != null )
         {
             // Do not unregister as bellow, because the services are automatically unregistered as soon as the bundle

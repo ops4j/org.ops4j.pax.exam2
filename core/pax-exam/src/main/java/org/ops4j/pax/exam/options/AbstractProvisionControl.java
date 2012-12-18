@@ -27,23 +27,23 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
     /**
      * If the scanned bundles should be updated. Default behaviour is depending on used Test Container implementation.
      */
-    private Boolean m_shouldUpdate;
+    private Boolean shouldUpdate;
     /**
      * If the scanned bundles should be started. Default behaviour is depending on used Test Container implementation.
      */
-    private Boolean m_shouldStart;
+    private Boolean shouldStart;
     /**
      * Start level of scanned bundles. Default behaviour is depending on used Test Container implementation.
      */
-    private Integer m_startLevel;
+    private Integer startLevel;
 
     /**
      * Constructor.
      */
     public AbstractProvisionControl()
     {
-        m_shouldUpdate = true;
-        m_shouldStart = true;
+        shouldUpdate = true;
+        shouldStart = true;
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
      */
     public boolean shouldUpdate()
     {
-        return m_shouldUpdate;
+        return shouldUpdate;
     }
 
     /**
@@ -59,7 +59,7 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
      */
     public T update( final Boolean shouldUpdate )
     {
-        m_shouldUpdate = shouldUpdate;
+        this.shouldUpdate = shouldUpdate;
         return itself();
     }
 
@@ -84,7 +84,7 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
      */
     public boolean shouldStart()
     {
-        return m_shouldStart;
+        return shouldStart;
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
      */
     public T start( final Boolean shouldStart )
     {
-        m_shouldStart = shouldStart;
+        this.shouldStart = shouldStart;
         return itself();
     }
 
@@ -117,7 +117,7 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
      */
     public Integer getStartLevel()
     {
-        return m_startLevel;
+        return startLevel;
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
      */
     public T startLevel( final Integer startLevel )
     {
-        m_startLevel = startLevel;
+        this.startLevel = startLevel;
         return itself();
     }
 
@@ -141,9 +141,9 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_shouldStart == null ) ? 0 : m_shouldStart.hashCode() );
-        result = prime * result + ( ( m_shouldUpdate == null ) ? 0 : m_shouldUpdate.hashCode() );
-        result = prime * result + ( ( m_startLevel == null ) ? 0 : m_startLevel.hashCode() );
+        result = prime * result + ( ( shouldStart == null ) ? 0 : shouldStart.hashCode() );
+        result = prime * result + ( ( shouldUpdate == null ) ? 0 : shouldUpdate.hashCode() );
+        result = prime * result + ( ( startLevel == null ) ? 0 : startLevel.hashCode() );
         return result;
     }
 
@@ -158,26 +158,26 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
             return false;
         @SuppressWarnings( "unchecked" )
         AbstractProvisionControl<T> other = (AbstractProvisionControl<T>) obj;
-        if( m_shouldStart == null )
+        if( shouldStart == null )
         {
-            if( other.m_shouldStart != null )
+            if( other.shouldStart != null )
                 return false;
         }
-        else if( !m_shouldStart.equals( other.m_shouldStart ) )
+        else if( !shouldStart.equals( other.shouldStart ) )
             return false;
-        if( m_shouldUpdate == null )
+        if( shouldUpdate == null )
         {
-            if( other.m_shouldUpdate != null )
+            if( other.shouldUpdate != null )
                 return false;
         }
-        else if( !m_shouldUpdate.equals( other.m_shouldUpdate ) )
+        else if( !shouldUpdate.equals( other.shouldUpdate ) )
             return false;
-        if( m_startLevel == null )
+        if( startLevel == null )
         {
-            if( other.m_startLevel != null )
+            if( other.startLevel != null )
                 return false;
         }
-        else if( !m_startLevel.equals( other.m_startLevel ) )
+        else if( !startLevel.equals( other.startLevel ) )
             return false;
         return true;
     }

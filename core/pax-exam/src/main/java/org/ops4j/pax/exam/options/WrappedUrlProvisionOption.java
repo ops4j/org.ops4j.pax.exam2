@@ -32,24 +32,24 @@ public class WrappedUrlProvisionOption
     /**
      * Wrapped jar bundle symbolic name. Can be null.
      */
-    private String m_bundleSymbolicName;
+    private String bundleSymbolicName;
     /**
      * Wrapped jar bundle version. Can be null.
      */
-    private String m_bundleVersion;
+    private String bundleVersion;
     /**
      * Wrapped jar imports.
      */
-    private String[] m_imports;
+    private String[] imports;
     /**
      * Wrapped jar exports.
      */
-    private String[] m_exports;
+    private String[] exports;
     /**
      * Wrapped jar raw instructions.
      */
-    private String[] m_instructions;
-    private WrappedUrlProvisionOption.OverwriteMode m_overwriteMode;
+    private String[] instructions;
+    private WrappedUrlProvisionOption.OverwriteMode overwriteMode;
 
     /**
      * Constructor.
@@ -81,59 +81,59 @@ public class WrappedUrlProvisionOption
     public String getURL()
     {
         final StringBuilder options = new StringBuilder();
-        if( m_overwriteMode != null )
+        if( overwriteMode != null )
         {
             if( options.length() > 0 )
             {
                 options.append( "&" );
             }
-            options.append( "overwrite=" ).append( m_overwriteMode );
+            options.append( "overwrite=" ).append( overwriteMode );
         }
-        if( m_bundleSymbolicName != null )
+        if( bundleSymbolicName != null )
         {
             if( options.length() > 0 )
             {
                 options.append( "&" );
             }
-            options.append( BUNDLE_SYMBOLICNAME ).append( "=" ).append( m_bundleSymbolicName );
+            options.append( BUNDLE_SYMBOLICNAME ).append( "=" ).append( bundleSymbolicName );
         }
-        if( m_bundleVersion != null )
+        if( bundleVersion != null )
         {
             if( options.length() > 0 )
             {
                 options.append( "&" );
             }
-            options.append( BUNDLE_VERSION ).append( "=" ).append( m_bundleVersion );
+            options.append( BUNDLE_VERSION ).append( "=" ).append( bundleVersion );
         }
-        if( m_imports != null && m_imports.length > 0 )
+        if( imports != null && imports.length > 0 )
         {
             if( options.length() > 0 )
             {
                 options.append( "&" );
             }
             options.append( IMPORT_PACKAGE ).append( "=" );
-            for( String entry : m_imports )
+            for( String entry : imports )
             {
                 options.append( entry ).append( "," );
             }
             options.delete( options.length() - 1, options.length() );
         }
-        if( m_exports != null && m_exports.length > 0 )
+        if( exports != null && exports.length > 0 )
         {
             if( options.length() > 0 )
             {
                 options.append( "&" );
             }
             options.append( EXPORT_PACKAGE ).append( "=" );
-            for( String entry : m_exports )
+            for( String entry : exports )
             {
                 options.append( entry ).append( "," );
             }
             options.delete( options.length() - 1, options.length() );
         }
-        if( m_instructions != null && m_instructions.length > 0 )
+        if( instructions != null && instructions.length > 0 )
         {
-            for( String entry : m_instructions )
+            for( String entry : instructions )
             {
                 if( options.length() > 0 )
                 {
@@ -158,7 +158,7 @@ public class WrappedUrlProvisionOption
      */
     public WrappedUrlProvisionOption bundleSymbolicName( final String bundleSymbolicName )
     {
-        m_bundleSymbolicName = bundleSymbolicName;
+        this.bundleSymbolicName = bundleSymbolicName;
 
         return this;
     }
@@ -172,7 +172,7 @@ public class WrappedUrlProvisionOption
      */
     public WrappedUrlProvisionOption bundleVersion( final String bundleVersion )
     {
-        m_bundleVersion = bundleVersion;
+        this.bundleVersion = bundleVersion;
 
         return this;
     }
@@ -186,7 +186,7 @@ public class WrappedUrlProvisionOption
      */
     public WrappedUrlProvisionOption imports( final String... imports )
     {
-        m_imports = imports;
+        this.imports = imports;
 
         return this;
     }
@@ -200,7 +200,7 @@ public class WrappedUrlProvisionOption
      */
     public WrappedUrlProvisionOption exports( final String... exports )
     {
-        m_exports = exports;
+        this.exports = exports;
 
         return this;
     }
@@ -214,7 +214,7 @@ public class WrappedUrlProvisionOption
      */
     public WrappedUrlProvisionOption overwriteManifest( final OverwriteMode mode )
     {
-        m_overwriteMode = mode;
+        overwriteMode = mode;
 
         return this;
     }
@@ -228,7 +228,7 @@ public class WrappedUrlProvisionOption
      */
     public WrappedUrlProvisionOption instructions( final String... instructions )
     {
-        m_instructions = instructions;
+        this.instructions = instructions;
 
         return this;
     }

@@ -41,9 +41,9 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
 
     private static Logger LOG = LoggerFactory.getLogger( EagerSingleStagedReactor.class );
 
-    final private List<TestContainer> m_targetContainer;
-    final private List<TestProbeBuilder> m_probes;
-    final private Map<TestAddress, TestContainer> m_map;
+    final private List<TestContainer> targetContainer;
+    final private List<TestProbeBuilder> probes;
+    final private Map<TestAddress, TestContainer> map;
 
     /**
      * @param containers to be used
@@ -51,9 +51,9 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
      */
     public EagerSingleStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
     {
-        m_map = new LinkedHashMap<TestAddress, TestContainer>();
-        m_targetContainer = containers;
-        m_probes = mProbes;
+        map = new LinkedHashMap<TestAddress, TestContainer>();
+        targetContainer = containers;
+        probes = mProbes;
 
         int index = 0;
         for( TestContainer container : containers ) {
@@ -63,7 +63,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
                 for( TestAddress a : builder.getTests() ) {
                     // we need to create a new, because "a" exists for each test container
                     // this new address makes the test (reachable via getTargets() ) reachable directly.
-                    m_map.put( new DefaultTestAddress( a, caption ), container );
+                    map.put( new DefaultTestAddress( a, caption ), container );
                 }
             }
             index++;
@@ -84,10 +84,10 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     
     public void setUp()
     {
-        for( TestContainer container : m_targetContainer ) {
+        for( TestContainer container : targetContainer ) {
             container.start( );
 
-            for( TestProbeBuilder builder : m_probes ) {
+            for( TestProbeBuilder builder : probes ) {
                 LOG.debug( "installing probe " + builder );
 
                 try {
@@ -104,7 +104,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     {
         assert ( address != null ) : "TestAddress must not be null.";
 
-        TestContainer testContainer = m_map.get( address );
+        TestContainer testContainer = map.get( address );
         if( testContainer == null ) {
             throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
         }
@@ -113,12 +113,12 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
 
     public Set<TestAddress> getTargets()
     {
-        return m_map.keySet();
+        return map.keySet();
     }
 
     public void tearDown()
     {
-        for( TestContainer container : m_targetContainer ) {
+        for( TestContainer container : targetContainer ) {
             container.stop();
         }
     }

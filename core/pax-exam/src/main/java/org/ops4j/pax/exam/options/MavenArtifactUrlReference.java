@@ -33,23 +33,23 @@ public class MavenArtifactUrlReference
     /**
      * Artifact group id (cannot be null or empty).
      */
-    private String m_groupId;
+    private String groupId;
     /**
      * Artifact id  (cannot be null or empty).
      */
-    private String m_artifactId;
+    private String artifactId;
     /**
      * Artifact type (can be null case when the default type is used = jar).
      */
-    private String m_type;
+    private String type;
     /**
      * Artifact version/version range (can be null case when latest version will be used).
      */
-    private String m_version;
+    private String version;
     /**
      * Artifact clasifier. Can be null.
      */
-    private String m_classifier;
+    private String classifier;
 
     /**
      * {@inheritDoc}
@@ -57,7 +57,7 @@ public class MavenArtifactUrlReference
     public MavenArtifactUrlReference groupId( final String groupId )
     {
         validateNotEmpty( groupId, true, "Group" );
-        m_groupId = groupId;
+        this.groupId = groupId;
         return this;
     }
 
@@ -67,7 +67,7 @@ public class MavenArtifactUrlReference
     public MavenArtifactUrlReference artifactId( final String artifactId )
     {
         validateNotEmpty( artifactId, true, "Artifact" );
-        m_artifactId = artifactId;
+        this.artifactId = artifactId;
         return this;
     }
 
@@ -77,7 +77,7 @@ public class MavenArtifactUrlReference
     public MavenArtifactUrlReference type( final String type )
     {
         validateNotEmpty( type, true, "Type" );
-        m_type = type;
+        this.type = type;
         return this;
     }
 
@@ -87,7 +87,7 @@ public class MavenArtifactUrlReference
     public MavenUrlReference classifier( String classifier )
     {
         validateNotEmpty( classifier, true, "Classifier" );
-        m_classifier = classifier;
+        this.classifier = classifier;
         return this;
     }
 
@@ -97,7 +97,7 @@ public class MavenArtifactUrlReference
     public MavenArtifactUrlReference version( final String version )
     {
         validateNotEmpty( version, true, "Version" );
-        m_version = version;
+        this.version = version;
         return this;
     }
 
@@ -107,7 +107,7 @@ public class MavenArtifactUrlReference
     public MavenArtifactUrlReference version( final VersionResolver resolver )
     {
         validateNotNull( resolver, "Version resolver" );
-        return version( resolver.getVersion( m_groupId, m_artifactId ) );
+        return version( resolver.getVersion( groupId, artifactId ) );
     }
 
     /**
@@ -123,7 +123,7 @@ public class MavenArtifactUrlReference
      */
     public Boolean isSnapshot()
     {
-        return m_version == null ? null : m_version.endsWith( "SNAPSHOT" );
+        return version == null ? null : version.endsWith( "SNAPSHOT" );
     }
 
     /**
@@ -134,29 +134,29 @@ public class MavenArtifactUrlReference
      */
     public String getURL()
     {
-        validateNotEmpty( m_groupId, true, "Group" );
-        validateNotEmpty( m_artifactId, true, "Artifact" );
+        validateNotEmpty( groupId, true, "Group" );
+        validateNotEmpty( artifactId, true, "Artifact" );
         final StringBuilder url = new StringBuilder();
-        url.append( "mvn:" ).append( m_groupId ).append( "/" ).append( m_artifactId );
-        if( m_version != null || m_type != null || m_classifier != null )
+        url.append( "mvn:" ).append( groupId ).append( "/" ).append( artifactId );
+        if( version != null || type != null || classifier != null )
         {
             url.append( "/" );
         }
-        if( m_version != null )
+        if( version != null )
         {
-            url.append( m_version );
+            url.append( version );
         }
-        if( m_type != null || m_classifier != null )
+        if( type != null || classifier != null )
         {
             url.append( "/" );
         }
-        if( m_type != null )
+        if( type != null )
         {
-            url.append( m_type );
+            url.append( type );
         }
-        if( m_classifier != null )
+        if( classifier != null )
         {
-            url.append( "/" ).append( m_classifier );
+            url.append( "/" ).append( classifier );
         }
         return url.toString();
     }
@@ -169,10 +169,10 @@ public class MavenArtifactUrlReference
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( this.getClass().getSimpleName() );
-        sb.append( "{groupId='" ).append( m_groupId ).append( '\'' );
-        sb.append( ", artifactId='" ).append( m_artifactId ).append( '\'' );
-        sb.append( ", version='" ).append( m_version ).append( '\'' );
-        sb.append( ", type='" ).append( m_type ).append( '\'' );
+        sb.append( "{groupId='" ).append( groupId ).append( '\'' );
+        sb.append( ", artifactId='" ).append( artifactId ).append( '\'' );
+        sb.append( ", version='" ).append( version ).append( '\'' );
+        sb.append( ", type='" ).append( type ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }
@@ -182,11 +182,11 @@ public class MavenArtifactUrlReference
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_artifactId == null ) ? 0 : m_artifactId.hashCode() );
-        result = prime * result + ( ( m_classifier == null ) ? 0 : m_classifier.hashCode() );
-        result = prime * result + ( ( m_groupId == null ) ? 0 : m_groupId.hashCode() );
-        result = prime * result + ( ( m_type == null ) ? 0 : m_type.hashCode() );
-        result = prime * result + ( ( m_version == null ) ? 0 : m_version.hashCode() );
+        result = prime * result + ( ( artifactId == null ) ? 0 : artifactId.hashCode() );
+        result = prime * result + ( ( classifier == null ) ? 0 : classifier.hashCode() );
+        result = prime * result + ( ( groupId == null ) ? 0 : groupId.hashCode() );
+        result = prime * result + ( ( type == null ) ? 0 : type.hashCode() );
+        result = prime * result + ( ( version == null ) ? 0 : version.hashCode() );
         return result;
     }
 
@@ -200,40 +200,40 @@ public class MavenArtifactUrlReference
         if( getClass() != obj.getClass() )
             return false;
         MavenArtifactUrlReference other = (MavenArtifactUrlReference) obj;
-        if( m_artifactId == null )
+        if( artifactId == null )
         {
-            if( other.m_artifactId != null )
+            if( other.artifactId != null )
                 return false;
         }
-        else if( !m_artifactId.equals( other.m_artifactId ) )
+        else if( !artifactId.equals( other.artifactId ) )
             return false;
-        if( m_classifier == null )
+        if( classifier == null )
         {
-            if( other.m_classifier != null )
+            if( other.classifier != null )
                 return false;
         }
-        else if( !m_classifier.equals( other.m_classifier ) )
+        else if( !classifier.equals( other.classifier ) )
             return false;
-        if( m_groupId == null )
+        if( groupId == null )
         {
-            if( other.m_groupId != null )
+            if( other.groupId != null )
                 return false;
         }
-        else if( !m_groupId.equals( other.m_groupId ) )
+        else if( !groupId.equals( other.groupId ) )
             return false;
-        if( m_type == null )
+        if( type == null )
         {
-            if( other.m_type != null )
+            if( other.type != null )
                 return false;
         }
-        else if( !m_type.equals( other.m_type ) )
+        else if( !type.equals( other.type ) )
             return false;
-        if( m_version == null )
+        if( version == null )
         {
-            if( other.m_version != null )
+            if( other.version != null )
                 return false;
         }
-        else if( !m_version.equals( other.m_version ) )
+        else if( !version.equals( other.version ) )
             return false;
         return true;
     }

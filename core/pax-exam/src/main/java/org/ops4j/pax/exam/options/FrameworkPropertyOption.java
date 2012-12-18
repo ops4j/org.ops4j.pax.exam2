@@ -31,11 +31,11 @@ public class FrameworkPropertyOption implements ValueOption<Object>
     /**
      * System property key (cannot be null or empty).
      */
-    private final String m_key;
+    private final String key;
     /**
      * System property value (can be null or empty).
      */
-    private Object m_value;
+    private Object value;
 
     /**
      * Constructor.
@@ -46,8 +46,8 @@ public class FrameworkPropertyOption implements ValueOption<Object>
      */
     public FrameworkPropertyOption( final String key )
     {
-        m_key = key;
-        m_value = "";
+        this.key = key;
+        value = "";
     }
 
     /**
@@ -62,7 +62,7 @@ public class FrameworkPropertyOption implements ValueOption<Object>
     public FrameworkPropertyOption value( final Object value )
     {
         validateNotNull( value, "Value" );
-        m_value = value;
+        this.value = value;
         return this;
     }
 
@@ -73,7 +73,7 @@ public class FrameworkPropertyOption implements ValueOption<Object>
      */
     public String getKey()
     {
-        return m_key;
+        return key;
     }
 
     /**
@@ -83,7 +83,7 @@ public class FrameworkPropertyOption implements ValueOption<Object>
      */
     public Object getValue()
     {
-        return m_value;
+        return value;
     }
 
     /**
@@ -94,8 +94,8 @@ public class FrameworkPropertyOption implements ValueOption<Object>
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( "FrameworkPropertyOption" );
-        sb.append( "{key='" ).append( m_key ).append( '\'' );
-        sb.append( ", value='" ).append( m_value ).append( '\'' );
+        sb.append( "{key='" ).append( key ).append( '\'' );
+        sb.append( ", value='" ).append( value ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }

@@ -23,7 +23,7 @@ import org.ops4j.pax.exam.util.Injector;
 
 public class ContainerTestRunnerBuilder extends RunnerBuilder
 {
-    private Injector m_injector;
+    private Injector injector;
 
     /**
      * Constructs a request for the given class which will be injected with dependencies from
@@ -33,13 +33,13 @@ public class ContainerTestRunnerBuilder extends RunnerBuilder
      */
     public ContainerTestRunnerBuilder( Injector injector )
     {
-        m_injector = injector;
+        this.injector = injector;
     }
 
     @Override
     public Runner runnerForClass( Class<?> testClass ) throws Throwable
     {
-        return new ContainerTestRunner( testClass, m_injector );
+        return new ContainerTestRunner( testClass, injector );
     }
 
 }

@@ -47,38 +47,38 @@ public class DefaultExamReactor implements ExamReactor
 
     private static Logger LOG = LoggerFactory.getLogger( DefaultExamReactor.class );
 
-    final private List<Option[]> m_configurations;
-    final private List<TestProbeBuilder> m_probes;
-    final private TestContainerFactory m_factory;
+    final private List<Option[]> configurations;
+    final private List<TestProbeBuilder> probes;
+    final private TestContainerFactory testContainerFactory;
 
-    final private ExamSystem m_system;
+    final private ExamSystem system;
 
     public DefaultExamReactor( ExamSystem system, TestContainerFactory factory )
     {
-        m_system = system;
-        m_configurations = new ArrayList<Option[]>();
-        m_probes = new ArrayList<TestProbeBuilder>();
-        m_factory = factory;
+        this.system = system;
+        this.configurations = new ArrayList<Option[]>();
+        this.probes = new ArrayList<TestProbeBuilder>();
+        this.testContainerFactory = factory;
     }
 
     synchronized public void addConfiguration( Option[] configuration )
     {
-        m_configurations.add( configuration );
+        configurations.add( configuration );
     }
 
     synchronized public void addProbe( TestProbeBuilder builder )
     {
-        m_probes.add( builder );
+        probes.add( builder );
     }
 
     synchronized public StagedExamReactor stage( StagedExamReactorFactory factory )
         throws IOException
     {
-        LOG.debug( "Staging reactor with probes: " + m_probes.size() + " using strategy: "
+        LOG.debug( "Staging reactor with probes: " + probes.size() + " using strategy: "
                 + factory );
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
-        if( m_configurations.isEmpty() )
+        if( configurations.isEmpty() )
         {
             List<ConfigurationFactory> configurationFactories =
                 ServiceProviderFinder.findServiceProviders( ConfigurationFactory.class );
@@ -88,17 +88,17 @@ public class DefaultExamReactor implements ExamReactor
                 addConfiguration( configuration );
             }
         }
-        if( m_configurations.isEmpty() )
+        if( configurations.isEmpty() )
         {
             LOG.debug( "No configuration given. Setting an empty one." );
-            m_configurations.add( options() );
+            configurations.add( options() );
         }
-        for( Option[] config : m_configurations )
+        for( Option[] config : configurations )
         {
-            containers.addAll( Arrays.asList( m_factory.create( m_system.fork( config ) ) ) );
+            containers.addAll( Arrays.asList( testContainerFactory.create( system.fork( config ) ) ) );
         }
 
-        return factory.create( containers, m_probes );
+        return factory.create( containers, probes );
     }
 
 }

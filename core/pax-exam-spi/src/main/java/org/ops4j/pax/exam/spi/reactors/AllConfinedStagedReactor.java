@@ -32,8 +32,8 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 public class AllConfinedStagedReactor implements StagedExamReactor
 {
 
-    final private List<TestProbeBuilder> m_probes;
-    final private Map<TestAddress, TestContainer> m_map;
+    final private List<TestProbeBuilder> probes;
+    final private Map<TestAddress, TestContainer> map;
 
     /**
      * @param containers to be used
@@ -41,17 +41,17 @@ public class AllConfinedStagedReactor implements StagedExamReactor
      */
     public AllConfinedStagedReactor( List<TestContainer> containers, List<TestProbeBuilder> mProbes )
     {
-        m_probes = mProbes;
-        m_map = new LinkedHashMap<TestAddress, TestContainer>();
+        probes = mProbes;
+        map = new LinkedHashMap<TestAddress, TestContainer>();
         int index = 0;
         for ( TestContainer container : containers )
         {
             String caption = buildCaption(containers, container, index);
-            for ( TestProbeBuilder builder : m_probes )
+            for ( TestProbeBuilder builder : probes )
             {
                 for ( TestAddress a : builder.getTests() )
                 {
-                    m_map.put( new DefaultTestAddress( a, caption ), container );
+                    map.put( new DefaultTestAddress( a, caption ), container );
                 }
             }
             index++;
@@ -78,7 +78,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
     {
         assert (address != null) : "TestAddress must not be null.";
         // you can directly invoke:
-        TestContainer container = m_map.get( address );
+        TestContainer container = map.get( address );
         if ( container == null )
         {
             throw new IllegalArgumentException( "TestAddress " + address + " not from this reactor? Got it from getTargets() really?" );
@@ -86,7 +86,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
         container.start(  );
         try
         {
-            for ( TestProbeBuilder builder : m_probes )
+            for ( TestProbeBuilder builder : probes )
             {
                 container.install( builder.build().getStream() );
             }
@@ -100,7 +100,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor
 
     public Set<TestAddress> getTargets()
     {
-        return m_map.keySet();
+        return map.keySet();
     }
 
     public void tearDown()

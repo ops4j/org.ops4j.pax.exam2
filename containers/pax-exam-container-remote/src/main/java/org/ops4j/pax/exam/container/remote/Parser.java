@@ -26,18 +26,18 @@ import static org.ops4j.pax.exam.OptionUtils.*;
  */ 
 public class Parser
 {
-    private String m_host;
+    private String host;
 
-    private Integer m_port;
+    private Integer port;
 
-    private long m_timeout;
+    private long timeout;
 
     public Parser( Option[] options )
     {
         extractArguments( filter( RBCPortOption.class, options ) );
         extractArguments( filter( RBCLookupTimeoutOption.class, options ) );
-        assert m_port != null : "Port should never be null.";
-        assert m_host != null : "Host should never be null.";
+        assert port != null : "Port should never be null.";
+        assert host != null : "Host should never be null.";
 
     }
 
@@ -45,7 +45,7 @@ public class Parser
     {
         for( RBCLookupTimeoutOption op : options )
         {
-            m_timeout = op.getTimeout();
+            timeout = op.getTimeout();
         }
     }
 
@@ -53,28 +53,28 @@ public class Parser
     {
         for( RBCPortOption op : rbcPortOptions )
         {
-            m_host = op.getHost();
-            m_port = op.getPort();
+            host = op.getHost();
+            port = op.getPort();
         }
     }
 
     public String getHost()
     {
-        return m_host;
+        return host;
     }
 
     public Integer getRMIPort()
     {
-        return m_port;
+        return port;
     }
 
     public long getRMILookupTimpout()
     {
-        return m_timeout;
+        return timeout;
     }
 
     public Integer getPort()
     {
-        return m_port;
+        return port;
     }
 }

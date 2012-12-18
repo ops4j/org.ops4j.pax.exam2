@@ -29,19 +29,19 @@ import org.ops4j.pax.exam.ProbeInvoker;
 public class Probe
 {
 
-    private final String m_service;
-    private final ProbeInvoker m_impl;
-    private final Dictionary<?, ?> m_dict;
+    private final String service;
+    private final ProbeInvoker impl;
+    private final Dictionary<?, ?> dict;
 
     public Probe( String service, ProbeInvoker impl, Dictionary<?, ?> dict )
     {
-        m_service = service;
-        m_impl = impl;
-        m_dict = dict;
+        this.service = service;
+        this.impl = impl;
+        this.dict = dict;
     }
 
     public ServiceRegistration register( BundleContext ctx )
     {
-        return ctx.registerService( m_service, m_impl, m_dict );
+        return ctx.registerService( service, impl, dict );
     }
 }

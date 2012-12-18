@@ -33,11 +33,11 @@ public class OptionalCompositeOption
     /**
      * Boolean condition to evaluate. Cannot be null;
      */
-    private final Condition m_condition;
+    private final Condition condition;
     /**
      * Options holder. Cannot be null.
      */
-    private final DefaultCompositeOption m_composite;
+    private final DefaultCompositeOption composite;
 
     /**
      * Constructor.
@@ -46,8 +46,8 @@ public class OptionalCompositeOption
      */
     public OptionalCompositeOption( final Condition condition )
     {
-        m_condition = condition;
-        m_composite = new DefaultCompositeOption();
+        this.condition = condition;
+        composite = new DefaultCompositeOption();
     }
 
     /**
@@ -69,7 +69,7 @@ public class OptionalCompositeOption
      */
     public OptionalCompositeOption useOptions( final Option... options )
     {
-        m_composite.add( options );
+        composite.add( options );
         return this;
     }
 
@@ -79,9 +79,9 @@ public class OptionalCompositeOption
      */
     public Option[] getOptions()
     {
-        if( m_condition.evaluate() )
+        if( condition.evaluate() )
         {
-            return m_composite.getOptions();
+            return composite.getOptions();
         }
         return new Option[0];
     }
@@ -92,8 +92,8 @@ public class OptionalCompositeOption
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_composite == null ) ? 0 : m_composite.hashCode() );
-        result = prime * result + ( ( m_condition == null ) ? 0 : m_condition.hashCode() );
+        result = prime * result + ( ( composite == null ) ? 0 : composite.hashCode() );
+        result = prime * result + ( ( condition == null ) ? 0 : condition.hashCode() );
         return result;
     }
 
@@ -107,19 +107,19 @@ public class OptionalCompositeOption
         if( getClass() != obj.getClass() )
             return false;
         OptionalCompositeOption other = (OptionalCompositeOption) obj;
-        if( m_composite == null )
+        if( composite == null )
         {
-            if( other.m_composite != null )
+            if( other.composite != null )
                 return false;
         }
-        else if( !m_composite.equals( other.m_composite ) )
+        else if( !composite.equals( other.composite ) )
             return false;
-        if( m_condition == null )
+        if( condition == null )
         {
-            if( other.m_condition != null )
+            if( other.condition != null )
                 return false;
         }
-        else if( !m_condition.equals( other.m_condition ) )
+        else if( !condition.equals( other.condition ) )
             return false;
         return true;
     }
@@ -148,7 +148,7 @@ public class OptionalCompositeOption
         /**
          * Boolean condition.
          */
-        private final boolean m_condition;
+        private final boolean condition;
 
         /**
          * Constructor.
@@ -157,7 +157,7 @@ public class OptionalCompositeOption
          */
         public BooleanCondition( final boolean condition )
         {
-            m_condition = condition;
+            this.condition = condition;
         }
 
         /**
@@ -165,7 +165,7 @@ public class OptionalCompositeOption
          */
         public boolean evaluate()
         {
-            return m_condition;
+            return condition;
         }
 
         @Override
@@ -173,7 +173,7 @@ public class OptionalCompositeOption
         {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ( m_condition ? 1231 : 1237 );
+            result = prime * result + ( condition ? 1231 : 1237 );
             return result;
         }
 
@@ -187,7 +187,7 @@ public class OptionalCompositeOption
             if( getClass() != obj.getClass() )
                 return false;
             BooleanCondition other = (BooleanCondition) obj;
-            if( m_condition != other.m_condition )
+            if( condition != other.condition )
                 return false;
             return true;
         }

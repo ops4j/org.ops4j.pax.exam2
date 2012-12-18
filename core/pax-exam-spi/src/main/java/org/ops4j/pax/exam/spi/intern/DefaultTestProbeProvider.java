@@ -32,35 +32,35 @@ import org.ops4j.store.Store;
  */
 public class DefaultTestProbeProvider implements TestProbeProvider
 {
-    private Set<TestAddress> m_tests;
-    private Handle m_probe;
-    private Store<InputStream> m_store;
-    private String m_formattedInfo = "";
+    private Set<TestAddress> tests;
+    private Handle probe;
+    private Store<InputStream> store;
+    private String formattedInfo = "";
 
     public DefaultTestProbeProvider( Set<TestAddress> tests, Store<InputStream> store, Handle probe )
     {
-        m_tests = tests;
-        m_store = store;
-        m_probe = probe;
+        this.tests = tests;
+        this.store = store;
+        this.probe = probe;
 
         // Prepare text info
-        m_formattedInfo = constuctInfo();
+        formattedInfo = constuctInfo();
     }
 
     public Set<TestAddress> getTests()
     {
-        return m_tests;
+        return tests;
     }
 
     public InputStream getStream()
         throws IOException
     {
-        return m_store.load( m_probe );
+        return store.load( probe );
     }
 
     public String toString()
     {
-        return m_formattedInfo;
+        return formattedInfo;
     }
 
     // TODO: use some flat JSON Tree Model so we don't have to mess with formatting here.
@@ -70,15 +70,15 @@ public class DefaultTestProbeProvider implements TestProbeProvider
         String info = "";
         try
         {
-            info += "[Probe ID: " + m_probe.getIdentification() + "]\n";
-            info += "[Probe Location: " + m_store.getLocation( m_probe ).toASCIIString() + "]\n";
+            info += "[Probe ID: " + probe.getIdentification() + "]\n";
+            info += "[Probe Location: " + store.getLocation( probe ).toASCIIString() + "]\n";
 
-            in = new JarInputStream( m_store.load( m_probe ) );
+            in = new JarInputStream( store.load( probe ) );
             Manifest man = in.getManifest();
             Attributes mainAttributes = man.getMainAttributes();
 
             info += "[Tests: " + "\n";
-            for( TestAddress t : m_tests )
+            for( TestAddress t : tests )
             {
                 info += "    SIG=" + t + "\n";
             }

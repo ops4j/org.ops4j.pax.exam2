@@ -56,24 +56,24 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     private static final String DEFAULT_PROBE_METHOD_NAME = "probe";
 
-    private final Map<TestAddress, TestInstantiationInstruction> m_probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
-    private final List<Class<?>> m_anchors;
-    private final Properties m_extraProperties;
-    private final Set<String> m_ignorePackages = new HashSet<String>();
-    private final Store<InputStream> m_store;
+    private final Map<TestAddress, TestInstantiationInstruction> probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
+    private final List<Class<?>> anchors;
+    private final Properties extraProperties;
+    private final Set<String> ignorePackages = new HashSet<String>();
+    private final Store<InputStream> store;
 
     public TestProbeBuilderImpl( Store<InputStream> store )
         throws IOException
     {
-        m_anchors = new ArrayList<Class<?>>();
-        m_store = store;
-        m_extraProperties = new Properties( );
+        anchors = new ArrayList<Class<?>>();
+        this.store = store;
+        extraProperties = new Properties( );
     }
 
     public TestAddress addTest( Class<?> clazz, String methodName, Object... args )
     {
         TestAddress address = new DefaultTestAddress( clazz.getName() + "." + methodName, args );
-        m_probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
+        probeCalls.put( address, new TestInstantiationInstruction( clazz.getName() + ";" + methodName ) );
         addAnchor( clazz );
         return address;
     }
@@ -94,13 +94,13 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     public TestProbeBuilder addAnchor( Class<?> clazz )
     {
-        m_anchors.add( clazz );
+        anchors.add( clazz );
         return this;
     }
 
     public TestProbeBuilder setHeader( String key, String value )
     {
-        m_extraProperties.put( key, value );
+        extraProperties.put( key, value );
         return this;
     }
 
@@ -110,7 +110,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     public TestProbeBuilder ignorePackageOf( Class<?>... classes )
     {
         for( Class<?> c : classes ) {
-            m_ignorePackages.add( c.getPackage().getName() );
+            ignorePackages.add( c.getPackage().getName() );
         }
 
         return this;
@@ -118,17 +118,17 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     public TestProbeProvider build()
     {
-        if( m_anchors.size() == 0 ) {
+        if( anchors.size() == 0 ) {
             throw new TestContainerException( "No tests added to setup!" );
         }
 
-        constructProbeTag( m_extraProperties );
+        constructProbeTag( extraProperties );
         try {
             TinyBundle bundle = prepareProbeBundle( createExtraIgnores() );
             return new DefaultTestProbeProvider(
                 getTests(),
-                m_store,
-                m_store.store( bundle.build( withClassicBuilder() ) )
+                store,
+                store.store( bundle.build( withClassicBuilder() ) )
             );
 
         } catch( IOException e ) {
@@ -139,12 +139,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private TinyBundle prepareProbeBundle( Properties p )
         throws IOException
     {
-        TinyBundle bundle = bundle(m_store).set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
+        TinyBundle bundle = bundle(store).set( Constants.DYNAMICIMPORT_PACKAGE, "*" );
 
         bundle.set( Constants.BUNDLE_SYMBOLICNAME,"" );
         bundle.set( Constants.BUNDLE_MANIFESTVERSION, "2" );
-        for( Object key : m_extraProperties.keySet() ) {
-            bundle.set( (String) key, (String) m_extraProperties.get( key ) );
+        for( Object key : extraProperties.keySet() ) {
+            bundle.set( (String) key, (String) extraProperties.get( key ) );
         }
         for( Object key : p.keySet() ) {
             bundle.set( (String) key, (String) p.get( key ) );
@@ -202,26 +202,26 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private ContentCollector selectCollector()
         throws IOException
     {
-        File root = findClassesFolder( m_anchors.get( 0 ) );
+        File root = findClassesFolder( anchors.get( 0 ) );
 
         if( root != null ) {
-            return new CompositeCollector( new CollectFromBase( root ), new CollectFromItems( m_anchors ) );
+            return new CompositeCollector( new CollectFromBase( root ), new CollectFromItems( anchors ) );
         }
         else {
-            return new CollectFromItems( m_anchors );
+            return new CollectFromItems( anchors );
         }
     }
 
     public Set<TestAddress> getTests()
     {
-        return m_probeCalls.keySet();
+        return probeCalls.keySet();
     }
 
     private Properties createExtraIgnores()
     {
         Properties extraProperties = new Properties();
         StringBuilder sb = new StringBuilder();
-        for( String p : m_ignorePackages ) {
+        for( String p : ignorePackages ) {
             if( sb.length() > 0 ) {
                 sb.append( "," );
             }
@@ -236,10 +236,10 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         // construct out of added Tests
         StringBuilder sbKeyChain = new StringBuilder();
 
-        for( TestAddress address : m_probeCalls.keySet() ) {
+        for( TestAddress address : probeCalls.keySet() ) {
             sbKeyChain.append( address.identifier() );
             sbKeyChain.append( "," );
-            p.put( address.identifier(), m_probeCalls.get( address ).toString() );
+            p.put( address.identifier(), probeCalls.get( address ).toString() );
         }
         p.put( PROBE_EXECUTABLE, sbKeyChain.toString() );
     }

@@ -10,24 +10,24 @@ public class CleanCachesOption implements ValueOption<Boolean>
 {
 
     private static final Boolean DEFAULT_VALUE = Boolean.TRUE;
-    private Boolean m_value;
+    private Boolean value;
 
     public CleanCachesOption() {
-         m_value = DEFAULT_VALUE;
+         value = DEFAULT_VALUE;
     }
     
     public CleanCachesOption(Boolean value) {
-        m_value = value;
+        this.value = value;
    }
     
     public CleanCachesOption setValue(Boolean value) {
-        m_value = value;
+        this.value = value;
         return this;
     }
     
     public Boolean getValue()
     {
-         return m_value;
+         return value;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class CleanCachesOption implements ValueOption<Boolean>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_value == null ) ? 0 : m_value.hashCode() );
+        result = prime * result + ( ( value == null ) ? 0 : value.hashCode() );
         return result;
     }
 
@@ -49,12 +49,12 @@ public class CleanCachesOption implements ValueOption<Boolean>
         if( getClass() != obj.getClass() )
             return false;
         CleanCachesOption other = (CleanCachesOption) obj;
-        if( m_value == null )
+        if( value == null )
         {
-            if( other.m_value != null )
+            if( other.value != null )
                 return false;
         }
-        else if( !m_value.equals( other.m_value ) )
+        else if( !value.equals( other.value ) )
             return false;
         return true;
     }

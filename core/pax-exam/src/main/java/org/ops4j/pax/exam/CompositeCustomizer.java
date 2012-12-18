@@ -30,17 +30,17 @@ import java.io.InputStream;
 public class CompositeCustomizer extends Customizer
 {
 
-    private final Customizer[] m_customizers;
+    private final Customizer[] customizers;
 
     public CompositeCustomizer( Customizer[] customizers )
     {
-        m_customizers = customizers;
+        this.customizers = customizers;
     }
 
     @Override
     public void customizeEnvironment( File workingFolder )
     {
-        for( Customizer cust : m_customizers )
+        for( Customizer cust : customizers )
         {
             cust.customizeEnvironment( workingFolder );
         }
@@ -51,7 +51,7 @@ public class CompositeCustomizer extends Customizer
         throws Exception
     {
         InputStream inputStream = testProbe;
-        for( Customizer cust : m_customizers )
+        for( Customizer cust : customizers )
         {
             inputStream = cust.customizeTestProbe( inputStream );
         }

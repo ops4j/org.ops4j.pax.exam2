@@ -32,7 +32,7 @@ public class SystemPackageOption
     /**
      * System package (cannot be null or empty).
      */
-    private final String m_package;
+    private final String pkg;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public class SystemPackageOption
     public SystemPackageOption( final String pkg )
     {
         validateNotEmpty( pkg, true, "Package" );
-        m_package = pkg;
+        this.pkg = pkg;
     }
 
     /**
@@ -54,7 +54,7 @@ public class SystemPackageOption
      */
     public String getPackage()
     {
-        return m_package;
+        return pkg;
     }
     
     /**
@@ -75,7 +75,7 @@ public class SystemPackageOption
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( "SystemPackageOption" );
-        sb.append( "{package='" ).append( m_package ).append( '\'' );
+        sb.append( "{package='" ).append( pkg ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }

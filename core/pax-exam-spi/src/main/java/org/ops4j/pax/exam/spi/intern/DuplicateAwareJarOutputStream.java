@@ -30,7 +30,7 @@ import java.util.zip.ZipEntry;
  * If someone tries to do so, it just does not write anything.
  * Be aware that this could be a source of trouble - but it simplifies merging jars with first come first serve policy.
  * <p/>
- * Implementation note: some silly class init starvation prevents constructor initialization of m_entrynames..
+ * Implementation note: some silly class init starvation prevents constructor initialization of entrynames..
  *
  * @author Toni Menzel (tonit)
  * @since May 29, 2008
@@ -38,8 +38,8 @@ import java.util.zip.ZipEntry;
 public class DuplicateAwareJarOutputStream extends JarOutputStream
 {
 
-    private Set<String> m_entrynames;
-    private boolean m_writable = false;
+    private Set<String> entrynames;
+    private boolean writable = false;
 
     public DuplicateAwareJarOutputStream( OutputStream outputStream, Manifest manifest )
         throws IOException
@@ -56,7 +56,7 @@ public class DuplicateAwareJarOutputStream extends JarOutputStream
     public void write( int i )
         throws IOException
     {
-        if( m_writable )
+        if( writable )
         {
             super.write( i );
         }
@@ -65,7 +65,7 @@ public class DuplicateAwareJarOutputStream extends JarOutputStream
     public synchronized void write( byte[] bytes, int i, int i1 )
         throws IOException
     {
-        if( m_writable )
+        if( writable )
         {
             super.write( bytes, i, i1 );
         }
@@ -74,7 +74,7 @@ public class DuplicateAwareJarOutputStream extends JarOutputStream
     public void write( byte[] bytes )
         throws IOException
     {
-        if( m_writable )
+        if( writable )
         {
             super.write( bytes );
         }
@@ -83,19 +83,19 @@ public class DuplicateAwareJarOutputStream extends JarOutputStream
     public void putNextEntry( ZipEntry zipEntry )
         throws IOException
     {
-        if( m_entrynames == null )
+        if( entrynames == null )
         {
-            m_entrynames = new HashSet<String>();
+            entrynames = new HashSet<String>();
         }
 
-        if( m_entrynames.add( zipEntry.getName() ) )
+        if( entrynames.add( zipEntry.getName() ) )
         {
             super.putNextEntry( zipEntry );
-            m_writable = true;
+            writable = true;
         }
         else
         {
-            m_writable = false;
+            writable = false;
         }
     }
 }

@@ -32,7 +32,7 @@ public class RawUrlReference
     /**
      * Provision url (cannot be null or empty).
      */
-    private final String m_url;
+    private final String url;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public class RawUrlReference
     public RawUrlReference( final String url )
     {
         validateNotEmpty( url, true, "URL" );
-        m_url = url;
+        this.url = url;
     }
 
     /**
@@ -52,7 +52,7 @@ public class RawUrlReference
      */
     public String getURL()
     {
-        return m_url;
+        return url;
     }
 
     /**
@@ -63,7 +63,7 @@ public class RawUrlReference
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( this.getClass().getSimpleName() );
-        sb.append( "{url='" ).append( m_url ).append( '\'' );
+        sb.append( "{url='" ).append( url ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }
@@ -73,7 +73,7 @@ public class RawUrlReference
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( m_url == null ) ? 0 : m_url.hashCode() );
+        result = prime * result + ( ( url == null ) ? 0 : url.hashCode() );
         return result;
     }
 
@@ -87,12 +87,12 @@ public class RawUrlReference
         if( getClass() != obj.getClass() )
             return false;
         RawUrlReference other = (RawUrlReference) obj;
-        if( m_url == null )
+        if( url == null )
         {
-            if( other.m_url != null )
+            if( other.url != null )
                 return false;
         }
-        else if( !m_url.equals( other.m_url ) )
+        else if( !url.equals( other.url ) )
             return false;
         return true;
     }

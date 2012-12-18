@@ -33,11 +33,11 @@ public class BootClasspathLibraryOption
     /**
      * Library url (cannot be null).
      */
-    private final UrlReference m_libraryUrl;
+    private final UrlReference libraryUrl;
     /**
      * If the library should be in classpath after framework jar.
      */
-    private boolean m_append;
+    private boolean append;
 
     /**
      * Constructor.
@@ -61,8 +61,8 @@ public class BootClasspathLibraryOption
     public BootClasspathLibraryOption( final UrlReference libraryUrl )
     {
         validateNotNull( libraryUrl, "URL" );
-        m_libraryUrl = libraryUrl;
-        m_append = true;
+        this.libraryUrl = libraryUrl;
+        append = true;
     }
 
     /**
@@ -72,7 +72,7 @@ public class BootClasspathLibraryOption
      */
     public BootClasspathLibraryOption beforeFramework()
     {
-        m_append = false;
+        append = false;
         return itself();
     }
 
@@ -83,7 +83,7 @@ public class BootClasspathLibraryOption
      */
     public BootClasspathLibraryOption afterFramework()
     {
-        m_append = true;
+        append = true;
         return itself();
     }
 
@@ -94,7 +94,7 @@ public class BootClasspathLibraryOption
      */
     public UrlReference getLibraryUrl()
     {
-        return m_libraryUrl;
+        return libraryUrl;
     }
 
     /**
@@ -104,7 +104,7 @@ public class BootClasspathLibraryOption
      */
     public boolean isBeforeFramework()
     {
-        return !m_append;
+        return !append;
     }
 
     /**
@@ -114,7 +114,7 @@ public class BootClasspathLibraryOption
      */
     public boolean isAfterFramework()
     {
-        return m_append;
+        return append;
     }
 
     /**
@@ -125,8 +125,8 @@ public class BootClasspathLibraryOption
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( "BootClasspathOption" );
-        sb.append( "{url=" ).append( m_libraryUrl );
-        sb.append( ", append=" ).append( m_append );
+        sb.append( "{url=" ).append( libraryUrl );
+        sb.append( ", append=" ).append( append );
         sb.append( '}' );
         return sb.toString();
     }

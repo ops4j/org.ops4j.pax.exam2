@@ -52,15 +52,15 @@ public class Activator
     /**
      * RMI registry.
      */
-    private Registry m_registry;
+    private Registry registry;
     /**
      * Strong reference to {@link RemoteBundleContext}.
      * !Note: this must be here otherwise JVM will garbage collect it and this will result in an
      * java.rmi.NoSuchObjectException: no such object in table
      */
-    private volatile RemoteBundleContext m_remoteBundleContext;
+    private volatile RemoteBundleContext remoteBundleContext;
     
-    private Thread m_registerRBCThread;
+    private Thread registerRBCThread;
 
     /**
      * {@inheritDoc}
@@ -76,7 +76,7 @@ public class Activator
         	return;
         }
         //!! Absolutely necessary for RMIClassLoading to work
-        m_registerRBCThread = new Thread( new Runnable() {
+        registerRBCThread = new Thread( new Runnable() {
 
             public void run()
             {
@@ -97,7 +97,7 @@ public class Activator
             }
         }
         );
-        m_registerRBCThread.start();
+        registerRBCThread.start();
 
     }
 
@@ -118,9 +118,9 @@ public class Activator
                         String name = getName();
 
                         LOG.debug( "Trying to find registry on [host=" + host + " port=" + port + "]" );
-                        m_registry = LocateRegistry.getRegistry( getHost(), getPort() );
+                        registry = LocateRegistry.getRegistry( getHost(), getPort() );
 
-                        bindRBC( m_registry, name, bundleContext );
+                        bindRBC( registry, name, bundleContext );
                         LOG.debug( "Container with name " + name + " has added its RBC" );
 
                         return null;
@@ -139,7 +139,7 @@ public class Activator
         throws RemoteException, BundleException
     {
         LOG.debug( "Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name + " to RMI registry" );
-        Remote remoteStub = UnicastRemoteObject.exportObject( m_remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), 0 );
+        Remote remoteStub = UnicastRemoteObject.exportObject( remoteBundleContext = new RemoteBundleContextImpl( bundleContext.getBundle( 0 ).getBundleContext() ), 0 );
         registry.rebind( getName(), remoteStub );
     }
 
@@ -149,15 +149,15 @@ public class Activator
     public synchronized void stop( BundleContext bundleContext )
         throws Exception
     {
-    	if (m_registerRBCThread != null) {
-	        m_registerRBCThread.interrupt();
+    	if (registerRBCThread != null) {
+	        registerRBCThread.interrupt();
 	        String name = getName();
-	        m_registry.unbind( name );
-	        UnicastRemoteObject.unexportObject( m_remoteBundleContext, true );
+	        registry.unbind( name );
+	        UnicastRemoteObject.unexportObject( remoteBundleContext, true );
 	
-	        // UnicastRemoteObject.unexportObject( m_registry, true );
-	        m_registry = null;
-	        m_remoteBundleContext = null;
+	        // UnicastRemoteObject.unexportObject( registry, true );
+	        registry = null;
+	        remoteBundleContext = null;
 	        LOG.debug( "Container with name " + name + " has removed its RBC" );
     	}
     }

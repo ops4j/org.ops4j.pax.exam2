@@ -11,15 +11,15 @@ import org.ops4j.pax.exam.Option;
 public class WorkingDirectoryOption implements Option
 {
 
-    final private String m_workingDirectory;
+    final private String workingDirectory;
 
     public WorkingDirectoryOption( String directory )
     {
-        m_workingDirectory = directory;
+        workingDirectory = directory;
     }
 
     public String getWorkingDirectory()
     {
-        return m_workingDirectory;
+        return workingDirectory;
     }
 }

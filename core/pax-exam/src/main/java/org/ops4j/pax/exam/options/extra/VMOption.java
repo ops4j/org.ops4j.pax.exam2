@@ -33,7 +33,7 @@ public class VMOption
     /**
      * Virtual machine option. Cannot be null or empty.
      */
-    private final String m_option;
+    private final String option;
 
     /**
      * Constructor.
@@ -45,7 +45,7 @@ public class VMOption
     public VMOption( final String option )
     {
         validateNotEmpty( option, true, "VM option" );
-        m_option = option;
+        this.option = option;
     }
 
     /**
@@ -55,7 +55,7 @@ public class VMOption
      */
     public String getOption()
     {
-        return m_option;
+        return option;
     }
 
     /**
@@ -66,7 +66,7 @@ public class VMOption
     {
         final StringBuilder sb = new StringBuilder();
         sb.append( "VMOption" );
-        sb.append( "{option='" ).append( m_option ).append( '\'' );
+        sb.append( "{option='" ).append( option ).append( '\'' );
         sb.append( '}' );
         return sb.toString();
     }

@@ -44,8 +44,8 @@ import com.sun.jersey.api.client.WebResource;
  */
 public class ServletBridgeProbeInvoker implements ProbeInvoker
 {
-    private String m_clazz;
-    private String m_method;
+    private String clazz;
+    private String method;
     private WebResource testRunner;
 
     public ServletBridgeProbeInvoker( String encodedInstruction )
@@ -58,8 +58,8 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker
             {
                 throw new TestContainerException( "invalid test instruction: " + encodedInstruction );
             }
-            m_clazz = parts[0];
-            m_method = parts[1];
+            clazz = parts[0];
+            method = parts[1];
             URI contextRoot = new URI( parts[2] );
             this.testRunner = getTestRunner( contextRoot );
         }
@@ -74,7 +74,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker
         Class<?> testClass;
         try
         {
-            testClass = getClass().getClassLoader().loadClass( m_clazz );
+            testClass = getClass().getClassLoader().loadClass( clazz );
         }
         catch ( ClassNotFoundException e )
         {
@@ -83,7 +83,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker
 
         if( !( findAndInvoke( testClass ) ) )
         {
-            throw new TestContainerException( " Test " + m_method + " not found in test class "
+            throw new TestContainerException( " Test " + method + " not found in test class "
                     + testClass.getName() );
         }
     }
@@ -96,7 +96,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker
             // find matching method
             for( Method m : testClass.getMethods() )
             {
-                if( m.getName().equals( m_method ) )
+                if( m.getName().equals( method ) )
                 {
                     // we assume its correct:
                     invokeViaJUnit( testClass, m );

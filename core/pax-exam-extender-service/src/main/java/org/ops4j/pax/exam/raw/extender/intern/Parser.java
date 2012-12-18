@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class Parser {
     final private Logger LOG = LoggerFactory.getLogger(Probe.class);
 
-    final private Probe[] m_probes;
+    final private Probe[] probes;
 
     public Parser(BundleContext ctx, String sigs, List<ManifestEntry> manifestEntries) {
         List<String> signatures = new ArrayList<String>();
@@ -54,7 +54,7 @@ public class Parser {
             }
         }
 
-        m_probes = probes.toArray(new Probe[probes.size()]);
+        this.probes = probes.toArray(new Probe[probes.size()]);
     }
 
     private Probe make(BundleContext ctx, String sig, String expr) {
@@ -81,6 +81,6 @@ public class Parser {
     }
 
     public Probe[] getProbes() {
-        return m_probes;
+        return probes;
     }
 }

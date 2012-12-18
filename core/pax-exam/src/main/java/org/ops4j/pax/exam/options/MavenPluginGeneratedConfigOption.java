@@ -11,18 +11,18 @@ import org.ops4j.pax.exam.Option;
 public class MavenPluginGeneratedConfigOption implements Option
 {
 
-    private URL m_url;
+    private URL url;
 
     public MavenPluginGeneratedConfigOption( URL url )
 
     {
         validateNotNull( url, "url" );
-        m_url = url;
+        this.url = url;
     }
 
     public URL getURL()
     {
-        return m_url;
+        return url;
     }
 
 }

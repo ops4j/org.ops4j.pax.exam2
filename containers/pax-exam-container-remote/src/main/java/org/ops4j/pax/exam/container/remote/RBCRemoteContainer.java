@@ -33,21 +33,21 @@ import org.ops4j.pax.exam.TimeoutException;
 public class RBCRemoteContainer implements TestContainer
 {
 
-    final private TestContainer m_target;
+    final private TestContainer target;
 
     public RBCRemoteContainer( final TestContainer target )
     {
-        m_target = target;
+        this.target = target;
     }
 
     public void call( TestAddress address )
     {
-        m_target.call( address );
+        target.call( address );
     }
 
     public long install( String location, InputStream stream )
     {
-        return m_target.install( location, stream );
+        return target.install( location, stream );
     }
     
     public long install( InputStream stream )
@@ -71,6 +71,6 @@ public class RBCRemoteContainer implements TestContainer
     @Override
     public String toString()
     {
-        return "Remote:" + m_target.toString();
+        return "Remote:" + target.toString();
     }
 }

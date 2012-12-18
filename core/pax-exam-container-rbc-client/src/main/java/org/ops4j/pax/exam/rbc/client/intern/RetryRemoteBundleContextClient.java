@@ -37,15 +37,15 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
     private static final Logger LOG = LoggerFactory.getLogger( RetryRemoteBundleContextClient.class );
     private static final int RETRY_WAIT = 500;
 
-    final private RemoteBundleContextClient m_proxy;
+    final private RemoteBundleContextClient proxy;
 
-    final private int m_maxRetry;
+    final private int maxRetry;
 
     public RetryRemoteBundleContextClient( final RemoteBundleContextClient client, int maxRetries )
     {
-        m_maxRetry = maxRetries;
+        maxRetry = maxRetries;
 
-        m_proxy = (RemoteBundleContextClient) Proxy.newProxyInstance(
+        proxy = (RemoteBundleContextClient) Proxy.newProxyInstance(
             getClass().getClassLoader(),
             new Class<?>[]{ RemoteBundleContextClient.class },
             new InvocationHandler() {
@@ -79,7 +79,7 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
                                 throw lastError;
                             }
                         }
-                    } while( retry && m_maxRetry > triedTimes );
+                    } while( retry && maxRetry > triedTimes );
                     // check if we need to throw an exception:
 
                     if( ( retry ) && ( lastError != null ) ) {
@@ -95,36 +95,36 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
 
     public long install( String location, InputStream stream )
     {
-        return m_proxy.install( location, stream );
+        return proxy.install( location, stream );
     }
 
     public void cleanup()
     {
-        m_proxy.cleanup();
+        proxy.cleanup();
     }
 
     public void setBundleStartLevel( long bundleId, int startLevel )
     {
-        m_proxy.setBundleStartLevel( bundleId, startLevel );
+        proxy.setBundleStartLevel( bundleId, startLevel );
     }
 
     public void start()
     {
-        m_proxy.start();
+        proxy.start();
     }
 
     public void stop()
     {
-        m_proxy.stop();
+        proxy.stop();
     }
 
     public void waitForState( long bundleId, int state, RelativeTimeout timeout )
     {
-        m_proxy.waitForState( bundleId, state, timeout );
+        proxy.waitForState( bundleId, state, timeout );
     }
 
     public void call( TestAddress address )
     {
-        m_proxy.call( address );
+        proxy.call( address );
     }
 }

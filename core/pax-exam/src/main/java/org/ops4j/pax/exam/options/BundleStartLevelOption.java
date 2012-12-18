@@ -32,7 +32,7 @@ public class BundleStartLevelOption
     /**
      * Start level.
      */
-    private final int m_startLevel;
+    private final int startLevel;
 
     /**
      * Constructor.
@@ -47,7 +47,7 @@ public class BundleStartLevelOption
         {
             throw new IllegalArgumentException( "Start level must be bigger then zero" );
         }
-        m_startLevel = startLevel;
+        this.startLevel = startLevel;
     }
 
     /**
@@ -57,7 +57,7 @@ public class BundleStartLevelOption
      */
     public int getStartLevel()
     {
-        return m_startLevel;
+        return startLevel;
     }
 
     /**
@@ -68,7 +68,7 @@ public class BundleStartLevelOption
     {
         return new StringBuilder()
             .append( BundleStartLevelOption.class.getSimpleName() )
-            .append( "{startlevel='" ).append( m_startLevel ).append( "\'}" )
+            .append( "{startlevel='" ).append( startLevel ).append( "\'}" )
             .toString();
     }
 
