@@ -47,6 +47,12 @@
             <groupId>org.apache.openejb</groupId>
             <artifactId>tomee-embedded</artifactId>
             <version>${dependency.tomee.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
