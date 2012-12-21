@@ -120,4 +120,10 @@ public interface Constants {
      * Do not provision any logging system and leave it to the user.
      */
     static final String EXAM_LOGGING_NONE = "none";
+    
+    /**
+     * Should Pax Exam fail the test if any of the provisioned bundles is unresolved?
+     * Values: true | false.
+     */
+    static final String EXAM_FAIL_ON_UNRESOLVED_KEY = "pax.exam.osgi.unresolved.fail";
 }

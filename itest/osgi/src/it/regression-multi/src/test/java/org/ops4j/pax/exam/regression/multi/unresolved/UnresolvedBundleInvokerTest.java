@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.ops4j.pax.exam.Constants;
 
 /**
  * 
@@ -34,6 +35,7 @@ public class UnresolvedBundleInvokerTest {
     @Test
     public void exceptionOnUnresolvedBundle() {
 
+        System.setProperty(Constants.EXAM_FAIL_ON_UNRESOLVED_KEY, "true");
         JUnitCore junit = new JUnitCore();
         Result result = junit.run(UnresolvedBundleTestWrapped.class);
         assertThat(result.getFailureCount(), is(1));

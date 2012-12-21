@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
-import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
+import static org.ops4j.pax.exam.Constants.*;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
@@ -38,6 +38,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
@@ -342,7 +343,9 @@ public class NativeTestContainer implements TestContainer {
                 haveUnresolvedBundles = true;
             }
         }
-        if (haveUnresolvedBundles) {
+        ConfigurationManager cm = new ConfigurationManager();
+        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY, "false"));
+        if (haveUnresolvedBundles && failOnUnresolved) {
             throw new TestContainerException("There are unresolved bundles. See previous ERROR log messages for details.");
         }
     }

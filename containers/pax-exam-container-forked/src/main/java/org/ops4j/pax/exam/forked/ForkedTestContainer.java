@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.forked;
 
+import static org.ops4j.pax.exam.Constants.EXAM_FAIL_ON_UNRESOLVED_KEY;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ops4j.io.StreamUtils;
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
@@ -304,7 +306,9 @@ public class ForkedTestContainer implements TestContainer {
                 hasUnresolvedBundles = true;
             }
         }
-        if (hasUnresolvedBundles) {
+        ConfigurationManager cm = new ConfigurationManager();
+        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY, "false"));
+        if (hasUnresolvedBundles && failOnUnresolved) {
             throw new TestContainerException("There are unresolved bundles. See previous ERROR log messages for details.");
         }
     }
