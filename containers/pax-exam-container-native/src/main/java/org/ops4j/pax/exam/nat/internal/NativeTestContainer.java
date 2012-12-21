@@ -28,7 +28,9 @@ import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.Stack;
@@ -286,8 +288,10 @@ public class NativeTestContainer implements TestContainer {
     private void installAndStartBundles(BundleContext context) throws BundleException {
         framework.start();
         StartLevel sl = ServiceLookup.getService(context, StartLevel.class);
+        List<Bundle> bundles = new ArrayList<Bundle>();
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
             Bundle b = context.installBundle(bundle.getURL());
+            bundles.add(b);
             int startLevel = getStartLevel(bundle);
             sl.setBundleStartLevel(b, startLevel);
             if (bundle.shouldStart()) {
@@ -328,6 +332,18 @@ public class NativeTestContainer implements TestContainer {
         }
         catch (InterruptedException e) {
             throw new TestContainerException(e);
+        }
+        
+        // Check that all bundles are resolved.
+        boolean haveUnresolvedBundles = false;
+        for (Bundle b : bundles) {
+            if (b.getState() == Bundle.INSTALLED) {
+                LOG.error("Bundle [{}] is not resolved", b);
+                haveUnresolvedBundles = true;
+            }
+        }
+        if (haveUnresolvedBundles) {
+            throw new TestContainerException("There are unresolved bundles. See previous ERROR log messages for details.");
         }
     }
 

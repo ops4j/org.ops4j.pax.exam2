@@ -256,12 +256,14 @@ public class ForkedTestContainer implements TestContainer {
 
     private void installAndStartBundles() throws BundleException, RemoteException {
         remoteFramework.start();
+        List<Long> bundleIds = new ArrayList<Long>();
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
             String localUrl = downloadBundle(bundle.getURL());
             long bundleId = remoteFramework.installBundle(localUrl);
             int startLevel = getStartLevel(bundle);
             remoteFramework.setBundleStartLevel(bundleId, startLevel);
             if (bundle.shouldStart()) {
+                bundleIds.add(bundleId);
                 remoteFramework.startBundle(bundleId);
                 LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
             }
@@ -283,6 +285,27 @@ public class ForkedTestContainer implements TestContainer {
         }
         catch (InterruptedException exc) {
             throw new TestContainerException(exc);
+        }
+        
+        /*
+         * Check that all bundles are resolved.
+         * TODO RemoteFramework does not have a method for getting the bundle state. Now that
+         * the framework startlevel has reached the final value, we should get an exception
+         * from Bundle.start() if the bundle is not resolved. This is just a workaround, which
+         * moreover does not detect unresolved fragments.
+         */
+        boolean hasUnresolvedBundles = false;
+        for (long bundleId : bundleIds) {
+            try {
+                remoteFramework.startBundle(bundleId);
+            }
+            catch (BundleException exc) {
+                LOG.error("Bundle [{}] is not resolved", bundleId);
+                hasUnresolvedBundles = true;
+            }
+        }
+        if (hasUnresolvedBundles) {
+            throw new TestContainerException("There are unresolved bundles. See previous ERROR log messages for details.");
         }
     }
 
