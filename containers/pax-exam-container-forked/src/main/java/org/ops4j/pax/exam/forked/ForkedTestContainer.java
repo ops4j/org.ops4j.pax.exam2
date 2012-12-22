@@ -56,6 +56,7 @@ import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
@@ -68,11 +69,8 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The drawback of this container is that remote debugging is required to debug the tests executed
  * by the forked framework.
- * <p>
- * TODO support additional Exam options
  * 
  * @author Harald Wellmann
- * 
  */
 public class ForkedTestContainer implements TestContainer {
 
@@ -274,34 +272,37 @@ public class ForkedTestContainer implements TestContainer {
             }
         }
 
+        setFrameworkStartLevel();
+        verifyThatBundlesAreResolved( bundleIds );
+    }
+
+    private void setFrameworkStartLevel() throws RemoteException {
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
         int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption
             .getStartLevel();
         LOG.debug("Jump to startlevel: " + startLevel);
-        long timeout = 30000;
+        long timeout = system.getTimeout().getValue();
         boolean startLevelReached = remoteFramework.setFrameworkStartLevel(startLevel, timeout);
 
         if (!startLevelReached) {
             String msg = String.format("start level %d has not been reached within %d ms", startLevel, timeout);
             throw new TestContainerException(msg);            
         }
+    }
 
-        /*
-         * Check that all bundles are resolved.
-         * TODO RemoteFramework does not have a method for getting the bundle state. Now that
-         * the framework startlevel has reached the final value, we should get an exception
-         * from Bundle.start() if the bundle is not resolved. This is just a workaround, which
-         * moreover does not detect unresolved fragments.
-         */
+    private void verifyThatBundlesAreResolved( List<Long> bundleIds ) throws RemoteException
+    {
         boolean hasUnresolvedBundles = false;
         for (long bundleId : bundleIds) {
             try {
-                remoteFramework.startBundle(bundleId);
+                if (remoteFramework.getBundleState(bundleId) == Bundle.INSTALLED) {
+                    LOG.error("Bundle [{}] is not resolved", bundleId);
+                    hasUnresolvedBundles = true;                    
+                }
             }
             catch (BundleException exc) {
-                LOG.error("Bundle [{}] is not resolved", bundleId);
-                hasUnresolvedBundles = true;
+                throw new TestContainerException(exc);
             }
         }
         ConfigurationManager cm = new ConfigurationManager();
