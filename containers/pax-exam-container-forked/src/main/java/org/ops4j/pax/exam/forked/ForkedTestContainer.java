@@ -279,16 +279,14 @@ public class ForkedTestContainer implements TestContainer {
         int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption
             .getStartLevel();
         LOG.debug("Jump to startlevel: " + startLevel);
-        remoteFramework.setFrameworkStartLevel(startLevel);
+        long timeout = 30000;
+        boolean startLevelReached = remoteFramework.setFrameworkStartLevel(startLevel, timeout);
 
-        // FIXME listen for a startup event instead of sleeping
-        try {
-            Thread.sleep(1000);
+        if (!startLevelReached) {
+            String msg = String.format("start level %d has not been reached within %d ms", startLevel, timeout);
+            throw new TestContainerException(msg);            
         }
-        catch (InterruptedException exc) {
-            throw new TestContainerException(exc);
-        }
-        
+
         /*
          * Check that all bundles are resolved.
          * TODO RemoteFramework does not have a method for getting the bundle state. Now that
