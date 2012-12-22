@@ -489,6 +489,9 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
         for (TestAddress address : targets) {
             ITestNGMethod frameworkMethod = (ITestNGMethod) manager
                 .lookupTestMethod(address.root());
+            if (frameworkMethod == null) {
+                continue;
+            }
             Method javaMethod = frameworkMethod.getConstructorOrMethod().getMethod();
 
             if (mangleMethodNames) {
@@ -508,6 +511,9 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
     /**
      * Disables BeforeMethod and AfterMethod configuration methods in the given test class.
+     * <p>
+     * NOTE: Ugly reflection hack, as TestNG does not provide an API for overriding before and after
+     * methods.
      * 
      * @param testClass
      *            TestNG test class wrapper

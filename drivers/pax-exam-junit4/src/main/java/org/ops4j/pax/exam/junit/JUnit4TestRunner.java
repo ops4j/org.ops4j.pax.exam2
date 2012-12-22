@@ -185,6 +185,11 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         for (TestAddress address : targets) {
             FrameworkMethod frameworkMethod = (FrameworkMethod) manager.lookupTestMethod(address
                 .root());
+            
+            // The reactor may contain targets which do not belong to the current test class
+            if (frameworkMethod == null) {
+                continue;
+            }
             String className = frameworkMethod.getMethod().getDeclaringClass().getName();
             String methodName = frameworkMethod.getName();
 
