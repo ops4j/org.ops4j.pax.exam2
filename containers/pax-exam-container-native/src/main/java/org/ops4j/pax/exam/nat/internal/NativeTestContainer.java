@@ -17,7 +17,8 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
-import static org.ops4j.pax.exam.Constants.*;
+import static org.ops4j.pax.exam.Constants.EXAM_FAIL_ON_UNRESOLVED_KEY;
+import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
@@ -69,6 +70,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The Native Test Container starts an OSGi framework using {@link FrameworkFactory} and
+ * provisions the bundles configured in the Exam system.
+ * <p>
+ * When the framework has reached the configured start level, the container checks that all
+ * bundles are resolved and throws an exception otherwise.
+ * 
  * @author Toni Menzel
  * @author Harald Wellmann
  * @since Jan 7, 2010
@@ -139,7 +146,6 @@ public class NativeTestContainer implements TestContainer {
     }
 
     public TestContainer start() throws TestContainerException {
-        ClassLoader parent = null;
         try {
             system = system.fork(new Option[] {
                 systemPackage("org.ops4j.pax.exam;version="
@@ -154,18 +160,12 @@ public class NativeTestContainer implements TestContainer {
                 logFrameworkProperties(p);
                 logSystemProperties();
             }
-            parent = Thread.currentThread().getContextClassLoader();
             framework = frameworkFactory.newFramework(p);
             framework.init();
             installAndStartBundles(framework.getBundleContext());
         }
         catch (Exception e) {
             throw new TestContainerException("Problem starting test container.", e);
-        }
-        finally {
-            if (parent != null) {
-                Thread.currentThread().setContextClassLoader(parent);
-            }
         }
         return this;
     }
@@ -304,52 +304,59 @@ public class NativeTestContainer implements TestContainer {
             }
         }
 
+        setFrameworkStartLevel(context, sl);
+        verifyThatBundlesAreResolved(bundles);
+    }
+    
+    private void setFrameworkStartLevel(BundleContext context, final StartLevel sl) {
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
-        int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption
-            .getStartLevel();
+        final int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE
+            : startLevelOption.getStartLevel();
         LOG.debug("Jump to startlevel: " + startLevel);
-        sl.setStartLevel(startLevel);
-        // Work around for FELIX-2942
         final CountDownLatch latch = new CountDownLatch(1);
         context.addFrameworkListener(new FrameworkListener() {
 
             public void frameworkEvent(FrameworkEvent frameworkEvent) {
-                switch (frameworkEvent.getType()) {
-                    case FrameworkEvent.STARTLEVEL_CHANGED:
+                if (frameworkEvent.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
+                    if (sl.getStartLevel() == startLevel) {
                         latch.countDown();
+                    }
                 }
             }
         });
+        sl.setStartLevel(startLevel);
+
         try {
-            final long timeout = system.getTimeout().getLowerValue();
+            long timeout = system.getTimeout().getValue();
             if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
-                // Framework start level has not reached yet, so report an error to cause the test
-                // process to abort
-                final String message = "Framework is yet to reach target start level " + startLevel
-                    + " after " + timeout + " ms. Current start level is " + sl.getStartLevel();
-                throw new TestContainerException(message);
+                String msg = String.format("start level %d has not been reached within %d ms",
+                    startLevel, timeout);
+                throw new TestContainerException(msg);
             }
         }
         catch (InterruptedException e) {
             throw new TestContainerException(e);
         }
-        
-        // Check that all bundles are resolved.
-        boolean haveUnresolvedBundles = false;
-        for (Bundle b : bundles) {
-            if (b.getState() == Bundle.INSTALLED) {
-                LOG.error("Bundle [{}] is not resolved", b);
-                haveUnresolvedBundles = true;
+    }
+
+    private void verifyThatBundlesAreResolved(List<Bundle> bundles) {
+        boolean hasUnresolvedBundles = false;
+        for (Bundle bundle : bundles) {
+            if (bundle.getState() == Bundle.INSTALLED) {
+                LOG.error("Bundle [{}] is not resolved", bundle);
+                hasUnresolvedBundles = true;
             }
         }
         ConfigurationManager cm = new ConfigurationManager();
-        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY, "false"));
-        if (haveUnresolvedBundles && failOnUnresolved) {
-            throw new TestContainerException("There are unresolved bundles. See previous ERROR log messages for details.");
+        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY,
+            "false"));
+        if (hasUnresolvedBundles && failOnUnresolved) {
+            throw new TestContainerException(
+                "There are unresolved bundles. See previous ERROR log messages for details.");
         }
     }
-
+    
     private int getStartLevel(ProvisionOption<?> bundle) {
         Integer start = bundle.getStartLevel();
         if (start == null) {
