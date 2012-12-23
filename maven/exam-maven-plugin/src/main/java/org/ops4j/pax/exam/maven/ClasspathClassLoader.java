@@ -30,30 +30,30 @@ import java.util.List;
  */
 public class ClasspathClassLoader extends URLClassLoader {
 
-	public ClasspathClassLoader() {
-		this(new URL[] {});
-	}
+    public ClasspathClassLoader() {
+        this(new URL[] {});
+    }
 
-	public ClasspathClassLoader(List<String> classpathElements) throws MalformedURLException {
-		this(toClasspathURLs(classpathElements));
-	}
+    public ClasspathClassLoader(List<String> classpathElements) throws MalformedURLException {
+        this(toClasspathURLs(classpathElements));
+    }
 
-	public ClasspathClassLoader(URL[] urls) {
-		this(urls, ClasspathClassLoader.class.getClassLoader());
-	}
+    public ClasspathClassLoader(URL[] urls) {
+        this(urls, ClasspathClassLoader.class.getClassLoader());
+    }
 
-	public ClasspathClassLoader(URL[] urls, ClassLoader parent) {
-		super(urls, parent);
-	}
+    public ClasspathClassLoader(URL[] urls, ClassLoader parent) {
+        super(urls, parent);
+    }
 
-	protected static URL[] toClasspathURLs(List<String> classpathElements)
-		throws MalformedURLException {
-		List<URL> urls = new ArrayList<URL>();
-		if (classpathElements != null) {
-			for (String classpathElement : classpathElements) {
-				urls.add(new File(classpathElement).toURI().toURL());
-			}
-		}
-		return urls.toArray(new URL[urls.size()]);
-	}
+    protected static URL[] toClasspathURLs(List<String> classpathElements)
+        throws MalformedURLException {
+        List<URL> urls = new ArrayList<URL>();
+        if (classpathElements != null) {
+            for (String classpathElement : classpathElements) {
+                urls.add(new File(classpathElement).toURI().toURL());
+            }
+        }
+        return urls.toArray(new URL[urls.size()]);
+    }
 }

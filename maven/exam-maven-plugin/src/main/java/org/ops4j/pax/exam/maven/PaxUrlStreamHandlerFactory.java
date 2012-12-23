@@ -33,48 +33,48 @@ import java.util.List;
  */
 public class PaxUrlStreamHandlerFactory implements URLStreamHandlerFactory {
 
-	/**
-	 * Default protocol supported by the JRE, to be ignored by this factory.
-	 */
-	private static List<String> ignoredProtocols = Arrays.asList("http", "https", "ftp", "jar",
-		"file");
+    /**
+     * Default protocol supported by the JRE, to be ignored by this factory.
+     */
+    private static List<String> ignoredProtocols = Arrays.asList("http", "https", "ftp", "jar",
+        "file");
 
-	private ClassLoader classLoader;
+    private ClassLoader classLoader;
 
-	public PaxUrlStreamHandlerFactory(ClassLoader classLoader) {
-		this.classLoader = classLoader;
-	}
+    public PaxUrlStreamHandlerFactory(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
-	@Override
-	public URLStreamHandler createURLStreamHandler(String protocol) {
-		if (ignoredProtocols.contains(protocol)) {
-			return null;
-		}
+    @Override
+    public URLStreamHandler createURLStreamHandler(String protocol) {
+        if (ignoredProtocols.contains(protocol)) {
+            return null;
+        }
 
-		String className = String.format("org.ops4j.pax.url.%s.Handler", protocol);
-		Class<?> handlerClass = loadHandlerClass(className);
-		if (handlerClass == null) {
-			return null;
-		}
+        String className = String.format("org.ops4j.pax.url.%s.Handler", protocol);
+        Class<?> handlerClass = loadHandlerClass(className);
+        if (handlerClass == null) {
+            return null;
+        }
 
-		try {
-			return (URLStreamHandler) handlerClass.newInstance();
-		}
-		catch (InstantiationException exc) {
-			throw new IllegalArgumentException("cannot instantiate " + className, exc);
-		}
-		catch (IllegalAccessException exc) {
-			throw new IllegalArgumentException("cannot instantiate " + className, exc);
-		}
-	}
+        try {
+            return (URLStreamHandler) handlerClass.newInstance();
+        }
+        catch (InstantiationException exc) {
+            throw new IllegalArgumentException("cannot instantiate " + className, exc);
+        }
+        catch (IllegalAccessException exc) {
+            throw new IllegalArgumentException("cannot instantiate " + className, exc);
+        }
+    }
 
-	private Class<?> loadHandlerClass(String className) {
-		try {
-			Class<?> handlerClass = Class.forName(className, true, classLoader);
-			return handlerClass;
-		}
-		catch (ClassNotFoundException e) {
-			return null;
-		}
-	}
+    private Class<?> loadHandlerClass(String className) {
+        try {
+            Class<?> handlerClass = Class.forName(className, true, classLoader);
+            return handlerClass;
+        }
+        catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
 }

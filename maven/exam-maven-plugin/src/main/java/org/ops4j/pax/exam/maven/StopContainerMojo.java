@@ -32,14 +32,14 @@ import org.ops4j.pax.exam.TestContainer;
  */
 public class StopContainerMojo extends AbstractMojo {
 
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		Object object = getPluginContext().get(TEST_CONTAINER_KEY);
-		if (object == null) {
-			throw new MojoExecutionException(
-				"No Pax Exam container found. Did you run the start-container goal?");
-		}
-		TestContainer testContainer = (TestContainer) object;
-		testContainer.stop();
-	}
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        Object object = getPluginContext().get(TEST_CONTAINER_KEY);
+        if (object == null) {
+            throw new MojoExecutionException(
+                "No Pax Exam container found. Did you run the start-container goal?");
+        }
+        TestContainer testContainer = (TestContainer) object;
+        testContainer.stop();
+    }
 }
