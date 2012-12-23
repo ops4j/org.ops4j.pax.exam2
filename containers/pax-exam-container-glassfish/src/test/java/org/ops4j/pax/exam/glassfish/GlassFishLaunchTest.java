@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder;
-import org.ops4j.pax.swissbox.framework.ServiceLookup;
+import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;

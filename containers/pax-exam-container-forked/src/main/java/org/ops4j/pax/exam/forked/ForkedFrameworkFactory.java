@@ -34,6 +34,7 @@ import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.ops4j.pax.swissbox.framework.RemoteFrameworkImpl;
+import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
@@ -153,11 +154,14 @@ public class ForkedFrameworkFactory {
     }
 
     private String[] buildClasspath() throws URISyntaxException {
-        String frameworkPath = frameworkFactory.getClass().getProtectionDomain().getCodeSource()
-            .getLocation().toURI().getPath();
-        String launcherPath = RemoteFrameworkImpl.class.getProtectionDomain().getCodeSource()
-            .getLocation().toURI().getPath();
-        return new String[] { frameworkPath, launcherPath };
+        String frameworkPath = toPath(frameworkFactory.getClass());
+        String launcherPath = toPath(RemoteFrameworkImpl.class);
+        String serviceLookupPath = toPath(ServiceLookup.class);
+        return new String[] { frameworkPath, launcherPath, serviceLookupPath };
+    }
+    
+    static String toPath(Class<?> klass) throws URISyntaxException {
+        return klass.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
     }
 
     private RemoteFramework findRemoteFramework(int port, String rmiName) {

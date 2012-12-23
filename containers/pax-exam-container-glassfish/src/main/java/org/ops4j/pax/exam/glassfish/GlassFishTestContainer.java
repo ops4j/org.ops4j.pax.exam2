@@ -25,7 +25,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemPackages;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
-import static org.ops4j.pax.swissbox.framework.ServiceLookup.getService;
+import static org.ops4j.pax.swissbox.tracker.ServiceLookup.getService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -701,6 +701,8 @@ public class GlassFishTestContainer implements TestContainer {
             url("link:classpath:META-INF/links/org.ops4j.pax.swissbox.framework.link").startLevel(
                 START_LEVEL_SYSTEM_BUNDLES),
             url("link:classpath:META-INF/links/org.ops4j.pax.swissbox.lifecycle.link").startLevel(
+                START_LEVEL_SYSTEM_BUNDLES),
+            url("link:classpath:META-INF/links/org.ops4j.pax.swissbox.tracker.link").startLevel(
                 START_LEVEL_SYSTEM_BUNDLES),
             url("link:classpath:META-INF/links/ch.qos.logback.classic.link").startLevel(
                 START_LEVEL_SYSTEM_BUNDLES),

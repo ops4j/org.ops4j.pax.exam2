@@ -50,6 +50,10 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
+                                <requireMavenVersion>
+                                    <version>(3.0.0,)</version>
+                                    <message>This project requires Maven 3</message>
+                                </requireMavenVersion>
                                 <DependencyConvergence />
                             </rules>
                         </configuration>
@@ -223,12 +227,12 @@
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
-                <artifactId>pax-swissbox-optional-jcl</artifactId>
+                <artifactId>pax-swissbox-framework</artifactId>
                 <version>${dependency.swissbox.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.swissbox</groupId>
-                <artifactId>pax-swissbox-framework</artifactId>
+                <artifactId>pax-swissbox-tracker</artifactId>
                 <version>${dependency.swissbox.version}</version>
             </dependency>
             <dependency>
@@ -330,7 +334,7 @@
                         <groupId>javax.enterprise</groupId>
                         <artifactId>cdi-api</artifactId>
                     </exclusion>
-                </exclusions>                
+                </exclusions>
             </dependency>
 
             <dependency>

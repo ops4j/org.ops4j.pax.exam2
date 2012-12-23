@@ -35,7 +35,7 @@ import org.osgi.service.log.LogService;
  */
 public class PlayerTest {
 
-    private static final int NUM_EXAM_BUNDLES = 13;
+    private static final int NUM_EXAM_BUNDLES = 14;
 
     /**
      * WARNING: Do NOT use the same as PaxExamRuntime, or the test will fail.

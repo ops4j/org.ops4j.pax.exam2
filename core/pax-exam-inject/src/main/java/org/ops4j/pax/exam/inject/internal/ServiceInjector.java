@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.util.Injector;
-import org.ops4j.pax.swissbox.framework.ServiceLookup;
+import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleReference;
 

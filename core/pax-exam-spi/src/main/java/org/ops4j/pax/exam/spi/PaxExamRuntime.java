@@ -121,6 +121,8 @@ public class PaxExamRuntime {
                 START_LEVEL_SYSTEM_BUNDLES),
             url("link:classpath:META-INF/links/org.ops4j.pax.swissbox.lifecycle.link").startLevel(
                 START_LEVEL_SYSTEM_BUNDLES),
+            url("link:classpath:META-INF/links/org.ops4j.pax.swissbox.tracker.link").startLevel(
+                START_LEVEL_SYSTEM_BUNDLES),
             url("link:classpath:META-INF/links/org.apache.geronimo.specs.atinject.link")
                 .startLevel(START_LEVEL_SYSTEM_BUNDLES) };
     }
