@@ -10,7 +10,7 @@ import org.ops4j.pax.exam.Option;
  */
 public class WorkingDirectoryOption implements Option {
 
-    final private String workingDirectory;
+    private final String workingDirectory;
 
     public WorkingDirectoryOption(String directory) {
         workingDirectory = directory;

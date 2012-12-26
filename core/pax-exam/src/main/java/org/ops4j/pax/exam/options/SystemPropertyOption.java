@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
 
 /**
  * Option specifying a system property.
@@ -53,7 +53,7 @@ public class SystemPropertyOption implements ValueOption<String> {
     /**
      * Sets the system property value.
      * 
-     * @param value
+     * @param _value
      *            system property value (cannot be null, can be empty)
      * 
      * @return itself, for fluent api usage
@@ -61,9 +61,9 @@ public class SystemPropertyOption implements ValueOption<String> {
      * @throws IllegalArgumentException
      *             - If value is null
      */
-    public SystemPropertyOption value(final String value) {
-        validateNotNull(value, "Value");
-        this.value = value;
+    public SystemPropertyOption value(final String _value) {
+        validateNotNull(_value, "Value");
+        this.value = _value;
         return this;
     }
 
@@ -107,6 +107,7 @@ public class SystemPropertyOption implements ValueOption<String> {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -130,5 +131,5 @@ public class SystemPropertyOption implements ValueOption<String> {
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

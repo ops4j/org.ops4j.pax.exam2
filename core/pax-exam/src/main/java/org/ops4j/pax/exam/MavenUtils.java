@@ -85,9 +85,6 @@ public class MavenUtils {
     public static MavenArtifactUrlReference.VersionResolver asInProject() {
         return new MavenArtifactUrlReference.VersionResolver() {
 
-            /**
-             * {@inheritDoc}
-             */
             public String getVersion(final String groupId, final String artifactId) {
                 return getArtifactVersion(groupId, artifactId);
             }

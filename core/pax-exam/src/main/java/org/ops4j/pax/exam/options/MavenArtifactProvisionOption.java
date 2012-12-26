@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
 
 /**
  * Option specifying provisioning from an maven url (Pax URL mvn: handler).
@@ -55,80 +55,53 @@ public class MavenArtifactProvisionOption extends
         this.artifact = artifact;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactProvisionOption groupId(final String groupId) {
         artifact.groupId(groupId);
         updateUsed = false;
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactProvisionOption artifactId(final String artifactId) {
         artifact.artifactId(artifactId);
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactProvisionOption type(final String type) {
         artifact.type(type);
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactProvisionOption classifier(String classifier) {
         artifact.classifier(classifier);
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactProvisionOption version(final String version) {
         artifact.version(version);
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactProvisionOption version(
         final MavenArtifactUrlReference.VersionResolver resolver) {
         artifact.version(resolver);
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactProvisionOption versionAsInProject() {
         artifact.versionAsInProject();
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Boolean isSnapshot() {
         return artifact.isSnapshot();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getURL() {
         return artifact.getURL();
     }
 
     /**
-     * {@inheritDoc} Keep track if the user used the update method, so we do not override the value
+     * Keep track if the user used the update method, so we do not override the value
      * when handling automatic update on SNAPSHOT versions.
      */
     @Override
@@ -153,9 +126,6 @@ public class MavenArtifactProvisionOption extends
         return artifact.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected MavenArtifactProvisionOption itself() {
         return this;
     }
@@ -169,6 +139,7 @@ public class MavenArtifactProvisionOption extends
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -188,5 +159,5 @@ public class MavenArtifactProvisionOption extends
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

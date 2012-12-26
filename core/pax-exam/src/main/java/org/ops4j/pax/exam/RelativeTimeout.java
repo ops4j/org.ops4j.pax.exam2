@@ -31,15 +31,16 @@ import java.io.Serializable;
  */
 public class RelativeTimeout implements Serializable {
 
+    public static final RelativeTimeout TIMEOUT_NOWAIT = new RelativeTimeout(0L);
+    public static final RelativeTimeout TIMEOUT_NOTIMEOUT = new RelativeTimeout(Long.MAX_VALUE);
+
+    public static final RelativeTimeout TIMEOUT_DEFAULT = new RelativeTimeout(1000L * 180L);
+
     private static final long serialVersionUID = 3490846022856083260L;
-    public final static RelativeTimeout TIMEOUT_NOWAIT = new RelativeTimeout(0L);
-    public final static RelativeTimeout TIMEOUT_NOTIMEOUT = new RelativeTimeout(Long.MAX_VALUE);
 
-    public final static RelativeTimeout TIMEOUT_DEFAULT = new RelativeTimeout(1000L * 180L);
-
-    final private long value;
-    final private long lower;
-    final private long upper;
+    private final long value;
+    private final long lower;
+    private final long upper;
 
     public RelativeTimeout(final long time) {
         value = time;

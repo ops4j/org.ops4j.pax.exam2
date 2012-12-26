@@ -17,7 +17,10 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.osgi.framework.Constants.*;
+import static org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME;
+import static org.osgi.framework.Constants.BUNDLE_VERSION;
+import static org.osgi.framework.Constants.EXPORT_PACKAGE;
+import static org.osgi.framework.Constants.IMPORT_PACKAGE;
 
 /**
  * Option specifying a provision url that will wrap (osgify) another bundle.
@@ -76,9 +79,6 @@ public class WrappedUrlProvisionOption extends
         super(url);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getURL() {
         final StringBuilder options = new StringBuilder();
         if (overwriteMode != null) {
@@ -136,13 +136,13 @@ public class WrappedUrlProvisionOption extends
     /**
      * Sets wrapped jar bundle symbolic name.
      * 
-     * @param bundleSymbolicName
+     * @param _bundleSymbolicName
      *            bundle symbolic name
      * 
      * @return itself
      */
-    public WrappedUrlProvisionOption bundleSymbolicName(final String bundleSymbolicName) {
-        this.bundleSymbolicName = bundleSymbolicName;
+    public WrappedUrlProvisionOption bundleSymbolicName(final String _bundleSymbolicName) {
+        this.bundleSymbolicName = _bundleSymbolicName;
 
         return this;
     }
@@ -150,13 +150,13 @@ public class WrappedUrlProvisionOption extends
     /**
      * Sets wrapped jar bundle version.
      * 
-     * @param bundleVersion
+     * @param _bundleVersion
      *            bundle symbolic name
      * 
      * @return itself
      */
-    public WrappedUrlProvisionOption bundleVersion(final String bundleVersion) {
-        this.bundleVersion = bundleVersion;
+    public WrappedUrlProvisionOption bundleVersion(final String _bundleVersion) {
+        this.bundleVersion = _bundleVersion;
 
         return this;
     }
@@ -164,13 +164,13 @@ public class WrappedUrlProvisionOption extends
     /**
      * Sets wrapped jar imports.
      * 
-     * @param imports
+     * @param _imports
      *            BND style imports
      * 
      * @return itself
      */
-    public WrappedUrlProvisionOption imports(final String... imports) {
-        this.imports = imports;
+    public WrappedUrlProvisionOption imports(final String... _imports) {
+        this.imports = _imports;
 
         return this;
     }
@@ -178,13 +178,13 @@ public class WrappedUrlProvisionOption extends
     /**
      * Sets wrapped jar exports.
      * 
-     * @param exports
+     * @param _exports
      *            BND style exports
      * 
      * @return itself
      */
-    public WrappedUrlProvisionOption exports(final String... exports) {
-        this.exports = exports;
+    public WrappedUrlProvisionOption exports(final String... _exports) {
+        this.exports = _exports;
 
         return this;
     }
@@ -206,20 +206,17 @@ public class WrappedUrlProvisionOption extends
     /**
      * Sets wrapped jar raw BND instructions.
      * 
-     * @param instructions
+     * @param _instructions
      *            BND instructions
      * 
      * @return itself
      */
-    public WrappedUrlProvisionOption instructions(final String... instructions) {
-        this.instructions = instructions;
+    public WrappedUrlProvisionOption instructions(final String... _instructions) {
+        this.instructions = _instructions;
 
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected WrappedUrlProvisionOption itself() {
         return this;
     }

@@ -17,7 +17,8 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
+
 import org.ops4j.pax.exam.Option;
 
 /**
@@ -125,11 +126,7 @@ public class BootClasspathLibraryOption implements Option {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected BootClasspathLibraryOption itself() {
         return this;
     }
-
 }

@@ -17,6 +17,11 @@ package org.ops4j.pax.exam.util;
 
 public class PathUtils {
 
+    
+    /** Hidden utility class constructor. */
+    private PathUtils() {
+    }
+
     /**
      * Returns the base directory of the current Maven project, used by tests that require absolute
      * paths.

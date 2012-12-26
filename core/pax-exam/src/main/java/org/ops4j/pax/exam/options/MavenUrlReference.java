@@ -127,7 +127,7 @@ public interface MavenUrlReference extends UrlReference {
     /**
      * Resolves versions based on maven artifact groupId / atifactid.
      */
-    public static interface VersionResolver {
+    public interface VersionResolver {
 
         /**
          * Getter.

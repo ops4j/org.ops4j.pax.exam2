@@ -19,8 +19,8 @@ public class CleanCachesOption implements ValueOption<Boolean> {
         this.value = value;
     }
 
-    public CleanCachesOption setValue(Boolean value) {
-        this.value = value;
+    public CleanCachesOption setValue(Boolean _value) {
+        this.value = _value;
         return this;
     }
 
@@ -36,6 +36,7 @@ public class CleanCachesOption implements ValueOption<Boolean> {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -53,5 +54,5 @@ public class CleanCachesOption implements ValueOption<Boolean> {
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Filter {
 
-    public static final long DEFAULT_TIMEOUT = 10000;
+    long DEFAULT_TIMEOUT = 10000;
 
     String value() default "";
 

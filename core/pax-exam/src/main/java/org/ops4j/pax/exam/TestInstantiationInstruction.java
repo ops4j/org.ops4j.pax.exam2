@@ -23,7 +23,7 @@ package org.ops4j.pax.exam;
  */
 public class TestInstantiationInstruction {
 
-    final private String instruction;
+    private final String instruction;
 
     public TestInstantiationInstruction(String s) {
         instruction = s;

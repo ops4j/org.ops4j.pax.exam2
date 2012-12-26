@@ -51,11 +51,7 @@ public class UrlProvisionOption extends AbstractUrlProvisionOption<UrlProvisionO
         super(url);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected UrlProvisionOption itself() {
         return this;
     }
-
 }

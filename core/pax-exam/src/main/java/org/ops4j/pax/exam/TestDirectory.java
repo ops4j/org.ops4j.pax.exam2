@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class TestDirectory {
 
-    private static final TestDirectory instance = new TestDirectory();
+    private static final TestDirectory INSTANCE = new TestDirectory();
 
     private Map<TestAddress, TestInstantiationInstruction> map = new HashMap<TestAddress, TestInstantiationInstruction>();
     private URI accessPoint;
@@ -33,7 +33,7 @@ public class TestDirectory {
     }
 
     public static TestDirectory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public void add(TestAddress address, TestInstantiationInstruction instruction) {

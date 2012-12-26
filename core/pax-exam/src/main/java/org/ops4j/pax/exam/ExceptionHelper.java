@@ -5,6 +5,11 @@ package org.ops4j.pax.exam;
  */
 public class ExceptionHelper {
 
+    
+    /** Hidden utility class constructor */
+    private ExceptionHelper() {
+    }
+
     public static Throwable unwind(Throwable e) {
         Throwable t = e.getCause();
         if (t != null) {

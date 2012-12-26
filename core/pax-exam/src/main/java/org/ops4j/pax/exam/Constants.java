@@ -24,106 +24,112 @@ package org.ops4j.pax.exam;
  * @author Harald Wellmann
  * @since 0.5.0, April 22, 2009
  */
-public interface Constants {
-
+public class Constants {
+    
+    
     /**
      * The start level at which Pax Exam system bundles are to be started.
      */
-    static final int START_LEVEL_SYSTEM_BUNDLES = 2;
+    public static final int START_LEVEL_SYSTEM_BUNDLES = 2;
 
     /**
      * The start level at which Pax Exam test bundle is to be started.
      */
-    static final int START_LEVEL_DEFAULT_PROVISION = 3;
+    public static final int START_LEVEL_DEFAULT_PROVISION = 3;
 
     /**
      * The start level at which Pax Exam test bundle is to be started. This is also the startlevel,
      * the test container reaches in start.
      */
-    static final int START_LEVEL_TEST_BUNDLE = 5;
+    public static final int START_LEVEL_TEST_BUNDLE = 5;
 
     /**
      * Timeout specifing that there should be no waiting.
      */
-    long NO_WAIT = 0;
+    public static final long NO_WAIT = 0;
     /**
      * Timeout specifing that it should wait forever.
      */
-    long WAIT_FOREVER = Long.MAX_VALUE;
+    public static final long WAIT_FOREVER = Long.MAX_VALUE;
     /**
      * Timeout specifing that it should wait .
      */
-    long WAIT_5_MINUTES = 5 * 60 * 1000;
+    public static final long WAIT_5_MINUTES = 5 * 60 * 1000;
 
     /**
      * Manifest header specifying the string of executable services.
      */
-    static final String PROBE_EXECUTABLE = "PaxExam-Executable";
+    public static final String PROBE_EXECUTABLE = "PaxExam-Executable";
 
     /** Name of configuration properties file. */
-    static final String EXAM_PROPERTIES_FILE = "exam.properties";
+    public static final String EXAM_PROPERTIES_FILE = "exam.properties";
 
     /** Resource path of configuration properties file. */
-    static final String EXAM_PROPERTIES_PATH = "/" + EXAM_PROPERTIES_FILE;
+    public static final String EXAM_PROPERTIES_PATH = "/" + EXAM_PROPERTIES_FILE;
 
     /** Configuration key for Exam system type. */
-    static final String EXAM_SYSTEM_KEY = "pax.exam.system";
+    public static final String EXAM_SYSTEM_KEY = "pax.exam.system";
 
     /**
      * URL of configuration properties, overriding the default classpath:/exam.properties. If you
      * want this to be a plain old file, make sure to include the {@code file:} protocol.
      */
-    static final String EXAM_CONFIGURATION_KEY = "pax.exam.configuration";
+    public static final String EXAM_CONFIGURATION_KEY = "pax.exam.configuration";
 
     /** Default exam system with no predefined options. */
-    static final String EXAM_SYSTEM_DEFAULT = "default";
+    public static final String EXAM_SYSTEM_DEFAULT = "default";
 
     /** Exam system for Java EE containers. */
-    static final String EXAM_SYSTEM_JAVAEE = "javaee";
+    public static final String EXAM_SYSTEM_JAVAEE = "javaee";
 
     /** Exam system for CDI containers. */
-    static final String EXAM_SYSTEM_CDI = "cdi";
+    public static final String EXAM_SYSTEM_CDI = "cdi";
 
     /** Test exam system with predefined options for Exam's own bundles etc. */
-    static final String EXAM_SYSTEM_TEST = "test";
+    public static final String EXAM_SYSTEM_TEST = "test";
 
     /**
      * Default reactor strategy. Legal values are {@code PerSuite, PerClass, PerMethod}.
      */
-    static final String EXAM_REACTOR_STRATEGY_KEY = "pax.exam.reactor.strategy";
+    public static final String EXAM_REACTOR_STRATEGY_KEY = "pax.exam.reactor.strategy";
 
-    static final String EXAM_REACTOR_STRATEGY_PER_SUITE = "PerSuite";
-    static final String EXAM_REACTOR_STRATEGY_PER_CLASS = "PerClass";
-    static final String EXAM_REACTOR_STRATEGY_PER_METHOD = "PerMethod";
+    public static final String EXAM_REACTOR_STRATEGY_PER_SUITE = "PerSuite";
+    public static final String EXAM_REACTOR_STRATEGY_PER_CLASS = "PerClass";
+    public static final String EXAM_REACTOR_STRATEGY_PER_METHOD = "PerMethod";
 
     /**
      * Timeout for service lookup in milliseconds.
      */
-    static final String EXAM_SERVICE_TIMEOUT_KEY = "pax.exam.service.timeout";
+    public static final String EXAM_SERVICE_TIMEOUT_KEY = "pax.exam.service.timeout";
 
     /**
      * Default value for service lookup timeout (10 seconds).
      */
-    static final String EXAM_SERVICE_TIMEOUT_DEFAULT = "10000";
+    public static final String EXAM_SERVICE_TIMEOUT_DEFAULT = "10000";
 
     /**
      * The logging system to be provisioned by Pax Exam.
      */
-    static final String EXAM_LOGGING_KEY = "pax.exam.logging";
+    public static final String EXAM_LOGGING_KEY = "pax.exam.logging";
 
     /**
      * Provision Pax Logging as logging system. (Default value).
      */
-    static final String EXAM_LOGGING_PAX_LOGGING = "pax-logging";
+    public static final String EXAM_LOGGING_PAX_LOGGING = "pax-logging";
 
     /**
      * Do not provision any logging system and leave it to the user.
      */
-    static final String EXAM_LOGGING_NONE = "none";
+    public static final String EXAM_LOGGING_NONE = "none";
     
     /**
      * Should Pax Exam fail the test if any of the provisioned bundles is unresolved?
      * Values: true | false.
      */
-    static final String EXAM_FAIL_ON_UNRESOLVED_KEY = "pax.exam.osgi.unresolved.fail";
+    public static final String EXAM_FAIL_ON_UNRESOLVED_KEY = "pax.exam.osgi.unresolved.fail";
+
+    /** Hidden utility class constructor. */
+    private Constants() {
+    }
+
 }

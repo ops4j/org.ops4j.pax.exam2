@@ -32,5 +32,5 @@ public interface ProbeInvoker {
      * @throws TestContainerException
      *             - Something to care about..
      */
-    void call(Object... args) throws TestContainerException;
+    void call(Object... args);
 }

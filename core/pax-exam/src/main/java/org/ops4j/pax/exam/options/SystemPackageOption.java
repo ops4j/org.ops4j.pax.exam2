@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 
 /**
  * Option specifying a system package (package exported by system bundle).

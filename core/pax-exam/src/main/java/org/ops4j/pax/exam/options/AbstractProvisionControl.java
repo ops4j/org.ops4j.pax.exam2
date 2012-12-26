@@ -49,76 +49,46 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
         shouldStart = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean shouldUpdate() {
         return shouldUpdate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public T update(final Boolean shouldUpdate) {
-        this.shouldUpdate = shouldUpdate;
+    public T update(final Boolean _shouldUpdate) {
+        this.shouldUpdate = _shouldUpdate;
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T update() {
         return update(true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T noUpdate() {
         return update(false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean shouldStart() {
         return shouldStart;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public T start(final Boolean shouldStart) {
-        this.shouldStart = shouldStart;
+    public T start(final Boolean _shouldStart) {
+        this.shouldStart = _shouldStart;
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T start() {
         return start(true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T noStart() {
         return start(false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Integer getStartLevel() {
         return startLevel;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public T startLevel(final Integer startLevel) {
-        this.startLevel = startLevel;
+    public T startLevel(final Integer _startLevel) {
+        this.startLevel = _startLevel;
         return itself();
     }
 
@@ -139,7 +109,8 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
         return result;
     }
 
-    @Override
+    // CHECKSTYLE:OFF : generated code
+    @Override    
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -169,5 +140,5 @@ public abstract class AbstractProvisionControl<T extends AbstractProvisionContro
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

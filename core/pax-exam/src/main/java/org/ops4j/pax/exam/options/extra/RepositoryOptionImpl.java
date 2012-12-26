@@ -18,7 +18,7 @@
  */
 package org.ops4j.pax.exam.options.extra;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 
 /**
  * {@link RepositoryOption} implementation.
@@ -64,24 +64,18 @@ public class RepositoryOptionImpl implements RepositoryOption {
         allowReleases = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public RepositoryOptionImpl allowSnapshots() {
         allowSnapshots = true;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public RepositoryOptionImpl disableReleases() {
         allowReleases = false;
         return this;
     }
 
-    public RepositoryOption id(String id) {
-        this.id = id;
+    public RepositoryOption id(String _id) {
+        this.id = _id;
         return this;
     }
 
@@ -99,19 +93,19 @@ public class RepositoryOptionImpl implements RepositoryOption {
             throw new IllegalStateException(
                 "Does not make sense to disallow both releases and snapshots.");
         }
-        final StringBuilder repositoryUrl = new StringBuilder();
-        repositoryUrl.append(this.repositoryUrl);
+        final StringBuilder url = new StringBuilder();
+        url.append(this.repositoryUrl);
         if (allowSnapshots) {
-            repositoryUrl.append("@snapshots");
+            url.append("@snapshots");
         }
         if (!allowReleases) {
-            repositoryUrl.append("@noreleases");
+            url.append("@noreleases");
         }
         if (id != null) {
-            repositoryUrl.append("@id=");
-            repositoryUrl.append(id);
+            url.append("@id=");
+            url.append(id);
         }
-        return repositoryUrl.toString();
+        return url.toString();
     }
 
     /**

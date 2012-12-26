@@ -38,6 +38,6 @@ public interface TestContainerFactory {
      * @throws TestContainerException
      *             fail if incompatible options are being passed in.
      */
-    TestContainer[] create(ExamSystem system) throws TestContainerException;
+    TestContainer[] create(ExamSystem system);
 
 }

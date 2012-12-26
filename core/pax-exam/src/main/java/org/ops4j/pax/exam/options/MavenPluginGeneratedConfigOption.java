@@ -1,7 +1,9 @@
 package org.ops4j.pax.exam.options;
 
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
+
 import java.net.URL;
-import static org.ops4j.lang.NullArgumentException.*;
+
 import org.ops4j.pax.exam.Option;
 
 /**
@@ -12,9 +14,7 @@ public class MavenPluginGeneratedConfigOption implements Option {
 
     private URL url;
 
-    public MavenPluginGeneratedConfigOption(URL url)
-
-    {
+    public MavenPluginGeneratedConfigOption(URL url) {
         validateNotNull(url, "url");
         this.url = url;
     }

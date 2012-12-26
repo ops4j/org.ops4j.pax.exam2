@@ -17,7 +17,8 @@
  */
 package org.ops4j.pax.exam.options.extra;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
+
 import org.ops4j.pax.exam.Option;
 
 /**

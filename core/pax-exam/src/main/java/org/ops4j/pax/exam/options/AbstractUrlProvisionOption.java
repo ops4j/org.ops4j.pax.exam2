@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
 
 /**
  * Option specifying a provision url.
@@ -60,9 +60,6 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
         urlReference = url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getURL() {
         return urlReference.getURL();
     }
@@ -96,6 +93,7 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -114,5 +112,5 @@ public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionO
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

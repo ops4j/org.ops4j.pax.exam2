@@ -42,7 +42,7 @@ public interface TestContainer {
      * @throws TimeoutException
      *             - if timeout occured and the test container cannot be started
      */
-    TestContainer start() throws TimeoutException;
+    TestContainer start();
 
     /**
      * @param stream
@@ -69,7 +69,7 @@ public interface TestContainer {
      * @throws TestContainerException
      *             exception
      */
-    void call(TestAddress address) throws TestContainerException;
+    void call(TestAddress address);
 
     /**
      * Stops the regression container. Implementations should take care of calling cleanup()
@@ -80,6 +80,6 @@ public interface TestContainer {
      * @throws TimeoutException
      *             - if timeout occured and the regression container cannot be stopped
      */
-    TestContainer stop() throws TimeoutException;
+    TestContainer stop();
 
 }

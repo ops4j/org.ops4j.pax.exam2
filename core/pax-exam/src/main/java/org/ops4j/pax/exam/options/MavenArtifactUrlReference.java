@@ -17,7 +17,9 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
+
 import org.ops4j.pax.exam.MavenUtils;
 
 /**
@@ -49,75 +51,50 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
      */
     private String classifier;
 
-    /**
-     * {@inheritDoc}
-     */
-    public MavenArtifactUrlReference groupId(final String groupId) {
-        validateNotEmpty(groupId, true, "Group");
-        this.groupId = groupId;
+    public MavenArtifactUrlReference groupId(final String _groupId) {
+        validateNotEmpty(_groupId, true, "Group");
+        this.groupId = _groupId;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MavenArtifactUrlReference artifactId(final String artifactId) {
-        validateNotEmpty(artifactId, true, "Artifact");
-        this.artifactId = artifactId;
+    public MavenArtifactUrlReference artifactId(final String _artifactId) {
+        validateNotEmpty(_artifactId, true, "Artifact");
+        this.artifactId = _artifactId;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MavenArtifactUrlReference type(final String type) {
-        validateNotEmpty(type, true, "Type");
-        this.type = type;
+    public MavenArtifactUrlReference type(final String _type) {
+        validateNotEmpty(_type, true, "Type");
+        this.type = _type;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MavenUrlReference classifier(String classifier) {
-        validateNotEmpty(classifier, true, "Classifier");
-        this.classifier = classifier;
+    public MavenUrlReference classifier(String _classifier) {
+        validateNotEmpty(_classifier, true, "Classifier");
+        this.classifier = _classifier;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MavenArtifactUrlReference version(final String version) {
-        validateNotEmpty(version, true, "Version");
-        this.version = version;
+    public MavenArtifactUrlReference version(final String _version) {
+        validateNotEmpty(_version, true, "Version");
+        this.version = _version;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public MavenArtifactUrlReference version(final VersionResolver resolver) {
-        validateNotNull(resolver, "Version resolver");
-        return version(resolver.getVersion(groupId, artifactId));
+    public MavenArtifactUrlReference version(final VersionResolver _resolver) {
+        validateNotNull(_resolver, "Version resolver");
+        return version(_resolver.getVersion(groupId, artifactId));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public MavenArtifactUrlReference versionAsInProject() {
         return version(MavenUtils.asInProject());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Boolean isSnapshot() {
         return version == null ? null : version.endsWith("SNAPSHOT");
     }
 
     /**
-     * {@inheritDoc}
      * 
      * @throws IllegalArgumentException
      *             - If group id is null or empty - If artifact id is null or empty
@@ -145,9 +122,6 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
         return url.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -172,6 +146,7 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -213,5 +188,5 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

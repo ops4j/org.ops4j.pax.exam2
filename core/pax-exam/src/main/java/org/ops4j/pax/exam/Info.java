@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -38,19 +39,19 @@ public class Info {
     /**
      * Pax Exam version.
      */
-    private static final String paxExamVersion;
+    private static final String PAX_EXAM_VERSION;
     /**
      * Pax URL version.
      */
-    private static final String paxUrlVersion;
+    private static final String PAX_URL_VERSION;
     /**
      * Ops4J Base libraries version
      */
-    private static final String ops4jBaseVersion;
+    private static final String OPS4J_BASE_VERSION;
     /**
      * Pax Swissbox libraries version
      */
-    private static final String paxSwissboxVersion;
+    private static final String PAX_SWISSBOX_VERSION;
     /**
      * True if pax exam is a snapshot version.
      */
@@ -69,33 +70,33 @@ public class Info {
     private static boolean paxSwissboxSnapshotVersion;
 
     static {
-        String _paxExamVersion = "";
-        String _paxUrlVersion = "";
-        String _ops4jBaseVersion = "";
-        String _paxSwissboxVersion = "";
+        String paxExamVersion = "";
+        String paxUrlVersion = "";
+        String ops4jBaseVersion = "";
+        String paxSwissboxVersion = "";
         try {
             final InputStream is = Info.class.getClassLoader().getResourceAsStream(
                 "META-INF/pax-exam-version.properties");
             if (is != null) {
                 final Properties properties = new Properties();
                 properties.load(is);
-                _paxExamVersion = properties.getProperty("pax.exam.version", "").trim();
-                _paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
-                _ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
-                _paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
+                paxExamVersion = properties.getProperty("pax.exam.version", "").trim();
+                paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
+                ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
+                paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
             }
         }
-        catch (Exception ignore) {
+        catch (IOException ignore) {
             // use default versions
         }
-        paxExamVersion = _paxExamVersion;
-        paxUrlVersion = _paxUrlVersion;
-        ops4jBaseVersion = _ops4jBaseVersion;
-        paxSwissboxVersion = _paxSwissboxVersion;
-        paxExamSnapshotVersion = _paxExamVersion.endsWith(SNAPSHOT);
-        paxUrlSnapshotVersion = _paxUrlVersion.endsWith(SNAPSHOT);
-        ops4jBaseSnapshotVersion = _ops4jBaseVersion.endsWith(SNAPSHOT);
-        paxSwissboxSnapshotVersion = _paxSwissboxVersion.endsWith(SNAPSHOT);
+        PAX_EXAM_VERSION = paxExamVersion;
+        PAX_URL_VERSION = paxUrlVersion;
+        OPS4J_BASE_VERSION = ops4jBaseVersion;
+        PAX_SWISSBOX_VERSION = paxSwissboxVersion;
+        paxExamSnapshotVersion = paxExamVersion.endsWith(SNAPSHOT);
+        paxUrlSnapshotVersion = paxUrlVersion.endsWith(SNAPSHOT);
+        ops4jBaseSnapshotVersion = ops4jBaseVersion.endsWith(SNAPSHOT);
+        paxSwissboxSnapshotVersion = paxSwissboxVersion.endsWith(SNAPSHOT);
     }
 
     /**
@@ -111,7 +112,7 @@ public class Info {
      * @return pax exam version
      */
     public static String getPaxExamVersion() {
-        return paxExamVersion;
+        return PAX_EXAM_VERSION;
     }
 
     /**
@@ -120,7 +121,7 @@ public class Info {
      * @return pax url version
      */
     public static String getPaxUrlVersion() {
-        return paxUrlVersion;
+        return PAX_URL_VERSION;
     }
 
     /**
@@ -129,7 +130,7 @@ public class Info {
      * @return the ops4j base version.
      */
     public static String getOps4jBaseVersion() {
-        return ops4jBaseVersion;
+        return OPS4J_BASE_VERSION;
     }
 
     /**
@@ -138,7 +139,7 @@ public class Info {
      * @return pax swissbox version
      */
     public static String getPaxSwissboxVersion() {
-        return paxSwissboxVersion;
+        return PAX_SWISSBOX_VERSION;
     }
 
     /**

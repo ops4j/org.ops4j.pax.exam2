@@ -32,12 +32,12 @@ public interface TestAddress {
      * @return identifier that is associated with this address. Basically its the persistent
      *         representation.
      */
-    public String identifier();
+    String identifier();
 
     /**
      * @return A human readable name of that test address
      */
-    public String caption();
+    String caption();
 
     /**
      * Test Addresses are built from other test addresses, so they build a compound tree. This
@@ -46,13 +46,12 @@ public interface TestAddress {
      * 
      * @return root of this address (where this was built from).
      */
-    public TestAddress root();
+    TestAddress root();
 
     /**
      * Test Addresses can have default argument values.
      * 
      * @return the arguments passed to this address by default.
      */
-    public Object[] arguments();
-
+    Object[] arguments();
 }

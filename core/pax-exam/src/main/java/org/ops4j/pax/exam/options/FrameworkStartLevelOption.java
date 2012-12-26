@@ -74,6 +74,7 @@ public class FrameworkStartLevelOption implements Option {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -87,5 +88,5 @@ public class FrameworkStartLevelOption implements Option {
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

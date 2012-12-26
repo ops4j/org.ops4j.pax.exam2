@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 
 /**
  * Options specifying a boot delegation package (package for which framework will delegate to the
@@ -85,6 +85,7 @@ public class BootDelegationOption implements ValueOption<String> {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -102,5 +103,5 @@ public class BootDelegationOption implements ValueOption<String> {
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

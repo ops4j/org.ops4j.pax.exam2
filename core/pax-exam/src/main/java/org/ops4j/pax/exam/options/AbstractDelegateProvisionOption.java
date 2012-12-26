@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
 
 /**
  * Abstract {@link ProvisionOption} that delegates to another provision option.
@@ -47,85 +47,52 @@ public abstract class AbstractDelegateProvisionOption<T extends AbstractDelegate
         this.delegate = delegate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getURL() {
         return delegate.getURL();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean shouldUpdate() {
         return delegate.shouldUpdate();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean shouldStart() {
         return delegate.shouldStart();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Integer getStartLevel() {
         return delegate.getStartLevel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T update(final Boolean shouldUpdate) {
         delegate.update(shouldUpdate);
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T update() {
         delegate.update();
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T noUpdate() {
         delegate.noUpdate();
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T start(final Boolean shouldStart) {
         delegate.start(shouldStart);
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T start() {
         delegate.start();
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T noStart() {
         delegate.noStart();
         return itself();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T startLevel(final Integer startLevel) {
         delegate.startLevel(startLevel);
         return itself();

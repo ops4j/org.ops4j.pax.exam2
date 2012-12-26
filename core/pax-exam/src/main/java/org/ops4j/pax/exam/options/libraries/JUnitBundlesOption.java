@@ -17,8 +17,9 @@
  */
 package org.ops4j.pax.exam.options.libraries;
 
-import static org.ops4j.pax.exam.Constants.*;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+
 import org.ops4j.pax.exam.options.AbstractDelegateProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 
@@ -66,11 +67,7 @@ public class JUnitBundlesOption extends AbstractDelegateProvisionOption<JUnitBun
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected JUnitBundlesOption itself() {
         return this;
     }
-
 }

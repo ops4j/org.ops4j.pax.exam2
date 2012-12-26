@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 
 /**
  * Option specifying an url.
@@ -46,16 +46,10 @@ public class RawUrlReference implements UrlReference {
         this.url = url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getURL() {
         return url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -73,6 +67,8 @@ public class RawUrlReference implements UrlReference {
         return result;
     }
 
+
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -90,5 +86,5 @@ public class RawUrlReference implements UrlReference {
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

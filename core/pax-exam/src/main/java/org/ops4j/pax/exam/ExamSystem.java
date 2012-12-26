@@ -39,7 +39,7 @@ public interface ExamSystem {
      *         may rule of their own how to react when multiple values are found (check their
      *         javadoc).
      */
-    public <T extends Option> T getSingleOption(final Class<T> optionType);
+    <T extends Option> T getSingleOption(final Class<T> optionType);
 
     /**
      * Getting options of this "system". This is the prime method on accessing options of a giving
@@ -50,7 +50,7 @@ public interface ExamSystem {
      * @return options matching the parameter type T. If none was found, this method returns an
      *         empty array.
      */
-    public <T extends Option> T[] getOptions(final Class<T> optionType);
+    <T extends Option> T[] getOptions(final Class<T> optionType);
 
     /**
      * 
@@ -63,24 +63,24 @@ public interface ExamSystem {
      * @throws IOException
      *             in case creation of the new {@link ExamSystem} fails. (IO related).
      */
-    public ExamSystem fork(Option[] options) throws IOException;
+    ExamSystem fork(Option[] options) throws IOException;
 
     /**
      * @return the basic directory that Exam should use to look at user-defaults.
      */
-    public File getConfigFolder();
+    File getConfigFolder();
 
     /**
      * Each call to this method might create a new folder that is being cleared on clear().
      * 
      * @return the basic directory that Exam should use for all IO write activities.
      */
-    public File getTempFolder();
+    File getTempFolder();
 
     /**
      * @return a relative indication of how to deal with timeouts.
      */
-    public RelativeTimeout getTimeout();
+    RelativeTimeout getTimeout();
 
     /**
      * New Probe creator using this systems "caches".
@@ -89,7 +89,7 @@ public interface ExamSystem {
      * @throws IOException
      *             in case of an IO problem.
      */
-    public TestProbeBuilder createProbe() throws IOException;
+    TestProbeBuilder createProbe() throws IOException;
 
     /**
      * Exam relies on uniquely used identifiers per system. This method gives you one UUID.
@@ -99,10 +99,10 @@ public interface ExamSystem {
      *            (for debugging and logging purposes)
      * @return a new and unqiue identifier.
      */
-    public String createID(String purposeText);
+    String createID(String purposeText);
 
     /**
      * Clears up resources taken by system (like temporary files)
      */
-    public void clear();
+    void clear();
 }

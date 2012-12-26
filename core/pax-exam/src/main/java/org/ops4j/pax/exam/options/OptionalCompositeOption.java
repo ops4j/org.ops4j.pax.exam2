@@ -73,7 +73,7 @@ public class OptionalCompositeOption implements CompositeOption {
 
     /**
      * If condition is true will return the composite options. Otherwise will return an empty array
-     * of options. {@inheritDoc}
+     * of options. 
      */
     public Option[] getOptions() {
         if (condition.evaluate()) {
@@ -91,6 +91,7 @@ public class OptionalCompositeOption implements CompositeOption {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -114,11 +115,12 @@ public class OptionalCompositeOption implements CompositeOption {
             return false;
         return true;
     }
+    // CHECKSTYLE:ON
 
     /**
      * Condition to be evaluated.
      */
-    public static interface Condition {
+    public interface Condition {
 
         /**
          * @return true when the composite option sshould be used
@@ -147,9 +149,6 @@ public class OptionalCompositeOption implements CompositeOption {
             this.condition = condition;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public boolean evaluate() {
             return condition;
         }
@@ -162,6 +161,7 @@ public class OptionalCompositeOption implements CompositeOption {
             return result;
         }
 
+        // CHECKSTYLE:OFF : generated code
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -175,7 +175,7 @@ public class OptionalCompositeOption implements CompositeOption {
                 return false;
             return true;
         }
-
+        // CHECKSTYLE:ON
     }
 
 }

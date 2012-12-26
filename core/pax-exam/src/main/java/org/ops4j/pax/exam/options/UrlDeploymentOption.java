@@ -57,8 +57,8 @@ public class UrlDeploymentOption implements DeploymentOption, UrlReference {
         return urlReference;
     }
 
-    public UrlDeploymentOption name(String name) {
-        this.name = name;
+    public UrlDeploymentOption name(String _name) {
+        this.name = _name;
         return this;
     }
 
@@ -66,8 +66,8 @@ public class UrlDeploymentOption implements DeploymentOption, UrlReference {
         return name;
     }
 
-    public UrlDeploymentOption contextRoot(String contextRoot) {
-        this.contextRoot = contextRoot;
+    public UrlDeploymentOption contextRoot(String _contextRoot) {
+        this.contextRoot = _contextRoot;
         return this;
     }
 
@@ -75,9 +75,6 @@ public class UrlDeploymentOption implements DeploymentOption, UrlReference {
         return contextRoot;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected UrlDeploymentOption itself() {
         return this;
     }

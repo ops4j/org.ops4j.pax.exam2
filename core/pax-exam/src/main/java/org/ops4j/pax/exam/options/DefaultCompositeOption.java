@@ -54,9 +54,6 @@ public class DefaultCompositeOption implements CompositeOption {
         this(new Option[0]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Option[] getOptions() {
         return OptionUtils.expand(options.toArray(new Option[options.size()]));
     }
@@ -64,14 +61,14 @@ public class DefaultCompositeOption implements CompositeOption {
     /**
      * Adds options.
      * 
-     * @param options
+     * @param _options
      *            composite options to be added (can be null or no options specified)
      * 
      * @return itself, for fluent api usage
      */
-    public DefaultCompositeOption add(final Option... options) {
-        if (options != null) {
-            this.options.addAll(Arrays.asList(options));
+    public DefaultCompositeOption add(final Option... _options) {
+        if (_options != null) {
+            this.options.addAll(Arrays.asList(_options));
         }
         return this;
     }
@@ -96,6 +93,7 @@ public class DefaultCompositeOption implements CompositeOption {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -113,5 +111,5 @@ public class DefaultCompositeOption implements CompositeOption {
             return false;
         return true;
     }
-
+    // CHECKSTYLE:ON
 }

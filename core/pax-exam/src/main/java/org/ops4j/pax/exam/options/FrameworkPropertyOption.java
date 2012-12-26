@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.options;
 
-import static org.ops4j.lang.NullArgumentException.*;
+import static org.ops4j.lang.NullArgumentException.validateNotNull;
 
 /**
  * Option specifying a framework property.
@@ -53,7 +53,7 @@ public class FrameworkPropertyOption implements ValueOption<Object> {
     /**
      * Sets the system property value.
      * 
-     * @param value
+     * @param _value
      *            system property value (cannot be null, can be empty)
      * 
      * @return itself, for fluent api usage
@@ -61,9 +61,9 @@ public class FrameworkPropertyOption implements ValueOption<Object> {
      * @throws IllegalArgumentException
      *             - If value is null
      */
-    public FrameworkPropertyOption value(final Object value) {
-        validateNotNull(value, "Value");
-        this.value = value;
+    public FrameworkPropertyOption value(final Object _value) {
+        validateNotNull(_value, "Value");
+        this.value = _value;
         return this;
     }
 
