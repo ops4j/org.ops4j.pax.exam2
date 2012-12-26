@@ -66,7 +66,27 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>verify-style</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configLocation>checkstyle/pax-cdi-checks.xml</configLocation>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ops4j.pax.cdi</groupId>
+                        <artifactId>pax-cdi-checkstyle-rules</artifactId>
+                        <version>0.3.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
+
         </plugins>
         <pluginManagement>
             <plugins>

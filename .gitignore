@@ -11,6 +11,7 @@ bin
 .classpath
 .project
 .settings
+.checkstyle
 test-output
 *.log
 atlassian-ide-plugin.xml
