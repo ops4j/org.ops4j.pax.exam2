@@ -32,7 +32,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Preferred link because it does not require an mvn url handler implicitely. -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-link-mvn</artifactId>
@@ -293,11 +292,6 @@
                     <scope>test</scope>
                 </dependency>
 
-                <!-- Required when using mvn provisioning options -->
-                <dependency>
-                    <groupId>org.ops4j.pax.url</groupId>
-                    <artifactId>pax-url-aether</artifactId>
-                </dependency>
                 <dependency>
                     <groupId>org.ops4j.pax.url</groupId>
                     <artifactId>pax-url-wrap</artifactId>
@@ -322,11 +316,6 @@
                     <scope>test</scope>
                 </dependency>
 
-                <!-- Required when using mvn provisioning options -->
-                <dependency>
-                    <groupId>org.ops4j.pax.url</groupId>
-                    <artifactId>pax-url-aether</artifactId>
-                </dependency>
                 <dependency>
                     <groupId>org.ops4j.pax.url</groupId>
                     <artifactId>pax-url-reference</artifactId>
@@ -336,14 +325,6 @@
                     <groupId>org.ops4j.pax.url</groupId>
                     <artifactId>pax-url-wrap</artifactId>
                     <version>${dependency.paxurl.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.ops4j.pax.url</groupId>
-                    <artifactId>pax-url-link</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.ops4j.pax.url</groupId>
-                    <artifactId>pax-url-classpath</artifactId>
                 </dependency>
 
             </dependencies>

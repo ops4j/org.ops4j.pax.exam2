@@ -54,21 +54,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Required when using mvn provisioning options -->
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-aether</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-wrap</artifactId>
-            <version>${dependency.paxurl.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-commons</artifactId>
-            <version>${dependency.paxurl.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
