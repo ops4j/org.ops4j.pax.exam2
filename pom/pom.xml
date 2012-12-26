@@ -19,7 +19,7 @@
     <properties>
         <namespace>org.ops4j.pax.exam</namespace>
         <dependency.paxurl.version>1.5.0</dependency.paxurl.version>
-        <dependency.swissbox.version>1.6.0-SNAPSHOT</dependency.swissbox.version>
+        <dependency.swissbox.version>1.6.0</dependency.swissbox.version>
         <dependency.base.version>1.4.0</dependency.base.version>
         <dependency.slf4j.version>1.6.1</dependency.slf4j.version>
         <dependency.junit.version>4.10</dependency.junit.version>
