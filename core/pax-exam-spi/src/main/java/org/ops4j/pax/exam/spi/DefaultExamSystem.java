@@ -226,8 +226,7 @@ public class DefaultExamSystem implements ExamSystem {
         for (Option option : combinedOptions) {
             boolean found = false;
             for (Class<?> c : requestedOptionTypes) {
-                option.getClass().asSubclass(c);
-                found = true;
+                found = c.isAssignableFrom(option.getClass());
                 break;
             }
             if (!found) {
