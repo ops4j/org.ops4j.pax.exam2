@@ -36,8 +36,8 @@ public class JUnitBundlesOption extends AbstractDelegateProvisionOption<JUnitBun
      * Constructor.
      */
     public JUnitBundlesOption() {
-        super(mavenBundle().groupId("org.apache.servicemix.bundles")
-            .artifactId("org.apache.servicemix.bundles.junit").version("4.10_1"));
+        super(mavenBundle().groupId("org.ops4j.pax.tipi")
+            .artifactId("org.ops4j.pax.tipi.junit").version("4.11.0.1"));
         noUpdate();
         startLevel(START_LEVEL_SYSTEM_BUNDLES);
     }
