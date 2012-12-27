@@ -90,7 +90,7 @@ public class TomcatTestContainer implements TestContainer {
     public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
         system.getOptions(WarProbeOption.class);
-        copyContextXml(webappDir, EXAM_APPLICATION_NAME);
+        copyContextXml(EXAM_APPLICATION_NAME);
         deployModule(EXAM_APPLICATION_NAME, stream);
         return -1;
     }
@@ -135,7 +135,7 @@ public class TomcatTestContainer implements TestContainer {
         }
     }
 
-    private void copyContextXml(File webappDir, String applicationName) {
+    private void copyContextXml(String applicationName) {
         for (String fileName : CONTEXT_XML) {
             File contextXml = new File(fileName);
             if (contextXml.exists()) {

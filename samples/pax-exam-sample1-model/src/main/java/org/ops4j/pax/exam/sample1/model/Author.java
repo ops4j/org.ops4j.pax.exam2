@@ -81,6 +81,7 @@ public class Author {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -94,4 +95,5 @@ public class Author {
             return false;
         return true;
     }
+    // CHECKSTYLE:ON
 }

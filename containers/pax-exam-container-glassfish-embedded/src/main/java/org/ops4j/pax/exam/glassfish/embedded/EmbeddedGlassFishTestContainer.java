@@ -270,7 +270,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
     /**
      * Starts the GlassFish container.
      */
-    public TestContainer start() throws TestContainerException {
+    public TestContainer start() {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         ConfigurationManager cm = new ConfigurationManager();
         configDirName = cm.getProperty(GLASSFISH_CONFIG_DIR_KEY,
@@ -292,7 +292,10 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
 
             deployModules();
         }
-        catch (Exception e) {
+        catch (GlassFishException e) {
+            throw new TestContainerException("Problem starting test container.", e);
+        }
+        catch (URISyntaxException e) {
             throw new TestContainerException("Problem starting test container.", e);
         }
         return this;

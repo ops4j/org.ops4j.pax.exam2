@@ -44,13 +44,13 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultExamReactor implements ExamReactor {
 
-    private static Logger LOG = LoggerFactory.getLogger(DefaultExamReactor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultExamReactor.class);
 
-    final private List<Option[]> configurations;
-    final private List<TestProbeBuilder> probes;
-    final private TestContainerFactory testContainerFactory;
+    private final List<Option[]> configurations;
+    private final List<TestProbeBuilder> probes;
+    private final TestContainerFactory testContainerFactory;
 
-    final private ExamSystem system;
+    private final ExamSystem system;
 
     public DefaultExamReactor(ExamSystem system, TestContainerFactory factory) {
         this.system = system;
@@ -59,15 +59,15 @@ public class DefaultExamReactor implements ExamReactor {
         this.testContainerFactory = factory;
     }
 
-    synchronized public void addConfiguration(Option[] configuration) {
+    public synchronized void addConfiguration(Option[] configuration) {
         configurations.add(configuration);
     }
 
-    synchronized public void addProbe(TestProbeBuilder builder) {
+    public synchronized void addProbe(TestProbeBuilder builder) {
         probes.add(builder);
     }
 
-    synchronized public StagedExamReactor stage(StagedExamReactorFactory factory)
+    public synchronized StagedExamReactor stage(StagedExamReactorFactory factory)
         throws IOException {
         LOG.debug("Staging reactor with probes: " + probes.size() + " using strategy: " + factory);
         List<TestContainer> containers = new ArrayList<TestContainer>();

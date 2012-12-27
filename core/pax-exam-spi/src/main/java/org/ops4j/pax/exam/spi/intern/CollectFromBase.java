@@ -34,8 +34,8 @@ public class CollectFromBase implements ContentCollector {
         }
     }
 
-    private String normalize(File base, File f) throws IOException {
-        return f.getCanonicalPath().substring(base.getCanonicalPath().length() + 1)
+    private String normalize(File _base, File f) throws IOException {
+        return f.getCanonicalPath().substring(_base.getCanonicalPath().length() + 1)
             .replace(File.separatorChar, '/');
     }
 

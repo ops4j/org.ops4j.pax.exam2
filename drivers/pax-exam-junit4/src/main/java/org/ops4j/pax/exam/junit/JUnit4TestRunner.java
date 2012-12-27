@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
-    private static Logger LOG = LoggerFactory.getLogger(JUnit4TestRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JUnit4TestRunner.class);
 
     /**
      * Reactor manager singleton.
@@ -73,7 +73,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
      * Staged reactor for this test class. This may actually be a reactor already staged for a
      * previous test class, depending on the reactor strategy.
      */
-    private StagedExamReactor reactor;
+    private StagedExamReactor stagedReactor;
 
     /**
      * Shall we use a probe invoker, or invoke test methods directly?
@@ -94,7 +94,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         if (useProbeInvoker) {
             addTestsToReactor(examReactor, klass, testClassInstance);
         }
-        reactor = manager.stageReactor();
+        stagedReactor = manager.stageReactor();
     }
 
     /**
@@ -107,16 +107,17 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         LOG.info("running test class {}", getTestClass().getName());
         Class<?> testClass = getTestClass().getJavaClass();
         try {
-            manager.beforeClass(reactor, testClass);
+            manager.beforeClass(stagedReactor, testClass);
             super.run(notifier);
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             // rethrowing the exception does not help, we have to use the notifier here
             Description description = Description.createSuiteDescription(testClass);
             notifier.fireTestFailure(new Failure(description, e));
         }
         finally {
-            manager.afterClass(reactor, testClass);
+            manager.afterClass(stagedReactor, testClass);
         }
     }
 
@@ -145,14 +146,17 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
 
         Object test;
         try {
-            test = new ReflectiveCallable() {
+            ReflectiveCallable reflectiveCallable = new ReflectiveCallable() {
 
                 @Override
+                // CHECKSTYLE:SKIP : Base class API
                 protected Object runReflectiveCall() throws Throwable {
                     return createTest();
                 }
-            }.run();
+            };
+            test = reflectiveCallable.run();
         }
+        // CHECKSTYLE:SKIP : ReflectiveCallable API
         catch (Throwable e) {
             return new Fail(e);
         }
@@ -179,7 +183,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
     }
 
     private void fillChildren() {
-        Set<TestAddress> targets = reactor.getTargets();
+        Set<TestAddress> targets = stagedReactor.getTargets();
         TestDirectory testDirectory = TestDirectory.getInstance();
         boolean mangleMethodNames = manager.getNumConfigurations() > 1;
         for (TestAddress address : targets) {
@@ -260,6 +264,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                 return null;
             }
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             throw new TestContainerException("Problem delegating to test.", e);
         }
@@ -277,6 +282,7 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
         return new Statement() {
 
             @Override
+            // CHECKSTYLE:SKIP : Statement API
             public void evaluate() throws Throwable {
                 TestAddress address = methodToTestAddressMap.get(method);
                 TestAddress root = address.root();
@@ -284,8 +290,9 @@ public class JUnit4TestRunner extends BlockJUnit4ClassRunner {
                 LOG.debug("Invoke " + method.getName() + " @ " + address + " Arguments: "
                     + root.arguments());
                 try {
-                    reactor.invoke(address);
+                    stagedReactor.invoke(address);
                 }
+                // CHECKSTYLE:SKIP : StagedExamReactor API
                 catch (Exception e) {
                     Throwable t = ExceptionHelper.unwind(e);
                     throw t;

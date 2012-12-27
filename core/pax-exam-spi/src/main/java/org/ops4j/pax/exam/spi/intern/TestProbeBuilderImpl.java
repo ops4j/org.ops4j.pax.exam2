@@ -203,7 +203,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     }
 
     private Properties createExtraIgnores() {
-        Properties extraProperties = new Properties();
+        Properties properties = new Properties();
         StringBuilder sb = new StringBuilder();
         for (String p : ignorePackages) {
             if (sb.length() > 0) {
@@ -211,8 +211,8 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
             }
             sb.append(p);
         }
-        extraProperties.put("Ignore-Package", sb.toString());
-        return extraProperties;
+        properties.put("Ignore-Package", sb.toString());
+        return properties;
     }
 
     private void constructProbeTag(Properties p) {

@@ -76,11 +76,15 @@ public class JBossTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JBossTestContainer.class);
 
-    final private Stack<String> deployed = new Stack<String>();
+    private static final String HTTP_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='http']/@port";
+    
+    private static final String MGMT_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='management-native']/@port";
+    
+    private final Stack<String> deployed = new Stack<String>();
 
-    final private ExamSystem system;
+    private final ExamSystem system;
 
-    final private TestDirectory testDirectory;
+    private final TestDirectory testDirectory;
 
     private String jBossHome;
 
@@ -197,7 +201,7 @@ public class JBossTestContainer implements TestContainer {
         }
     }
 
-    public TestContainer start() throws TestContainerException {
+    public TestContainer start() {
         installContainer();
         File tempDir = system.getTempFolder();
         File dataDir = new File(tempDir, "data");
@@ -285,8 +289,6 @@ public class JBossTestContainer implements TestContainer {
             Document doc = builder.parse(serverConfig);
             XPathFactory xpf = XPathFactory.newInstance();
             XPath xPath = xpf.newXPath();
-            String HTTP_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='http']/@port";
-            String MGMT_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='management-native']/@port";
             httpPort = substituteProperties(xPath.evaluate(HTTP_PORT_XPATH, doc));
             mgmtPort = substituteProperties(xPath.evaluate(MGMT_PORT_XPATH, doc));
         }

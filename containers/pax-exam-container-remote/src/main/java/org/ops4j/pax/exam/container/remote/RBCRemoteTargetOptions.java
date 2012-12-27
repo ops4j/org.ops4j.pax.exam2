@@ -25,6 +25,10 @@ import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
  * @since Jan 25, 2010
  */
 public class RBCRemoteTargetOptions {
+    
+    /** Hidden utility class constructor. */
+    private RBCRemoteTargetOptions() {
+    }
 
     /**
      * Creates a {@link org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption}.

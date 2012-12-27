@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ForkedTestContainer implements TestContainer {
 
-    private static Logger LOG = LoggerFactory.getLogger(ForkedTestContainer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ForkedTestContainer.class);
 
     private ExamSystem system;
     private ForkedFrameworkFactory frameworkFactory;

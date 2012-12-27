@@ -56,6 +56,7 @@ class DecoratedFrameworkMethod extends FrameworkMethod {
         return result;
     }
 
+    // CHECKSTYLE:OFF : generated code
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -73,4 +74,5 @@ class DecoratedFrameworkMethod extends FrameworkMethod {
             return false;
         return true;
     }
+    // CHECKSTYLE:ON
 }

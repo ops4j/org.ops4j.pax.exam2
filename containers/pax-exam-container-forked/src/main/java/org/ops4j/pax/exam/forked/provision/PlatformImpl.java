@@ -190,7 +190,7 @@ public class PlatformImpl {
         }
     }
 
-    private void saveProperties(Properties properties, File file) throws TestContainerException {
+    private void saveProperties(Properties properties, File file) {
         FileOutputStream os = null;
         try {
             os = new FileOutputStream(file);
@@ -225,7 +225,7 @@ public class PlatformImpl {
      * @throws TestContainerException
      *             if the jar is not a valid bundle
      */
-    void validateBundle(final URL url, final File file) throws TestContainerException {
+    void validateBundle(final URL url, final File file) {
         String bundleSymbolicName = null;
         String bundleName = null;
         JarFile jar = null;

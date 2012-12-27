@@ -39,6 +39,7 @@ public class ContainerTestRunnerBuilder extends RunnerBuilder {
     }
 
     @Override
+    // CHECKSTYLE:SKIP : base class API
     public Runner runnerForClass(Class<?> testClass) throws Throwable {
         return new ContainerTestRunner(testClass, injector);
     }

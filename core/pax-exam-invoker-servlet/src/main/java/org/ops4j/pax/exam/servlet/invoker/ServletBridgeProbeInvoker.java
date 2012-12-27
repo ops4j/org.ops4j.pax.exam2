@@ -80,9 +80,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
         }
     }
 
-    private boolean findAndInvoke(Class<?> testClass)
-
-    {
+    private boolean findAndInvoke(Class<?> testClass) {
         try {
             // find matching method
             for (Method m : testClass.getMethods()) {

@@ -34,4 +34,9 @@ public class ContainerConstants {
     public static final String TESTRUNNER_NAME = "testrunner";
     public static final String TESTRUNNER_URL = "/" + TESTRUNNER_NAME;
     public static final String HTTP_PORT_DEFAULT = "8080";
+    
+
+    /** Hidden utility class constructor. */
+    private ContainerConstants() {
+    }
 }

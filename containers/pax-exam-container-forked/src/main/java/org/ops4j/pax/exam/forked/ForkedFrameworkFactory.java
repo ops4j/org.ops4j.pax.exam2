@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ForkedFrameworkFactory {
 
-    private static Logger LOG = LoggerFactory.getLogger(ForkedFrameworkFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ForkedFrameworkFactory.class);
 
     // TODO make this configurable
     private static final long TIMEOUT = 60 * 1000;
@@ -164,7 +164,7 @@ public class ForkedFrameworkFactory {
         return klass.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
     }
 
-    private RemoteFramework findRemoteFramework(int port, String rmiName) {
+    private RemoteFramework findRemoteFramework(int _port, String rmiName) {
         RemoteFramework framework = null;
         Throwable reason = null;
         long startedTrying = System.currentTimeMillis();
@@ -172,7 +172,7 @@ public class ForkedFrameworkFactory {
         try {
             do {
                 try {
-                    Registry reg = LocateRegistry.getRegistry(port);
+                    Registry reg = LocateRegistry.getRegistry(_port);
                     framework = (RemoteFramework) reg.lookup(rmiName);
                 }
                 catch (Exception e) {

@@ -52,10 +52,10 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 public class Player {
 
     private static final StagedExamReactorFactory DEFAULT_STRATEGY = new PerClass();
-    final private TestContainerFactory factory;
-    final private Option[] parts;
-    final private TestProbeBuilder builder;
-    final private ExamSystem testSystem;
+    private final TestContainerFactory factory;
+    private final Option[] parts;
+    private final TestProbeBuilder builder;
+    private final ExamSystem testSystem;
 
     public Player(TestContainerFactory containerFactory, Option... parts) throws IOException {
         this.testSystem = createTestSystem();
@@ -72,8 +72,8 @@ public class Player {
         this(getTestContainerFactory());
     }
 
-    public Player with(Option... parts) throws IOException {
-        return new Player(factory, parts);
+    public Player with(Option... _parts) throws IOException {
+        return new Player(factory, _parts);
     }
 
     public Player test(Class<?> clazz, Object... args) throws Exception {
@@ -97,6 +97,7 @@ public class Player {
             try {
                 stagedReactor.invoke(target);
             }
+            // CHECKSTYLE:SKIP : StagedExamReactor API
             catch (Exception e) {
                 Throwable t = ExceptionHelper.unwind(e);
                 t.printStackTrace();

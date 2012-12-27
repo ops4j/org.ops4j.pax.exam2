@@ -36,7 +36,7 @@ import org.osgi.framework.launch.FrameworkFactory;
 // @MetaInfServices
 public class NativeTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+    public TestContainer[] create(ExamSystem system) {
         List<TestContainer> containers = new ArrayList<TestContainer>();
         Iterator<FrameworkFactory> factories = ServiceLoader.load(FrameworkFactory.class)
             .iterator();

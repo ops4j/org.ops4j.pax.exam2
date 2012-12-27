@@ -28,7 +28,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 public class RBCRemoteContainerFactory implements TestContainerFactory {
 
     /**
-     * {@inheritDoc} Not used yet.
+     * Not used yet.
      */
     public TestContainer[] create(final ExamSystem system) {
         return new TestContainer[] {

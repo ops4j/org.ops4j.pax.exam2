@@ -53,26 +53,30 @@ public class MovieDbJsonMapper {
             // movie.setLastModified(toDate(data,"last_modified_at","yyyy-MM-dd HH:mm:ss"));
             movie.setImageUrl(selectImageUrl((List<Map>) data.get("posters"), "poster", "mid"));
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             throw new MovieDbException("Failed to map json for movie", e);
         }
     }
 
     public String getYoutubeId(String trailerUrl) {
-        if (trailerUrl == null || !trailerUrl.contains("youtu"))
+        if (trailerUrl == null || !trailerUrl.contains("youtu")) {
             return null;
+        }
         String[] parts = trailerUrl.split("[=/]");
         int numberOfParts = parts.length;
         return numberOfParts > 0 ? parts[numberOfParts - 1] : null;
     }
 
     private String selectImageUrl(List<Map> data, final String type, final String size) {
-        if (data == null)
+        if (data == null) {
             return null;
+        }
         for (Map entry : data) {
             Map image = (Map) entry.get("image");
-            if (image.get("type").equals(type) && image.get("size").equals(size))
+            if (image.get("type").equals(type) && image.get("size").equals(size)) {
                 return (String) image.get("url");
+            }
         }
         return null;
     }
@@ -80,19 +84,21 @@ public class MovieDbJsonMapper {
     @SuppressWarnings("unused")
     private String extractFirst(Map data, String field, String property) {
         List<Map> inner = (List<Map>) data.get(field);
-        if (inner == null || inner.isEmpty())
+        if (inner == null || inner.isEmpty()) {
             return null;
+        }
         return (String) inner.get(0).get(property);
     }
 
-    private Date toDate(Map data, String field, final String pattern) throws ParseException {
+    private Date toDate(Map data, String field, final String pattern) {
         try {
             String dateString = (String) data.get(field);
-            if (dateString == null || dateString.isEmpty())
+            if (dateString == null || dateString.isEmpty()) {
                 return null;
+            }
             return new SimpleDateFormat(pattern).parse(dateString);
         }
-        catch (Exception e) {
+        catch (ParseException e) {
             return null;
         }
     }
@@ -114,14 +120,16 @@ public class MovieDbJsonMapper {
             }
             person.setLastModified(toDate(data, "last_modified_at", "yyyy-MM-dd HH:mm:ss"));
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             throw new MovieDbException("Failed to map json for person", e);
         }
     }
 
     private String limit(String text, int limit) {
-        if (text == null || text.length() < limit)
+        if (text == null || text.length() < limit) {
             return text;
+        }
         return text.substring(0, limit);
     }
 

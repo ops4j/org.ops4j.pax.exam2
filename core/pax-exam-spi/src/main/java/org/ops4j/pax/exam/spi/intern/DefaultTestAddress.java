@@ -27,12 +27,12 @@ import org.ops4j.pax.exam.TestAddress;
  */
 public class DefaultTestAddress implements TestAddress {
 
-    private static Logger LOG = LoggerFactory.getLogger(DefaultTestAddress.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTestAddress.class);
 
-    final private String sig;
-    final private TestAddress root;
-    final private String caption;
-    final private Object[] args;
+    private final String sig;
+    private final TestAddress root;
+    private final String caption;
+    private final Object[] args;
 
     public DefaultTestAddress(String caption, Object... args) {
         this(null, caption, args);
@@ -69,19 +69,24 @@ public class DefaultTestAddress implements TestAddress {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DefaultTestAddress other = (DefaultTestAddress) obj;
         if (caption == null) {
-            if (other.caption != null)
+            if (other.caption != null) {
                 return false;
+            }
         }
-        else if (!caption.equals(other.caption))
+        else if (!caption.equals(other.caption)) {
             return false;
+        }
         return true;
     }
 

@@ -109,15 +109,16 @@ import org.testng.internal.NoOpTestClass;
  */
 public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
-    private static Logger LOG = LoggerFactory.getLogger(PaxExam.class);
-
     public static final String PAX_EXAM_SUITE_NAME = "PaxExamInternal";
+
+    private static final Logger LOG = LoggerFactory.getLogger(PaxExam.class);
+
 
     /**
      * Staged reactor for this test class. This may actually be a reactor already staged for a
      * previous test class, depending on the reactor strategy.
      */
-    private StagedExamReactor reactor;
+    private StagedExamReactor stagedReactor;
 
     /**
      * Maps method names to test addresses. The method names are qualified by class and container
@@ -185,9 +186,10 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             manager = ReactorManager.getInstance();
             manager.setAnnotationHandler(new TestNGLegacyAnnotationHandler());
             try {
-                reactor = stageReactor(suite);
-                manager.beforeSuite(reactor);
+                stagedReactor = stageReactor(suite);
+                manager.beforeSuite(stagedReactor);
             }
+            // CHECKSTYLE:SKIP : catch all wanted
             catch (Exception exc) {
                 throw new TestContainerException(exc);
             }
@@ -205,9 +207,9 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
         if (!isRunningInTestContainer(suite)) {
             // fire an afterClass event for the last test class
             if (currentTestClassInstance != null) {
-                manager.afterClass(reactor, currentTestClassInstance.getClass());
+                manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
             }
-            manager.afterSuite(reactor);
+            manager.afterSuite(stagedReactor);
         }
     }
 
@@ -237,6 +239,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             }
             return manager.stageReactor();
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }
@@ -438,9 +441,9 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
         Object testClassInstance = testResult.getMethod().getInstance();
         if (testClassInstance != currentTestClassInstance) {
             if (currentTestClassInstance != null) {
-                manager.afterClass(reactor, currentTestClassInstance.getClass());
+                manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
             }
-            manager.beforeClass(reactor, testClassInstance);
+            manager.beforeClass(stagedReactor, testClassInstance);
             currentTestClassInstance = testClassInstance;
         }
 
@@ -455,9 +458,10 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
         LOG.debug("Invoke " + testResult.getName() + " @ " + address + " Arguments: "
             + root.arguments());
         try {
-            reactor.invoke(address);
+            stagedReactor.invoke(address);
             testResult.setStatus(ITestResult.SUCCESS);
         }
+        // CHECKSTYLE:SKIP : StagedExamReactor API
         catch (Exception e) {
             Throwable t = ExceptionHelper.unwind(e);
             LOG.error("Exception", e);
@@ -485,7 +489,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
         boolean mangleMethodNames = manager.getNumConfigurations() > 1;
         TestDirectory testDirectory = TestDirectory.getInstance();
         List<IMethodInstance> newInstances = new ArrayList<IMethodInstance>();
-        Set<TestAddress> targets = reactor.getTargets();
+        Set<TestAddress> targets = stagedReactor.getTargets();
         for (TestAddress address : targets) {
             ITestNGMethod frameworkMethod = (ITestNGMethod) manager
                 .lookupTestMethod(address.root());
@@ -544,6 +548,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             field.setAccessible(true);
             field.set(instance, value);
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }

@@ -37,6 +37,11 @@ public class BeanManagerLookup {
     private static final String BEAN_MANAGER_JNDI = "java:comp/BeanManager";
     private static final String BEAN_MANAGER_JNDI_FALLBACK = "java:comp/env/BeanManager";
 
+    
+    /** Hidden utility class constructor. */
+    private BeanManagerLookup() {
+    }
+    
     /**
      * Tries to look up bean manager first from JNDI, and failing that from any service providers
      * that might be registered using META-INF/services.

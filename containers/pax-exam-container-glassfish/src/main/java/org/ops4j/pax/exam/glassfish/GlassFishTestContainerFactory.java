@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.glassfish;
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -40,7 +39,7 @@ public class GlassFishTestContainerFactory implements TestContainerFactory {
      * 
      * @return array with one element
      */
-    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+    public TestContainer[] create(ExamSystem system) {
         FrameworkFactory frameworkFactory = FrameworkFactoryFinder.loadSingleFrameworkFactory();
         GlassFishTestContainer container = new GlassFishTestContainer(system, frameworkFactory);
         return new TestContainer[] { container };

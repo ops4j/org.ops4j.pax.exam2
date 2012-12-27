@@ -32,17 +32,17 @@ import org.superbiz.moviefun.setup.Setup;
  */
 public class SetupServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     @Inject
     private Setup setup;
 
-    private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
     public SetupServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**

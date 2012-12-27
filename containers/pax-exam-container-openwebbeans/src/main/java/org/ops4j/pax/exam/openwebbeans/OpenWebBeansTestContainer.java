@@ -39,9 +39,9 @@ public class OpenWebBeansTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebBeansTestContainer.class);
 
-    private boolean isValid;
-
     private static CdiTestContainer container;
+
+    private boolean isValid;
 
     public OpenWebBeansTestContainer(ExamSystem system) {
     }
@@ -68,6 +68,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
             container.bootContainer();
             container.startContexts();
         }
+        // CHECKSTYLE:SKIP : OpenWebBeans API
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }
@@ -81,6 +82,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
                 container.stopContexts();
                 container.shutdownContainer();
             }
+            // CHECKSTYLE:SKIP : OpenWebBeans API
             catch (Exception exc) {
                 throw new TestContainerException(exc);
             }

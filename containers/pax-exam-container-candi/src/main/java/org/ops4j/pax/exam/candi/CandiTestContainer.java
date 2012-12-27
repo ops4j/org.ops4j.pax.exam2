@@ -39,9 +39,9 @@ public class CandiTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CandiTestContainer.class);
 
-    private boolean isValid;
-
     private static ResinBeanContainer container;
+
+    private boolean isValid;
 
     private BeanContainerRequest request;
 

@@ -11,7 +11,7 @@ import org.ops4j.pax.exam.spi.ContentCollector;
  */
 public class CollectFromItems implements ContentCollector {
 
-    final private List<Class<?>> items;
+    private final List<Class<?>> items;
 
     public CollectFromItems(List<Class<?>> items) {
         this.items = items;

@@ -118,6 +118,7 @@ public class ActionServlet extends HttpServlet {
             try {
                 movies = moviesBean.getMovies();
             }
+            // CHECKSTYLE:SKIP : catch all wanted
             catch (Throwable e) {
                 // We must not have run setup yet
                 response.sendRedirect("setup.jsp");

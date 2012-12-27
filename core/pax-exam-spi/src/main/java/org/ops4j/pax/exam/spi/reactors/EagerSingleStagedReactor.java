@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
  */
 public class EagerSingleStagedReactor implements StagedExamReactor {
 
-    private static Logger LOG = LoggerFactory.getLogger(EagerSingleStagedReactor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EagerSingleStagedReactor.class);
 
-    final private List<TestContainer> targetContainer;
-    final private List<TestProbeBuilder> probes;
-    final private Map<TestAddress, TestContainer> map;
+    private final List<TestContainer> targetContainer;
+    private final List<TestProbeBuilder> probes;
+    private final Map<TestAddress, TestContainer> map;
 
     /**
      * @param containers

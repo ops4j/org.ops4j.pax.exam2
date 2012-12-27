@@ -53,9 +53,9 @@ public class LibraryServiceNoTx implements Serializable {
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public void fillLibrary() {
-        if (getNumBooks() != 0)
+        if (getNumBooks() != 0) {
             return;
-
+        }
         Author mann = createAuthor("Thomas", "Mann");
         Author steinbeck = createAuthor("John", "Steinbeck");
 

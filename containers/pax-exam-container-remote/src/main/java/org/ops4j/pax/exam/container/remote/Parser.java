@@ -15,11 +15,11 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
+import static org.ops4j.pax.exam.OptionUtils.filter;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.remote.options.RBCLookupTimeoutOption;
 import org.ops4j.pax.exam.container.remote.options.RBCPortOption;
-
-import static org.ops4j.pax.exam.OptionUtils.*;
 
 /**
  * Minimal parser for the rbcremote fragment.

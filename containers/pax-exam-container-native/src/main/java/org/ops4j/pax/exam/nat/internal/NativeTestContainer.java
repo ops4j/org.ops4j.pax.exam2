@@ -82,14 +82,14 @@ import org.slf4j.LoggerFactory;
  */
 public class NativeTestContainer implements TestContainer {
 
-    final private static Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
-    final private static String PROBE_SIGNATURE_KEY = "Probe-Signature";
-    final private Stack<Long> installed = new Stack<Long>();
+    private static final Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
+    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
+    private final Stack<Long> installed = new Stack<Long>();
 
-    final private FrameworkFactory frameworkFactory;
+    private final FrameworkFactory frameworkFactory;
     private ExamSystem system;
 
-    volatile Framework framework;
+    private volatile Framework framework;
 
     public NativeTestContainer(ExamSystem system, FrameworkFactory frameworkFactory)
         throws IOException {
@@ -140,12 +140,12 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    public void setBundleStartLevel(long bundleId, int startLevel) throws TestContainerException {
+    public void setBundleStartLevel(long bundleId, int startLevel) {
         StartLevel sl = ServiceLookup.getService(framework.getBundleContext(), StartLevel.class);
         sl.setBundleStartLevel(framework.getBundleContext().getBundle(bundleId), startLevel);
     }
 
-    public TestContainer start() throws TestContainerException {
+    public TestContainer start() {
         try {
             system = system.fork(new Option[] {
                 systemPackage("org.ops4j.pax.exam;version="
@@ -164,7 +164,10 @@ public class NativeTestContainer implements TestContainer {
             framework.init();
             installAndStartBundles(framework.getBundleContext());
         }
-        catch (Exception e) {
+        catch (BundleException e) {
+            throw new TestContainerException("Problem starting test container.", e);
+        }
+        catch (IOException e) {
             throw new TestContainerException("Problem starting test container.", e);
         }
         return this;

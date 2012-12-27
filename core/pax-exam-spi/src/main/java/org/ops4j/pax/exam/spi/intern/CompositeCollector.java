@@ -27,7 +27,7 @@ import org.ops4j.pax.exam.spi.ContentCollector;
  */
 public class CompositeCollector implements ContentCollector {
 
-    final private ContentCollector[] collectors;
+    private final ContentCollector[] collectors;
 
     public CompositeCollector(ContentCollector... collectors) {
         this.collectors = collectors;

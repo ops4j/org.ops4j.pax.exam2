@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ContainerTestRunner extends BlockJUnit4ClassRunner {
 
-    private static Logger LOG = LoggerFactory.getLogger(ContainerTestRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContainerTestRunner.class);
 
     private Injector injector;
 

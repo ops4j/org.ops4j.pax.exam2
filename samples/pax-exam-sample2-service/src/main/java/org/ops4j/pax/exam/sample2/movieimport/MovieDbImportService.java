@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class MovieDbImportService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MovieDbImportService.class);
+    private static Logger logger = LoggerFactory.getLogger(MovieDbImportService.class);
     private MovieDbJsonMapper movieDbJsonMapper = new MovieDbJsonMapper();
 
     @PersistenceContext
@@ -64,6 +64,7 @@ public class MovieDbImportService {
             Movie movie = doImportMovie(id);
             return movie.getTitle();
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             return e.getMessage();
         }
@@ -80,8 +81,9 @@ public class MovieDbImportService {
         movie.setId(movieId);
 
         Map<String, ?> data = loadMovieData(movieId);
-        if (data.containsKey("not_found"))
+        if (data.containsKey("not_found")) {
             throw new RuntimeException("Data for Movie " + movieId + " not found.");
+        }
         movieDbJsonMapper.mapToMovie(data, movie);
         relatePersonsToMovie(movie, data);
         em.persist(movie);
@@ -124,8 +126,7 @@ public class MovieDbImportService {
                 movie.setDirector(director);
             }
             else {
-                if (logger.isInfoEnabled())
-                    logger.info("Could not add person with job " + jobName + " " + entry);
+                logger.info("Could not add person with job {} {}", jobName, entry);
                 continue;
             }
         }
@@ -135,8 +136,9 @@ public class MovieDbImportService {
         String personId = Integer.toString(person.getId());
         logger.info("Importing person " + personId);
         Map<String, ?> data = loadPersonData(personId);
-        if (data.containsKey("not_found"))
+        if (data.containsKey("not_found")) {
             throw new RuntimeException("Data for Person " + personId + " not found.");
+        }
         movieDbJsonMapper.mapToPerson(data, person);
         Person persistentPerson = em.find(Person.class, person.getId());
         if (persistentPerson == null) {

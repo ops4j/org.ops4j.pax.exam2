@@ -114,7 +114,7 @@ public class StreamUtils {
     /**
      * Feddback for downloading process.
      */
-    public static interface ProgressBar {
+    public interface ProgressBar {
 
         /**
          * Callback on download progress.
@@ -152,7 +152,7 @@ public class StreamUtils {
      */
     public static class FineGrainedProgressBar implements ProgressBar {
 
-        int counter = 0;
+        int counter;
         /**
          * Name of the downloaded artifact.
          */
@@ -191,9 +191,9 @@ public class StreamUtils {
             LOGGER.debug(downloadTargetName + " : downloading...");
         }
 
-        public void increment(final long bytes, final long kbps) {
-            this.bytes = bytes;
-            this.kbps = kbps;
+        public void increment(final long _bytes, final long _kbps) {
+            this.bytes = _bytes;
+            this.kbps = _kbps;
         }
 
         public void stop() {

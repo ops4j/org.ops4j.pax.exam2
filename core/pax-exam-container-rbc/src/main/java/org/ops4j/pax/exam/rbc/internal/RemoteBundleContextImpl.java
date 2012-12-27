@@ -72,9 +72,6 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         this.bundleContext = bundleContext;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Object remoteCall(final Class<?> serviceType, final String methodName,
         final Class<?>[] methodParams, String filter, final RelativeTimeout timeout,
         final Object... actualParams) throws NoSuchServiceException, NoSuchMethodException,
@@ -85,17 +82,11 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
             getService(serviceType, filter, timeout), actualParams);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public long installBundle(final String bundleUrl) throws BundleException {
         LOG.trace("Install bundle from URL [" + bundleUrl + "]");
         return bundleContext.installBundle(bundleUrl).getBundleId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public long installBundle(final String bundleLocation, final byte[] bundle)
         throws BundleException {
         LOG.trace("Install bundle [ location=" + bundleLocation + "] from byte array");
@@ -123,24 +114,15 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void startBundle(long bundleId) throws BundleException {
         startBundle(bundleContext.getBundle(bundleId));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void stopBundle(long bundleId) throws BundleException {
         bundleContext.getBundle(bundleId).stop();
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setBundleStartLevel(long bundleId, int startLevel) throws RemoteException,
         BundleException {
         try {
@@ -154,9 +136,6 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         Bundle bundle = bundleContext.getBundle(bundleId);
         if (bundle == null || (timeout.isNoWait() && (bundle == null || bundle.getState() < state))) {

@@ -80,7 +80,7 @@ public class PaxExamServer extends ExternalResource {
     }
 
     @Override
-    protected void before() throws Throwable {
+    protected void before() throws Exception {
         Option[] options = getConfigurationOptions();
         ExamSystem system = DefaultExamSystem.create(options);
         testContainer = PaxExamRuntime.createContainer(system);

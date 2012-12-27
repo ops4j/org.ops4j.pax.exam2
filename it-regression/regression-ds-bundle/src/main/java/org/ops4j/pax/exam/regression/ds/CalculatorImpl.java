@@ -24,7 +24,7 @@ public class CalculatorImpl implements Calculator {
         this.addition = addition;
     }
 
-    protected void unsetAddition(BinaryOperation addition) {
+    protected void unsetAddition(BinaryOperation _addition) {
         this.addition = null;
     }
 

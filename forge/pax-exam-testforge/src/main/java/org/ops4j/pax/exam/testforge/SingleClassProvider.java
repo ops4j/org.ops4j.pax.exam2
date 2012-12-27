@@ -54,8 +54,9 @@ public class SingleClassProvider {
         String sourceName = "";
         for (Bundle b : ctx.getBundles()) {
             if ((optionalSkipSystemBundle != null) && (optionalSkipSystemBundle)
-                && (b.getBundleId() == 0))
+                && (b.getBundleId() == 0)) {
                 continue;
+            }
             long loaded = findSafe(b, clazzName);
             if (commonSource == UNCHECKED && loaded != CLAZZ_NOT_FOUND) {
                 commonSource = loaded;

@@ -86,16 +86,16 @@ public class WrappedTomEEContainer {
     private Tomcat tomcat;
 
     public WrappedTomEEContainer() {
-        final Configuration configuration = new Configuration();
-        configuration.setHttpPort(23880);
-        configuration.setStopPort(23881);
-        setup(configuration);
+        final Configuration config = new Configuration();
+        config.setHttpPort(23880);
+        config.setStopPort(23881);
+        setup(config);
     }
 
-    public void setup(Configuration configuration) {
-        this.configuration = configuration;
+    public void setup(Configuration _configuration) {
+        this.configuration = _configuration;
 
-        if (configuration.isQuickSession()) {
+        if (_configuration.isQuickSession()) {
             tomcat = new TomcatWithFastSessionIDs();
         }
         else {
@@ -227,6 +227,7 @@ public class WrappedTomEEContainer {
                 System.setProperty("tomcat.built", serverBuilt);
             }
         }
+        // CHECKSTYLE:SKIP : third-party code
         catch (Throwable e) {
             // no-op
         }
@@ -246,8 +247,9 @@ public class WrappedTomEEContainer {
     private String getBaseDir() {
         try {
             final String dir = configuration.getDir();
-            if (dir != null)
+            if (dir != null) {
                 return dir;
+            }
             final File file = File.createTempFile("apache-tomee", "-home");
             return file.getAbsolutePath();
         }
@@ -364,10 +366,12 @@ public class WrappedTomEEContainer {
     }
 
     private void deleteTree(File file) {
-        if (file == null)
+        if (file == null) {
             return;
-        if (!file.exists())
+        }
+        if (!file.exists()) {
             return;
+        }
 
         if (file.isFile()) {
             if (!file.delete()) {
@@ -377,11 +381,12 @@ public class WrappedTomEEContainer {
         }
 
         if (file.isDirectory()) {
-            if ("".equals(file.getName()))
+            if ("".equals(file.getName())) {
                 return;
-            if ("src/main".equals(file.getName()))
+            }
+            if ("src/main".equals(file.getName())) {
                 return;
-
+            }
             File[] children = file.listFiles();
 
             if (children != null) {

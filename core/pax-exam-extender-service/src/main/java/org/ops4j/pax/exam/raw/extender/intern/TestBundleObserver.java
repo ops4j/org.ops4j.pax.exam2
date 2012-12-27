@@ -54,7 +54,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
     }
 
     /**
-     * {@inheritDoc} Registers specified regression case as a service.
+     * Registers specified regression case as a service.
      */
     public void addingEntries(final Bundle bundle, final List<ManifestEntry> manifestEntries) {
         String testExec = null;
@@ -77,7 +77,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
     }
 
     /**
-     * {@inheritDoc} Unregisters prior registered regression for the service.
+     * Unregisters prior registered regression for the service.
      */
     public void removingEntries(final Bundle bundle, final List<ManifestEntry> manifestEntries) {
         final Registration registration = registrations.remove(bundle);

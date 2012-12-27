@@ -34,6 +34,7 @@ import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
+import org.ops4j.pax.exam.rbc.internal.NoSuchServiceException;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
@@ -44,29 +45,27 @@ import org.slf4j.LoggerFactory;
  */
 public class RemoteBundleContextClientImpl implements RemoteBundleContextClient {
 
-    // TODO duplicate
-    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
-
-    private RemoteBundleContext remoteBundleContext = null;
-
     /**
      * JCL logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(RemoteBundleContextClient.class);
 
+    // TODO duplicate
+    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
+
+    private RemoteBundleContext remoteBundleContext;
+
+
     /**
      * Timeout for looking up the remote bundle context via RMI.
      */
-    final private RelativeTimeout rmiLookupTimeout;
-    /**
-     * Remote bundle context instance.
-     */
-    // private RemoteBundleContext remoteBundleContext;
+    private final RelativeTimeout rmiLookupTimeout;
+    
+    private final Integer registry;
 
-    final private Integer registry;
-
-    final private Stack<Long> installed;
-    final private String name;
+    private final Stack<Long> installed;
+    
+    private final String name;
 
     /**
      * Constructor.
@@ -88,9 +87,6 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         installed = new Stack<Long>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("unchecked")
     private <T> T getService(final Class<T> serviceType, final String filter,
         final RelativeTimeout timeout) {
@@ -98,22 +94,28 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             new Class<?>[] { serviceType }, new InvocationHandler() {
 
                 /**
-                 * {@inheritDoc} Delegates the call to remote bundle context.
+                 * Delegates the call to remote bundle context.
                  */
                 public Object invoke(final Object proxy, final Method method, final Object[] params)
-                    throws Throwable {
+                    {
                     try {
                         return getRemoteBundleContext().remoteCall(method.getDeclaringClass(),
                             method.getName(), method.getParameterTypes(), filter, timeout, params);
                     }
                     catch (InvocationTargetException e) {
-                        throw e.getCause();
+                        throw new RuntimeException(e.getCause());
                     }
                     catch (RemoteException e) {
                         throw new RuntimeException("Remote exception", e);
                     }
-                    catch (Exception e) {
-                        throw new RuntimeException("Invocation exception", e);
+                    catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    catch (NoSuchServiceException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             });
@@ -167,9 +169,6 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setBundleStartLevel(final long bundleId, final int startLevel) {
         try {
             getRemoteBundleContext().setBundleStartLevel(bundleId, startLevel);
@@ -182,9 +181,6 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void start() {
         try {
             getRemoteBundleContext().startBundle(0);
@@ -197,9 +193,6 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void stop() {
         try {
             getRemoteBundleContext().stopBundle(0);
@@ -214,11 +207,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout)
-
     {
         try {
             getRemoteBundleContext().waitForState(bundleId, state, timeout);

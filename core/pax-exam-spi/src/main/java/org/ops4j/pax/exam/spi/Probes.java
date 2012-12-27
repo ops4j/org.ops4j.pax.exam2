@@ -22,6 +22,10 @@ import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.war.WarTestProbeBuilderImpl;
 
 public class Probes {
+        
+    /** Hidden utility class constructor. */ 
+    private Probes() {
+    }
 
     public static TestProbeBuilder builder(Option option) {
         if (option instanceof WarProbeOption) {

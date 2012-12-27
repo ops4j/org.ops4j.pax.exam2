@@ -32,14 +32,15 @@ public class WaitForService {
 
     public void probe(BundleContext ctx, String servicename, Integer wait)
         throws InterruptedException, InvalidSyntaxException {
+        Integer doWait = wait;
         if (wait == null) {
-            wait = 1000;
+            doWait = 1000;
         }
         ServiceTracker tracker = new ServiceTracker(ctx, servicename, null);
         tracker.open(true);
         long start = System.currentTimeMillis();
 
-        while (((tracker.getTrackingCount()) == 0) && (start + wait > System.currentTimeMillis())) {
+        while (((tracker.getTrackingCount()) == 0) && (start + doWait > System.currentTimeMillis())) {
             Thread.sleep(100);
         }
         int c = tracker.getTrackingCount();

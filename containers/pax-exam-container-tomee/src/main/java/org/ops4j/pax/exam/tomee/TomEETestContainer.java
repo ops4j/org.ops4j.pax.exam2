@@ -152,6 +152,7 @@ public class TomEETestContainer implements TestContainer {
         try {
             tomee.stop();
         }
+        // CHECKSTYLE:SKIP : TomEE API
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }
@@ -213,6 +214,7 @@ public class TomEETestContainer implements TestContainer {
             testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
                 + "/Pax-Exam-Probe/"));
         }
+        // CHECKSTYLE:SKIP : TomEE API
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }

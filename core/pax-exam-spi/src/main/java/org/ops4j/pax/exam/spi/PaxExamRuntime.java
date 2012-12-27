@@ -23,7 +23,8 @@ import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
 import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
 import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
 import static org.ops4j.pax.exam.CoreOptions.serverMode;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.CoreOptions.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +54,10 @@ import org.slf4j.LoggerFactory;
 public class PaxExamRuntime {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaxExamRuntime.class);
+    
+    /** Hidden utility class constructor. */
+    private PaxExamRuntime() {
+    }
 
     /**
      * Discovers the regression container. Discovery is performed via ServiceLoader discovery

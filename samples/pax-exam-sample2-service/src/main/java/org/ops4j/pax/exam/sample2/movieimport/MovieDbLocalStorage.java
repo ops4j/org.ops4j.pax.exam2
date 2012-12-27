@@ -16,17 +16,17 @@
  */
 package org.ops4j.pax.exam.sample2.movieimport;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.io.*;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 public class MovieDbLocalStorage {
 
     private String storagePath;
-    protected ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     public MovieDbLocalStorage() {
         this("moviedb-json");
@@ -65,12 +65,14 @@ public class MovieDbLocalStorage {
             final Object value = mapper.readValue(storageFile, Object.class);
             if (value instanceof List) {
                 List<?> list = (List<?>) value;
-                if (list.isEmpty() || list.get(0).equals("Nothing found."))
+                if (list.isEmpty() || list.get(0).equals("Nothing found.")) {
                     return Collections.singletonMap("not_found", System.currentTimeMillis());
+                }
                 return asMap(list.get(0));
             }
             return asMap(value);
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             throw new MovieDbException("Failed to load JSON from storage for file "
                 + storageFile.getPath(), e);
@@ -96,6 +98,7 @@ public class MovieDbLocalStorage {
         try {
             mapper.writeValue(storageFile, jsonData);
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             throw new MovieDbException("Failed to store JSON to storage for file "
                 + storageFile.getPath(), e);

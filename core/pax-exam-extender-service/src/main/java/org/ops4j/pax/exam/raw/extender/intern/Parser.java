@@ -39,23 +39,23 @@ import org.slf4j.LoggerFactory;
  */
 public class Parser {
 
-    final private Logger LOG = LoggerFactory.getLogger(Probe.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Probe.class);
 
-    final private Probe[] probes;
+    private final Probe[] probes;
 
     public Parser(BundleContext ctx, String sigs, List<ManifestEntry> manifestEntries) {
         List<String> signatures = new ArrayList<String>();
-        List<Probe> probes = new ArrayList<Probe>();
+        List<Probe> probeList = new ArrayList<Probe>();
         signatures.addAll(Arrays.asList(sigs.split(",")));
 
         for (ManifestEntry manifestEntry : manifestEntries) {
             LOG.debug("Test " + manifestEntry.getKey() + " to be in " + sigs);
             if (signatures.contains(manifestEntry.getKey())) {
-                probes.add(make(ctx, manifestEntry.getKey(), manifestEntry.getValue()));
+                probeList.add(make(ctx, manifestEntry.getKey(), manifestEntry.getValue()));
             }
         }
 
-        this.probes = probes.toArray(new Probe[probes.size()]);
+        this.probes = probeList.toArray(new Probe[probeList.size()]);
     }
 
     private Probe make(BundleContext ctx, String sig, String expr) {

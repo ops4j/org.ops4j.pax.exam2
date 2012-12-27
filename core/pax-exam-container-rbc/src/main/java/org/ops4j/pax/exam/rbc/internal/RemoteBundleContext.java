@@ -17,13 +17,12 @@
  */
 package org.ops4j.pax.exam.rbc.internal;
 
-import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TimeoutException;
-import org.osgi.framework.BundleException;
-
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+
+import org.ops4j.pax.exam.RelativeTimeout;
+import org.osgi.framework.BundleException;
 
 /**
  * Remote BundleContext like access.
@@ -38,11 +37,11 @@ public interface RemoteBundleContext extends Remote {
     /**
      * Timeout specifing that there should be no waiting.
      */
-    final long NO_WAIT = 0;
+    long NO_WAIT = 0;
     /**
      * Timeout specifing that it should wait forever.
      */
-    final long WAIT_FOREVER = Long.MAX_VALUE;
+    long WAIT_FOREVER = Long.MAX_VALUE;
 
     /**
      * Makes a remote call on a service.
@@ -159,7 +158,7 @@ public interface RemoteBundleContext extends Remote {
      *             - if timeout occured and expected state has not being reached
      */
     void waitForState(long bundleId, int state, RelativeTimeout timeout) throws RemoteException,
-        BundleException, TimeoutException;
+        BundleException;
 
     /**
      * @param id

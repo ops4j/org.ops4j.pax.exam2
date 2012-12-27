@@ -40,7 +40,7 @@ public class MovieController implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Movie current;
-    private DataModel items = null;
+    private DataModel items;
     @EJB
     private Movies ejbFacade;
     private PaginationHelper pagination;
@@ -105,6 +105,7 @@ public class MovieController implements Serializable {
                 .addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieCreated"));
             return prepareCreate();
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             JsfUtil.addErrorMessage(e,
                 ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
@@ -125,6 +126,7 @@ public class MovieController implements Serializable {
                 .addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieUpdated"));
             return "View";
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             JsfUtil.addErrorMessage(e,
                 ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
@@ -160,6 +162,7 @@ public class MovieController implements Serializable {
             JsfUtil
                 .addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieDeleted"));
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             JsfUtil.addErrorMessage(e,
                 ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));

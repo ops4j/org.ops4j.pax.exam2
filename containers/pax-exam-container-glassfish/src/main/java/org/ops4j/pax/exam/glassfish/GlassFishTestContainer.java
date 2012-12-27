@@ -445,7 +445,7 @@ public class GlassFishTestContainer implements TestContainer {
      * @param startLevel
      * @throws TestContainerException
      */
-    public void setBundleStartLevel(long bundleId, int startLevel) throws TestContainerException {
+    public void setBundleStartLevel(long bundleId, int startLevel) {
         BundleContext context = framework.getBundleContext();
         StartLevel sl = getService(context, StartLevel.class);
         sl.setBundleStartLevel(context.getBundle(bundleId), startLevel);
@@ -454,7 +454,7 @@ public class GlassFishTestContainer implements TestContainer {
     /**
      * Starts the GlassFish container, first downloading and installing GlassFish, if required.
      */
-    public TestContainer start() throws TestContainerException {
+    public TestContainer start() {
         try {
             installContainer();
 
@@ -834,8 +834,7 @@ public class GlassFishTestContainer implements TestContainer {
         context.addFrameworkListener(new FrameworkListener() {
 
             public void frameworkEvent(FrameworkEvent frameworkEvent) {
-                switch (frameworkEvent.getType()) {
-                    case FrameworkEvent.STARTLEVEL_CHANGED:
+                if (frameworkEvent.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
                         latch.countDown();
                 }
             }

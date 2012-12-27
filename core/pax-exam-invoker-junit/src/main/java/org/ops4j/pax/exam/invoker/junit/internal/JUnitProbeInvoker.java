@@ -75,9 +75,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         }
     }
 
-    private boolean findAndInvoke(Class<?> testClass)
-
-    {
+    private boolean findAndInvoke(Class<?> testClass) {
         try {
             // find matching method
             for (Method m : testClass.getMethods()) {
@@ -105,8 +103,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
      * @param testMethod
      * @throws TestContainerException
      */
-    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod)
-        throws TestContainerException {
+    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod) {
         Request classRequest = new ContainerTestRunnerClassRequest(testClass, injector);
         Description methodDescription = Description.createTestDescription(testClass, method);
         Request request = classRequest.filterWith(methodDescription);

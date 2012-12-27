@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ReactorManager {
 
-    private static Logger LOG = LoggerFactory.getLogger(ReactorManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReactorManager.class);
 
     /** Singleton instance of this manager. */
     private static ReactorManager instance;
@@ -171,7 +171,7 @@ public class ReactorManager {
      * Prepares the unstaged reactor for the given test class instance. Any configurations from
      * {@code Configuration} methods of the class are added to the reactor.
      * 
-     * @param testClass
+     * @param _testClass
      * @param testClassInstance
      * @return
      * @throws IllegalAccessException
@@ -180,13 +180,12 @@ public class ReactorManager {
      * @throws InvocationTargetException
      * @throws IllegalArgumentException
      */
-    public synchronized ExamReactor prepareReactor(Class<?> testClass, Object testClassInstance)
-        throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-        InvocationTargetException, IOException {
-        this.testClass = testClass;
-        this.reactor = createReactor(testClass);
-        testClasses.add(testClass);
-        addConfigurationsToReactor(testClass, testClassInstance);
+    public synchronized ExamReactor prepareReactor(Class<?> _testClass, Object testClassInstance)
+        throws InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+        this.testClass = _testClass;
+        this.reactor = createReactor(_testClass);
+        testClasses.add(_testClass);
+        addConfigurationsToReactor(_testClass, testClassInstance);
         return reactor;
     }
 
@@ -233,8 +232,7 @@ public class ReactorManager {
      * @throws IOException
      */
     private void addConfigurationsToReactor(Class<?> testClass, Object testClassInstance)
-        throws IllegalAccessException, InvocationTargetException, IllegalArgumentException,
-        IOException {
+        throws IllegalAccessException, InvocationTargetException, IOException {
         numConfigurations = 0;
         Method[] methods = testClass.getMethods();
         for (Method m : methods) {
@@ -360,7 +358,7 @@ public class ReactorManager {
         return probeBuilder;
     }
 
-    private TestProbeBuilder overwriteWithUserDefinition(Class<?> testClass, Object instance)
+    private TestProbeBuilder overwriteWithUserDefinition(Class<?> testClass, Object testInstance)
         throws ExamConfigurationException {
         Method[] methods = testClass.getMethods();
         for (Method m : methods) {
@@ -368,8 +366,9 @@ public class ReactorManager {
                 LOG.debug("User defined probe hook found: " + m.getName());
                 TestProbeBuilder probeBuilder;
                 try {
-                    probeBuilder = (TestProbeBuilder) m.invoke(instance, defaultProbeBuilder);
+                    probeBuilder = (TestProbeBuilder) m.invoke(testInstance, defaultProbeBuilder);
                 }
+                // CHECKSTYLE:SKIP : catch all wanted
                 catch (Exception e) {
                     throw new ExamConfigurationException("Invoking custom probe hook "
                         + m.getName() + " failed", e);

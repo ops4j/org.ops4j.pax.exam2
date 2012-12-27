@@ -18,15 +18,14 @@
 package org.ops4j.pax.exam.container.remote;
 
 import java.io.InputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -65,11 +64,11 @@ public class RBCRemoteTarget implements TestContainer {
         remoteBundleContextClient.call(address);
     }
 
-    public TestContainer start() throws TimeoutException {
+    public TestContainer start() {
         return this;
     }
 
-    public long install(String location, InputStream probe) throws TestContainerException {
+    public long install(String location, InputStream probe) {
         LOG.debug("Preparing and Installing bundle (from stream )..");
 
         long id = 0;
@@ -78,11 +77,11 @@ public class RBCRemoteTarget implements TestContainer {
         return id;
     }
 
-    public long install(InputStream probe) throws TestContainerException {
+    public long install(InputStream probe) {
         return install("local", probe);
     }
 
-    public TestContainer stop() throws TimeoutException {
+    public TestContainer stop() {
         remoteBundleContextClient.cleanup();
 
         return this;

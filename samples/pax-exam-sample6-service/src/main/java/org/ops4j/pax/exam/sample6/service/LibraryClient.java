@@ -49,8 +49,9 @@ public class LibraryClient implements Serializable {
 
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public void fillLibrary() {
-        if (libraryService.getNumBooks() != 0)
+        if (libraryService.getNumBooks() != 0) {
             return;
+        }
 
         Author mann = libraryService.createAuthor("Thomas", "Mann");
         Author steinbeck = libraryService.createAuthor("John", "Steinbeck");

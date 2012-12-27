@@ -76,9 +76,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         }
     }
 
-    private boolean findAndInvoke(Class<?> testClass, Object... params)
-
-    {
+    private boolean findAndInvoke(Class<?> testClass, Object... params) {
         try {
             // find matching method
             for (Method m : testClass.getMethods()) {
@@ -88,7 +86,6 @@ public class ProbeInvokerImpl implements ProbeInvoker {
                     return true;
                 }
             }
-
         }
         catch (NoClassDefFoundError e) {
             throw new TestContainerException(e);
@@ -119,22 +116,18 @@ public class ProbeInvokerImpl implements ProbeInvoker {
      *             - Re-thrown from reflection invokation
      */
     private void injectContextAndInvoke(final Object testInstance, final Method testMethod,
-        Object[] params) throws TestContainerException {
+        Object[] params) {
         final Class<?>[] paramTypes = testMethod.getParameterTypes();
         injector.injectFields(testInstance);
-        boolean cleanup = false;
         try {
             // runBefores( testInstance );
             if (paramTypes.length == 0) {
                 testMethod.invoke(testInstance);
             }
             else {
-                params = injectHook(testMethod, params);
-                testMethod.invoke(testInstance, params);
+                Object[] parameters = injectHook(testMethod, params);
+                testMethod.invoke(testInstance, parameters);
             }
-
-            cleanup = true;
-            // runAfters( testInstance );
         }
         catch (InvocationTargetException e) {
             throw new TestContainerException(e);
@@ -142,17 +135,6 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         }
         catch (IllegalAccessException e) {
             throw new TestContainerException(e);
-        }
-        finally {
-            if (!cleanup) {
-                try {
-                    // runAfters( testInstance );
-                }
-                catch (Throwable throwable) {
-                    // LOG.warn( "Got the exception when calling the runAfters. [Exception]: " +
-                    // throwable );
-                }
-            }
         }
     }
 

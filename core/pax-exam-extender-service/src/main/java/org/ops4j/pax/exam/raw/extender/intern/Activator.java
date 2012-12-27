@@ -32,23 +32,18 @@ import org.ops4j.pax.swissbox.extender.RegexKeyManifestFilter;
 public class Activator implements BundleActivator {
 
     private static final String PAX_EXAM_HEADER_PREFIX = "PaxExam-.*";
+
     /**
      * Bundle watcher of web.xml.
      */
     private BundleWatcher<ManifestEntry> probeWatcher;
 
-    /**
-     * {@inheritDoc}
-     */
     public void start(BundleContext bundleContext) throws Exception {
         probeWatcher = new BundleWatcher<ManifestEntry>(bundleContext, new BundleManifestScanner(
             new RegexKeyManifestFilter(PAX_EXAM_HEADER_PREFIX)), new TestBundleObserver());
         probeWatcher.start();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void stop(BundleContext bundleContext) throws Exception {
         probeWatcher.stop();
     }

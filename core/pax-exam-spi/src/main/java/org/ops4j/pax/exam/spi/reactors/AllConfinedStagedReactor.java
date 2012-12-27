@@ -31,8 +31,8 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
  */
 public class AllConfinedStagedReactor implements StagedExamReactor {
 
-    final private List<TestProbeBuilder> probes;
-    final private Map<TestAddress, TestContainer> map;
+    private final List<TestProbeBuilder> probes;
+    private final Map<TestAddress, TestContainer> map;
 
     /**
      * @param containers

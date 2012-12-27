@@ -61,9 +61,6 @@ public class Activator implements BundleActivator {
 
     private Thread registerRBCThread;
 
-    /**
-     * {@inheritDoc}
-     */
     public synchronized void start(final BundleContext bundleContext) throws Exception {
         String host = getHost();
         String name = getName();
@@ -105,7 +102,7 @@ public class Activator implements BundleActivator {
 
                 {
 
-                    public Object call() throws Exception {
+                    public Object call() throws RemoteException, BundleException {
                         // try to find port from property
                         int port = getPort();
                         String host = getHost();
@@ -125,25 +122,23 @@ public class Activator implements BundleActivator {
             );
             return true;
         }
+        // CHECKSTYLE:SKIP : Pax Swissbox API
         catch (Exception e) {
             LOG.warn("Registration of RBC failed: ", e);
         }
         return false;
     }
 
-    private void bindRBC(Registry registry, String name, BundleContext bundleContext)
+    private void bindRBC(Registry _registry, String name, BundleContext bundleContext)
         throws RemoteException, BundleException {
         LOG.debug("Now Binding " + RemoteBundleContext.class.getSimpleName() + " as name=" + name
             + " to RMI registry");
-        Remote remoteStub = UnicastRemoteObject.exportObject(
-            remoteBundleContext = new RemoteBundleContextImpl(bundleContext.getBundle(0)
-                .getBundleContext()), 0);
-        registry.rebind(getName(), remoteStub);
+        remoteBundleContext = new RemoteBundleContextImpl(bundleContext.getBundle(0)
+            .getBundleContext());
+        Remote remoteStub = UnicastRemoteObject.exportObject(remoteBundleContext , 0);
+        _registry.rebind(getName(), remoteStub);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public synchronized void stop(BundleContext bundleContext) throws Exception {
         if (registerRBCThread != null) {
             registerRBCThread.interrupt();

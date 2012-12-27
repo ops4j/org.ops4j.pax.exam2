@@ -21,7 +21,6 @@ import java.io.InputStream;
 
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TimeoutException;
 
 /**
  * Graceful delegator to underlying target instance. All other TestContainer services are do nothing
@@ -32,7 +31,7 @@ import org.ops4j.pax.exam.TimeoutException;
  */
 public class RBCRemoteContainer implements TestContainer {
 
-    final private TestContainer target;
+    private final TestContainer target;
 
     public RBCRemoteContainer(final TestContainer target) {
         this.target = target;
@@ -50,12 +49,12 @@ public class RBCRemoteContainer implements TestContainer {
         return install("local", stream);
     }
 
-    public TestContainer start() throws TimeoutException {
+    public TestContainer start() {
         // do nothing
         return this;
     }
 
-    public TestContainer stop() throws TimeoutException {
+    public TestContainer stop() {
         return this;
     }
 

@@ -26,7 +26,7 @@ import org.ops4j.pax.exam.TestAddress;
  */
 public interface StagedExamReactor {
 
-    public Set<TestAddress> getTargets();
+    Set<TestAddress> getTargets();
 
     /**
      * Invoke an actual regression. The reactor implementation will take care of (perhaps)

@@ -39,7 +39,7 @@ import java.util.zip.ZipEntry;
 public class DuplicateAwareJarOutputStream extends JarOutputStream {
 
     private Set<String> entrynames;
-    private boolean writable = false;
+    private boolean writable;
 
     public DuplicateAwareJarOutputStream(OutputStream outputStream, Manifest manifest)
         throws IOException {

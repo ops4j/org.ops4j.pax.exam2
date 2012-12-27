@@ -16,7 +16,7 @@
  */
 package org.ops4j.pax.exam.maven;
 
-import static org.ops4j.pax.exam.maven.Constants.*;
+import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_KEY;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -59,7 +59,7 @@ public class StartContainerMojo extends AbstractMojo {
      * @parameter expression="${project.testClasspathElements}"
      * @required
      */
-    protected List<String> classpathElements;
+    private List<String> classpathElements;
 
     private ClasspathClassLoader testClassLoader;
 

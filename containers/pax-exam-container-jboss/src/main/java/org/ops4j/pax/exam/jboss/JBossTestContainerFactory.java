@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.jboss;
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 
 /**
@@ -30,7 +29,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 @MetaInfServices
 public class JBossTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+    public TestContainer[] create(ExamSystem system) {
         JBossTestContainer container = new JBossTestContainer(system, null);
         return new TestContainer[] { container };
     }

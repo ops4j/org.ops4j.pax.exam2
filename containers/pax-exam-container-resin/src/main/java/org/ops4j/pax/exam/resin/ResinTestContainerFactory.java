@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.resin;
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 
 /**
@@ -30,7 +29,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 @MetaInfServices
 public class ResinTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+    public TestContainer[] create(ExamSystem system) {
         ResinTestContainer container = new ResinTestContainer(system, null);
         return new TestContainer[] { container };
     }

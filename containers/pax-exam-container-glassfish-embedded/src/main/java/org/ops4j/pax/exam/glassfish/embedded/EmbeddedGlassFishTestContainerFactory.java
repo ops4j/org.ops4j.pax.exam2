@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.glassfish.embedded;
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 
 /**
@@ -38,7 +37,7 @@ public class EmbeddedGlassFishTestContainerFactory implements TestContainerFacto
      * 
      * @return array with one element
      */
-    public TestContainer[] create(ExamSystem system) throws TestContainerException {
+    public TestContainer[] create(ExamSystem system) {
         EmbeddedGlassFishTestContainer container = new EmbeddedGlassFishTestContainer(system);
         return new TestContainer[] { container };
     }

@@ -27,7 +27,6 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +38,11 @@ public class WeldTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WeldTestContainer.class);
 
-    private Weld weld;
-    private boolean isValid;
-
     private static WeldContainer weldContainer;
+
+    private Weld weld;
+
+    private boolean isValid;
 
     public WeldTestContainer(ExamSystem system) {
     }
@@ -62,7 +62,7 @@ public class WeldTestContainer implements TestContainer {
         isValid = true;
     }
 
-    public TestContainer start() throws TestContainerException {
+    public TestContainer start() {
         LOG.debug("starting Weld container");
         weld = new Weld();
         weldContainer = weld.initialize();

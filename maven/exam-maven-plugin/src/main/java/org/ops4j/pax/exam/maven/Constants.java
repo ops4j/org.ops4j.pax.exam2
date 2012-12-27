@@ -23,4 +23,9 @@ public class Constants {
      * communication between the mojos of this Maven plugin.
      */
     public static final String TEST_CONTAINER_KEY = "exam.testContainer";
+    
+
+    /** Hidden utility class constructor. */
+    private Constants() {
+    }
 }

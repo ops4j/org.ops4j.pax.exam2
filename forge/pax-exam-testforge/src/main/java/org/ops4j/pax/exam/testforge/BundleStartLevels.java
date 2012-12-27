@@ -28,11 +28,12 @@ import org.ops4j.pax.exam.TestContainerException;
 public class BundleStartLevels {
 
     public void probe(BundleContext ctx, Integer desiredMinBundleState,
-        Integer desiredMaxBundleState) throws InterruptedException, InvalidSyntaxException {
+        Integer _desiredMaxBundleState) throws InterruptedException, InvalidSyntaxException {
+        Integer desiredMaxBundleState = _desiredMaxBundleState;
         if (desiredMinBundleState == null) {
             throw new TestContainerException("Argument desiredBundleState (integer) is mandatory.");
         }
-        if (desiredMaxBundleState == null) {
+        if (_desiredMaxBundleState == null) {
             desiredMaxBundleState = desiredMinBundleState;
         }
 

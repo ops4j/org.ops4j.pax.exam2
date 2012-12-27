@@ -35,8 +35,9 @@ public class LibraryService implements Serializable {
     private EntityManager em;
 
     public void fillLibrary() {
-        if (getNumBooks() != 0)
+        if (getNumBooks() != 0) {
             return;
+        }
 
         Author mann = createAuthor("Thomas", "Mann");
         Author steinbeck = createAuthor("John", "Steinbeck");

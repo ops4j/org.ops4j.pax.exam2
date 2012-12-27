@@ -25,9 +25,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class MovieDbApiClient {
 
+    protected final ObjectMapper mapper;
     private final String baseUrl = "http://api.themoviedb.org/";
     private final String apiKey;
-    protected final ObjectMapper mapper;
 
     public MovieDbApiClient() {
         this("926d2a79e82920b62f03b1cb57e532e6");
@@ -46,10 +46,12 @@ public class MovieDbApiClient {
     private Map<String, ?> loadJsonData(String id, String url) {
         try {
             List<?> value = mapper.readValue(new URL(url), List.class);
-            if (value.isEmpty() || value.get(0).equals("Nothing found."))
+            if (value.isEmpty() || value.get(0).equals("Nothing found.")) {
                 return Collections.singletonMap("not_found", System.currentTimeMillis());
+            }
             return (Map<String, ?>) value.get(0);
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             throw new RuntimeException("Failed to get data from " + url, e);
         }

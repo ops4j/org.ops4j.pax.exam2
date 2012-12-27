@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SingletonStagedReactor implements StagedExamReactor {
 
-    private static Logger LOG = LoggerFactory.getLogger(SingletonStagedReactor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SingletonStagedReactor.class);
 
     private static SingletonStagedReactor instance;
 

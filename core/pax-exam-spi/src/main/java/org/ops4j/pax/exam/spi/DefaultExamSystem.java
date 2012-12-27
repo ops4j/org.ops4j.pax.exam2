@@ -59,43 +59,14 @@ public class DefaultExamSystem implements ExamSystem {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExamSystem.class);
 
-    final private Store<InputStream> store;
-    final private File configDirectory;
-    final private Option[] combinedOptions;
-    final private Stack<ExamSystem> subsystems;
-    final private RelativeTimeout timeout;
-    final private Set<Class<?>> requestedOptionTypes = new HashSet<Class<?>>();
-    final private CleanCachesOption clean;
-    final private File cache;
-
-    /**
-     * Creates a fresh ExamSystem. Your options will be combined with internal defaults. If you need
-     * to change the system after it has been created, you fork() it. Forking will not add default
-     * options again.
-     * 
-     * @param options
-     *            options to be used to define the new system.
-     * 
-     * @return a fresh instance of {@literal DefaultExamSystem}
-     * 
-     * @throws IOException
-     *             in case of an instantiation problem. (IO related)
-     */
-    public static ExamSystem create(Option[] options) throws IOException {
-        LOG.info("Pax Exam System (Version: " + Info.getPaxExamVersion() + ") created.");
-        return new DefaultExamSystem(options);
-
-    }
-
-    /**
-     * Create a new system based on *this*. The forked System remembers the forked instances in
-     * order to clear resources up (if desired).
-     */
-    public ExamSystem fork(Option[] options) throws IOException {
-        ExamSystem sys = new DefaultExamSystem(combine(combinedOptions, options));
-        subsystems.add(sys);
-        return sys;
-    }
+    private final Store<InputStream> store;
+    private final File configDirectory;
+    private final Option[] combinedOptions;
+    private final Stack<ExamSystem> subsystems;
+    private final RelativeTimeout timeout;
+    private final Set<Class<?>> requestedOptionTypes = new HashSet<Class<?>>();
+    private final CleanCachesOption clean;
+    private final File cache;
 
     /**
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults. If you need
@@ -136,6 +107,35 @@ public class DefaultExamSystem implements ExamSystem {
     }
 
     /**
+     * Creates a fresh ExamSystem. Your options will be combined with internal defaults. If you need
+     * to change the system after it has been created, you fork() it. Forking will not add default
+     * options again.
+     * 
+     * @param options
+     *            options to be used to define the new system.
+     * 
+     * @return a fresh instance of {@literal DefaultExamSystem}
+     * 
+     * @throws IOException
+     *             in case of an instantiation problem. (IO related)
+     */
+    public static ExamSystem create(Option[] options) throws IOException {
+        LOG.info("Pax Exam System (Version: " + Info.getPaxExamVersion() + ") created.");
+        return new DefaultExamSystem(options);
+
+    }
+
+    /**
+     * Create a new system based on *this*. The forked System remembers the forked instances in
+     * order to clear resources up (if desired).
+     */
+    public ExamSystem fork(Option[] options) throws IOException {
+        ExamSystem sys = new DefaultExamSystem(combine(combinedOptions, options));
+        subsystems.add(sys);
+        return sys;
+    }
+
+    /**
      * Creates a fresh temp folder under the mentioned working folder. If workingFolder is null,
      * system wide temp location will be used.
      * 
@@ -153,8 +153,6 @@ public class DefaultExamSystem implements ExamSystem {
 
     /**
      * Helper method for single options. Last occurence has precedence. (support overwrite).
-     * 
-     * {@inheritDoc}
      * 
      */
     public <T extends Option> T getSingleOption(final Class<T> optionType) {
@@ -228,14 +226,9 @@ public class DefaultExamSystem implements ExamSystem {
         for (Option option : combinedOptions) {
             boolean found = false;
             for (Class<?> c : requestedOptionTypes) {
-                try {
-                    option.getClass().asSubclass(c);
-                    found = true;
-                    break;
-                }
-                catch (Exception e) {
-
-                }
+                option.getClass().asSubclass(c);
+                found = true;
+                break;
             }
             if (!found) {
                 missing.add(option.getClass().getCanonicalName());
@@ -278,15 +271,19 @@ public class DefaultExamSystem implements ExamSystem {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DefaultExamSystem other = (DefaultExamSystem) obj;
-        if (!Arrays.equals(combinedOptions, other.combinedOptions))
+        if (!Arrays.equals(combinedOptions, other.combinedOptions)) {
             return false;
+        }
         return true;
     }
 }
