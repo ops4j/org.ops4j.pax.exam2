@@ -22,6 +22,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>build/pax-exam-checkstyle-rules</module>
                 <module>pom</module>
                 <module>core/pax-exam</module>
                 <module>core/pax-exam-spi</module>
