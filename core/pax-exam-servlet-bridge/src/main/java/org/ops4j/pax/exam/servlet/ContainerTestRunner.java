@@ -90,6 +90,7 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
         catch (AssumptionViolatedException e) {
             eachNotifier.addFailedAssumption(e);
         }
+        // CHECKSTYLE:SKIP : base class API
         catch (Throwable e) {
             eachNotifier.addFailure(e);
         }

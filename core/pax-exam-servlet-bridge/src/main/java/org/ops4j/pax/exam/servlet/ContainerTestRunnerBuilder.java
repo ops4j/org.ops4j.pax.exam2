@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.servlet;
 
 import org.junit.runner.Runner;
+import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 import org.ops4j.pax.exam.util.Injector;
 
@@ -30,7 +31,7 @@ public class ContainerTestRunnerBuilder extends RunnerBuilder {
     }
 
     @Override
-    public Runner runnerForClass(Class<?> testClass) throws Throwable {
+    public Runner runnerForClass(Class<?> testClass) throws InitializationError  {
         return new ContainerTestRunner(testClass, injector);
     }
 }
