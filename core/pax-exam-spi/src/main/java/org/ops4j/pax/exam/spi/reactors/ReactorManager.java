@@ -93,7 +93,7 @@ public class ReactorManager {
     private String systemType;
 
     /** The current test class. */
-    private Class<?> testClass;
+    private Class<?> currentTestClass;
 
     /** The reactor. */
     private ExamReactor reactor;
@@ -182,7 +182,7 @@ public class ReactorManager {
      */
     public synchronized ExamReactor prepareReactor(Class<?> _testClass, Object testClassInstance)
         throws InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
-        this.testClass = _testClass;
+        this.currentTestClass = _testClass;
         this.reactor = createReactor(_testClass);
         testClasses.add(_testClass);
         addConfigurationsToReactor(_testClass, testClassInstance);
@@ -199,7 +199,7 @@ public class ReactorManager {
      */
     public StagedExamReactor stageReactor() throws IOException, InstantiationException,
         IllegalAccessException {
-        StagedExamReactor stagedReactor = reactor.stage(getStagingFactory(testClass));
+        StagedExamReactor stagedReactor = reactor.stage(getStagingFactory(currentTestClass));
         return stagedReactor;
     }
 
@@ -354,7 +354,7 @@ public class ReactorManager {
         if (defaultProbeBuilder == null) {
             defaultProbeBuilder = system.createProbe();
         }
-        TestProbeBuilder probeBuilder = overwriteWithUserDefinition(testClass, testClassInstance);
+        TestProbeBuilder probeBuilder = overwriteWithUserDefinition(currentTestClass, testClassInstance);
         return probeBuilder;
     }
 

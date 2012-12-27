@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -159,7 +160,7 @@ public class ForkedFrameworkFactory {
         String serviceLookupPath = toPath(ServiceLookup.class);
         return new String[] { frameworkPath, launcherPath, serviceLookupPath };
     }
-    
+
     static String toPath(Class<?> klass) throws URISyntaxException {
         return klass.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
     }
@@ -169,21 +170,19 @@ public class ForkedFrameworkFactory {
         Throwable reason = null;
         long startedTrying = System.currentTimeMillis();
 
-        try {
-            do {
-                try {
-                    Registry reg = LocateRegistry.getRegistry(_port);
-                    framework = (RemoteFramework) reg.lookup(rmiName);
-                }
-                catch (Exception e) {
-                    reason = e;
-                }
+        do {
+            try {
+                Registry reg = LocateRegistry.getRegistry(_port);
+                framework = (RemoteFramework) reg.lookup(rmiName);
             }
-            while (framework == null && (System.currentTimeMillis() < startedTrying + TIMEOUT));
+            catch (RemoteException e) {
+                reason = e;
+            }
+            catch (NotBoundException e) {
+                reason = e;
+            }
         }
-        catch (Exception e) {
-            throw new TestContainerException("cannot find remote framework in RMI registry", e);
-        }
+        while (framework == null && (System.currentTimeMillis() < startedTrying + TIMEOUT));
         if (framework == null) {
             throw new TestContainerException("cannot find remote framework in RMI registry", reason);
         }

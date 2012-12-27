@@ -18,6 +18,8 @@ package org.ops4j.pax.exam.maven;
 
 import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_KEY;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -78,6 +80,7 @@ public class StartContainerMojo extends AbstractMojo {
             Thread.currentThread().setContextClassLoader(cl);
             run(cl);
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             getLog().error(e);
             throw new MojoExecutionException("Failed to start Pax Exam server for " + configClass,
@@ -89,7 +92,8 @@ public class StartContainerMojo extends AbstractMojo {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void run(ClassLoader ccl) throws Exception {
+    private void run(ClassLoader ccl) throws ClassNotFoundException,
+        InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
         /*
          * Make sure we can load use Pax URL protocol handles defined as client project
          * dependencies.
@@ -106,7 +110,8 @@ public class StartContainerMojo extends AbstractMojo {
         context.put(TEST_CONTAINER_KEY, testContainer);
     }
 
-    private Option[] getConfigurationOptions() throws Exception {
+    private Option[] getConfigurationOptions() throws ClassNotFoundException,
+        InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?> klass = Class.forName(configClass, true, testClassLoader);
         Method m = getConfigurationMethod(klass);
         Object configClassInstance = klass.newInstance();

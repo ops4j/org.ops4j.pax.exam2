@@ -445,9 +445,9 @@ public class GlassFishTestContainer implements TestContainer {
      * @param startLevel
      * @throws TestContainerException
      */
-    public void setBundleStartLevel(long bundleId, int startLevel) {
+    private void setBundleStartLevel(long bundleId, int startLevel) {
         BundleContext context = framework.getBundleContext();
-        StartLevel sl = getService(context, StartLevel.class);
+        sl = getService(context, StartLevel.class);
         sl.setBundleStartLevel(context.getBundle(bundleId), startLevel);
     }
 
@@ -504,6 +504,7 @@ public class GlassFishTestContainer implements TestContainer {
             installAndStartBundles(bc);
             deployModules();
         }
+        // CHECKSTYLE:SKIP : catch all wanted
         catch (Exception e) {
             throw new TestContainerException("Problem starting test container.", e);
         }

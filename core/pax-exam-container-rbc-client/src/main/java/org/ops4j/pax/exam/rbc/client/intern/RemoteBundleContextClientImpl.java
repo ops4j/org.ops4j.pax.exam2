@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -55,16 +56,15 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     private RemoteBundleContext remoteBundleContext;
 
-
     /**
      * Timeout for looking up the remote bundle context via RMI.
      */
     private final RelativeTimeout rmiLookupTimeout;
-    
+
     private final Integer registry;
 
     private final Stack<Long> installed;
-    
+
     private final String name;
 
     /**
@@ -96,8 +96,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
                 /**
                  * Delegates the call to remote bundle context.
                  */
-                public Object invoke(final Object proxy, final Method method, final Object[] params)
-                    {
+                public Object invoke(final Object proxy, final Method method, final Object[] params) {
                     try {
                         return getRemoteBundleContext().remoteCall(method.getDeclaringClass(),
                             method.getName(), method.getParameterTypes(), filter, timeout, params);
@@ -207,8 +206,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
-    public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout)
-    {
+    public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         try {
             getRemoteBundleContext().waitForState(bundleId, state, timeout);
         }
@@ -238,25 +236,21 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             Throwable reason = null;
             long startedTrying = System.currentTimeMillis();
 
-            try {
-                do {
-                    try {
-                        Registry reg = LocateRegistry.getRegistry(registry);
-                        remoteBundleContext = (RemoteBundleContext) reg.lookup(name);
-                    }
-                    catch (Exception e) {
-                        reason = e;
-                    }
-
+            do {
+                try {
+                    Registry reg = LocateRegistry.getRegistry(registry);
+                    remoteBundleContext = (RemoteBundleContext) reg.lookup(name);
                 }
-                while (remoteBundleContext == null
-                    && (rmiLookupTimeout.isNoTimeout() || System.currentTimeMillis() < startedTrying
-                        + rmiLookupTimeout.getValue()));
+                catch (RemoteException e) {
+                    reason = e;
+                }
+                catch (NotBoundException e) {
+                    reason = e;
+                }
             }
-            catch (Exception e) {
-
-                // throw new RuntimeException( "Cannot get the remote bundle context", e );
-            }
+            while (remoteBundleContext == null
+                && (rmiLookupTimeout.isNoTimeout() || System.currentTimeMillis() < startedTrying
+                    + rmiLookupTimeout.getValue()));
             if (remoteBundleContext == null) {
                 throw new RuntimeException("Cannot get the remote bundle context", reason);
             }

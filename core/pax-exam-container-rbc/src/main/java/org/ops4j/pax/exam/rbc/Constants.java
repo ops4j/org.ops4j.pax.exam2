@@ -23,15 +23,19 @@ package org.ops4j.pax.exam.rbc;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 11, 2008
  */
-public interface Constants {
+public class Constants {
 
     /**
      * Name of the system (framework) property that specifies the RMI registry port.
      */
-    String RMI_PORT_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.port";
+    public static final String RMI_PORT_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.port";
 
-    String RMI_HOST_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.host";
-    String RMI_NAME_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.name";
+    public static final String RMI_HOST_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.host";
+    public static final String RMI_NAME_PROPERTY = "org.ops4j.pax.exam.rbc.rmi.name";
 
-    long WAIT_FOREVER = 0;
+    public static final long WAIT_FOREVER = 0;
+    
+    /** Hidden utility class constructor. */
+    private Constants() {
+    }
 }

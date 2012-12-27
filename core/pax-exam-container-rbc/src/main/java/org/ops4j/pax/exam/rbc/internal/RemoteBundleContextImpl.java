@@ -27,13 +27,12 @@ import java.rmi.RemoteException;
 import java.util.Dictionary;
 
 import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TimeoutException;
+import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.startlevel.StartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,9 +76,8 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         final Object... actualParams) throws NoSuchServiceException, NoSuchMethodException,
         IllegalAccessException, InvocationTargetException {
         LOG.trace("Remote call of [" + serviceType.getName() + "." + methodName + "]");
-
-        return serviceType.getMethod(methodName, methodParams).invoke(
-            getService(serviceType, filter, timeout), actualParams);
+        Object service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue());
+        return serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
     }
 
     public long installBundle(final String bundleUrl) throws BundleException {
@@ -125,15 +123,8 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
 
     public void setBundleStartLevel(long bundleId, int startLevel) throws RemoteException,
         BundleException {
-        try {
-            final StartLevel startLevelService = getService(StartLevel.class, null,
-                RelativeTimeout.TIMEOUT_NOWAIT);
-            startLevelService.setBundleStartLevel(bundleContext.getBundle(bundleId), startLevel);
-        }
-        catch (NoSuchServiceException e) {
-            throw new BundleException(
-                "Cannot get the start level service to set bundle start level");
-        }
+        final StartLevel startLevelService = ServiceLookup.getService(bundleContext, StartLevel.class);
+        startLevelService.setBundleStartLevel(bundleContext.getBundle(bundleId), startLevel);
     }
 
     public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
@@ -163,47 +154,6 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
                 + bundleStateToString(bundle.getState()) + "' not '" + bundleStateToString(state)
                 + "' as expected");
         }
-    }
-
-    /**
-     * Lookup a service in the service registry.
-     * 
-     * @param serviceType
-     *            service class
-     * @param filter
-     * @param timeoutInMillis
-     *            number of milliseconds to wait for service before failing TODO timeout is not
-     *            used!
-     * 
-     * @return a service published under the required service type
-     * 
-     * @throws NoSuchServiceException
-     *             - If service cannot be found in the service registry
-     */
-    @SuppressWarnings("unchecked")
-    private <T> T getService(final Class<T> serviceType, String filter,
-        final RelativeTimeout timeout) throws NoSuchServiceException {
-        LOG.trace("Look up service [" + serviceType.getName() + "] filter [" + filter
-            + "], timeout in " + timeout.getValue() + " millis");
-        long start = System.currentTimeMillis();
-        do {
-            try {
-                ServiceReference[] reference = bundleContext.getServiceReferences(
-                    serviceType.getName(), filter);
-                if (reference != null && reference.length > 0) {
-                    return ((T) bundleContext.getService(reference[0]));
-                }
-                Thread.sleep(200);
-            }
-            catch (Exception e) {
-                LOG.error(
-                    "Some problem during looking up service from framework: " + bundleContext, e);
-            }
-            // wait a bit
-        }
-        while ((timeout.isNoTimeout() || (System.currentTimeMillis()) < start + timeout.getValue()));
-        throw new TestContainerException("Not found a matching Service " + serviceType.getName()
-            + " for Filter:" + (filter != null ? filter : ""));
     }
 
     /**
