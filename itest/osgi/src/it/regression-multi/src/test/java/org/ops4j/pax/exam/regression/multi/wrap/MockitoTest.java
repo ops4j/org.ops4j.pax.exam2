@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.repository;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
@@ -33,7 +34,7 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.regression.pde.HelloService;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
@@ -54,7 +55,7 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
  * @author Harald Wellmann
  * 
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
 public class MockitoTest {
 
@@ -105,9 +106,11 @@ public class MockitoTest {
     public Option[] config2() {
         return options(
 
-        regressionDefaults(),
+            regressionDefaults(),
+            repository("http://repository.springsource.com/maven/bundles/external").id(
+                "com.springsource.repository.bundles.external"),
 
-        // A simple test bundle
+            // A simple test bundle
             mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion()),
 
             // Mockito without Hamcrest and Objenesis
