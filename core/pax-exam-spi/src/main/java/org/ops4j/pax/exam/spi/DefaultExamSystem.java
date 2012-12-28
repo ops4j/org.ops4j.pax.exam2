@@ -226,8 +226,10 @@ public class DefaultExamSystem implements ExamSystem {
         for (Option option : combinedOptions) {
             boolean found = false;
             for (Class<?> c : requestedOptionTypes) {
-                found = c.isAssignableFrom(option.getClass());
-                break;
+                if (c.isAssignableFrom(option.getClass())) {
+                    found = true;
+                    break;
+                }
             }
             if (!found) {
                 missing.add(option.getClass().getCanonicalName());
