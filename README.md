@@ -28,9 +28,9 @@ Checkout:
     git checkout v2.x
 
 Branches:
-   v2.x   : Maintenance for Pax Exam 2.x (2.6.0 and higher)
-   v3.0.x : 3.0.x releases
-   master : ongoing development for 3.1.0 and higher 
+* v2.x   : Maintenance for Pax Exam 2.x (2.6.0 and higher)
+* v3.0.x : 3.0.x releases
+* master : ongoing development for 3.1.0 and higher 
 
 Run Build:
 
@@ -44,7 +44,7 @@ Run build with integration tests
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 2.6.0.
+The most recent release of Pax Exam 2 is 2.6.0. Pax Exam 3.x is the current release line.
 
 ## Issue Tracking
 
