@@ -25,6 +25,12 @@ You'll need a machine with Java 6+ and Apache Maven 3 installed.
 Checkout:
 
     git clone git://github.com/ops4j/org.ops4j.pax.exam2.git
+    git checkout v2.x
+
+Branches:
+   v2.x   : Maintenance for Pax Exam 2.x (2.6.0 and higher)
+   v3.0.x : 3.0.x releases
+   master : ongoing development for 3.1.0 and higher 
 
 Run Build:
 
@@ -32,13 +38,13 @@ Run Build:
 
 Run build with integration tests
 
-    mvn -P itest clean install
+    mvn -Pdefault,itest clean install
 
 ## Releases
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 2.4.0.
+The current release of Pax Exam is 2.6.0.
 
 ## Issue Tracking
 
