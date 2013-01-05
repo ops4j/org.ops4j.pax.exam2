@@ -31,7 +31,6 @@ import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
 import org.ops4j.pax.exam.options.CompositeOption;
-import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
@@ -509,16 +508,6 @@ public class CoreOptions {
     public static Option frameworkProperties(final FrameworkPropertyOption... frameworkProperties) {
         return composite(frameworkProperties);
     }
-
-    /**
-     * Creates a {@link DebugClassLoadingOption}.
-     * 
-     * @return system property option
-     */
-    public static DebugClassLoadingOption debugClassLoading() {
-        return new DebugClassLoadingOption();
-    }
-
     /**
      * Creates a {@link OptionalCompositeOption}.
      * 
