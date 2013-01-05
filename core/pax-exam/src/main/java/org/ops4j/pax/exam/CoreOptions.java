@@ -49,7 +49,6 @@ import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
-import org.ops4j.pax.exam.options.extra.AutoWrapOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOptionImpl;
@@ -723,15 +722,6 @@ public class CoreOptions {
      */
     public static RepositoryOption repository(final String repositoryUrl) {
         return new RepositoryOptionImpl(repositoryUrl);
-    }
-
-    /**
-     * Creates a {@link AutoWrapOption}.
-     * 
-     * @return AutoWrapOption
-     */
-    public static AutoWrapOption autoWrap() {
-        return new AutoWrapOption();
     }
 
     /**
