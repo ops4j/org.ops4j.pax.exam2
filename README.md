@@ -2,12 +2,13 @@ Pax Exam
 ========
 
 Thanks for looking into Pax Exam.
-This is the official source repository of the OPS4J Pax Exam project, containing the 2.x and 3.x release lines.
-Its licensed under the Apache Software License 2.0 by the OPS4J community.
+This is the official source repository of the OPS4J Pax Exam project for 
+release lines 2.x and 3.x.
+It's licensed under the Apache Software License 2.0 by the OPS4J community.
 
 ## Documentation
 
-* <http://team.ops4j.org/wiki/display/paxexam/Documentation>
+* <http://team.ops4j.org/wiki/display/PAXEXAM3/Documentation>
 
 You may want to have a look at the Pax Exam 2 Learning project for more help and introductory content:
 
@@ -25,6 +26,12 @@ You'll need a machine with Java 6+ and Apache Maven 3 installed.
 Checkout:
 
     git clone git://github.com/ops4j/org.ops4j.pax.exam2.git
+    git checkout v3.0,x
+
+Branches:
+   v2.x   : Maintenance for Pax Exam 2.x (2.6.0 and higher)
+   v3.0.x : 3.0.x releases
+   master : ongoing development for 3.1.0 and higher 
 
 Run Build:
 
@@ -32,7 +39,7 @@ Run Build:
 
 Run build with integration tests
 
-    mvn -P default,itest clean install
+    mvn -Pdefault,itest clean install
 
 ## Releases
 
