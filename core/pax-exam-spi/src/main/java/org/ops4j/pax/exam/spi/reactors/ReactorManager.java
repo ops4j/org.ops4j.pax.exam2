@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * the test probe, where applicable.
  * 
  * <p>
- * This class was factored out from the JUnit4TestRunner and does not depend on JUnit.
+ * This class was factored out from the JUnit4TestRunner of Pax Exam 2.x and does not depend on JUnit.
  * <p>
  * TODO check if there are any concurrency issues. Some methods are synchronized, which is just
  * inherited from the 2.1.0 implementation. The use cases are not quite clear.
