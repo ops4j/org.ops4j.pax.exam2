@@ -49,6 +49,7 @@ import org.ops4j.pax.exam.forked.provision.PlatformImpl;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
+import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
@@ -216,6 +217,14 @@ public class ForkedTestContainer implements TestContainer {
 
     private Map<String, String> createSystemProperties() {
         Map<String, String> p = new HashMap<String, String>();
+        for (PropagateSystemPropertyOption option : system.getOptions(PropagateSystemPropertyOption.class)) {
+            String key = option.getKey();
+            String value = System.getProperty(key);
+            if (value != null) {
+                p.put(key, value);
+            }
+        }
+
         for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {
             p.put(option.getKey(), option.getValue());
         }

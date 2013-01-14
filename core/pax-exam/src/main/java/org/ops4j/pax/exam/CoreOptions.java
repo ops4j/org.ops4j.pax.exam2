@@ -38,6 +38,7 @@ import org.ops4j.pax.exam.options.MavenArtifactDeploymentOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.OptionalCompositeOption;
+import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
@@ -483,6 +484,39 @@ public class CoreOptions {
      */
     public static SystemPropertyOption systemProperty(final String key) {
         return new SystemPropertyOption(key);
+    }
+
+    /**
+     * Propagates a system property from the driver VM to the container VM. Only meaningful for
+     * remote containers.
+     * <p>
+     * If the given system property is set in the driver VM, Pax Exam will set the system property
+     * with the same key to the same value in the container VM.
+     * 
+     * @param key
+     *            system property key
+     */
+    public static PropagateSystemPropertyOption propagateSystemProperty(final String key) {
+        return new PropagateSystemPropertyOption(key);
+    }
+
+    /**
+     * Propagates a list of system properties from the driver VM to the container VM. Only meaningful for
+     * remote containers.
+     * <p>
+     * For each given system property which is set in the driver VM, Pax Exam will set the system property
+     * with the same key to the same value in the container VM.
+     * 
+     * @param keys
+     *            list of system property keys
+     */
+    public static Option propagateSystemProperties(final String... keys) {
+        
+        final List<PropagateSystemPropertyOption> options = new ArrayList<PropagateSystemPropertyOption>();
+        for (String key : keys) {
+            options.add(propagateSystemProperty(key));
+        }
+        return composite(options.toArray(new Option[options.size()]));
     }
 
     /**
