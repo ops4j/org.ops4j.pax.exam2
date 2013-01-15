@@ -3,7 +3,7 @@
     <parent>
         <artifactId>pax-exam-samples</artifactId>
         <groupId>org.ops4j.pax.exam</groupId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
