@@ -70,11 +70,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Native Test Container starts an OSGi framework using {@link FrameworkFactory} and
- * provisions the bundles configured in the Exam system.
+ * The Native Test Container starts an OSGi framework using {@link FrameworkFactory} and provisions
+ * the bundles configured in the Exam system.
  * <p>
- * When the framework has reached the configured start level, the container checks that all
- * bundles are resolved and throws an exception otherwise.
+ * When the framework has reached the configured start level, the container checks that all bundles
+ * are resolved and throws an exception otherwise.
  * 
  * @author Toni Menzel
  * @author Harald Wellmann
@@ -97,6 +97,7 @@ public class NativeTestContainer implements TestContainer {
         this.system = system;
     }
 
+    @Override
     public synchronized void call(TestAddress address) {
         Map<String, String> props = new HashMap<String, String>();
         props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
@@ -105,6 +106,7 @@ public class NativeTestContainer implements TestContainer {
         service.call(address.arguments());
     }
 
+    @Override
     public synchronized long install(String location, InputStream stream) {
         try {
             Bundle b = framework.getBundleContext().installBundle(location, stream);
@@ -121,6 +123,7 @@ public class NativeTestContainer implements TestContainer {
         return -1;
     }
 
+    @Override
     public synchronized long install(InputStream stream) {
         return install("local", stream);
     }
@@ -145,6 +148,7 @@ public class NativeTestContainer implements TestContainer {
         sl.setBundleStartLevel(framework.getBundleContext().getBundle(bundleId), startLevel);
     }
 
+    @Override
     public TestContainer start() {
         try {
             system = system.fork(new Option[] {
@@ -188,6 +192,7 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
+    @Override
     public TestContainer stop() {
         if (framework != null) {
             try {
@@ -290,7 +295,6 @@ public class NativeTestContainer implements TestContainer {
     }
 
     private void installAndStartBundles(BundleContext context) throws BundleException {
-        framework.start();
         StartLevel sl = ServiceLookup.getService(context, StartLevel.class);
         List<Bundle> bundles = new ArrayList<Bundle>();
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
@@ -306,11 +310,12 @@ public class NativeTestContainer implements TestContainer {
                 LOG.debug("+ Install (no start) {}", bundle);
             }
         }
-
+        // All bundles are installed, we can now start the framework...
+        framework.start();
         setFrameworkStartLevel(context, sl);
         verifyThatBundlesAreResolved(bundles);
     }
-    
+
     private void setFrameworkStartLevel(BundleContext context, final StartLevel sl) {
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
@@ -320,6 +325,7 @@ public class NativeTestContainer implements TestContainer {
         final CountDownLatch latch = new CountDownLatch(1);
         context.addFrameworkListener(new FrameworkListener() {
 
+            @Override
             public void frameworkEvent(FrameworkEvent frameworkEvent) {
                 if (frameworkEvent.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
                     if (sl.getStartLevel() == startLevel) {
@@ -359,7 +365,7 @@ public class NativeTestContainer implements TestContainer {
                 "There are unresolved bundles. See previous ERROR log messages for details.");
         }
     }
-    
+
     private int getStartLevel(ProvisionOption<?> bundle) {
         Integer start = bundle.getStartLevel();
         if (start == null) {

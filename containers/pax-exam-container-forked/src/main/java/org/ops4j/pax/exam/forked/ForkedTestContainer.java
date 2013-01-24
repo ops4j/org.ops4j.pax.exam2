@@ -78,10 +78,10 @@ public class ForkedTestContainer implements TestContainer {
     private static final Logger LOG = LoggerFactory.getLogger(ForkedTestContainer.class);
 
     private ExamSystem system;
-    private ForkedFrameworkFactory frameworkFactory;
+    private final ForkedFrameworkFactory frameworkFactory;
     private RemoteFramework remoteFramework;
-    private PlatformImpl platform;
-    private String name;
+    private final PlatformImpl platform;
+    private final String name;
 
     public ForkedTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
@@ -90,6 +90,7 @@ public class ForkedTestContainer implements TestContainer {
         this.name = "Forked:" + frameworkFactory.getClass().getSimpleName();
     }
 
+    @Override
     public void call(TestAddress address) {
         String filterExpression = "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker)(Probe-Signature="
             + address.root().identifier() + "))";
@@ -104,6 +105,7 @@ public class ForkedTestContainer implements TestContainer {
         }
     }
 
+    @Override
     public long install(String location, InputStream stream) {
         try {
             return remoteFramework.installBundle(location);
@@ -116,6 +118,7 @@ public class ForkedTestContainer implements TestContainer {
         }
     }
 
+    @Override
     public long install(InputStream stream) {
         try {
             long bundleId = remoteFramework.installBundle("local", pack(stream));
@@ -130,6 +133,7 @@ public class ForkedTestContainer implements TestContainer {
         }
     }
 
+    @Override
     public TestContainer start() {
         try {
             system = system.fork(new Option[] { systemProperty("java.protocol.handler.pkgs").value(
@@ -159,6 +163,7 @@ public class ForkedTestContainer implements TestContainer {
         return this;
     }
 
+    @Override
     public TestContainer stop() {
         try {
             remoteFramework.stop();
@@ -264,7 +269,6 @@ public class ForkedTestContainer implements TestContainer {
     }
 
     private void installAndStartBundles() throws BundleException, RemoteException {
-        remoteFramework.start();
         List<Long> bundleIds = new ArrayList<Long>();
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
             String localUrl = downloadBundle(bundle.getURL());
@@ -280,9 +284,10 @@ public class ForkedTestContainer implements TestContainer {
                 LOG.debug("+ Install (no start) {}", bundle);
             }
         }
-
+        // All bundles are installed, we can now start the framework...
+        remoteFramework.start();
         setFrameworkStartLevel();
-        verifyThatBundlesAreResolved( bundleIds );
+        verifyThatBundlesAreResolved(bundleIds);
     }
 
     private void setFrameworkStartLevel() throws RemoteException {
@@ -295,19 +300,19 @@ public class ForkedTestContainer implements TestContainer {
         boolean startLevelReached = remoteFramework.setFrameworkStartLevel(startLevel, timeout);
 
         if (!startLevelReached) {
-            String msg = String.format("start level %d has not been reached within %d ms", startLevel, timeout);
-            throw new TestContainerException(msg);            
+            String msg = String.format("start level %d has not been reached within %d ms",
+                startLevel, timeout);
+            throw new TestContainerException(msg);
         }
     }
 
-    private void verifyThatBundlesAreResolved( List<Long> bundleIds ) throws RemoteException
-    {
+    private void verifyThatBundlesAreResolved(List<Long> bundleIds) throws RemoteException {
         boolean hasUnresolvedBundles = false;
         for (long bundleId : bundleIds) {
             try {
                 if (remoteFramework.getBundleState(bundleId) == Bundle.INSTALLED) {
                     LOG.error("Bundle [{}] is not resolved", bundleId);
-                    hasUnresolvedBundles = true;                    
+                    hasUnresolvedBundles = true;
                 }
             }
             catch (BundleException exc) {
@@ -315,9 +320,11 @@ public class ForkedTestContainer implements TestContainer {
             }
         }
         ConfigurationManager cm = new ConfigurationManager();
-        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY, "false"));
+        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY,
+            "false"));
         if (hasUnresolvedBundles && failOnUnresolved) {
-            throw new TestContainerException("There are unresolved bundles. See previous ERROR log messages for details.");
+            throw new TestContainerException(
+                "There are unresolved bundles. See previous ERROR log messages for details.");
         }
     }
 
