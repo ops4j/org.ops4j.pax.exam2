@@ -26,7 +26,7 @@ import org.ops4j.pax.exam.osgi.internal.karaf.KarafFeatureProvisionOption;
  */
 public class KarafOptions {
 
-    public KarafOptions() {
+    private KarafOptions() {
         //we are just static
     }
 
