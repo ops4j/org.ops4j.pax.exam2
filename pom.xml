@@ -33,6 +33,7 @@
                 <module>core/pax-exam-servlet-bridge</module>
                 <module>core/pax-exam-cdi</module>
                 <module>core/pax-exam-spring</module>
+                <module>core/pax-exam-osgi</module>
                 <module>forge/pax-exam-testforge</module>
                 <module>drivers/pax-exam-player</module>
                 <module>drivers/pax-exam-junit4</module>
