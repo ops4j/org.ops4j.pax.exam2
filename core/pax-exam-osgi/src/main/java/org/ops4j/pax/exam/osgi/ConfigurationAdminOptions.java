@@ -17,8 +17,18 @@
  */
 package org.ops4j.pax.exam.osgi;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
+import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.osgi.internal.configuration.ConfigurationProvisionOption;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -64,6 +74,50 @@ public class ConfigurationAdminOptions {
      */
     public static ConfigurationOption factoryConfiguration(String pid) {
         return new ConfigurationProvisionOption(pid, new HashMap<String, Object>()).factory(true);
+    }
+
+    /**
+     * read all configuration files from a folder and transform them into
+     * configuration options
+     * 
+     * @param folder
+     * @return an option containing all the read configurations
+     */
+    public static Option configurationFolder(File folder) {
+        if (!folder.exists()) {
+            throw new TestContainerException("folder " + folder + " does not exits");
+        }
+        List<Option> options = new ArrayList<Option>();
+        File[] files = folder.listFiles();
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                continue;
+            }
+            if (!file.getName().endsWith(".cfg")) {
+                continue;
+            }
+            String[] split = file.getName().split("-");
+            ConfigurationProvisionOption cfg = new ConfigurationProvisionOption(split[0], new HashMap<String, Object>());
+            cfg.factory(split.length > 1);
+            Properties properties = new Properties();
+            try {
+                FileInputStream stream = new FileInputStream(file);
+                try {
+                    properties.load(stream);
+                } finally {
+                    stream.close();
+                }
+            } catch (IOException e) {
+                throw new TestContainerException("can't read configuration file " + file, e);
+            }
+            Set<String> names = properties.stringPropertyNames();
+            for (String key : names) {
+                cfg.put(key, properties.getProperty(key));
+            }
+            options.add(cfg.asOption());
+        }
+        return CoreOptions.composite(options.toArray(new Option[0]));
     }
 
 }
