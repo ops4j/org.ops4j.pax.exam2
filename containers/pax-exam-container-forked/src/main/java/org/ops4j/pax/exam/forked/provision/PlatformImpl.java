@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.Properties;
@@ -123,7 +124,15 @@ public class PlatformImpl {
                             progressBar = new StreamUtils.CoarseGrainedProgressBar(displayName);
                         }
                     }
-                    StreamUtils.streamCopy(url, fileChannel, progressBar);
+                    // Check if this is an exploded bundle...
+                    if (url.getPath().endsWith("/") && "file".equals(url.getProtocol())) {
+                        StreamUtils.streamCopy(new URL("assembly:" + url.toExternalForm()),
+                            fileChannel, progressBar);
+                    }
+                    else {
+                        StreamUtils.streamCopy(url, fileChannel, progressBar);
+                    }
+
                     fileChannel.close();
                     LOGGER.debug("Successfully downloaded to [" + destination + "]");
                 }
@@ -228,33 +237,58 @@ public class PlatformImpl {
     void validateBundle(final URL url, final File file) {
         String bundleSymbolicName = null;
         String bundleName = null;
-        JarFile jar = null;
-        try {
-            // verify that is a valid jar. Do not verify that is signed (the false param).
-            jar = new JarFile(file, false);
-            final Manifest manifest = jar.getManifest();
-            if (manifest == null) {
-                throw new TestContainerException("[" + url + "] is not a valid bundle");
-            }
-            bundleSymbolicName = manifest.getMainAttributes().getValue(
-                Constants.BUNDLE_SYMBOLICNAME);
-            bundleName = manifest.getMainAttributes().getValue(Constants.BUNDLE_NAME);
-        }
-        catch (IOException e) {
-            throw new TestContainerException("[" + url + "] is not a valid bundle", e);
-        }
-        finally {
-            if (jar != null) {
+        if (url.getPath().endsWith("/")) {
+            // is this an exploded bundle?
+            try {
+                URL manifestURL = new URL(url, "META-INF/MANIFEST.MF");
+                InputStream stream = manifestURL.openStream();
                 try {
-                    jar.close();
+                    Manifest manifest = new Manifest(stream);
+                    bundleSymbolicName = manifest.getMainAttributes().getValue(
+                        Constants.BUNDLE_SYMBOLICNAME);
+                    bundleName = manifest.getMainAttributes().getValue(Constants.BUNDLE_NAME);
                 }
-                catch (IOException ignore) {
-                    // just ignore as this is less probably to happen.
+                finally {
+                    stream.close();
+                }
+
+            }
+            catch (IOException e) {
+                throw new TestContainerException("[" + url + "] is not a valid exploded bundle", e);
+            }
+        }
+        else {
+            JarFile jar = null;
+            try {
+                // verify that is a valid jar. Do not verify that is signed (the false param).
+                jar = new JarFile(file, false);
+                final Manifest manifest = jar.getManifest();
+                if (manifest == null) {
+                    throw new TestContainerException("[" + url
+                        + "] is not a valid bundle (manifest is missing)");
+                }
+                bundleSymbolicName = manifest.getMainAttributes().getValue(
+                    Constants.BUNDLE_SYMBOLICNAME);
+                bundleName = manifest.getMainAttributes().getValue(Constants.BUNDLE_NAME);
+            }
+            catch (IOException e) {
+                throw new TestContainerException("[" + url
+                    + "] is not a valid bundle (reading jar failed)", e);
+            }
+            finally {
+                if (jar != null) {
+                    try {
+                        jar.close();
+                    }
+                    catch (IOException ignore) {
+                        // just ignore as this is less probably to happen.
+                    }
                 }
             }
         }
         if (bundleSymbolicName == null && bundleName == null) {
-            throw new TestContainerException("[" + url + "] is not a valid bundle");
+            throw new TestContainerException("[" + url
+                + "] is not a valid bundle (bundleSymbolicName and bundleName are null)");
         }
     }
 
