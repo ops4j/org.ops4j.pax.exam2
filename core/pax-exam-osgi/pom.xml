@@ -82,6 +82,11 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.service.obr</artifactId>
+            <version>1.0.2</version>
+        </dependency>
     </dependencies>
     <build>
         <pluginManagement>
