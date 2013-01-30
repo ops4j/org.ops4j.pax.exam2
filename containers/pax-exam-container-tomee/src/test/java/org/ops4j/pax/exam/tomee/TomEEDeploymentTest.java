@@ -32,7 +32,7 @@ public class TomEEDeploymentTest {
     public void deployWebapp() throws IOException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         ExamSystem system = DefaultExamSystem.create(options(war(
-            "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0-SNAPSHOT/war").name(
+            "mvn:org.ops4j.pax.exam.samples/pax-exam-sample1-web/3.0.0/war").name(
             "sample1")));
         TomEETestContainer container = new TomEETestContainer(system);
         container.start();
