@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -90,12 +91,15 @@ public class WarBuilderTest {
     public void buildWarAutoClassPath() throws MalformedURLException, IOException {
         war = localCopy(warProbe().classPathDefaultExcludes());
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
+        assertThat(war.getEntry("WEB-INF/lib/mockito-all-1.9.5.jar"), is(notNullValue()));
+        assertThat(war.getEntry("WEB-INF/lib/tinybundles-1.0.0.jar"), is(nullValue()));
     }
 
     @Test
     public void buildWarAutoClassPathNoFilter() throws MalformedURLException, IOException {
         war = localCopy(warProbe().exclude());
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
+        assertThat(war.getEntry("WEB-INF/lib/tinybundles-1.0.0.jar"), is(notNullValue()));
     }
 
     @Test
@@ -113,5 +117,21 @@ public class WarBuilderTest {
     @Test
     public void buildWarAutoClassPathCustomFilter() throws MalformedURLException, IOException {
         war = localCopy(warProbe().exclude("mockito", ".cp"));
+        assertThat(war.getEntry("WEB-INF/lib/mockito-all-1.9.5.jar"), is(nullValue()));
+    }
+    
+    @Test
+    public void buildEmptyWar() throws IOException {
+        war = localCopy(warProbe());
+        ZipEntry beansXml = war.getEntry("WEB-INF/beans.xml");
+        assertThat(beansXml, is(notNullValue()));
+        assertThat(beansXml.getSize(), is(0L));
+    }
+
+    @Test
+    public void buildWarWithName() throws MalformedURLException, IOException {
+        WarBuilder warBuilder = new WarBuilder(warProbe().library("target/classes").name("foo"));
+        URI uri = warBuilder.buildWar();
+        assertThat(new File(uri).getName(), is("foo.war"));
     }
 }

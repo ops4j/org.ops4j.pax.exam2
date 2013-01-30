@@ -31,7 +31,6 @@ import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.BundleStartLevelOption;
 import org.ops4j.pax.exam.options.CompositeOption;
-import org.ops4j.pax.exam.options.DebugClassLoadingOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
@@ -39,6 +38,7 @@ import org.ops4j.pax.exam.options.MavenArtifactDeploymentOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.OptionalCompositeOption;
+import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
@@ -49,7 +49,6 @@ import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
-import org.ops4j.pax.exam.options.extra.AutoWrapOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOptionImpl;
@@ -488,6 +487,39 @@ public class CoreOptions {
     }
 
     /**
+     * Propagates a system property from the driver VM to the container VM. Only meaningful for
+     * remote containers.
+     * <p>
+     * If the given system property is set in the driver VM, Pax Exam will set the system property
+     * with the same key to the same value in the container VM.
+     * 
+     * @param key
+     *            system property key
+     */
+    public static PropagateSystemPropertyOption propagateSystemProperty(final String key) {
+        return new PropagateSystemPropertyOption(key);
+    }
+
+    /**
+     * Propagates a list of system properties from the driver VM to the container VM. Only meaningful for
+     * remote containers.
+     * <p>
+     * For each given system property which is set in the driver VM, Pax Exam will set the system property
+     * with the same key to the same value in the container VM.
+     * 
+     * @param keys
+     *            list of system property keys
+     */
+    public static Option propagateSystemProperties(final String... keys) {
+        
+        final List<PropagateSystemPropertyOption> options = new ArrayList<PropagateSystemPropertyOption>();
+        for (String key : keys) {
+            options.add(propagateSystemProperty(key));
+        }
+        return composite(options.toArray(new Option[options.size()]));
+    }
+
+    /**
      * Creates a {@link FrameworkPropertyOption}.
      * 
      * @param key
@@ -510,16 +542,6 @@ public class CoreOptions {
     public static Option frameworkProperties(final FrameworkPropertyOption... frameworkProperties) {
         return composite(frameworkProperties);
     }
-
-    /**
-     * Creates a {@link DebugClassLoadingOption}.
-     * 
-     * @return system property option
-     */
-    public static DebugClassLoadingOption debugClassLoading() {
-        return new DebugClassLoadingOption();
-    }
-
     /**
      * Creates a {@link OptionalCompositeOption}.
      * 
@@ -723,15 +745,6 @@ public class CoreOptions {
      */
     public static RepositoryOption repository(final String repositoryUrl) {
         return new RepositoryOptionImpl(repositoryUrl);
-    }
-
-    /**
-     * Creates a {@link AutoWrapOption}.
-     * 
-     * @return AutoWrapOption
-     */
-    public static AutoWrapOption autoWrap() {
-        return new AutoWrapOption();
     }
 
     /**

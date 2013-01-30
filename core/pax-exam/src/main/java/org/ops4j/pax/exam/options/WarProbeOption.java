@@ -199,7 +199,7 @@ public class WarProbeOption implements Option {
     }
 
     /**
-     * Adds the given resourcs from the current class path to the WAR in {@code WEB-INF/}.
+     * Adds the given resource from the current class path to the WAR in {@code WEB-INF/}.
      * 
      * @param klass
      *            list of resource paths, relative to the class path root
