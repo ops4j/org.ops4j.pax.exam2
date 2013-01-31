@@ -76,7 +76,7 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         final Object... actualParams) throws NoSuchServiceException, NoSuchMethodException,
         IllegalAccessException, InvocationTargetException {
         LOG.trace("Remote call of [" + serviceType.getName() + "." + methodName + "]");
-        Object service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue());
+        Object service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(), filter);
         return serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
     }
 
