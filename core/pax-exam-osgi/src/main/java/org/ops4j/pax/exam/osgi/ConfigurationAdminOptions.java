@@ -77,13 +77,26 @@ public class ConfigurationAdminOptions {
     }
 
     /**
-     * read all configuration files from a folder and transform them into
-     * configuration options
+     * read all configuration files (.cfg) from a folder and transform them into
+     * configuration options similar to apache felix fileinstall
      * 
      * @param folder
      * @return an option containing all the read configurations
      */
     public static Option configurationFolder(File folder) {
+        return configurationFolder(folder, ".cfg");
+    }
+
+    /**
+     * read all configuration files from a folder and transform them into
+     * configuration options
+     * 
+     * @param folder
+     * @param extension
+     *            the file extension to scan for (eg .cfg)
+     * @return an option containing all the read configurations
+     */
+    public static Option configurationFolder(File folder, String extension) {
         if (!folder.exists()) {
             throw new TestContainerException("folder " + folder + " does not exits");
         }
@@ -94,10 +107,13 @@ public class ConfigurationAdminOptions {
             if (file.isDirectory()) {
                 continue;
             }
-            if (!file.getName().endsWith(".cfg")) {
+            String name = file.getName();
+            if (!name.endsWith(extension)) {
                 continue;
+            } else {
+                name = name.substring(0, name.length() - extension.length());
             }
-            String[] split = file.getName().split("-");
+            String[] split = name.split("-");
             ConfigurationProvisionOption cfg = new ConfigurationProvisionOption(split[0], new HashMap<String, Object>());
             cfg.factory(split.length > 1);
             Properties properties = new Properties();
