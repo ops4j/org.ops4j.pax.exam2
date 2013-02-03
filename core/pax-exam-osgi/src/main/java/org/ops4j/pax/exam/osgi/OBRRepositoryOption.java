@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.osgi;
 
+import java.util.concurrent.TimeUnit;
+
 import org.ops4j.pax.exam.Option;
 
 /**
@@ -56,5 +58,14 @@ public interface OBRRepositoryOption {
      * @return
      */
     public OBRRepositoryOption bundles(String... symbolicNames);
+
+    /**
+     * Set the timeout for waiting to complete the resolve operation
+     * 
+     * @param value
+     * @param unit
+     * @return
+     */
+    public OBRRepositoryOption timeout(long value, TimeUnit unit);
 
 }

@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.osgi.internal.obr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import org.osgi.service.obr.RepositoryAdmin;
 import org.osgi.service.obr.Requirement;
@@ -39,13 +40,17 @@ public class OBRResolverRunnable implements Runnable {
     private final List<String[]>  bundleList;
     private final List<Exception> exceptions;
 
+    private final CountDownLatch  barrier;
+
     /**
      * @param repositoryAdmin
      * @param bundleList
+     * @param barrier
      */
-    public OBRResolverRunnable(RepositoryAdmin repositoryAdmin, List<String[]> bundleList, List<Exception> exceptions) {
+    public OBRResolverRunnable(RepositoryAdmin repositoryAdmin, List<String[]> bundleList, List<Exception> exceptions, CountDownLatch barrier) {
         this.repositoryAdmin = repositoryAdmin;
         this.exceptions = exceptions;
+        this.barrier = barrier;
         this.bundleList = new ArrayList<String[]>(bundleList);
     }
 
@@ -120,6 +125,7 @@ public class OBRResolverRunnable implements Runnable {
             }
         } finally {
             thread.setName(name);
+            barrier.countDown();
         }
     }
 }

@@ -23,8 +23,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,6 +57,7 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final List<Exception> exceptions      = new ArrayList<Exception>();
     private final List<Future<?>> submitedOBRs    = new ArrayList<Future<?>>();
+    private final CountDownLatch  barrier         = new CountDownLatch(1);
 
     @SuppressWarnings("unchecked")
     @Override
@@ -62,11 +65,13 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
         this.context = context;
         URL entry = context.getBundle().getEntry("/obrdata.obj");
         InputStream stream = entry.openStream();
+        Hashtable<String, Object> barrierProperties;
         try {
             ObjectInputStream oi = new ObjectInputStream(stream);
             try {
                 urlList = (Set<String>) oi.readObject();
                 bundleList = (List<String[]>) oi.readObject();
+                barrierProperties = (Hashtable<String, Object>) oi.readObject();
             } finally {
                 oi.close();
             }
@@ -76,6 +81,9 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
         LOG.info("Waiting for RepositoryAdmin to resolve {}", asString(bundleList));
         serviceTracker = new ServiceTracker(context, RepositoryAdmin.class.getName(), this);
         serviceTracker.open();
+        //register the CountDownLatch
+        context.registerService(CountDownLatch.class.getName(), barrier, barrierProperties);
+        //Register the validation service
         context.registerService(OBRValidation.class.getName(), this, null);
     }
 
@@ -115,7 +123,7 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
                     }
                 }
             }
-            Future<?> submit = executorService.submit(new OBRResolverRunnable(repositoryAdmin, bundleList, exceptions));
+            Future<?> submit = executorService.submit(new OBRResolverRunnable(repositoryAdmin, bundleList, exceptions, barrier));
             synchronized (submitedOBRs) {
                 submitedOBRs.add(submit);
             }

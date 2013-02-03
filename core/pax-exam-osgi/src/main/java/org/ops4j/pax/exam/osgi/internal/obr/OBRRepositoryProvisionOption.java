@@ -24,9 +24,11 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
@@ -43,8 +45,16 @@ import org.osgi.framework.Constants;
  */
 public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
 
-    private final Set<String>    urlsList    = new HashSet<String>();
-    private final List<String[]> bundlesList = new ArrayList<String[]>();
+    private final Set<String>               urlsList          = new HashSet<String>();
+    private final List<String[]>            bundlesList       = new ArrayList<String[]>();
+    private final Hashtable<String, Object> barrierProperties = new Hashtable<String, Object>(3);
+
+    /**
+     * 
+     */
+    public OBRRepositoryProvisionOption() {
+        barrierProperties.put("target", "paxexam.barrier");
+    }
 
     @Override
     public OBRRepositoryOption repository(String... urls) {
@@ -60,6 +70,7 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
             os = new ObjectOutputStream(outputStream);
             os.writeObject(urlsList);
             os.writeObject(bundlesList);
+            os.writeObject(barrierProperties);
             os.flush();
             os.close();
         } catch (IOException e) {
@@ -120,6 +131,13 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
             return OBRRepositoryProvisionOption.this.toOption();
         }
 
+    }
+
+    @Override
+    public OBRRepositoryOption timeout(long value, TimeUnit unit) {
+        barrierProperties.put("barrier.timeout.value", value);
+        barrierProperties.put("barrier.timeout.unit", unit);
+        return this;
     }
 
 }
