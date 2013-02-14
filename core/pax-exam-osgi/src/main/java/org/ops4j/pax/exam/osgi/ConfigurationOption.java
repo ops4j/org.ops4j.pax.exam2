@@ -23,36 +23,34 @@ import org.ops4j.pax.exam.Option;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
- * The {@link ConfigurationOption} allows to specify a Map of properties that
- * are injected into the container. You have the choice of either create (the
- * default) or override an existing configuration Configuration Options e.g. in
- * ConfigAdmin
+ * The {@link ConfigurationOption} allows to specify a Map of properties that are injected into the
+ * container. You have the choice of either create (the default) or override an existing
+ * configuration Configuration Options e.g. in ConfigAdmin
  */
 public interface ConfigurationOption {
 
     /**
      * @return the current value of id
      */
-    public String getId();
+    String getId();
 
     /**
-     * Add the key/value pair to the overriden options. Only the following
-     * "primary property types" are supported by the {@link ConfigurationAdmin}
+     * Add the key/value pair to the overriden options. Only the following "primary property types"
+     * are supported by the {@link ConfigurationAdmin}
      * <ul>
      * <li>primitive types
      * <li/>
-     * <li>object variants of primitive types (like Integer, Boolean, and so on)
-     * </li>
+     * <li>object variants of primitive types (like Integer, Boolean, and so on)</li>
      * <li>arrays or collections (must be serializable!) of all types</li>
      * </ul>
-     * Also make sure not to contain case variants, because they are also not
-     * allowed and keep in mind that some properties can't be overriden
+     * Also make sure not to contain case variants, because they are also not allowed and keep in
+     * mind that some properties can't be overriden
      * 
      * @param key
      * @param value
      * @return <code>this</code> for chaining
      */
-    public ConfigurationOption put(String key, Object value);
+    ConfigurationOption put(String key, Object value);
 
     /**
      * Putt all properties from the given map to this configuration object, see
@@ -61,12 +59,12 @@ public interface ConfigurationOption {
      * @param properties
      * @return <code>this</code> for chaining
      */
-    public ConfigurationOption putAll(Map<String, ?> properties);
+    ConfigurationOption putAll(Map<String, ?> properties);
 
     /**
      * @return the current value of overrideValues
      */
-    public Map<String, ?> getProperties();
+    Map<String, ?> getProperties();
 
     /**
      * Specify if the configuration should be created if it does not yet exits
@@ -74,17 +72,16 @@ public interface ConfigurationOption {
      * @param create
      * @return <code>this</code> for chaining
      */
-    public ConfigurationOption create(boolean create);
+    ConfigurationOption create(boolean create);
 
     /**
-     * Specify if the properties of an exiting configuration should be
-     * overriden/extended by the ones given here, <b>this does not work with
-     * factories!</b>
+     * Specify if the properties of an exiting configuration should be overriden/extended by the
+     * ones given here, <b>this does not work with factories!</b>
      * 
      * @param override
      * @return <code>this</code> for chaining
      */
-    public ConfigurationOption override(boolean override);
+    ConfigurationOption override(boolean override);
 
     /**
      * Specify if the target of the properties are a factory configuration
@@ -92,31 +89,30 @@ public interface ConfigurationOption {
      * @param factory
      * @return <code>this</code> for chaining
      */
-    public ConfigurationOption factory(boolean factory);
+    ConfigurationOption factory(boolean factory);
 
     /**
-     * @return <code>true</code> if this configuration should be created if not
-     *         exits, <code>false</code> otherwhise
-     */
-    public boolean isCreate();
-
-    /**
-     * @return <code>true</code> if existing configurations should be
-     *         extended/ovewritten <code>false</code> otherwhise
-     */
-    public boolean isOverride();
-
-    /**
-     * @return <code>true</code> if a factory configuration should be created
+     * @return <code>true</code> if this configuration should be created if not exits,
      *         <code>false</code> otherwhise
      */
-    public boolean isFactory();
+    boolean isCreate();
 
     /**
-     * Creates an Option from the current settings that could be used in
-     * Configure methods
+     * @return <code>true</code> if existing configurations should be extended/ovewritten
+     *         <code>false</code> otherwhise
+     */
+    boolean isOverride();
+
+    /**
+     * @return <code>true</code> if a factory configuration should be created <code>false</code>
+     *         otherwhise
+     */
+    boolean isFactory();
+
+    /**
+     * Creates an Option from the current settings that could be used in Configure methods
      * 
      * @return this configuration as an Option
      */
-    public Option asOption();
+    Option asOption();
 }

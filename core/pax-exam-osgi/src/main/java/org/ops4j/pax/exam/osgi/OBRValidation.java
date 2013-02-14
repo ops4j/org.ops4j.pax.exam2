@@ -18,15 +18,15 @@
 package org.ops4j.pax.exam.osgi;
 
 /**
- * A service that will be present when OBR starts and allows to validate an OBR
- * operation has finished with success
+ * A service that will be present when OBR starts and allows to validate an OBR operation has
+ * finished with success
  */
 public interface OBRValidation {
 
     /**
-     * can be used to validate that the OBR Operation finished without any
-     * error, throws an {@link RuntimeException} if any error was recorded,
-     * returns with a no-op otherwhise. Can be used in After/Before methods.
+     * can be used to validate that the OBR Operation finished without any error, throws an
+     * {@link RuntimeException} if any error was recorded, returns with a no-op otherwhise. Can be
+     * used in After/Before methods.
      */
-    public void validate() throws RuntimeException;
+    void validate();
 }

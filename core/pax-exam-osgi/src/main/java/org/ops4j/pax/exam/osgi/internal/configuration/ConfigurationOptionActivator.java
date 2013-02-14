@@ -29,8 +29,7 @@ import org.osgi.service.cm.ConfigurationListener;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * The {@link BundleActivator} that is used internaly to interact with
- * {@link ConfigurationAdmin}
+ * The {@link BundleActivator} that is used internaly to interact with {@link ConfigurationAdmin}
  */
 public class ConfigurationOptionActivator implements BundleActivator {
 
@@ -49,14 +48,18 @@ public class ConfigurationOptionActivator implements BundleActivator {
                 boolean factory = oi.readBoolean();
                 @SuppressWarnings("unchecked")
                 Map<String, Object> overrides = (Map<String, Object>) oi.readObject();
-                ConfigurationOptionConfigurationListener listener = new ConfigurationOptionConfigurationListener(pid, overrides, context, create, override, factory);
+                ConfigurationOptionConfigurationListener listener = new ConfigurationOptionConfigurationListener(
+                    pid, overrides, context, create, override, factory);
                 context.registerService(ConfigurationListener.class.getName(), listener, null);
-                serviceTracker = new ServiceTracker(context, ConfigurationAdmin.class.getName(), listener);
+                serviceTracker = new ServiceTracker(context, ConfigurationAdmin.class.getName(),
+                    listener);
                 serviceTracker.open();
-            } finally {
+            }
+            finally {
                 oi.close();
             }
-        } finally {
+        }
+        finally {
             stream.close();
         }
 

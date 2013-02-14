@@ -34,13 +34,13 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * This class allows to construct conifuration options that interact with the
- * {@link ConfigurationAdmin} service of the OSGi plattform to support creation
- * and/or modification of configuration data used in test scenarios
+ * {@link ConfigurationAdmin} service of the OSGi plattform to support creation and/or modification
+ * of configuration data used in test scenarios
  */
 public class ConfigurationAdminOptions {
 
     private ConfigurationAdminOptions() {
-        //we are just static
+        // we are just static
     }
 
     /**
@@ -62,7 +62,8 @@ public class ConfigurationAdminOptions {
      * @return empty configuration
      */
     public static ConfigurationOption overrideConfiguration(String pid) {
-        return new ConfigurationProvisionOption(pid, new HashMap<String, Object>()).override(true).create(false);
+        return new ConfigurationProvisionOption(pid, new HashMap<String, Object>()).override(true)
+            .create(false);
     }
 
     /**
@@ -77,8 +78,8 @@ public class ConfigurationAdminOptions {
     }
 
     /**
-     * read all configuration files (.cfg) from a folder and transform them into
-     * configuration options similar to apache felix fileinstall
+     * read all configuration files (.cfg) from a folder and transform them into configuration
+     * options similar to apache felix fileinstall
      * 
      * @param folder
      * @return an option containing all the read configurations
@@ -88,8 +89,7 @@ public class ConfigurationAdminOptions {
     }
 
     /**
-     * read all configuration files from a folder and transform them into
-     * configuration options
+     * read all configuration files from a folder and transform them into configuration options
      * 
      * @param folder
      * @param extension
@@ -110,21 +110,25 @@ public class ConfigurationAdminOptions {
             String name = file.getName();
             if (!name.endsWith(extension)) {
                 continue;
-            } else {
+            }
+            else {
                 name = name.substring(0, name.length() - extension.length());
             }
             String[] split = name.split("-");
-            ConfigurationProvisionOption cfg = new ConfigurationProvisionOption(split[0], new HashMap<String, Object>());
+            ConfigurationProvisionOption cfg = new ConfigurationProvisionOption(split[0],
+                new HashMap<String, Object>());
             cfg.factory(split.length > 1);
             Properties properties = new Properties();
             try {
                 FileInputStream stream = new FileInputStream(file);
                 try {
                     properties.load(stream);
-                } finally {
+                }
+                finally {
                     stream.close();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new TestContainerException("can't read configuration file " + file, e);
             }
             Set<String> names = properties.stringPropertyNames();

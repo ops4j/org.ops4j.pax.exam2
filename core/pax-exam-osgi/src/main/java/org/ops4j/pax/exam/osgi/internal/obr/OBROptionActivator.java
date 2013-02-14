@@ -43,27 +43,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link BundleActivator} that is used internaly to interact with
- * {@link RepositoryAdmin}
+ * The {@link BundleActivator} that is used internaly to interact with {@link RepositoryAdmin}
  */
 public class OBROptionActivator implements BundleActivator, ServiceTrackerCustomizer, OBRValidation {
 
-    private static final Logger   LOG             = LoggerFactory.getLogger(OBROptionActivator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OBROptionActivator.class);
 
-    private ServiceTracker        serviceTracker;
-    private Set<String>           urlList;
-    private List<String[]>        bundleList;
-    private BundleContext         context;
+    private ServiceTracker serviceTracker;
+    private Set<String> urlList;
+    private List<String[]> bundleList;
+    private BundleContext context;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private final List<Exception> exceptions      = new ArrayList<Exception>();
-    private final List<Future<?>> submitedOBRs    = new ArrayList<Future<?>>();
-    private final CountDownLatch  barrier         = new CountDownLatch(1);
+    private final List<Exception> exceptions = new ArrayList<Exception>();
+    private final List<Future<?>> submitedOBRs = new ArrayList<Future<?>>();
+    private final CountDownLatch barrier = new CountDownLatch(1);
 
     @SuppressWarnings("unchecked")
     @Override
-    public void start(BundleContext context) throws Exception {
-        this.context = context;
-        URL entry = context.getBundle().getEntry("/obrdata.obj");
+    public void start(BundleContext bundleContext) throws Exception {
+        this.context = bundleContext;
+        URL entry = bundleContext.getBundle().getEntry("/obrdata.obj");
         InputStream stream = entry.openStream();
         Hashtable<String, Object> barrierProperties;
         try {
@@ -72,19 +71,21 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
                 urlList = (Set<String>) oi.readObject();
                 bundleList = (List<String[]>) oi.readObject();
                 barrierProperties = (Hashtable<String, Object>) oi.readObject();
-            } finally {
+            }
+            finally {
                 oi.close();
             }
-        } finally {
+        }
+        finally {
             stream.close();
         }
         LOG.info("Waiting for RepositoryAdmin to resolve {}", asString(bundleList));
-        serviceTracker = new ServiceTracker(context, RepositoryAdmin.class.getName(), this);
+        serviceTracker = new ServiceTracker(bundleContext, RepositoryAdmin.class.getName(), this);
         serviceTracker.open();
-        //register the CountDownLatch
-        context.registerService(CountDownLatch.class.getName(), barrier, barrierProperties);
-        //Register the validation service
-        context.registerService(OBRValidation.class.getName(), this, null);
+        // register the CountDownLatch
+        bundleContext.registerService(CountDownLatch.class.getName(), barrier, barrierProperties);
+        // Register the validation service
+        bundleContext.registerService(OBRValidation.class.getName(), this, null);
     }
 
     private static Object asString(List<String[]> bundleList) {
@@ -102,7 +103,7 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
     }
 
     @Override
-    public void stop(BundleContext context) throws Exception {
+    public void stop(BundleContext bundleContext) throws Exception {
         serviceTracker.close();
         executorService.shutdownNow();
     }
@@ -116,14 +117,17 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
                 try {
                     repositoryAdmin.addRepository(new URL(rawURL));
                     LOG.info("Added repository with URL {}", rawURL);
-                } catch (Exception e) {
+                }
+                // CHECKSTYLE:SKIP
+                catch (Exception e) {
                     LOG.info("Adding repository with URL {} failed", rawURL, e);
                     synchronized (exceptions) {
                         exceptions.add(e);
                     }
                 }
             }
-            Future<?> submit = executorService.submit(new OBRResolverRunnable(repositoryAdmin, bundleList, exceptions, barrier));
+            Future<?> submit = executorService.submit(new OBRResolverRunnable(repositoryAdmin,
+                bundleList, exceptions, barrier));
             synchronized (submitedOBRs) {
                 submitedOBRs.add(submit);
             }
@@ -143,7 +147,9 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
                 try {
                     repositoryAdmin.removeRepository(new URL(rawURL));
                     LOG.info("removed repository with URL {}", rawURL);
-                } catch (Exception e) {
+                }
+                // CHECKSTYLE:SKIP
+                catch (Exception e) {
                     LOG.info("removing repository with URL {} failed", rawURL, e);
                     synchronized (exceptions) {
                         exceptions.add(e);
@@ -155,19 +161,21 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
     }
 
     @Override
-    public void validate() throws RuntimeException {
+    public void validate() {
         Future<?>[] futures;
         synchronized (submitedOBRs) {
             futures = submitedOBRs.toArray(new Future<?>[0]);
         }
         if (futures.length > 0) {
-            //Wait for each future to complete...
+            // Wait for each future to complete...
             for (Future<?> future : futures) {
                 try {
                     future.get();
-                } catch (InterruptedException e) {
-                    //We ignore this...
-                } catch (ExecutionException e) {
+                }
+                catch (InterruptedException e) {
+                    // We ignore this...
+                }
+                catch (ExecutionException e) {
                     synchronized (exceptions) {
                         exceptions.add(e);
                     }
@@ -178,8 +186,9 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
                 recordedExceptions = exceptions.toArray(new Exception[0]);
             }
             if (recordedExceptions.length > 0) {
-                StringBuffer sb = new StringBuffer("recorded " + recordedExceptions.length + " exception(s) during execution: \r\n");
-                //Anything failed in the chain...
+                StringBuffer sb = new StringBuffer("recorded " + recordedExceptions.length
+                    + " exception(s) during execution: \r\n");
+                // Anything failed in the chain...
                 for (int i = 0; i < recordedExceptions.length; i++) {
                     Exception exception = recordedExceptions[i];
                     sb.append("\r\nException ");
@@ -195,8 +204,10 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
                 }
                 throw new RuntimeException(sb.toString());
             }
-        } else {
-            throw new RuntimeException("no obr action was started until now, maybe the OBRService is not avaiable?");
+        }
+        else {
+            throw new RuntimeException(
+                "no obr action was started until now, maybe the OBRService is not avaiable?");
         }
     }
 }

@@ -35,21 +35,20 @@ import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 /**
- * Implementation of the {@link ConfigurationOption} interface used internally
- * when construction such options
+ * Implementation of the {@link ConfigurationOption} interface used internally when construction
+ * such options
  */
 public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.ConfigurationOption {
 
-    private final String              id;
+    private final String id;
     private final Map<String, Object> properties;
 
-    private boolean                   create   = true;
-    private boolean                   override = false;
-    private boolean                   factory  = false;
+    private boolean create = true;
+    private boolean override;
+    private boolean factory;
 
     /**
-     * Creates a new {@link ConfigurationOption} for the given id and the given
-     * property values
+     * Creates a new {@link ConfigurationOption} for the given id and the given property values
      * 
      * @param id
      * @param properties
@@ -107,9 +106,8 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
     }
 
     /**
-     * Specify if the properties of an exiting configuration should be
-     * overriden/extended by the ones given here, <b>this does not work with
-     * factories!</b>
+     * Specify if the properties of an exiting configuration should be overriden/extended by the
+     * ones given here, <b>this does not work with factories!</b>
      * 
      * @param override
      * @return <code>this</code> for chaining
@@ -133,8 +131,8 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
     }
 
     /**
-     * @return <code>true</code> if this configuration should be created if not
-     *         exits, <code>false</code> otherwhise
+     * @return <code>true</code> if this configuration should be created if not exits,
+     *         <code>false</code> otherwhise
      */
     @Override
     public boolean isCreate() {
@@ -142,8 +140,8 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
     }
 
     /**
-     * @return <code>true</code> if existing configurations should be
-     *         extended/ovewritten <code>false</code> otherwhise
+     * @return <code>true</code> if existing configurations should be extended/ovewritten
+     *         <code>false</code> otherwhise
      */
     @Override
     public boolean isOverride() {
@@ -151,8 +149,8 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
     }
 
     /**
-     * @return <code>true</code> if a factory configuration should be created
-     *         <code>false</code> otherwhise
+     * @return <code>true</code> if a factory configuration should be created <code>false</code>
+     *         otherwhise
      */
     @Override
     public boolean isFactory() {
@@ -164,12 +162,13 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
         return createProvisionOption(this);
     }
 
-    private static ProvisionOption<?> createProvisionOption(ConfigurationOption configOption) throws TestContainerException {
+    private static ProvisionOption<?> createProvisionOption(ConfigurationOption configOption) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ObjectOutputStream os;
         try {
             os = new ObjectOutputStream(outputStream);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new TestContainerException("can't write stream headers", e);
         }
         String id = configOption.getId();
@@ -187,20 +186,26 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
             }
             try {
                 os.writeObject(new HashMap<String, Object>(properties));
-            } catch (NotSerializableException e) {
-                throw new TestContainerException("One of the values of the ConfigurationOption properties are not serializable", e);
+            }
+            catch (NotSerializableException e) {
+                throw new TestContainerException(
+                    "One of the values of the ConfigurationOption properties are not serializable",
+                    e);
             }
             os.flush();
             os.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new TestContainerException("Writing object data failed", e);
         }
         ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add(ConfigurationOptionConfigurationListener.class);
         bundle.add(ConfigurationOptionActivator.class).add("override.obj", stream);
-        bundle.set(Constants.BUNDLE_SYMBOLICNAME, "PAXExamConfigurationOption-" + UUID.randomUUID());
-        bundle.set(Constants.IMPORT_PACKAGE, "org.osgi.framework,org.osgi.service.cm,org.osgi.util.tracker,org.slf4j");
+        bundle
+            .set(Constants.BUNDLE_SYMBOLICNAME, "PAXExamConfigurationOption-" + UUID.randomUUID());
+        bundle.set(Constants.IMPORT_PACKAGE,
+            "org.osgi.framework,org.osgi.service.cm,org.osgi.util.tracker,org.slf4j");
         bundle.set(Constants.BUNDLE_ACTIVATOR, ConfigurationOptionActivator.class.getName());
         bundle.set(Constants.BUNDLE_MANIFESTVERSION, "2");
         return CoreOptions.streamBundle(bundle.build()).startLevel(1).start(true).update(false);

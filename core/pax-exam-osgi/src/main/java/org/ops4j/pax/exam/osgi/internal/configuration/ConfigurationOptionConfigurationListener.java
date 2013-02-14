@@ -36,21 +36,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tracks the {@link ConfigurationAdmin} and uses {@link ConfigurationListener}
- * to be notified when configuration changes
+ * Tracks the {@link ConfigurationAdmin} and uses {@link ConfigurationListener} to be notified when
+ * configuration changes
  */
-public class ConfigurationOptionConfigurationListener implements ConfigurationListener, ServiceTrackerCustomizer {
+public class ConfigurationOptionConfigurationListener implements ConfigurationListener,
+    ServiceTrackerCustomizer {
 
-    private static final Logger       LOG = LoggerFactory.getLogger(ConfigurationOptionConfigurationListener.class);
+    private static final Logger LOG = LoggerFactory
+        .getLogger(ConfigurationOptionConfigurationListener.class);
 
     private final Map<String, Object> properties;
-    private final BundleContext       context;
-    private final String              pid;
-    private final boolean             create;
-    private final boolean             override;
-    private final boolean             factory;
+    private final BundleContext context;
+    private final String pid;
+    private final boolean create;
+    private final boolean override;
+    private final boolean factory;
 
-    private Configuration             factoryConfiguration;
+    private Configuration factoryConfiguration;
 
     /**
      * @param properties
@@ -59,8 +61,8 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
      * @param override
      * @param create
      */
-    public ConfigurationOptionConfigurationListener(String pid, Map<String, Object> properties, BundleContext context, boolean create, boolean override,
-            boolean factory) {
+    public ConfigurationOptionConfigurationListener(String pid, Map<String, Object> properties,
+        BundleContext context, boolean create, boolean override, boolean factory) {
         this.properties = properties;
         this.context = context;
         this.pid = pid;
@@ -77,7 +79,8 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
             if (service != null) {
                 try {
                     checkIfConfigurationNeeded(service);
-                } finally {
+                }
+                finally {
                     context.ungetService(reference);
                 }
             }
@@ -85,10 +88,9 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
     }
 
     /**
-     * Check if an override of config values is needed for the given
-     * {@link ConfigurationAdmin} service, since events can occur asycrounous we
-     * synchronized here to handle each event one by one since this method might
-     * trigger other async events also...
+     * Check if an override of config values is needed for the given {@link ConfigurationAdmin}
+     * service, since events can occur asycrounous we synchronized here to handle each event one by
+     * one since this method might trigger other async events also...
      * 
      * @param service
      *            the {@link ConfigurationAdmin} to check
@@ -99,10 +101,12 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
                 if (factoryConfiguration == null) {
                     factoryConfiguration = service.createFactoryConfiguration(pid, null);
                     factoryConfiguration.update(new Hashtable<String, Object>(properties));
-                    LOG.info("Created new factory configuration for factory-pid {}, generated pid is {} with properties: {}", new Object[] { pid,
-                            factoryConfiguration.getPid(), properties });
+                    LOG.info(
+                        "Created new factory configuration for factory-pid {}, generated pid is {} with properties: {}",
+                        new Object[] { pid, factoryConfiguration.getPid(), properties });
                 }
-            } else {
+            }
+            else {
                 Configuration configuration = service.getConfiguration(pid, null);
                 @SuppressWarnings("unchecked")
                 Dictionary<String, Object> dictionary = configuration.getProperties();
@@ -113,31 +117,36 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
                         Object object = dictionary.get(entry.getKey());
                         if (object == null) {
                             if (entry.getValue() == null) {
-                                //Not changed...
-                                continue;
-                            }
-                        } else {
-                            if (object.equals(entry.getValue())) {
-                                //Not changed...
+                                // Not changed...
                                 continue;
                             }
                         }
-                        //A change is detected...
+                        else {
+                            if (object.equals(entry.getValue())) {
+                                // Not changed...
+                                continue;
+                            }
+                        }
+                        // A change is detected...
                         update = true;
                         dictionary.put(entry.getKey(), entry.getValue());
                     }
                     if (update) {
-                        LOG.info("Update existing configuration for pid {} with properties: {}", pid, dictToString(dictionary));
+                        LOG.info("Update existing configuration for pid {} with properties: {}",
+                            pid, dictToString(dictionary));
                         configuration.update(dictionary);
                     }
-                } else {
+                }
+                else {
                     if (create) {
                         configuration.update(new Hashtable<String, Object>(properties));
-                        LOG.info("Created new configuration for pid {} with properties: {}", pid, properties);
+                        LOG.info("Created new configuration for pid {} with properties: {}", pid,
+                            properties);
                     }
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             LOG.warn("can't modify configuration for PID {}", pid, e);
         }
     }
@@ -148,7 +157,8 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
         while (keys.hasMoreElements()) {
             if (sb.length() == 0) {
                 sb.append("[");
-            } else {
+            }
+            else {
                 sb.append(", ");
             }
             String key = keys.nextElement();
@@ -176,13 +186,16 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
     @Override
     public void removedService(ServiceReference reference, Object service) {
         if (factoryConfiguration != null) {
-            //We delete it here, just in case the ConfigAdmin is restarted so we are not ending up with two factory configs
+            // We delete it here, just in case the ConfigAdmin is restarted so we are not ending up
+            // with two factory configs
             try {
                 factoryConfiguration.delete();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 LOG.debug("Deleting factoryConfiguration failed", e);
-            } catch (IllegalStateException e) {
-                //Ignore... it was already deleted!
+            }
+            catch (IllegalStateException e) {
+                // Ignore... it was already deleted!
             }
         }
         context.ungetService(reference);

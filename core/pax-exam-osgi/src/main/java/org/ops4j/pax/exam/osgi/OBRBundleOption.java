@@ -30,7 +30,7 @@ public interface OBRBundleOption {
      * @param version
      * @return the {@link OBRRepositoryOption} for further adding of bundles
      */
-    public OBRRepositoryOption version(String version);
+    OBRRepositoryOption version(String version);
 
     /**
      * Add a new Bundle with the given symbolic name
@@ -38,14 +38,14 @@ public interface OBRBundleOption {
      * @param symbolicName
      * @return the newly created Bundle
      */
-    public OBRBundleOption bundle(String symbolicName);
+    OBRBundleOption bundle(String symbolicName);
 
     /**
-     * end the setup phase and convert this bundle and the underlying
-     * {@link OBRRepositoryOption} to an {@link Option}
+     * end the setup phase and convert this bundle and the underlying {@link OBRRepositoryOption} to
+     * an {@link Option}
      * 
      * @return
      */
-    public Option toOption();
+    Option toOption();
 
 }

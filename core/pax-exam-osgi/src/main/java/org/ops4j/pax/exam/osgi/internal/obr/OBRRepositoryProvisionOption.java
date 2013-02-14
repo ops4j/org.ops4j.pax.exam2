@@ -45,8 +45,8 @@ import org.osgi.framework.Constants;
  */
 public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
 
-    private final Set<String>               urlsList          = new HashSet<String>();
-    private final List<String[]>            bundlesList       = new ArrayList<String[]>();
+    private final Set<String> urlsList = new HashSet<String>();
+    private final List<String[]> bundlesList = new ArrayList<String[]>();
     private final Hashtable<String, Object> barrierProperties = new Hashtable<String, Object>(3);
 
     /**
@@ -73,7 +73,8 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
             os.writeObject(barrierProperties);
             os.flush();
             os.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new TestContainerException("can't write stream headers", e);
         }
         ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
@@ -83,9 +84,11 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
         bundle.add(OBRResolverRunnable.class);
         bundle.add(OBRValidation.class);
         bundle.set(Constants.BUNDLE_SYMBOLICNAME, "PAXExamOBROption-" + UUID.randomUUID());
-        bundle.set(Constants.IMPORT_PACKAGE, "org.osgi.framework,org.osgi.service.obr,org.osgi.util.tracker,org.slf4j");
+        bundle.set(Constants.IMPORT_PACKAGE,
+            "org.osgi.framework,org.osgi.service.obr,org.osgi.util.tracker,org.slf4j");
         bundle.set(Constants.EXPORT_PACKAGE, OBRValidation.class.getPackage().getName());
-        bundle.set(Constants.BUNDLE_ACTIVATOR, org.ops4j.pax.exam.osgi.internal.obr.OBROptionActivator.class.getName());
+        bundle.set(Constants.BUNDLE_ACTIVATOR,
+            org.ops4j.pax.exam.osgi.internal.obr.OBROptionActivator.class.getName());
         bundle.set(Constants.BUNDLE_MANIFESTVERSION, "2");
         return CoreOptions.streamBundle(bundle.build()).startLevel(2).start(true).update(false);
     }

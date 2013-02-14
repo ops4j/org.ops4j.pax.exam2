@@ -34,20 +34,21 @@ import org.slf4j.LoggerFactory;
  */
 public class OBRResolverRunnable implements Runnable {
 
-    private static final Logger   LOG = LoggerFactory.getLogger(OBRResolverRunnable.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OBRResolverRunnable.class);
 
     private final RepositoryAdmin repositoryAdmin;
-    private final List<String[]>  bundleList;
+    private final List<String[]> bundleList;
     private final List<Exception> exceptions;
 
-    private final CountDownLatch  barrier;
+    private final CountDownLatch barrier;
 
     /**
      * @param repositoryAdmin
      * @param bundleList
      * @param barrier
      */
-    public OBRResolverRunnable(RepositoryAdmin repositoryAdmin, List<String[]> bundleList, List<Exception> exceptions, CountDownLatch barrier) {
+    public OBRResolverRunnable(RepositoryAdmin repositoryAdmin, List<String[]> bundleList,
+        List<Exception> exceptions, CountDownLatch barrier) {
         this.repositoryAdmin = repositoryAdmin;
         this.exceptions = exceptions;
         this.barrier = barrier;
@@ -71,28 +72,36 @@ public class OBRResolverRunnable implements Runnable {
                 String filterSymbolicName = "(symbolicname=" + symbolicName + ")";
                 if (version == null) {
                     filter = filterSymbolicName;
-                } else {
+                }
+                else {
                     filter = "(&(symbolicname=" + symbolicName + ")(version=" + version + "))";
                 }
                 Resource[] resources = repositoryAdmin.discoverResources(filter);
                 if (resources != null && resources.length > 0) {
                     for (Resource resource : resources) {
-                        LOG.info("Add resource {} (version = {}) to resolver...", resource.getSymbolicName(), resource.getVersion());
+                        LOG.info("Add resource {} (version = {}) to resolver...",
+                            resource.getSymbolicName(), resource.getVersion());
                         resolver.add(resource);
                     }
-                } else {
+                }
+                else {
                     synchronized (exceptions) {
                         exceptions.add(new RuntimeException("can't resolve item " + filter));
                     }
                     LOG.error("can't resolve item with filter {}!", filter);
                     if (version != null && LOG.isInfoEnabled()) {
-                        Resource[] discoverResources = repositoryAdmin.discoverResources(filterSymbolicName);
+                        Resource[] discoverResources = repositoryAdmin
+                            .discoverResources(filterSymbolicName);
                         if (discoverResources != null && discoverResources.length > 0) {
                             for (Resource resource : discoverResources) {
-                                LOG.info("Alternative version for resource {} is {}", filter, resource.getVersion());
+                                LOG.info("Alternative version for resource {} is {}", filter,
+                                    resource.getVersion());
                             }
-                        } else {
-                            LOG.info("No alternative versions found, are you sure you specified the right fragment name for item {}?", filter);
+                        }
+                        else {
+                            LOG.info(
+                                "No alternative versions found, are you sure you specified the right fragment name for item {}?",
+                                filter);
                         }
                     }
                 }
@@ -103,27 +112,34 @@ public class OBRResolverRunnable implements Runnable {
             boolean resolve = resolver.resolve();
             if (resolve) {
                 for (Resource resource : resolver.getRequiredResources()) {
-                    LOG.info("required resource {} (version = {}) discovered by resolver...", resource.getSymbolicName(), resource.getVersion());
+                    LOG.info("required resource {} (version = {}) discovered by resolver...",
+                        resource.getSymbolicName(), resource.getVersion());
                 }
                 for (Resource resource : resolver.getOptionalResources()) {
-                    LOG.info("optional resource {} (version = {}) discovered by resolver...", resource.getSymbolicName(), resource.getVersion());
+                    LOG.info("optional resource {} (version = {}) discovered by resolver...",
+                        resource.getSymbolicName(), resource.getVersion());
                 }
                 LOG.info("Deploy bundles...");
                 resolver.deploy(true);
                 LOG.info("Deploy finished!");
-            } else {
+            }
+            else {
                 Requirement[] requirements = resolver.getUnsatisfiedRequirements();
                 String stringReq = Arrays.toString(requirements);
                 synchronized (exceptions) {
-                    exceptions.add(new IllegalStateException("can't resolve the following requirements are not meet: " + stringReq));
+                    exceptions.add(new IllegalStateException(
+                        "can't resolve the following requirements are not meet: " + stringReq));
                 }
                 LOG.error("can't resolve the following requirements are not meet: {}", stringReq);
             }
-        } catch (RuntimeException e) {
+        }
+        // CHECKSTYLE:SKIP
+        catch (RuntimeException e) {
             synchronized (exceptions) {
                 exceptions.add(e);
             }
-        } finally {
+        }
+        finally {
             thread.setName(name);
             barrier.countDown();
         }

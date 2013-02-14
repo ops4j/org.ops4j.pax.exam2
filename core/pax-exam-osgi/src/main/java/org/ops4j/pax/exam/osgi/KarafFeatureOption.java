@@ -30,31 +30,28 @@ public interface KarafFeatureOption {
      * 
      * @param features
      */
-    public KarafFeatureOption add(String... features);
+    KarafFeatureOption add(String... features);
 
     /**
-     * Set the default start level if none is given in the feature descriptor
-     * (defaults to 60)
+     * Set the default start level if none is given in the feature descriptor (defaults to 60)
      * 
      * @param level
      * @return <code>this</code> for chaining
      */
-    public KarafFeatureOption defaultStartLevel(int level);
+    KarafFeatureOption defaultStartLevel(int level);
 
     /**
-     * Set the Working directory, this is required if you want to use the
-     * configFile deploy feature
+     * Set the Working directory, this is required if you want to use the configFile deploy feature
      * 
      * @param directoryOption
      * @return <code>this</code> for chaining
      */
-    public KarafFeatureOption workingDir(WorkingDirectoryOption directoryOption);
+    KarafFeatureOption workingDir(WorkingDirectoryOption directoryOption);
 
     /**
-     * Creates an Option from the current settings that could be used in
-     * Configure methods
+     * Creates an Option from the current settings that could be used in Configure methods
      * 
      * @return this configuration as an Option
      */
-    public Option toOption();
+    Option toOption();
 }

@@ -28,22 +28,28 @@ import org.ops4j.pax.exam.osgi.internal.obr.OBRRepositoryProvisionOption;
 public class RepositoryOptions {
 
     /**
-     * @return an option tha represents the bundles needed to resolve OBR
-     *         resources. This is needed if you don't want to provide the
-     *         service API and an implementation on your own, like
+     * Hidden utility class constructor.
+     */
+    private RepositoryOptions() {
+    }
+
+    /**
+     * @return an option tha represents the bundles needed to resolve OBR resources. This is needed
+     *         if you don't want to provide the service API and an implementation on your own, like
      *         {@link CoreOptions#junitBundles()}
      */
     public static Option obrBundles() {
-        MavenArtifactProvisionOption serviceBundle = CoreOptions.mavenBundle("org.apache.felix", "org.osgi.service.obr", "1.0.2");
+        MavenArtifactProvisionOption serviceBundle = CoreOptions.mavenBundle("org.apache.felix",
+            "org.osgi.service.obr", "1.0.2");
         serviceBundle.start(true).startLevel(1);
-        MavenArtifactProvisionOption implBundle = CoreOptions.mavenBundle("org.apache.felix", "org.apache.felix.bundlerepository", "1.6.6");
+        MavenArtifactProvisionOption implBundle = CoreOptions.mavenBundle("org.apache.felix",
+            "org.apache.felix.bundlerepository", "1.6.6");
         implBundle.start(true).startLevel(1);
         return CoreOptions.composite(serviceBundle, implBundle);
     }
 
     /**
-     * Creates an {@link OBRRepositoryOption} initilized with the given
-     * repository URLs
+     * Creates an {@link OBRRepositoryOption} initilized with the given repository URLs
      * 
      * @param reproURLs
      * @return

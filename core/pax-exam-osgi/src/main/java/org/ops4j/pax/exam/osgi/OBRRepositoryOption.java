@@ -32,15 +32,15 @@ public interface OBRRepositoryOption {
      * @param urls
      * @return
      */
-    public OBRRepositoryOption repository(String... urls);
+    OBRRepositoryOption repository(String... urls);
 
     /**
-     * end the setup phase and convert this bundle and the underlying
-     * {@link OBRRepositoryOption} to an {@link Option}
+     * end the setup phase and convert this bundle and the underlying {@link OBRRepositoryOption} to
+     * an {@link Option}
      * 
      * @return
      */
-    public Option toOption();
+    Option toOption();
 
     /**
      * Add a new Bundle with the given symbolic name
@@ -48,16 +48,15 @@ public interface OBRRepositoryOption {
      * @param symbolicName
      * @return the newly created Bundle
      */
-    public OBRBundleOption bundle(String symbolicName);
+    OBRBundleOption bundle(String symbolicName);
 
     /**
-     * Add a list of bundles, use {@link #bundle(String)} if you want to specify
-     * a specific version
+     * Add a list of bundles, use {@link #bundle(String)} if you want to specify a specific version
      * 
      * @param symbolicNames
      * @return
      */
-    public OBRRepositoryOption bundles(String... symbolicNames);
+    OBRRepositoryOption bundles(String... symbolicNames);
 
     /**
      * Set the timeout for waiting to complete the resolve operation
@@ -66,6 +65,6 @@ public interface OBRRepositoryOption {
      * @param unit
      * @return
      */
-    public OBRRepositoryOption timeout(long value, TimeUnit unit);
+    OBRRepositoryOption timeout(long value, TimeUnit unit);
 
 }

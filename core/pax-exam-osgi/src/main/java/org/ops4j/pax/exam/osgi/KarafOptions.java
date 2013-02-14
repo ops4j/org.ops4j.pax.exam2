@@ -27,7 +27,7 @@ import org.ops4j.pax.exam.osgi.internal.karaf.KarafFeatureProvisionOption;
 public class KarafOptions {
 
     private KarafOptions() {
-        //we are just static
+        // we are just static
     }
 
     /**
@@ -41,8 +41,8 @@ public class KarafOptions {
     }
 
     /**
-     * Creates a {@link KarafFeatureOption} for the given repositoryUrl, init it
-     * with the feature names and convert it to an option
+     * Creates a {@link KarafFeatureOption} for the given repositoryUrl, init it with the feature
+     * names and convert it to an option
      * 
      * @param repositoryUrl
      * @param features
@@ -53,15 +53,15 @@ public class KarafOptions {
     }
 
     /**
-     * Creates a {@link KarafFeatureOption} for the given repositoryUrl, init it
-     * with the feature names and {@link WorkingDirectoryOption} and convert it
-     * to an option
+     * Creates a {@link KarafFeatureOption} for the given repositoryUrl, init it with the feature
+     * names and {@link WorkingDirectoryOption} and convert it to an option
      * 
      * @param repositoryUrl
      * @param features
      * @return
      */
-    public static Option features(String repositoryUrl, WorkingDirectoryOption workingDirectoryOption, String... features) {
+    public static Option features(String repositoryUrl,
+        WorkingDirectoryOption workingDirectoryOption, String... features) {
         return features(repositoryUrl).add(features).workingDir(workingDirectoryOption).toOption();
     }
 }
