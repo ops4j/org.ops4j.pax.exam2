@@ -170,7 +170,9 @@ public class JBossTestContainer implements TestContainer {
 
     public void cleanup() {
         undeployModules();
-        server.stop();
+        if (server != null) {
+            server.stop();
+        }
     }
 
     private void undeployModules() {
