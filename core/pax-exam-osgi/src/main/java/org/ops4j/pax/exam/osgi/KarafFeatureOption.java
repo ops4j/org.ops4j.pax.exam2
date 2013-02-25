@@ -33,7 +33,8 @@ public interface KarafFeatureOption {
     KarafFeatureOption add(String... features);
 
     /**
-     * Set the default start level if none is given in the feature descriptor (defaults to 60)
+     * Set the default start level if none is given in the feature descriptor
+     * (defaults to 60)
      * 
      * @param level
      * @return <code>this</code> for chaining
@@ -41,7 +42,8 @@ public interface KarafFeatureOption {
     KarafFeatureOption defaultStartLevel(int level);
 
     /**
-     * Set the Working directory, this is required if you want to use the configFile deploy feature
+     * Set the Working directory, this is required if you want to use the
+     * configFile deploy feature
      * 
      * @param directoryOption
      * @return <code>this</code> for chaining
@@ -49,9 +51,34 @@ public interface KarafFeatureOption {
     KarafFeatureOption workingDir(WorkingDirectoryOption directoryOption);
 
     /**
-     * Creates an Option from the current settings that could be used in Configure methods
+     * Creates an Option from the current settings that could be used in
+     * Configure methods
      * 
      * @return this configuration as an Option
      */
     Option toOption();
+
+    /**
+     * If the root 'features' element is not correctly namespaced XML parsing
+     * would fail. By default, the namesace is added if missing, this can be
+     * switched off here. Use this to have strict checkingof your feature.xml
+     * 
+     * @param strict
+     *            if <code>true</code> force strict namespace handling, default
+     *            is <code>false</code>
+     * @return <code>this</code> for chaining
+     */
+    KarafFeatureOption strictNamespaceHandling(boolean strict);
+
+    /**
+     * By default, the provisioning will fail if dependent features can't be
+     * resolved. If you reference some features that you will provide later
+     * an/or by other means you can disable the behaviour here.
+     * 
+     * @param fail
+     *            if <code>true</code> always fail if a contrain can't be
+     *            resolved, <code>false</code> switches this off
+     * @return <code>this</code> for chaining
+     */
+    KarafFeatureOption failOnMissingConstraint(boolean fail);
 }
