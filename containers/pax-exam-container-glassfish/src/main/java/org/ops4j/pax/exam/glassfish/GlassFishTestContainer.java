@@ -598,6 +598,9 @@ public class GlassFishTestContainer implements TestContainer {
      */
     private void installConfiguration() {
         File configSource = new File(configDirName);
+        if (!configSource.exists()) {
+            throw new TestContainerException("configuration directory " + configSource + " does not exist");
+        }
 
         File configTargetDir = new File(glassFishHome, "glassfish/domains/domain1/config");
         for (File configFile : configSource.listFiles()) {
