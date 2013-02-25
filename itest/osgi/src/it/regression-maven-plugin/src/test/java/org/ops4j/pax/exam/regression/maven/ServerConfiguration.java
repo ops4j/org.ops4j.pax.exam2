@@ -47,8 +47,8 @@ public class ServerConfiguration {
             mavenBundle("org.apache.geronimo.specs", "geronimo-servlet_3.0_spec").version("1.0"),
             mavenBundle("org.osgi", "org.osgi.compendium", "4.3.0"),
 
-            mavenBundle("org.slf4j", "slf4j-api", "1.6.4"),
-            mavenBundle("org.slf4j", "slf4j-simple", "1.6.4").noStart(),
+            mavenBundle("org.slf4j", "slf4j-api").versionAsInProject(),
+            mavenBundle("org.slf4j", "slf4j-simple").versionAsInProject().noStart(),
 
             mavenBundle("org.apache.geronimo.samples.osgi", "wab-sample", "3.0.0")
 

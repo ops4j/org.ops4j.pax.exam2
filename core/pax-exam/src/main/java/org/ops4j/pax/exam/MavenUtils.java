@@ -108,6 +108,12 @@ public class MavenUtils {
         try {
             URL fileURL = MavenUtils.class.getClassLoader().getResource(filePath);
             if (fileURL == null) {
+                if (fileURL == null) {
+                    // try the TCCL for getResource
+                    fileURL = Thread.currentThread().getContextClassLoader().getResource(filePath);
+                }
+            }
+            if (fileURL == null) {
                 throw new FileNotFoundException("File [" + filePath
                     + "] could not be found in classpath");
             }
