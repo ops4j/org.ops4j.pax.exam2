@@ -194,10 +194,11 @@ public class PaxExam extends BlockJUnit4ClassRunner {
             if (frameworkMethod == null) {
                 continue;
             }
-            String className = frameworkMethod.getMethod().getDeclaringClass().getName();
+            Class<?> frameworkMethodClass = frameworkMethod.getMethod().getDeclaringClass();
+            String className = frameworkMethodClass.getName();
             String methodName = frameworkMethod.getName();
 
-            if (className.equals(getTestClass().getName())) {
+            if (frameworkMethodClass.isAssignableFrom(getTestClass().getJavaClass())) {
                 FrameworkMethod method = mangleMethodNames ? new DecoratedFrameworkMethod(address,
                     frameworkMethod) : frameworkMethod;
                 testDirectory.add(address, new TestInstantiationInstruction(className + ";"
