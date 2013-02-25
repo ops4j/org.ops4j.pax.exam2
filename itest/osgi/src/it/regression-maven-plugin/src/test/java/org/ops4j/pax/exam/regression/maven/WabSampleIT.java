@@ -17,7 +17,7 @@
 package org.ops4j.pax.exam.regression.maven;
 
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.hamcrest.CoreMatchers.containsString;
 
 import org.junit.Test;
 
