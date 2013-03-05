@@ -279,10 +279,10 @@ public class ForkedTestContainer implements TestContainer {
         }
         // All bundles are installed, we can now start the framework...
         remoteFramework.start();
-        // iterate over the bundles, set sl and start them
-        // FIXME: This is neccesary until PAX Swissbox support a
-        // remoteFramework.installBundle(localUrl, startLevel, autostart); method
-        // We can try to use the "old way" when PAXSB-1.7 is out
+
+        // iterate over the bundles, set start level and start them
+        // TODO Simplify with new method in Pax Swissbox 1.7.0:
+        // remoteFramework.installBundle(localUrl, startLevel, autostart); 
         for (ProvisionOption<?> bundle : options) {
             int startLevel = getStartLevel(bundle);
             Long bundleId = remoteMappings.get(bundle.getURL());
