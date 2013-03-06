@@ -19,7 +19,6 @@
 package org.ops4j.pax.exam.regression.multi.depend;
 
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -47,7 +46,6 @@ public class DependencyTest {
     public Option[] config() {
         return options(
             regressionDefaults(), //
-            frameworkProperty("osgi.console").value("6666"), //
             junitBundles(), //
             mavenBundle("org.apache.felix", "org.apache.felix.gogo.command", "0.10.0")
                 .startLevel(1).start(true),
