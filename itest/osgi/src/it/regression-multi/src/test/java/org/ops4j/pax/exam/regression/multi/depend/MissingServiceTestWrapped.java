@@ -20,7 +20,8 @@ package org.ops4j.pax.exam.regression.multi.depend;
 
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
@@ -40,16 +42,16 @@ import org.ops4j.pax.exam.junit.PaxExam;
  */
 @RunWith(PaxExam.class)
 public class MissingServiceTestWrapped {
-    
+
     @Inject
     private Runnable runnable;
 
     @Configuration
     public Option[] config() {
-        return options(
-            regressionDefaults(), //
-            systemPackage("org.ops4j.pax.swissbox.tracker; version=1.6.0"),
-            junitBundles());
+        return options(regressionDefaults(), //
+            systemPackage("org.ops4j.pax.swissbox.tracker; version="
+                + Info.getPaxSwissboxVersion().replace("-SNAPSHOT", "")), 
+                junitBundles());
     }
 
     @Test
