@@ -20,7 +20,7 @@ package org.ops4j.pax.exam.regression.multi.depend;
 
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
@@ -48,6 +48,7 @@ public class MissingServiceTestWrapped {
     public Option[] config() {
         return options(
             regressionDefaults(), //
+            systemPackage("org.ops4j.pax.swissbox.tracker; version=1.6.0"),
             junitBundles());
     }
 
