@@ -21,46 +21,40 @@ import org.ops4j.pax.exam.options.ProvisionOption;
 
 /**
  * Utility methods related to scanner options.
- *
+ * 
  * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 18, 2008
  */
 @Deprecated
-class ScannerUtils
-{
+class ScannerUtils {
 
     /**
      * Utility class. Ment to be used via the static methods.
      */
-    private ScannerUtils()
-    {
+    private ScannerUtils() {
         // utility class
     }
 
     /**
      * Returns common scanner options. Ment to be used by subclasses when building the url.
-     *
-     * @param provision provision options to be used (cannot be null)
-     *
+     * 
+     * @param provision
+     *            provision options to be used (cannot be null)
+     * 
      * @return common scanner options (cannot be null)
      */
-    static String getOptions( final ProvisionOption provision )
-    {
+    static String getOptions(final ProvisionOption<?> provision) {
         final StringBuilder options = new StringBuilder();
-        if( provision.shouldUpdate() )
-        {
-            options.append( "@" ).append( "update" );
+        if (provision.shouldUpdate()) {
+            options.append("@").append("update");
         }
-        if( !provision.shouldStart() )
-        {
-            options.append( "@" ).append( "nostart" );
+        if (!provision.shouldStart()) {
+            options.append("@").append("nostart");
         }
-        if( provision.getStartLevel() != null )
-        {
-            options.append( "@" ).append( provision.getStartLevel() );
+        if (provision.getStartLevel() != null) {
+            options.append("@").append(provision.getStartLevel());
         }
         return options.toString();
     }
-
 }

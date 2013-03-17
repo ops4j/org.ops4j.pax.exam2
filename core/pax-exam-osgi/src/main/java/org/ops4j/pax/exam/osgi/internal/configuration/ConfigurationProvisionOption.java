@@ -80,8 +80,8 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
     }
 
     @Override
-    public ConfigurationOption putAll(Map<String, ?> properties) {
-        this.properties.putAll(properties);
+    public ConfigurationOption putAll(Map<String, ?> _properties) {
+        this.properties.putAll(_properties);
         return this;
     }
 
@@ -96,12 +96,12 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
     /**
      * Specify if the configuration should be created if it does not yet exits
      * 
-     * @param create
+     * @param _create
      * @return <code>this</code> for chaining
      */
     @Override
-    public ConfigurationOption create(boolean create) {
-        this.create = create;
+    public ConfigurationOption create(boolean _create) {
+        this.create = _create;
         return this;
     }
 
@@ -109,24 +109,24 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.Con
      * Specify if the properties of an exiting configuration should be overriden/extended by the
      * ones given here, <b>this does not work with factories!</b>
      * 
-     * @param override
+     * @param _override
      * @return <code>this</code> for chaining
      */
     @Override
-    public ConfigurationOption override(boolean override) {
-        this.override = override;
+    public ConfigurationOption override(boolean _override) {
+        this.override = _override;
         return this;
     }
 
     /**
      * Specify if the target of the properties are a factory configuration
      * 
-     * @param factory
+     * @param _factory
      * @return <code>this</code> for chaining
      */
     @Override
-    public ConfigurationOption factory(boolean factory) {
-        this.factory = factory;
+    public ConfigurationOption factory(boolean _factory) {
+        this.factory = _factory;
         return this;
     }
 

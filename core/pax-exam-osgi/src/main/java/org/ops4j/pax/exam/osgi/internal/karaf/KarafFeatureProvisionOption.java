@@ -68,40 +68,45 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class KarafFeatureProvisionOption implements KarafFeatureOption {
 
-    private static final String                    JAVA_PROTOCOL_HANDLER_PKGS = "java.protocol.handler.pkgs";
+    private static final String JAVA_PROTOCOL_HANDLER_PKGS = "java.protocol.handler.pkgs";
 
-    private static final Logger                    LOG                        = LoggerFactory.getLogger(KarafFeatureProvisionOption.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KarafFeatureProvisionOption.class);
 
     private static final ThreadLocal<Unmarshaller> UNMARSHALLER;
 
     static {
         try {
-            final JAXBContext context = JAXBContext.newInstance(org.apache.karaf.xmlns.features.v1_0.ObjectFactory.class);
+            final JAXBContext context = JAXBContext
+                .newInstance(org.apache.karaf.xmlns.features.v1_0.ObjectFactory.class);
             UNMARSHALLER = new ThreadLocal<Unmarshaller>() {
+
                 @Override
                 protected Unmarshaller initialValue() {
                     try {
                         return context.createUnmarshaller();
-                    } catch (JAXBException e) {
-                        throw new TestContainerException("can't create Unmarshaller for parsing XML", e);
+                    }
+                    catch (JAXBException e) {
+                        throw new TestContainerException(
+                            "can't create Unmarshaller for parsing XML", e);
                     }
                 };
             };
-        } catch (JAXBException e) {
+        }
+        catch (JAXBException e) {
             throw new TestContainerException("can't create JAXBContext for parsing XML", e);
         }
     }
 
-    private final String                           repositoryUrl;
-    private final Set<String>                      featuresSet;
+    private final String repositoryUrl;
+    private final Set<String> featuresSet;
 
-    private int                                    karafStartlevel            = 60;
+    private int karafStartlevel = 60;
 
-    private WorkingDirectoryOption                 directoryOption;
+    private WorkingDirectoryOption directoryOption;
 
-    private boolean                                strictNamespaceHandling    = false;
+    private boolean strictNamespaceHandling;
 
-    private boolean                                failOnMissingContraint     = true;
+    private boolean failOnMissingContraint = true;
 
     /**
      * @param repositoryUrl
@@ -127,39 +132,49 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see org.ops4j.pax.exam.osgi.KarafFeatureOption#setWorkingDir(org.ops4j.pax.exam.options.extra.WorkingDirectoryOption)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.ops4j.pax.exam.osgi.KarafFeatureOption#setWorkingDir(org.ops4j.pax.exam.options.extra
+     * .WorkingDirectoryOption)
      */
     @Override
-    public KarafFeatureOption workingDir(WorkingDirectoryOption directoryOption) {
-        this.directoryOption = directoryOption;
+    public KarafFeatureOption workingDir(WorkingDirectoryOption _directoryOption) {
+        this.directoryOption = _directoryOption;
         return this;
     }
 
     @Override
-    public Option toOption() throws TestContainerException {
+    public Option toOption() {
         String oldHandler = System.getProperty(JAVA_PROTOCOL_HANDLER_PKGS);
         try {
-            //This is... *urks* ... but otherwhise we can't load some special urls... we might find a better way once...
+            // This is... *urks* ... but otherwhise we can't load some special urls... we might find
+            // a better way once...
             System.setProperty(JAVA_PROTOCOL_HANDLER_PKGS, "org.ops4j.pax.url");
-            //create the URL
+            // create the URL
             URL url = new URL(repositoryUrl);
             List<Feature> features = new ArrayList<Feature>();
             FeaturesRoot featuresRoot = getFeaturesRoot(url, strictNamespaceHandling);
-            LOG.info("Provision feature repository with name {} from url {}", featuresRoot.getName(), repositoryUrl);
+            LOG.info("Provision feature repository with name {} from url {}",
+                featuresRoot.getName(), repositoryUrl);
             addAllFeatures(features, featuresRoot, new HashSet<String>());
             List<Option> options = new ArrayList<Option>();
             for (Feature feature : features) {
-                LOG.info("Adding feature {} (version: {})...", feature.getName(), feature.getVersion());
+                LOG.info("Adding feature {} (version: {})...", feature.getName(),
+                    feature.getVersion());
                 addFeatureOptions(feature, options);
             }
             return CoreOptions.composite(options.toArray(new Option[0]));
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e) {
             throw new TestContainerException("can't parse URL", e);
-        } finally {
+        }
+        finally {
             if (oldHandler != null) {
                 System.setProperty(JAVA_PROTOCOL_HANDLER_PKGS, oldHandler);
-            } else {
+            }
+            else {
                 System.clearProperty(JAVA_PROTOCOL_HANDLER_PKGS);
             }
         }
@@ -169,41 +184,54 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
      * @param features
      * @param featuresRoot
      */
-    private void addAllFeatures(List<Feature> features, FeaturesRoot featuresRoot, Set<String> scannedURIs) {
+    private void addAllFeatures(List<Feature> features, FeaturesRoot featuresRoot,
+        Set<String> scannedURIs) {
         List<Object> repositoryOrFeature = featuresRoot.getRepositoryOrFeature();
         for (Object object : repositoryOrFeature) {
             if (object instanceof Feature) {
                 features.add((Feature) object);
-            } else if (object instanceof String) {
-                //This is a repository with additional dependencies
+            }
+            else if (object instanceof String) {
+                // This is a repository with additional dependencies
                 String repro = (String) object;
                 if (scannedURIs.contains(repro)) {
-                    //Ignore and warn already read URIs
-                    String msg = "It seems you have a cyclic dependency for repository URI " + repro + " the scanned features might not be complete!";
+                    // Ignore and warn already read URIs
+                    String msg = "It seems you have a cyclic dependency for repository URI "
+                        + repro + " the scanned features might not be complete!";
                     if (failOnMissingContraint) {
                         throw new TestContainerException(msg);
-                    } else {
+                    }
+                    else {
                         LOG.warn(msg);
                     }
 
-                } else {
+                }
+                else {
                     scannedURIs.add(repro);
                     try {
                         URL url = new URL(repro);
                         FeaturesRoot repository = getFeaturesRoot(url, strictNamespaceHandling);
                         addAllFeatures(features, repository, scannedURIs);
-                    } catch (MalformedURLException e) {
-                        String msg = "Can't parse repository URI " + repro + ", the scanned features might not be complete! (" + e.toString() + ")";
+                    }
+                    catch (MalformedURLException e) {
+                        String msg = "Can't parse repository URI " + repro
+                            + ", the scanned features might not be complete! (" + e.toString()
+                            + ")";
                         if (failOnMissingContraint) {
                             throw new TestContainerException(msg);
-                        } else {
+                        }
+                        else {
                             LOG.error(msg);
                         }
-                    } catch (RuntimeException e) {
-                        String msg = "Can't parse repository URI " + repro + ", the scanned features might not be complete! (" + e.toString() + ")";
+                    }
+                    catch (RuntimeException e) {
+                        String msg = "Can't parse repository URI " + repro
+                            + ", the scanned features might not be complete! (" + e.toString()
+                            + ")";
                         if (failOnMissingContraint) {
                             throw new TestContainerException(msg);
-                        } else {
+                        }
+                        else {
                             LOG.error(msg);
                         }
                     }
@@ -217,15 +245,21 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
         try {
             Unmarshaller unmarshaller = UNMARSHALLER.get();
             XMLReader reader = XMLReaderFactory.createXMLReader();
-            final QName rootQName = new ObjectFactory().createFeatures(new FeaturesRoot()).getName();
+            final QName rootQName = new ObjectFactory().createFeatures(new FeaturesRoot())
+                .getName();
             XMLFilterImpl rootNameSpaceFilter = new XMLFilterImpl() {
+
                 @Override
-                public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+                public void startElement(String uri, String localName, String qName, Attributes atts)
+                    throws SAXException {
                     if (!strictNamespaceHandling) {
                         if (rootQName.getLocalPart().equals(localName)) {
                             if (!uri.equals(rootQName.getNamespaceURI())) {
-                                LOG.warn("The feature with url {} does not declare the required namespace {} on the root element, in favor of well-formed xml you should correct this or inform the author about the issue!", url, rootQName.getNamespaceURI());
-                                super.startElement(rootQName.getNamespaceURI(), localName, qName, atts);
+                                LOG.warn(
+                                    "The feature with url {} does not declare the required namespace {} on the root element, in favor of well-formed xml you should correct this or inform the author about the issue!",
+                                    url, rootQName.getNamespaceURI());
+                                super.startElement(rootQName.getNamespaceURI(), localName, qName,
+                                    atts);
                                 return;
                             }
                         }
@@ -241,15 +275,22 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
             }
             if (object instanceof FeaturesRoot) {
                 return (FeaturesRoot) object;
-            } else {
+            }
+            else {
                 throw new TestContainerException("The parsed object is not of type FeaturesRoot");
             }
-        } catch (JAXBException e) {
-            throw new TestContainerException("parsing the featurefile from url " + url + " failed!", e);
-        } catch (SAXException e) {
-            throw new TestContainerException("parsing the featurefile from url " + url + " failed!", e);
-        } catch (IOException e) {
-            throw new TestContainerException("parsing the featurefile from url " + url + " failed!", e);
+        }
+        catch (JAXBException e) {
+            throw new TestContainerException(
+                "parsing the featurefile from url " + url + " failed!", e);
+        }
+        catch (SAXException e) {
+            throw new TestContainerException(
+                "parsing the featurefile from url " + url + " failed!", e);
+        }
+        catch (IOException e) {
+            throw new TestContainerException(
+                "parsing the featurefile from url " + url + " failed!", e);
         }
     }
 
@@ -260,19 +301,23 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
     private void addFeatureOptions(Feature feature, List<Option> options) {
         String name = feature.getName();
         if (featuresSet.contains(name)) {
-            //The feature should be provisioned!
+            // The feature should be provisioned!
             String version = feature.getVersion();
             LOG.info("Provision feature {} with version {}", name, version);
             String resolver = feature.getResolver();
             if (resolver != null) {
-                //TODO: We can (similar to the ConfigurationAdminOptions) create a tiny bundle here that searches
-                //  for (&(objectClass=org.apache.karaf.features.Resolver)(name=resolver)) service and try to resolve it at runtime then!
-                //  or we even can support some resolvers (e.g. OBR) natively...
-                String msg = "Using resolvers (specified in feature " + name + ") is currently not supported (resolver specified: " + resolver
-                        + "), the feature will be ignored!";
+                // TODO: We can (similar to the ConfigurationAdminOptions) create a tiny bundle here
+                // that searches
+                // for (&(objectClass=org.apache.karaf.features.Resolver)(name=resolver)) service
+                // and try to resolve it at runtime then!
+                // or we even can support some resolvers (e.g. OBR) natively...
+                String msg = "Using resolvers (specified in feature " + name
+                    + ") is currently not supported (resolver specified: " + resolver
+                    + "), the feature will be ignored!";
                 if (failOnMissingContraint) {
                     throw new TestContainerException(msg);
-                } else {
+                }
+                else {
                     LOG.error(msg);
                 }
                 return;
@@ -281,15 +326,19 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
             for (Object object : content) {
                 if (object instanceof Dependency) {
                     addDependency((Dependency) object, options);
-                } else if (object instanceof Bundle) {
+                }
+                else if (object instanceof Bundle) {
                     addBundle((Bundle) object, options);
-                } else if (object instanceof Config) {
+                }
+                else if (object instanceof Config) {
                     addConfig((Config) object, options);
-                } else if (object instanceof ConfigFile) {
+                }
+                else if (object instanceof ConfigFile) {
                     addConfigFile((ConfigFile) object, options);
-                } else if (object instanceof String) {
-                    //Long info displayed in features:info command result.
-                    //We can ignore this here
+                }
+                else if (object instanceof String) {
+                    // Long info displayed in features:info command result.
+                    // We can ignore this here
                 }
             }
         }
@@ -313,15 +362,21 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
                 try {
                     InputStream inputStream = url.openStream();
                     StreamUtils.copyStream(inputStream, outputStream, true);
-                } finally {
+                }
+                finally {
                     outputStream.close();
                 }
-            } catch (IOException e) {
-                LOG.error("The deployment of configFile {} failed and will not take place (final name = {})", new Object[] { configFile.getValue(),
-                        configFile.getFinalname(), e });
             }
-        } else {
-            LOG.warn("No working directory set, the deployment of configFile {} will not take place (final name = {})", configFile.getValue(), configFile.getFinalname());
+            catch (IOException e) {
+                LOG.error(
+                    "The deployment of configFile {} failed and will not take place (final name = {})",
+                    new Object[] { configFile.getValue(), configFile.getFinalname(), e });
+            }
+        }
+        else {
+            LOG.warn(
+                "No working directory set, the deployment of configFile {} will not take place (final name = {})",
+                configFile.getValue(), configFile.getFinalname());
         }
 
     }
@@ -340,22 +395,25 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
         Properties properties = new Properties();
         try {
             properties.load(new StringReader(value));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             String msg = "Can't read the properties for configuration " + name + ": " + e;
             if (failOnMissingContraint) {
                 throw new TestContainerException(msg);
-            } else {
+            }
+            else {
                 LOG.error(msg, e);
             }
             return;
         }
         if (indexOf > -1) {
-            //a factory configuration
+            // a factory configuration
             String fpid = name.substring(0, indexOf);
             configuration = ConfigurationAdminOptions.factoryConfiguration(fpid);
             LOG.info("Provision factory configuration for PID {} and values = {}", fpid, properties);
-        } else {
-            //a "normal" configuration
+        }
+        else {
+            // a "normal" configuration
             configuration = ConfigurationAdminOptions.newConfiguration(name);
             LOG.info("Provision configuration for PID {} and values = {}", name, properties);
         }
@@ -376,18 +434,20 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
         UrlProvisionOption option = CoreOptions.bundle(uri);
         if (startLevel != null) {
             option.startLevel(startLevel);
-        } else {
+        }
+        else {
             option.startLevel(karafStartlevel);
         }
         if (start == null || start.booleanValue()) {
-            //The default is to start the bundle...
+            // The default is to start the bundle...
             option.start(true);
-        } else {
+        }
+        else {
             option.start(false);
         }
         options.add(option);
         if (dependency != null && dependency.booleanValue()) {
-            //TODO: support it...
+            // TODO: support it...
             LOG.warn("The dependency option is currently not supported and will be ignored!");
         }
 
@@ -401,7 +461,9 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
      */
     private void addDependency(Dependency object, List<Option> options) {
         if (!featuresSet.contains(object.getValue())) {
-            LOG.info("One of the features has a dependency to feature {} what is not part of this provision, make sure it will be provided by some other means", object.getValue());
+            LOG.info(
+                "One of the features has a dependency to feature {} what is not part of this provision, make sure it will be provided by some other means",
+                object.getValue());
         }
     }
 
@@ -411,7 +473,9 @@ public class KarafFeatureProvisionOption implements KarafFeatureOption {
         return this;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.ops4j.pax.exam.osgi.KarafFeatureOption#failOnMissingConstraint(boolean)
      */
     @Override

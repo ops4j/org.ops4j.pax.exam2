@@ -111,7 +111,8 @@ public class PaxExam extends BlockJUnit4ClassRunner {
             super.run(notifier);
         }
         // CHECKSTYLE:SKIP : catch all wanted
-        catch (Exception e) {
+        catch (Throwable e) {
+            e.printStackTrace();
             // rethrowing the exception does not help, we have to use the notifier here
             Description description = Description.createSuiteDescription(testClass);
             notifier.fireTestFailure(new Failure(description, e));

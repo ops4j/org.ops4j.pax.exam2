@@ -666,17 +666,21 @@ public class KarafTestContainer implements TestContainer {
                     FileUtils.forceDelete(targetFolder);
                 }
                 catch (IOException e) {
-                    LOGGER.info("Can't remove runtime system; shedule it for exit of the jvm.");
-                    try {
-                        FileUtils.forceDeleteOnExit(targetFolder);
-                    }
-                    catch (IOException e1) {
-                        LOGGER.error("Well, this should simply not happen...");
-                    }
+                    forceCleanup();
                 }
             }
         }
         return this;
+    }
+
+    private void forceCleanup() {
+        LOGGER.info("Can't remove runtime system; shedule it for exit of the jvm.");
+        try {
+            FileUtils.forceDeleteOnExit(targetFolder);
+        }
+        catch (IOException e1) {
+            LOGGER.error("Well, this should simply not happen...");
+        }
     }
 
     private void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
