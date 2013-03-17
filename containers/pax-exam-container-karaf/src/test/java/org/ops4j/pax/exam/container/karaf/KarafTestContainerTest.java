@@ -38,26 +38,25 @@ import org.osgi.framework.ServiceReference;
 
 @RunWith(PaxExam.class)
 public class KarafTestContainerTest {
-	
-	@Inject
-	private BundleContext bc;
+
+    @Inject
+    private BundleContext bc;
 
     @Configuration
     public Option[] config() {
-        return new Option[] { 
-        	karafDistributionConfiguration().
-        	frameworkUrl(maven("org.apache.karaf", "apache-karaf", "3.0.0.RC1").type("zip")).
-        	karafVersion("3.0.0.RC1").useDeployFolder(false),
-        	configureConsole().ignoreLocalConsole().startRemoteShell(),
-        	logLevel(LogLevel.INFO)
-         };
+        return new Option[] {
+            karafDistributionConfiguration()
+                .frameworkUrl(maven("org.apache.karaf", "apache-karaf", "3.0.0.RC1").type("zip"))
+                .karafVersion("3.0.0.RC1").useDeployFolder(false),
+            configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO) };
     }
 
     @Test
     public void checkKarafSystemService() throws Exception {
-    	assertThat(bc, is(notNullValue()));
-    	ServiceReference serviceRef = bc.getServiceReference("org.apache.karaf.system.SystemService");
-    	Object service = bc.getService(serviceRef);
-    	assertThat(service, is(notNullValue()));
+        assertThat(bc, is(notNullValue()));
+        ServiceReference serviceRef = bc
+            .getServiceReference("org.apache.karaf.system.SystemService");
+        Object service = bc.getService(serviceRef);
+        assertThat(service, is(notNullValue()));
     }
 }

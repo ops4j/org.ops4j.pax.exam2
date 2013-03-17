@@ -122,7 +122,9 @@ public class ExamFeaturesFile {
                 properties.load(is);
                 optionsVersion = properties.getProperty(name, "").trim();
             }
-        } catch (Exception ignore) {
+        }
+        // CHECKSTYLE:SKIP
+        catch (Exception ignore) {
             // use default versions
         }
         return optionsVersion;

@@ -27,25 +27,25 @@ import org.ops4j.io.Pipe;
 
 public class InternalRunner {
 
-    private Process m_frameworkProcess;
-    private Thread m_shutdownHook;
+    private Process frameworkProcess;
+    private Thread shutdownHook;
 
     public synchronized void exec(CommandLineBuilder commandLine, final File workingDirectory,
-                                  final String[] envOptions) {
-        if (m_frameworkProcess != null) {
+        final String[] envOptions) {
+        if (frameworkProcess != null) {
             throw new IllegalStateException("Platform already started");
         }
 
         try {
-            m_frameworkProcess =
-                    Runtime.getRuntime().exec(commandLine.toArray(), createEnvironmentVars(envOptions),
-                            workingDirectory);
-        } catch (IOException e) {
+            frameworkProcess = Runtime.getRuntime().exec(commandLine.toArray(),
+                createEnvironmentVars(envOptions), workingDirectory);
+        }
+        catch (IOException e) {
             throw new IllegalStateException("Could not start up the process", e);
         }
 
-        m_shutdownHook = createShutdownHook(m_frameworkProcess);
-        Runtime.getRuntime().addShutdownHook(m_shutdownHook);
+        shutdownHook = createShutdownHook(frameworkProcess);
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
 
         waitForExit();
     }
@@ -62,22 +62,20 @@ public class InternalRunner {
         return env.toArray(new String[env.size()]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void shutdown() {
         try {
-            if (m_shutdownHook != null) {
-                synchronized (m_shutdownHook) {
-                    if (m_shutdownHook != null) {
-                        Runtime.getRuntime().removeShutdownHook(m_shutdownHook);
-                        m_frameworkProcess = null;
-                        m_shutdownHook.run();
-                        m_shutdownHook = null;
+            if (shutdownHook != null) {
+                synchronized (shutdownHook) {
+                    if (shutdownHook != null) {
+                        Runtime.getRuntime().removeShutdownHook(shutdownHook);
+                        frameworkProcess = null;
+                        shutdownHook.run();
+                        shutdownHook = null;
                     }
                 }
             }
-        } catch (IllegalStateException ignore) {
+        }
+        catch (IllegalStateException ignore) {
             // just ignore
         }
     }
@@ -86,11 +84,13 @@ public class InternalRunner {
      * Wait till the framework process exits.
      */
     public void waitForExit() {
-        synchronized (m_frameworkProcess) {
+        synchronized (frameworkProcess) {
             try {
-                m_frameworkProcess.waitFor();
+                frameworkProcess.waitFor();
                 shutdown();
-            } catch (Throwable e) {
+            }
+            // CHECKSTYLE:SKIP
+            catch (Throwable e) {
                 shutdown();
             }
         }
@@ -98,8 +98,9 @@ public class InternalRunner {
 
     /**
      * Create helper thread to safely shutdown the external framework process
-     *
-     * @param process framework process
+     * 
+     * @param process
+     *            framework process
      * @return stream handler
      */
     private Thread createShutdownHook(final Process process) {
@@ -107,22 +108,23 @@ public class InternalRunner {
         final Pipe outPipe = new Pipe(process.getInputStream(), System.out).start("Out pipe");
         final Pipe inPipe = new Pipe(process.getOutputStream(), System.in).start("In pipe");
 
-        return new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        inPipe.stop();
-                        outPipe.stop();
-                        errPipe.stop();
+        return new Thread(new Runnable() {
 
-                        try {
-                            process.destroy();
-                        } catch (Exception e) {
-                            // ignore if already shutting down
-                        }
-                    }
-                },
-                "Pax-Runner shutdown hook");
+            @Override
+            public void run() {
+                inPipe.stop();
+                outPipe.stop();
+                errPipe.stop();
+
+                try {
+                    process.destroy();
+                }
+                // CHECKSTYLE:SKIP
+                catch (Exception e) {
+                    // ignore if already shutting down
+                }
+            }
+        }, "Pax-Runner shutdown hook");
     }
 
 }

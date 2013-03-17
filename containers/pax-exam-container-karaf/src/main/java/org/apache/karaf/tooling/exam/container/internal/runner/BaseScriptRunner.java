@@ -36,6 +36,7 @@ public abstract class BaseScriptRunner implements Runner {
     }
 
     @Override
+    // CHECKSTYLE:SKIP - allow more than 10 params
     public void exec(final String[] environment, final File karafBase, String javaHome, String[] javaOpts,
                      String[] javaEndorsedDirs, String[] javaExtDirs, String karafHome,
                      String karafData, String[] karafOpts, String[] opts, String[] classPath, String main, String options) {
@@ -44,13 +45,14 @@ public abstract class BaseScriptRunner implements Runner {
     }
 
     private void startSystem(final String[] environment, final File karafBase) {
-        new Thread("KarafJavaRunner") {
+        Thread thread = new Thread("KarafJavaRunner") {
             @Override
             public void run() {
                 CommandLineBuilder commandLine = createCommandLine(environment, karafBase);
                 runner.exec(commandLine, karafBase, environment);
             }
-        }.start();
+        };
+        thread.start();
     }
 
     protected abstract CommandLineBuilder createCommandLine(final String[] environment, final File karafBase);

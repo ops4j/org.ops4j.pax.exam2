@@ -83,10 +83,13 @@ public class InternalKarafDistributionConfigurationOption extends KarafDistribut
                 Properties props = new Properties();
                 props.load(fileInputStream);
                 return props.getProperty(key);
-            } finally {
+            } 
+            finally {
                 fileInputStream.close();
             }
-        } catch (Exception e) {
+        }
+        // CHECKSTYLE:SKIP
+        catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }

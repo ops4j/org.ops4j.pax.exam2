@@ -37,8 +37,8 @@ public class LogLevelOption implements Option {
         this.logLevel = logLevel;
     }
 
-    public LogLevelOption logLevel(LogLevel logLevel) {
-        this.logLevel = logLevel;
+    public LogLevelOption logLevel(LogLevel _logLevel) {
+        this.logLevel = _logLevel;
         return this;
     }
 

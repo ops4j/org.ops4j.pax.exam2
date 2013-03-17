@@ -22,26 +22,32 @@ import org.apache.karaf.tooling.exam.options.ConfigurationPointer;
  * Pre configured property file pointers to the most commonly used properties in /etc/config.properties and
  * /etc/custom.properties.
  */
-public interface CustomProperties {
+public class CustomProperties {
 
-    static final String FILE_PATH = "etc/config.properties";
+    public static final String FILE_PATH = "etc/config.properties";
 
     /**
      * Possible values here are felix or equinox
      */
-    static final ConfigurationPointer KARAF_FRAMEWORK = new CustomPropertiesPointer("karaf.framework");
+    public static final ConfigurationPointer KARAF_FRAMEWORK = new CustomPropertiesPointer("karaf.framework");
 
-    static final ConfigurationPointer SYSTEM_PACKAGES_EXTRA = new CustomPropertiesPointer(
+    public static final ConfigurationPointer SYSTEM_PACKAGES_EXTRA = new CustomPropertiesPointer(
             "org.osgi.framework.system.packages.extra");
 
-    static final ConfigurationPointer BOOTDELEGATION = new CustomPropertiesPointer("org.osgi.framework.bootdelegation");
+    public static final ConfigurationPointer BOOTDELEGATION = new CustomPropertiesPointer("org.osgi.framework.bootdelegation");
 
-    static class CustomPropertiesPointer extends ConfigurationPointer {
+    public static class CustomPropertiesPointer extends ConfigurationPointer {
 
         public CustomPropertiesPointer(String key) {
             super(FILE_PATH, key);
         }
 
     }
-
+    
+    
+    /**
+     * Hidden utility class constructor.
+     */
+    private CustomProperties() {
+    }
 }

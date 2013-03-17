@@ -35,9 +35,10 @@ public final class KarafManipulatorFactory {
             i++;
         }
         Version version;
-        if (dots < 3) {           
+        if (dots < 3) {
             version = new Version(karafVersion.replaceFirst("-", "."));
-        } else {
+        }
+        else {
             version = new Version(karafVersion);
         }        
         if (version.getMajor() < 2 || version.getMajor() == 2 && version.getMinor() < 2) {

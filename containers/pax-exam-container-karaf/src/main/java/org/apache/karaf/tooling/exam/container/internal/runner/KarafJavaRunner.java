@@ -30,54 +30,55 @@ public class KarafJavaRunner implements Runner {
     }
 
     @Override
-    public synchronized void
+    public synchronized void // CHECKSTYLE:SKIP : more than 10 params
     exec(final String[] environment, final File karafBase, final String javaHome, final String[] javaOpts,
          final String[] javaEndorsedDirs,
          final String[] javaExtDirs, final String karafHome, final String karafData, final String[] karafOpts,
          final String[] opts, final String[] classPath, final String main, final String options) {
-        new Thread("KarafJavaRunner") {
-            @Override
-            public void run() {
-                String cp = buildCmdSeparatedString(classPath);
-                String endDirs = buildCmdSeparatedString(javaEndorsedDirs);
-                String extDirs = buildCmdSeparatedString(javaExtDirs);
-                final CommandLineBuilder commandLine = new CommandLineBuilder()
-                        .append(getJavaExecutable(javaHome))
-                        .append(javaOpts)
-                        .append("-Djava.endorsed.dirs=" + endDirs)
-                        .append("-Djava.ext.dirs=" + extDirs)
-                        .append("-Dkaraf.instances=" + karafHome + "/instances")
-                        .append("-Dkaraf.home=" + karafHome)
-                        .append("-Dkaraf.base=" + karafBase)
-                        .append("-Dkaraf.data=" + karafData)
-                        .append("-Djava.util.logging.config.file=" + karafBase + "/etc/java.util.logging.properties")
-                        .append(karafOpts)
-                        .append(opts)
-                        .append("-cp")
-                        .append(cp)
-                        .append(main)
-                        .append(options);
-                runner.exec(commandLine, karafBase, environment);
-            }
+        Thread thread = new Thread("KarafJavaRunner") {
+                @Override
+                public void run() {
+                    String cp = buildCmdSeparatedString(classPath);
+                    String endDirs = buildCmdSeparatedString(javaEndorsedDirs);
+                    String extDirs = buildCmdSeparatedString(javaExtDirs);
+                    final CommandLineBuilder commandLine = new CommandLineBuilder()
+                            .append(getJavaExecutable(javaHome))
+                            .append(javaOpts)
+                            .append("-Djava.endorsed.dirs=" + endDirs)
+                            .append("-Djava.ext.dirs=" + extDirs)
+                            .append("-Dkaraf.instances=" + karafHome + "/instances")
+                            .append("-Dkaraf.home=" + karafHome)
+                            .append("-Dkaraf.base=" + karafBase)
+                            .append("-Dkaraf.data=" + karafData)
+                            .append("-Djava.util.logging.config.file=" + karafBase + "/etc/java.util.logging.properties")
+                            .append(karafOpts)
+                            .append(opts)
+                            .append("-cp")
+                            .append(cp)
+                            .append(main)
+                            .append(options);
+                    runner.exec(commandLine, karafBase, environment);
+                }
 
-            private String buildCmdSeparatedString(final String[] splitted) {
-                final StringBuilder together = new StringBuilder();
-                for (String path : splitted) {
-                    if (together.length() != 0) {
-                        together.append(File.pathSeparator);
+                private String buildCmdSeparatedString(final String[] splitted) {
+                    final StringBuilder together = new StringBuilder();
+                    for (String path : splitted) {
+                        if (together.length() != 0) {
+                            together.append(File.pathSeparator);
+                        }
+                        together.append(path);
                     }
-                    together.append(path);
+                    return together.toString();
                 }
-                return together.toString();
-            }
 
-            private String getJavaExecutable(final String javaHome) {
-                if (javaHome == null) {
-                    throw new IllegalStateException("JAVA_HOME is not set.");
+                private String getJavaExecutable(final String javaHome) {
+                    if (javaHome == null) {
+                        throw new IllegalStateException("JAVA_HOME is not set.");
+                    }
+                    return javaHome + "/bin/java";
                 }
-                return javaHome + "/bin/java";
-            }
-        }.start();
+            };
+        thread.start();
     }
 
     @Override

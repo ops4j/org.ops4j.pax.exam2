@@ -22,26 +22,30 @@ import org.apache.karaf.tooling.exam.options.ConfigurationPointer;
  * Pre configured property file pointers to the most commonly used properties in /etc/config.properties and
  * /etc/org.apache.karaf.management.cfg.
  */
-public interface ManagementCfg {
+public class ManagementCfg {
 
-    static final String FILE_PATH = "etc/org.apache.karaf.management.cfg";
-
-    /**
-     * Port of the registry for the exported RMI service
-     */
-    static final ConfigurationPointer RMI_REGISTRY_PORT = new CustomPropertiesPointer("rmiRegistryPort");
+    public static final String FILE_PATH = "etc/org.apache.karaf.management.cfg";
 
     /**
      * Port of the registry for the exported RMI service
      */
-    static final ConfigurationPointer RMI_SERVER_PORT = new CustomPropertiesPointer("rmiServerPort");
+    public static final ConfigurationPointer RMI_REGISTRY_PORT = new CustomPropertiesPointer("rmiRegistryPort");
 
-    static class CustomPropertiesPointer extends ConfigurationPointer {
+    /**
+     * Port of the registry for the exported RMI service
+     */
+    public static final ConfigurationPointer RMI_SERVER_PORT = new CustomPropertiesPointer("rmiServerPort");
+
+    public static class CustomPropertiesPointer extends ConfigurationPointer {
 
         public CustomPropertiesPointer(String key) {
             super(FILE_PATH, key);
         }
-
+    }    
+    
+    /**
+     * Hidden utility class constructor.
+     */
+    private ManagementCfg() {
     }
-
 }

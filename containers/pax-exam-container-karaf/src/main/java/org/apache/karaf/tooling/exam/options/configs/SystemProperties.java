@@ -22,13 +22,13 @@ import org.apache.karaf.tooling.exam.options.ConfigurationPointer;
  * Pre configured property file pointers to the most commonly used properties in /etc/config.properties and
  * /etc/system.properties..
  */
-public interface SystemProperties {
+public class SystemProperties {
 
-    static final String FILE_PATH = "etc/system.properties";
+    public static final String FILE_PATH = "etc/system.properties";
 
-    static final ConfigurationPointer KARAF_NAME = new CustomPropertiesPointer("karaf.name");
+    public static final ConfigurationPointer KARAF_NAME = new CustomPropertiesPointer("karaf.name");
 
-    static class CustomPropertiesPointer extends ConfigurationPointer {
+    public static class CustomPropertiesPointer extends ConfigurationPointer {
 
         public CustomPropertiesPointer(String key) {
             super(FILE_PATH, key);
@@ -36,4 +36,11 @@ public interface SystemProperties {
 
     }
 
+    
+    /**
+     * Hidden utility class constructor.
+     */
+    private SystemProperties() {
+        // TODO Auto-generated constructor stub
+    }
 }

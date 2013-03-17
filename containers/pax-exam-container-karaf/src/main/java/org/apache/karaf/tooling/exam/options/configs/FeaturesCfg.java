@@ -22,19 +22,24 @@ import org.apache.karaf.tooling.exam.options.ConfigurationPointer;
  * Pre configured property file pointers to the most commonly used properties in /etc/config.properties and
  * /etc/org.apache.karaf.features.cfg.
  */
-public interface FeaturesCfg {
+public class FeaturesCfg {
 
-    static final String FILE_PATH = "etc/org.apache.karaf.features.cfg";
+    public static final String FILE_PATH = "etc/org.apache.karaf.features.cfg";
 
-    static final ConfigurationPointer REPOSITORIES = new CustomPropertiesPointer("featuresRepositories");
-    static final ConfigurationPointer BOOT = new CustomPropertiesPointer("featuresBoot");
+    public static final ConfigurationPointer REPOSITORIES = new CustomPropertiesPointer("featuresRepositories");
+    public static final ConfigurationPointer BOOT = new CustomPropertiesPointer("featuresBoot");
 
-    static class CustomPropertiesPointer extends ConfigurationPointer {
+    public static class CustomPropertiesPointer extends ConfigurationPointer {
 
         public CustomPropertiesPointer(String key) {
             super(FILE_PATH, key);
         }
-
     }
 
+    
+    /**
+     * Hidden utility class constructor 
+     */
+    private FeaturesCfg() {
+    }
 }

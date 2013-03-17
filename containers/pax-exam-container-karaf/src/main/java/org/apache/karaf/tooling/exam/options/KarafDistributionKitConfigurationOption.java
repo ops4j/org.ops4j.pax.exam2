@@ -22,10 +22,12 @@ import java.util.List;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 
 /**
- * Option describing the karaf distribution to use; This option uses the specified scripts to run the environment
- * depending on the platform. If a platform is defined and run on another platform it is simply ignored.
+ * Option describing the karaf distribution to use; This option uses the specified scripts to run
+ * the environment depending on the platform. If a platform is defined and run on another platform
+ * it is simply ignored.
  */
-public class KarafDistributionKitConfigurationOption extends KarafDistributionBaseConfigurationOption {
+public class KarafDistributionKitConfigurationOption extends
+    KarafDistributionBaseConfigurationOption {
 
     public enum Platform {
         WINDOWS, NIX
@@ -36,24 +38,25 @@ public class KarafDistributionKitConfigurationOption extends KarafDistributionBa
     private String exec;
 
     public KarafDistributionKitConfigurationOption(KarafDistributionBaseConfigurationOption base,
-                                                   Platform platform) {
+        Platform platform) {
         super(base);
         setPlatform(platform);
     }
 
-    public KarafDistributionKitConfigurationOption(MavenUrlReference frameworkURLReference, String name,
-                                                   String karafVersion, Platform platform) {
+    public KarafDistributionKitConfigurationOption(MavenUrlReference frameworkURLReference,
+        String name, String karafVersion, Platform platform) {
         super(frameworkURLReference, name, karafVersion);
         setPlatform(platform);
     }
 
-    public KarafDistributionKitConfigurationOption(MavenUrlReference frameworkURLReference, Platform platform) {
+    public KarafDistributionKitConfigurationOption(MavenUrlReference frameworkURLReference,
+        Platform platform) {
         super(frameworkURLReference);
         setPlatform(platform);
     }
 
-    public KarafDistributionKitConfigurationOption(String frameworkURL, String name, String karafVersion,
-                                                   Platform platform) {
+    public KarafDistributionKitConfigurationOption(String frameworkURL, String name,
+        String karafVersion, Platform platform) {
         super(frameworkURL, name, karafVersion);
         setPlatform(platform);
     }
@@ -62,12 +65,14 @@ public class KarafDistributionKitConfigurationOption extends KarafDistributionBa
         this.platform = platform;
         if (platform.equals(Platform.WINDOWS)) {
             exec = "bin\\karaf.bat";
-        } else {
+        }
+        else {
             exec = "bin/karaf";
         }
     }
 
-    public KarafDistributionKitConfigurationOption filesToMakeExecutable(String... platformRelativeFilePath) {
+    public KarafDistributionKitConfigurationOption filesToMakeExecutable(
+        String... platformRelativeFilePath) {
         for (String platformRelativePath : platformRelativeFilePath) {
             makeExec.add(platformRelativePath);
         }

@@ -16,12 +16,17 @@
  */
 package org.apache.karaf.tooling.exam.container.internal;
 
-public interface Constants {
+public class Constants {
 
-    static final String FEATURES_CFG_LOCATION = "/etc/org.apache.karaf.features.cfg";
+    public static final String FEATURES_CFG_LOCATION = "/etc/org.apache.karaf.features.cfg";
 
-    static final int SYSTEM_BUNDLE = 0;
+    public static final int SYSTEM_BUNDLE = 0;
 
-    static final int DEFAULT_START_LEVEL = 5;
+    public static final int DEFAULT_START_LEVEL = 5;
 
+    /**
+     * Hidden utility class constructor.
+     */
+    private Constants() {
+    }
 }

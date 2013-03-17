@@ -38,10 +38,10 @@ public class KarafTestContainerFactory implements TestContainerFactory {
     private static final int DEFAULTPORT = 21412;
     private static final boolean IS_WINDOWS_OS = System.getProperty("os.name").toLowerCase().contains("windows");
 
-    private RMIRegistry m_rmiRegistry;
+    private RMIRegistry rmiRegistry;
 
     public KarafTestContainerFactory() {
-        m_rmiRegistry = new RMIRegistry(DEFAULTPORT, DEFAULTPORT + 1, DEFAULTPORT + 99).selectGracefully();
+        rmiRegistry = new RMIRegistry(DEFAULTPORT, DEFAULTPORT + 1, DEFAULTPORT + 99).selectGracefully();
     }
 
     /**
@@ -55,14 +55,15 @@ public class KarafTestContainerFactory implements TestContainerFactory {
         for (KarafDistributionKitConfigurationOption kitOption : kitOptions) {
             if (kitOption.getPlatform().equals(Platform.WINDOWS)) {
                 if (IS_WINDOWS_OS) {
-                    containers.add(new KarafTestContainer(system, m_rmiRegistry, kitOption, new WindowsRunner(kitOption
+                    containers.add(new KarafTestContainer(system, rmiRegistry, kitOption, new WindowsRunner(kitOption
                             .getMakeExec(), kitOption.getExec())));
                     continue;
                 }
                 LOGGER.info("Ignore windows settings on non windows platforms");
-            } else {
+            } 
+            else {
                 if (!IS_WINDOWS_OS) {
-                    containers.add(new KarafTestContainer(system, m_rmiRegistry, kitOption, new NixRunner(kitOption
+                    containers.add(new KarafTestContainer(system, rmiRegistry, kitOption, new NixRunner(kitOption
                             .getMakeExec(), kitOption.getExec())));
                     continue;
                 }
@@ -72,7 +73,7 @@ public class KarafTestContainerFactory implements TestContainerFactory {
         KarafDistributionBaseConfigurationOption[] options =
                 system.getOptions(KarafDistributionConfigurationOption.class);
         for (KarafDistributionBaseConfigurationOption testContainer : options) {
-            containers.add(new KarafTestContainer(system, m_rmiRegistry, testContainer, new KarafJavaRunner()));
+            containers.add(new KarafTestContainer(system, rmiRegistry, testContainer, new KarafJavaRunner()));
         }
         return containers.toArray(new TestContainer[containers.size()]);
     }

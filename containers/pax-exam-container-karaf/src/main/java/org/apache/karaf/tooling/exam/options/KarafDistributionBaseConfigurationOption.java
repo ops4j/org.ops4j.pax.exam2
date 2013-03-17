@@ -72,24 +72,24 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     /**
      * Sets the URL of the framework as a String (for example a file).
      */
-    public KarafDistributionBaseConfigurationOption frameworkUrl(String frameworkURL) {
-        this.frameworkURL = frameworkURL;
+    public KarafDistributionBaseConfigurationOption frameworkUrl(String _frameworkURL) {
+        this.frameworkURL = _frameworkURL;
         return this;
     }
 
     /**
      * Sets the URL of the frameworks as a maven reference.
      */
-    public KarafDistributionBaseConfigurationOption frameworkUrl(MavenUrlReference frameworkURL) {
-        frameworkURLReference = frameworkURL;
+    public KarafDistributionBaseConfigurationOption frameworkUrl(MavenUrlReference _frameworkURL) {
+        frameworkURLReference = _frameworkURL;
         return this;
     }
 
     /**
      * Set's the name of the framework. This is only used for logging.
      */
-    public KarafDistributionBaseConfigurationOption name(String name) {
-        this.name = name;
+    public KarafDistributionBaseConfigurationOption name(String _name) {
+        this.name = _name;
         return this;
     }
 
@@ -97,8 +97,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
      * The version of karaf used by the framework. That one is required since there is the high possibility that
      * configuration is different between various karaf versions.
      */
-    public KarafDistributionBaseConfigurationOption karafVersion(String karafVersion) {
-        this.karafVersion = karafVersion;
+    public KarafDistributionBaseConfigurationOption karafVersion(String _karafVersion) {
+        this.karafVersion = _karafVersion;
         return this;
     }
 
@@ -106,8 +106,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
      * Define the unpack directory for the karaf distribution. In this directory a UUID named directory will be created
      * for each environment.
      */
-    public KarafDistributionBaseConfigurationOption unpackDirectory(File unpackDirectory) {
-        this.unpackDirectory = unpackDirectory;
+    public KarafDistributionBaseConfigurationOption unpackDirectory(File _unpackDirectory) {
+        this.unpackDirectory = _unpackDirectory;
         return this;
     }
 
@@ -117,8 +117,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
      * option to false. PaxExam Karaf will then try to add those deployment urls directly to a features xml instead of
      * copying those files to the deploy folder.
      */
-    public KarafDistributionBaseConfigurationOption useDeployFolder(boolean useDeployFolder) {
-        this.useDeployFolder = useDeployFolder;
+    public KarafDistributionBaseConfigurationOption useDeployFolder(boolean _useDeployFolder) {
+        this.useDeployFolder = _useDeployFolder;
         return this;
     }
 

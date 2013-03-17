@@ -32,7 +32,8 @@ public class KarafPropertiesFile {
     public KarafPropertiesFile(File karafHome, String location) {
         if (location.startsWith("/")) {
             propertyFile = new File(karafHome + location);
-        } else {
+        } 
+        else {
             propertyFile = new File(karafHome + "/" + location);
         }
         properties = new Properties();
@@ -68,7 +69,8 @@ public class KarafPropertiesFile {
     public void replace(File source) {
         try {
             FileUtils.copyFile(source, propertyFile);
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             throw new IllegalStateException("It is required to replace propertyFile");
         }
     }
