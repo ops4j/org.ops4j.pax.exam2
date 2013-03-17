@@ -59,6 +59,7 @@
                 <module>containers/pax-exam-container-candi</module>
                 <module>containers/pax-exam-container-tomcat</module>
                 <module>containers/pax-exam-container-tomee</module>
+                <module>containers/pax-exam-container-karaf</module>
 
                 <module>maven/exam-maven-plugin</module>
 
