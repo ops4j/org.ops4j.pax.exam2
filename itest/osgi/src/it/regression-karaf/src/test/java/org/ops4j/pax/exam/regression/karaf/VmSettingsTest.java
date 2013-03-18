@@ -17,35 +17,34 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.junit.Assert.assertEquals;
-import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
+import static junit.framework.Assert.assertTrue;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.CoreOptions.maven;
 
-import javax.inject.Inject;
-
-import org.apache.karaf.system.FrameworkType;
-import org.apache.karaf.system.SystemService;
-import org.apache.karaf.tooling.exam.options.configs.CustomProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.options.extra.VMOption;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
-@RunWith(PaxExam.class)
-public class EquinoxFrameworkTest {
-
-    @Inject
-    SystemService systemService;
+@RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
+public class VmSettingsTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[] { regressionDefaults(),
-            editConfigurationFilePut(CustomProperties.KARAF_FRAMEWORK, "equinox") };
+        return new Option[]{
+                RegressionConfiguration.regressionDefaults(),
+                    new VMOption("-Xmx1024m"), 
+                    new VMOption("-XX:MaxPermSize=56m") };
     }
 
     @Test
     public void test() throws Exception {
-        assertEquals(FrameworkType.equinox, systemService.getFramework());
+        assertTrue(true);
     }
+
 }

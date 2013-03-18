@@ -17,35 +17,41 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.junit.Assert.assertEquals;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
-import org.apache.karaf.system.FrameworkType;
-import org.apache.karaf.system.SystemService;
-import org.apache.karaf.tooling.exam.options.configs.CustomProperties;
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.osgi.framework.BundleContext;
 
-@RunWith(PaxExam.class)
-public class EquinoxFrameworkTest {
-
+@RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
+public class FrameworkWithShellOffTest {
     @Inject
-    SystemService systemService;
+    BundleContext bc;
 
     @Configuration
     public Option[] config() {
-        return new Option[] { regressionDefaults(),
-            editConfigurationFilePut(CustomProperties.KARAF_FRAMEWORK, "equinox") };
+        return new Option[]{
+            regressionDefaults(),
+            configureConsole().ignoreLocalConsole().ignoreRemoteShell() };
     }
 
     @Test
     public void test() throws Exception {
-        assertEquals(FrameworkType.equinox, systemService.getFramework());
+        Assert.assertEquals("false", bc.getProperty("karaf.startLocalConsole"));
+        Assert.assertEquals("false", bc.getProperty("karaf.startRemoteShell"));
     }
+
 }

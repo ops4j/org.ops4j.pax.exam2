@@ -17,35 +17,44 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.CoreOptions.bootClasspathLibrary;
+import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
-import javax.inject.Inject;
+import java.io.File;
 
-import org.apache.karaf.system.FrameworkType;
-import org.apache.karaf.system.SystemService;
-import org.apache.karaf.tooling.exam.options.configs.CustomProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
-@RunWith(PaxExam.class)
-public class EquinoxFrameworkTest {
-
-    @Inject
-    SystemService systemService;
+@RunWith(JUnit4TestRunner.class)
+@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
+public class BootClasspathLibraryOptionTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[] { regressionDefaults(),
-            editConfigurationFilePut(CustomProperties.KARAF_FRAMEWORK, "equinox") };
+        return new Option[]{
+            regressionDefaults(),
+            bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527") };
     }
 
     @Test
     public void test() throws Exception {
-        assertEquals(FrameworkType.equinox, systemService.getFramework());
+        File file = new File("lib");
+        File[] files = file.listFiles();
+        int foundJarFiles = 0;
+        for (File libFile : files) {
+            if (libFile.getName().endsWith("jar")) {
+                foundJarFiles++;
+            }
+        }
+        assertEquals(6, foundJarFiles);
     }
+
 }
