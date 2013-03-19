@@ -17,9 +17,7 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static junit.framework.Assert.assertEquals;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 
 import java.io.FileInputStream;
@@ -27,14 +25,11 @@ import java.util.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
-@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
+@RunWith(PaxExam.class)
 public class SystemPackageOptionTest {
 
     @Configuration

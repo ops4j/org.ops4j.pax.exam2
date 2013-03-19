@@ -17,11 +17,9 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFileExtend;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 import java.io.File;
@@ -31,16 +29,13 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.ExamReactorStrategy;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 
-@RunWith(JUnit4TestRunner.class)
-@ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
+@RunWith(PaxExam.class)
 public class DuplicatedPropertyEntryFromFileTest {
 
     @Inject
