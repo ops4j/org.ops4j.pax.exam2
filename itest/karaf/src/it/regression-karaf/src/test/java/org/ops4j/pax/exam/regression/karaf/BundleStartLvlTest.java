@@ -17,14 +17,10 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.junit.Assert.assertTrue;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.useOwnExamBundlesStartLevel;
-import static org.ops4j.pax.exam.CoreOptions.maven;
-
-import java.io.File;
+import static org.junit.Assert.assertTrue;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,12 +38,10 @@ public class BundleStartLvlTest {
     @Configuration
     public Option[] config() {
         return new Option[]{
-            karafDistributionConfiguration().frameworkUrl(
-                maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                    .version("3.0.0.RC1")).unpackDirectory(new File("target/paxexam/startLvl/")),
-                    configureConsole().ignoreLocalConsole(),
-                    keepRuntimeFolder(),
-            useOwnExamBundlesStartLevel(4) };
+            regressionDefaults("target/paxexam/startLvl/"),
+            keepRuntimeFolder(),
+            useOwnExamBundlesStartLevel(4)
+        };
     }
 
     @Test

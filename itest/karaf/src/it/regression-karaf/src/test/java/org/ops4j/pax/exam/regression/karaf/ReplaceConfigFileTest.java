@@ -17,20 +17,17 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.replaceConfigurationFile;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;
 
 import javax.inject.Inject;
 
 import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
-import org.apache.karaf.tooling.exam.options.configs.CustomProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -48,33 +45,27 @@ public class ReplaceConfigFileTest {
 
     @Configuration
     public Option[] config() {
-        Option[] base =
-            new Option[]{
-                karafDistributionConfiguration().frameworkUrl(
-                    maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                        .version("3.0.0.RC1")).unpackDirectory(new File("target/paxexam/unpack/")),
-                KarafDistributionOption.editConfigurationFilePut(CustomProperties.KARAF_FRAMEWORK, "equinox"),
-                KarafDistributionOption.keepRuntimeFolder(),
-                configureConsole().ignoreLocalConsole()};
-        base =
-            combine(
-                base,
-                replaceConfigurationFile("etc/replaced.cfg", new File(
-                    "src/test/resources/replaced.cfg")));
-        return base;
+        return options(
+            regressionDefaults("target/paxexam/unpack/"),
+            keepRuntimeFolder(),
+            replaceConfigurationFile("etc/replaced.cfg",
+                new File("src/test/resources/replaced.cfg")));
     }
 
     @Test
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void testConfiguration_shouldHaveWrittenTheLaterOne() throws Exception {
-        ServiceReference[] allServiceReferences = ctx.getAllServiceReferences(ConfigurationAdmin.class.getName(), null);
+        ServiceReference[] allServiceReferences = ctx.getAllServiceReferences(
+            ConfigurationAdmin.class.getName(), null);
         for (ServiceReference serviceReference : allServiceReferences) {
             ConfigurationAdmin service = (ConfigurationAdmin) ctx.getService(serviceReference);
             try {
-                org.osgi.service.cm.Configuration configuration = service.getConfiguration("replaced");
+                org.osgi.service.cm.Configuration configuration = service
+                    .getConfiguration("replaced");
                 assertEquals("myvalue1", configuration.getProperties().get("mykey"));
                 return;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 // continue
             }
         }

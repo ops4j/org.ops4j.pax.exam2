@@ -17,10 +17,8 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.keepRuntimeFolder;
-import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;
 
@@ -39,11 +37,8 @@ public class KeepFolderTest {
     @Configuration
     public Option[] config() {
         return new Option[]{
-            karafDistributionConfiguration().frameworkUrl(
-                maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                    .version("3.0.0.RC1")).unpackDirectory(new File("target/paxexam/unpack/")),
-                    configureConsole().ignoreLocalConsole(),
-                    keepRuntimeFolder() };
+            regressionDefaults("target/paxexam/unpack/"),
+            keepRuntimeFolder() };
     }
 
     @Test

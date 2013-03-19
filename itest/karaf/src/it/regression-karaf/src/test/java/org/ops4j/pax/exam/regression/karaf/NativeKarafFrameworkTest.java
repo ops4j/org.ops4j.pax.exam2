@@ -19,7 +19,7 @@ package org.ops4j.pax.exam.regression.karaf;
 
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.mvnKarafDist;
 
 import org.apache.karaf.tooling.exam.options.KarafDistributionKitConfigurationOption;
 import org.apache.karaf.tooling.exam.options.KarafDistributionKitConfigurationOption.Platform;
@@ -35,11 +35,9 @@ public class NativeKarafFrameworkTest {
     @Configuration
     public Option[] config() {
         return new Option[]{
-            new KarafDistributionKitConfigurationOption(maven().groupId("org.apache.karaf")
-                .artifactId("apache-karaf").type("zip").version("3.0.0.RC1"), Platform.WINDOWS).executable(
+            new KarafDistributionKitConfigurationOption(mvnKarafDist(), Platform.WINDOWS).executable(
                 "bin\\karaf.bat").filesToMakeExecutable("bin\\instance.bat"),
-            new KarafDistributionKitConfigurationOption(maven().groupId("org.apache.karaf")
-                .artifactId("apache-karaf").type("zip").version("3.0.0.RC1"), Platform.NIX).executable("bin/karaf")
+            new KarafDistributionKitConfigurationOption(mvnKarafDist(), Platform.NIX).executable("bin/karaf")
                 .filesToMakeExecutable("bin/instance"),
                 configureConsole().ignoreLocalConsole()                
                 };

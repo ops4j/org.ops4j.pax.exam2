@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
 import java.io.BufferedReader;
@@ -111,10 +112,8 @@ public class KarafWithBundleTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[]{ karafDistributionConfiguration().frameworkUrl(
-            maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                .version("3.0.0.RC1")).useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
-            configureConsole().ignoreLocalConsole(),    
+        return new Option[]{ 
+            regressionDefaults("target/paxexam/unpack2/"),
             keepRuntimeFolder(),
             scanFeatures(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
                 .classifier("features").version("3.0.0.RC1"), "http").start(),

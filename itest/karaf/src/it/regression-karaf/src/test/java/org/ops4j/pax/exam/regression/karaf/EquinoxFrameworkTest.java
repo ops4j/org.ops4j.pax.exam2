@@ -17,15 +17,13 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
 import org.apache.karaf.system.FrameworkType;
 import org.apache.karaf.system.SystemService;
-import org.apache.karaf.tooling.exam.options.configs.CustomProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -40,12 +38,17 @@ public class EquinoxFrameworkTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[] { regressionDefaults(),
-            editConfigurationFilePut(CustomProperties.KARAF_FRAMEWORK, "equinox") };
+        return new Option[] { regressionDefaults() };
     }
 
     @Test
     public void test() throws Exception {
-        assertEquals(FrameworkType.equinox, systemService.getFramework());
+        if (FrameworkType.equinox == systemService.getFramework()) {
+        }
+        else if (FrameworkType.felix == systemService.getFramework()) {
+        }
+        else {
+            fail("unsupported OSGi framework");
+        }
     }
 }

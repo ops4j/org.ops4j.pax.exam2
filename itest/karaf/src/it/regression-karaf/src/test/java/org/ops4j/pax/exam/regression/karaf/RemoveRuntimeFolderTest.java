@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.regression.karaf;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;
 
@@ -37,22 +38,15 @@ public class RemoveRuntimeFolderTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[]{
-            karafDistributionConfiguration().frameworkUrl(
-                maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                    .version("3.0.0.RC1"))
-                    // unpackDirectory seems to be necessary to make sure the working directory is set like we use below
-                    .unpackDirectory(new File("target/paxexam/unpack/")
-                    ),
-                    configureConsole().ignoreLocalConsole()
-                    };
+        return new Option[] { regressionDefaults("target/paxexam/unpack/"), };
     }
 
     @Test
     public void test() throws Exception {
         runtimeFolder = new File(".").getAbsoluteFile().getParentFile();
         Assert.assertTrue("Runtime folder should exist while test runs", runtimeFolder.exists());
-        System.out.println("Please check manually that the folder " + runtimeFolder.getAbsolutePath() + " is deleted after this test");
+        System.out.println("Please check manually that the folder "
+            + runtimeFolder.getAbsolutePath() + " is deleted after this test");
     }
 
 }

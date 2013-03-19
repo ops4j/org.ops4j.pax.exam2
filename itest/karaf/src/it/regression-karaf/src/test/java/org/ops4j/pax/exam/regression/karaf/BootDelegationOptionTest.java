@@ -37,7 +37,8 @@ public class BootDelegationOptionTest {
     public Option[] config() {
         return new Option[]{
             regressionDefaults(),
-                    bootDelegationPackage("com.sun.*") };
+            bootDelegationPackage("com.sun.*")
+        };
     }
 
     @Test

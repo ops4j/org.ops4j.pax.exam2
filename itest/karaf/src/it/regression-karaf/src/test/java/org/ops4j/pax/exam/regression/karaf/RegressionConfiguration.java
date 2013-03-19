@@ -18,11 +18,18 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.when;
 
+import java.io.File;
+
+import org.apache.karaf.tooling.exam.options.configs.CustomProperties;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 
 /**
  * Default configuration for native container regression tests, overriding the default test system
@@ -40,11 +47,22 @@ import org.ops4j.pax.exam.Option;
 public class RegressionConfiguration {
 
     public static Option regressionDefaults() {
+        return regressionDefaults(null);        
+    }
+
+    public static Option regressionDefaults(String unpackDir) {
         return composite(
 
-            karafDistributionConfiguration().frameworkUrl(
-                maven("org.apache.karaf", "apache-karaf", "3.0.0.RC1").type("zip")),
-            configureConsole().ignoreLocalConsole());        
+            karafDistributionConfiguration().frameworkUrl(mvnKarafDist()).
+                unpackDirectory(unpackDir == null ? null : new File(unpackDir)).useDeployFolder(false),                
+            
+                configureConsole().ignoreLocalConsole(),
+            
+            when(isEquinox()).useOptions(                
+                editConfigurationFilePut(CustomProperties.KARAF_FRAMEWORK, "equinox"),
+                systemProperty("pax.exam.framework").value(System.getProperty("pax.exam.framework")),
+                systemProperty("osgi.console").value("6666"),
+                systemProperty("osgi.console.enable.builtin").value("true")));        
     }
 
     public static boolean isEquinox() {
@@ -54,5 +72,9 @@ public class RegressionConfiguration {
     public static boolean isFelix() {
         return "felix".equals(System.getProperty("pax.exam.framework"));
     }
-
+    
+    public static MavenArtifactUrlReference mvnKarafDist() {
+        return maven().groupId("org.apache.karaf")
+            .artifactId("apache-karaf").type("zip").version("3.0.0.RC1");
+    }
 }

@@ -20,7 +20,7 @@ package org.ops4j.pax.exam.regression.karaf;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 
@@ -42,11 +42,8 @@ public class UseFeatureInsteadOfDeployFolderTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[]{ karafDistributionConfiguration().frameworkUrl(
-            maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip").version("3.0.0.RC1"))
-            .useDeployFolder(false),
-            configureConsole().ignoreLocalConsole(),
-            provision(mavenBundle("org.slf4j", "slf4j-api", "1.6.1")) };
+        return options(RegressionConfiguration.regressionDefaults(),
+            mavenBundle("org.slf4j", "slf4j-api", "1.6.1"));
     }
 
     @Test
@@ -58,5 +55,4 @@ public class UseFeatureInsteadOfDeployFolderTest {
         }
         fail("slf4j-api is not provisioned");
     }
-
 }

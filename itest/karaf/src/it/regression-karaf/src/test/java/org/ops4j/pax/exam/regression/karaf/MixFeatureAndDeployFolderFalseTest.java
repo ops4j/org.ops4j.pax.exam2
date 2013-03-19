@@ -54,8 +54,8 @@ public class MixFeatureAndDeployFolderFalseTest {
             karafDistributionConfiguration()
                 .frameworkUrl(
                     maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                        .version("3.0.0.RC1"))
-                .useDeployFolder(false),
+                        .version("3.0.0.RC1")),
+                //.useDeployFolder(false),
                 configureConsole().ignoreLocalConsole(),
                 editConfigurationFilePut(FeaturesCfg.BOOT,
                 "config,standard,region,package,ssh"),
