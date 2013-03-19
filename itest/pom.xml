@@ -41,6 +41,16 @@
         </profile>
 
         <profile>
+            <id>karaf</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>karaf</module>
+            </modules>
+        </profile>
+
+        <profile>
             <id>osgi</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
