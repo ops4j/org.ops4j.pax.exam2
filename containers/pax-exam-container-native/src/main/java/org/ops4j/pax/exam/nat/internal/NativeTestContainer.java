@@ -159,7 +159,7 @@ public class NativeTestContainer implements TestContainer {
                             }
                             catch (InterruptedException e) {
                                 throw new TestContainerException(
-                                    "Interupted while waiting at the barrier", e);
+                                    "Interrupted while waiting at the barrier", e);
                             }
                         }
                     }
@@ -387,13 +387,32 @@ public class NativeTestContainer implements TestContainer {
         verifyThatBundlesAreResolved(bundles);
     }
 
+    private int getCurrentStartLevel(BundleContext context) {
+        // We depends on OSGi 4.2, so this method is not allowed
+        //        Bundle systemBundle = context.getBundle(0);
+        //        FrameworkStartLevel startLevel = (FrameworkStartLevel) systemBundle.adapt(FrameworkStartLevel.class);
+        //        return startLevel.getStartLevel();
+
+        StartLevel sl = ServiceLookup.getService(context, StartLevel.class);
+        if (sl == null) {
+            // The service lookup failed, either the framework is not yet started, or something terrible happened
+            return -1;
+        } else {
+            return sl.getStartLevel();
+        }
+    }
+
     private void setFrameworkStartLevel(BundleContext context, final StartLevel sl) {
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
         final int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE
             : startLevelOption.getStartLevel();
-        LOG.debug("Jump to startlevel: " + startLevel);
+
+
+        LOG.debug("Jump to startlevel: " + startLevel + " / current start level " + getCurrentStartLevel(context));
         final CountDownLatch latch = new CountDownLatch(1);
+
+
         context.addFrameworkListener(new FrameworkListener() {
 
             @Override
@@ -407,12 +426,28 @@ public class NativeTestContainer implements TestContainer {
         });
         sl.setStartLevel(startLevel);
 
+        // Check the current start level before starting to wait.
+        if (getCurrentStartLevel(context) == startLevel) {
+            LOG.debug("Requested start level reached");
+            return;
+        } else {
+            LOG.debug("startlevel: " + startLevel + "requested / current start level " + getCurrentStartLevel
+                    (context));
+        }
+
         try {
             long timeout = system.getTimeout().getValue();
             if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
-                String msg = String.format("start level %d has not been reached within %d ms",
-                    startLevel, timeout);
-                throw new TestContainerException(msg);
+                // Before throwing an exception, do a last check
+                if (startLevel != sl.getStartLevel()) {
+                    String msg = String.format("start level %d has not been reached within %d ms",
+                            startLevel, timeout);
+                    throw new TestContainerException(msg);
+                } else {
+                    // We reached the requested start level.
+                    LOG.debug("Requested start level reached");
+                }
+
             }
         }
         catch (InterruptedException e) {
