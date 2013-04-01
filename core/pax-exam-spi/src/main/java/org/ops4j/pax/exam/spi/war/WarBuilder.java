@@ -17,6 +17,7 @@
 package org.ops4j.pax.exam.spi.war;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,6 +94,15 @@ public class WarBuilder {
             for (String library : option.getLibraries()) {
 
                 File file = toLocalFile(library);
+                
+                /*
+                 * ScatteredArchive copies all directory class path items to WEB-INF/classes,
+                 * so that separate CDI bean deployment archives get merged into one. To avoid
+                 * that, we convert each directory class path to a JAR file.
+                 */
+                if (file.isDirectory()) {
+                    file = toJar(file);
+                }
                 LOG.debug("including library {}", file);
                 sar.addClassPath(file);
             }
@@ -102,6 +113,50 @@ public class WarBuilder {
         catch (IOException exc) {
             throw new TestContainerException(exc);
         }
+    }
+
+    /**
+     * Creates a JAR file from the contents of the given root directory. The file is located in
+     * a temporary directory and is named <code>$&#123;artifactId&#125;-$&#123;version&#125;.jar</code> according to
+     * Maven conventions, if there is a {@code pom.properties} resource located anywhere under
+     * {@code META-INF/maven} defining the two propeties {@code artifactId} and {@code version}.
+     * <p>
+     * Otherwise the file is named <code>$&#123;uuid&#125;.jar</code>, where {@code uuid} represents a random
+     * {@link UUID}.
+     * 
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    private File toJar(File root) throws IOException {
+        JarCreator jarCreator = new JarCreator(root);
+        String artifactName = findArtifactName(root);
+        File jarFile = new File(tempDir, artifactName);
+        jarCreator.jar(jarFile);
+        return jarFile;
+    }
+
+    /**
+     * @param root
+     * @return
+     */
+    private String findArtifactName(File root) {
+        File pomProperties = FileFinder.findFile(root, "pom.properties");
+        if (pomProperties != null) {
+            Properties props = new Properties();
+            try {
+                InputStream is = new FileInputStream(pomProperties);
+                props.load(is);
+                String artifactId = props.getProperty("artifactId");
+                String version = props.getProperty("version");
+                is.close();
+                return String.format("%s-%s.jar", artifactId, version);
+            }
+            catch (IOException exc) {
+                // ignore
+            }
+        }
+        return UUID.randomUUID().toString() + ".jar";
     }
 
     private File toLocalFile(String anyUri) throws IOException {

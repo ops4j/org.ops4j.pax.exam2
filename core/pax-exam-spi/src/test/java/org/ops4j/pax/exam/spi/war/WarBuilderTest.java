@@ -12,14 +12,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.junit.After;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ops4j.io.StreamUtils;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.ExamReactor;
@@ -28,6 +31,18 @@ import org.ops4j.pax.exam.spi.reactors.PerSuite;
 public class WarBuilderTest {
 
     private ZipFile war;
+    
+    @BeforeClass
+    public static void setUp() throws IOException {
+        File pomProperties = new File("target/classes/META-INF/maven/org.ops4j.pax.exam/pax-exam-spi/pom.properties");
+        if (!pomProperties.exists()) {
+            pomProperties.getParentFile().mkdirs();
+            PrintWriter writer = new PrintWriter(new FileOutputStream(pomProperties));
+            writer.println("artifactId = pax-exam-spi");
+            writer.println("version = " + Info.getPaxExamVersion());
+            writer.close();
+        }
+    }
 
     @After
     public void tearDown() {
@@ -44,10 +59,8 @@ public class WarBuilderTest {
     @Test
     public void buildWar() throws MalformedURLException, IOException {
         war = localCopy(warProbe().library("target/classes"));
-        war.getEntry("WEB-INF/beans.xml");
-        war.getEntry("WEB-INF/classes/org/ops4j/pax/exam/spi/ExamReactor.class");
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
-        assertThat(war.getEntry("WEB-INF/classes/org/ops4j/pax/exam/spi/ExamReactor.class"),
+        assertThat(war.getEntry("WEB-INF/lib/pax-exam-spi-" + Info.getPaxExamVersion() + ".jar"),
             is(notNullValue()));
     }
 

@@ -100,8 +100,12 @@ public class WarProbeOption implements Option {
 
     /**
      * Adds the library from the given path to the WAR. If the path is a directory, it is assumed to
-     * be a class folder, and its contents are copied recursively to {@code WEB-INF/classes}.
-     * Otherwise, the path is assumed to be a JAR, and its contents are copied to
+     * be a class folder, and its contents will be archived in a JAR, and the JAR will be copied to
+     * {@code WEB-INF/lib}. The JAR name follows Maven conventions and is determined from properties
+     * defined in any file named {@code pom.properties}, located in any subdirectory of
+     * {@code META-INF/maven}, if available (otherwise, a random JAR name is generated).
+     * <p>
+     * If the path is not a directory, it is assumed to be a JAR, and its contents will be copied to
      * {@code WEB-INF/lib}.
      * 
      * @param libraryPath
