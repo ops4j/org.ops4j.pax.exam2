@@ -22,9 +22,12 @@ import java.io.InputStream;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
 
+import org.ops4j.pax.exam.ConfigurationManager;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,11 +67,21 @@ public class CandiTestContainer implements TestContainer {
     }
 
     public TestContainer start() {
+        validateConfiguration();
         LOG.debug("starting CanDI container");
         container = new ResinBeanContainer();
         container.start();
         request = container.beginRequest();
         return this;
+    }
+    
+    private void validateConfiguration() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
+        if (! Constants.EXAM_SYSTEM_CDI.equals(systemType)) {
+            String msg = "CandiTestContainer requires pax.exam.system = cdi";
+            throw new TestContainerException(msg);
+        }
     }
 
     public TestContainer stop() {
