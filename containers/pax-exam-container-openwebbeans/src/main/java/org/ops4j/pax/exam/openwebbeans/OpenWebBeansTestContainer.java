@@ -24,6 +24,8 @@ import javax.enterprise.inject.spi.AfterDeploymentValidation;
 
 import org.apache.webbeans.cditest.CdiTestContainer;
 import org.apache.webbeans.cditest.CdiTestContainerLoader;
+import org.ops4j.pax.exam.ConfigurationManager;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
@@ -62,6 +64,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
     }
 
     public TestContainer start() {
+        validateConfiguration();
         LOG.debug("starting OpenWebBeans container");
         container = CdiTestContainerLoader.getCdiContainer();
         try {
@@ -74,6 +77,17 @@ public class OpenWebBeansTestContainer implements TestContainer {
         }
         return this;
     }
+    
+    private void validateConfiguration() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
+        if (! Constants.EXAM_SYSTEM_CDI.equals(systemType)) {
+            String msg = "OpenWebBeansTestContainer requires pax.exam.system = cdi";
+            throw new TestContainerException(msg);
+        }
+    }
+
+    
 
     public TestContainer stop() {
         if (container != null && isValid) {

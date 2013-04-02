@@ -23,6 +23,7 @@
         <profile>
             <id>matrix</id>
             <modules>
+                <module>src/it/regression-cdi-invalid</module>
                 <module>src/it/regression-deltaspike</module>
                 <module>src/it/regression-sample1</module>
                 <module>src/it/regression-sample3-testng</module>

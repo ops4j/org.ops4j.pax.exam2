@@ -24,9 +24,12 @@ import javax.enterprise.inject.spi.AfterDeploymentValidation;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
+import org.ops4j.pax.exam.ConfigurationManager;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +66,21 @@ public class WeldTestContainer implements TestContainer {
     }
 
     public TestContainer start() {
+        validateConfiguration();
+        
         LOG.debug("starting Weld container");
         weld = new Weld();
         weldContainer = weld.initialize();
         return this;
+    }
+
+    private void validateConfiguration() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
+        if (! Constants.EXAM_SYSTEM_CDI.equals(systemType)) {
+            String msg = "WeldTestContainer requires pax.exam.system = cdi";
+            throw new TestContainerException(msg);
+        }
     }
 
     public TestContainer stop() {
