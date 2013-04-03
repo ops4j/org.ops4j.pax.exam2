@@ -30,8 +30,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.glassfish.embeddable.archive.ScatteredArchive;
-import org.glassfish.embeddable.archive.ScatteredArchive.Type;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.io.ZipExploder;
 import org.ops4j.pax.exam.TestContainerException;
@@ -90,7 +88,8 @@ public class WarBuilder {
         processClassPath();
         try {
             File webResourceDir = getWebResourceDir();
-            ScatteredArchive sar = new ScatteredArchive(option.getName(), Type.WAR, webResourceDir);
+            File probeWar = new File(tempDir, option.getName() + ".war");
+            ZipBuilder builder = new ZipBuilder(probeWar);
             for (String library : option.getLibraries()) {
 
                 File file = toLocalFile(library);
@@ -104,9 +103,11 @@ public class WarBuilder {
                     file = toJar(file);
                 }
                 LOG.debug("including library {}", file);
-                sar.addClassPath(file);
+                builder.addFile(file, "WEB-INF/lib/" + file.getName());
             }
-            URI warUri = sar.toURI();
+            builder.addDirectory(webResourceDir, "");
+            builder.close();
+            URI warUri = probeWar.toURI();
             LOG.info("WAR probe = {}", warUri);
             return warUri;
         }
@@ -129,11 +130,12 @@ public class WarBuilder {
      * @throws IOException
      */
     private File toJar(File root) throws IOException {
-        JarCreator jarCreator = new JarCreator(root);
         String artifactName = findArtifactName(root);
-        File jarFile = new File(tempDir, artifactName);
-        jarCreator.jar(jarFile);
-        return jarFile;
+        File jar = new File(tempDir, artifactName);
+        ZipBuilder builder = new ZipBuilder(jar);
+        builder.addDirectory(root, "");
+        builder.close();
+        return jar;
     }
 
     /**
