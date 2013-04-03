@@ -37,14 +37,19 @@ public class FileFinderTest {
     public void findFileInTree() {
         File rootDir = new File("src/main/java");
         File file = FileFinder.findFile(rootDir, "FileFinder.java");
-        assertThat(file.getPath(), is("src/main/java/org/ops4j/pax/exam/spi/war/FileFinder.java"));
+        assertFilePath(file, "src/main/java/org/ops4j/pax/exam/spi/war/FileFinder.java");
+    }
+    
+    private void assertFilePath(File file, String path) {
+    	String filePath = file.getPath().replace(File.separatorChar, '/');
+    	assertThat(filePath, is(path));
     }
 
     @Test
     public void findFileInRoot() {
         File rootDir = new File("src/main/java/org/ops4j/pax/exam/spi/war");
         File file = FileFinder.findFile(rootDir, "FileFinder.java");
-        assertThat(file.getPath(), is("src/main/java/org/ops4j/pax/exam/spi/war/FileFinder.java"));
+        assertFilePath(file, "src/main/java/org/ops4j/pax/exam/spi/war/FileFinder.java");
     }
 
     @Test
@@ -54,24 +59,24 @@ public class FileFinderTest {
             
             @Override
             public boolean accept(File dir, String name) {
-                return name.startsWith("Jar");
+                return name.startsWith("Zip");
             }
         };
         File file = FileFinder.findFile(rootDir, filter);
-        assertThat(file.getPath(), is("src/main/java/org/ops4j/pax/exam/spi/war/JarCreator.java"));
+        assertFilePath(file, "src/main/java/org/ops4j/pax/exam/spi/war/ZipBuilder.java");
     }
 
     @Test
     public void findDirectory() {
         File rootDir = new File("src");
         File file = FileFinder.findFile(rootDir, "java");
-        assertThat(file.getPath(), is("src/main/java"));        
+        assertFilePath(file, "src/main/java");        
     }
 
     @Test
     public void findSubdirectory() {
         File rootDir = new File("src/test");
         File file = FileFinder.findFile(rootDir, "java");
-        assertThat(file.getPath(), is("src/test/java"));        
+        assertFilePath(file, "src/test/java");        
     }
 }

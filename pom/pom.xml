@@ -329,11 +329,6 @@
 
             <dependency>
                 <groupId>org.glassfish.main.common</groupId>
-                <artifactId>scattered-archive-api</artifactId>
-                <version>${dependency.glassfish.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.main.common</groupId>
                 <artifactId>simple-glassfish-api</artifactId>
                 <version>${dependency.glassfish.version}</version>
             </dependency>

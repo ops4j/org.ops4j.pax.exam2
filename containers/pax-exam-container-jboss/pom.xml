@@ -82,11 +82,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.glassfish.main.common</groupId>
-            <artifactId>scattered-archive-api</artifactId>
-        </dependency>
-
         <!-- Required when using mvn provisioning options -->
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
