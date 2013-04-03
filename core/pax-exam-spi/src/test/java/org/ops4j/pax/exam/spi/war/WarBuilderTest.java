@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -113,6 +114,16 @@ public class WarBuilderTest {
         war = localCopy(warProbe().exclude());
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
         assertThat(war.getEntry("WEB-INF/lib/tinybundles-1.0.0.jar"), is(notNullValue()));
+    }
+
+    @Test
+    public void buildWarAutoClassPathWindows() throws MalformedURLException, IOException {
+        war = localCopy(warProbe().exclude());
+        Enumeration<? extends ZipEntry> e = war.entries();
+        while (e.hasMoreElements()) {
+            ZipEntry entry = e.nextElement();
+            assertThat(entry.getName().contains("\\"), is(false));
+        }
     }
 
     @Test
