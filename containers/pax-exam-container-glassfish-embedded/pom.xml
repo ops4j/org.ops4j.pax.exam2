@@ -108,12 +108,13 @@
         <dependency>
             <groupId>org.glassfish.main.extras</groupId>
             <artifactId>glassfish-embedded-all</artifactId>
-            <version>${dependency.glassfish.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -123,5 +124,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

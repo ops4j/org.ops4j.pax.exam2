@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam.glassfish.embedded;
 
-import java.io.File;
 import java.net.URI;
 
 import org.glassfish.embeddable.Deployer;
@@ -39,9 +38,6 @@ public class EmbeddedGlassFishLaunchTest {
             "src/test/resources/glassfish-config/logging.properties");
 
         GlassFishProperties gfProps = new GlassFishProperties();
-        File domainXml = new File("src/test/resources/glassfish-config/domain.xml");
-        gfProps.setConfigFileURI(domainXml.getAbsoluteFile().toURI().toString());
-
         GlassFish gf = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
         gf.start();
 

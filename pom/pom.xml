@@ -27,8 +27,9 @@
         <dependency.osgicomp.version>4.2.0</dependency.osgicomp.version>
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
         <dependency.asm.version>3.0</dependency.asm.version>
-        <dependency.guava.version>12.0</dependency.guava.version>
+        <dependency.guava.version>14.0</dependency.guava.version>
         <dependency.glassfish.version>3.1.2.2</dependency.glassfish.version>
+        <dependency.glassfish4.version>4.0-b84</dependency.glassfish4.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.3</dependency.maven.version>
         <dependency.openwebbeans.version>1.1.7</dependency.openwebbeans.version>
@@ -269,11 +270,6 @@
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>${dependency.asm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${dependency.guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -691,6 +687,56 @@
             </dependencies>
         </profile>
         <profile>
+            <id>glassfish3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                        <version>12.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.main.common</groupId>
+                        <artifactId>simple-glassfish-api</artifactId>
+                        <version>${dependency.glassfish.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.main.extras</groupId>
+                        <artifactId>glassfish-embedded-all</artifactId>
+                        <version>${dependency.glassfish.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
+            <id>glassfish4</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                        <version>14.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.main.common</groupId>
+                        <artifactId>simple-glassfish-api</artifactId>
+                        <version>${dependency.glassfish4.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.main.extras</groupId>
+                        <artifactId>glassfish-embedded-all</artifactId>
+                        <version>${dependency.glassfish4.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
             <id>knopflerfish</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -815,6 +861,17 @@
             <id>caucho</id>
             <name>Caucho Repository</name>
             <url>http://caucho.com/m2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>glassfish-promoted</id>
+            <name>GlassFish Promoted Repository</name>
+            <url>https://maven.java.net/content/groups/promoted</url>
             <releases>
                 <enabled>true</enabled>
             </releases>

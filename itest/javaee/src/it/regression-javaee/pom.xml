@@ -61,6 +61,18 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.ops4j.pax.url</groupId>
+            <artifactId>pax-url-link</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.url</groupId>
+            <artifactId>pax-url-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- For sane logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
