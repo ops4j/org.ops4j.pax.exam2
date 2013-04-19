@@ -226,9 +226,9 @@
           </protocol>
         </protocols>
         <network-listeners>
-          <network-listener name="http-listener-1" port="8080" protocol="http-listener-1" thread-pool="http-thread-pool" transport="tcp"/>
-          <network-listener name="http-listener-2" port="8181" protocol="http-listener-2" thread-pool="http-thread-pool" transport="tcp"/>
-          <network-listener name="admin-listener" port="4848" protocol="admin-listener" thread-pool="admin-thread-pool" transport="tcp"/>
+          <network-listener name="http-listener-1" port="18080" protocol="http-listener-1" thread-pool="http-thread-pool" transport="tcp"/>
+          <network-listener name="http-listener-2" port="18181" protocol="http-listener-2" thread-pool="http-thread-pool" transport="tcp"/>
+          <network-listener name="admin-listener" port="14848" protocol="admin-listener" thread-pool="admin-thread-pool" transport="tcp"/>
         </network-listeners>
         <transports>
           <transport name="tcp"/>
