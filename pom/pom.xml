@@ -689,7 +689,9 @@
         <profile>
             <id>glassfish3</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                  <name>!glassfish.release</name>
+                </property>
             </activation>
             <dependencyManagement>
                 <dependencies>
@@ -712,10 +714,7 @@
             </dependencyManagement>
         </profile>
         <profile>
-            <id>glassfish4</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
+            <id>glassfish4-embedded</id>
             <dependencyManagement>
                 <dependencies>
                     <dependency>
