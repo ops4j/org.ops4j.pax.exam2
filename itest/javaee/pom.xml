@@ -199,12 +199,12 @@
         </profile>
 
         <profile>
-            <id>glassfish4</id>
+            <id>glassfish4-embedded</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <pax.exam.container>glassfish-embedded</pax.exam.container>
+                <pax.exam.container>glassfish4-embedded</pax.exam.container>
             </properties>
             <dependencies>
                 <dependency>
