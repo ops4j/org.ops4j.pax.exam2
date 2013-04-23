@@ -41,7 +41,7 @@ public class ExamFeaturesFile {
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                         + "<features name=\"pax-exam-features-"
                         + Info.getPaxExamVersion()
-                        + "\">\n"
+                        + "\" xmlns=\"http://karaf.apache.org/xmlns/features/v1.0.0\">\n"
                         + "<feature name=\"exam\" version=\""
                         + Info.getPaxExamVersion()
                         + "\">\n"
