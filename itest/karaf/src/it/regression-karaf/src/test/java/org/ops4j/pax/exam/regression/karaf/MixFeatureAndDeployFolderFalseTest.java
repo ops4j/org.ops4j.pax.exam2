@@ -60,7 +60,7 @@ public class MixFeatureAndDeployFolderFalseTest {
                 editConfigurationFilePut(FeaturesCfg.BOOT,
                 "config,standard,region,package,ssh"),
             scanFeatures(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
-                .classifier("features").version("3.0.0.RC1"), "kar").start() };
+                .classifier("features").version("3.0.0.RC1"), "kar") };
     }
 
     @Test

@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.regression.karaf;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
 import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
@@ -40,6 +41,7 @@ import javax.inject.Inject;
 
 import org.apache.karaf.features.BootFinished;
 import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
+import org.apache.karaf.tooling.exam.options.LogLevelOption.LogLevel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,8 +117,9 @@ public class KarafWithBundleTest {
         return new Option[]{ 
             regressionDefaults("target/paxexam/unpack2/"),
             keepRuntimeFolder(),
+            //logLevel(LogLevel.DEBUG),
             scanFeatures(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
-                .classifier("features").version("3.0.0.RC1"), "http").start(),
+                .classifier("features").version("3.0.0.RC1"), "http"),
             // set the system property for pax web
             KarafDistributionOption.editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
                 RegressionTestSupport.HTTP_PORT),

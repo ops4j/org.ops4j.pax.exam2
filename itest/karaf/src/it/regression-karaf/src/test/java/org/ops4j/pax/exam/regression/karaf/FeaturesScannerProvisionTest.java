@@ -47,7 +47,7 @@ public class FeaturesScannerProvisionTest {
             regressionDefaults(),
             scanFeatures(
                 maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
-                    .classifier("features").version("3.0.0.RC1"), "scheduler", "wrapper").start() };
+                    .classifier("features").version("3.0.0.RC1"), "scheduler", "wrapper", "http") };
     }
 
     @Test
