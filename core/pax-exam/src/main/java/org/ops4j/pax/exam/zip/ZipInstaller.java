@@ -27,20 +27,44 @@ import org.ops4j.io.ZipExploder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Downloads a ZIP archive from a given URL and unpacks it into a given directory.
+ * @author Harald Wellmann
+ *
+ */
 public class ZipInstaller {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZipInstaller.class);
 
     private URL zipUrl;
-    private String installRoot;
+    private File installDir;
 
+    /**
+     * Constructs installer with archive URL and install path.
+     * @param zipUrl
+     * @param installRoot
+     */
     public ZipInstaller(URL zipUrl, String installRoot) {
         this.zipUrl = zipUrl;
-        this.installRoot = installRoot;
+        this.installDir = new File(installRoot);
     }
 
+    /**
+     * Constructs installer with archive URL and install directory.
+     * 
+     * @param zipUrl
+     * @param installRoot
+     */
+    public ZipInstaller(URL zipUrl, File installDir) {
+        this.zipUrl = zipUrl;
+        this.installDir = installDir;
+    }
+
+    /**
+     * Download and unpacks the archive.
+     * @throws IOException
+     */
     public void downloadAndInstall() throws IOException {
-        File installDir = new File(installRoot);
         installDir.mkdirs();
 
         File tempFile = File.createTempFile("pax-exam", ".zip");
@@ -50,9 +74,9 @@ public class ZipInstaller {
             os = new FileOutputStream(tempFile);
             StreamUtils.copyStream(zipUrl.openStream(), os, true);
 
-            LOG.info("unzipping into {}", installRoot);
+            LOG.info("unzipping into {}", installDir);
             ZipExploder exploder = new ZipExploder();
-            exploder.processFile(tempFile.getAbsolutePath(), installRoot);
+            exploder.processFile(tempFile.getAbsolutePath(), installDir.getAbsolutePath());
         }
         finally {
             tempFile.delete();
