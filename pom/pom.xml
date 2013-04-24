@@ -37,7 +37,7 @@
         <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
         <dependency.tomcat.version>7.0.34</dependency.tomcat.version>
         <dependency.tomee.version>1.5.1</dependency.tomee.version>
-        <dependency.weld.version>1.1.10.Final</dependency.weld.version>
+        <dependency.weld.version>1.1.12.Final</dependency.weld.version>
     </properties>
 
     <build>
