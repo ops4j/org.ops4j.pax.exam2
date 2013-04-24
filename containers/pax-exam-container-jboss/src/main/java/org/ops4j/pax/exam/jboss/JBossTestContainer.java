@@ -70,9 +70,17 @@ import org.xml.sax.SAXException;
  * @since 3.0.0
  */
 public class JBossTestContainer implements TestContainer {
+    
+    /**
+     * Configuration property specifying the download URL for a JBoss AS distribution.
+     * The default value is {@link #JBOSS_DIST_URL_DEFAULT}.
+     */
+    public static final String JBOSS_DIST_URL_KEY = "pax.exam.jboss.dist.url";
 
-    // TODO make this configurable
-    public static final String JBOSS_DISTRIBUTION_URL = "mvn:org.jboss.as/jboss-as-dist/7.1.1.Final/zip";
+    /**
+     * Default download URL for JBoss AS distribution.
+     */
+    public static final String JBOSS_DIST_URL_DEFAULT = "mvn:org.jboss.as/jboss-as-dist/7.1.1.Final/zip";
 
     private static final Logger LOG = LoggerFactory.getLogger(JBossTestContainer.class);
 
@@ -265,8 +273,10 @@ public class JBossTestContainer implements TestContainer {
         }
         else {
             LOG.info("installing JBoss AS in {}", jBossHome);
+            String distUrl = cm.getProperty(JBOSS_DIST_URL_KEY, JBOSS_DIST_URL_DEFAULT);
+            LOG.info("installing JBoss AS from {} in {}", distUrl, jBossHome);
             try {
-                URL url = new URL(JBOSS_DISTRIBUTION_URL);
+                URL url = new URL(distUrl);
                 File installParent = installDir.getParentFile();
                 File tempInstall = new File(installParent, UUID.randomUUID().toString());
                 ZipInstaller installer = new ZipInstaller(url, tempInstall.getAbsolutePath());

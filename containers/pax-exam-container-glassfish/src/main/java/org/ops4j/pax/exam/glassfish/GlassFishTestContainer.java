@@ -126,8 +126,10 @@ import org.xml.sax.SAXException;
  */
 public class GlassFishTestContainer implements TestContainer {
 
-    // TODO make this configurable
-    public static final String GLASSFISH_DISTRIBUTION_URL = "mvn:org.glassfish.main.distributions/glassfish/3.1.2.2/zip";
+
+    public static final String GLASSFISH_DIST_URL_KEY = "pax.exam.glassfish.dist.url";
+
+    public static final String GLASSFISH_DIST_URL_DEFAULT = "mvn:org.glassfish.main.distributions/glassfish/3.1.2.2/zip";
 
     /** Configuration property key for GlassFish installation directory. */
     public static final String GLASSFISH_HOME_KEY = "pax.exam.glassfish.home";
@@ -580,13 +582,22 @@ public class GlassFishTestContainer implements TestContainer {
             }
         }
         else {
-            LOG.info("installing GlassFish in {}", glassFishHome);
-            URL url = new URL(GLASSFISH_DISTRIBUTION_URL);
+            String distUrl = cm.getProperty(GLASSFISH_DIST_URL_KEY, GLASSFISH_DIST_URL_DEFAULT);
+            LOG.info("installing GlassFish from {} in {}", distUrl, glassFishHome);
+            URL url = new URL(distUrl);
             File gfParent = gfHome.getParentFile();
             File tempInstall = new File(gfParent, UUID.randomUUID().toString());
             ZipInstaller installer = new ZipInstaller(url, tempInstall.getAbsolutePath());
             installer.downloadAndInstall();
-            new File(tempInstall, "glassfish3").renameTo(gfHome);
+            
+            File serverRoot3 = new File(tempInstall, "glassfish3");
+            File serverRoot4 = new File(tempInstall, "glassfish4");
+            if (serverRoot3.exists()) {
+                serverRoot3.renameTo(gfHome);
+            }
+            else if (serverRoot4.exists()) {
+                serverRoot4.renameTo(gfHome);
+            }
 
             installConfiguration();
         }
