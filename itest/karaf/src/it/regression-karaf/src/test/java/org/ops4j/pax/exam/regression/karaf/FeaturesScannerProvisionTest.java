@@ -17,9 +17,9 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.features;
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
@@ -45,7 +45,7 @@ public class FeaturesScannerProvisionTest {
     public Option[] config() {
         return new Option[]{
             regressionDefaults(),
-            scanFeatures(
+            features(
                 maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
                     .classifier("features").version("3.0.0.RC1"), "scheduler", "wrapper", "http") };
     }

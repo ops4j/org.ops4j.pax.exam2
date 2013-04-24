@@ -50,7 +50,6 @@ import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
-import org.ops4j.pax.exam.options.extra.FeaturesScannerProvisionOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOptionImpl;
 import org.ops4j.pax.exam.options.extra.VMOption;
@@ -746,38 +745,6 @@ public class CoreOptions {
      */
     public static RepositoryOption repository(final String repositoryUrl) {
         return new RepositoryOptionImpl(repositoryUrl);
-    }
-
-    /**
-     * Creates a {@link FeaturesScannerProvisionOption}.
-     *
-     * @param repositoryUrl url of features respository to be scanned
-     * @param features      features to be scanned
-     *
-     * @return file scanner option
-     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
-     */
-    @Deprecated
-    public static FeaturesScannerProvisionOption scanFeatures( final String repositoryUrl,
-                                                               final String... features )
-    {
-        return new FeaturesScannerProvisionOption( repositoryUrl, features );
-    }
-
-    /**
-     * Creates a {@link FileScannerProvisionOption}.
-     *
-     * @param repositoryUrl url of features respository to be scanned
-     * @param features      features to be scanned
-     *
-     * @return file scanner option
-     * @deprecated Only supported by Pax Runner Container which will be removed in Pax Exam 3.0.
-     */
-    @Deprecated
-    public static FeaturesScannerProvisionOption scanFeatures( final UrlReference repositoryUrl,
-                                                               final String... features )
-    {
-        return new FeaturesScannerProvisionOption( repositoryUrl, features );
     }
 
     /**

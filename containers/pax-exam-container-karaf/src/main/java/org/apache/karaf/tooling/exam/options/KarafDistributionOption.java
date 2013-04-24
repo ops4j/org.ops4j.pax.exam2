@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.karaf.tooling.exam.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.extra.VMOption;
 
 /**
@@ -264,4 +265,35 @@ public final class KarafDistributionOption {
         return new VMOption(format("-Xrunjdwp:transport=dt_socket,server=y,suspend=%s,address=%s",
             hold ? "y" : "n", port));
     }
+
+    /**
+     * Creates a {@link FeaturesScannerProvisionOption}.
+     * 
+     * @param repositoryUrl
+     *            url of features respository to be scanned
+     * @param features
+     *            features to be scanned
+     * 
+     * @return file scanner option
+     */
+    public static KarafFeaturesOption features(final String repositoryUrl,
+        final String... features) {
+        return new KarafFeaturesOption(repositoryUrl, features);
+    }
+
+    /**
+     * Creates a {@link FileScannerProvisionOption}.
+     * 
+     * @param repositoryUrl
+     *            url of features respository to be scanned
+     * @param features
+     *            features to be scanned
+     * 
+     * @return file scanner option
+     */
+    public static KarafFeaturesOption features(final UrlReference repositoryUrl,
+        final String... features) {
+        return new KarafFeaturesOption(repositoryUrl, features);
+    }
+
 }

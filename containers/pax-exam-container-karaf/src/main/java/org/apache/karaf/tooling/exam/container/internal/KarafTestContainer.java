@@ -56,6 +56,7 @@ import org.apache.karaf.tooling.exam.container.internal.adaptions.KarafManipulat
 import org.apache.karaf.tooling.exam.container.internal.runner.Runner;
 import org.apache.karaf.tooling.exam.options.DoNotModifyLogOption;
 import org.apache.karaf.tooling.exam.options.ExamBundlesStartLevel;
+import org.apache.karaf.tooling.exam.options.KarafFeaturesOption;
 import org.apache.karaf.tooling.exam.options.KarafDistributionBaseConfigurationOption;
 import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationConsoleOption;
 import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFileExtendOption;
@@ -80,7 +81,6 @@ import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.UrlReference;
-import org.ops4j.pax.exam.options.extra.FeaturesScannerProvisionOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.osgi.framework.Bundle;
@@ -469,20 +469,22 @@ public class KarafTestContainer implements TestContainer {
     private Collection<? extends KarafDistributionConfigurationFileOption> extractFileOptionsBasedOnFeaturesScannerOptions(
         ExamSystem subsystem) {
         ArrayList<KarafDistributionConfigurationFileOption> retVal = Lists.newArrayList();
-        FeaturesScannerProvisionOption[] features = subsystem
-            .getOptions(FeaturesScannerProvisionOption.class);
-        for (FeaturesScannerProvisionOption feature : features) {
-            String fullFeatureUrl = feature.getURL();
-            String[] split = fullFeatureUrl.split("\\!/");
-            String url = split[0].replaceAll("scan-features:", "");
+        KarafFeaturesOption[] featuresOptions = subsystem
+            .getOptions(KarafFeaturesOption.class);
+        for (KarafFeaturesOption featuresOption : featuresOptions) {
+            String url = featuresOption.getURL();
             retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES,
                 "," + url));
-            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.BOOT, ","
-                + split[1]));
+            StringBuilder buffer = new StringBuilder();
+            for (String feature : featuresOption.getFeatures()) {
+                buffer.append(",");
+                buffer.append(feature);
+            }
+            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.BOOT, buffer.toString()));
         }
         return retVal;
     }
-
+    
     private void setupExamProperties(File karafHome, ExamSystem _system) throws IOException {
         File customPropertiesFile = new File(karafHome + "/etc/system.properties");
         SystemPropertyOption[] customProps = _system.getOptions(SystemPropertyOption.class);

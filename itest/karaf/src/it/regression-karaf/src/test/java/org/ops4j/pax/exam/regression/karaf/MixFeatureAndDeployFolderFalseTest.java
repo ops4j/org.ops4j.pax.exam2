@@ -19,11 +19,11 @@ package org.ops4j.pax.exam.regression.karaf;
 
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.features;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 
 import javax.inject.Inject;
 
@@ -59,7 +59,7 @@ public class MixFeatureAndDeployFolderFalseTest {
                 configureConsole().ignoreLocalConsole(),
                 editConfigurationFilePut(FeaturesCfg.BOOT,
                 "config,standard,region,package,ssh"),
-            scanFeatures(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
+            features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
                 .classifier("features").version("3.0.0.RC1"), "kar") };
     }
 
