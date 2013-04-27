@@ -762,6 +762,31 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>resin</id>
+            <activation>
+                <file>
+                   <exists>src/profile/resin</exists>
+                </file>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>caucho</id>
+                    <name>Caucho Repository</name>
+                    <url>http://caucho.com/m2</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>glassfish4</id>
+            <repositories>
+                <repository>
+                    <id>glassfish-promoted</id>
+                    <name>GlassFish Promoted Repository</name>
+                    <url>https://maven.java.net/content/groups/promoted</url>
+                </repository>
+            </repositories>
+        </profile>
     </profiles>
 
 
@@ -855,28 +880,6 @@
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
-        </repository>
-        <repository>
-            <id>caucho</id>
-            <name>Caucho Repository</name>
-            <url>http://caucho.com/m2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>glassfish-promoted</id>
-            <name>GlassFish Promoted Repository</name>
-            <url>https://maven.java.net/content/groups/promoted</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
     </repositories>
 

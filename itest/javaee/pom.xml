@@ -392,7 +392,7 @@
         </profile>
 
         <profile>
-            <id>mytomee</id>
+            <id>tomee</id>
 
             <properties>
                 <pax.exam.container>tomee</pax.exam.container>
@@ -416,10 +416,5 @@
 
             </dependencies>
         </profile>
-
-
-
     </profiles>
-
-
 </project>

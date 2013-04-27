@@ -73,6 +73,10 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 
+           pax-url-aether embeds an ancient version of google-collections.
+           This is why we place Guava here. 
+        -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
