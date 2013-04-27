@@ -38,6 +38,19 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-osgi</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.osgi.core</artifactId>
+                    <groupId>org.apache.felix</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 
         <!-- For sane logging -->
