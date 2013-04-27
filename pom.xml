@@ -55,6 +55,7 @@
                 <module>containers/pax-exam-container-weld</module>
                 <module>containers/pax-exam-container-openwebbeans</module>
                 <module>containers/pax-exam-container-jboss</module>
+                <module>containers/pax-exam-container-jboss72</module>
                 <module>containers/pax-exam-container-resin</module>
                 <module>containers/pax-exam-container-candi</module>
                 <module>containers/pax-exam-container-tomcat</module>
