@@ -392,7 +392,7 @@
         </profile>
 
         <profile>
-            <id>tomee</id>
+            <id>mytomee</id>
 
             <properties>
                 <pax.exam.container>tomee</pax.exam.container>

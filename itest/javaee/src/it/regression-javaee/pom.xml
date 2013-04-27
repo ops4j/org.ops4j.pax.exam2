@@ -17,10 +17,6 @@
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam Java EE Container Regression Tests</name>
-    
-    <properties>
-      <dependency.openwebbeans.version>1.2.0-SNAPSHOT</dependency.openwebbeans.version>
-    </properties>
 
     <dependencies>
 
@@ -74,6 +70,12 @@
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-classpath</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
             <scope>test</scope>
         </dependency>
 
