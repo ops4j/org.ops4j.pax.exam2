@@ -98,6 +98,18 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>jboss72</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>jboss72</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/jboss72</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>resin</id>
                                 <goals>
                                     <goal>run</goal>
@@ -261,6 +273,80 @@
                     <groupId>org.jboss.logmanager</groupId>
                     <artifactId>jboss-logmanager</artifactId>
                     <version>1.2.2.GA</version>
+                    <scope>test</scope>
+                </dependency>
+
+
+
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>jboss72</id>
+            <properties>
+                <pax.exam.container>jboss72</pax.exam.container>
+            </properties>
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jboss.as</groupId>
+                        <artifactId>jboss-as-embedded</artifactId>
+                        <version>7.2.0.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                        <version>3.1.2.GA</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.logmanager</groupId>
+                        <artifactId>jboss-logmanager</artifactId>
+                        <version>1.4.0.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.xnio</groupId>
+                        <artifactId>xnio-api</artifactId>
+                        <version>3.0.7.GA</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-jboss72</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-embedded</artifactId>
+                    <version>7.2.0.Final</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                    <version>3.1.2.GA</version>
+                    <scope>test</scope>
+                </dependency>
+
+
+                <dependency>
+
+                    <groupId>org.jboss.logmanager</groupId>
+                    <artifactId>jboss-logmanager</artifactId>
+                    <version>1.4.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                    <version>3.0.7.GA</version>
                     <scope>test</scope>
                 </dependency>
 

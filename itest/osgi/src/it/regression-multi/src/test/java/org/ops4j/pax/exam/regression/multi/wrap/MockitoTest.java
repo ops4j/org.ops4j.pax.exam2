@@ -107,6 +107,7 @@ public class MockitoTest {
         return options(
 
             regressionDefaults(),
+//            repository("http://repo1.maven.org/maven2").id("central"),
             repository("http://repository.springsource.com/maven/bundles/external").id(
                 "com.springsource.repository.bundles.external"),
 

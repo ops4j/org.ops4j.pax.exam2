@@ -46,6 +46,7 @@ import org.jboss.as.controller.client.helpers.standalone.ServerUpdateActionResul
 import org.jboss.as.embedded.EmbeddedServerFactory;
 import org.jboss.as.embedded.ServerStartException;
 import org.jboss.as.embedded.StandaloneServer;
+import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ProbeInvoker;
@@ -70,24 +71,38 @@ import org.xml.sax.SAXException;
  * @since 3.1.0
  */
 public class JBoss72TestContainer implements TestContainer {
-    
+
     /**
-     * Configuration property specifying the download URL for a JBoss AS distribution.
-     * The default value is {@link #JBOSS_DIST_URL_DEFAULT}.
+     * Configuration property specifying the download URL for a JBoss AS distribution. The default
+     * value is {@link #JBOSS72_DIST_URL_DEFAULT}.
      */
-    public static final String JBOSS_DIST_URL_KEY = "pax.exam.jboss.dist.url";
+    public static final String JBOSS72_DIST_URL_KEY = "pax.exam.jboss.dist.url";
 
     /**
      * Default download URL for JBoss AS distribution.
      */
-    public static final String JBOSS_DIST_URL_DEFAULT = "mvn:org.jboss.as/jboss-as-dist/7.2.0.Final/zip";
+    public static final String JBOSS72_DIST_URL_DEFAULT = "mvn:org.jboss.as/jboss-as-dist/7.2.0.Final/zip";
+
+    /**
+     * Configuration property key for JBoss AS installation configuration file directory. The files
+     * contained in this directory will be copied to the config directory of the JBoss AS instance.
+     */
+    public static final String JBOSS72_CONFIG_DIR_KEY = "pax.exam.jboss72.config.dir";
+
+    /**
+     * Configuration property key for overwriting standalone.xml and other configuration files in an
+     * existing JBoss AS installation. If the value is {@code true}, existing files in
+     * {@code standalone/configuration/} will be overwritten with files from {@code jboss72-config/}
+     * , if present. The default value is {@code false}.
+     */
+    public static final String JBOSS72_CONFIG_OVERWRITE_KEY = "pax.exam.jboss72.config.overwrite";
 
     private static final Logger LOG = LoggerFactory.getLogger(JBoss72TestContainer.class);
 
     private static final String HTTP_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='http']/@port";
-    
+
     private static final String MGMT_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='management-native']/@port";
-    
+
     private final Stack<String> deployed = new Stack<String>();
 
     private final ExamSystem system;
@@ -103,6 +118,9 @@ public class JBoss72TestContainer implements TestContainer {
     private String httpPort;
 
     private String mgmtPort;
+
+    private File configSourceDir;
+    private File configTargetDir;
 
     public JBoss72TestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
@@ -216,16 +234,15 @@ public class JBoss72TestContainer implements TestContainer {
         File tempDir = system.getTempFolder();
         File dataDir = new File(tempDir, "data");
         dataDir.mkdir();
-        File configDir = new File("src/test/resources/jboss-config");
-        File configFile = new File(configDir, "standalone.xml");
+
+        File configFile = new File(configTargetDir, "standalone.xml");
         if (!configFile.exists()) {
             throw new TestContainerException(configFile + " does not exist");
         }
         parseServerConfiguration(configFile);
-        System.setProperty("jboss.server.config.dir", configDir.getAbsolutePath());
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
         server = EmbeddedServerFactory.create(jBossHome, null, null,
-            // packages to be loaded from system class loader
+        // packages to be loaded from system class loader
             "org.jboss.logging");
         try {
             server.start();
@@ -251,43 +268,95 @@ public class JBoss72TestContainer implements TestContainer {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
+
         ConfigurationManager cm = new ConfigurationManager();
-        jBossHome = cm.getProperty("pax.exam.jboss.home");
+        jBossHome = cm.getProperty("pax.exam.jboss72.home");
         if (jBossHome == null) {
             throw new TestContainerException(
-                "System property pax.exam.jboss.home must be set to JBoss AS install root");
+                "System property pax.exam.jboss72.home must be set to JBoss AS 7.2 install root");
         }
-        File installDir = new File(jBossHome);
-        if (installDir.exists()) {
-            File moduleLoader = new File(installDir, "jboss-modules.jar");
-            if (moduleLoader.exists()) {
-                LOG.info("using JBoss AS installation in {}", jBossHome);
-            }
-            else {
-                String msg = String.format("%s exists, but %s does not. "
-                    + "This does not look like a valid JBoss AS installation.", jBossHome,
-                    moduleLoader);
-                throw new TestContainerException(msg);
+
+        String configDirName = cm.getProperty(JBOSS72_CONFIG_DIR_KEY,
+            "src/test/resources/jboss72-config");
+        configSourceDir = new File(configDirName);
+        boolean overwriteConfig = Boolean.parseBoolean(cm.getProperty(JBOSS72_CONFIG_OVERWRITE_KEY,
+            "false"));
+
+        if (isValidInstallation()) {
+            if (overwriteConfig) {
+                installConfiguration();
             }
         }
         else {
             LOG.info("installing JBoss AS in {}", jBossHome);
-            String distUrl = cm.getProperty(JBOSS_DIST_URL_KEY, JBOSS_DIST_URL_DEFAULT);
-            LOG.info("installing JBoss AS from {} in {}", distUrl, jBossHome);
+            String distUrl = cm.getProperty(JBOSS72_DIST_URL_KEY, JBOSS72_DIST_URL_DEFAULT);
+            LOG.info("installing JBoss AS 7.2 from {} in {}", distUrl, jBossHome);
             try {
                 URL url = new URL(distUrl);
+                File installDir = new File(jBossHome);
                 File installParent = installDir.getParentFile();
                 File tempInstall = new File(installParent, UUID.randomUUID().toString());
                 ZipInstaller installer = new ZipInstaller(url, tempInstall.getAbsolutePath());
                 installer.downloadAndInstall();
                 File unpackedRoot = tempInstall.listFiles()[0];
                 unpackedRoot.renameTo(installDir);
+                installConfiguration();
             }
             catch (MalformedURLException exc) {
                 throw new TestContainerException(exc);
             }
             catch (IOException exc) {
-                throw new TestContainerException("error during JBoss AS installation", exc);
+                throw new TestContainerException("error during JBoss AS 7.2 installation", exc);
+            }
+        }
+    }
+
+    private boolean isValidInstallation() {
+        boolean valid = false;
+        File installDir = new File(jBossHome);
+        if (installDir.exists()) {
+            File moduleLoader = new File(installDir, "jboss-modules.jar");
+            if (!moduleLoader.exists()) {
+                String msg = String.format("%s exists, but %s does not. "
+                    + "This does not look like a valid JBoss AS 7.2 installation.", jBossHome,
+                    moduleLoader);
+                throw new TestContainerException(msg);
+            }
+            File modulesDir = new File(installDir, "modules");
+            File systemDir = new File(modulesDir, "system");
+            if (!systemDir.exists()) {
+                String msg = String.format("%s does not exist. "
+                    + "This does not look like a valid JBoss AS 7.2 installation.", systemDir);
+                throw new TestContainerException(msg);
+            }
+
+            LOG.info("using existing JBoss AS 7.2 installation in {}", jBossHome);
+            valid = true;
+        }
+        return valid;
+    }
+
+    /**
+     * Copies all files in a user-defined configuration directory to the GlassFish instance
+     * configuration directory.
+     */
+    private void installConfiguration() {
+        if (!configSourceDir.exists()) {
+            throw new TestContainerException("configuration directory " + configSourceDir
+                + " does not exist");
+        }
+
+        configTargetDir = new File(jBossHome, "standalone/configuration");
+        for (File configFile : configSourceDir.listFiles()) {
+            if (!configFile.isDirectory()) {
+                File targetFile = new File(configTargetDir, configFile.getName());
+                try {
+                    LOG.info("copying {} to {}", configFile, targetFile);
+                    FileUtils.copyFile(configFile, targetFile, null);
+                }
+                catch (IOException exc) {
+                    throw new TestContainerException("error copying config file " + configFile, exc);
+                }
             }
         }
     }
@@ -341,6 +410,6 @@ public class JBoss72TestContainer implements TestContainer {
 
     @Override
     public String toString() {
-        return "JBoss";
+        return "JBoss72";
     }
 }
