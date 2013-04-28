@@ -79,7 +79,7 @@
                                 </goals>
                                 <configuration>
                                     <profiles>
-                                        <profile>glassfish-embedded</profile>
+                                        <profile>glassfish4-embedded</profile>
                                         <profile>glassfish4</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish4-embedded</cloneProjectsTo>

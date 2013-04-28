@@ -734,6 +734,13 @@
                     </dependency>
                 </dependencies>
             </dependencyManagement>
+            <repositories>
+                <repository>
+                    <id>glassfish-promoted</id>
+                    <name>GlassFish Promoted Repository</name>
+                    <url>https://maven.java.net/content/groups/promoted</url>
+                </repository>
+            </repositories>
         </profile>
         <profile>
             <id>knopflerfish</id>
@@ -774,16 +781,6 @@
                     <id>caucho</id>
                     <name>Caucho Repository</name>
                     <url>http://caucho.com/m2</url>
-                </repository>
-            </repositories>
-        </profile>
-        <profile>
-            <id>glassfish4</id>
-            <repositories>
-                <repository>
-                    <id>glassfish-promoted</id>
-                    <name>GlassFish Promoted Repository</name>
-                    <url>https://maven.java.net/content/groups/promoted</url>
                 </repository>
             </repositories>
         </profile>
