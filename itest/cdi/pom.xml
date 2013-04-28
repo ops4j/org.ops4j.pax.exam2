@@ -53,6 +53,7 @@
                                 <configuration>
                                     <profiles>
                                         <profile>candi</profile>
+                                        <profile>resin</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/candi</cloneProjectsTo>
                                     <!-- Resin does not fire a BeforeBeanDiscoveryEvent, 

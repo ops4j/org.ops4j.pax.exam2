@@ -371,7 +371,7 @@
                 <dependency>
                     <groupId>com.caucho</groupId>
                     <artifactId>resin</artifactId>
-                    <version>4.0.23</version>
+                    <version>${dependency.resin.version}</version>
                     <scope>test</scope>
                 </dependency>
 
