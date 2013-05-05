@@ -94,6 +94,7 @@
         <property name="ipsRoot" value="${com.sun.aas.installRoot}/.."/>
         <das-config/>
       </admin-service>
+      <cdi-service enable-implicit-cdi="false"/>
       <connector-service/>
       <transaction-service tx-log-dir="${com.sun.aas.instanceRoot}/logs"/>
       <batch-runtime-configuration/>
