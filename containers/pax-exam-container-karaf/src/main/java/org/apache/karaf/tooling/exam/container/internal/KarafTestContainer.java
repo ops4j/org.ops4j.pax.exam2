@@ -180,7 +180,9 @@ public class KarafTestContainer implements TestContainer {
                 + shouldLocalConsoleBeStarted(subsystem), "-Dkaraf.startRemoteShell="
                 + shouldRemoteShellBeStarted(subsystem));
 
+            copyBootClasspathLibraries(karafHome, subsystem);
             String[] classPath = buildKarafClasspath(karafHome);
+
             String main = "org.apache.karaf.main.Main";
             String options = "";
             String[] environment = new String[] {};
@@ -188,7 +190,6 @@ public class KarafTestContainer implements TestContainer {
 
             updateLogProperties(karafHome, subsystem);
             updateUserSetProperties(karafHome, subsystem);
-            copyBootClasspathLibraries(karafHome, subsystem);
             setupExamProperties(karafHome, subsystem);
             makeScriptsInBinExec(karafBin);
 
