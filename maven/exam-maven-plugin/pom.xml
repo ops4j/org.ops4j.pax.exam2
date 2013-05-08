@@ -16,7 +16,7 @@
 
     <name>OPS4J Pax Exam - Maven Plugin</name>
     <description>
-        Starts and stops a Forked Container in server mode.
+        Starts and stops a container in server mode.
     </description>
 
     <dependencies>
@@ -41,7 +41,7 @@
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-forked</artifactId>
+            <artifactId>pax-exam-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
 
