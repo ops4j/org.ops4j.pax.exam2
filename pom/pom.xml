@@ -29,7 +29,7 @@
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.guava.version>14.0</dependency.guava.version>
         <dependency.glassfish.version>3.1.2.2</dependency.glassfish.version>
-        <dependency.glassfish4.version>4.0-b87</dependency.glassfish4.version>
+        <dependency.glassfish4.version>4.0</dependency.glassfish4.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.3</dependency.maven.version>
         <dependency.openwebbeans.version>1.1.8</dependency.openwebbeans.version>
@@ -38,6 +38,7 @@
         <dependency.tomcat.version>7.0.34</dependency.tomcat.version>
         <dependency.tomee.version>1.5.1</dependency.tomee.version>
         <dependency.weld.version>1.1.12.Final</dependency.weld.version>
+        <dependency.xbean.version>3.12</dependency.xbean.version>
     </properties>
 
     <build>
@@ -638,7 +639,19 @@
             <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-reflect</artifactId>
-                <version>3.12</version>
+                <version>${dependency.xbean.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.xbean</groupId>
+                <artifactId>xbean-asm-shaded</artifactId>
+                <version>${dependency.xbean.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.xbean</groupId>
+                <artifactId>xbean-finder-shaded</artifactId>
+                <version>${dependency.xbean.version}</version>
             </dependency>
 
         </dependencies>
