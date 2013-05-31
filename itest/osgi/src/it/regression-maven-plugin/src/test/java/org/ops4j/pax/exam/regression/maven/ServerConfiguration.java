@@ -17,6 +17,7 @@
 package org.ops4j.pax.exam.regression.maven;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
@@ -25,6 +26,8 @@ public class ServerConfiguration {
 
     @Configuration
     public Option[] configuration() {
+        verify_PAXEXAM_529();
+
         return options(systemProperty("org.osgi.service.http.port").value("8181"),
             frameworkProperty("osgi.console").value("6666"),
 
@@ -53,5 +56,9 @@ public class ServerConfiguration {
             mavenBundle("org.apache.geronimo.samples.osgi", "wab-sample", "3.0.0")
 
         );
+    }
+
+    private void verify_PAXEXAM_529() {
+       	assertNotNull("System property \"basedir\" not set (PAXEXAM-529)", System.getProperty("basedir"));
     }
 }

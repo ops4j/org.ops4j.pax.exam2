@@ -18,6 +18,7 @@ package org.ops4j.pax.exam.maven;
 
 import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_KEY;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,6 +46,19 @@ import org.ops4j.pax.exam.spi.PaxExamRuntime;
  * @description Starts Pax Exam in server mode
  */
 public class StartContainerMojo extends AbstractMojo {
+
+    /**
+     * Maven defined system property name.
+     */ 
+    private static final String BASEDIR = "basedir";
+
+    /**
+     * The base directory of the project being built. This can be obtained in your {@code @Configuration}
+     * method integration test via System.getProperty("basedir").
+     * 
+     * @parameter default-value="${basedir}"
+     */
+    protected File basedir;
 
     /**
      * Fully qualified name of a Java class with a {@code @Configuration} method, providing the test
@@ -115,8 +129,20 @@ public class StartContainerMojo extends AbstractMojo {
         Class<?> klass = Class.forName(configClass, true, testClassLoader);
         Method m = getConfigurationMethod(klass);
         Object configClassInstance = klass.newInstance();
-        Option[] options = (Option[]) m.invoke(configClassInstance);
-        return options;
+
+        String oldBasedir = System.setProperty(BASEDIR, basedir.getAbsolutePath());
+        try {
+            Option[] options = (Option[]) m.invoke(configClassInstance);
+            return options;
+        }
+        finally {
+            if (oldBasedir != null) {
+                System.setProperty(BASEDIR, oldBasedir);
+            }
+            else {
+                System.clearProperty(BASEDIR);
+            }
+        }
     }
 
     private Method getConfigurationMethod(Class<?> klass) {
