@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.testng.test;
 
+import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -41,8 +42,10 @@ public class TestNGExamTest {
     public Option[] config() {
         return options(
 
-        mavenBundle("org.testng", "testng", "6.3.1"),
-
+        mavenBundle("org.testng", "testng", "6.8.5"),
+        bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
+        bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.11.0.1"),
+        
         /*
          * The following are optional direct and transitive dependencies of TestNG which do not seem
          * to be required unless you want to use command line parameters, Guice injection or YAML

@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.testng.inject;
 
+import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -30,10 +31,12 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
 
     @Override
     public Option[] createConfiguration() {
-        return options(mavenBundle("org.testng", "testng", "6.3.1"), url("reference:file:"
-            + PathUtils.getBaseDir() + "/target/regression-pde-bundle/"),
+        return options(mavenBundle("org.testng", "testng", "6.8.5"),
+            bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
+            bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.11.0.1"),
+            url("reference:file:" + PathUtils.getBaseDir() + "/target/regression-pde-bundle/"),
 
-        systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("WARN"),
+            systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("WARN"),
             systemProperty("osgi.console").value("6666"));
     }
 
