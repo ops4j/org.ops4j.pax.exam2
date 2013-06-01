@@ -31,7 +31,7 @@
         <dependency.glassfish.version>3.1.2.2</dependency.glassfish.version>
         <dependency.glassfish4.version>4.0</dependency.glassfish4.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
-        <dependency.maven.version>3.0.3</dependency.maven.version>
+        <dependency.maven.version>3.0.5</dependency.maven.version>
         <dependency.openwebbeans.version>1.1.8</dependency.openwebbeans.version>
         <dependency.resin.version>4.0.30</dependency.resin.version>
         <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
