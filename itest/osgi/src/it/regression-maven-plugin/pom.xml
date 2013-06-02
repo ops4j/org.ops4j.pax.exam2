@@ -40,12 +40,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-forked</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <scope>test</scope>
@@ -163,14 +157,22 @@
             <properties>
                 <pax.exam.framework>felix</pax.exam.framework>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.apache.felix.framework</artifactId>
-                    <version>4.0.2</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.ops4j.pax.exam</groupId>
+                        <artifactId>exam-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.felix</groupId>
+                                <artifactId>org.apache.felix.framework</artifactId>
+                                <version>4.0.2</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>equinox</id>
@@ -180,66 +182,72 @@
             <properties>
                 <pax.exam.framework>equinox</pax.exam.framework>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>org.eclipse.osgi</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.ops4j.pax.exam</groupId>
+                        <artifactId>exam-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.eclipse.tycho</groupId>
+                                <artifactId>org.eclipse.osgi</artifactId>
+                                <version>3.7.0.v20110613</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
-            <id>jbosgi</id>
+            <id>native</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <pax.exam.container>native</pax.exam.container>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.ops4j.pax.exam</groupId>
+                        <artifactId>exam-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.ops4j.pax.exam</groupId>
+                                <artifactId>pax-exam-container-native</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>forked</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <pax.exam.framework>jbosgi</pax.exam.framework>
+                <pax.exam.container>forked</pax.exam.container>
             </properties>
-            <repositories>
-                <repository>
-                    <id>jboss-public</id>
-                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.osgi.framework</groupId>
-                    <artifactId>jbosgi-framework-aggregated</artifactId>
-                    <version>1.1.0</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                    <version>3.1.0.CR2</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>knopflerfish</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>knopflerfish</pax.exam.framework>
-            </properties>
-            <repositories>
-                <repository>
-                    <id>knopflerfish-releases</id>
-                    <url>http://www.knopflerfish.org/maven2</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>org.knopflerfish</groupId>
-                    <artifactId>framework</artifactId>
-                    <version>5.2.0</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.ops4j.pax.exam</groupId>
+                        <artifactId>exam-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.ops4j.pax.exam</groupId>
+                                <artifactId>pax-exam-container-forked</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
     </profiles>
