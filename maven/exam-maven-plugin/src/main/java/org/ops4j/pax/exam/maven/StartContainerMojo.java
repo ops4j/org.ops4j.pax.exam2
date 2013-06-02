@@ -16,6 +16,8 @@
  */
 package org.ops4j.pax.exam.maven;
 
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_KEY;
 
 import java.io.File;
@@ -49,12 +51,12 @@ public class StartContainerMojo extends AbstractMojo {
 
     /**
      * Maven defined system property name.
-     */ 
+     */
     private static final String BASEDIR = "basedir";
 
     /**
-     * The base directory of the project being built. This can be obtained in your {@code @Configuration}
-     * method integration test via System.getProperty("basedir").
+     * The base directory of the project being built. This can be obtained in your
+     * {@code @Configuration} method integration test via System.getProperty("basedir").
      * 
      * @parameter default-value="${basedir}"
      */
@@ -106,10 +108,10 @@ public class StartContainerMojo extends AbstractMojo {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void run(ClassLoader ccl) throws ClassNotFoundException,
-        InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+    private void run(ClassLoader ccl) throws ClassNotFoundException, InstantiationException,
+        IllegalAccessException, InvocationTargetException, IOException {
         /*
-         * Make sure we can load use Pax URL protocol handles defined as client project
+         * Make sure we can load use Pax URL protocol handlers defined as client project
          * dependencies.
          */
         URL.setURLStreamHandlerFactory(new PaxUrlStreamHandlerFactory(ccl));
@@ -133,7 +135,7 @@ public class StartContainerMojo extends AbstractMojo {
         String oldBasedir = System.setProperty(BASEDIR, basedir.getAbsolutePath());
         try {
             Option[] options = (Option[]) m.invoke(configClassInstance);
-            return options;
+            return combine(options, systemProperty(BASEDIR).value(basedir.getAbsolutePath()));
         }
         finally {
             if (oldBasedir != null) {
