@@ -113,7 +113,7 @@ public class WarBuilderTest {
     public void buildWarAutoClassPathNoFilter() throws MalformedURLException, IOException {
         war = localCopy(warProbe().exclude());
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
-        assertThat(war.getEntry("WEB-INF/lib/tinybundles-1.0.0.jar"), is(notNullValue()));
+        assertThat(war.getEntry("WEB-INF/lib/tinybundles-2.0.0-SNAPSHOT.jar"), is(notNullValue()));
     }
 
     @Test
