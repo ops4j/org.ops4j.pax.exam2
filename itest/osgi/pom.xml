@@ -23,9 +23,34 @@
         <profile>
             <id>matrix</id>
             <modules>
-                <module>src/it/regression-maven-plugin</module>
                 <module>src/it/regression-multi</module>
                 <module>src/it/regression-plumbing</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>maven-plugin-equinox</id>
+            <activation>
+                <property>
+                    <name>framework</name>
+                    <value>equinox</value>
+                </property>
+            </activation>
+            <modules>
+                <module>src/it/regression-maven-plugin</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>maven-plugin-felix</id>
+            <activation>
+                <property>
+                    <name>framework</name>
+                    <value>felix</value>
+                </property>
+            </activation>
+            <modules>
+                <module>src/it/regression-maven-plugin</module>
             </modules>
         </profile>
 
@@ -55,7 +80,6 @@
                                         <profile>native</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/equinox-native</cloneProjectsTo>
-
                                 </configuration>
                             </execution>
                             <execution>
@@ -82,6 +106,7 @@
                                         <profile>native</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/knopflerfish-native</cloneProjectsTo>
+                                    <pomExcludes>regression-maven-plugin/pom.xml</pomExcludes>
                                 </configuration>
                             </execution>
                             <execution>
@@ -121,6 +146,7 @@
                                         <profile>forked</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/knopferfish-forked</cloneProjectsTo>
+                                    <pomExcludes>regression-maven-plugin/pom.xml</pomExcludes>
                                 </configuration>
                             </execution>
                         </executions>
