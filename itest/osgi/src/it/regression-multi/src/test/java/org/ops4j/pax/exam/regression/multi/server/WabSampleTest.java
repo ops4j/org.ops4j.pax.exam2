@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.regression.multi.server;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -37,10 +37,12 @@ public class WabSampleTest {
 
     @Rule
     public PaxExamServer exam = new PaxExamServer();
+    
+    private String port = System.getProperty("pax.exam.itest.http.port", "18181");
+
 
     @Configuration
     public Option[] configuration() {
-        String port = System.getProperty("pax.exam.itest.http.port", "18181");
         return options(frameworkProperty("felix.bootdelegation.implicit").value("false"),
             frameworkProperty("osgi.console").value("6666"),
             frameworkProperty("org.osgi.service.http.port").value(port),
@@ -76,7 +78,8 @@ public class WabSampleTest {
     public void checkPlainTextFromWabServlet() {
         assumeTrue(!isKnopflerfish());
         Client client = Client.create();
-        WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
+        String url = String.format("http://localhost:%s/wab/WABServlet", port);
+        WebResource resource = client.resource(url);
         String response = resource.get(String.class);
         assertThat(response, containsString("wab symbolic name : wab-sample"));
     }

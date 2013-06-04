@@ -15,13 +15,13 @@
  */
 package org.ops4j.pax.exam.regression.multi.inject;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.*;
+import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isFelix;
 
 import org.junit.Test;
-import org.junit.matchers.JUnitMatchers;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -48,7 +48,6 @@ public class ServiceTimeoutInvokerTest {
         Result run = junit.run(ServiceTimeout.class);
         assertThat(run.getFailureCount(), is(1));
         Failure failure = run.getFailures().get(0);
-        assertThat(failure.getMessage(),
-            JUnitMatchers.containsString("gave up waiting for service"));
+        assertThat(failure.getMessage(), containsString("gave up waiting for service"));
     }
 }
