@@ -33,17 +33,21 @@ public class ExternalConfigurationTest {
 
     @Rule
     public PaxExamServer exam = new PaxExamServer(WabSampleConfiguration.class);
+    
+    private String url;
 
     @Before
     public void waitForShutdown() throws InterruptedException {
         assumeTrue(!isKnopflerfish());
         Thread.sleep(3000);
+        String port = System.getProperty("pax.exam.itest.http.port", "18181");
+        url = String.format("http://localhost:%s/wab/WABServlet", port);
     }
 
     @Test
     public void checkWabSymbolicName() {
         Client client = Client.create();
-        WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
+        WebResource resource = client.resource(url);
         String response = resource.get(String.class);
         assertThat(response, containsString("wab symbolic name : wab-sample"));
     }
@@ -51,7 +55,7 @@ public class ExternalConfigurationTest {
     @Test
     public void checkWabVersion() {
         Client client = Client.create();
-        WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
+        WebResource resource = client.resource(url);
         String response = resource.get(String.class);
         assertThat(response, containsString("wab version :3.0.0"));
     }

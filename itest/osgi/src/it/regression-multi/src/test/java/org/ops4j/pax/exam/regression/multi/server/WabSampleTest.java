@@ -40,9 +40,10 @@ public class WabSampleTest {
 
     @Configuration
     public Option[] configuration() {
+        String port = System.getProperty("pax.exam.itest.http.port", "18181");
         return options(frameworkProperty("felix.bootdelegation.implicit").value("false"),
             frameworkProperty("osgi.console").value("6666"),
-            frameworkProperty("org.osgi.service.http.port").value("8181"),
+            frameworkProperty("org.osgi.service.http.port").value(port),
 
             mavenBundle("org.ops4j.pax.web", "pax-web-spi").version("2.0.2"),
             mavenBundle("org.ops4j.pax.web", "pax-web-api").version("2.0.2"),

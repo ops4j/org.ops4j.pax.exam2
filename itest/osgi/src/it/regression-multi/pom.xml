@@ -16,6 +16,10 @@
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam Multi-Container Regression Tests</name>
+    
+    <properties>
+        <pax.exam.itest.http.port>18181</pax.exam.itest.http.port>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -198,6 +202,7 @@
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
+                        <pax.exam.itest.http.port>${pax.exam.itest.http.port}</pax.exam.itest.http.port>
                     </systemProperties>
                     <excludes>
                       <!-- This test works locally but not on our slow Hudson server -->
