@@ -32,6 +32,7 @@
         <dependency.guava.version>14.0</dependency.guava.version>
         <dependency.glassfish.version>3.1.2.2</dependency.glassfish.version>
         <dependency.glassfish4.version>4.0</dependency.glassfish4.version>
+        <dependency.karaf.version>3.0.0.RC1</dependency.karaf.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
         <dependency.openwebbeans.version>1.1.8</dependency.openwebbeans.version>
