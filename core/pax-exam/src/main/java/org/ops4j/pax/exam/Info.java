@@ -32,7 +32,7 @@ import java.util.Properties;
 public class Info {
 
     /**
-     * Snapshot constant to avaoid typos in analysing code.
+     * Snapshot constant to avoid typos in analysing code.
      */
     private static final String SNAPSHOT = "SNAPSHOT";
 
@@ -52,6 +52,11 @@ public class Info {
      * Pax Swissbox libraries version
      */
     private static final String PAX_SWISSBOX_VERSION;
+    
+    private static final String PAX_TINYBUNDLES_VERSION;
+    
+    private static final String ATINJECT_VERSION;
+    
     /**
      * True if pax exam is a snapshot version.
      */
@@ -69,11 +74,18 @@ public class Info {
      */
     private static boolean paxSwissboxSnapshotVersion;
 
+    /**
+     * True if Pax Tinybundles is a snapshot version.
+     */
+    private static boolean paxTinybundlesSnapshotVersion;
+
     static {
         String paxExamVersion = "";
         String paxUrlVersion = "";
         String ops4jBaseVersion = "";
         String paxSwissboxVersion = "";
+        String paxTinybundlesVersion = "";
+        String atinjectVersion = "";
         try {
             final InputStream is = Info.class.getClassLoader().getResourceAsStream(
                 "META-INF/pax-exam-version.properties");
@@ -84,6 +96,8 @@ public class Info {
                 paxUrlVersion = properties.getProperty("pax.url.version", "").trim();
                 ops4jBaseVersion = properties.getProperty("ops4j.base.version", "").trim();
                 paxSwissboxVersion = properties.getProperty("pax.swissbox.version").trim();
+                paxTinybundlesVersion = properties.getProperty("pax.tinybundles.version").trim();
+                atinjectVersion = properties.getProperty("atinject.version").trim();
             }
         }
         catch (IOException ignore) {
@@ -93,10 +107,13 @@ public class Info {
         PAX_URL_VERSION = paxUrlVersion;
         OPS4J_BASE_VERSION = ops4jBaseVersion;
         PAX_SWISSBOX_VERSION = paxSwissboxVersion;
+        PAX_TINYBUNDLES_VERSION = paxTinybundlesVersion;
+        ATINJECT_VERSION = atinjectVersion;
         paxExamSnapshotVersion = paxExamVersion.endsWith(SNAPSHOT);
         paxUrlSnapshotVersion = paxUrlVersion.endsWith(SNAPSHOT);
         ops4jBaseSnapshotVersion = ops4jBaseVersion.endsWith(SNAPSHOT);
         paxSwissboxSnapshotVersion = paxSwissboxVersion.endsWith(SNAPSHOT);
+        paxTinybundlesSnapshotVersion = paxTinybundlesVersion.endsWith(SNAPSHOT);
     }
 
     /**
@@ -143,6 +160,24 @@ public class Info {
     }
 
     /**
+     * Discovers the Pax Tinybundles version. If version cannot be determined returns an empty string.
+     * 
+     * @return Pax Tinybundles version
+     */
+    public static String getPaxTinybundlesVersion() {
+        return PAX_TINYBUNDLES_VERSION;
+    }
+
+    /**
+     * Discovers the Geronimo Atinject version. If version cannot be determined returns an empty string.
+     * 
+     * @return Pax Tinybundles version
+     */
+    public static String getAtinjectVersion() {
+        return ATINJECT_VERSION;
+    }
+
+    /**
      * Getter.
      * 
      * @return true if pax exam is a snapshot version, false otherwise
@@ -176,6 +211,15 @@ public class Info {
      */
     public static boolean isPaxSwissboxSnapshotVersion() {
         return paxSwissboxSnapshotVersion;
+    }
+
+    /**
+     * Getter.
+     * 
+     * @return true if pax swissbox is a snapshot version, false otherwise.
+     */
+    public static boolean isPaxTinybundlesSnapshotVersion() {
+        return paxTinybundlesSnapshotVersion;
     }
 
     /**

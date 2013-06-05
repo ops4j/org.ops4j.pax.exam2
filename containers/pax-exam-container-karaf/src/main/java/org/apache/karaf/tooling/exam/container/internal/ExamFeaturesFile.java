@@ -18,8 +18,6 @@ package org.apache.karaf.tooling.exam.container.internal;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.ops4j.pax.exam.Info;
@@ -99,35 +97,12 @@ public class ExamFeaturesFile {
                         + Info.getPaxExamVersion()
                         + "</bundle>\n"
                         + "<bundle start-level='" + startLevel
-                        + "'>mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/" + getInjectionVersion()
+                        + "'>mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/" + Info.getAtinjectVersion()
                         + "</bundle>\n"
                         + "<bundle start-level='" + startLevel + "'>mvn:org.ops4j.pax.exam/pax-exam-inject/"
                         + Info.getPaxExamVersion() + "</bundle>\n"
                         + "</feature>\n"
                         + "</features>";
-    }
-
-    private String getInjectionVersion() {
-        return getNamedVersion("injection.version");
-    }
-
-    private String getNamedVersion(String name) {
-        String optionsVersion = "";
-        try {
-            final InputStream is = ExamFeaturesFile.class.getClassLoader().getResourceAsStream(
-                    "META-INF/versions.properties"
-            );
-            if (is != null) {
-                final Properties properties = new Properties();
-                properties.load(is);
-                optionsVersion = properties.getProperty(name, "").trim();
-            }
-        }
-        // CHECKSTYLE:SKIP
-        catch (Exception ignore) {
-            // use default versions
-        }
-        return optionsVersion;
     }
 
     public void writeToFile(File featuresXmlFile) throws IOException {

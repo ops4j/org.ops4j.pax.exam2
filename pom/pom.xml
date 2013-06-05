@@ -20,6 +20,7 @@
         <namespace>org.ops4j.pax.exam</namespace>
         <dependency.paxurl.version>1.6.0-SNAPSHOT</dependency.paxurl.version>
         <dependency.swissbox.version>1.7.0-SNAPSHOT</dependency.swissbox.version>
+        <dependency.tinybundles.version>2.0.0-SNAPSHOT</dependency.tinybundles.version>
         <dependency.base.version>1.4.0</dependency.base.version>
         <dependency.slf4j.version>1.6.1</dependency.slf4j.version>
         <dependency.junit.version>4.11</dependency.junit.version>
@@ -27,6 +28,7 @@
         <dependency.osgicomp.version>4.2.0</dependency.osgicomp.version>
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
         <dependency.asm.version>3.0</dependency.asm.version>
+        <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.guava.version>14.0</dependency.guava.version>
         <dependency.glassfish.version>3.1.2.2</dependency.glassfish.version>
         <dependency.glassfish4.version>4.0</dependency.glassfish4.version>
@@ -284,7 +286,7 @@
             <dependency>
                 <groupId>org.ops4j.pax.tinybundles</groupId>
                 <artifactId>tinybundles</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>${dependency.tinybundles.version}</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
@@ -382,7 +384,7 @@
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-atinject_1.0_spec</artifactId>
-                <version>1.0</version>
+                <version>${dependency.atinject.version}</version>
             </dependency>
 
             <dependency>

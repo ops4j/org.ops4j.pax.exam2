@@ -106,14 +106,16 @@ public class WarBuilderTest {
         war = localCopy(warProbe().classPathDefaultExcludes());
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
         assertThat(war.getEntry("WEB-INF/lib/mockito-all-1.9.5.jar"), is(notNullValue()));
-        assertThat(war.getEntry("WEB-INF/lib/tinybundles-1.0.0.jar"), is(nullValue()));
+        String entry = String.format("WEB-INF/lib/tinybundles-%s.jar", Info.getPaxTinybundlesVersion());
+        assertThat(war.getEntry(entry), is(nullValue()));
     }
 
     @Test
     public void buildWarAutoClassPathNoFilter() throws MalformedURLException, IOException {
         war = localCopy(warProbe().exclude());
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
-        assertThat(war.getEntry("WEB-INF/lib/tinybundles-2.0.0-SNAPSHOT.jar"), is(notNullValue()));
+        String entry = String.format("WEB-INF/lib/tinybundles-%s.jar", Info.getPaxTinybundlesVersion());
+        assertThat(war.getEntry(entry), is(notNullValue()));
     }
 
     @Test
