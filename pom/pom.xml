@@ -18,7 +18,7 @@
 
     <properties>
         <namespace>org.ops4j.pax.exam</namespace>
-        <dependency.paxurl.version>1.6.0-SNAPSHOT</dependency.paxurl.version>
+        <dependency.paxurl.version>1.6.0</dependency.paxurl.version>
         <dependency.swissbox.version>1.7.0</dependency.swissbox.version>
         <dependency.tinybundles.version>2.0.0-SNAPSHOT</dependency.tinybundles.version>
         <dependency.base.version>1.4.0</dependency.base.version>
