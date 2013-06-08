@@ -26,7 +26,7 @@ You'll need a machine with Java 6+ and Apache Maven 3 installed.
 Checkout:
 
     git clone git://github.com/ops4j/org.ops4j.pax.exam2.git
-    git checkout v3.0.x
+    git checkout master
 
 Branches:
 * v2.x   : Maintenance for Pax Exam 2.x (2.6.0 and higher)
@@ -45,7 +45,7 @@ Run build with integration tests
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 3.0.0.RC1.
+The current release of Pax Exam is 3.0.3.
 
 ## Issue Tracking
 
@@ -55,7 +55,7 @@ The current release of Pax Exam is 3.0.0.RC1.
 
 We have a continuous integration build set up here:
 
-* <http://ci.ops4j.org/hudson/job/org.ops4j.pax.exam3>
+* <http://ci.ops4j.org/jenkins/job/org.ops4j.pax.exam3>
 
 Snapshot artifacts are being published to:
 
