@@ -64,14 +64,6 @@
 
                 <module>maven/exam-maven-plugin</module>
 
-                <module>it-regression/regression-pde-bundle</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>regression</id>
-            <modules>
-                <module>pom</module>
-                <module>it-regression/regression-pde-bundle</module>
             </modules>
         </profile>
         <profile>
