@@ -317,6 +317,17 @@ public class NativeTestContainer implements TestContainer {
         verifyThatBundlesAreResolved(bundles);
     }
 
+    private int getCurrentStartLevel(StartLevel sl) {
+        if (sl == null) {
+            // The service lookup failed, either the framework is not yet started, or something
+            // terrible happened
+            return -1;
+        }
+        else {
+            return sl.getStartLevel();
+        }
+    }
+
     private void setFrameworkStartLevel(BundleContext context, final StartLevel sl) {
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
@@ -337,12 +348,30 @@ public class NativeTestContainer implements TestContainer {
         });
         sl.setStartLevel(startLevel);
 
+        // Check the current start level before starting to wait.
+        if (getCurrentStartLevel(sl) == startLevel) {
+            LOG.debug("requested start level reached");
+            return;
+        }
+        else {
+            LOG.debug("start level {} requested, current start level is {}", startLevel,
+                getCurrentStartLevel(sl));
+        }
+
         try {
             long timeout = system.getTimeout().getValue();
             if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
-                String msg = String.format("start level %d has not been reached within %d ms",
-                    startLevel, timeout);
-                throw new TestContainerException(msg);
+                // Before throwing an exception, do a last check
+                if (startLevel != sl.getStartLevel()) {
+                    String msg = String.format("start level %d has not been reached within %d ms",
+                        startLevel, timeout);
+                    throw new TestContainerException(msg);
+                }
+                else {
+                    // We reached the requested start level.
+                    LOG.debug("requested start level reached");
+                }
+
             }
         }
         catch (InterruptedException e) {
