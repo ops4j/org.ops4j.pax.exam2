@@ -36,7 +36,7 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
             mavenBundle("org.testng", "testng", "6.8.5"),
             bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
             bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.11.0.1"),
-            url("reference:file:" + PathUtils.getBaseDir() + "/target/regression-pde-bundle/"),
+            url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde/"),
 
             systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("WARN"),
             systemProperty("osgi.console").value("6666"));

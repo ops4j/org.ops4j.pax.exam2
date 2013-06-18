@@ -96,8 +96,7 @@
 
     <build>
         <plugins>
-            <!-- unpack the regression-pde-bundle so we have an exploded bundle for 
-                testing -->
+            <!-- unpack pax-exam-sample9-pde so we have an exploded bundle for testing -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -110,10 +109,10 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.ops4j.pax.exam</groupId>
-                                    <artifactId>regression-pde-bundle</artifactId>
+                                    <groupId>org.ops4j.pax.exam.samples</groupId>
+                                    <artifactId>pax-exam-sample9-pde</artifactId>
                                     <version>${project.version}</version>
-                                    <outputDirectory>${project.build.directory}/regression-pde-bundle</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/pax-exam-sample9-pde</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

@@ -72,7 +72,7 @@ import org.testng.internal.NoOpTestClass;
  * <pre>
  * 
  * 
- * &#064;Listeners(ExamTestNGListener.class)
+ * &#064;Listeners(PaxExam.class)
  * public class MyTest {
  * 
  *     &#064;BeforeMethod
