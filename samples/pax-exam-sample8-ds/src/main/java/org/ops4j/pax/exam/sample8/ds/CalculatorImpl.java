@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.ds;
+package org.ops4j.pax.exam.sample8.ds;
 
 public class CalculatorImpl implements Calculator {
 

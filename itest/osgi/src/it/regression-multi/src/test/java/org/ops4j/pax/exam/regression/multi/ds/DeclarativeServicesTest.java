@@ -27,14 +27,15 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.regression.ds.Calculator;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.sample8.ds.Calculator;
+import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 
 /**
- * Test case for PAXEXAM-406. Calculator is a Declarative Services components which has
- * an injected dependency on another DS Component Addition. 
+ * Test case for PAXEXAM-406. Calculator is a Declarative Services components which has an injected
+ * dependency on another DS Component Addition.
  * <p>
  * Pax Exam injection is based on {@link ServiceLookup} which failed to keep a reference to the
  * given service after returning in Pax Exam 2.4.0 with Pax Swissbox 1.5.0.
@@ -44,27 +45,22 @@ import org.ops4j.pax.exam.regression.ds.Calculator;
  * 
  * @author Harald Wellmann
  */
-@RunWith( JUnit4TestRunner.class )
-public class DeclarativeServicesTest
-{
+@RunWith(PaxExam.class)
+public class DeclarativeServicesTest {
+
     @Inject
     private Calculator calculator;
 
-    @Configuration( )
-    public Option[] config()
-    {
-        return options(
-            regressionDefaults(),
-            mavenBundle( "org.ops4j.pax.exam", "regression-ds-bundle" ).versionAsInProject(),
-            mavenBundle( "org.osgi", "org.osgi.compendium" ).versionAsInProject(),
-            mavenBundle( "org.apache.felix", "org.apache.felix.scr", "1.6.0" ),
-            junitBundles() );
+    @Configuration
+    public Option[] config() {
+        return options(regressionDefaults(),
+            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds").versionAsInProject(),
+            mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.0"), junitBundles());
     }
 
     @Test
-    public void getCalculatorService()
-    {
-        assertThat( calculator, is( notNullValue() ) );
-        assertThat( calculator.add( 5, 7 ), is( 12 ) );
+    public void getCalculatorService() {
+        assertThat(calculator, is(notNullValue()));
+        assertThat(calculator.add(5, 7), is(12));
     }
 }

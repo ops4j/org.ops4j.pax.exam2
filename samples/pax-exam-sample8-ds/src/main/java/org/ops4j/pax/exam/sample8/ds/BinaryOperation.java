@@ -14,9 +14,9 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.ds;
+package org.ops4j.pax.exam.sample8.ds;
 
-public interface Calculator {
+public interface BinaryOperation {
 
-    int add(int op1, int op2);
+    int operate(int op1, int op2);
 }
