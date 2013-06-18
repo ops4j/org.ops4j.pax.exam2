@@ -31,6 +31,7 @@ import java.util.List;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.regression.pde.Notifier;
+import org.testng.SkipException;
 import org.testng.TestNG;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -47,6 +48,7 @@ public class SuiteTest implements Notifier, Remote {
 
     @BeforeMethod
     public void setUp() {
+        skipOnKnopflerfish();
         messages = new ArrayList<String>();
     }
 
@@ -88,4 +90,11 @@ public class SuiteTest implements Notifier, Remote {
 
         assertThat(messages.size(), is(numRestarts));
     }
+    
+    public static void skipOnKnopflerfish() {
+        if ("knopflerfish".equals(System.getProperty("pax.exam.framework"))) {
+            throw new SkipException("skipping this test on Knopflerfish");            
+        }
+    }
+    
 }

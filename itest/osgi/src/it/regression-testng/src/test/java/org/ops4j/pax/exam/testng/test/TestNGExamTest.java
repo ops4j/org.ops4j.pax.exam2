@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.testng.test;
 
-import static org.ops4j.pax.exam.CoreOptions.bundle;
+import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -42,6 +42,7 @@ public class TestNGExamTest {
     public Option[] config() {
         return options(
 
+        //frameworkProperty("org.knopflerfish.osgi.registerserviceurlhandler").value("false"),
         mavenBundle("org.testng", "testng", "6.8.5"),
         bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
         bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.11.0.1"),
