@@ -125,6 +125,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
+                    <systemProperties>
+                        <pax.exam.container>${pax.exam.container}</pax.exam.container>
+                        <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
+                        <pax.exam.itest.http.port>${pax.exam.itest.http.port}</pax.exam.itest.http.port>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>
