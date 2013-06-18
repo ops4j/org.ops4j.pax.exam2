@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi;
+package org.ops4j.pax.exam.cm;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +29,6 @@ import java.util.Set;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.osgi.internal.configuration.ConfigurationProvisionOption;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 /**

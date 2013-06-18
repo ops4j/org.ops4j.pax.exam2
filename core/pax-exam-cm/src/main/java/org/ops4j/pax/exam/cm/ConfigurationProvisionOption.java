@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi.internal.configuration;
+package org.ops4j.pax.exam.cm;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,8 +28,9 @@ import java.util.UUID;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.cm.internal.ConfigurationOptionActivator;
+import org.ops4j.pax.exam.cm.internal.ConfigurationOptionConfigurationListener;
 import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.osgi.ConfigurationOption;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
@@ -38,7 +39,7 @@ import org.osgi.framework.Constants;
  * Implementation of the {@link ConfigurationOption} interface used internally when construction
  * such options
  */
-public class ConfigurationProvisionOption implements org.ops4j.pax.exam.osgi.ConfigurationOption {
+public class ConfigurationProvisionOption implements org.ops4j.pax.exam.cm.ConfigurationOption {
 
     private final String id;
     private final Map<String, Object> properties;

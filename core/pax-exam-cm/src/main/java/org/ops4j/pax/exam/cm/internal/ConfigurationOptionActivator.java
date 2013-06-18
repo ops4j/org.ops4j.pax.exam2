@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi.internal.configuration;
+package org.ops4j.pax.exam.cm.internal;
 
 import java.io.InputStream;
 import java.io.ObjectInputStream;
