@@ -16,7 +16,7 @@
     <version>2.0.0-M2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>OPS4J Pax Exam - Distribution</name>
+    <name>OPS4J Pax Exam Distribution</name>
 
     <build>
         <plugins>

@@ -14,7 +14,7 @@
     <artifactId>pax-exam-cdi</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - CDI Injector</name>
+    <name>OPS4J Pax Exam CDI Injector</name>
 
     <properties>
         <bundle.symbolicName>org.ops4j.pax.exam.cdi</bundle.symbolicName>

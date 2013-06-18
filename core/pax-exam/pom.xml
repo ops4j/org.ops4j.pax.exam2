@@ -14,7 +14,7 @@
     <artifactId>pax-exam</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - API</name>
+    <name>OPS4J Pax Exam API</name>
 
     <properties>
         <bundle.symbolicName>${namespace}</bundle.symbolicName>

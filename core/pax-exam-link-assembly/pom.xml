@@ -13,7 +13,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-link-assembly</artifactId>
 
-    <name>OPS4J Pax Exam - Links for Assembly</name>
+    <name>OPS4J Pax Exam Links for Assembly</name>
 
     <description>
         Link Files to its own content.

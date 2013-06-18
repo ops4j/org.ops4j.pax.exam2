@@ -14,7 +14,7 @@
     <artifactId>pax-exam-extender-service</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - Extender Service</name>
+    <name>OPS4J Pax Exam Extender Service</name>
     <properties>
         <bundle.symbolicName>${namespace}.extender.service</bundle.symbolicName>
         <bundle.namespace>${namespace}.raw.extender.intern</bundle.namespace>

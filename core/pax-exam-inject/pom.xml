@@ -14,7 +14,7 @@
     <artifactId>pax-exam-inject</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - Injection</name>
+    <name>OPS4J Pax Exam Injection</name>
 
     <properties>
         <bundle.symbolicName>org.ops4j.pax.exam.inject</bundle.symbolicName>

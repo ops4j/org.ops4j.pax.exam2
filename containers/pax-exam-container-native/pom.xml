@@ -14,7 +14,7 @@
     <artifactId>pax-exam-container-native</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam - TestContainer Native</name>
+    <name>OPS4J Pax Exam TestContainer Native</name>
     <description>Leverages the OSGi R4.2 Launch API so it just works with newer osgi implementations.</description>
 
     <dependencies>

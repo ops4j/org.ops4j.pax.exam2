@@ -14,7 +14,7 @@
     <artifactId>pax-exam-player</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam - Player</name>
+    <name>OPS4J Pax Exam Player</name>
 
     <description>Pax Exam Player: Test Harness in a tweet.</description>
 

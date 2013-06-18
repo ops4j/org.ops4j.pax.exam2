@@ -10,7 +10,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-candi</artifactId>
 
-    <name>OPS4J Pax Exam - Resin CanDI CDI Container</name>
+    <name>OPS4J Pax Exam Resin CanDI CDI Container</name>
     
     <properties>
       <pax.exam.container>resin</pax.exam.container>

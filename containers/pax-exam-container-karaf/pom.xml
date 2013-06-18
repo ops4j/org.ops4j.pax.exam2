@@ -10,7 +10,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-karaf</artifactId>
 
-    <name>OPS4J Pax Exam - Karaf Container</name>
+    <name>OPS4J Pax Exam Karaf Container</name>
     
     <dependencies>
 

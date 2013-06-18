@@ -14,7 +14,7 @@
 
     <name>OPS4J Pax Exam (Build POM)</name>
 
-    <description>Pax Exam - Integration testing framework for Modern Java Platforms.</description>
+    <description>Pax Exam Integration testing framework for Modern Java Platforms.</description>
 
     <properties>
         <namespace>org.ops4j.pax.exam</namespace>

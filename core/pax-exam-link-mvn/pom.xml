@@ -12,7 +12,7 @@
 
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-link-mvn</artifactId>
-    <name>OPS4J Pax Exam - Links for Maven</name>
+    <name>OPS4J Pax Exam Links for Maven</name>
     
     <dependencies>
         <dependency>

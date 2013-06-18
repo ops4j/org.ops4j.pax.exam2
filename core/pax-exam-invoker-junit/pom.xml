@@ -14,7 +14,7 @@
     <artifactId>pax-exam-invoker-junit</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - JUnit Probe Invoker</name>
+    <name>OPS4J Pax Exam JUnit Probe Invoker</name>
 
     <properties>
         <bundle.symbolicName>org.ops4j.pax.exam.invoker.junit</bundle.symbolicName>

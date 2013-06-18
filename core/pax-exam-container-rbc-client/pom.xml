@@ -14,7 +14,7 @@
     <artifactId>pax-exam-container-rbc-client</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam - Remote Bundle Context Client</name>
+    <name>OPS4J Pax Exam Remote Bundle Context Client</name>
 
     <dependencies>
         <dependency>

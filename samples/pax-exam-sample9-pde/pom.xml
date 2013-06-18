@@ -15,7 +15,7 @@
     <artifactId>pax-exam-sample9-pde</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam Regression - PDE Bundle</name>
+    <name>OPS4J Pax Exam Sample9 PDE Bundle</name>
 
     <dependencies>
         <dependency>

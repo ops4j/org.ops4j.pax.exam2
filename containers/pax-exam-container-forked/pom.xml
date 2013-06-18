@@ -14,7 +14,7 @@
     <artifactId>pax-exam-container-forked</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam - Forked Test Container</name>
+    <name>OPS4J Pax Exam Forked Test Container</name>
 
     <dependencies>
         <dependency>

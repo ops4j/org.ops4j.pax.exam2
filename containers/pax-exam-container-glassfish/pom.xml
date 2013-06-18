@@ -10,7 +10,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-glassfish</artifactId>
 
-    <name>OPS4J Pax Exam - GlassFish Container</name>
+    <name>OPS4J Pax Exam GlassFish Container</name>
 
     <dependencies>
 

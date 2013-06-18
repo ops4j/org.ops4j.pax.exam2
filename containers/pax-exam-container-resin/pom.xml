@@ -10,7 +10,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-resin</artifactId>
 
-    <name>OPS4J Pax Exam - Resin Container</name>
+    <name>OPS4J Pax Exam Resin Container</name>
 
     <dependencies>
 

@@ -14,7 +14,7 @@
     <artifactId>exam-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>OPS4J Pax Exam - Maven Plugin</name>
+    <name>OPS4J Pax Exam Maven Plugin</name>
     <description>
         Starts and stops a container in server mode.
     </description>

@@ -14,7 +14,7 @@
     <artifactId>pax-exam-invoker-servlet</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - Servlet Invoker</name>
+    <name>OPS4J Pax Exam Servlet Invoker</name>
 
     <properties>
         <bundle.symbolicName>org.ops4j.pax.exam.invoker.servlet</bundle.symbolicName>

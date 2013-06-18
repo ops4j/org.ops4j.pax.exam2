@@ -14,7 +14,7 @@
     <artifactId>pax-exam-servlet-bridge</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - Servlet Bridge</name>
+    <name>OPS4J Pax Exam Servlet Bridge</name>
 
     <properties>
         <bundle.symbolicName>org.ops4j.pax.exam.servlet</bundle.symbolicName>

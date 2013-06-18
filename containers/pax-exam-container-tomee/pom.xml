@@ -10,7 +10,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-tomee</artifactId>
 
-    <name>OPS4J Pax Exam - TomEE Container</name>
+    <name>OPS4J Pax Exam TomEE Container</name>
 
     <dependencies>
 

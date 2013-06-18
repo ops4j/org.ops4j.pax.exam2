@@ -14,7 +14,7 @@
     <artifactId>pax-exam-spring</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - Spring Injector</name>
+    <name>OPS4J Pax Exam Spring Injector</name>
 
     <properties>
         <bundle.symbolicName>org.ops4j.pax.exam.spring</bundle.symbolicName>

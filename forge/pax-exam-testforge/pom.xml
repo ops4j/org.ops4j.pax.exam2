@@ -14,7 +14,7 @@
     <artifactId>pax-exam-testforge</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam - TestForge Collection</name>
+    <name>OPS4J Pax Exam TestForge Collection</name>
 
     <description>Pax Exam TestForge: Collection of prebuild tests.</description>
 

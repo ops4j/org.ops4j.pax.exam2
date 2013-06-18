@@ -15,7 +15,7 @@
     <artifactId>pax-exam-sample8-ds</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam Regression - Declarative Services Bundle</name>
+    <name>OPS4J Pax Exam Sample8 Declarative Services Bundle</name>
 
     <properties>
         <bundle.symbolicName>org.ops4j.pax.exam.sample8.ds</bundle.symbolicName>

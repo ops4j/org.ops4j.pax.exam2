@@ -14,7 +14,7 @@
     <artifactId>pax-exam-cm</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam - Configuration Admin Options</name>
+    <name>OPS4J Pax Exam Configuration Admin Options</name>
 
     <dependencies>
         <dependency>

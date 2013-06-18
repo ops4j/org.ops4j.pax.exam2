@@ -14,7 +14,7 @@
     <artifactId>pax-exam-testng</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam - Driver TestNG</name>
+    <name>OPS4J Pax Exam Driver TestNG</name>
 
     <dependencies>
         <dependency>

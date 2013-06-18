@@ -10,7 +10,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-jboss72</artifactId>
 
-    <name>OPS4J Pax Exam - JBoss AS 7.2 Container</name>
+    <name>OPS4J Pax Exam JBoss AS 7.2 Container</name>
 
     <dependencyManagement>
         <dependencies>

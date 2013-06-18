@@ -14,7 +14,7 @@
     <artifactId>pax-exam-container-rbc</artifactId>
     <packaging>bundle</packaging>
 
-    <name>OPS4J Pax Exam - Remote Bundle Context</name>
+    <name>OPS4J Pax Exam Remote Bundle Context</name>
 
     <properties>
         <bundle.symbolicName>${namespace}.rbc</bundle.symbolicName>
