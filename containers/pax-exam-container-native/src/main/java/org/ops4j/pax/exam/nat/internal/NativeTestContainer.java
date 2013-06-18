@@ -63,8 +63,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.service.startlevel.StartLevel;
@@ -106,79 +104,7 @@ public class NativeTestContainer implements TestContainer {
         BundleContext bundleContext = framework.getBundleContext();
         ProbeInvoker probeInvokerService = ServiceLookup.getService(bundleContext,
             ProbeInvoker.class, props);
-        waitForBarriers(bundleContext);
         probeInvokerService.call(address.arguments());
-    }
-
-    private void waitForBarriers(BundleContext bundleContext) {
-        try {
-            // We try to fetch barriers, these must be present already, if none are found now, none
-            // are considered!
-            ServiceReference[] serviceReferences = bundleContext.getServiceReferences(
-                CountDownLatch.class.getName(), "(target=paxexam.barrier)");
-            if (serviceReferences != null) {
-                LOG.info("{} barrier(s) found...", serviceReferences.length);
-                for (ServiceReference serviceReference : serviceReferences) {
-                    Object serviceObject = bundleContext.getService(serviceReference);
-                    try {
-                        waitForBarrier(serviceReference, serviceObject);
-                    }
-                    finally {
-                        bundleContext.ungetService(serviceReference);
-                    }
-                }
-            }
-            else {
-                LOG.info("No barrier(s) found.");
-            }
-        }
-        catch (InvalidSyntaxException e) {
-            throw new AssertionError("should never happen: " + e);
-        }
-    }
-
-    private void waitForBarrier(ServiceReference serviceReference, Object serviceObject) {
-        if (serviceObject instanceof CountDownLatch) {
-            Object propertyValue = serviceReference
-                .getProperty("barrier.timeout.value");
-            Object propertyUnit = serviceReference
-                .getProperty("barrier.timeout.unit");
-            long timeout = 60;
-            TimeUnit unit = TimeUnit.SECONDS;
-            if (propertyValue != null) {
-                try {
-                    timeout = Long.parseLong(propertyValue.toString());
-                }
-                catch (NumberFormatException e) {
-                    LOG.warn(
-                        "can't parse timeout value {}, will use default value",
-                        propertyValue, e);
-                }
-            }
-            if (propertyUnit != null) {
-                try {
-                    unit = TimeUnit.valueOf(propertyUnit.toString());
-                }
-                catch (IllegalArgumentException e) {
-                    LOG.warn("can't parse timeout unit {}, will use default value",
-                        propertyUnit, e);
-                }
-            }
-            CountDownLatch barrier = (CountDownLatch) serviceObject;
-            try {
-                LOG.info("Await barrier with timeout = {} {}", timeout, unit);
-                boolean success = barrier.await(timeout, unit);
-                if (!success) {
-                    throw new TestContainerException(
-                        "Timeout while waiting for barrier");
-                }
-                LOG.info("barrier passed with success!");
-            }
-            catch (InterruptedException e) {
-                throw new TestContainerException(
-                    "Interupted while waiting at the barrier", e);
-            }
-        }
     }
 
     @Override
