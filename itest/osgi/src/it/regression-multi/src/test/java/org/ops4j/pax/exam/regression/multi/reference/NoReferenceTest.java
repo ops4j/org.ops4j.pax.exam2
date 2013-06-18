@@ -42,7 +42,7 @@ public class NoReferenceTest {
         expectedException.expectMessage("unknown protocol");
 
         String reference = "reference:file:" + PathUtils.getBaseDir()
-            + "/target/regression-pde-bundle";
+            + "/target/pax-exam-sample9-pde";
         new URL(reference);
     }
 }

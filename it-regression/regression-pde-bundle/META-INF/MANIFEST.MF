@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Regression-pde-bundle
-Bundle-SymbolicName: org.ops4j.pax.exam.regression.pde
-Bundle-Version: 2.2.1.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.osgi.framework;version="1.5.0"
-Export-Package: org.ops4j.pax.exam.regression.pde
-Bundle-Activator: org.ops4j.pax.exam.regression.pde.impl.Activator

@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.regression.pde.HelloService;
+import org.ops4j.pax.exam.sample9.pde.HelloService;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
@@ -48,14 +48,14 @@ public class MultiConfigurationTest {
     @Configuration
     public Option[] createConfiguration1() {
         return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
-            + "/target/regression-pde-bundle.jar"),
+            + "/target/pax-exam-sample9-pde.jar"),
             systemProperty("pax.exam.language").value("la"), junitBundles());
     }
 
     @Configuration
     public Option[] createConfiguration2() {
         return options(regressionDefaults(), systemProperty("pax.exam.language").value("en"),
-            url("reference:file:" + PathUtils.getBaseDir() + "/target/regression-pde-bundle.jar"),
+            url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde.jar"),
             junitBundles());
     }
 

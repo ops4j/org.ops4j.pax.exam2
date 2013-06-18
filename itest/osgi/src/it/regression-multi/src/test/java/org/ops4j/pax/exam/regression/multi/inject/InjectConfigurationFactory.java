@@ -36,7 +36,7 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
 
         return options(
             regressionDefaults(),
-            url("reference:file:" + PathUtils.getBaseDir() + "/target/regression-pde-bundle.jar"),
+            url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde.jar"),
             systemProperty("osgi.console").value("6666"),
             when(!rmiPort.isEmpty()).useOptions(
                 systemProperty("pax.exam.regression.rmi").value(rmiPort)), junitBundles());

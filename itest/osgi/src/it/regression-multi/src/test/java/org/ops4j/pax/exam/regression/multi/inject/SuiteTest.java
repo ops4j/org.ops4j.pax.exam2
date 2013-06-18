@@ -35,7 +35,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.Constants;
-import org.ops4j.pax.exam.regression.pde.Notifier;
+import org.ops4j.pax.exam.sample9.pde.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.ops4j.pax.exam.regression.pde;
+package org.ops4j.pax.exam.sample9.pde;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

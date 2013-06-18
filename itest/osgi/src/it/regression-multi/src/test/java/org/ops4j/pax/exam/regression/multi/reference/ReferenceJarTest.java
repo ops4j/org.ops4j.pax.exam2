@@ -43,13 +43,13 @@ public class ReferenceJarTest {
     @Configuration()
     public Option[] config() {
         return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
-            + "/target/regression-pde-bundle.jar"), junitBundles());
+            + "/target/pax-exam-sample9-pde.jar"), junitBundles());
     }
 
     @Test
     public void getHelloService() {
         Object service = ServiceLookup.getService(bc,
-            "org.ops4j.pax.exam.regression.pde.HelloService");
+            "org.ops4j.pax.exam.sample9.pde.HelloService");
         assertThat(service, is(notNullValue()));
     }
 }

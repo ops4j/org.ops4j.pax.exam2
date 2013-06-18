@@ -47,7 +47,7 @@ public class PdeExplodedReferenceTest {
     public Option[] config() {
         String baseDir = PathUtils.getBaseDir();
         return options(regressionDefaults(), url("reference:file:" + baseDir
-            + "/target/regression-pde-bundle"), junitBundles(),
+            + "/target/pax-exam-sample9-pde"), junitBundles(),
             systemProperty("osgi.clean").value("true"),
             systemProperty("osgi.dev").value("target/classes"));
     }
@@ -56,7 +56,7 @@ public class PdeExplodedReferenceTest {
     public void getHelloService() {
         assumeTrue(isEquinox());
         Object service = ServiceLookup.getService(bc,
-            "org.ops4j.pax.exam.regression.pde.HelloService");
+            "org.ops4j.pax.exam.sample9.pde.HelloService");
         assertThat(service, is(notNullValue()));
     }
 }

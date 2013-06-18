@@ -35,7 +35,7 @@ public class BeforeAfterParent {
     @Configuration
     public Option[] config() {
         return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
-            + "/target/regression-pde-bundle.jar"), junitBundles());
+            + "/target/pax-exam-sample9-pde.jar"), junitBundles());
     }
 
     @Before

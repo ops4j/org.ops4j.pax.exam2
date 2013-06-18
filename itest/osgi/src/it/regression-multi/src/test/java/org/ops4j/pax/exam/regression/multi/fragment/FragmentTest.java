@@ -57,15 +57,15 @@ public class FragmentTest {
     @Configuration()
     public Option[] config() {
         return options(regressionDefaults(),
-            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion()),
+            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample9-pde", Info.getPaxExamVersion()),
             url(createFragmentBundle().toExternalForm()).noStart(), junitBundles(), cleanCaches());
     }
 
     private URL createFragmentBundle() {
         TinyBundle bundle = TinyBundles.bundle()
-            .set(Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.regression.pde")
+            .set(Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.sample9.pde")
             .set(Constants.BUNDLE_MANIFESTVERSION, "2")
-            .set(Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.regression.fragment")
+            .set(Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.sample9.fragment")
             .add("messages.properties", getClass().getResource("/messages.properties"));
 
         try {
@@ -84,7 +84,7 @@ public class FragmentTest {
             System.out.println(bundle.getSymbolicName() + " state = " + bundle.getState());
         }
         Object service = ServiceLookup.getService(bc,
-            "org.ops4j.pax.exam.regression.pde.HelloService");
+            "org.ops4j.pax.exam.sample9.pde.HelloService");
         assertThat(service, is(notNullValue()));
     }
 }

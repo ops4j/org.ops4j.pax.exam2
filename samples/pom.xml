@@ -27,5 +27,6 @@
     <module>pax-exam-sample7-service</module>
     <module>pax-exam-sample7-web</module>
     <module>pax-exam-sample8-ds</module>
+    <module>pax-exam-sample9-pde</module>
   </modules>
 </project>

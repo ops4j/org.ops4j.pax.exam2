@@ -27,8 +27,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>regression-pde-bundle</artifactId>
+            <groupId>org.ops4j.pax.exam.samples</groupId>
+            <artifactId>pax-exam-sample9-pde</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

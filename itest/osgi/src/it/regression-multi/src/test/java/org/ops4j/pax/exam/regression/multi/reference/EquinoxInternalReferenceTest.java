@@ -37,7 +37,7 @@ public class EquinoxInternalReferenceTest {
         System.setProperty("java.protocol.handler.pkgs",
             "org.eclipse.osgi.framework.internal.protocol");
         String reference = "reference:file:" + PathUtils.getBaseDir()
-            + "/target/regression-pde-bundle";
+            + "/target/pax-exam-sample9-pde";
         URL url = new URL(reference);
         assertEquals("reference", url.getProtocol());
         InputStream is = url.openStream();

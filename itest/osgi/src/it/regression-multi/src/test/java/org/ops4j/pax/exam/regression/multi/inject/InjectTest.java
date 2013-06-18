@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.regression.pde.HelloService;
+import org.ops4j.pax.exam.sample9.pde.HelloService;
 
 @RunWith(PaxExam.class)
 public class InjectTest {

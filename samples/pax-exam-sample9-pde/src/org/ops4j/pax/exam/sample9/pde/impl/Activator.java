@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.pde.impl;
+package org.ops4j.pax.exam.sample9.pde.impl;
 
 import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Hashtable;
 
-import org.ops4j.pax.exam.regression.pde.HelloService;
-import org.ops4j.pax.exam.regression.pde.Notifier;
+import org.ops4j.pax.exam.sample9.pde.HelloService;
+import org.ops4j.pax.exam.sample9.pde.Notifier;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

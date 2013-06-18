@@ -45,13 +45,13 @@ public class ExplodedReferenceTest {
     public Option[] config() {
         String baseDir = PathUtils.getBaseDir();
         return options(regressionDefaults(), url("reference:file:" + baseDir
-            + "/target/regression-pde-bundle"), junitBundles(), cleanCaches());
+            + "/target/pax-exam-sample9-pde"), junitBundles(), cleanCaches());
     }
 
     @Test
     public void getHelloService() {
         Object service = ServiceLookup.getService(bc,
-            "org.ops4j.pax.exam.regression.pde.HelloService");
+            "org.ops4j.pax.exam.sample9.pde.HelloService");
         assertThat(service, is(notNullValue()));
     }
 }

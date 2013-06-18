@@ -53,17 +53,17 @@ public class EquinoxReferenceTest {
         assertNotNull(bc);
 
         String reference = "reference:file:" + PathUtils.getBaseDir()
-            + "/target/regression-pde-bundle";
+            + "/target/pax-exam-sample9-pde";
         Bundle bundle = bc.installBundle(reference);
         assertNotNull(bundle);
-        assertEquals("org.ops4j.pax.exam.regression.pde", bundle.getSymbolicName());
+        assertEquals("org.ops4j.pax.exam.sample9.pde", bundle.getSymbolicName());
 
         bundle.start();
         ServiceReference serviceRef = bc
-            .getServiceReference("org.ops4j.pax.exam.regression.pde.HelloService");
+            .getServiceReference("org.ops4j.pax.exam.sample9.pde.HelloService");
         Object service = bc.getService(serviceRef);
         assertNotNull(service);
-        assertEquals("org.ops4j.pax.exam.regression.pde.impl.EnglishHelloService", service
+        assertEquals("org.ops4j.pax.exam.sample9.pde.impl.EnglishHelloService", service
             .getClass().getName());
 
         bundle.uninstall();

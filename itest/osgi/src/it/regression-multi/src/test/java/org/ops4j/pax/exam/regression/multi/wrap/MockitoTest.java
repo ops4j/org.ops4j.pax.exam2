@@ -35,7 +35,7 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.regression.pde.HelloService;
+import org.ops4j.pax.exam.sample9.pde.HelloService;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
@@ -66,7 +66,7 @@ public class MockitoTest {
         regressionDefaults(),
 
             // A simple test bundle
-            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion()),
+            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample9-pde", Info.getPaxExamVersion()),
 
             // Mockito with Hamcrest and Objenesis embedded
             mavenBundle("org.mockito", "mockito-all", "1.9.5"),
@@ -81,7 +81,7 @@ public class MockitoTest {
              * exception:
              * 
              * loader constraint violation in interface itable initialization: when resolving method
-             * "org.ops4j.pax.exam.regression.pde.HelloService$$EnhancerByMockitoWithCGLIB$$451e2809.newInstance(Lorg/mockito/cglib/proxy/Callback;)Ljava/lang/Object;"
+             * "org.ops4j.pax.exam.sample9.pde.HelloService$$EnhancerByMockitoWithCGLIB$$451e2809.newInstance(Lorg/mockito/cglib/proxy/Callback;)Ljava/lang/Object;"
              * the class loader (instance of
              * org/mockito/internal/creation/jmock/SearchingClassLoader) of the current class,
              * org/ops4j/pax/exam/regression/pde/HelloService$$EnhancerByMockitoWithCGLIB$$451e2809,
@@ -90,7 +90,7 @@ public class MockitoTest {
              * org/mockito/cglib/proxy/Factory have different Class objects for the type
              * org/mockito/cglib/proxy/Callback used in the signature
              * 
-             * The bundle classloader of regression-pde-bundle loads org.mockito.cglib.proxy.Factory
+             * The bundle classloader of pax-exam-sample9-pde loads org.mockito.cglib.proxy.Factory
              * via boot delegation from the app class loader, which conflicts with the class loaded
              * by the Mockito bundle class loader.
              * 
@@ -107,12 +107,11 @@ public class MockitoTest {
         return options(
 
             regressionDefaults(),
-//            repository("http://repo1.maven.org/maven2").id("central"),
             repository("http://repository.springsource.com/maven/bundles/external").id(
                 "com.springsource.repository.bundles.external"),
 
             // A simple test bundle
-            mavenBundle("org.ops4j.pax.exam", "regression-pde-bundle", Info.getPaxExamVersion()),
+            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample9-pde", Info.getPaxExamVersion()),
 
             // Mockito without Hamcrest and Objenesis
             mavenBundle("org.mockito", "mockito-core", "1.9.5"),

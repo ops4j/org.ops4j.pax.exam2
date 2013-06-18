@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.Constants;
-import org.ops4j.pax.exam.regression.pde.Notifier;
+import org.ops4j.pax.exam.sample9.pde.Notifier;
 import org.testng.SkipException;
 import org.testng.TestNG;
 import org.testng.annotations.BeforeMethod;
