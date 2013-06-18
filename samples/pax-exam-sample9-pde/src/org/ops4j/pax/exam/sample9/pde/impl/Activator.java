@@ -52,7 +52,7 @@ public class Activator implements BundleActivator {
         Registry registry = LocateRegistry.getRegistry(rmiPort);
         Remote remote = registry.lookup("PaxExamNotifier");
         Notifier notifier = (Notifier) remote;
-        notifier.send("bundle org.ops4j.pax.exam.regression.pde started");
+        notifier.send("bundle org.ops4j.pax.exam.sample9.pde started");
     }
 
     /**
