@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi;
+package org.ops4j.pax.exam.obr;
 
 /**
  * A service that will be present when OBR starts and allows to validate an OBR operation has
  * finished with success
  */
-public interface OBRValidation {
+public interface ObrValidation {
 
     /**
      * can be used to validate that the OBR Operation finished without any error, throws an

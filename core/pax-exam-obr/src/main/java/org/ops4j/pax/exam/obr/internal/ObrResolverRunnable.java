@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi.internal.obr;
+package org.ops4j.pax.exam.obr.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Used in the runtime to provision bundles via OBR...
  */
-public class OBRResolverRunnable implements Runnable {
+public class ObrResolverRunnable implements Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OBRResolverRunnable.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ObrResolverRunnable.class);
 
     private final RepositoryAdmin repositoryAdmin;
     private final List<String[]> bundleList;
@@ -47,7 +47,7 @@ public class OBRResolverRunnable implements Runnable {
      * @param bundleList
      * @param barrier
      */
-    public OBRResolverRunnable(RepositoryAdmin repositoryAdmin, List<String[]> bundleList,
+    public ObrResolverRunnable(RepositoryAdmin repositoryAdmin, List<String[]> bundleList,
         List<Exception> exceptions, CountDownLatch barrier) {
         this.repositoryAdmin = repositoryAdmin;
         this.exceptions = exceptions;

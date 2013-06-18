@@ -15,12 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi;
+package org.ops4j.pax.exam.obr;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.obr.internal.ObrRepositoryProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
-import org.ops4j.pax.exam.osgi.internal.obr.OBRRepositoryProvisionOption;
 
 /**
  * provides access to Repository related Options to configure test cases
@@ -49,12 +49,12 @@ public class RepositoryOptions {
     }
 
     /**
-     * Creates an {@link OBRRepositoryOption} initilized with the given repository URLs
+     * Creates an {@link ObrRepositoryOption} initilized with the given repository URLs
      * 
      * @param reproURLs
      * @return
      */
-    public static OBRRepositoryOption obr(String... reproURLs) {
-        return new OBRRepositoryProvisionOption().repository(reproURLs);
+    public static ObrRepositoryOption obr(String... reproURLs) {
+        return new ObrRepositoryProvisionOption().repository(reproURLs);
     }
 }

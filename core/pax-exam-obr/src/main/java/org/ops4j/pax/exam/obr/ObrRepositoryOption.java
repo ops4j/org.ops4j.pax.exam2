@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi;
+package org.ops4j.pax.exam.obr;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +24,7 @@ import org.ops4j.pax.exam.Option;
 /**
  * represents repository configuration and bundles
  */
-public interface OBRRepositoryOption {
+public interface ObrRepositoryOption {
 
     /**
      * Add a repository to resolve bundles against
@@ -32,10 +32,10 @@ public interface OBRRepositoryOption {
      * @param urls
      * @return
      */
-    OBRRepositoryOption repository(String... urls);
+    ObrRepositoryOption repository(String... urls);
 
     /**
-     * end the setup phase and convert this bundle and the underlying {@link OBRRepositoryOption} to
+     * end the setup phase and convert this bundle and the underlying {@link ObrRepositoryOption} to
      * an {@link Option}
      * 
      * @return
@@ -48,7 +48,7 @@ public interface OBRRepositoryOption {
      * @param symbolicName
      * @return the newly created Bundle
      */
-    OBRBundleOption bundle(String symbolicName);
+    ObrBundleOption bundle(String symbolicName);
 
     /**
      * Add a list of bundles, use {@link #bundle(String)} if you want to specify a specific version
@@ -56,7 +56,7 @@ public interface OBRRepositoryOption {
      * @param symbolicNames
      * @return
      */
-    OBRRepositoryOption bundles(String... symbolicNames);
+    ObrRepositoryOption bundles(String... symbolicNames);
 
     /**
      * Set the timeout for waiting to complete the resolve operation
@@ -65,6 +65,6 @@ public interface OBRRepositoryOption {
      * @param unit
      * @return
      */
-    OBRRepositoryOption timeout(long value, TimeUnit unit);
+    ObrRepositoryOption timeout(long value, TimeUnit unit);
 
 }

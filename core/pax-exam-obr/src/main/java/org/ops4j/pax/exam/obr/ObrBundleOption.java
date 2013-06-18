@@ -15,22 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi;
+package org.ops4j.pax.exam.obr;
 
 import org.ops4j.pax.exam.Option;
 
 /**
  * allows to specify a version to use when install the bundle via OBR
  */
-public interface OBRBundleOption {
+public interface ObrBundleOption {
 
     /**
      * restrict this bundle to the given version
      * 
      * @param version
-     * @return the {@link OBRRepositoryOption} for further adding of bundles
+     * @return the {@link ObrRepositoryOption} for further adding of bundles
      */
-    OBRRepositoryOption version(String version);
+    ObrRepositoryOption version(String version);
 
     /**
      * Add a new Bundle with the given symbolic name
@@ -38,10 +38,10 @@ public interface OBRBundleOption {
      * @param symbolicName
      * @return the newly created Bundle
      */
-    OBRBundleOption bundle(String symbolicName);
+    ObrBundleOption bundle(String symbolicName);
 
     /**
-     * end the setup phase and convert this bundle and the underlying {@link OBRRepositoryOption} to
+     * end the setup phase and convert this bundle and the underlying {@link ObrRepositoryOption} to
      * an {@link Option}
      * 
      * @return

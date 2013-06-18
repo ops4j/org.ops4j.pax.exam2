@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi.internal.obr;
+package org.ops4j.pax.exam.obr.internal;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,17 +33,17 @@ import java.util.concurrent.TimeUnit;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.osgi.OBRBundleOption;
-import org.ops4j.pax.exam.osgi.OBRRepositoryOption;
-import org.ops4j.pax.exam.osgi.OBRValidation;
+import org.ops4j.pax.exam.obr.ObrBundleOption;
+import org.ops4j.pax.exam.obr.ObrRepositoryOption;
+import org.ops4j.pax.exam.obr.ObrValidation;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 /**
- * provides implementation for the {@link OBRRepositoryOption}
+ * provides implementation for the {@link ObrRepositoryOption}
  */
-public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
+public class ObrRepositoryProvisionOption implements ObrRepositoryOption {
 
     private final Set<String> urlsList = new HashSet<String>();
     private final List<String[]> bundlesList = new ArrayList<String[]>();
@@ -52,12 +52,12 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
     /**
      * 
      */
-    public OBRRepositoryProvisionOption() {
+    public ObrRepositoryProvisionOption() {
         barrierProperties.put("target", "paxexam.barrier");
     }
 
     @Override
-    public OBRRepositoryOption repository(String... urls) {
+    public ObrRepositoryOption repository(String... urls) {
         urlsList.addAll(Arrays.asList(urls));
         return this;
     }
@@ -80,21 +80,21 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
         ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add("obrdata.obj", stream);
-        bundle.add(OBROptionActivator.class);
-        bundle.add(OBRResolverRunnable.class);
-        bundle.add(OBRValidation.class);
+        bundle.add(ObrOptionActivator.class);
+        bundle.add(ObrResolverRunnable.class);
+        bundle.add(ObrValidation.class);
         bundle.set(Constants.BUNDLE_SYMBOLICNAME, "PAXExamOBROption-" + UUID.randomUUID());
         bundle.set(Constants.IMPORT_PACKAGE,
             "org.osgi.framework,org.osgi.service.obr,org.osgi.util.tracker,org.slf4j");
-        bundle.set(Constants.EXPORT_PACKAGE, OBRValidation.class.getPackage().getName());
+        bundle.set(Constants.EXPORT_PACKAGE, ObrValidation.class.getPackage().getName());
         bundle.set(Constants.BUNDLE_ACTIVATOR,
-            org.ops4j.pax.exam.osgi.internal.obr.OBROptionActivator.class.getName());
+            org.ops4j.pax.exam.obr.internal.ObrOptionActivator.class.getName());
         bundle.set(Constants.BUNDLE_MANIFESTVERSION, "2");
         return CoreOptions.streamBundle(bundle.build()).startLevel(2).start(true).update(false);
     }
 
     @Override
-    public OBRBundleOption bundle(String symbolicName) {
+    public ObrBundleOption bundle(String symbolicName) {
         String[] nameAndVersion = new String[2];
         nameAndVersion[0] = symbolicName;
         OBRBundle bundle = new OBRBundle(nameAndVersion);
@@ -103,14 +103,14 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
     }
 
     @Override
-    public OBRRepositoryOption bundles(String... symbolicNames) {
+    public ObrRepositoryOption bundles(String... symbolicNames) {
         for (String symbolicName : symbolicNames) {
             bundle(symbolicName);
         }
         return this;
     }
 
-    private class OBRBundle implements OBRBundleOption {
+    private class OBRBundle implements ObrBundleOption {
 
         private final String[] nameAndVersion;
 
@@ -119,25 +119,25 @@ public class OBRRepositoryProvisionOption implements OBRRepositoryOption {
         }
 
         @Override
-        public OBRRepositoryOption version(String version) {
+        public ObrRepositoryOption version(String version) {
             nameAndVersion[1] = version;
-            return OBRRepositoryProvisionOption.this;
+            return ObrRepositoryProvisionOption.this;
         }
 
         @Override
-        public OBRBundleOption bundle(String symbolicName) {
-            return OBRRepositoryProvisionOption.this.bundle(symbolicName);
+        public ObrBundleOption bundle(String symbolicName) {
+            return ObrRepositoryProvisionOption.this.bundle(symbolicName);
         }
 
         @Override
         public Option toOption() {
-            return OBRRepositoryProvisionOption.this.toOption();
+            return ObrRepositoryProvisionOption.this.toOption();
         }
 
     }
 
     @Override
-    public OBRRepositoryOption timeout(long value, TimeUnit unit) {
+    public ObrRepositoryOption timeout(long value, TimeUnit unit) {
         barrierProperties.put("barrier.timeout.value", value);
         barrierProperties.put("barrier.timeout.unit", unit);
         return this;

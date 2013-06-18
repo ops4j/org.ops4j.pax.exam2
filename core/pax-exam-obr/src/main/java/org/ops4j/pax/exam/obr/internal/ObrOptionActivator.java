@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.osgi.internal.obr;
+package org.ops4j.pax.exam.obr.internal;
 
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.ops4j.pax.exam.osgi.OBRValidation;
+import org.ops4j.pax.exam.obr.ObrValidation;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -45,9 +45,9 @@ import org.slf4j.LoggerFactory;
 /**
  * The {@link BundleActivator} that is used internaly to interact with {@link RepositoryAdmin}
  */
-public class OBROptionActivator implements BundleActivator, ServiceTrackerCustomizer, OBRValidation {
+public class ObrOptionActivator implements BundleActivator, ServiceTrackerCustomizer, ObrValidation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OBROptionActivator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ObrOptionActivator.class);
 
     private ServiceTracker serviceTracker;
     private Set<String> urlList;
@@ -85,7 +85,7 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
         // register the CountDownLatch
         bundleContext.registerService(CountDownLatch.class.getName(), barrier, barrierProperties);
         // Register the validation service
-        bundleContext.registerService(OBRValidation.class.getName(), this, null);
+        bundleContext.registerService(ObrValidation.class.getName(), this, null);
     }
 
     private static Object asString(List<String[]> bundleList) {
@@ -126,7 +126,7 @@ public class OBROptionActivator implements BundleActivator, ServiceTrackerCustom
                     }
                 }
             }
-            Future<?> submit = executorService.submit(new OBRResolverRunnable(repositoryAdmin,
+            Future<?> submit = executorService.submit(new ObrResolverRunnable(repositoryAdmin,
                 bundleList, exceptions, barrier));
             synchronized (submitedOBRs) {
                 submitedOBRs.add(submit);
