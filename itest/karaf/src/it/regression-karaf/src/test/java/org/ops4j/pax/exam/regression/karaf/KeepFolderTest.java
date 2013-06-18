@@ -17,7 +17,7 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;

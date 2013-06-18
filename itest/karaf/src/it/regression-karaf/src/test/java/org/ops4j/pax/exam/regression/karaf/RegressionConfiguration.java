@@ -17,18 +17,18 @@
  */
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.when;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 
 import java.io.File;
 
-import org.apache.karaf.tooling.exam.options.configs.CustomProperties;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 
 /**

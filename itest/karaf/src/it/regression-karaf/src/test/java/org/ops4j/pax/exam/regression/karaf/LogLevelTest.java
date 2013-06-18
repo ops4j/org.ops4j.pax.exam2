@@ -17,17 +17,17 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.keepRuntimeFolder;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
 import static org.junit.Assert.assertTrue;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
-import org.apache.karaf.tooling.exam.options.LogLevelOption.LogLevel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 
 @RunWith(PaxExam.class)
 public class LogLevelTest {

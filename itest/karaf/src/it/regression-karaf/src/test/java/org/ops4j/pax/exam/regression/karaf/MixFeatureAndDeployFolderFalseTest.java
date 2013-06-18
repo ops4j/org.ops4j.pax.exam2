@@ -17,24 +17,24 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.features;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 
 import javax.inject.Inject;
 
 import org.apache.karaf.features.BootFinished;
 import org.apache.karaf.features.FeaturesService;
-import org.apache.karaf.tooling.exam.options.configs.FeaturesCfg;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
 
 /**
  * This test should validate if the versionAsInProject tags work as expected.

@@ -17,11 +17,11 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.features;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
@@ -36,13 +36,13 @@ import java.util.Hashtable;
 import javax.inject.Inject;
 
 import org.apache.karaf.features.BootFinished;
-import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.regression.karaf.supports.EchoServlet;
 import org.ops4j.pax.exam.regression.karaf.supports.ServletActivator;
 import org.ops4j.pax.web.service.spi.ServletEvent;

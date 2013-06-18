@@ -17,8 +17,8 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.doNotModifyLogConfiguration;
 import static org.junit.Assert.assertTrue;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.doNotModifyLogConfiguration;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -17,10 +17,10 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFileExtend;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
 
 import java.io.File;
 

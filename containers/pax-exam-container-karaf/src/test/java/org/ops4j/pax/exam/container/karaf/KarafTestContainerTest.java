@@ -17,22 +17,22 @@
 
 package org.ops4j.pax.exam.container.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 import javax.inject.Inject;
 
-import org.apache.karaf.tooling.exam.options.LogLevelOption.LogLevel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 

@@ -17,17 +17,17 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.configureConsole;
 import static org.junit.Assert.assertTrue;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.mvnKarafDist;
 
-import org.apache.karaf.tooling.exam.options.KarafDistributionKitConfigurationOption;
-import org.apache.karaf.tooling.exam.options.KarafDistributionKitConfigurationOption.Platform;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionKitConfigurationOption;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionKitConfigurationOption.Platform;
 
 @RunWith(PaxExam.class)
 public class NativeKarafFrameworkTest {
