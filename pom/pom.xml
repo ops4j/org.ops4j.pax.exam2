@@ -774,13 +774,6 @@
                     </dependency>
                 </dependencies>
             </dependencyManagement>
-            <repositories>
-                <repository>
-                    <id>glassfish-promoted</id>
-                    <name>GlassFish Promoted Repository</name>
-                    <url>https://maven.java.net/content/groups/promoted</url>
-                </repository>
-            </repositories>
         </profile>
         <profile>
             <id>knopflerfish</id>
