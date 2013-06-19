@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.testng.inject;
 import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.propagateSystemProperty;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
 
@@ -32,14 +33,13 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
     @Override
     public Option[] createConfiguration() {
         return options(
-            
+            propagateSystemProperty("pax.exam.regression.rmi"),
             mavenBundle("org.testng", "testng", "6.8.5"),
             mavenBundle("com.beust", "jcommander", "1.27"),
             bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
             bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.11.0.1"),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde/"),
 
-            systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("WARN"),
             systemProperty("osgi.console").value("6666"));
     }
 }
