@@ -18,11 +18,8 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.provision;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.CoreOptions.options;
 
 import javax.inject.Inject;
 
