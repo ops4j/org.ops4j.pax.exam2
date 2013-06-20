@@ -24,6 +24,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configure
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.karafVersion;
 
 import javax.inject.Inject;
 
@@ -54,13 +55,13 @@ public class MixFeatureAndDeployFolderFalseTest {
             karafDistributionConfiguration()
                 .frameworkUrl(
                     maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                        .version("3.0.0.RC1")),
+                        .version(karafVersion())),
                 //.useDeployFolder(false),
                 configureConsole().ignoreLocalConsole(),
                 editConfigurationFilePut(FeaturesCfg.BOOT,
                 "config,standard,region,package,ssh"),
             features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
-                .classifier("features").version("3.0.0.RC1"), "kar") };
+                .classifier("features").version(karafVersion()), "kar") };
     }
 
     @Test

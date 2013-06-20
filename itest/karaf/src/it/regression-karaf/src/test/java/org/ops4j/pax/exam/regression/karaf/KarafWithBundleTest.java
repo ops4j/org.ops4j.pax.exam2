@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.karafVersion;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
 
@@ -114,7 +115,7 @@ public class KarafWithBundleTest {
             keepRuntimeFolder(),
             //logLevel(LogLevel.DEBUG),
             features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
-                .classifier("features").version("3.0.0.RC1"), "http"),
+                .classifier("features").version(karafVersion()), "http"),
             // set the system property for pax web
             KarafDistributionOption.editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
                 RegressionTestSupport.HTTP_PORT),

@@ -27,6 +27,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDist
 
 import java.io.File;
 
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
@@ -53,7 +54,7 @@ public class RegressionConfiguration {
     public static Option regressionDefaults(String unpackDir) {
         return composite(
 
-            karafDistributionConfiguration().frameworkUrl(mvnKarafDist()).
+            karafDistributionConfiguration().frameworkUrl(mvnKarafDist()).karafVersion(karafVersion()).
                 unpackDirectory(unpackDir == null ? null : new File(unpackDir)).useDeployFolder(false),                
             
                 configureConsole().ignoreLocalConsole(),
@@ -75,6 +76,12 @@ public class RegressionConfiguration {
     
     public static MavenArtifactUrlReference mvnKarafDist() {
         return maven().groupId("org.apache.karaf")
-            .artifactId("apache-karaf").type("zip").version("3.0.0.RC1");
+            .artifactId("apache-karaf").type("zip").version(karafVersion());
+    }
+    
+    public static String karafVersion() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String karafVersion = cm.getProperty("pax.exam.karaf.version", "3.0.0.RC1");
+        return karafVersion;
     }
 }
