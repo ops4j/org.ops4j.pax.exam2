@@ -61,6 +61,7 @@
                 <module>containers/pax-exam-container-tomcat</module>
                 <module>containers/pax-exam-container-tomee</module>
                 <module>containers/pax-exam-container-karaf</module>
+                <module>containers/pax-exam-container-wildfly80</module>
 
                 <module>maven/exam-maven-plugin</module>
 
