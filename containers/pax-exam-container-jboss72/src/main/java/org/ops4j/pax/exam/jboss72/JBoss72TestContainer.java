@@ -337,7 +337,7 @@ public class JBoss72TestContainer implements TestContainer {
     }
 
     /**
-     * Copies all files in a user-defined configuration directory to the GlassFish instance
+     * Copies all files in a user-defined configuration directory to the JBoss AS
      * configuration directory.
      */
     private void installConfiguration() {

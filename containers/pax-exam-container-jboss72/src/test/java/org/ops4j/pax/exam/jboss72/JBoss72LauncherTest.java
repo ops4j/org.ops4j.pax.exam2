@@ -40,7 +40,7 @@ public class JBoss72LauncherTest {
         ExecutionException {
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
-        System.setProperty("jboss.server.config.dir", "src/test/resources/jboss72-config");
+        System.setProperty("jboss.server.config.dir", "target/test-classes/jboss72-config");
 
         ConfigurationManager cm = new ConfigurationManager();
         String jBossHome = cm.getProperty("pax.exam.jboss72.home");
