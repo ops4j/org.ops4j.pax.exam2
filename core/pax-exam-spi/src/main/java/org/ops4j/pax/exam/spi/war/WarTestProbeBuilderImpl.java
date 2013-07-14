@@ -52,8 +52,14 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
     @Override
     public TestAddress addTest(Class<?> clazz, String methodName, Object... args) {
         TestAddress address = new DefaultTestAddress(clazz.getSimpleName() + "." + methodName, args);
-        probeCalls.put(address,
-            new TestInstantiationInstruction(clazz.getName() + ";" + methodName));
+        String instruction = clazz.getName() + ";" + methodName;
+        /*
+         * args are only used for parameterized tests. A single integer argument is the parameter index. 
+         */
+        if (args.length > 0) {
+            instruction = instruction + ";" + args[0];
+        }
+        probeCalls.put(address, new TestInstantiationInstruction(instruction));
         return address;
     }
 

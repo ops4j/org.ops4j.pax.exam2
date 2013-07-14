@@ -25,13 +25,24 @@ import org.ops4j.pax.exam.util.Injector;
 public class ContainerTestRunnerBuilder extends RunnerBuilder {
 
     private Injector injector;
+    private Integer index;
 
     public ContainerTestRunnerBuilder(Injector injector) {
         this.injector = injector;
     }
 
+    public ContainerTestRunnerBuilder(Injector injector, Integer index) {
+        this.injector = injector;
+        this.index = index;
+    }
+
     @Override
     public Runner runnerForClass(Class<?> testClass) throws InitializationError  {
-        return new ContainerTestRunner(testClass, injector);
+        if (index == null) {
+            return new ContainerTestRunner(testClass, injector);
+        }
+        else {
+            return new ParameterizedContainerTestRunner(testClass, injector, index);
+        }
     }
 }

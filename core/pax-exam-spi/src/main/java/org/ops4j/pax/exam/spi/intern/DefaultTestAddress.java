@@ -17,7 +17,9 @@
  */
 package org.ops4j.pax.exam.spi.intern;
 
+import java.util.Arrays;
 import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ops4j.pax.exam.TestAddress;
@@ -63,30 +65,28 @@ public class DefaultTestAddress implements TestAddress {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + Arrays.hashCode(args);
         result = prime * result + ((caption == null) ? 0 : caption.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         DefaultTestAddress other = (DefaultTestAddress) obj;
-        if (caption == null) {
-            if (other.caption != null) {
-                return false;
-            }
-        }
-        else if (!caption.equals(other.caption)) {
+        if (!Arrays.equals(args, other.args))
             return false;
+        if (caption == null) {
+            if (other.caption != null)
+                return false;
         }
+        else if (!caption.equals(other.caption))
+            return false;
         return true;
     }
 

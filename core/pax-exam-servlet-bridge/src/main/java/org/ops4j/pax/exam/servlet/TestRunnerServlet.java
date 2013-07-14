@@ -68,11 +68,12 @@ public class TestRunnerServlet extends HttpServlet {
         throws ServletException, IOException {
         String className = request.getParameter("class");
         String methodName = request.getParameter("method");
+        String indexName = request.getParameter("index");
         try {
             Class<?> clazz = getClass().getClassLoader().loadClass(className);
             response.setContentType("application/octet-stream");
             ServletOutputStream os = response.getOutputStream();
-            runSuite(os, clazz, methodName);
+            runSuite(os, clazz, methodName, indexName);
             os.flush();
         }
         catch (ClassNotFoundException exc) {
@@ -80,13 +81,18 @@ public class TestRunnerServlet extends HttpServlet {
         }
     }
 
-    private void runSuite(OutputStream os, Class<?> clazz, String methodName) throws IOException {
+    private void runSuite(OutputStream os, Class<?> clazz, String methodName, String indexName) throws IOException {
 
         InjectorFactory injectorFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(InjectorFactory.class);
         injectorFactory.setContext(getServletContext());
         Injector injector = injectorFactory.createInjector();
-        Request classRequest = new ContainerTestRunnerClassRequest(clazz, injector);
+        Integer index = null;
+        if (indexName != null) {
+            index = Integer.parseInt(indexName);
+        }
+        
+        Request classRequest = new ContainerTestRunnerClassRequest(clazz, injector, index);
         Description method = Description.createTestDescription(clazz, methodName);
         Request request = classRequest.filterWith(method);
 

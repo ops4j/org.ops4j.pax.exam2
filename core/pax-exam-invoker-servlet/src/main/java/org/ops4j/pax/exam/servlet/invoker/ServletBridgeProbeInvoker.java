@@ -74,19 +74,31 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
             throw new TestContainerException(e);
         }
 
-        if (!(findAndInvoke(testClass))) {
+        if (!(findAndInvoke(testClass, args))) {
             throw new TestContainerException(" Test " + method + " not found in test class "
                 + testClass.getName());
         }
     }
 
-    private boolean findAndInvoke(Class<?> testClass) {
+    private boolean findAndInvoke(Class<?> testClass, Object... args) {
+        Integer index = null;
         try {
+            /*
+             * If args are present, we expect exactly one integer argument, defining the index of
+             * the parameter set for a parameterized test.
+             */
+            if (args.length > 0) {
+                if (!(args[0] instanceof Integer)) {
+                    throw new TestContainerException("Integer argument expected");
+                }
+                index = (Integer) args[0];
+            }
+
             // find matching method
             for (Method m : testClass.getMethods()) {
                 if (m.getName().equals(method)) {
                     // we assume its correct:
-                    invokeViaJUnit(testClass, m);
+                    invokeViaServletBridge(testClass, m, index);
                     return true;
                 }
             }
@@ -104,22 +116,25 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
     }
 
     /**
-     * Invokes a given method of a given test class via {@link JUnitCore} and injects dependencies
-     * into the instantiated test class.
-     * <p>
-     * This requires building a {@code Request} which is aware of an {@code Injector} and a
-     * {@code BundleContext}.
+     * Invokes a given method of a given test class via the servlet bridge.
      * 
      * @param testClass
      * @param testMethod
+     * @param parameterIndex
+     *            index of parameter set (counting from 0) for parameterized test, null for plain
+     *            tests
      * @throws TestContainerException
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod)
-        throws IOException, ClassNotFoundException {
-        InputStream is = testRunner.queryParam("class", testClass.getName())
-            .queryParam("method", testMethod.getName()).get(InputStream.class);
+    private void invokeViaServletBridge(final Class<?> testClass, final Method testMethod,
+        Integer parameterIndex) throws IOException, ClassNotFoundException {
+        WebResource webResource = testRunner.queryParam("class", testClass.getName()) //
+            .queryParam("method", testMethod.getName());
+        if (parameterIndex != null) {
+            webResource = webResource.queryParam("index", Integer.toString(parameterIndex));
+        }
+        InputStream is = webResource.get(InputStream.class);
 
         ObjectInputStream ois = new ObjectInputStream(is);
         Object object = ois.readObject();
@@ -140,5 +155,4 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
         Client client = Client.create();
         return client.resource(uri);
     }
-
 }

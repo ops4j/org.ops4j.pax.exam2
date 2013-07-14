@@ -26,6 +26,7 @@ public class ContainerTestRunnerClassRequest extends ClassRequest {
 
     private Class<?> testClass;
     private Injector injector;
+    private Integer index;
 
     public ContainerTestRunnerClassRequest(Class<?> testClass, Injector injector) {
         super(testClass);
@@ -33,9 +34,16 @@ public class ContainerTestRunnerClassRequest extends ClassRequest {
         this.injector = injector;
     }
 
+    public ContainerTestRunnerClassRequest(Class<?> testClass, Injector injector, Integer index) {
+        super(testClass);
+        this.testClass = testClass;
+        this.injector = injector;
+        this.index = index;
+    }
+
     @Override
     public Runner getRunner() {
-        RunnerBuilder builder = new ContainerTestRunnerBuilder(injector);
+        RunnerBuilder builder = new ContainerTestRunnerBuilder(injector, index);
         return builder.safeRunnerForClass(testClass);
     }
 

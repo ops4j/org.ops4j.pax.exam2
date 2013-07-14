@@ -34,8 +34,8 @@ import org.ops4j.pax.exam.TestAddress;
  */
 class DecoratedFrameworkMethod extends FrameworkMethod {
 
-    private final TestAddress address;
-    private final FrameworkMethod frameworkMethod;
+    protected final TestAddress address;
+    protected final FrameworkMethod frameworkMethod;
 
     DecoratedFrameworkMethod(TestAddress address, FrameworkMethod frameworkMethod) {
         super(frameworkMethod.getMethod());
