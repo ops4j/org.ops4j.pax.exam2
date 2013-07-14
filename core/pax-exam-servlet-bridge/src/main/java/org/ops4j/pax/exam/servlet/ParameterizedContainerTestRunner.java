@@ -61,6 +61,7 @@ public class ParameterizedContainerTestRunner extends BlockJUnit4ClassRunner {
                     parameters = it.next();
                 }
             }
+            // CHECKSTYLE:SKIP - JUnit API
             catch (Throwable t) {
                 throw new InitializationError(Collections.singletonList(t));
             }
@@ -122,10 +123,11 @@ public class ParameterizedContainerTestRunner extends BlockJUnit4ClassRunner {
     }
 
     @SuppressWarnings("unchecked")
+    // CHECKSTYLE:SKIP - JUnit API
     private Iterable<Object[]> allParameters() throws Throwable {
-        Object parameters = getParametersMethod().invokeExplosively(null);
-        if (parameters instanceof Iterable) {
-            return (Iterable<Object[]>) parameters;
+        Object params = getParametersMethod().invokeExplosively(null);
+        if (params instanceof Iterable) {
+            return (Iterable<Object[]>) params;
         }
         else {
             throw parametersMethodReturnedWrongType();

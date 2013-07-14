@@ -72,21 +72,27 @@ public class DefaultTestAddress implements TestAddress {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        DefaultTestAddress other = (DefaultTestAddress) obj;
-        if (!Arrays.equals(args, other.args))
-            return false;
-        if (caption == null) {
-            if (other.caption != null)
-                return false;
         }
-        else if (!caption.equals(other.caption))
+        if (obj == null) {
             return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DefaultTestAddress other = (DefaultTestAddress) obj;
+        if (!Arrays.equals(args, other.args)) {
+            return false;
+        }
+        if (caption == null) {
+            if (other.caption != null) {
+                return false;
+            }
+        }
+        else if (!caption.equals(other.caption)) {
+            return false;
+        }
         return true;
     }
 
