@@ -115,9 +115,9 @@ public class JBoss72TestContainer implements TestContainer {
 
     private ServerDeploymentManager deploymentManager;
 
-    private String httpPort;
+    private int httpPort;
 
-    private String mgmtPort;
+    private int mgmtPort;
 
     private File configSourceDir;
     private File configTargetDir;
@@ -247,7 +247,7 @@ public class JBoss72TestContainer implements TestContainer {
         try {
             server.start();
             deploymentManager = ServerDeploymentManager.Factory.create(
-                InetAddress.getByName("localhost"), Integer.parseInt(mgmtPort));
+                InetAddress.getByName("localhost"), mgmtPort);
             testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
                 + "/Pax-Exam-Probe/"));
             deployModules();
@@ -369,8 +369,15 @@ public class JBoss72TestContainer implements TestContainer {
             Document doc = builder.parse(serverConfig);
             XPathFactory xpf = XPathFactory.newInstance();
             XPath xPath = xpf.newXPath();
-            httpPort = substituteProperties(xPath.evaluate(HTTP_PORT_XPATH, doc));
-            mgmtPort = substituteProperties(xPath.evaluate(MGMT_PORT_XPATH, doc));
+            String httpPortString = substituteProperties(xPath.evaluate(HTTP_PORT_XPATH, doc));
+            String mgmtPortString = substituteProperties(xPath.evaluate(MGMT_PORT_XPATH, doc));
+            String portOffsetString = System.getProperty("jboss.socket.binding.port-offset", "0");
+            httpPort = Integer.parseInt(httpPortString);
+            mgmtPort = Integer.parseInt(mgmtPortString);
+            int portOffset = Integer.parseInt(portOffsetString);
+            httpPort += portOffset;
+            mgmtPort += portOffset;
+            
         }
         catch (ParserConfigurationException exc) {
             throw new IllegalArgumentException(exc);
