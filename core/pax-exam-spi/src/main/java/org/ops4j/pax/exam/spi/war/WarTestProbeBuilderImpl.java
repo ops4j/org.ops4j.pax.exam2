@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.spi.war;
 
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +39,7 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 public class WarTestProbeBuilderImpl implements TestProbeBuilder {
 
     private WarProbeOption option;
-    private final Map<TestAddress, TestInstantiationInstruction> probeCalls = new HashMap<TestAddress, TestInstantiationInstruction>();
+    private final Map<TestAddress, TestInstantiationInstruction> probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
 
     public WarTestProbeBuilderImpl() {
         this(new WarProbeOption().classPathDefaultExcludes());

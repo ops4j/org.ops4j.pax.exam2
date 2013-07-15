@@ -32,6 +32,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.FrameworkField;
@@ -53,17 +54,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is the default Test Runner using the Exam plumbing API. Its also the blueprint for custom,
- * much more specific runners. This will make a single probe bundling in all @Tests in this class.
+ * JUnit runner for parameterized Pax Exam tests. See {@link Parameterized} for more details
+ * on specifying parameter sets.
+ * <p>
+ * TODO Currently only for Java EE mode. Support for OSGi and CDI modes to be added.
  * 
- * This uses the whole regression class as a single unit of tests with the following valid
- * annotations: - @Configuration -> Configuration 1:N. Multiple configurations will result in
- * multiple invocations of the same regression. - @ProbeBuilder -> Customize the probe creation. - @Test
- * -> Single tests to be invoked. Note that in @Configuration you can specify the invocation
- * strategy.
- * 
- * @author Toni Menzel
  * @author Harald Wellmann
+ *
  */
 public class PaxExamParameterized extends BlockJUnit4ClassRunner {
 
@@ -387,5 +384,4 @@ public class PaxExamParameterized extends BlockJUnit4ClassRunner {
     private boolean fieldsAreAnnotated() {
         return !getAnnotatedFieldsByParameter().isEmpty();
     }
-
 }

@@ -33,6 +33,8 @@ import org.ops4j.pax.exam.junit.PaxExamParameterized;
 @RunWith(PaxExamParameterized.class)
 public class CalculatorTest {
     
+    private static int paramIndex;
+    
     @Inject
     private Calculator calculator;
 
@@ -45,7 +47,8 @@ public class CalculatorTest {
     public static List<Object[]> getParameters() {
         return Arrays.asList(new Object[][] {
             {2, 3, 5},
-            {5, 6, 11}
+            {5, 6, 11},
+            {6, 2, 8}
         });
     }
 
@@ -60,5 +63,9 @@ public class CalculatorTest {
     @Test
     public void add() {        
         assertThat(calculator.add(a,  b), is(sum));
+        
+        // ordering of parameter sets must be preserved
+        assertThat((Integer) getParameters().get(paramIndex)[0], is(a));
+        paramIndex++;
     }
 }
