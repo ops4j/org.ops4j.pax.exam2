@@ -44,22 +44,22 @@ public class WarProbeOption implements Option {
         "geronimo-ejb_", //
         "geronimo-jcdi_", //
         "geronimo-jpa_", //
-        "glassfish-embedded", //
-        "javaee-api", //
-        "jboss-log", //
-        "jersey-client", //
-        "jstl", //
-        "myfaces", "openejb", //
-        "openwebbeans", //
+        "glassfish-embedded-", //
+        "javaee-api-", //
+        "jboss-log-", //
+        "jersey-client-", //
+        "jstl-", //
+        "myfaces-", "openejb-", //
+        "openwebbeans-", //
         "org.eclipse.osgi", //
-        "pax-exam-container", //
-        "pax-url-aether", //
-        "scattered-archive-api", //
-        "servlet-api", //
-        "simple-glassfish-api", //
-        "sisu", //
-        "tinybundles", //
-        "tomcat", //
+        "pax-exam-container-", //
+        "pax-url-aether-", //
+        "scattered-archive-api-", //
+        "servlet-api-", //
+        "simple-glassfish-api-", //
+        "sisu-", //
+        "tinybundles-", //
+        "tomcat-", //
     };
 
     private List<String> overlays;
