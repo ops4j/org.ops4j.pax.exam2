@@ -20,10 +20,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.Info;
+import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.ExamReactor;
@@ -33,6 +36,7 @@ import com.google.common.io.Files;
 
 public class WarBuilderTest {
 
+    private File tempDir;
     private ZipFile war;
     
     @BeforeClass
@@ -46,9 +50,15 @@ public class WarBuilderTest {
             writer.close();
         }
     }
+    
+    @Before
+    public void before() {
+        tempDir = Files.createTempDir();
+    }
 
     @After
     public void tearDown() {
+        FileUtils.delete(tempDir);
         if (war != null) {
             try {
                 war.close();
@@ -68,7 +78,9 @@ public class WarBuilderTest {
     }
 
     private ZipFile localCopy(WarProbeOption option) throws IOException {
-        TestProbeProvider provider = builder(option).build();
+        TestProbeBuilder builder = builder(option);
+        builder.setTempDir(tempDir);
+        TestProbeProvider provider = builder.build();
         InputStream is = provider.getStream();
         File out = new File("target/out.war");
         StreamUtils.copyStream(is, new FileOutputStream(out), true);
