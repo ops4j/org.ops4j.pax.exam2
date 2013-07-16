@@ -355,6 +355,9 @@ public class ReactorManager {
             defaultProbeBuilder = system.createProbe();
         }
         TestProbeBuilder probeBuilder = overwriteWithUserDefinition(currentTestClass, testClassInstance);
+        if (probeBuilder.getTempDir() == null) {
+            probeBuilder.setTempDir(defaultProbeBuilder.getTempDir());
+        }
         return probeBuilder;
     }
 

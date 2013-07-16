@@ -70,9 +70,9 @@ public class WarBuilder {
      * @param option
      *            WAR probe option
      */
-    public WarBuilder(WarProbeOption option) {
+    public WarBuilder(File tempDir, WarProbeOption option) {
         this.option = option;
-        this.tempDir = Files.createTempDir();
+        this.tempDir = tempDir;
     }
 
     /**
@@ -81,7 +81,6 @@ public class WarBuilder {
      * @return file URI referencing the WAR in a temporary directory
      */
     public URI buildWar() {
-        this.tempDir = Files.createTempDir();
         if (option.getName() == null) {
             option.name(UUID.randomUUID().toString());
         }

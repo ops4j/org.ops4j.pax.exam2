@@ -16,6 +16,7 @@
  */
 package org.ops4j.pax.exam.spi.war;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -38,14 +39,16 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
  */
 public class WarTestProbeBuilderImpl implements TestProbeBuilder {
 
+    private File tempDir;
     private WarProbeOption option;
     private final Map<TestAddress, TestInstantiationInstruction> probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
 
-    public WarTestProbeBuilderImpl() {
-        this(new WarProbeOption().classPathDefaultExcludes());
+    public WarTestProbeBuilderImpl(File tempDir) {
+        this(tempDir, new WarProbeOption().classPathDefaultExcludes());
     }
 
-    public WarTestProbeBuilderImpl(WarProbeOption option) {
+    public WarTestProbeBuilderImpl(File tempDir, WarProbeOption option) {
+        this.tempDir = tempDir;
         this.option = option;
     }
 
@@ -85,12 +88,22 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
 
     @Override
     public TestProbeProvider build() {
-        WarBuilder warBuilder = new WarBuilder(option);
+        WarBuilder warBuilder = new WarBuilder(tempDir, option);
         URI warUri = warBuilder.buildWar();
         return new WarTestProbeProvider(warUri, getTests());
     }
 
     public Set<TestAddress> getTests() {
         return probeCalls.keySet();
+    }
+
+    @Override
+    public File getTempDir() {
+        return tempDir;
+    }
+
+    @Override
+    public void setTempDir(File tempDir) {
+        this.tempDir = tempDir;
     }
 }

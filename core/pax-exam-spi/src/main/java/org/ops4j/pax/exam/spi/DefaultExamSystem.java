@@ -61,12 +61,13 @@ public class DefaultExamSystem implements ExamSystem {
 
     private final Store<InputStream> store;
     private final File configDirectory;
-    private final Option[] combinedOptions;
     private final Stack<ExamSystem> subsystems;
     private final RelativeTimeout timeout;
     private final Set<Class<?>> requestedOptionTypes = new HashSet<Class<?>>();
     private final CleanCachesOption clean;
     private final File cache;
+
+    private Option[] combinedOptions;
 
     /**
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults. If you need
@@ -86,13 +87,13 @@ public class DefaultExamSystem implements ExamSystem {
         configDirectory.mkdirs();
 
         WorkingDirectoryOption work = getSingleOption(WorkingDirectoryOption.class);
-        if (work != null) {
-            cache = createTemp(new File(work.getWorkingDirectory()));
+        // make sure that working directory gets propagated to forked systems
+        if (work == null) {
+            work = new WorkingDirectoryOption(createTemp(null).getAbsolutePath());
+            combinedOptions = combine(combinedOptions, work);
         }
-        else {
-            cache = createTemp(null);
-        }
-
+        
+        cache = createTemp(new File(work.getWorkingDirectory()));
         store = new TemporaryStore(cache, false);
 
         TimeoutOption timeoutOption = getSingleOption(TimeoutOption.class);
@@ -103,7 +104,6 @@ public class DefaultExamSystem implements ExamSystem {
             timeout = RelativeTimeout.TIMEOUT_DEFAULT;
         }
         clean = getSingleOption(CleanCachesOption.class);
-
     }
 
     /**
@@ -185,7 +185,7 @@ public class DefaultExamSystem implements ExamSystem {
     public File getTempFolder() {
         return cache;
     }
-
+    
     /**
      * @return a relative indication of how to deal with timeouts.
      */
@@ -205,7 +205,6 @@ public class DefaultExamSystem implements ExamSystem {
                     sys.clear();
                 }
                 FileUtils.delete(cache.getCanonicalFile());
-
             }
         }
         catch (IOException e) {
@@ -242,14 +241,14 @@ public class DefaultExamSystem implements ExamSystem {
         Option warProbeOption = getSingleOption(WarProbeOption.class);
         if (warProbeOption == null) {
             LOG.debug("creating default probe");
-            TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl(store);
+            TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl(cache, store);
             testProbeBuilder.setHeader("Bundle-SymbolicName", "PAXEXAM-PROBE-"
                 + createID("created probe"));
             return testProbeBuilder;
         }
         else {
             LOG.debug("creating WAR probe");
-            return new WarTestProbeBuilderImpl();
+            return new WarTestProbeBuilderImpl(getTempFolder());
         }
     }
 

@@ -60,10 +60,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private final List<Class<?>> anchors;
     private final Properties extraProperties;
     private final Set<String> ignorePackages = new HashSet<String>();
+    private File tempDir;
     private final Store<InputStream> store;
 
-    public TestProbeBuilderImpl(Store<InputStream> store) throws IOException {
-        anchors = new ArrayList<Class<?>>();
+    public TestProbeBuilderImpl(File tempDir, Store<InputStream> store) throws IOException {
+        this.anchors = new ArrayList<Class<?>>();
+        this.tempDir = tempDir;
         this.store = store;
         extraProperties = new Properties();
     }
@@ -225,5 +227,15 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
             p.put(address.identifier(), probeCalls.get(address).toString());
         }
         p.put(PROBE_EXECUTABLE, sbKeyChain.toString());
+    }
+
+    @Override
+    public File getTempDir() {
+        return tempDir;
+    }
+
+    @Override
+    public void setTempDir(File tempDir) {
+        this.tempDir = tempDir;
     }
 }

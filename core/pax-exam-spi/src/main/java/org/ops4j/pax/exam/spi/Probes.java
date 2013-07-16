@@ -29,7 +29,7 @@ public class Probes {
 
     public static TestProbeBuilder builder(Option option) {
         if (option instanceof WarProbeOption) {
-            return new WarTestProbeBuilderImpl((WarProbeOption) option);
+            return new WarTestProbeBuilderImpl(null, (WarProbeOption) option);
         }
         return null;
     }
