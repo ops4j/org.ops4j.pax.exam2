@@ -69,19 +69,31 @@ public class JUnitProbeInvoker implements ProbeInvoker {
             throw new TestContainerException(e);
         }
 
-        if (!(findAndInvoke(testClass))) {
+        if (!(findAndInvoke(testClass, args))) {
             throw new TestContainerException(" Test " + method + " not found in test class "
                 + testClass.getName());
         }
     }
 
-    private boolean findAndInvoke(Class<?> testClass) {
+    private boolean findAndInvoke(Class<?> testClass, Object...args) {
+        Integer index = null;
         try {
+            /*
+             * If args are present, we expect exactly one integer argument, defining the index of
+             * the parameter set for a parameterized test.
+             */
+            if (args.length > 0) {
+                if (!(args[0] instanceof Integer)) {
+                    throw new TestContainerException("Integer argument expected");
+                }
+                index = (Integer) args[0];
+            }
+
             // find matching method
             for (Method m : testClass.getMethods()) {
                 if (m.getName().equals(method)) {
                     // we assume its correct:
-                    invokeViaJUnit(testClass, m);
+                    invokeViaJUnit(testClass, m, index);
                     return true;
                 }
             }
@@ -103,8 +115,8 @@ public class JUnitProbeInvoker implements ProbeInvoker {
      * @param testMethod
      * @throws TestContainerException
      */
-    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod) {
-        Request classRequest = new ContainerTestRunnerClassRequest(testClass, injector);
+    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod, Integer index) {
+        Request classRequest = new ContainerTestRunnerClassRequest(testClass, injector, index);
         Description methodDescription = Description.createTestDescription(testClass, method);
         Request request = classRequest.filterWith(methodDescription);
         JUnitCore junit = new JUnitCore();

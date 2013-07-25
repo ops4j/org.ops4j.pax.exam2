@@ -46,7 +46,7 @@ public class DelegatingTest {
     public void switchRunner() {
         JUnitCore junit = new JUnitCore();
         Description method = Description.createTestDescription(SimpleTestHidden.class, "doNothing");
-        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector);
+        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector, null);
         Request request = classRequest.filterWith(method);
         Result result = junit.run(request);
         assertTrue(result.getFailures().isEmpty());
@@ -59,7 +59,7 @@ public class DelegatingTest {
         JUnitCore junit = new JUnitCore();
         Description method = Description.createTestDescription(SimpleTestHidden.class,
             "failingTest");
-        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector);
+        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector, null);
         Request request = classRequest.filterWith(method);
         Result result = junit.run(request);
         assertEquals(1, result.getFailures().size());

@@ -24,6 +24,7 @@ import org.ops4j.pax.exam.util.Injector;
 public class ContainerTestRunnerBuilder extends RunnerBuilder {
 
     private Injector injector;
+    private Integer index;
 
     /**
      * Constructs a request for the given class which will be injected with dependencies from the
@@ -33,15 +34,23 @@ public class ContainerTestRunnerBuilder extends RunnerBuilder {
      *            test class to be run
      * @param injector
      *            injector for injecting dependencies
+     * @param index
+     *            parameter set index (counting from 0). Only for parameterized tests, null
+     *            otherwise.
      */
-    public ContainerTestRunnerBuilder(Injector injector) {
+    public ContainerTestRunnerBuilder(Injector injector, Integer index) {
         this.injector = injector;
+        this.index = index;
     }
 
     @Override
     // CHECKSTYLE:SKIP : base class API
     public Runner runnerForClass(Class<?> testClass) throws Throwable {
-        return new ContainerTestRunner(testClass, injector);
+        if (index == null) {
+            return new ContainerTestRunner(testClass, injector);
+        }
+        else {
+            return new ParameterizedContainerTestRunner(testClass, injector, index);
+        }
     }
-
 }

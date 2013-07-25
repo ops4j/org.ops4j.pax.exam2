@@ -34,6 +34,7 @@ public class ContainerTestRunnerClassRequest extends ClassRequest {
 
     private Class<?> testClass;
     private Injector injector;
+    private Integer index;
 
     /**
      * Constructs a request for the given class which will be injected with dependencies from the
@@ -43,16 +44,20 @@ public class ContainerTestRunnerClassRequest extends ClassRequest {
      *            test class to be run
      * @param injector
      *            injector for injecting dependencies
+     * @param index
+     *            parameter set index (counting from 0). Only for parameterized tests, null
+     *            otherwise.
      */
-    public ContainerTestRunnerClassRequest(Class<?> testClass, Injector injector) {
+    public ContainerTestRunnerClassRequest(Class<?> testClass, Injector injector, Integer index) {
         super(testClass);
         this.testClass = testClass;
         this.injector = injector;
+        this.index = index;
     }
 
     @Override
     public Runner getRunner() {
-        RunnerBuilder builder = new ContainerTestRunnerBuilder(injector);
+        RunnerBuilder builder = new ContainerTestRunnerBuilder(injector, index);
         return builder.safeRunnerForClass(testClass);
     }
 }

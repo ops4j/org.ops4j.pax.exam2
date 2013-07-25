@@ -89,14 +89,12 @@ public class PaxExamParameterized extends BlockJUnit4ClassRunner {
     public PaxExamParameterized(Class<?> klass) throws Exception {
         super(klass);
         LOG.info("creating PaxExam runner for {}", klass);
-        Object testClassInstance = null;
-
         manager = ReactorManager.getInstance();
         manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
-        ExamReactor examReactor = manager.prepareReactor(klass, testClassInstance);
+        ExamReactor examReactor = manager.prepareReactor(klass, null);
         useProbeInvoker = !manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI);
         if (useProbeInvoker) {
-            addTestsToReactor(examReactor, klass, testClassInstance);
+            addTestsToReactor(examReactor, klass, null);
         }
         stagedReactor = manager.stageReactor();
     }
