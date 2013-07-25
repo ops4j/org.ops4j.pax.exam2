@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -57,6 +58,7 @@ import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
+import org.ops4j.pax.swissbox.framework.RemoteServiceReference;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -95,12 +97,13 @@ public class ForkedTestContainer implements TestContainer {
         String filterExpression = "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker)(Probe-Signature="
             + address.root().identifier() + "))";
         try {
-            remoteFramework.callService(filterExpression, "call");
+            RemoteServiceReference[] references = remoteFramework.getServiceReferences(
+                filterExpression, system.getTimeout().getValue(), TimeUnit.MILLISECONDS);
+            remoteFramework.invokeMethodOnService(references[0], "call",
+                (Object) address.arguments());
         }
-        catch (RemoteException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (BundleException exc) {
+        // CHECKSTYLE:SKIP
+        catch (Exception exc) {
             throw new TestContainerException(exc);
         }
     }
@@ -222,7 +225,8 @@ public class ForkedTestContainer implements TestContainer {
 
     private Map<String, String> createSystemProperties() {
         Map<String, String> p = new HashMap<String, String>();
-        for (PropagateSystemPropertyOption option : system.getOptions(PropagateSystemPropertyOption.class)) {
+        for (PropagateSystemPropertyOption option : system
+            .getOptions(PropagateSystemPropertyOption.class)) {
             String key = option.getKey();
             String value = System.getProperty(key);
             if (value != null) {
@@ -282,7 +286,7 @@ public class ForkedTestContainer implements TestContainer {
 
         // iterate over the bundles, set start level and start them
         // TODO Simplify with new method in Pax Swissbox 1.7.0:
-        // remoteFramework.installBundle(localUrl, startLevel, autostart); 
+        // remoteFramework.installBundle(localUrl, startLevel, autostart);
         for (ProvisionOption<?> bundle : options) {
             int startLevel = getStartLevel(bundle);
             Long bundleId = remoteMappings.get(bundle.getURL());
