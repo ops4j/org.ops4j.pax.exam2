@@ -76,7 +76,7 @@ public class JBoss72TestContainer implements TestContainer {
      * Configuration property specifying the download URL for a JBoss AS distribution. The default
      * value is {@link #JBOSS72_DIST_URL_DEFAULT}.
      */
-    public static final String JBOSS72_DIST_URL_KEY = "pax.exam.jboss.dist.url";
+    public static final String JBOSS72_DIST_URL_KEY = "pax.exam.jboss72.dist.url";
 
     /**
      * Default download URL for JBoss AS distribution.
