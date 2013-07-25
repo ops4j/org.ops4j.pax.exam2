@@ -17,7 +17,7 @@
             <dependency>
                 <groupId>org.wildfly</groupId>
                 <artifactId>wildfly-embedded</artifactId>
-                <version>8.0.0.Alpha2</version>
+                <version>8.0.0.Alpha3</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.logging</groupId>

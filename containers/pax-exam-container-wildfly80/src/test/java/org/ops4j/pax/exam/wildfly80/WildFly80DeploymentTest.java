@@ -21,7 +21,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +31,7 @@ import org.jboss.as.controller.client.helpers.standalone.InitialDeploymentPlanBu
 import org.jboss.as.controller.client.helpers.standalone.ServerDeploymentActionResult;
 import org.jboss.as.controller.client.helpers.standalone.ServerDeploymentManager;
 import org.jboss.as.controller.client.helpers.standalone.ServerDeploymentPlanResult;
+import org.jboss.as.controller.client.helpers.standalone.ServerUpdateActionResult.Result;
 import org.jboss.as.embedded.EmbeddedServerFactory;
 import org.jboss.as.embedded.ServerStartException;
 import org.jboss.as.embedded.StandaloneServer;
@@ -39,7 +39,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ops4j.pax.exam.ConfigurationManager;
-import org.jboss.as.controller.client.helpers.standalone.ServerUpdateActionResult.Result;
 
 public class WildFly80DeploymentTest {
 
