@@ -76,12 +76,13 @@ public class JBoss72TestContainer implements TestContainer {
      * Configuration property specifying the download URL for a JBoss AS distribution. The default
      * value is {@link #JBOSS72_DIST_URL_DEFAULT}.
      */
-    public static final String JBOSS72_DIST_URL_KEY = "pax.exam.jboss.dist.url";
+    public static final String JBOSS72_DIST_URL_KEY = "pax.exam.jboss72.dist.url";
 
     /**
-     * Default download URL for JBoss AS distribution.
+     * Default download URL for JBoss AS distribution. Since JBoss does not publish official
+     * binaries, we use an inofficial source.
      */
-    public static final String JBOSS72_DIST_URL_DEFAULT = "mvn:org.jboss.as/jboss-as-dist/7.2.0.Final/zip";
+    public static final String JBOSS72_DIST_URL_DEFAULT = "http://www.redpill-linpro.com/sites/default/files/node_files/jboss-as-7.2.0.final_.zip";
 
     /**
      * Configuration property key for JBoss AS installation configuration file directory. The files
@@ -337,8 +338,8 @@ public class JBoss72TestContainer implements TestContainer {
     }
 
     /**
-     * Copies all files in a user-defined configuration directory to the JBoss AS
-     * configuration directory.
+     * Copies all files in a user-defined configuration directory to the JBoss AS configuration
+     * directory.
      */
     private void installConfiguration() {
         if (!configSourceDir.exists()) {
@@ -377,7 +378,7 @@ public class JBoss72TestContainer implements TestContainer {
             int portOffset = Integer.parseInt(portOffsetString);
             httpPort += portOffset;
             mgmtPort += portOffset;
-            
+
         }
         catch (ParserConfigurationException exc) {
             throw new IllegalArgumentException(exc);
