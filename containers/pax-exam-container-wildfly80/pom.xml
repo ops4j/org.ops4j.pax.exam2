@@ -8,7 +8,7 @@
         <relativePath>../../pom</relativePath>
     </parent>
     <groupId>org.ops4j.pax.exam</groupId>
-    <artifactId>pax-exam-container-wildfly</artifactId>
+    <artifactId>pax-exam-container-wildfly80</artifactId>
 
     <name>OPS4J Pax Exam WildFly 8.0 Container</name>
 
