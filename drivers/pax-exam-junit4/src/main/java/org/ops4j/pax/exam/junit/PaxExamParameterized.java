@@ -34,17 +34,20 @@ import org.ops4j.pax.exam.junit.impl.ParameterizedProbeRunner;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
 /**
- * JUnit runner for parameterized Pax Exam tests. See {@link Parameterized} for more details
- * on specifying parameter sets.
+ * JUnit runner for parameterized Pax Exam tests. See {@link Parameterized} for more details on
+ * specifying parameter sets.
+ * <p>
+ * See {@link PaxExam} for more information on other annotations supported on Pax Exam test classes
+ * or methods.
  * 
  * @author Harald Wellmann
- *
+ * 
  */
-public class PaxExamParameterized extends Runner implements Filterable, Sortable  {
-    
+public class PaxExamParameterized extends Runner implements Filterable, Sortable {
+
     private ParentRunner<?> delegate;
     private Class<?> testClass;
-    
+
     public PaxExamParameterized(Class<?> klass) throws InitializationError {
         this.testClass = klass;
         createDelegate();
@@ -78,5 +81,5 @@ public class PaxExamParameterized extends Runner implements Filterable, Sortable
     @Override
     public void sort(Sorter sorter) {
         delegate.sort(sorter);
-    }    
+    }
 }

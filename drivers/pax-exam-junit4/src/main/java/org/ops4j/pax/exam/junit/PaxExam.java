@@ -33,23 +33,41 @@ import org.ops4j.pax.exam.junit.impl.ProbeRunner;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
 /**
- * This is the default Test Runner using the Exam plumbing API. Its also the blueprint for custom,
- * much more specific runners. This will make a single probe bundling in all @Tests in this class.
+ * Default JUnit runner for Pax Exam. To use this runner, annotate your test class with
+ * {@code @RunWith(PaxExam.class)}.
+ * <p>
+ * The optional class-level annotation {@code @ExamReactorStrategy} defines the restart behaviour of
+ * the test reactor which defaults to {@code PerMethod} in OSGi mode and to {@code PerSuite}
+ * otherwise.
+ * <p>
+ * The test class may contain one or more methods annotated by {@code @Configuration}, returning a
+ * list of options for configuring the test container.
+ * <p>
+ * If there is more than one configuration method, each test method is run for each configuration.
+ * <p>
+ * The JUnit annotations {@code @Rule, @Before, @After} work as expected, the corresponding actions
+ * are executed within the Pax Exam test container.
+ * <p>
+ * The JUnit annotations {@code @BeforeClass, @AfterClass} are of limited use only: The
+ * corresponding actions will be executed in the driver, but not in the Pax Exam test container.)
+ * <p>
+ * The {@code javax.inject.Inject} annotation can be used on fields to inject dependencies into the
+ * test class. In Java EE and CDI modes, injection is performed by the CDI bean manager. In web
+ * mode, injection is performed by CDI or by Spring, depending on the configured injector.
+ * <p>
+ * In OSGi mode, Pax Exam injects OSGi services, obtained from the service registry with the default
+ * Pax Exam system timeout. The optional {@code @Filter} annotation can be used on an injection
+ * point to define an LDAP filter or to customize the timeout.
+ * <p>
+ * For parameterized tests, use {@link PaxExamParameterized} instead of this runner.
  * 
- * This uses the whole regression class as a single unit of tests with the following valid
- * annotations: - @Configuration -> Configuration 1:N. Multiple configurations will result in
- * multiple invocations of the same regression. - @ProbeBuilder -> Customize the probe creation. - @Test
- * -> Single tests to be invoked. Note that in @Configuration you can specify the invocation
- * strategy.
- * 
- * @author Toni Menzel
  * @author Harald Wellmann
  */
 public class PaxExam extends Runner implements Filterable, Sortable {
-    
+
     private ParentRunner<?> delegate;
     private Class<?> testClass;
-    
+
     public PaxExam(Class<?> klass) throws InitializationError {
         this.testClass = klass;
         createDelegate();

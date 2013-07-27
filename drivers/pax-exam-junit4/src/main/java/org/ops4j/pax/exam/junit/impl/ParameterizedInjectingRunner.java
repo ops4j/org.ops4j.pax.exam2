@@ -28,6 +28,7 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Suite;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -35,97 +36,15 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
 /**
+ * JUnit runner for parameterized Pax Exam tests without an invoker. This runner is
+ * used for CDI mode only.
+ * <p> 
+ * See {@link Parameterized} for more details on specifying parameter sets.
  * <p>
- * The custom runner <code>Parameterized</code> implements parameterized tests. When running a
- * parameterized test class, instances are created for the cross-product of the test methods and the
- * test data elements.
- * </p>
+ * Based on {@code org.junit.runners.Parameterized}.
  * 
- * For example, to test a Fibonacci function, write:
+ * @author Harald Wellmann
  * 
- * <pre>
- * 
- * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- * 
- *     &#064;Parameters(name = &quot;{index}: fib({0})={1}&quot;)
- *     public static Iterable&lt;Object[]&gt; data() {
- *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
- *             { 5, 5 }, { 6, 8 } });
- *     }
- * 
- *     private int fInput;
- * 
- *     private int fExpected;
- * 
- *     public FibonacciTest(int input, int expected) {
- *         fInput = input;
- *         fExpected = expected;
- *     }
- * 
- *     &#064;Test
- *     public void test() {
- *         assertEquals(fExpected, Fibonacci.compute(fInput));
- *     }
- * }
- * </pre>
- * 
- * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed using the two-argument
- * constructor and the data values in the <code>&#064;Parameters</code> method.
- * 
- * <p>
- * In order that you can easily identify the individual tests, you may provide a name for the
- * <code>&#064;Parameters</code> annotation. This name is allowed to contain placeholders, which are
- * replaced at runtime. The placeholders are
- * <dl>
- * <dt>{index}</dt>
- * <dd>the current parameter index</dd>
- * <dt>{0}</dt>
- * <dd>the first parameter value</dd>
- * <dt>{1}</dt>
- * <dd>the second parameter value</dd>
- * <dt>...</dt>
- * <dd></dd>
- * </dl>
- * In the example given above, the <code>Parameterized</code> runner creates names like
- * <code>[1: fib(3)=2]</code>. If you don't use the name parameter, then the current parameter index
- * is used as name.
- * </p>
- * 
- * You can also write:
- * 
- * <pre>
- * 
- * &#064;RunWith(Parameterized.class)
- * public class FibonacciTest {
- * 
- *     &#064;Parameters
- *     public static Iterable&lt;Object[]&gt; data() {
- *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
- *             { 5, 5 }, { 6, 8 } });
- *     }
- * 
- *     &#064;Parameter(0)
- *     public int fInput;
- * 
- *     &#064;Parameter(1)
- *     public int fExpected;
- * 
- *     &#064;Test
- *     public void test() {
- *         assertEquals(fExpected, Fibonacci.compute(fInput));
- *     }
- * }
- * </pre>
- * 
- * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor and
- * fields annotated by <code>&#064;Parameter</code> will be initialized with the data values in the
- * <code>&#064;Parameters</code> method.
- * </p>
- * 
- * @since 4.0
  */
 public class ParameterizedInjectingRunner extends Suite {
 
@@ -137,9 +56,6 @@ public class ParameterizedInjectingRunner extends Suite {
 
     private StagedExamReactor stagedReactor;
 
-    /**
-     * Only called reflectively. Do not use programmatically.
-     */
     public ParameterizedInjectingRunner(Class<?> klass) throws InitializationError {
         super(klass, NO_RUNNERS);
 
@@ -174,7 +90,6 @@ public class ParameterizedInjectingRunner extends Suite {
 
     @Override
     public void run(RunNotifier notifier) {
-        // LOG.info("running test class {}", getTestClass().getName());
         Class<?> testClass = getTestClass().getJavaClass();
         try {
             manager.beforeClass(stagedReactor, testClass);

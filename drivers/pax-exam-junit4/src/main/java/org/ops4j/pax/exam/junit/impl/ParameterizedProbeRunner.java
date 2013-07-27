@@ -55,8 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JUnit runner for parameterized Pax Exam tests in Osgi . See {@link Parameterized} for more
- * details on specifying parameter sets.
+ * JUnit runner for parameterized Pax Exam tests executed via an invoker. This runner is used for
+ * all operation modes except CDI. See {@link Parameterized} for more details on specifying
+ * parameter sets.
  * 
  * @author Harald Wellmann
  * 

@@ -29,6 +29,13 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
+/**
+ * Runner for parameterized test classes.
+ * 
+ * Based on {@code org.junit.runners.Parameterized}.
+ * @author Harald Wellmann
+ *
+ */
 class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
 
     private final Object[] fParameters;
