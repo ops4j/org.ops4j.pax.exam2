@@ -19,7 +19,13 @@ package org.ops4j.pax.exam.junit;
 
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.manipulation.Sortable;
+import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.junit.impl.InjectingRunner;
@@ -39,9 +45,9 @@ import org.ops4j.pax.exam.spi.reactors.ReactorManager;
  * @author Toni Menzel
  * @author Harald Wellmann
  */
-public class PaxExam extends Runner {
+public class PaxExam extends Runner implements Filterable, Sortable {
     
-    private Runner delegate;
+    private ParentRunner<?> delegate;
     private Class<?> testClass;
     
     public PaxExam(Class<?> klass) throws InitializationError {
@@ -67,5 +73,15 @@ public class PaxExam extends Runner {
     @Override
     public void run(RunNotifier notifier) {
         delegate.run(notifier);
+    }
+
+    @Override
+    public void filter(Filter filter) throws NoTestsRemainException {
+        delegate.filter(filter);
+    }
+
+    @Override
+    public void sort(Sorter sorter) {
+        delegate.sort(sorter);
     }
 }
