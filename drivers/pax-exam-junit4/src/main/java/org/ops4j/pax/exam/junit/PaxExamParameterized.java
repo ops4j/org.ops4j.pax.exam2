@@ -21,7 +21,10 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized;
+import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.Constants;
+import org.ops4j.pax.exam.junit.impl.ParameterizedInjectingRunner;
+import org.ops4j.pax.exam.junit.impl.ParameterizedProbeRunner;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
 /**
@@ -41,7 +44,7 @@ public class PaxExamParameterized extends Runner {
         createDelegate();
     }
 
-    private void createDelegate() throws Throwable {
+    private void createDelegate() throws InitializationError {
         ReactorManager manager = ReactorManager.getInstance();
         if (manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI)) {
             delegate = new ParameterizedInjectingRunner(testClass);
@@ -60,5 +63,4 @@ public class PaxExamParameterized extends Runner {
     public void run(RunNotifier notifier) {
         delegate.run(notifier);
     }
-
 }

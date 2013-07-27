@@ -14,10 +14,12 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.junit.impl;
 
 
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -137,17 +139,32 @@ public class ParameterizedInjectingRunner extends Suite {
     /**
      * Only called reflectively. Do not use programmatically.
      */
-    public ParameterizedInjectingRunner(Class<?> klass) throws Throwable {
+    public ParameterizedInjectingRunner(Class<?> klass) throws InitializationError {
         super(klass, NO_RUNNERS);
         
         manager = ReactorManager.getInstance();
         manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
-        manager.prepareReactor(klass, null);
-        stagedReactor = manager.stageReactor();
         
-        Parameters parameters = getParametersMethod().getAnnotation(
-                Parameters.class);
-        createRunnersForParameters(allParameters(), parameters.name());
+        try {
+            manager.prepareReactor(klass, null);
+            stagedReactor = manager.stageReactor();
+            
+            Parameters parameters = getParametersMethod().getAnnotation(
+                    Parameters.class);
+            createRunnersForParameters(allParameters(), parameters.name());
+        }
+        catch (InstantiationException exc) {
+            throw new InitializationError(exc);
+        }
+        catch (IllegalAccessException exc) {
+            throw new InitializationError(exc);
+        }
+        catch (InvocationTargetException exc) {
+            throw new InitializationError(exc);
+        }
+        catch (IOException exc) {
+            throw new InitializationError(exc);
+        }
     }
 
     @Override
@@ -175,8 +192,14 @@ public class ParameterizedInjectingRunner extends Suite {
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<Object[]> allParameters() throws Throwable {
-        Object parameters = getParametersMethod().invokeExplosively(null);
+    private Iterable<Object[]> allParameters() throws InitializationError {
+        Object parameters;
+        try {
+            parameters = getParametersMethod().invokeExplosively(null);
+        }
+        catch (Throwable t) {
+            throw new InitializationError(t);
+        }
         if (parameters instanceof Iterable) {
             return (Iterable<Object[]>) parameters;
         } else {
@@ -184,7 +207,7 @@ public class ParameterizedInjectingRunner extends Suite {
         }
     }
 
-    private FrameworkMethod getParametersMethod() throws Exception {
+    private FrameworkMethod getParametersMethod() throws InitializationError {
         List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(
                 Parameters.class);
         for (FrameworkMethod each : methods) {
@@ -193,12 +216,12 @@ public class ParameterizedInjectingRunner extends Suite {
             }
         }
 
-        throw new Exception("No public static parameters method on class "
+        throw new InitializationError("No public static parameters method on class "
                 + getTestClass().getName());
     }
 
     private void createRunnersForParameters(Iterable<Object[]> allParameters,
-            String namePattern) throws InitializationError, Exception {
+            String namePattern) throws InitializationError {
         try {
             int i = 0;
             for (Object[] parametersOfSingleTest : allParameters) {
@@ -221,12 +244,12 @@ public class ParameterizedInjectingRunner extends Suite {
         return "[" + name + "]";
     }
 
-    private Exception parametersMethodReturnedWrongType() throws Exception {
+    private InitializationError parametersMethodReturnedWrongType() throws InitializationError {
         String className = getTestClass().getName();
         String methodName = getParametersMethod().getName();
         String message = MessageFormat.format(
                 "{0}.{1}() must return an Iterable of arrays.",
                 className, methodName);
-        return new Exception(message);
+        return new InitializationError(message);
     }
 }

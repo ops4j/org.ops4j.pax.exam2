@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.junit.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

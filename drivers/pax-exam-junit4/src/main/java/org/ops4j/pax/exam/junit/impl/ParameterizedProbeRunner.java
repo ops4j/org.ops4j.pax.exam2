@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.junit.impl;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
@@ -78,14 +80,31 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
 
     private Object[] parameters;
 
-    public ParameterizedProbeRunner(Class<?> klass) throws Exception {
+    public ParameterizedProbeRunner(Class<?> klass) throws InitializationError {
         super(klass);
         LOG.info("creating PaxExam runner for {}", klass);
         manager = ReactorManager.getInstance();
         manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
-        ExamReactor examReactor = manager.prepareReactor(klass, null);
-        addTestsToReactor(examReactor, klass, null);
-        stagedReactor = manager.stageReactor();
+        try {
+            ExamReactor examReactor = manager.prepareReactor(klass, null);
+            addTestsToReactor(examReactor, klass, null);
+            stagedReactor = manager.stageReactor();
+        }
+        catch (InstantiationException exc) {
+            throw new InitializationError(exc);
+        }
+        catch (IllegalAccessException exc) {
+            throw new InitializationError(exc);
+        }
+        catch (InvocationTargetException exc) {
+            throw new InitializationError(exc);
+        }
+        catch (IOException exc) {
+            throw new InitializationError(exc);
+        }
+        catch (ExamConfigurationException exc) {
+            throw new InitializationError(exc);
+        }
     }
 
     /**

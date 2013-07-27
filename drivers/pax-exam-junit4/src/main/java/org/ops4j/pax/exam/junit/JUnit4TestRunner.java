@@ -24,7 +24,7 @@ package org.ops4j.pax.exam.junit;
 @Deprecated
 public class JUnit4TestRunner extends PaxExam {
 
-    public JUnit4TestRunner(Class<?> klass) throws Exception {
+    public JUnit4TestRunner(Class<?> klass) throws Throwable {
         super(klass);
     }
 }

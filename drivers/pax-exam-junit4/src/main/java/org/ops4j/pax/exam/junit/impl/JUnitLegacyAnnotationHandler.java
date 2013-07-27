@@ -14,11 +14,15 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.junit.impl;
 
 import java.lang.reflect.Method;
 
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ExamFactory;
+import org.ops4j.pax.exam.junit.ExamReactorStrategy;
+import org.ops4j.pax.exam.junit.ProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 import org.ops4j.pax.exam.spi.reactors.AnnotationHandler;
 

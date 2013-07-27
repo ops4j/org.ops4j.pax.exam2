@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.junit.impl;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.ops4j.pax.exam.TestAddress;
