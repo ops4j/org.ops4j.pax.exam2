@@ -12,8 +12,8 @@
         <relativePath>../../pom</relativePath>
     </parent>
 
-    <groupId>org.ops4j.pax.exam</groupId>
-    <artifactId>regression-native-testng</artifactId>
+    <groupId>org.ops4j.pax.exam.itest</groupId>
+    <artifactId>regression-testng</artifactId>
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam Regression - Native Container + TestNG</name>

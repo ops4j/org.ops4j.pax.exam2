@@ -13,7 +13,6 @@
     </parent>
 
 
-    <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>regression-javaee-userprobe</artifactId>
     <packaging>jar</packaging>
 

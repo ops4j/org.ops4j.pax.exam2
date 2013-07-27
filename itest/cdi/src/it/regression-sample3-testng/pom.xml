@@ -12,7 +12,6 @@
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>regression-sample3-testng</artifactId>
     <packaging>jar</packaging>
 

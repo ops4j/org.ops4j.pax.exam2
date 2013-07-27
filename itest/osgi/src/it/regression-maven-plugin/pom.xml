@@ -11,7 +11,7 @@
         <version>3.2.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.ops4j.pax.exam</groupId>
+    <groupId>org.ops4j.pax.exam.itest</groupId>
     <artifactId>regression-maven-plugin</artifactId>
     <packaging>jar</packaging>
 

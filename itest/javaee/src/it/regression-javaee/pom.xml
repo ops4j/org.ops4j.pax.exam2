@@ -12,7 +12,6 @@
         <relativePath>../../..</relativePath>
     </parent>
 
-    <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>regression-javaee</artifactId>
     <packaging>jar</packaging>
 
