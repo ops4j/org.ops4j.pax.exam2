@@ -14,9 +14,22 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.cdi.calc;
+package org.ops4j.pax.exam.sample3.ice;
 
-public interface Calculator {
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    int add(int op1, int op2);
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
+
+@Qualifier
+@Target({ TYPE, METHOD, PARAMETER, FIELD })
+@Retention(RUNTIME)
+public @interface Chocolate {
+
 }

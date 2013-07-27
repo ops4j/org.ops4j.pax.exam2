@@ -15,9 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.cdi.ice;
+package org.ops4j.pax.exam.sample3.ice;
 
-public interface IceCreamService {
+@Chocolate
+public class ChocolateService implements IceCreamService {
 
-    String getFlavour();
+    public String getFlavour() {
+        return "Chocolate";
+    }
 }

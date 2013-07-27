@@ -24,8 +24,8 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.regression.cdi.ice.IceCreamService;
-import org.ops4j.pax.exam.regression.cdi.ice.Vanilla;
+import org.ops4j.pax.exam.sample3.ice.IceCreamService;
+import org.ops4j.pax.exam.sample3.ice.Vanilla;
 
 /**
  * This test is invalid, since exam.properties does not exist and pax.exam.system is not set.

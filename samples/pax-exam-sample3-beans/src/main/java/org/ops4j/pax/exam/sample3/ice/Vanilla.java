@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.cdi.ice;
+package org.ops4j.pax.exam.sample3.ice;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -30,6 +30,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({ TYPE, METHOD, PARAMETER, FIELD })
 @Retention(RUNTIME)
-public @interface Chocolate {
+public @interface Vanilla {
 
 }

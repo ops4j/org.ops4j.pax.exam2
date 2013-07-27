@@ -14,22 +14,16 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.cdi.ice;
+package org.ops4j.pax.exam.sample3.calc;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.inject.Inject;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class CalculatorImpl implements Calculator {
 
-import javax.inject.Qualifier;
+    @Inject
+    private BinaryOperation addition;
 
-@Qualifier
-@Target({ TYPE, METHOD, PARAMETER, FIELD })
-@Retention(RUNTIME)
-public @interface Vanilla {
-
+    public int add(int op1, int op2) {
+        return addition.operate(op1, op2);
+    }
 }

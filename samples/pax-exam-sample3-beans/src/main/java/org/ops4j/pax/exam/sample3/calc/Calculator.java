@@ -14,9 +14,9 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.cdi.calc;
+package org.ops4j.pax.exam.sample3.calc;
 
-public interface BinaryOperation {
+public interface Calculator {
 
-    int operate(int op1, int op2);
+    int add(int op1, int op2);
 }

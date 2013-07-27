@@ -14,16 +14,11 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.cdi.calc;
+package org.ops4j.pax.exam.sample3.calc;
 
-import javax.inject.Inject;
+public class Addition implements BinaryOperation {
 
-public class CalculatorImpl implements Calculator {
-
-    @Inject
-    private BinaryOperation addition;
-
-    public int add(int op1, int op2) {
-        return addition.operate(op1, op2);
+    public int operate(int op1, int op2) {
+        return op1 + op2;
     }
 }

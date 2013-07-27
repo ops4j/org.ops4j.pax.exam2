@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 import org.ops4j.pax.exam.junit.PaxExamParameterized;
+import org.ops4j.pax.exam.sample3.calc.Calculator;
 
 @RunWith(PaxExamParameterized.class)
 public class CalculatorTest {

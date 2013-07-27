@@ -14,11 +14,9 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.cdi.calc;
+package org.ops4j.pax.exam.sample3.calc;
 
-public class Addition implements BinaryOperation {
+public interface BinaryOperation {
 
-    public int operate(int op1, int op2) {
-        return op1 + op2;
-    }
+    int operate(int op1, int op2);
 }
