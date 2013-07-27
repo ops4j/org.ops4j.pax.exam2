@@ -25,8 +25,8 @@
             <modules>
                 <module>src/it/regression-cdi-invalid</module>
                 <module>src/it/regression-deltaspike</module>
-                <module>src/it/regression-sample1</module>
-                <module>src/it/regression-sample3-testng</module>
+                <module>src/it/regression-cdi</module>
+                <module>src/it/regression-cdi-testng</module>
             </modules>
         </profile>
 
@@ -58,7 +58,7 @@
                                     <cloneProjectsTo>${project.build.directory}/candi</cloneProjectsTo>
                                     <!-- Resin does not fire a BeforeBeanDiscoveryEvent, 
                                         which crashes DeltaSpike -->
-                                    <invokerTest>regression-sample3-testng</invokerTest>
+                                    <invokerTest>regression-cdi-testng</invokerTest>
                                 </configuration>
                             </execution>
                             <execution>

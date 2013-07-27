@@ -12,7 +12,7 @@
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>regression-sample3-testng</artifactId>
+    <artifactId>regression-cdi-testng</artifactId>
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam CDI/TestNG Regression Tests</name>
