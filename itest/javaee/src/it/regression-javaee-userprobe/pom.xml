@@ -14,7 +14,7 @@
 
 
     <groupId>org.ops4j.pax.exam</groupId>
-    <artifactId>regression-userprobe</artifactId>
+    <artifactId>regression-javaee-userprobe</artifactId>
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam Java EE Regression Tests with User-Defined Probe</name>
