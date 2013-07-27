@@ -16,6 +16,8 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import org.junit.runners.model.InitializationError;
+
 /**
  * @deprecated Use {@link PaxExam}.
  * @author Harald Wellmann
@@ -24,7 +26,7 @@ package org.ops4j.pax.exam.junit;
 @Deprecated
 public class JUnit4TestRunner extends PaxExam {
 
-    public JUnit4TestRunner(Class<?> klass) throws Throwable {
+    public JUnit4TestRunner(Class<?> klass) throws InitializationError {
         super(klass);
     }
 }

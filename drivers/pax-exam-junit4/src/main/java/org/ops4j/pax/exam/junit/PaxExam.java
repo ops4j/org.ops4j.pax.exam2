@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.junit;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.junit.impl.InjectingRunner;
 import org.ops4j.pax.exam.junit.impl.ProbeRunner;
@@ -43,12 +44,12 @@ public class PaxExam extends Runner {
     private Runner delegate;
     private Class<?> testClass;
     
-    public PaxExam(Class<?> klass) throws Exception {
+    public PaxExam(Class<?> klass) throws InitializationError {
         this.testClass = klass;
         createDelegate();
     }
 
-    private void createDelegate() throws Exception {
+    private void createDelegate() throws InitializationError {
         ReactorManager manager = ReactorManager.getInstance();
         if (manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI)) {
             delegate = new InjectingRunner(testClass);

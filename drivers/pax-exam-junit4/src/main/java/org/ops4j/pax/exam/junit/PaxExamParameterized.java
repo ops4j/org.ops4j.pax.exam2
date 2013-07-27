@@ -39,7 +39,7 @@ public class PaxExamParameterized extends Runner {
     private Runner delegate;
     private Class<?> testClass;
     
-    public PaxExamParameterized(Class<?> klass) throws Throwable {
+    public PaxExamParameterized(Class<?> klass) throws InitializationError {
         this.testClass = klass;
         createDelegate();
     }
