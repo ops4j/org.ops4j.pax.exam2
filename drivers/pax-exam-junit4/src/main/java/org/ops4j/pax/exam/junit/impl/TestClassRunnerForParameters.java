@@ -30,12 +30,13 @@ import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
 class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
+
     private final Object[] fParameters;
 
     private final String fName;
 
-    TestClassRunnerForParameters(Class<?> type, Object[] parameters,
-            String name) throws InitializationError {
+    TestClassRunnerForParameters(Class<?> type, Object[] parameters, String name)
+        throws InitializationError {
         super(type);
         fParameters = parameters;
         fName = name;
@@ -46,7 +47,8 @@ class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
         Object test = null;
         if (fieldsAreAnnotated()) {
             test = createTestUsingFieldInjection();
-        } else {
+        }
+        else {
             test = createTestUsingConstructorInjection();
         }
         ReactorManager.getInstance().inject(test);
@@ -60,8 +62,9 @@ class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
     private Object createTestUsingFieldInjection() throws Exception {
         List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
         if (annotatedFieldsByParameter.size() != fParameters.length) {
-            throw new Exception("Wrong number of parameters and @Parameter fields." +
-                    " @Parameter fields counted: " + annotatedFieldsByParameter.size() + ", available parameters: " + fParameters.length + ".");
+            throw new Exception("Wrong number of parameters and @Parameter fields."
+                + " @Parameter fields counted: " + annotatedFieldsByParameter.size()
+                + ", available parameters: " + fParameters.length + ".");
         }
         Object testClassInstance = getTestClass().getJavaClass().newInstance();
         for (FrameworkField each : annotatedFieldsByParameter) {
@@ -70,11 +73,12 @@ class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
             int index = annotation.value();
             try {
                 field.set(testClassInstance, fParameters[index]);
-            } catch (IllegalArgumentException iare) {
-                throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName() +
-                        " with the value " + fParameters[index] +
-                        " that is not the right type (" + fParameters[index].getClass().getSimpleName() + " instead of " +
-                        field.getType().getSimpleName() + ").", iare);
+            }
+            catch (IllegalArgumentException iare) {
+                throw new Exception(getTestClass().getName() + ": Trying to set " + field.getName()
+                    + " with the value " + fParameters[index] + " that is not the right type ("
+                    + fParameters[index].getClass().getSimpleName() + " instead of "
+                    + field.getType().getSimpleName() + ").", iare);
             }
         }
         return testClassInstance;
@@ -107,12 +111,12 @@ class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
             for (FrameworkField each : annotatedFieldsByParameter) {
                 int index = each.getField().getAnnotation(Parameter.class).value();
                 if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
-                    errors.add(
-                            new Exception("Invalid @Parameter value: " + index + ". @Parameter fields counted: " +
-                                    annotatedFieldsByParameter.size() + ". Please use an index between 0 and " +
-                                    (annotatedFieldsByParameter.size() - 1) + ".")
-                    );
-                } else {
+                    errors.add(new Exception("Invalid @Parameter value: " + index
+                        + ". @Parameter fields counted: " + annotatedFieldsByParameter.size()
+                        + ". Please use an index between 0 and "
+                        + (annotatedFieldsByParameter.size() - 1) + "."));
+                }
+                else {
                     usedIndices[index]++;
                 }
             }
@@ -120,8 +124,10 @@ class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
                 int numberOfUse = usedIndices[index];
                 if (numberOfUse == 0) {
                     errors.add(new Exception("@Parameter(" + index + ") is never used."));
-                } else if (numberOfUse > 1) {
-                    errors.add(new Exception("@Parameter(" + index + ") is used more than once (" + numberOfUse + ")."));
+                }
+                else if (numberOfUse > 1) {
+                    errors.add(new Exception("@Parameter(" + index + ") is used more than once ("
+                        + numberOfUse + ")."));
                 }
             }
         }
@@ -136,7 +142,7 @@ class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
     protected Annotation[] getRunnerAnnotations() {
         return new Annotation[0];
     }
-    
+
     private List<FrameworkField> getAnnotatedFieldsByParameter() {
         return getTestClass().getAnnotatedFields(Parameter.class);
     }
@@ -144,5 +150,4 @@ class TestClassRunnerForParameters extends BlockJUnit4ClassRunner {
     private boolean fieldsAreAnnotated() {
         return !getAnnotatedFieldsByParameter().isEmpty();
     }
-    
 }

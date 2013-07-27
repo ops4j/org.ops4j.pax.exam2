@@ -16,8 +16,6 @@
  */
 package org.ops4j.pax.exam.junit.impl;
 
-
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -38,47 +36,48 @@ import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
 /**
  * <p>
- * The custom runner <code>Parameterized</code> implements parameterized tests.
- * When running a parameterized test class, instances are created for the
- * cross-product of the test methods and the test data elements.
+ * The custom runner <code>Parameterized</code> implements parameterized tests. When running a
+ * parameterized test class, instances are created for the cross-product of the test methods and the
+ * test data elements.
  * </p>
- *
+ * 
  * For example, to test a Fibonacci function, write:
- *
+ * 
  * <pre>
+ * 
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- *      &#064;Parameters(name= &quot;{index}: fib({0})={1}&quot;)
- *      public static Iterable&lt;Object[]&gt; data() {
- *              return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ * 
+ *     &#064;Parameters(name = &quot;{index}: fib({0})={1}&quot;)
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
+ *             { 5, 5 }, { 6, 8 } });
  *     }
- *
- *      private int fInput;
- *
- *      private int fExpected;
- *
- *      public FibonacciTest(int input, int expected) {
- *              fInput= input;
- *              fExpected= expected;
+ * 
+ *     private int fInput;
+ * 
+ *     private int fExpected;
+ * 
+ *     public FibonacciTest(int input, int expected) {
+ *         fInput = input;
+ *         fExpected = expected;
  *     }
- *
- *      &#064;Test
- *      public void test() {
- *              assertEquals(fExpected, Fibonacci.compute(fInput));
+ * 
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(fExpected, Fibonacci.compute(fInput));
  *     }
  * }
  * </pre>
- *
+ * 
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed using the
- * two-argument constructor and the data values in the
- * <code>&#064;Parameters</code> method.
- *
+ * Each instance of <code>FibonacciTest</code> will be constructed using the two-argument
+ * constructor and the data values in the <code>&#064;Parameters</code> method.
+ * 
  * <p>
- * In order that you can easily identify the individual tests, you may provide a
- * name for the <code>&#064;Parameters</code> annotation. This name is allowed
- * to contain placeholders, which are replaced at runtime. The placeholders are
+ * In order that you can easily identify the individual tests, you may provide a name for the
+ * <code>&#064;Parameters</code> annotation. This name is allowed to contain placeholders, which are
+ * replaced at runtime. The placeholders are
  * <dl>
  * <dt>{index}</dt>
  * <dd>the current parameter index</dd>
@@ -89,46 +88,48 @@ import org.ops4j.pax.exam.spi.reactors.ReactorManager;
  * <dt>...</dt>
  * <dd></dd>
  * </dl>
- * In the example given above, the <code>Parameterized</code> runner creates
- * names like <code>[1: fib(3)=2]</code>. If you don't use the name parameter,
- * then the current parameter index is used as name.
+ * In the example given above, the <code>Parameterized</code> runner creates names like
+ * <code>[1: fib(3)=2]</code>. If you don't use the name parameter, then the current parameter index
+ * is used as name.
  * </p>
- *
+ * 
  * You can also write:
- *
+ * 
  * <pre>
+ * 
  * &#064;RunWith(Parameterized.class)
  * public class FibonacciTest {
- *  &#064;Parameters
- *  public static Iterable&lt;Object[]&gt; data() {
- *      return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 },
- *                 { 3, 2 }, { 4, 3 }, { 5, 5 }, { 6, 8 } });
+ * 
+ *     &#064;Parameters
+ *     public static Iterable&lt;Object[]&gt; data() {
+ *         return Arrays.asList(new Object[][] { { 0, 0 }, { 1, 1 }, { 2, 1 }, { 3, 2 }, { 4, 3 },
+ *             { 5, 5 }, { 6, 8 } });
  *     }
- *  &#064;Parameter(0)
- *  public int fInput;
- *
- *  &#064;Parameter(1)
- *  public int fExpected;
- *
- *  &#064;Test
- *  public void test() {
- *      assertEquals(fExpected, Fibonacci.compute(fInput));
+ * 
+ *     &#064;Parameter(0)
+ *     public int fInput;
+ * 
+ *     &#064;Parameter(1)
+ *     public int fExpected;
+ * 
+ *     &#064;Test
+ *     public void test() {
+ *         assertEquals(fExpected, Fibonacci.compute(fInput));
  *     }
  * }
  * </pre>
- *
+ * 
  * <p>
- * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor
- * and fields annotated by <code>&#064;Parameter</code>  will be initialized
- * with the data values in the <code>&#064;Parameters</code> method.
+ * Each instance of <code>FibonacciTest</code> will be constructed with the default constructor and
+ * fields annotated by <code>&#064;Parameter</code> will be initialized with the data values in the
+ * <code>&#064;Parameters</code> method.
  * </p>
- *
+ * 
  * @since 4.0
  */
 public class ParameterizedInjectingRunner extends Suite {
 
-    private static final List<Runner> NO_RUNNERS = Collections
-            .<Runner>emptyList();
+    private static final List<Runner> NO_RUNNERS = Collections.<Runner> emptyList();
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
 
@@ -141,16 +142,15 @@ public class ParameterizedInjectingRunner extends Suite {
      */
     public ParameterizedInjectingRunner(Class<?> klass) throws InitializationError {
         super(klass, NO_RUNNERS);
-        
+
         manager = ReactorManager.getInstance();
         manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
-        
+
         try {
             manager.prepareReactor(klass, null);
             stagedReactor = manager.stageReactor();
-            
-            Parameters parameters = getParametersMethod().getAnnotation(
-                    Parameters.class);
+
+            Parameters parameters = getParametersMethod().getAnnotation(Parameters.class);
             createRunnersForParameters(allParameters(), parameters.name());
         }
         catch (InstantiationException exc) {
@@ -171,10 +171,10 @@ public class ParameterizedInjectingRunner extends Suite {
     protected List<Runner> getChildren() {
         return runners;
     }
-    
+
     @Override
     public void run(RunNotifier notifier) {
-        //LOG.info("running test class {}", getTestClass().getName());
+        // LOG.info("running test class {}", getTestClass().getName());
         Class<?> testClass = getTestClass().getJavaClass();
         try {
             manager.beforeClass(stagedReactor, testClass);
@@ -197,19 +197,20 @@ public class ParameterizedInjectingRunner extends Suite {
         try {
             parameters = getParametersMethod().invokeExplosively(null);
         }
+        // CHECKSTYLE:SKIP - JUnit API
         catch (Throwable t) {
             throw new InitializationError(t);
         }
         if (parameters instanceof Iterable) {
             return (Iterable<Object[]>) parameters;
-        } else {
+        }
+        else {
             throw parametersMethodReturnedWrongType();
         }
     }
 
     private FrameworkMethod getParametersMethod() throws InitializationError {
-        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(
-                Parameters.class);
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(Parameters.class);
         for (FrameworkMethod each : methods) {
             if (each.isStatic() && each.isPublic()) {
                 return each;
@@ -217,29 +218,28 @@ public class ParameterizedInjectingRunner extends Suite {
         }
 
         throw new InitializationError("No public static parameters method on class "
-                + getTestClass().getName());
+            + getTestClass().getName());
     }
 
-    private void createRunnersForParameters(Iterable<Object[]> allParameters,
-            String namePattern) throws InitializationError {
+    private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern)
+        throws InitializationError {
         try {
             int i = 0;
             for (Object[] parametersOfSingleTest : allParameters) {
                 String name = nameFor(namePattern, i, parametersOfSingleTest);
                 TestClassRunnerForParameters runner = new TestClassRunnerForParameters(
-                        getTestClass().getJavaClass(), parametersOfSingleTest,
-                        name);
+                    getTestClass().getJavaClass(), parametersOfSingleTest, name);
                 runners.add(runner);
                 ++i;
             }
-        } catch (ClassCastException e) {
+        }
+        catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();
         }
     }
 
     private String nameFor(String namePattern, int index, Object[] parameters) {
-        String finalPattern = namePattern.replaceAll("\\{index\\}",
-                Integer.toString(index));
+        String finalPattern = namePattern.replaceAll("\\{index\\}", Integer.toString(index));
         String name = MessageFormat.format(finalPattern, parameters);
         return "[" + name + "]";
     }
@@ -247,9 +247,8 @@ public class ParameterizedInjectingRunner extends Suite {
     private InitializationError parametersMethodReturnedWrongType() throws InitializationError {
         String className = getTestClass().getName();
         String methodName = getParametersMethod().getName();
-        String message = MessageFormat.format(
-                "{0}.{1}() must return an Iterable of arrays.",
-                className, methodName);
+        String message = MessageFormat.format("{0}.{1}() must return an Iterable of arrays.",
+            className, methodName);
         return new InitializationError(message);
     }
 }
