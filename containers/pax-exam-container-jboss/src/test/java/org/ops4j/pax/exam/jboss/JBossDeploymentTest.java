@@ -36,10 +36,24 @@ public class JBossDeploymentTest {
     @Test
     public void deployWar() throws ServerStartException, IOException, InterruptedException,
         ExecutionException {
+        deployWarWithPortOffset(null);
+    }
+
+    @Test
+    public void deployWarWithPortOffset() throws ServerStartException, IOException, InterruptedException,
+        ExecutionException {
+        deployWarWithPortOffset(10000);
+    }
+
+    private void deployWarWithPortOffset(Integer offset) throws ServerStartException, IOException, InterruptedException,
+        ExecutionException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
         System.setProperty("jboss.server.config.dir", "src/test/resources/jboss-config");
+        if (offset != null) {
+            System.setProperty("jboss.socket.binding.port-offset", Integer.toString(offset));
+        }
 
         ConfigurationManager cm = new ConfigurationManager();
         String jBossHome = cm.getProperty("pax.exam.jboss.home");
@@ -48,8 +62,12 @@ public class JBossDeploymentTest {
             "org.slf4j", "org.jboss.threads", "ch.qos.cal10n");
         server.start();
 
+        int port = 9999;
+        if (offset != null) {
+            port += offset;
+        }
         ServerDeploymentManager deploymentManager = ServerDeploymentManager.Factory.create(
-            InetAddress.getByName("localhost"), 9999);
+            InetAddress.getByName("localhost"), port);
         InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
         String applName = "wicket-examples1";
         URL applUrl = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war");
@@ -86,6 +104,5 @@ public class JBossDeploymentTest {
         deploymentManager.execute(plan).get();
         actionResult = result.getDeploymentActionResult(actionId);
         assertThat(actionResult.getResult(), is(Result.EXECUTED));
-
     }
 }

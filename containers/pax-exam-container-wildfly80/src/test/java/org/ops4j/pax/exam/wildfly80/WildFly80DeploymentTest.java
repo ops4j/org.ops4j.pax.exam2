@@ -51,10 +51,24 @@ public class WildFly80DeploymentTest {
     @Test
     public void deployWar() throws ServerStartException, IOException, InterruptedException,
         ExecutionException {
+        deployWarWithPortOffset(null);
+    }
+    
+    @Test
+    public void deployWarWithPortOffset() throws ServerStartException, IOException, InterruptedException,
+        ExecutionException {
+        deployWarWithPortOffset(10000);
+    }
+    
+    private void deployWarWithPortOffset(Integer offset) throws ServerStartException, IOException, InterruptedException,
+        ExecutionException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
         System.setProperty("jboss.server.config.dir", "target/test-classes/wildfly80-config");
+        if (offset != null) {
+            System.setProperty("jboss.socket.binding.port-offset", Integer.toString(offset));
+        }
 
         ConfigurationManager cm = new ConfigurationManager();
         String jBossHome = cm.getProperty("pax.exam.wildfly80.home");
@@ -62,8 +76,12 @@ public class WildFly80DeploymentTest {
             null, null, "org.jboss.logging");
         server.start();
 
+        int port = 9990;
+        if (offset != null) {
+            port += offset;
+        }
         final ModelControllerClient client = ModelControllerClient.Factory
-            .create("localhost", 19990);
+            .create("localhost", port);
         ServerDeploymentManager deploymentManager = ServerDeploymentManager.Factory.create(client);
         InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
         String applName = "wicket-examples1";

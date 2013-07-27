@@ -52,19 +52,37 @@ public class JBoss72DeploymentTest {
     @Test
     public void deployWar() throws ServerStartException, IOException, InterruptedException,
         ExecutionException {
+        deployWarWithPortOffset(null);
+    }
+
+    @Test
+    public void deployWarWithPortOffset() throws ServerStartException, IOException,
+        InterruptedException, ExecutionException {
+        deployWarWithPortOffset(10000);
+    }
+
+    private void deployWarWithPortOffset(Integer offset) throws ServerStartException, IOException,
+        InterruptedException, ExecutionException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
         System.setProperty("jboss.server.config.dir", "target/test-classes/jboss72-config");
+        if (offset != null) {
+            System.setProperty("jboss.socket.binding.port-offset", Integer.toString(offset));
+        }
 
         ConfigurationManager cm = new ConfigurationManager();
         String jBossHome = cm.getProperty("pax.exam.jboss72.home");
-        StandaloneServer server = EmbeddedServerFactory.create(jBossHome,
-            null, null, "org.jboss.logging");
+        StandaloneServer server = EmbeddedServerFactory.create(jBossHome, null, null,
+            "org.jboss.logging");
         server.start();
 
+        int port = 9999;
+        if (offset != null) {
+            port += offset;
+        }
         ServerDeploymentManager deploymentManager = ServerDeploymentManager.Factory.create(
-            InetAddress.getByName("localhost"), 19999);
+            InetAddress.getByName("localhost"), port);
         InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
         String applName = "wicket-examples1";
         URL applUrl = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war");
@@ -73,16 +91,13 @@ public class JBoss72DeploymentTest {
         UUID actionId = plan.getDeploymentActions().get(0).getId();
         ServerDeploymentActionResult actionResult = result.getDeploymentActionResult(actionId);
         assertThat(actionResult.getResult(), is(Result.EXECUTED));
-        
+
         builder = deploymentManager.newDeploymentPlan();
         plan = builder.undeploy(applName).andRemoveUndeployed().build();
         result = deploymentManager.execute(plan).get();
         actionId = plan.getDeploymentActions().get(0).getId();
         actionResult = result.getDeploymentActionResult(actionId);
         assertThat(actionResult.getResult(), is(Result.EXECUTED));
-        
-        
-        
         server.stop();
     }
 
@@ -95,8 +110,8 @@ public class JBoss72DeploymentTest {
         System.setProperty("org.jboss.logging.provider", "slf4j");
         System.setProperty("jboss.server.config.dir", "target/test-classes/jboss72-config");
 
-        final ModelControllerClient client = ModelControllerClient.Factory
-            .create("localhost", 19999);
+        final ModelControllerClient client = ModelControllerClient.Factory.create("localhost",
+            9999);
         ServerDeploymentManager deploymentManager = ServerDeploymentManager.Factory.create(client);
         InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
         String applName = "wicket-examples.war";
@@ -112,6 +127,5 @@ public class JBoss72DeploymentTest {
         deploymentManager.execute(plan).get();
         actionResult = result.getDeploymentActionResult(actionId);
         assertThat(actionResult.getResult(), is(Result.EXECUTED));
-
     }
 }
