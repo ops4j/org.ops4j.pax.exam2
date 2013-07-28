@@ -32,7 +32,7 @@ Branches:
 * v2.x   : Maintenance for Pax Exam 2.x (2.6.0 and higher)
 * v3.0.x : 3.0.x releases
 * v3.1.x : 3.1.x releases
-* master : ongoing development for 3.2.0 and higher 
+* master : ongoing development for 3.3.0 and higher 
 
 Run Build:
 
@@ -46,7 +46,7 @@ Run build with integration tests
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 3.1.0.
+The current release of Pax Exam is 3.2.0.
 
 ## Issue Tracking
 
