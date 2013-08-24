@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileOption;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFilePutOption;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
 
 public class KarafPropertiesFile {
 
@@ -50,12 +54,16 @@ public class KarafPropertiesFile {
         properties.put(key, value);
     }
 
-    public void extend(String key, String value) {
+    public void extend(String key, String separator, String value) {
         if (properties.get(key) == null) {
             properties.put(key, value);
             return;
         }
-        properties.put(key, properties.get(key) + value);
+        properties.put(key, properties.get(key) + separator + value);
+    }
+
+    public void extend(String key, String value) {
+        extend(key, ",", value);
     }
 
     public String get(String key) {
@@ -72,6 +80,21 @@ public class KarafPropertiesFile {
         } 
         catch (IOException e) {
             throw new IllegalStateException("It is required to replace propertyFile");
+        }
+    }
+
+    /**
+     * Method used for delegating handling of the options to karaf property file.
+     * 
+     * @param option Option to be applied for given configuration file.
+     */
+    public void handle(KarafDistributionConfigurationFileOption option) {
+        if (option instanceof KarafDistributionConfigurationFilePutOption) {
+            put(option.getKey(), option.getValue());
+        } else if (option instanceof KarafDistributionConfigurationFileExtendOption) {
+            extend(option.getKey(), option.getSeparator(), option.getValue());
+        } else if (option instanceof KarafDistributionConfigurationFileReplacementOption) {
+            replace(((KarafDistributionConfigurationFileReplacementOption) option).getSource());
         }
     }
 

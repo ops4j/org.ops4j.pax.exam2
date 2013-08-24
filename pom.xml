@@ -17,6 +17,31 @@
 
     <profiles>
         <profile>
+            <id>core</id>
+            
+            <modules>
+                <module>build/pax-exam-checkstyle-rules</module>
+                <module>pom</module>
+                <module>core/pax-exam</module>
+                <module>core/pax-exam-spi</module>
+                <module>core/pax-exam-extender-service</module>
+                <module>core/pax-exam-inject</module>
+                <module>core/pax-exam-invoker-junit</module>
+                <module>core/pax-exam-invoker-servlet</module>
+                <module>core/pax-exam-servlet-bridge</module>
+                <module>core/pax-exam-cdi</module>
+                <module>core/pax-exam-spring</module>
+                <module>core/pax-exam-cm</module>
+                <module>core/pax-exam-link-mvn</module>
+                <module>core/pax-exam-link-assembly</module>
+                <module>core/pax-exam-container-rbc</module>
+                <module>core/pax-exam-container-rbc-client</module>
+            </modules>
+
+        </profile>
+
+
+        <profile>
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>

@@ -16,25 +16,28 @@
  */
 package org.ops4j.pax.exam.karaf.options;
 
-import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.karaf.options.configs.LoggingCfg;
 
 /**
  * While the log-level could also be configured using the config options in the configuration files we also provide a
  * more easy option here.
  */
-public class LogLevelOption implements Option {
+public class LogLevelOption extends KarafDistributionConfigurationFilePutOption {
 
     public static enum LogLevel {
         TRACE, DEBUG, INFO, WARN, ERROR
     }
 
+    public final static String DEFAULT_APPENDERS = "out, stdout, osgi:*";
+
     private LogLevel logLevel;
 
-    public LogLevelOption() {
+    public LogLevelOption(LogLevel level) {
+        this(level, DEFAULT_APPENDERS);
     }
 
-    public LogLevelOption(LogLevel logLevel) {
-        this.logLevel = logLevel;
+    public LogLevelOption(LogLevel level, String appenders) {
+        super(LoggingCfg.ROOT_LOGGER, level + "," + appenders);
     }
 
     public LogLevelOption logLevel(LogLevel _logLevel) {

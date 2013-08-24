@@ -251,11 +251,18 @@ public final class KarafDistributionOption {
     }
 
     /**
+     * Specify given log level for category.
+     */
+    public static Option logCategoryLevel(String category, LogLevel logLevel) {
+        return new LogCategoryLevelOption(category, logLevel);
+    }
+
+    /**
      * A very simple and convinient method to set a specific log level without the need of configure
      * the specific option itself.
      */
     public static LogLevelOption logLevel() {
-        return new LogLevelOption();
+        return new LogLevelOption(LogLevel.WARN);
     }
 
     /**
