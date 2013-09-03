@@ -28,6 +28,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleReference;
 
@@ -63,15 +64,14 @@ public class ServiceInjector implements Injector {
     }
 
     private void injectDeclaredFields(Object target, Class<?> targetClass) {
-        BundleContext context = getBundleContext(targetClass);
         for (Field field : targetClass.getDeclaredFields()) {
             if (field.getAnnotation(Inject.class) != null) {
-                injectField(context, target, field);
+                injectField(target, targetClass, field);
             }
         }
     }
 
-    private void injectField(BundleContext bc, Object target, Field field) {
+    private void injectField(Object target, Class<?> targetClass, Field field) {
         Class<?> type = field.getType();
         String filterString = "";
         String timeoutProp = System.getProperty(EXAM_SERVICE_TIMEOUT_KEY,
@@ -82,8 +82,16 @@ public class ServiceInjector implements Injector {
             filterString = filter.value();
             timeout = filter.timeout();
         }
+
+        // Retrieve bundle Context just before calling getService to avoid that the bundle restarts
+        // in between
+        BundleContext bc = getBundleContext(targetClass, timeout);
         Object service = (BundleContext.class == type) ? bc : ServiceLookup.getService(bc, type,
             timeout, filterString);
+        setField(target, field, service);
+    }
+
+    private void setField(Object target, Field field, Object service) {
         try {
             if (field.isAccessible()) {
                 field.set(target, service);
@@ -103,17 +111,45 @@ public class ServiceInjector implements Injector {
         }
     }
 
-    private BundleContext getBundleContext(Class<?> klass) {
-        BundleContext bc;
+    private BundleContext getBundleContext(Class<?> klass, long timeout) {
         try {
             BundleReference bundleRef = BundleReference.class.cast(klass.getClassLoader());
-            bc = bundleRef.getBundle().getBundleContext();
-            return bc;
+            Bundle bundle = bundleRef.getBundle();
+            return getBundleContext(bundle, timeout);
         }
         catch (ClassCastException exc) {
             throw new TestContainerException("class " + klass.getName()
                 + " is not loaded from an OSGi bundle");
         }
+    }
+
+    /**
+     * Retrieve bundle context from given bundle. If the bundle is being restarted the bundle
+     * context can be null for some time
+     * 
+     * @param bundle
+     * @param timeout TODO
+     * @return bundleContext or exception if bundleContext is null after timeout
+     */
+    private BundleContext getBundleContext(Bundle bundle, long timeout) {
+        long endTime = System.currentTimeMillis() + timeout;
+        BundleContext bc = null;
+        while (bc == null) {
+            bc = bundle.getBundleContext();
+            if (bc == null) {
+                if (System.currentTimeMillis() >= endTime) {
+                    throw new TestContainerException(
+                        "Unable to retrieve bundle context from bundle " + bundle);
+                }
+                try {
+                    Thread.sleep(100);
+                }
+                catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+        }
+        return bc;
     }
 
 }
