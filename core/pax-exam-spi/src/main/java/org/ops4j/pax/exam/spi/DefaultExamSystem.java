@@ -26,11 +26,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
 
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.exam.ConfigurationFactory;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -42,6 +44,7 @@ import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.exam.spi.intern.TestProbeBuilderImpl;
 import org.ops4j.pax.exam.spi.war.WarTestProbeBuilderImpl;
+import org.ops4j.spi.ServiceProviderFinder;
 import org.ops4j.store.Store;
 import org.ops4j.store.intern.TemporaryStore;
 import org.slf4j.Logger;
@@ -238,7 +241,9 @@ public class DefaultExamSystem implements ExamSystem {
     }
 
     public TestProbeBuilder createProbe() throws IOException {
-        Option warProbeOption = getSingleOption(WarProbeOption.class);
+        
+        
+        WarProbeOption warProbeOption = getSingleOption(WarProbeOption.class);
         if (warProbeOption == null) {
             LOG.debug("creating default probe");
             TestProbeBuilderImpl testProbeBuilder = new TestProbeBuilderImpl(cache, store);
@@ -247,8 +252,14 @@ public class DefaultExamSystem implements ExamSystem {
             return testProbeBuilder;
         }
         else {
+            List<ConfigurationFactory> configurationFactories = ServiceProviderFinder
+                .findServiceProviders(ConfigurationFactory.class);
+            for (ConfigurationFactory cf : configurationFactories) {
+                Option[] configuration = cf.createConfiguration();
+                combinedOptions = combine(combinedOptions, configuration);
+            }
             LOG.debug("creating WAR probe");
-            return new WarTestProbeBuilderImpl(getTempFolder());
+            return new WarTestProbeBuilderImpl(getTempFolder(), warProbeOption);
         }
     }
 
