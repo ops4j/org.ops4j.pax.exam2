@@ -259,7 +259,13 @@ public class DefaultExamSystem implements ExamSystem {
                 combinedOptions = combine(combinedOptions, configuration);
             }
             LOG.debug("creating WAR probe");
-            return new WarTestProbeBuilderImpl(getTempFolder(), warProbeOption);
+            if (configurationFactories.isEmpty()) {
+                return new WarTestProbeBuilderImpl(getTempFolder());
+            }
+            else {
+                warProbeOption = getSingleOption(WarProbeOption.class);
+                return new WarTestProbeBuilderImpl(getTempFolder(), warProbeOption);
+            }
         }
     }
 
