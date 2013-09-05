@@ -767,7 +767,29 @@ public class CoreOptions {
      * @return deployment option
      */
     public static UrlDeploymentOption war(String url) {
-        return new UrlDeploymentOption(url);
+        return new UrlDeploymentOption(url, "war");
+    }
+
+    /**
+     * Deploys a JAR from the given URL.
+     * 
+     * @param url
+     *            URL of a JAR
+     * @return deployment option
+     */
+    public static UrlDeploymentOption jar(String url) {
+        return new UrlDeploymentOption(url, "jar");
+    }
+
+    /**
+     * Deploys a resource adapter archive (RAR) from the given URL.
+     * 
+     * @param url
+     *            URL of a RAR
+     * @return deployment option
+     */
+    public static UrlDeploymentOption rar(String url) {
+        return new UrlDeploymentOption(url, "rar");
     }
 
     /**
@@ -792,6 +814,36 @@ public class CoreOptions {
     public static MavenArtifactDeploymentOption mavenWar(final String groupId,
         final String artifactId, final String version) {
         return mavenWar().groupId(groupId).artifactId(artifactId).version(version).type("war");
+    }
+
+    /**
+     * Deploys a Maven JAR artifact with the given Maven coordinates.
+     * 
+     * @param groupId
+     *            group ID
+     * @param artifactId
+     *            artifact ID
+     * @param version
+     * @return Maven artifact option
+     */
+    public static MavenArtifactDeploymentOption mavenJar(final String groupId,
+        final String artifactId, final String version) {
+        return mavenWar().groupId(groupId).artifactId(artifactId).version(version).type("jar");
+    }
+
+    /**
+     * Deploys a Maven RAR artifact with the given Maven coordinates.
+     * 
+     * @param groupId
+     *            group ID
+     * @param artifactId
+     *            artifact ID
+     * @param version
+     * @return Maven artifact option
+     */
+    public static MavenArtifactDeploymentOption mavenRar(final String groupId,
+        final String artifactId, final String version) {
+        return mavenWar().groupId(groupId).artifactId(artifactId).version(version).type("rar");
     }
 
     /**

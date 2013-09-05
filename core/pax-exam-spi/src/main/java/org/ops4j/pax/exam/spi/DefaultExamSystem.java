@@ -17,16 +17,11 @@
  */
 package org.ops4j.pax.exam.spi;
 
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.OptionUtils.expand;
-import static org.ops4j.pax.exam.OptionUtils.filter;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
@@ -51,6 +46,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
+
+import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.OptionUtils.expand;
+import static org.ops4j.pax.exam.OptionUtils.filter;
 
 /**
  * {@literal DefaultExamSystem} represents the default implementation of {@link ExamSystem}.
@@ -170,6 +169,17 @@ public class DefaultExamSystem implements ExamSystem {
         }
     }
 
+    public <T extends Option> T getSingleOption(final Class<T> optionType, Option[] options) {
+        T[] filter = filter(optionType, options);
+
+        if (filter.length > 0) {
+            return filter[filter.length - 1];
+        }
+        else {
+            return null;
+        }
+    }
+
     public <T extends Option> T[] getOptions(final Class<T> optionType) {
         requestedOptionTypes.add(optionType);
         return filter(optionType, combinedOptions);
@@ -252,18 +262,16 @@ public class DefaultExamSystem implements ExamSystem {
             return testProbeBuilder;
         }
         else {
-            List<ConfigurationFactory> configurationFactories = ServiceProviderFinder
-                .findServiceProviders(ConfigurationFactory.class);
-            for (ConfigurationFactory cf : configurationFactories) {
-                Option[] configuration = cf.createConfiguration();
-                combinedOptions = combine(combinedOptions, configuration);
-            }
+            ConfigurationFactory configurationFactory = ServiceProviderFinder
+                .findAnyServiceProvider(ConfigurationFactory.class);
             LOG.debug("creating WAR probe");
-            if (configurationFactories.isEmpty()) {
+            if (configurationFactory == null) {
                 return new WarTestProbeBuilderImpl(getTempFolder());
             }
             else {
-                warProbeOption = getSingleOption(WarProbeOption.class);
+                Option[] configuration = configurationFactory.createConfiguration();
+                Option[] tempOptions = combine(combinedOptions, configuration);
+                warProbeOption = getSingleOption(WarProbeOption.class, tempOptions);
                 return new WarTestProbeBuilderImpl(getTempFolder(), warProbeOption);
             }
         }

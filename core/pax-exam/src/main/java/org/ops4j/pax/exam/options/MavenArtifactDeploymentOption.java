@@ -25,7 +25,7 @@ public class MavenArtifactDeploymentOption extends UrlDeploymentOption implement
 
     public MavenArtifactDeploymentOption() {
         // FIXME
-        super("file:/dummy");
+        super("file:/dummy", null);
         this.artifact = new MavenArtifactUrlReference();
     }
 

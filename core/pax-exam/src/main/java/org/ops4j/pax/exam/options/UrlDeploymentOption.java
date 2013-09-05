@@ -26,18 +26,23 @@ public class UrlDeploymentOption implements DeploymentOption, UrlReference {
     private UrlReference urlReference;
     private String name;
     private String contextRoot;
+    
+    /** Deployment type, e.g. war, jar, rar, ear. */
+    private String type;
 
     /**
      * Constructor.
      * 
      * @param url
      *            provision url (cannot be null or empty)
-     * 
+     * @param type           
+     *            deployment type
      * @throws IllegalArgumentException
      *             - If url is null or empty
      */
-    public UrlDeploymentOption(final String url) {
+    public UrlDeploymentOption(final String url, final String type) {
         this.urlReference = new RawUrlReference(url);
+        this.type = type;
     }
 
     /**
@@ -57,6 +62,11 @@ public class UrlDeploymentOption implements DeploymentOption, UrlReference {
         return urlReference;
     }
 
+    /**
+     * Sets the deployment name (usually the basename of the given artifact).
+     * @param _name deploymenet name
+     * @return this for fluent syntax
+     */
     public UrlDeploymentOption name(String _name) {
         this.name = _name;
         return this;
@@ -64,6 +74,10 @@ public class UrlDeploymentOption implements DeploymentOption, UrlReference {
 
     public String getName() {
         return name;
+    }
+    
+    public String getType() {
+        return type;
     }
 
     public UrlDeploymentOption contextRoot(String _contextRoot) {
@@ -83,5 +97,4 @@ public class UrlDeploymentOption implements DeploymentOption, UrlReference {
     public String getURL() {
         return urlReference.getURL();
     }
-
 }
