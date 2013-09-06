@@ -96,6 +96,16 @@ public class WildFly80TestContainer implements TestContainer {
      * {@code wildfly80-config/}, if present. The default value is {@code false}.
      */
     public static final String WILDFLY80_CONFIG_OVERWRITE_KEY = "pax.exam.wildfly80.config.overwrite";
+    
+    /**
+     * Configuration property key for additional JBoss AS modules to be installed. The value is
+     * a comma-separated list of URLs. Each URL refers to a zipped module structure which will be unpacked
+     * under {@code modules/system/add-ons/pax-exam}.
+     */
+    public static final String WILDFLY80_MODULES_KEY = "pax.exam.wildfly80.modules";
+    
+    public static final String WILDFLY80_SYSTEM_PROPERTIES_KEY = "pax.exam.wildfly80.system.properties";
+    
 
     private static final Logger LOG = LoggerFactory.getLogger(WildFly80TestContainer.class);
 
@@ -122,9 +132,12 @@ public class WildFly80TestContainer implements TestContainer {
     private File configSourceDir;
     private File configTargetDir;
 
+    private ConfigurationManager cm;
+
     public WildFly80TestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
+        this.cm = new ConfigurationManager();
     }
 
     public synchronized void call(TestAddress address) {
@@ -231,6 +244,7 @@ public class WildFly80TestContainer implements TestContainer {
 
     public TestContainer start() {
         installContainer();
+        cm.loadSystemProperties(WILDFLY80_SYSTEM_PROPERTIES_KEY);
         File tempDir = system.getTempFolder();
         File dataDir = new File(tempDir, "data");
         dataDir.mkdir();
@@ -269,7 +283,6 @@ public class WildFly80TestContainer implements TestContainer {
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
 
-        ConfigurationManager cm = new ConfigurationManager();
         wildFlyHome = cm.getProperty("pax.exam.wildfly80.home");
         if (wildFlyHome == null) {
             throw new TestContainerException(
@@ -300,6 +313,7 @@ public class WildFly80TestContainer implements TestContainer {
                 installer.downloadAndInstall();
                 File unpackedRoot = tempInstall.listFiles()[0];
                 unpackedRoot.renameTo(installDir);
+                installWildFlyModules();
                 installConfiguration();
             }
             catch (MalformedURLException exc) {
@@ -308,6 +322,36 @@ public class WildFly80TestContainer implements TestContainer {
             catch (IOException exc) {
                 throw new TestContainerException("error during WildFly 8.0 installation", exc);
             }
+        }
+    }
+
+    private void installWildFlyModules() {
+        String modulesList = cm.getProperty(WILDFLY80_MODULES_KEY);
+        if (modulesList == null) {
+            return;
+        }
+
+        File addOnsDir = new File(wildFlyHome, "modules/system/add-ons/pax-exam");
+        addOnsDir.mkdirs();
+
+        String[] modules = modulesList.split(",\\s*");
+        for (String module : modules) {
+            installWildFlyModule(module, addOnsDir);
+        }
+    }
+
+    private void installWildFlyModule(String module, File moduleDir) {
+        try {
+            URL moduleUrl = new URL(module);
+            LOG.info("installing add-on module {}", module);
+            ZipInstaller installer = new ZipInstaller(moduleUrl, moduleDir.getAbsolutePath());
+            installer.downloadAndInstall();
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException("invalid module URL: " + module, exc);
+        }
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
