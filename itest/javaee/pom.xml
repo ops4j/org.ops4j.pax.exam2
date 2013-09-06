@@ -31,6 +31,13 @@
         </profile>
 
         <profile>
+            <id>matrix-jboss</id>
+            <modules>
+                <module>src/it/regression-javaee-jboss-module</module>
+            </modules>
+        </profile>
+
+        <profile>
             <id>invoker</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -57,6 +64,9 @@
                                         <profile>glassfish3</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish</cloneProjectsTo>
+                                    <pomExcludes>
+                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                    </pomExcludes>
                                 </configuration>
                             </execution>
                             <execution>
@@ -70,6 +80,9 @@
                                         <profile>glassfish3</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish-embedded</cloneProjectsTo>
+                                    <pomExcludes>
+                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                    </pomExcludes>
                                 </configuration>
                             </execution>
                             <execution>
@@ -83,6 +96,9 @@
                                         <profile>glassfish4</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish4-embedded</cloneProjectsTo>
+                                    <pomExcludes>
+                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                    </pomExcludes>
                                 </configuration>
                             </execution>
                             <execution>
@@ -131,6 +147,9 @@
                                         <profile>resin</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/resin</cloneProjectsTo>
+                                    <pomExcludes>
+                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                    </pomExcludes>
                                 </configuration>
                             </execution>
                             <execution>
@@ -143,6 +162,9 @@
                                         <profile>tomee</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/tomee</cloneProjectsTo>
+                                    <pomExcludes>
+                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                    </pomExcludes>
                                 </configuration>
                             </execution>
                         </executions>

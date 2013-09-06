@@ -12,7 +12,7 @@
         <relativePath>../../..</relativePath>
     </parent>
 
-    <artifactId>regression-javaee</artifactId>
+    <artifactId>regression-javaee-jboss-module</artifactId>
     <packaging>jar</packaging>
 
     <name>OPS4J Pax Exam Java EE Container Regression Tests</name>
