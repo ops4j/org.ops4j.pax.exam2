@@ -72,4 +72,32 @@ public class ConfigurationManager {
         String value = resolver.get(key);
         return (value == null) ? defaultValue : value;
     }
+    
+    public void loadSystemProperties(String configurationKey) {
+        String propertyRef = getProperty(configurationKey);
+        if (propertyRef == null) {
+            return;
+        }
+        
+        if (propertyRef.startsWith("env:")) {
+            propertyRef = propertyRef.substring(4);
+            propertyRef = System.getenv(propertyRef);
+        }
+        
+        if (! propertyRef.startsWith("/")) {
+            propertyRef = "/" + propertyRef;
+        }
+        try {
+            URL url = getClass().getResource(propertyRef);
+            if (url == null) {
+                url = new URL(propertyRef);
+            }
+            Properties props = System.getProperties();
+            props.load(url.openStream());
+            System.setProperties(props);
+        }
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
+        }        
+    }
 }

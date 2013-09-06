@@ -96,6 +96,8 @@ public class JBoss72TestContainer implements TestContainer {
      * under {@code modules/system/add-ons/pax-exam}.
      */
     public static final String JBOSS72_MODULES_KEY = "pax.exam.jboss72.modules";
+    
+    public static final String JBOSS72_SYSTEM_PROPERTIES_KEY = "pax.exam.jboss72.system.properties";
 
     /**
      * Configuration property key for overwriting {@code standalone.xml} and other configuration files in an
@@ -130,6 +132,8 @@ public class JBoss72TestContainer implements TestContainer {
     private File configSourceDir;
 
     private File configTargetDir;
+
+    private ConfigurationManager cm;
 
     public JBoss72TestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
@@ -239,7 +243,9 @@ public class JBoss72TestContainer implements TestContainer {
     }
 
     public TestContainer start() {
+        cm = new ConfigurationManager();
         installContainer();
+        cm.loadSystemProperties(JBOSS72_SYSTEM_PROPERTIES_KEY);
         File tempDir = system.getTempFolder();
         File dataDir = new File(tempDir, "data");
         dataDir.mkdir();
@@ -250,9 +256,8 @@ public class JBoss72TestContainer implements TestContainer {
         }
         parseServerConfiguration(configFile);
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
-        server = EmbeddedServerFactory.create(jBossHome, null, null,
-        // packages to be loaded from system class loader
-                "org.jboss.logging");
+        String systemPackages = "org.jboss.logging"; 
+        server = EmbeddedServerFactory.create(jBossHome, null, null, systemPackages);
         try {
             server.start();
             deploymentManager = ServerDeploymentManager.Factory.create(
@@ -278,7 +283,6 @@ public class JBoss72TestContainer implements TestContainer {
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
 
-        ConfigurationManager cm = new ConfigurationManager();
         jBossHome = cm.getProperty("pax.exam.jboss72.home");
         if (jBossHome == null) {
             throw new TestContainerException(
@@ -322,7 +326,6 @@ public class JBoss72TestContainer implements TestContainer {
     }
 
     private void installJbossModules() {
-        ConfigurationManager cm = new ConfigurationManager();
         String modulesList = cm.getProperty(JBOSS72_MODULES_KEY);
         if (modulesList == null) {
             return;
