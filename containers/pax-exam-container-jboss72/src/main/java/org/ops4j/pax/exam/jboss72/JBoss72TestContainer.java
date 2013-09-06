@@ -91,7 +91,14 @@ public class JBoss72TestContainer implements TestContainer {
     public static final String JBOSS72_CONFIG_DIR_KEY = "pax.exam.jboss72.config.dir";
 
     /**
-     * Configuration property key for overwriting standalone.xml and other configuration files in an
+     * Configuration property key for additional JBoss AS modules to be installed. The value is
+     * a comma-separated list of URLs. Each URL refers to a zipped module structure which will be unpacked
+     * under {@code modules/system/add-ons/pax-exam}.
+     */
+    public static final String JBOSS72_MODULES_KEY = "pax.exam.jboss72.modules";
+
+    /**
+     * Configuration property key for overwriting {@code standalone.xml} and other configuration files in an
      * existing JBoss AS installation. If the value is {@code true}, existing files in
      * {@code standalone/configuration/} will be overwritten with files from {@code jboss72-config/}
      * , if present. The default value is {@code false}.
@@ -121,6 +128,7 @@ public class JBoss72TestContainer implements TestContainer {
     private int mgmtPort;
 
     private File configSourceDir;
+
     private File configTargetDir;
 
     public JBoss72TestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
@@ -131,7 +139,7 @@ public class JBoss72TestContainer implements TestContainer {
     public synchronized void call(TestAddress address) {
         TestInstantiationInstruction instruction = testDirectory.lookup(address);
         ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
-            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
+                .loadUniqueServiceProvider(ProbeInvokerFactory.class);
         ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker(null, instruction.toString());
         invoker.call(address.arguments());
     }
@@ -244,13 +252,13 @@ public class JBoss72TestContainer implements TestContainer {
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
         server = EmbeddedServerFactory.create(jBossHome, null, null,
         // packages to be loaded from system class loader
-            "org.jboss.logging");
+                "org.jboss.logging");
         try {
             server.start();
             deploymentManager = ServerDeploymentManager.Factory.create(
-                InetAddress.getByName("localhost"), mgmtPort);
+                    InetAddress.getByName("localhost"), mgmtPort);
             testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
-                + "/Pax-Exam-Probe/"));
+                    + "/Pax-Exam-Probe/"));
             deployModules();
         }
         catch (ServerStartException exc) {
@@ -274,14 +282,14 @@ public class JBoss72TestContainer implements TestContainer {
         jBossHome = cm.getProperty("pax.exam.jboss72.home");
         if (jBossHome == null) {
             throw new TestContainerException(
-                "System property pax.exam.jboss72.home must be set to JBoss AS 7.2 install root");
+                    "System property pax.exam.jboss72.home must be set to JBoss AS 7.2 install root");
         }
 
         String configDirName = cm.getProperty(JBOSS72_CONFIG_DIR_KEY,
-            "src/test/resources/jboss72-config");
+                "src/test/resources/jboss72-config");
         configSourceDir = new File(configDirName);
         boolean overwriteConfig = Boolean.parseBoolean(cm.getProperty(JBOSS72_CONFIG_OVERWRITE_KEY,
-            "false"));
+                "false"));
 
         if (isValidInstallation()) {
             if (overwriteConfig) {
@@ -301,14 +309,46 @@ public class JBoss72TestContainer implements TestContainer {
                 installer.downloadAndInstall();
                 File unpackedRoot = tempInstall.listFiles()[0];
                 unpackedRoot.renameTo(installDir);
+                installJbossModules();
                 installConfiguration();
             }
             catch (MalformedURLException exc) {
-                throw new TestContainerException(exc);
+                throw new TestContainerException("invalid distribution URL: " + distUrl, exc);
             }
             catch (IOException exc) {
-                throw new TestContainerException("error during JBoss AS 7.2 installation", exc);
+                throw new TestContainerException("error during JBoss module installation", exc);
             }
+        }
+    }
+
+    private void installJbossModules() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String modulesList = cm.getProperty(JBOSS72_MODULES_KEY);
+        if (modulesList == null) {
+            return;
+        }
+
+        File addOnsDir = new File(jBossHome, "modules/system/add-ons/pax-exam");
+        addOnsDir.mkdirs();
+
+        String[] modules = modulesList.split(",\\s*");
+        for (String module : modules) {
+            installJbossModule(module, addOnsDir);
+        }
+    }
+
+    private void installJbossModule(String module, File moduleDir) {
+        try {
+            URL moduleUrl = new URL(module);
+            LOG.info("installing add-on module {}", module);
+            ZipInstaller installer = new ZipInstaller(moduleUrl, moduleDir.getAbsolutePath());
+            installer.downloadAndInstall();
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException("invalid module URL: " + module, exc);
+        }
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
@@ -319,15 +359,15 @@ public class JBoss72TestContainer implements TestContainer {
             File moduleLoader = new File(installDir, "jboss-modules.jar");
             if (!moduleLoader.exists()) {
                 String msg = String.format("%s exists, but %s does not. "
-                    + "This does not look like a valid JBoss AS 7.2 installation.", jBossHome,
-                    moduleLoader);
+                        + "This does not look like a valid JBoss AS 7.2 installation.", jBossHome,
+                        moduleLoader);
                 throw new TestContainerException(msg);
             }
             File modulesDir = new File(installDir, "modules");
             File systemDir = new File(modulesDir, "system");
             if (!systemDir.exists()) {
                 String msg = String.format("%s does not exist. "
-                    + "This does not look like a valid JBoss AS 7.2 installation.", systemDir);
+                        + "This does not look like a valid JBoss AS 7.2 installation.", systemDir);
                 throw new TestContainerException(msg);
             }
 
@@ -344,7 +384,7 @@ public class JBoss72TestContainer implements TestContainer {
     private void installConfiguration() {
         if (!configSourceDir.exists()) {
             throw new TestContainerException("configuration directory " + configSourceDir
-                + " does not exist");
+                    + " does not exist");
         }
 
         configTargetDir = new File(jBossHome, "standalone/configuration");
