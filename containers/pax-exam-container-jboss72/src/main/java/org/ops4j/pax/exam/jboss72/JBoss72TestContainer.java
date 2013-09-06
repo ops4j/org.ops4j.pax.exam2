@@ -138,6 +138,7 @@ public class JBoss72TestContainer implements TestContainer {
     public JBoss72TestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
+        this.cm = new ConfigurationManager();
     }
 
     public synchronized void call(TestAddress address) {
@@ -243,7 +244,6 @@ public class JBoss72TestContainer implements TestContainer {
     }
 
     public TestContainer start() {
-        cm = new ConfigurationManager();
         installContainer();
         cm.loadSystemProperties(JBOSS72_SYSTEM_PROPERTIES_KEY);
         File tempDir = system.getTempFolder();
