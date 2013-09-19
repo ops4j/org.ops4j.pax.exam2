@@ -271,4 +271,17 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     public String getName() {
         return name;
     }
+
+    @Override
+    public void uninstall(long bundleId) {
+        try {
+            getRemoteBundleContext().uninstallBundle(bundleId);
+        }
+        catch (RemoteException exc) {
+            throw new RuntimeException(exc);
+        }
+        catch (BundleException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
 }

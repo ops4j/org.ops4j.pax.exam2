@@ -175,6 +175,16 @@ public class GlassFishTestContainer implements TestContainer {
      * Stack of deployed modules. On shutdown, the modules are undeployed in reverse order.
      */
     private Stack<String> deployed = new Stack<String>();
+    
+    /**
+     * Bundle ID of OSGi probe bundle.
+     */
+    private Long osgiProbe;
+    
+    /**
+     * Application name of WAR probe.
+     */
+    private String warProbe;
 
     /**
      * OSGi framework factory located via Java SE ServiceLoader.
@@ -941,6 +951,42 @@ public class GlassFishTestContainer implements TestContainer {
             catch (InterruptedException exc) {
                 LOG.error("Stopper thread was interrupted");
             }
+        }
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        if (isJavaEE) {
+            deployWarProbe(stream);
+            this.warProbe = deployed.pop();
+            return -1;
+        }
+        else {
+            this.osgiProbe = installOsgiProbe("local", stream);
+            installed.pop();
+            return osgiProbe;
+        }
+    }
+
+    @Override
+    public void uninstallProbe() {
+        if (isJavaEE) {
+            try {
+                glassFish.getDeployer().undeploy(warProbe);
+            }
+            catch (GlassFishException exc) {
+                throw new TestContainerException(exc);
+            }
+            this.warProbe = null;
+        }
+        else {
+            try {
+                bc.getBundle(osgiProbe).uninstall();
+            }
+            catch (BundleException exc) {
+                throw new TestContainerException(exc);
+            }
+            this.osgiProbe = null;
         }
     }
 }

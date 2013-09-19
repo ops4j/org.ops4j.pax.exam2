@@ -101,4 +101,15 @@ public class CandiTestContainer implements TestContainer {
     public static ResinBeanContainer getCdiContainer() {
         return container;
     }
+    
+
+    @Override
+    public long installProbe(InputStream stream) {
+        return -1;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        // not used
+    }    
 }

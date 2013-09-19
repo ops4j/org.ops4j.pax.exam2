@@ -62,4 +62,14 @@ public class RBCRemoteContainer implements TestContainer {
     public String toString() {
         return "Remote:" + target.toString();
     }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        return install(stream);
+    }
+
+    @Override
+    public void uninstallProbe() {
+        target.uninstallProbe();
+    }
 }

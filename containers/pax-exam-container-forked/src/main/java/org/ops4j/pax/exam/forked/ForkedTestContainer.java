@@ -84,6 +84,7 @@ public class ForkedTestContainer implements TestContainer {
     private RemoteFramework remoteFramework;
     private final PlatformImpl platform;
     private final String name;
+    private Long probeId;
 
     public ForkedTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
@@ -309,7 +310,7 @@ public class ForkedTestContainer implements TestContainer {
             .getSingleOption(FrameworkStartLevelOption.class);
         int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption
             .getStartLevel();
-        LOG.debug("Jump to startlevel: " + startLevel);
+        LOG.debug("Jump to startlevel [{}]", startLevel);
         long timeout = system.getTimeout().getValue();
         boolean startLevelReached = remoteFramework.setFrameworkStartLevel(startLevel, timeout);
 
@@ -368,5 +369,24 @@ public class ForkedTestContainer implements TestContainer {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        this.probeId = install(stream);
+        return probeId;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        try {
+            remoteFramework.uninstallBundle(probeId);
+        }
+        catch (RemoteException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
+        }
     }
 }

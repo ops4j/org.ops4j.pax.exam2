@@ -89,7 +89,7 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
                 LOG.debug("installing probe " + builder);
 
                 try {
-                    container.install(builder.build().getStream());
+                    container.installProbe(builder.build().getStream());
                 }
                 catch (IOException e) {
                     throw new TestContainerException("Unable to build the probe.", e);

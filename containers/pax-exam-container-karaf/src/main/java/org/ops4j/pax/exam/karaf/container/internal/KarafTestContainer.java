@@ -710,4 +710,14 @@ public class KarafTestContainer implements TestContainer {
         return "KarafTestContainer{" + framework.getFrameworkURL() + "}";
     }
 
+    @Override
+    public long installProbe(InputStream stream) {
+        return target.installProbe(stream);
+    }
+
+    @Override
+    public void uninstallProbe() {
+        target.uninstallProbe();        
+    }
+
 }

@@ -85,6 +85,7 @@ public class NativeTestContainer implements TestContainer {
     private static final Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
     private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
     private final Stack<Long> installed = new Stack<Long>();
+    private Long probeId;
 
     private final FrameworkFactory frameworkFactory;
     private ExamSystem system;
@@ -446,6 +447,25 @@ public class NativeTestContainer implements TestContainer {
             catch (InterruptedException exc) {
                 LOG.error("Stopper thread was interrupted");
             }
+        }
+    }
+
+    @Override
+    public synchronized long installProbe(InputStream stream) {
+        probeId = install(stream);
+        installed.pop();
+        return probeId;
+    }
+
+    @Override
+    public synchronized void uninstallProbe() {
+        Bundle bundle = framework.getBundleContext().getBundle(probeId);
+        try {
+            bundle.uninstall();
+            probeId = null;
+        }
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
         }
     }
 }

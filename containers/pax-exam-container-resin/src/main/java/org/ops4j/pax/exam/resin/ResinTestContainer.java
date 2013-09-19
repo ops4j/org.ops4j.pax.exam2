@@ -57,6 +57,8 @@ public class ResinTestContainer implements TestContainer {
     private static final Logger LOG = LoggerFactory.getLogger(ResinTestContainer.class);
 
     private Stack<WebAppEmbed> deployed = new Stack<WebAppEmbed>();
+    
+    private WebAppEmbed probe;
 
     private ExamSystem system;
 
@@ -181,5 +183,18 @@ public class ResinTestContainer implements TestContainer {
     @Override
     public String toString() {
         return "Resin";
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        deployModule("Pax-Exam-Probe", stream);
+        probe = deployed.pop();
+        return -1;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        resin.removeWebApp(probe);
+        probe = null;
     }
 }

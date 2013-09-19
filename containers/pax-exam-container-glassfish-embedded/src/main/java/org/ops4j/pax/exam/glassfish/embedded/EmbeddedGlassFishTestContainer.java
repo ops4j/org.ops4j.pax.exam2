@@ -95,6 +95,8 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * Stack of deployed modules. On shutdown, the modules are undeployed in reverse order.
      */
     private Stack<String> deployed = new Stack<String>();
+    
+    private String warProbe;
 
     /**
      * Pax Exam system with configuration options.
@@ -349,5 +351,23 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
     @Override
     public String toString() {
         return "EmbeddedGlassFish";
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        install(stream);
+        this.warProbe = deployed.pop();
+        return -1;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        try {
+            glassFish.getDeployer().undeploy(warProbe);
+            this.warProbe = null;
+        }
+        catch (GlassFishException exc) {
+            throw new TestContainerException(exc);
+        }        
     }
 }

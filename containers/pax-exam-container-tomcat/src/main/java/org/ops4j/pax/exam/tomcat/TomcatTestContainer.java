@@ -63,6 +63,8 @@ public class TomcatTestContainer implements TestContainer {
         "src/main/webapp/META-INF/context.xml", };
 
     private Stack<String> deployed = new Stack<String>();
+    
+    private String probe;
 
     private ExamSystem system;
 
@@ -129,6 +131,7 @@ public class TomcatTestContainer implements TestContainer {
             File warFile = new File(webappDir, applicationName + ".war");
             StreamUtils.copyStream(stream, new FileOutputStream(warFile), true);
             hostConfig.deployWAR(new ContextName(applicationName), warFile);
+            deployed.push(applicationName);
         }
         catch (IOException exc) {
             throw new TestContainerException("Problem deploying " + applicationName, exc);
@@ -216,5 +219,17 @@ public class TomcatTestContainer implements TestContainer {
     @Override
     public String toString() {
         return "Tomcat";
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        install("local", stream);
+        probe = deployed.pop();
+        return -1;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        hostConfig.unmanageApp("/" + probe);
     }
 }

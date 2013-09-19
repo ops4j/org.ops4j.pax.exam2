@@ -99,4 +99,14 @@ public class WeldTestContainer implements TestContainer {
     public static WeldContainer getWeldContainer() {
         return weldContainer;
     }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        return -1;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        // not used
+    }
 }

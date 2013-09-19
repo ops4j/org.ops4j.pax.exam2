@@ -39,6 +39,7 @@ public class RBCRemoteTarget implements TestContainer {
     private static final Logger LOG = LoggerFactory.getLogger(RBCRemoteTarget.class);
 
     private RemoteBundleContextClient remoteBundleContextClient;
+    private Long probeId;
 
     /**
      * @param registry
@@ -85,6 +86,17 @@ public class RBCRemoteTarget implements TestContainer {
         remoteBundleContextClient.cleanup();
 
         return this;
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        this.probeId = install(stream);
+        return probeId;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        remoteBundleContextClient.uninstall(probeId);
     }
 
 }

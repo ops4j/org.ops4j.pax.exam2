@@ -71,6 +71,8 @@ public class TomEETestContainer implements TestContainer {
     private static final Logger LOG = LoggerFactory.getLogger(TomEETestContainer.class);
 
     private Stack<String> deployed = new Stack<String>();
+    
+    private String warProbe;
 
     private ExamSystem system;
 
@@ -230,5 +232,25 @@ public class TomEETestContainer implements TestContainer {
     @Override
     public String toString() {
         return "TomEE";
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        install(stream);
+        this.warProbe = deployed.pop();
+        return -1;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        try {
+            tomee.undeploy(warProbe);
+        }
+        catch (UndeployException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (NoSuchApplicationException exc) {
+            throw new TestContainerException(exc);
+        }
     }
 }

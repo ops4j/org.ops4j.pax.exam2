@@ -89,6 +89,8 @@ public class JBossTestContainer implements TestContainer {
     private static final String MGMT_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='management-native']/@port";
     
     private final Stack<String> deployed = new Stack<String>();
+    
+    private String warProbe;
 
     private final ExamSystem system;
 
@@ -351,5 +353,18 @@ public class JBossTestContainer implements TestContainer {
     @Override
     public String toString() {
         return "JBoss";
+    }
+
+    @Override
+    public long installProbe(InputStream stream) {
+        install(stream);
+        this.warProbe = deployed.pop();
+        return -1;
+    }
+
+    @Override
+    public void uninstallProbe() {
+        undeployModule(warProbe);
+        this.warProbe = null;        
     }
 }

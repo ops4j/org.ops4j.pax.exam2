@@ -125,4 +125,9 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
     public void call(TestAddress address) {
         proxy.call(address);
     }
+
+    @Override
+    public void uninstall(long bundleId) {
+        proxy.uninstall(bundleId);
+    }
 }

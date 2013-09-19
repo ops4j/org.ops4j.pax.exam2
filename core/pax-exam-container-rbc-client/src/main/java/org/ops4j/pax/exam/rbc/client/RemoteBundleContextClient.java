@@ -33,6 +33,8 @@ import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 public interface RemoteBundleContextClient {
 
     long install(String location, InputStream stream);
+    
+    void uninstall(long bundleId);
 
     void cleanup();
 

@@ -79,7 +79,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
         container.start();
         try {
             for (TestProbeBuilder builder : probes) {
-                container.install(builder.build().getStream());
+                container.installProbe(builder.build().getStream());
             }
             container.call(address);
         }

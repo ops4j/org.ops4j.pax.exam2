@@ -30,6 +30,7 @@ import java.io.InputStream;
  * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
+ * @author Harald Wellmann
  * @since 0.3.0, December 09, 2008
  */
 public interface TestContainer {
@@ -63,6 +64,25 @@ public interface TestContainer {
     long install(String location, InputStream stream);
 
     /**
+     * Installs a probe from the given stream. A test container supports at most one probe at a
+     * time. The installed probe (if any) can be uninstalled using {@link #uninstallProbe()}.
+     * 
+     * @param stream
+     *            probe bundle
+     * 
+     * @return bundle ID of probe bundle, or -1 if not in OSGi mode
+     */
+    long installProbe(InputStream stream);
+
+    /**
+     * Uninstalls the current probe. The container keeps running and can be reused with a new probe.
+     * 
+     * @throws TestContainerException
+     *             if no probe installed.
+     */
+    void uninstallProbe();
+
+    /**
      * @param address
      *            the target to be called.
      * 
@@ -81,5 +101,4 @@ public interface TestContainer {
      *             - if timeout occured and the regression container cannot be stopped
      */
     TestContainer stop();
-
 }
