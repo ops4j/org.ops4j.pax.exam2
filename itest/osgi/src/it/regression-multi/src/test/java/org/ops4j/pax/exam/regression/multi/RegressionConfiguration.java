@@ -19,10 +19,10 @@ package org.ops4j.pax.exam.regression.multi;
 
 import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
+import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import org.ops4j.pax.exam.Option;
@@ -49,12 +49,9 @@ public class RegressionConfiguration {
             cleanCaches(),
 
             // we're running with pax.exam.logging = none, so add SLF4J and logback bundles
-            mavenBundle("org.slf4j", "slf4j-api").versionAsInProject().startLevel(
-                START_LEVEL_SYSTEM_BUNDLES),
-            mavenBundle("ch.qos.logback", "logback-core").versionAsInProject().startLevel(
-                START_LEVEL_SYSTEM_BUNDLES),
-            mavenBundle("ch.qos.logback", "logback-classic").versionAsInProject().startLevel(
-                START_LEVEL_SYSTEM_BUNDLES),
+            bundle("link:classpath:META-INF/links/org.slf4j.api.link").startLevel(START_LEVEL_SYSTEM_BUNDLES),
+            bundle("link:classpath:META-INF/links/ch.qos.logback.classic.link").startLevel(START_LEVEL_SYSTEM_BUNDLES),
+            bundle("link:classpath:META-INF/links/ch.qos.logback.core.link").startLevel(START_LEVEL_SYSTEM_BUNDLES),
 
             // Set logback configuration via system property.
             // This way, both the driver and the container use the same configuration

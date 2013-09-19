@@ -612,7 +612,7 @@ public class CoreOptions {
     public static CompositeOption junitBundles() {
         return new DefaultCompositeOption(new JUnitBundlesOption(), 
             systemProperty("pax.exam.invoker").value("junit"),
-            bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
+            bundle("link:classpath:META-INF/links/org.ops4j.pax.tipi.hamcrest.core.link"),
             bundle("link:classpath:META-INF/links/org.ops4j.pax.exam.invoker.junit.link"));
     }
 

@@ -8,6 +8,7 @@ Import-Package:\
   org.ops4j.pax.exam,\
   org.ops4j.pax.exam.options,\
   org.ops4j.pax.exam.util,\
+  org.slf4j; version="1.5",\
   *
   
 Export-Package:\
