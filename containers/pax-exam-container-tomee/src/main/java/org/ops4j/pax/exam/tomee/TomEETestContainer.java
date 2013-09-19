@@ -136,6 +136,7 @@ public class TomEETestContainer implements TestContainer {
             File warFile = new File(webappDir, applicationName + ".war");
             StreamUtils.copyStream(stream, new FileOutputStream(warFile), true);
             tomee.deploy(applicationName, warFile);
+            deployed.push(applicationName);
         }
         catch (IOException exc) {
             throw new TestContainerException("Problem deploying " + applicationName, exc);
