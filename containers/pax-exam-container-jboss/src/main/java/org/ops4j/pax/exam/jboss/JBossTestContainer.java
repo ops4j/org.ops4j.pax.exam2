@@ -88,6 +88,8 @@ public class JBossTestContainer implements TestContainer {
      * under {@code modules/system/add-ons/pax-exam}.
      */
     public static final String JBOSS_MODULES_KEY = "pax.exam.jboss.modules";
+    
+    public static final String JBOSS_SYSTEM_PROPERTIES_KEY = "pax.exam.jboss.system.properties";
 
     private static final Logger LOG = LoggerFactory.getLogger(JBossTestContainer.class);
 
@@ -113,10 +115,13 @@ public class JBossTestContainer implements TestContainer {
 
     private int mgmtPort;
 
+    private ConfigurationManager cm;
+
 
     public JBossTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
+        this.cm = new ConfigurationManager();
     }
 
     public synchronized void call(TestAddress address) {
@@ -223,6 +228,7 @@ public class JBossTestContainer implements TestContainer {
 
     public TestContainer start() {
         installContainer();
+        cm.loadSystemProperties(JBOSS_SYSTEM_PROPERTIES_KEY);
         File tempDir = system.getTempFolder();
         File dataDir = new File(tempDir, "data");
         dataDir.mkdir();
@@ -262,7 +268,6 @@ public class JBossTestContainer implements TestContainer {
     public void installContainer() {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
-        ConfigurationManager cm = new ConfigurationManager();
         jBossHome = cm.getProperty("pax.exam.jboss.home");
         if (jBossHome == null) {
             throw new TestContainerException(
@@ -305,7 +310,6 @@ public class JBossTestContainer implements TestContainer {
     }
 
     private void installJbossModules() {
-        ConfigurationManager cm = new ConfigurationManager();
         String modulesList = cm.getProperty(JBOSS_MODULES_KEY);
         if (modulesList == null) {
             return;
