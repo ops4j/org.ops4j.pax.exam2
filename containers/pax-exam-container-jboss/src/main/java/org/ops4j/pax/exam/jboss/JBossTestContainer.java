@@ -82,6 +82,13 @@ public class JBossTestContainer implements TestContainer {
      */
     public static final String JBOSS_DIST_URL_DEFAULT = "mvn:org.jboss.as/jboss-as-dist/7.1.1.Final/zip";
 
+    /**
+     * Configuration property key for additional JBoss AS modules to be installed. The value is
+     * a comma-separated list of URLs. Each URL refers to a zipped module structure which will be unpacked
+     * under {@code modules/system/add-ons/pax-exam}.
+     */
+    public static final String JBOSS_MODULES_KEY = "pax.exam.jboss.modules";
+
     private static final Logger LOG = LoggerFactory.getLogger(JBossTestContainer.class);
 
     private static final String HTTP_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='http']/@port";
@@ -286,6 +293,7 @@ public class JBossTestContainer implements TestContainer {
                 installer.downloadAndInstall();
                 File unpackedRoot = tempInstall.listFiles()[0];
                 unpackedRoot.renameTo(installDir);
+                installJbossModules();
             }
             catch (MalformedURLException exc) {
                 throw new TestContainerException(exc);
@@ -293,6 +301,37 @@ public class JBossTestContainer implements TestContainer {
             catch (IOException exc) {
                 throw new TestContainerException("error during JBoss AS installation", exc);
             }
+        }
+    }
+
+    private void installJbossModules() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String modulesList = cm.getProperty(JBOSS_MODULES_KEY);
+        if (modulesList == null) {
+            return;
+        }
+
+        File addOnsDir = new File(jBossHome, "modules");
+        addOnsDir.mkdirs();
+
+        String[] modules = modulesList.split(",\\s*");
+        for (String module : modules) {
+            installJbossModule(module, addOnsDir);
+        }
+    }
+
+    private void installJbossModule(String module, File moduleDir) {
+        try {
+            URL moduleUrl = new URL(module);
+            LOG.info("installing add-on module {}", module);
+            ZipInstaller installer = new ZipInstaller(moduleUrl, moduleDir.getAbsolutePath());
+            installer.downloadAndInstall();
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException("invalid module URL: " + module, exc);
+        }
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
