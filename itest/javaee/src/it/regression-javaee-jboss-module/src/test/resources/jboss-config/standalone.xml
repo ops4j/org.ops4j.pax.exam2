@@ -92,27 +92,16 @@
         <subsystem xmlns="urn:jboss:domain:configadmin:1.0" />
         <subsystem xmlns="urn:jboss:domain:datasources:1.0">
             <datasources>
-                <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="ExampleDS"
-                    enabled="true" use-java-context="true">
-                    <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1</connection-url>
-                    <driver>h2</driver>
-                    <security>
-                        <user-name>sa</user-name>
-                        <password>sa</password>
-                    </security>
-                </datasource>
-                <datasource jndi-name="java:/jdbc/__default" pool-name="__default"
-                    enabled="true" use-java-context="true">
-                    <connection-url>jdbc:h2:mem:default;DB_CLOSE_DELAY=-1</connection-url>
-                    <driver>h2</driver>
-                    <security>
-                        <user-name>sa</user-name>
-                        <password>sa</password>
-                    </security>
+                <datasource jndi-name="java:/jdbc/__default" pool-name="__default" enabled="true" use-java-context="true">
+                    <connection-url>jdbc:derby:memory:default;create=true</connection-url>
+                    <driver>derby</driver>
                 </datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                    </driver>
+                    <driver name="derby" module="org.apache.derby">
+                        <xa-datasource-class>org.apache.derby.jdbc.EmbeddedXADataSource</xa-datasource-class>
                     </driver>
                 </drivers>
             </datasources>
