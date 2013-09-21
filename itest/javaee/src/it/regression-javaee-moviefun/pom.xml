@@ -68,12 +68,6 @@
 
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-aether</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-classpath</artifactId>
             <scope>test</scope>
         </dependency>
@@ -123,15 +117,33 @@
 
     </dependencies>
     <build>
-        
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-    
+
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.glassfish.main.distributions</groupId>
+                                    <artifactId>glassfish</artifactId>
+                                    <version>3.1.2.2</version>
+                                    <type>zip</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -146,15 +158,8 @@
                             </excludes>
                         </configuration>
                     </execution>
-                    <!--execution>
-                        <id>perclass</id>
-                        <configuration>
-                            <forkMode>always</forkMode>
-                            <includes>
-                              <include>**/perclass/**</include>
-                            </includes>
-                        </configuration>
-                    </execution-->
+                    <!--execution> <id>perclass</id> <configuration> <forkMode>always</forkMode> <includes> 
+                        <include>**/perclass/**</include> </includes> </configuration> </execution -->
                 </executions>
                 <configuration>
                     <parallel>none</parallel>
