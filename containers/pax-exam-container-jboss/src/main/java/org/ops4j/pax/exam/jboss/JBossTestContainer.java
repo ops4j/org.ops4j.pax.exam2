@@ -85,7 +85,7 @@ public class JBossTestContainer implements TestContainer {
     /**
      * Configuration property key for additional JBoss AS modules to be installed. The value is
      * a comma-separated list of URLs. Each URL refers to a zipped module structure which will be unpacked
-     * under {@code modules/system/add-ons/pax-exam}.
+     * under {@code $JBOSS_HOME/modules}.
      */
     public static final String JBOSS_MODULES_KEY = "pax.exam.jboss.modules";
     
