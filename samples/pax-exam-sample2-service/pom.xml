@@ -4,11 +4,13 @@
         <artifactId>pax-exam-samples</artifactId>
         <groupId>org.ops4j.pax.exam</groupId>
         <version>3.3.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
+    
     <groupId>org.ops4j.pax.exam.samples</groupId>
     <artifactId>pax-exam-sample2-service</artifactId>
+    
     <name>OPS4J Pax Exam Sample2 Service</name>
+    
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
@@ -23,7 +25,7 @@
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-glassfish</artifactId>
+            <artifactId>pax-exam-container-glassfish-embedded</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -75,12 +77,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.tycho</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-            <version>3.6.2.R36x_v20110210</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
             <scope>provided</scope>
@@ -124,4 +120,5 @@
         </dependency>
 
     </dependencies>
+    
 </project>
