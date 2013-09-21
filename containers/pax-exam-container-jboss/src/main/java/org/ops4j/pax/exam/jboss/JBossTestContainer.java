@@ -123,7 +123,7 @@ public class JBossTestContainer implements TestContainer {
     public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
         system.getOptions(WarProbeOption.class);
-        deployModule("Pax-Exam-Probe", stream);
+        deployModule("Pax-Exam-Probe", "war", stream);
         return -1;
     }
 
@@ -146,7 +146,7 @@ public class JBossTestContainer implements TestContainer {
     private void deployModule(UrlDeploymentOption option) {
         try {
             URL applUrl = new URL(option.getURL());
-            deployModule(option.getName(), applUrl.openStream());
+            deployModule(option.getName(), option.getType(), applUrl.openStream());
         }
         catch (MalformedURLException exc) {
             throw new TestContainerException("Problem deploying " + option, exc);
@@ -156,10 +156,10 @@ public class JBossTestContainer implements TestContainer {
         }
     }
 
-    private void deployModule(String applicationName, InputStream stream) {
+    private void deployModule(String applicationName, String deploymentType, InputStream stream) {
 
         try {
-            String warName = applicationName + ".war";
+            String warName = String.format("%s.%s", applicationName, deploymentType);
             InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
             DeploymentPlan plan = builder.add(warName, stream).deploy(warName).build();
             ServerDeploymentPlanResult result = deploymentManager.execute(plan).get();
