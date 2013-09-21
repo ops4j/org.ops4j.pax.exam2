@@ -68,6 +68,12 @@
 
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
+            <artifactId>pax-url-aether</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-classpath</artifactId>
             <scope>test</scope>
         </dependency>
@@ -117,6 +123,14 @@
 
     </dependencies>
     <build>
+        
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+    
         <plugins>
 
             <plugin>
