@@ -86,6 +86,27 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>8.1.4.v20120524</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>8.1.4.v20120524</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-xml</artifactId>
+            <version>8.1.4.v20120524</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -98,6 +119,14 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>dependencies</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>generate-link-files</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>server</id>
                         <goals>
                             <goal>start-container</goal>
                             <goal>stop-container</goal>
