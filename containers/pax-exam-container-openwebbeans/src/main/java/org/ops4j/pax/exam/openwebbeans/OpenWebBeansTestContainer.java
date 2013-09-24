@@ -19,9 +19,6 @@ package org.ops4j.pax.exam.openwebbeans;
 
 import java.io.InputStream;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterDeploymentValidation;
-
 import org.apache.webbeans.cditest.CdiTestContainer;
 import org.apache.webbeans.cditest.CdiTestContainerLoader;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -59,10 +56,6 @@ public class OpenWebBeansTestContainer implements TestContainer {
         return -1;
     }
 
-    public void afterDeployment(@Observes AfterDeploymentValidation event) {
-        isValid = true;
-    }
-
     public TestContainer start() {
         validateConfiguration();
         LOG.debug("starting OpenWebBeans container");
@@ -70,6 +63,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
         try {
             container.bootContainer();
             container.startContexts();
+            isValid = true;
         }
         // CHECKSTYLE:SKIP : OpenWebBeans API
         catch (Exception exc) {

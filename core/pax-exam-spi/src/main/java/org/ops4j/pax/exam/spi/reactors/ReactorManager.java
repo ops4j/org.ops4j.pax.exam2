@@ -134,8 +134,6 @@ public class ReactorManager {
 
     private boolean waitForAfterSuiteEvent;
 
-    private boolean injectDependencies;
-
     private AnnotationHandler annotationHandler;
 
     private int numConfigurations;
@@ -216,7 +214,6 @@ public class ReactorManager {
         else {
             system = PaxExamRuntime.createTestSystem(timeoutOption);
         }
-        injectDependencies = EXAM_SYSTEM_CDI.equals(systemType);
         return system;
     }
 
@@ -452,9 +449,6 @@ public class ReactorManager {
             suiteStarted = true;
             stagedReactor.beforeSuite();
         }
-        if (injectDependencies) {
-            inject(testClassInstance);
-        }
         stagedReactor.beforeClass();
     }
 
@@ -487,5 +481,4 @@ public class ReactorManager {
     public void setAnnotationHandler(AnnotationHandler annotationHandler) {
         this.annotationHandler = annotationHandler;
     }
-
 }

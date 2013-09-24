@@ -19,9 +19,6 @@ package org.ops4j.pax.exam.weld;
 
 import java.io.InputStream;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterDeploymentValidation;
-
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -61,16 +58,13 @@ public class WeldTestContainer implements TestContainer {
         return -1;
     }
 
-    public void afterDeployment(@Observes AfterDeploymentValidation event) {
-        isValid = true;
-    }
-
     public TestContainer start() {
         validateConfiguration();
         
         LOG.debug("starting Weld container");
         weld = new Weld();
         weldContainer = weld.initialize();
+        isValid = true;
         return this;
     }
 

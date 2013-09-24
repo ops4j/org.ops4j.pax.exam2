@@ -30,8 +30,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 import org.ops4j.pax.exam.junit.PaxExamParameterized;
 import org.ops4j.pax.exam.sample3.calc.Calculator;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 @RunWith(PaxExamParameterized.class)
+@ExamReactorStrategy(PerClass.class)
 public class CalculatorTest {
     
     private static int paramIndex;

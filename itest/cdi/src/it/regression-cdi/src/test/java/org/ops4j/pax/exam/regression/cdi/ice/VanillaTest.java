@@ -35,8 +35,11 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample3.ice.Chocolate;
 import org.ops4j.pax.exam.sample3.ice.IceCreamService;
 import org.ops4j.pax.exam.sample3.ice.Vanilla;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 @RunWith(PaxExam.class)
+@ExamReactorStrategy(PerClass.class)
 public class VanillaTest {
 
     @Inject

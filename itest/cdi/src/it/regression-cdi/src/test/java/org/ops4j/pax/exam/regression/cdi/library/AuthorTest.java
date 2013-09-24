@@ -32,10 +32,10 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample1.model.Author;
 import org.ops4j.pax.exam.sample1.model.Book;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerSuite;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 @RunWith(PaxExam.class)
-@ExamReactorStrategy(PerSuite.class)
+@ExamReactorStrategy(PerClass.class)
 public class AuthorTest {
 
     @Inject

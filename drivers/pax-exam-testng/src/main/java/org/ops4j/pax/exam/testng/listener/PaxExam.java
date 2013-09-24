@@ -443,6 +443,9 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             if (currentTestClassInstance != null) {
                 manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
             }
+            if (!useProbeInvoker) {
+                manager.inject(testClassInstance);
+            }
             manager.beforeClass(stagedReactor, testClassInstance);
             currentTestClassInstance = testClassInstance;
         }
