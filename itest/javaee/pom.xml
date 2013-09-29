@@ -27,6 +27,7 @@
                 <module>src/it/regression-javaee-testng</module>
                 <module>src/it/regression-javaee-userprobe</module>
                 <module>src/it/regression-javaee-moviefun</module>
+                <module>src/it/regression-javaee-data</module>
             </modules>
         </profile>
 
