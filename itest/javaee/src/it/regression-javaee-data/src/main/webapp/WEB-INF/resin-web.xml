@@ -1,0 +1,13 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+
+    <database>
+        <jndi-name>jdbc/__default</jndi-name>
+        <driver type="org.apache.derby.jdbc.EmbeddedDataSource">
+            <databaseName>memory:library</databaseName>
+            <connectionAttributes>create=true</connectionAttributes>
+        </driver>
+        <prepared-statement-cache-size>8</prepared-statement-cache-size>
+        <max-connections>20</max-connections>
+        <max-idle-time>30s</max-idle-time>
+    </database>
+</web-app>
