@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.invoker.junit.internal;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -27,8 +29,8 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Injector;
-import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -51,13 +53,13 @@ public class JUnitProbeInvoker implements ProbeInvoker {
 
     private Injector injector;
 
-    public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext) {
+    public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext, Injector injector) {
         // parse class and method out of expression:
         String[] parts = encodedInstruction.split(";");
         clazz = parts[0];
         method = parts[1];
         ctx = bundleContext;
-        injector = ServiceLookup.getService(ctx, Injector.class);
+        this.injector = injector; 
     }
 
     public void call(Object... args) {
@@ -123,7 +125,38 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         Result result = junit.run(request);
         List<Failure> failures = result.getFailures();
         if (!failures.isEmpty()) {
-            throw new TestContainerException(failures.toString(), failures.get(0).getException());
+            throw createTestContainerException(failures.toString(), failures.get(0).getException());
+        }
+    }
+    
+    /**
+     * create exception for test failure and make sure it is serializable
+     * @param message
+     * @param ex
+     * @return serializable exception
+     */
+    private TestContainerException createTestContainerException(String message, Throwable ex) {
+        return isSerializeable(ex)
+            ? new TestContainerException(message, ex) 
+            : new WrappedTestContainerException(message, ex);
+    }
+
+    /**
+     * Check if given exception is serializable by doing a serialization and 
+     * checking the exception
+     * 
+     * @param ex exception to check
+     * @return if the given exception is serializable
+     */
+    private boolean isSerializeable(Throwable ex) {
+        try {
+            new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(ex);
+            return true;
+        }
+        //CHECKSTYLE:OFF
+        catch (Throwable ex2) {
+        //CHECKSTYLE:ON
+            return false;
         }
     }
 }
