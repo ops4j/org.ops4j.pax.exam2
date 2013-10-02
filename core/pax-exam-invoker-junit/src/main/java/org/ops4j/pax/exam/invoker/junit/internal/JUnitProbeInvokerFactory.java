@@ -19,6 +19,8 @@ package org.ops4j.pax.exam.invoker.junit.internal;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.ProbeInvokerFactory;
+import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -29,6 +31,8 @@ import org.osgi.framework.BundleContext;
 public class JUnitProbeInvokerFactory implements ProbeInvokerFactory {
 
     public ProbeInvoker createProbeInvoker(Object context, String expr) {
-        return new JUnitProbeInvoker(expr, (BundleContext) context);
+        BundleContext ctx = (BundleContext) context;
+        Injector injector = ServiceLookup.getService(ctx, Injector.class);
+        return new JUnitProbeInvoker(expr, ctx, injector);
     }
 }
