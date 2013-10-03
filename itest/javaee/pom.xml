@@ -27,7 +27,6 @@
                 <module>src/it/regression-javaee-testng</module>
                 <module>src/it/regression-javaee-userprobe</module>
                 <module>src/it/regression-javaee-moviefun</module>
-                <module>src/it/regression-javaee-data</module>
             </modules>
         </profile>
 
@@ -35,6 +34,7 @@
             <id>matrix-jboss</id>
             <modules>
                 <module>src/it/regression-javaee-jboss-module</module>
+                <module>src/it/regression-javaee-data</module>
             </modules>
         </profile>
 
@@ -66,6 +66,7 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish</cloneProjectsTo>
                                     <pomExcludes>
+                                      <pomExclude>regression-javaee-data/pom.xml</pomExclude>
                                       <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
@@ -98,6 +99,7 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish4-embedded</cloneProjectsTo>
                                     <pomExcludes>
+                                      <pomExclude>regression-javaee-data/pom.xml</pomExclude>
                                       <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
@@ -164,6 +166,7 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/tomee</cloneProjectsTo>
                                     <pomExcludes>
+                                      <pomExclude>regression-javaee-data/pom.xml</pomExclude>
                                       <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
