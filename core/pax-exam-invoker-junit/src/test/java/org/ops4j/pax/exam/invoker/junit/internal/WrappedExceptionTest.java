@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Toni Menzel.
+ * Copyright 2013 Christian Schneider
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,17 @@
  */
 package org.ops4j.pax.exam.invoker.junit.internal;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Injector;
@@ -30,26 +36,30 @@ import org.osgi.framework.BundleContext;
 
 public class WrappedExceptionTest {
 
+    private static final String SHOULD_BE_WRAPPED = "This should not be serializable. So it should be wrapped";
+    private static final String SHOULD_NOT_BE_WRAPPED = "This should be serializable. So it should not be wrapped";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Test
     public void testSerializableException() throws ClassNotFoundException {
-        try { 
-            callWithMethod("serializable");
-        } catch (WrappedTestContainerException e) {
-            Assert.fail("Should not be wrapped");
-        } catch (TestContainerException e) {
-            Throwable cause = e.getCause();
-            Assert.assertEquals("This should be serializable. So it should not be wrapped", cause.getMessage());
-            Assert.assertEquals(RuntimeException.class, cause.getClass());
-        }
+        thrown.expect(TestContainerException.class);
+        thrown.expect(not(isA(WrappedTestContainerException.class)));
+        thrown.expectCause(isA(RuntimeException.class));
+        thrown.expectCause(hasMessage(is(SHOULD_NOT_BE_WRAPPED)));
+
+        callWithMethod("serializable");
     }
-    
+
     @Test
     public void testNotSerializableException() throws ClassNotFoundException {
         try {
             callWithMethod("notSerializable");
-        } catch (WrappedTestContainerException e) {
-            Assert.assertEquals("This should not be serializable. So it should be wrapped", e.getWrappedMessage());
-            Assert.assertEquals(MyNotSerializableException.class.getName(), e.getWrappedClassName());
+        }
+        catch (WrappedTestContainerException e) {
+            assertThat(e.getWrappedMessage(), is(SHOULD_BE_WRAPPED));
+            assertThat(e.getWrappedClassName(), is(MyNotSerializableException.class.getName()));
         }
     }
 
@@ -59,27 +69,29 @@ public class WrappedExceptionTest {
         Bundle bundle = mock(Bundle.class);
         when(bundleContext.getBundle()).thenReturn(bundle);
         when(bundle.loadClass(ExceptionSource.class.getName())).thenReturn(ExceptionSource.class);
-        JUnitProbeInvoker invoker = new JUnitProbeInvoker(ExceptionSource.class.getName() + ";" + method, bundleContext, injector );
-        invoker.call(new Object[]{});
+        JUnitProbeInvoker invoker = new JUnitProbeInvoker(ExceptionSource.class.getName() + ";"
+            + method, bundleContext, injector);
+        invoker.call(new Object[] {});
     }
-    
+
     public static class ExceptionSource {
 
         @Test
         public void serializable() {
-            throw new RuntimeException("This should be serializable. So it should not be wrapped");
+            throw new RuntimeException(SHOULD_NOT_BE_WRAPPED);
         }
-        
+
         @Test
         public void notSerializable() {
-            throw new MyNotSerializableException("This should not be serializable. So it should be wrapped");
+            throw new MyNotSerializableException(SHOULD_BE_WRAPPED);
         }
     }
-    
+
     public static class MyNotSerializableException extends RuntimeException {
+
         private static final long serialVersionUID = 6429496713575239757L;
         private NotSerializablePart detail;
-        
+
         public MyNotSerializableException(String message) {
             super(message);
             this.detail = new NotSerializablePart();
@@ -91,6 +103,5 @@ public class WrappedExceptionTest {
 
         public class NotSerializablePart {
         }
-        
     }
 }

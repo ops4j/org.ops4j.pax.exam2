@@ -130,13 +130,13 @@ public class JUnitProbeInvoker implements ProbeInvoker {
     }
     
     /**
-     * create exception for test failure and make sure it is serializable
+     * Creates exception for test failure and makes sure it is serializable.
      * @param message
      * @param ex
      * @return serializable exception
      */
     private TestContainerException createTestContainerException(String message, Throwable ex) {
-        return isSerializeable(ex)
+        return isSerializable(ex)
             ? new TestContainerException(message, ex) 
             : new WrappedTestContainerException(message, ex);
     }
@@ -148,14 +148,13 @@ public class JUnitProbeInvoker implements ProbeInvoker {
      * @param ex exception to check
      * @return if the given exception is serializable
      */
-    private boolean isSerializeable(Throwable ex) {
+    private boolean isSerializable(Throwable ex) {
         try {
             new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(ex);
             return true;
         }
-        //CHECKSTYLE:OFF
+        // CHECKSTYLE:SKIP
         catch (Throwable ex2) {
-        //CHECKSTYLE:ON
             return false;
         }
     }
