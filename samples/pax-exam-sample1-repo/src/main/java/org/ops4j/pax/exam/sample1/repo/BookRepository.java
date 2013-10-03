@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.javaee.data;
+package org.ops4j.pax.exam.sample1.repo;
 
 import java.util.List;
 

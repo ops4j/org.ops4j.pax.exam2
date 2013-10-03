@@ -35,10 +35,18 @@
 
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
+            <artifactId>pax-exam-sample1-repo</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.exam.samples</groupId>
             <artifactId>pax-exam-sample1-service</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
@@ -152,13 +160,11 @@
         <dependency>
             <groupId>org.apache.deltaspike.modules</groupId>
             <artifactId>deltaspike-jpa-module-impl</artifactId>
-            <version>0.5</version>
         </dependency>
         
         <dependency>
             <groupId>org.apache.deltaspike.modules</groupId>
             <artifactId>deltaspike-data-module-impl</artifactId>
-            <version>0.5</version>
         </dependency>
         
     </dependencies>

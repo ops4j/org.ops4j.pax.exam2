@@ -14,15 +14,30 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.javaee.data;
+package org.ops4j.pax.exam.sample1.repo;
 
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 
 public class EntityManagerProducer {
 
-    @Produces @PersistenceContext
-    private EntityManager em;
+    @PersistenceUnit
+    private EntityManagerFactory emf;
+    
+    @Produces @RequestScoped
+    public EntityManager em() {
+        return emf.createEntityManager();
+    }
+    
+    
+    public void close(@Disposes EntityManager em) {
+        if (em.isOpen()) {
+            em.close();
+        }
+    }
 }
