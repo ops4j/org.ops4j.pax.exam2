@@ -34,6 +34,7 @@ import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
+import org.ops4j.pax.exam.options.JarProbeOption;
 import org.ops4j.pax.exam.options.MavenArtifactDeploymentOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
@@ -854,5 +855,15 @@ public class CoreOptions {
      */
     public static WarProbeOption warProbe() {
         return new WarProbeOption();
+    }
+
+    /**
+     * Creates an option for a user-defined JAR probe. This option needs to be customized in fluent
+     * syntax.
+     * 
+     * @return JAR probe option
+     */
+    public static JarProbeOption jarProbe() {
+        return new JarProbeOption();
     }
 }

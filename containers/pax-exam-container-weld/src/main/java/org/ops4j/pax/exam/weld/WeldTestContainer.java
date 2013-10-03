@@ -17,7 +17,13 @@
  */
 package org.ops4j.pax.exam.weld;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.UUID;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -27,6 +33,8 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.options.JarProbeOption;
+import org.ops4j.pax.exam.spi.war.JarBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +52,14 @@ public class WeldTestContainer implements TestContainer {
 
     private boolean isValid;
 
+    private ExamSystem system;
+
+    private ClassLoader contextClassLoader;
+
+    private File probeDir;
+
     public WeldTestContainer(ExamSystem system) {
+        this.system = system;
     }
 
     public void call(TestAddress address) {
@@ -60,12 +75,32 @@ public class WeldTestContainer implements TestContainer {
 
     public TestContainer start() {
         validateConfiguration();
-        
+        setProbeClassLoader();
         LOG.debug("starting Weld container");
         weld = new Weld();
         weldContainer = weld.initialize();
         isValid = true;
         return this;
+    }
+
+    private void setProbeClassLoader() {
+        JarProbeOption probeOption = system.getSingleOption(JarProbeOption.class);
+        if (probeOption == null) {
+            return;
+        }
+        
+        probeDir = new File(system.getTempFolder(), UUID.randomUUID().toString());
+        probeDir.mkdir();
+        JarBuilder builder = new JarBuilder(probeDir, probeOption);
+        URI jar = builder.buildJar();
+        try {
+            URLClassLoader classLoader = new URLClassLoader(new URL[]{jar.toURL()});
+            contextClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
+        }
     }
 
     private void validateConfiguration() {
@@ -81,8 +116,15 @@ public class WeldTestContainer implements TestContainer {
         if (weld != null && isValid) {
             LOG.debug("stopping Weld container");
             weld.shutdown();
+            unsetProbeClassLoader();
         }
         return this;
+    }
+
+    private void unsetProbeClassLoader() {
+        if (contextClassLoader != null) {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
     }
 
     @Override

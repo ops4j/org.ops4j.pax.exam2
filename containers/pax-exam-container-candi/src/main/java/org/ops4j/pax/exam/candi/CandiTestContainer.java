@@ -17,7 +17,13 @@
  */
 package org.ops4j.pax.exam.candi;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.UUID;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
@@ -28,6 +34,8 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.options.JarProbeOption;
+import org.ops4j.pax.exam.spi.war.JarBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +56,14 @@ public class CandiTestContainer implements TestContainer {
 
     private BeanContainerRequest request;
 
+    private ExamSystem system;
+
+    private ClassLoader contextClassLoader;
+
+    private File probeDir;
+
     public CandiTestContainer(ExamSystem system) {
+        this.system = system;
     }
 
     public void call(TestAddress address) {
@@ -69,12 +84,33 @@ public class CandiTestContainer implements TestContainer {
     public TestContainer start() {
         validateConfiguration();
         LOG.debug("starting CanDI container");
+        setProbeClassLoader();
         container = new ResinBeanContainer();
         container.start();
         request = container.beginRequest();
         return this;
     }
     
+    private void setProbeClassLoader() {
+        JarProbeOption probeOption = system.getSingleOption(JarProbeOption.class);
+        if (probeOption == null) {
+            return;
+        }
+        
+        probeDir = new File(system.getTempFolder(), UUID.randomUUID().toString());
+        probeDir.mkdir();
+        JarBuilder builder = new JarBuilder(probeDir, probeOption);
+        URI jar = builder.buildJar();
+        try {
+            URLClassLoader classLoader = new URLClassLoader(new URL[]{jar.toURL()});
+            contextClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
+        }
+    }
+
     private void validateConfiguration() {
         ConfigurationManager cm = new ConfigurationManager();
         String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
@@ -89,8 +125,15 @@ public class CandiTestContainer implements TestContainer {
             LOG.debug("stopping CanDI container");
             container.completeRequest(request);
             container.close();
+            unsetProbeClassLoader();
         }
         return this;
+    }
+
+    private void unsetProbeClassLoader() {
+        if (contextClassLoader != null) {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
     }
 
     @Override

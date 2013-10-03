@@ -17,7 +17,13 @@
  */
 package org.ops4j.pax.exam.openwebbeans;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.UUID;
 
 import org.apache.webbeans.cditest.CdiTestContainer;
 import org.apache.webbeans.cditest.CdiTestContainerLoader;
@@ -27,6 +33,8 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.options.JarProbeOption;
+import org.ops4j.pax.exam.spi.war.JarBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +50,14 @@ public class OpenWebBeansTestContainer implements TestContainer {
 
     private boolean isValid;
 
+    private ExamSystem system;
+
+    private ClassLoader contextClassLoader;
+
+    private File probeDir;
+
     public OpenWebBeansTestContainer(ExamSystem system) {
+        this.system = system;
     }
 
     public void call(TestAddress address) {
@@ -58,6 +73,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
 
     public TestContainer start() {
         validateConfiguration();
+        setProbeClassLoader();
         LOG.debug("starting OpenWebBeans container");
         container = CdiTestContainerLoader.getCdiContainer();
         try {
@@ -72,6 +88,26 @@ public class OpenWebBeansTestContainer implements TestContainer {
         return this;
     }
     
+    private void setProbeClassLoader() {
+        JarProbeOption probeOption = system.getSingleOption(JarProbeOption.class);
+        if (probeOption == null) {
+            return;
+        }
+        
+        probeDir = new File(system.getTempFolder(), UUID.randomUUID().toString());
+        probeDir.mkdir();
+        JarBuilder builder = new JarBuilder(probeDir, probeOption);
+        URI jar = builder.buildJar();
+        try {
+            URLClassLoader classLoader = new URLClassLoader(new URL[]{jar.toURL()});
+            contextClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
+        }
+    }
+
     private void validateConfiguration() {
         ConfigurationManager cm = new ConfigurationManager();
         String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
@@ -89,6 +125,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
             try {
                 container.stopContexts();
                 container.shutdownContainer();
+                unsetProbeClassLoader();
             }
             // CHECKSTYLE:SKIP : OpenWebBeans API
             catch (Exception exc) {
@@ -96,6 +133,12 @@ public class OpenWebBeansTestContainer implements TestContainer {
             }
         }
         return this;
+    }
+
+    private void unsetProbeClassLoader() {
+        if (contextClassLoader != null) {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
     }
 
     @Override
