@@ -60,7 +60,6 @@ import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.zip.ZipInstaller;
 import org.ops4j.spi.ServiceProviderFinder;
-import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -137,7 +136,7 @@ public class JBoss72TestContainer implements TestContainer {
 
     private ConfigurationManager cm;
 
-    public JBoss72TestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
+    public JBoss72TestContainer(ExamSystem system) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
         this.cm = new ConfigurationManager();

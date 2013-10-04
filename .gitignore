@@ -18,6 +18,7 @@ atlassian-ide-plugin.xml
 felix-cache
 fwdir
 moviedb-json
+.factorypath
 
 # ignore while experimental
 pax-exam-container-geronimo

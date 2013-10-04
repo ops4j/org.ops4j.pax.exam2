@@ -18,11 +18,13 @@ package org.ops4j.pax.exam.servlet.invoker;
 
 import java.net.URI;
 
+import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 
+@MetaInfServices
 public class ServletBridgeProbeInvokerFactory implements ProbeInvokerFactory {
 
     @Override
