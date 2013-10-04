@@ -30,7 +30,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 public class JBoss72TestContainerFactory implements TestContainerFactory {
 
     public TestContainer[] create(ExamSystem system) {
-        JBoss72TestContainer container = new JBoss72TestContainer(system, null);
+        JBoss72TestContainer container = new JBoss72TestContainer(system);
         return new TestContainer[] { container };
     }
 }

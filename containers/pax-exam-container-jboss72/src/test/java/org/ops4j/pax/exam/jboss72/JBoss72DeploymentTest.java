@@ -45,7 +45,7 @@ public class JBoss72DeploymentTest {
 
     @Before
     public void setUp() throws IOException {
-        JBoss72TestContainer tc = new JBoss72TestContainer(null, null);
+        JBoss72TestContainer tc = new JBoss72TestContainer(null);
         tc.installContainer();
     }
 
