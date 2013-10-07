@@ -10,4 +10,6 @@ Private-Package:\
 Import-Package:\
   !${bundle.namespace}, org.slf4j;version="[1.4,2)", *
   
+Include-Resource:\
+  META-INF/services=target/classes/META-INF/services,{maven-resources}
   
