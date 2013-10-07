@@ -66,8 +66,8 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish</cloneProjectsTo>
                                     <pomExcludes>
-                                      <pomExclude>regression-javaee-data/pom.xml</pomExclude>
-                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-data/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
                             </execution>
@@ -83,7 +83,7 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish-embedded</cloneProjectsTo>
                                     <pomExcludes>
-                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
                             </execution>
@@ -99,8 +99,8 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/glassfish4-embedded</cloneProjectsTo>
                                     <pomExcludes>
-                                      <pomExclude>regression-javaee-data/pom.xml</pomExclude>
-                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-data/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
                             </execution>
@@ -151,7 +151,7 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/resin</cloneProjectsTo>
                                     <pomExcludes>
-                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
                             </execution>
@@ -166,8 +166,8 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/tomee</cloneProjectsTo>
                                     <pomExcludes>
-                                      <pomExclude>regression-javaee-data/pom.xml</pomExclude>
-                                      <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-data/pom.xml</pomExclude>
+                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
                             </execution>
@@ -404,7 +404,7 @@
                     <dependency>
                         <groupId>org.wildfly</groupId>
                         <artifactId>wildfly-embedded</artifactId>
-                        <version>8.0.0.Alpha4</version>
+                        <version>8.0.0.Beta1</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.logging</groupId>
@@ -414,17 +414,22 @@
                     <dependency>
                         <groupId>org.jboss.logmanager</groupId>
                         <artifactId>jboss-logmanager</artifactId>
-                        <version>1.5.0.Beta1</version>
+                        <version>1.5.0.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.marshalling</groupId>
+                        <artifactId>jboss-marshalling</artifactId>
+                        <version>1.4.1.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.xnio</groupId>
                         <artifactId>xnio-api</artifactId>
-                        <version>3.1.0.CR3</version>
+                        <version>3.1.0.CR7</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.xnio</groupId>
                         <artifactId>xnio-nio</artifactId>
-                        <version>3.1.0.CR3</version>
+                        <version>3.1.0.CR7</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
