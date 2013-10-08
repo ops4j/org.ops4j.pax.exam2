@@ -145,6 +145,10 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
+    public Bundle getSystemBundle() {
+        return framework;
+    }
+    
     public void setBundleStartLevel(long bundleId, int startLevel) {
         StartLevel sl = ServiceLookup.getService(framework.getBundleContext(), StartLevel.class);
         sl.setBundleStartLevel(framework.getBundleContext().getBundle(bundleId), startLevel);
