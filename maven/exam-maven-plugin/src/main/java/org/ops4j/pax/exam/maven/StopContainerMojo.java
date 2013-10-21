@@ -32,12 +32,12 @@ import org.ops4j.pax.exam.TestContainer;
  * @description Stops a Pax Exam Forked Container started by the start-container goal.
  */
 public class StopContainerMojo extends AbstractMojo {
-	
+
     /**
      * Mojo execution injected through Maven.
      * 
-     *  @parameter default-value="${mojoExecution}"
-     *  @readonly
+     * @parameter default-value="${mojoExecution}"
+     * @readonly
      */
     private MojoExecution mojoExecution;
 

@@ -55,14 +55,16 @@ public class StartContainerMojo extends AbstractMojo {
      */
     private static final String BASEDIR = "basedir";
 
+    private static boolean urlStreamHandlerFactoryInstalled;
+
     /**
      * Mojo execution injected through Maven.
      * 
-     *  @parameter default-value="${mojoExecution}"
-     *  @readonly
+     * @parameter default-value="${mojoExecution}"
+     * @readonly
      */
     private MojoExecution mojoExecution;
-    
+
     /**
      * The base directory of the project being built. This can be obtained in your
      * {@code @Configuration} method integration test via System.getProperty("basedir").
@@ -118,17 +120,24 @@ public class StartContainerMojo extends AbstractMojo {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void run(ClassLoader ccl) throws ClassNotFoundException, InstantiationException,
-        IllegalAccessException, InvocationTargetException, IOException {
+        IllegalAccessException, InvocationTargetException, IOException, MojoExecutionException {
         /*
          * Make sure we can load use Pax URL protocol handlers defined as client project
          * dependencies.
          */
-    	final PaxUrlStreamHandlerFactory urlStreamHandlerFactory = new PaxUrlStreamHandlerFactory(ccl);
-    	
+        final PaxUrlStreamHandlerFactory urlStreamHandlerFactory = new PaxUrlStreamHandlerFactory(
+            ccl);
+
         try {
             URL.setURLStreamHandlerFactory(urlStreamHandlerFactory);
-        } catch (Error e) {
-        	// ignore errors due to duplicate calls
+            urlStreamHandlerFactoryInstalled = true;
+        }
+        catch (Error e) {
+            if (! urlStreamHandlerFactoryInstalled) {
+                getLog().error(e);
+                String msg = "Cannot install URLStreamHandlerFactory. There may be a conflict with other Mojos.";
+                throw new MojoExecutionException(msg, e);
+            }
         }
         Option[] options = getConfigurationOptions();
         ExamSystem system = DefaultExamSystem.create(options);
