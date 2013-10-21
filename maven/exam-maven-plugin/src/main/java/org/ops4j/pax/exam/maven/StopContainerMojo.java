@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.maven;
 import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_KEY;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ops4j.pax.exam.TestContainer;
@@ -31,10 +32,18 @@ import org.ops4j.pax.exam.TestContainer;
  * @description Stops a Pax Exam Forked Container started by the start-container goal.
  */
 public class StopContainerMojo extends AbstractMojo {
+	
+    /**
+     * Mojo execution injected through Maven.
+     * 
+     *  @parameter default-value="${mojoExecution}"
+     *  @readonly
+     */
+    private MojoExecution mojoExecution;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Object object = getPluginContext().get(TEST_CONTAINER_KEY);
+        Object object = getPluginContext().get(TEST_CONTAINER_KEY + mojoExecution.getExecutionId());
         if (object == null) {
             throw new MojoExecutionException(
                 "No Pax Exam container found. Did you run the start-container goal?");

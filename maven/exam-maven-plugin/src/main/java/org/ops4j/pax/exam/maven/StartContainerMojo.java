@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.ops4j.pax.exam.Configuration;
@@ -54,6 +55,14 @@ public class StartContainerMojo extends AbstractMojo {
      */
     private static final String BASEDIR = "basedir";
 
+    /**
+     * Mojo execution injected through Maven.
+     * 
+     *  @parameter default-value="${mojoExecution}"
+     *  @readonly
+     */
+    private MojoExecution mojoExecution;
+    
     /**
      * The base directory of the project being built. This can be obtained in your
      * {@code @Configuration} method integration test via System.getProperty("basedir").
@@ -114,16 +123,19 @@ public class StartContainerMojo extends AbstractMojo {
          * Make sure we can load use Pax URL protocol handlers defined as client project
          * dependencies.
          */
-        URL.setURLStreamHandlerFactory(new PaxUrlStreamHandlerFactory(ccl));
-
+    	final PaxUrlStreamHandlerFactory urlStreamHandlerFactory = new PaxUrlStreamHandlerFactory(ccl);
+    	
+        try {
+            URL.setURLStreamHandlerFactory(urlStreamHandlerFactory);
+        } catch (Error e) {
+        	// ignore errors due to duplicate calls
+        }
         Option[] options = getConfigurationOptions();
-
         ExamSystem system = DefaultExamSystem.create(options);
         testContainer = PaxExamRuntime.createContainer(system);
         testContainer.start();
-
         Map context = getPluginContext();
-        context.put(TEST_CONTAINER_KEY, testContainer);
+        context.put(TEST_CONTAINER_KEY + mojoExecution.getExecutionId(), testContainer);
     }
 
     private Option[] getConfigurationOptions() throws ClassNotFoundException,
