@@ -62,6 +62,7 @@ import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulatorFac
 import org.ops4j.pax.exam.karaf.container.internal.runner.Runner;
 import org.ops4j.pax.exam.karaf.options.DoNotModifyLogOption;
 import org.ops4j.pax.exam.karaf.options.ExamBundlesStartLevel;
+import org.ops4j.pax.exam.karaf.options.KarafBootFeatureOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionBaseConfigurationOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationConsoleOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
@@ -69,11 +70,14 @@ import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileOption
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFilePutOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
 import org.ops4j.pax.exam.karaf.options.KarafExamSystemConfigurationOption;
+import org.ops4j.pax.exam.karaf.options.KarafFeatureRepositoryOption;
 import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
 import org.ops4j.pax.exam.karaf.options.KeepRuntimeFolderOption;
+import org.ops4j.pax.exam.karaf.options.LogCategoryLevelOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
+import org.ops4j.pax.exam.karaf.options.configs.LoggingCfg;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
@@ -189,6 +193,7 @@ public class KarafTestContainer implements TestContainer {
             String[] fileEndings = new String[] { "jar", "war", "zip", "kar", "xml" };
 
             updateLogProperties(karafHome, subsystem);
+            updateLogCategoryProperties(karafHome, subsystem);
             updateUserSetProperties(karafHome, subsystem);
             setupExamProperties(karafHome, subsystem);
             makeScriptsInBinExec(karafBin);
@@ -423,7 +428,7 @@ public class KarafTestContainer implements TestContainer {
                     }
                     else {
                         karafPropertiesFile
-                            .extend(optionToApply.getKey(), optionToApply.getValue());
+                            .extend(optionToApply.getKey(), optionToApply.getSeparator(), optionToApply.getValue());
                     }
                 }
                 if (!store) {
@@ -470,18 +475,14 @@ public class KarafTestContainer implements TestContainer {
     private Collection<? extends KarafDistributionConfigurationFileOption> extractFileOptionsBasedOnFeaturesScannerOptions(
         ExamSystem subsystem) {
         ArrayList<KarafDistributionConfigurationFileOption> retVal = Lists.newArrayList();
-        KarafFeaturesOption[] featuresOptions = subsystem
-            .getOptions(KarafFeaturesOption.class);
+        KarafFeaturesOption[] featuresOptions = subsystem.getOptions(KarafFeaturesOption.class);
+
         for (KarafFeaturesOption featuresOption : featuresOptions) {
-            String url = featuresOption.getURL();
-            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES,
-                "," + url));
-            StringBuilder buffer = new StringBuilder();
+            retVal.add(new KarafFeatureRepositoryOption(featuresOption.getURL()));
+
             for (String feature : featuresOption.getFeatures()) {
-                buffer.append(",");
-                buffer.append(feature);
+                retVal.add(new KarafBootFeatureOption(feature));
             }
-            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.BOOT, buffer.toString()));
         }
         return retVal;
     }
@@ -503,18 +504,31 @@ public class KarafTestContainer implements TestContainer {
             LOGGER.info("Log file should not be modified by the test framework");
             return;
         }
-        String realLogLevel = retrieveRealLogLevel(_system);
-        File customPropertiesFile = new File(karafHome + "/etc/org.ops4j.pax.logging.cfg");
-        Properties karafPropertyFile = new Properties();
-        karafPropertyFile.load(new FileInputStream(customPropertiesFile));
-        karafPropertyFile.put("log4j.rootLogger", realLogLevel + ", out, stdout, osgi:*");
-        karafPropertyFile.store(new FileOutputStream(customPropertiesFile), "updated by pax-exam");
+
+        LogLevelOption[] logLevelOptions = _system.getOptions(LogLevelOption.class);
+        if (logLevelOptions != null && logLevelOptions.length == 1) {
+            KarafPropertiesFile karafPropertyFile = new KarafPropertiesFile(karafHome, LoggingCfg.FILE_PATH);
+            karafPropertyFile.load();
+            karafPropertyFile.handle(logLevelOptions[0]);
+            karafPropertyFile.store();
+        }
     }
 
-    private String retrieveRealLogLevel(ExamSystem _system) {
-        LogLevelOption[] logLevelOptions = _system.getOptions(LogLevelOption.class);
-        return logLevelOptions != null && logLevelOptions.length != 0 ? logLevelOptions[0]
-            .getLogLevel().toString() : "WARN";
+    private void updateLogCategoryProperties(File karafHome, ExamSystem _system) throws IOException {
+        DoNotModifyLogOption[] modifyLog = _system.getOptions(DoNotModifyLogOption.class);
+        if (modifyLog != null && modifyLog.length != 0) {
+            LOGGER.info("Log file should not be modified by the test framework");
+            return;
+        }
+
+        KarafPropertiesFile karafPropertyFile = new KarafPropertiesFile(karafHome, LoggingCfg.FILE_PATH);
+        karafPropertyFile.load();
+
+        for (LogCategoryLevelOption option : _system.getOptions(LogCategoryLevelOption.class)) {
+            karafPropertyFile.handle(option);
+        }
+
+        karafPropertyFile.store();
     }
 
     private String[] buildKarafClasspath(File karafHome) {

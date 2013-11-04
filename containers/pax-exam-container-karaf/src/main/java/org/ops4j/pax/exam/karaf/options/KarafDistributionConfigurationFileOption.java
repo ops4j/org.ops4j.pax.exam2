@@ -27,15 +27,25 @@ public abstract class KarafDistributionConfigurationFileOption implements Option
     private String configurationFilePath;
     private String key;
     private String value;
+    private String separator;
 
     public KarafDistributionConfigurationFileOption(ConfigurationPointer pointer, String value) {
-        this(pointer.getConfigurationFilePath(), pointer.getKey(), value);
+        this(pointer.getConfigurationFilePath(), pointer.getKey(), value, null);
+    }
+
+    public KarafDistributionConfigurationFileOption(ConfigurationPointer pointer, String value, String separator) {
+        this(pointer.getConfigurationFilePath(), pointer.getKey(), value, separator);
     }
 
     public KarafDistributionConfigurationFileOption(String configurationFilePath, String key, String value) {
+        this(configurationFilePath, key, value, null);
+    }
+
+    public KarafDistributionConfigurationFileOption(String configurationFilePath, String key, String value, String separator) {
         this.configurationFilePath = configurationFilePath;
         this.key = key;
         this.value = value;
+        this.separator = separator;
     }
 
     public KarafDistributionConfigurationFileOption(String configurationFilePath) {
@@ -52,6 +62,10 @@ public abstract class KarafDistributionConfigurationFileOption implements Option
 
     public String getValue() {
         return value;
+    }
+
+    public String getSeparator() {
+        return separator;
     }
 
 }
