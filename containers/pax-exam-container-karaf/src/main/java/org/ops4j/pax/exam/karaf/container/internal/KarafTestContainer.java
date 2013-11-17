@@ -157,11 +157,12 @@ public class KarafTestContainer implements TestContainer {
 
             File javaHome = new File(System.getProperty("java.home"));
             File karafBase = searchKarafBase(targetFolder);
-            File distributionInfo = new File(karafBase + "/etc/distribution.info");
-            File karafBin = new File(karafBase + "/bin");
-            File featuresXmlFile = new File(targetFolder + "/examfeatures.xml");
+            File karafEtc = new File(karafBase, "etc");
+            File distributionInfo = new File(karafEtc, "distribution.info");
+            File karafBin = new File(karafBase, "bin");
+            File featuresXmlFile = new File(targetFolder, "examfeatures.xml");
             File karafHome = karafBase;
-            File deploy = new File(karafBase + "/deploy");
+            File deploy = new File(karafBase, "deploy");
             String karafData = karafHome + "/data";
 
             framework = new InternalKarafDistributionConfigurationOption(framework,
@@ -217,7 +218,7 @@ public class KarafTestContainer implements TestContainer {
 
             runner.exec(environment, karafBase, javaHome.toString(),
                 javaOpts.toArray(new String[] {}), javaEndorsedDirs, javaExtDirs,
-                karafHome.toString(), karafData, karafOpts, opts.toArray(new String[] {}),
+                karafHome.toString(), karafData, karafEtc.toString(), karafOpts, opts.toArray(new String[] {}),
                 classPath, main, options);
 
             LOGGER.debug("Test Container started in " + (System.currentTimeMillis() - startedAt)

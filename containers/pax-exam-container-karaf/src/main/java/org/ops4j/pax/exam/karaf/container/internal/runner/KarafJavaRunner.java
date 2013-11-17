@@ -33,7 +33,7 @@ public class KarafJavaRunner implements Runner {
     public synchronized void // CHECKSTYLE:SKIP : more than 10 params
     exec(final String[] environment, final File karafBase, final String javaHome, final String[] javaOpts,
          final String[] javaEndorsedDirs,
-         final String[] javaExtDirs, final String karafHome, final String karafData, final String[] karafOpts,
+         final String[] javaExtDirs, final String karafHome, final String karafData, final String karafEtc, final String[] karafOpts,
          final String[] opts, final String[] classPath, final String main, final String options) {
         Thread thread = new Thread("KarafJavaRunner") {
                 @Override
@@ -50,7 +50,8 @@ public class KarafJavaRunner implements Runner {
                             .append("-Dkaraf.home=" + karafHome)
                             .append("-Dkaraf.base=" + karafBase)
                             .append("-Dkaraf.data=" + karafData)
-                            .append("-Djava.util.logging.config.file=" + karafBase + "/etc/java.util.logging.properties")
+                            .append("-Dkaraf.etc=" + karafEtc)
+                            .append("-Djava.util.logging.config.file=" + karafEtc + "/java.util.logging.properties")
                             .append(karafOpts)
                             .append(opts)
                             .append("-cp")
