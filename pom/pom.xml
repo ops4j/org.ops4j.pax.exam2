@@ -39,7 +39,7 @@
         <dependency.resin.version>4.0.30</dependency.resin.version>
         <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.5</dependency.testng.version>
-        <dependency.tomcat.version>7.0.34</dependency.tomcat.version>
+        <dependency.tomcat.version>7.0.47</dependency.tomcat.version>
         <dependency.tomee.version>1.5.1</dependency.tomee.version>
         <dependency.weld.version>1.1.13.Final</dependency.weld.version>
         <dependency.xbean.version>3.12</dependency.xbean.version>
