@@ -139,7 +139,7 @@ public class KarafTestContainer implements TestContainer {
             copyBootClasspathLibraries(karafHome, subsystem);
             updateLogProperties(karafHome, subsystem);
             updateUserSetProperties(karafHome, subsystem);
-            setupExamProperties(karafHome, subsystem);
+            setupSystemProperties(karafHome, subsystem);
             addExamAndReferencesToKaraf(subsystem, karafBase, karafHome);
 
             startKaraf(subsystem, karafBase, karafHome);
@@ -382,7 +382,7 @@ public class KarafTestContainer implements TestContainer {
             .getOptions(KarafDistributionConfigurationFileOption.class));
         options.addAll(extractFileOptionsBasedOnFeaturesScannerOptions(subsystem));
         options.addAll(configureBootDelegation(subsystem));
-        options.addAll(configureSystemBundles(subsystem));
+        options.addAll(configureSystemPackages(subsystem));
         HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = Maps
             .newHashMap();
         for (KarafDistributionConfigurationFileOption option : options) {
@@ -443,36 +443,24 @@ public class KarafTestContainer implements TestContainer {
         }
     }
 
-    private Collection<? extends KarafDistributionConfigurationFileOption> configureSystemBundles(
+    private Collection<? extends KarafDistributionConfigurationFileOption> configureSystemPackages(
         ExamSystem subsystem) {
-        SystemPackageOption[] systemPackageOptions = subsystem
-            .getOptions(SystemPackageOption.class);
-        String systemPackageString = "";
-        for (SystemPackageOption systemPackageOption : systemPackageOptions) {
-            if (!systemPackageString.equals("")) {
-                systemPackageString += ",";
-            }
-            systemPackageString += systemPackageOption.getValue();
-        }
-        if (systemPackageString.equals("")) {
+        String systemPackages = JoinUtil.join(subsystem.getOptions(SystemPackageOption.class));
+        if (systemPackages.length() == 0) {
             return Lists.newArrayList();
         }
         return Lists.newArrayList(new KarafDistributionConfigurationFileExtendOption(
-            CustomProperties.SYSTEM_PACKAGES_EXTRA, systemPackageString));
+            CustomProperties.SYSTEM_PACKAGES_EXTRA, systemPackages));
     }
 
     private Collection<? extends KarafDistributionConfigurationFileOption> configureBootDelegation(
         ExamSystem subsystem) {
         BootDelegationOption[] bootDelegationOptions = subsystem
             .getOptions(BootDelegationOption.class);
-        String bootDelegationString = "";
-        for (BootDelegationOption bootDelegationOption : bootDelegationOptions) {
-            bootDelegationString += ",";
-            bootDelegationString += bootDelegationOption.getValue();
-        }
         return Lists.newArrayList(new KarafDistributionConfigurationFileExtendOption(
-            CustomProperties.BOOTDELEGATION, bootDelegationString));
+            CustomProperties.BOOTDELEGATION, JoinUtil.join(bootDelegationOptions)));
     }
+
 
     private Collection<? extends KarafDistributionConfigurationFileOption> extractFileOptionsBasedOnFeaturesScannerOptions(
         ExamSystem subsystem) {
@@ -480,20 +468,15 @@ public class KarafTestContainer implements TestContainer {
         KarafFeaturesOption[] featuresOptions = subsystem
             .getOptions(KarafFeaturesOption.class);
         for (KarafFeaturesOption featuresOption : featuresOptions) {
-            String url = featuresOption.getURL();
-            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES,
-                "," + url));
-            StringBuilder buffer = new StringBuilder();
-            for (String feature : featuresOption.getFeatures()) {
-                buffer.append(",");
-                buffer.append(feature);
-            }
-            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.BOOT, buffer.toString()));
+            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES, 
+                featuresOption.getURL()));
+            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.BOOT, 
+                JoinUtil.join(featuresOption.getFeatures())));
         }
         return retVal;
     }
     
-    private void setupExamProperties(File karafHome, ExamSystem _system) throws IOException {
+    private void setupSystemProperties(File karafHome, ExamSystem _system) throws IOException {
         File customPropertiesFile = new File(karafHome + "/etc/system.properties");
         SystemPropertyOption[] customProps = _system.getOptions(SystemPropertyOption.class);
         Properties karafPropertyFile = new Properties();
@@ -641,7 +624,7 @@ public class KarafTestContainer implements TestContainer {
 
     @Override
     public void uninstallProbe() {
-        target.uninstallProbe();        
+        target.uninstallProbe();
     }
 
 }

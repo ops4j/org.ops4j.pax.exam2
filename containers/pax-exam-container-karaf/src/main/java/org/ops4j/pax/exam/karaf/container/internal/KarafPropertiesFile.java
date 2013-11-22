@@ -55,7 +55,7 @@ public class KarafPropertiesFile {
             properties.put(key, value);
             return;
         }
-        properties.put(key, properties.get(key) + value);
+        properties.put(key, JoinUtil.join((String)properties.get(key), value));
     }
 
     public String get(String key) {
