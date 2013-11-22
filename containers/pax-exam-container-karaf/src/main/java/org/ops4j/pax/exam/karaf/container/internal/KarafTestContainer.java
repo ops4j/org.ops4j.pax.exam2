@@ -103,8 +103,6 @@ public class KarafTestContainer implements TestContainer {
     private KarafDistributionBaseConfigurationOption framework;
     @SuppressWarnings("unused")
     private KarafManipulator versionAdaptions;
-
-    private boolean deleteRuntime = true;
     private boolean started;
     private RBCRemoteTarget target;
 
@@ -123,13 +121,7 @@ public class KarafTestContainer implements TestContainer {
         try {
             String name = system.createID(KARAF_TEST_CONTAINER);
 
-            KarafExamSystemConfigurationOption[] internalConfigurationOptions = system
-                .getOptions(KarafExamSystemConfigurationOption.class);
-            Option invokerConfiguration = systemProperty("pax.exam.invoker").value("junit");
-            if (internalConfigurationOptions != null && internalConfigurationOptions.length != 0) {
-                invokerConfiguration = systemProperty("pax.exam.invoker").value(
-                    internalConfigurationOptions[0].getInvoker());
-            }
+            Option invokerConfiguration = getInvokerConfiguration();
 
             ExamSystem subsystem = system
                 .fork(options(
@@ -145,103 +137,125 @@ public class KarafTestContainer implements TestContainer {
             System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
             URL sourceDistribution = new URL(framework.getFrameworkURL());
-
-            KeepRuntimeFolderOption[] keepRuntimeFolder = subsystem
-                .getOptions(KeepRuntimeFolderOption.class);
-            if (keepRuntimeFolder != null && keepRuntimeFolder.length != 0) {
-                deleteRuntime = false;
-            }
-
             targetFolder = retrieveFinalTargetFolder(subsystem);
             extractKarafDistribution(sourceDistribution, targetFolder);
 
-            File javaHome = new File(System.getProperty("java.home"));
             File karafBase = searchKarafBase(targetFolder);
-            File karafEtc = new File(karafBase, "etc");
-            File distributionInfo = new File(karafEtc, "distribution.info");
-            File karafBin = new File(karafBase, "bin");
-            File featuresXmlFile = new File(targetFolder, "examfeatures.xml");
             File karafHome = karafBase;
-            File deploy = new File(karafBase, "deploy");
-            String karafData = karafHome + "/data";
 
-            framework = new InternalKarafDistributionConfigurationOption(framework,
-                distributionInfo);
-            versionAdaptions = KarafManipulatorFactory.createManipulator(framework
-                .getKarafVersion());
-
-            ArrayList<String> javaOpts = Lists.newArrayList();
-            appendVmSettingsFromSystem(javaOpts, subsystem);
-            String[] javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
-                javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
-            String[] javaExtDirs = new String[] { javaHome + "/jre/lib/ext", javaHome + "/lib/ext",
-                javaHome + "/lib/ext" };
-            String[] karafOpts = new String[] {};
-            ArrayList<String> opts = Lists.newArrayList("-Dkaraf.startLocalConsole="
-                + shouldLocalConsoleBeStarted(subsystem), "-Dkaraf.startRemoteShell="
-                + shouldRemoteShellBeStarted(subsystem));
-
+            versionAdaptions = createVersionAdapter(karafBase);
             copyBootClasspathLibraries(karafHome, subsystem);
-            String[] classPath = buildKarafClasspath(karafHome);
-
-            String main = "org.apache.karaf.main.Main";
-            String options = "";
-            String[] environment = new String[] {};
-            String[] fileEndings = new String[] { "jar", "war", "zip", "kar", "xml" };
-
             updateLogProperties(karafHome, subsystem);
             updateUserSetProperties(karafHome, subsystem);
             setupExamProperties(karafHome, subsystem);
-            makeScriptsInBinExec(karafBin);
+            addExamAndReferencesToKaraf(subsystem, karafBase, karafHome);
 
-            int startLevel = Constants.DEFAULT_START_LEVEL;
-            ExamBundlesStartLevel examBundlesStartLevel = system
-                .getSingleOption(ExamBundlesStartLevel.class);
-            if (examBundlesStartLevel != null) {
-                startLevel = examBundlesStartLevel.getStartLevel();
-            }
-
-            ExamFeaturesFile examFeaturesFile;
-            if (framework.isUseDeployFolder()) {
-                copyReferencedArtifactsToDeployFolder(deploy, subsystem, fileEndings);
-                examFeaturesFile = new ExamFeaturesFile("", startLevel);
-            }
-            else {
-                StringBuilder extension = extractExtensionString(subsystem);
-                examFeaturesFile = new ExamFeaturesFile(extension.toString(), startLevel);
-            }
-            examFeaturesFile.writeToFile(featuresXmlFile);
-
-            examFeaturesFile.adaptDistributionToStartExam(karafHome, featuresXmlFile);
-
-            long startedAt = System.currentTimeMillis();
-
-            runner.exec(environment, karafBase, javaHome.toString(),
-                javaOpts.toArray(new String[] {}), javaEndorsedDirs, javaExtDirs,
-                karafHome.toString(), karafData, karafEtc.toString(), karafOpts, opts.toArray(new String[] {}),
-                classPath, main, options);
-
-            LOGGER.debug("Test Container started in " + (System.currentTimeMillis() - startedAt)
-                + " millis");
-            LOGGER.info("Wait for test container to finish its initialization "
-                + subsystem.getTimeout());
-
-            if (subsystem.getOptions(ServerModeOption.class).length == 0) {
-                waitForState(
-                    org.ops4j.pax.exam.karaf.container.internal.Constants.SYSTEM_BUNDLE,
-                    Bundle.ACTIVE, subsystem.getTimeout());
-            }
-            else {
-                LOGGER
-                    .info("System runs in Server Mode. Which means, no Test facility bundles available on target system.");
-            }
-
+            startKaraf(subsystem, karafBase, karafHome);
             started = true;
         }
         catch (IOException e) {
             throw new RuntimeException("Problem starting container", e);
         }
         return this;
+    }
+
+    private KarafManipulator createVersionAdapter(File karafBase) {
+        File karafEtc = new File(karafBase, "etc");
+        File distributionInfo = new File(karafEtc, "distribution.info");
+
+        framework = new InternalKarafDistributionConfigurationOption(framework,
+            distributionInfo);
+        return KarafManipulatorFactory.createManipulator(framework
+            .getKarafVersion());
+    }
+
+    private void startKaraf(ExamSystem subsystem, File karafBase, File karafHome) {
+        long startedAt = System.currentTimeMillis();
+        File karafBin = new File(karafBase, "bin");
+        File karafEtc = new File(karafBase, "etc");
+        String karafData = karafHome + "/data";
+        String[] classPath = buildKarafClasspath(karafHome);
+        makeScriptsInBinExec(karafBin);
+        File javaHome = new File(System.getProperty("java.home"));
+        String main = "org.apache.karaf.main.Main";
+        String options = "";
+        String[] environment = new String[] {};
+        ArrayList<String> javaOpts = Lists.newArrayList();
+        appendVmSettingsFromSystem(javaOpts, subsystem);
+        String[] javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
+            javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
+        String[] javaExtDirs = new String[] { javaHome + "/jre/lib/ext", javaHome + "/lib/ext",
+            javaHome + "/lib/ext" };
+        ArrayList<String> opts = Lists.newArrayList("-Dkaraf.startLocalConsole="
+            + shouldLocalConsoleBeStarted(subsystem), "-Dkaraf.startRemoteShell="
+            + shouldRemoteShellBeStarted(subsystem));
+        String[] karafOpts = new String[] {};
+        runner.exec(environment, karafBase, javaHome.toString(),
+            javaOpts.toArray(new String[] {}), javaEndorsedDirs, javaExtDirs,
+            karafHome.toString(), karafData, karafEtc.toString(), karafOpts, opts.toArray(new String[] {}),
+            classPath, main, options);
+
+        LOGGER.debug("Test Container started in " + (System.currentTimeMillis() - startedAt)
+            + " millis");
+        LOGGER.info("Wait for test container to finish its initialization "
+            + subsystem.getTimeout());
+
+        if (subsystem.getOptions(ServerModeOption.class).length == 0) {
+            waitForState(
+                org.ops4j.pax.exam.karaf.container.internal.Constants.SYSTEM_BUNDLE,
+                Bundle.ACTIVE, subsystem.getTimeout());
+        }
+        else {
+            LOGGER
+                .info("System runs in Server Mode. Which means, no Test facility bundles available on target system.");
+        }
+    }
+
+    private boolean shouldDeleteRuntime() {
+        boolean deleteRuntime = true;
+        KeepRuntimeFolderOption[] keepRuntimeFolder = system
+            .getOptions(KeepRuntimeFolderOption.class);
+        if (keepRuntimeFolder != null && keepRuntimeFolder.length != 0) {
+            deleteRuntime = false;
+        }
+        return deleteRuntime;
+    }
+    
+
+    private Option getInvokerConfiguration() {
+        KarafExamSystemConfigurationOption[] internalConfigurationOptions = system
+            .getOptions(KarafExamSystemConfigurationOption.class);
+        Option invokerConfiguration = systemProperty("pax.exam.invoker").value("junit");
+        if (internalConfigurationOptions != null && internalConfigurationOptions.length != 0) {
+            invokerConfiguration = systemProperty("pax.exam.invoker").value(
+                internalConfigurationOptions[0].getInvoker());
+        }
+        return invokerConfiguration;
+    }
+
+    private void addExamAndReferencesToKaraf(ExamSystem subsystem, File karafBase, File karafHome)
+        throws IOException {
+        int startLevel = Constants.DEFAULT_START_LEVEL;
+        ExamBundlesStartLevel examBundlesStartLevel = system
+            .getSingleOption(ExamBundlesStartLevel.class);
+        if (examBundlesStartLevel != null) {
+            startLevel = examBundlesStartLevel.getStartLevel();
+        }
+
+        ExamFeaturesFile examFeaturesFile;
+        if (framework.isUseDeployFolder()) {
+            String[] fileEndings = new String[] { "jar", "war", "zip", "kar", "xml" };
+            File deploy = new File(karafBase, "deploy");
+            copyReferencedArtifactsToDeployFolder(deploy, subsystem, fileEndings);
+            examFeaturesFile = new ExamFeaturesFile("", startLevel);
+        }
+        else {
+            StringBuilder extension = extractExtensionString(subsystem);
+            examFeaturesFile = new ExamFeaturesFile(extension.toString(), startLevel);
+        }
+        File featuresXmlFile = new File(targetFolder, "examfeatures.xml");
+        examFeaturesFile.writeToFile(featuresXmlFile);
+        examFeaturesFile.adaptDistributionToStartExam(karafHome, featuresXmlFile);
     }
 
     private void copyBootClasspathLibraries(File karafHome, ExamSystem subsystem)
@@ -664,7 +678,7 @@ public class KarafTestContainer implements TestContainer {
         finally {
             started = false;
             target = null;
-            if (deleteRuntime) {
+            if (shouldDeleteRuntime()) {
                 system.clear();
                 try {
                     FileUtils.forceDelete(targetFolder);
