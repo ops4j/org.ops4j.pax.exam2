@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +41,10 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -242,8 +247,8 @@ public class KarafTestContainer implements TestContainer {
             examFeaturesFile = new ExamFeaturesFile("", startLevel);
         }
         else {
-            StringBuilder extension = extractExtensionString(subsystem);
-            examFeaturesFile = new ExamFeaturesFile(extension.toString(), startLevel);
+            String extension = extractExtensionString(subsystem);
+            examFeaturesFile = new ExamFeaturesFile(extension, startLevel);
         }
         File featuresXmlFile = new File(targetFolder, "examfeatures.xml");
         examFeaturesFile.writeToFile(featuresXmlFile);
@@ -263,19 +268,42 @@ public class KarafTestContainer implements TestContainer {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private StringBuilder extractExtensionString(ExamSystem subsystem) {
-        ProvisionOption[] provisionOptions = subsystem.getOptions(ProvisionOption.class);
-        StringBuilder extension = new StringBuilder();
-        for (ProvisionOption provisionOption : provisionOptions) {
-            if (provisionOption.getURL().startsWith("link")
-                || provisionOption.getURL().startsWith("scan-features")) {
-                // well those we've already handled at another location...
-                continue;
+    String extractExtensionString(ExamSystem subsystem) {
+        StringWriter wr = new StringWriter();
+        XMLOutputFactory xof =  XMLOutputFactory.newInstance();
+        XMLStreamWriter sw = null;
+        try {
+            sw = xof.createXMLStreamWriter(wr);
+            
+            ProvisionOption<?>[] provisionOptions = subsystem.getOptions(ProvisionOption.class);
+            for (ProvisionOption<?> provisionOption : provisionOptions) {
+                if (provisionOption.getURL().startsWith("link")
+                    || provisionOption.getURL().startsWith("scan-features")) {
+                    // well those we've already handled at another location...
+                    continue;
+                }
+                sw.writeStartElement("bundle");
+                sw.writeCharacters(provisionOption.getURL());
+                sw.writeEndElement();
             }
-            extension.append("<bundle>").append(provisionOption.getURL()).append("</bundle>\n");
+            return wr.toString();
         }
-        return extension;
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Error writing feature " + e.getMessage(), e);
+        } 
+        finally {
+            close(sw);
+        }
+    }
+
+    private void close(XMLStreamWriter sw) {
+        if (sw != null) {
+            try {
+                sw.close();
+            }
+            catch (XMLStreamException e) {
+            }
+        }
     }
 
     private String shouldRemoteShellBeStarted(ExamSystem subsystem) {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.ops4j.pax.exam.container.karaf;
+package org.ops4j.pax.exam.karaf.container;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -37,7 +37,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 @RunWith(PaxExam.class)
-public class KarafTestContainerTest {
+public class KarafTestContainerITest {
 
     @Inject
     private BundleContext bc;
@@ -59,4 +59,5 @@ public class KarafTestContainerTest {
         Object service = bc.getService(serviceRef);
         assertThat(service, is(notNullValue()));
     }
+
 }
