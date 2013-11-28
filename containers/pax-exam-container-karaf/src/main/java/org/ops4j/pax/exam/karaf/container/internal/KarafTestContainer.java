@@ -16,6 +16,7 @@
  */
 package org.ops4j.pax.exam.karaf.container.internal;
 
+import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
@@ -29,7 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,13 +42,10 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
@@ -58,26 +55,24 @@ import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulator;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulatorFactory;
 import org.ops4j.pax.exam.karaf.container.internal.runner.Runner;
 import org.ops4j.pax.exam.karaf.options.DoNotModifyLogOption;
-import org.ops4j.pax.exam.karaf.options.ExamBundlesStartLevel;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionBaseConfigurationOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationConsoleOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFilePutOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.KarafExamSystemConfigurationOption;
 import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
 import org.ops4j.pax.exam.karaf.options.KeepRuntimeFolderOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
-import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
-import org.ops4j.pax.exam.options.ProvisionOption;
+import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
-import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.osgi.framework.Bundle;
@@ -93,6 +88,8 @@ public class KarafTestContainer implements TestContainer {
 
     private static final String KARAF_TEST_CONTAINER = "KarafTestContainer.start";
     private static final String EXAM_INJECT_PROPERTY = "pax.exam.inject";
+    private static final MavenArtifactUrlReference EXAM_REPO_URL = maven()
+        .groupId("org.ops4j.pax.exam").artifactId("pax-exam-features").version(Info.getPaxExamVersion()).type("xml");
 
     private final Runner runner;
     private final RMIRegistry registry;
@@ -141,11 +138,27 @@ public class KarafTestContainer implements TestContainer {
             File karafHome = karafBase;
 
             versionAdaptions = createVersionAdapter(karafBase);
-            copyBootClasspathLibraries(karafHome, subsystem);
+            DependenciesDeployer deployer = new DependenciesDeployer(subsystem, karafBase, karafHome);
+            deployer.copyBootClasspathLibraries();
+            
             updateLogProperties(karafHome, subsystem);
-            updateUserSetProperties(karafHome, subsystem);
             setupSystemProperties(karafHome, subsystem);
-            addExamAndReferencesToKaraf(subsystem, karafBase, karafHome);
+
+            List<KarafDistributionConfigurationFileOption> options = Lists.newArrayList(subsystem
+                .getOptions(KarafDistributionConfigurationFileOption.class));
+            options.addAll(fromFeatureOptions(subsystem.getOptions(KarafFeaturesOption.class)));
+            options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL, "exam")));
+            
+            if (framework.isUseDeployFolder()) {
+                deployer.copyReferencedArtifactsToDeployFolder();
+            }
+            else {
+                options.addAll(fromFeatureOptions(deployer.getDependenciesFeature()));
+            }
+            
+            options.addAll(configureBootDelegation(subsystem));
+            options.addAll(configureSystemPackages(subsystem));
+            updateUserSetProperties(karafHome, options);
 
             startKaraf(subsystem, karafBase, karafHome);
             started = true;
@@ -230,82 +243,6 @@ public class KarafTestContainer implements TestContainer {
         return invokerConfiguration;
     }
 
-    private void addExamAndReferencesToKaraf(ExamSystem subsystem, File karafBase, File karafHome)
-        throws IOException {
-        int startLevel = Constants.DEFAULT_START_LEVEL;
-        ExamBundlesStartLevel examBundlesStartLevel = system
-            .getSingleOption(ExamBundlesStartLevel.class);
-        if (examBundlesStartLevel != null) {
-            startLevel = examBundlesStartLevel.getStartLevel();
-        }
-
-        ExamFeaturesFile examFeaturesFile;
-        if (framework.isUseDeployFolder()) {
-            String[] fileEndings = new String[] { "jar", "war", "zip", "kar", "xml" };
-            File deploy = new File(karafBase, "deploy");
-            copyReferencedArtifactsToDeployFolder(deploy, subsystem, fileEndings);
-            examFeaturesFile = new ExamFeaturesFile("", startLevel);
-        }
-        else {
-            String extension = extractExtensionString(subsystem);
-            examFeaturesFile = new ExamFeaturesFile(extension, startLevel);
-        }
-        File featuresXmlFile = new File(targetFolder, "examfeatures.xml");
-        examFeaturesFile.writeToFile(featuresXmlFile);
-        examFeaturesFile.adaptDistributionToStartExam(karafHome, featuresXmlFile);
-    }
-
-    private void copyBootClasspathLibraries(File karafHome, ExamSystem subsystem)
-        throws IOException {
-        BootClasspathLibraryOption[] bootClasspathLibraryOptions = subsystem
-            .getOptions(BootClasspathLibraryOption.class);
-        for (BootClasspathLibraryOption bootClasspathLibraryOption : bootClasspathLibraryOptions) {
-            UrlReference libraryUrl = bootClasspathLibraryOption.getLibraryUrl();
-            FileUtils.copyURLToFile(
-                new URL(libraryUrl.getURL()),
-                createFileNameWithRandomPrefixFromUrlAtTarget(libraryUrl.getURL(), new File(
-                    karafHome + "/lib"), new String[] { "jar" }));
-        }
-    }
-
-    String extractExtensionString(ExamSystem subsystem) {
-        StringWriter wr = new StringWriter();
-        XMLOutputFactory xof =  XMLOutputFactory.newInstance();
-        XMLStreamWriter sw = null;
-        try {
-            sw = xof.createXMLStreamWriter(wr);
-            
-            ProvisionOption<?>[] provisionOptions = subsystem.getOptions(ProvisionOption.class);
-            for (ProvisionOption<?> provisionOption : provisionOptions) {
-                if (provisionOption.getURL().startsWith("link")
-                    || provisionOption.getURL().startsWith("scan-features")) {
-                    // well those we've already handled at another location...
-                    continue;
-                }
-                sw.writeStartElement("bundle");
-                sw.writeCharacters(provisionOption.getURL());
-                sw.writeEndElement();
-            }
-            return wr.toString();
-        }
-        catch (XMLStreamException e) {
-            throw new RuntimeException("Error writing feature " + e.getMessage(), e);
-        } 
-        finally {
-            close(sw);
-        }
-    }
-
-    private void close(XMLStreamWriter sw) {
-        if (sw != null) {
-            try {
-                sw.close();
-            }
-            catch (XMLStreamException e) {
-            }
-        }
-    }
-
     private String shouldRemoteShellBeStarted(ExamSystem subsystem) {
         KarafDistributionConfigurationConsoleOption[] consoleOptions = subsystem
             .getOptions(KarafDistributionConfigurationConsoleOption.class);
@@ -368,49 +305,8 @@ public class KarafTestContainer implements TestContainer {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private void copyReferencedArtifactsToDeployFolder(File deploy, ExamSystem subsystem,
-        String[] fileEndings) {
-        ProvisionOption[] options = subsystem.getOptions(ProvisionOption.class);
-        for (ProvisionOption option : options) {
-            try {
-                FileUtils.copyURLToFile(
-                    new URL(option.getURL()),
-                    createFileNameWithRandomPrefixFromUrlAtTarget(option.getURL(), deploy,
-                        fileEndings));
-            }
-            // CHECKSTYLE:SKIP
-            catch (Exception e) {
-                // well, this can happen...
-            }
-        }
-    }
-
-    private File createFileNameWithRandomPrefixFromUrlAtTarget(String url, File deploy,
-        String[] fileEndings) {
-        String prefix = UUID.randomUUID().toString();
-        String realEnding = extractPossibleFileEndingIfMavenArtifact(url, fileEndings);
-        String fileName = new File(url).getName();
-        return new File(deploy + "/" + prefix + "_" + fileName + "." + realEnding);
-    }
-
-    private String extractPossibleFileEndingIfMavenArtifact(String url, String[] fileEndings) {
-        String realEnding = "jar";
-        for (String ending : fileEndings) {
-            if (url.indexOf("/" + ending + "/") > 0) {
-                realEnding = ending;
-                break;
-            }
-        }
-        return realEnding;
-    }
-
-    private void updateUserSetProperties(File karafHome, ExamSystem subsystem) throws IOException {
-        List<KarafDistributionConfigurationFileOption> options = Lists.newArrayList(subsystem
-            .getOptions(KarafDistributionConfigurationFileOption.class));
-        options.addAll(extractFileOptionsBasedOnFeaturesScannerOptions(subsystem));
-        options.addAll(configureBootDelegation(subsystem));
-        options.addAll(configureSystemPackages(subsystem));
+    private void updateUserSetProperties(File karafHome, 
+            List<KarafDistributionConfigurationFileOption> options) throws IOException {
         HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = Maps
             .newHashMap();
         for (KarafDistributionConfigurationFileOption option : options) {
@@ -489,12 +385,10 @@ public class KarafTestContainer implements TestContainer {
             CustomProperties.BOOTDELEGATION, JoinUtil.join(bootDelegationOptions)));
     }
 
-
-    private Collection<? extends KarafDistributionConfigurationFileOption> extractFileOptionsBasedOnFeaturesScannerOptions(
-        ExamSystem subsystem) {
+    private Collection<? extends KarafDistributionConfigurationFileOption> fromFeatureOptions(
+        KarafFeaturesOption... featuresOptions) {
         ArrayList<KarafDistributionConfigurationFileOption> retVal = Lists.newArrayList();
-        KarafFeaturesOption[] featuresOptions = subsystem
-            .getOptions(KarafFeaturesOption.class);
+        
         for (KarafFeaturesOption featuresOption : featuresOptions) {
             retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES, 
                 featuresOption.getURL()));
@@ -503,7 +397,7 @@ public class KarafTestContainer implements TestContainer {
         }
         return retVal;
     }
-    
+
     private void setupSystemProperties(File karafHome, ExamSystem _system) throws IOException {
         File customPropertiesFile = new File(karafHome + "/etc/system.properties");
         SystemPropertyOption[] customProps = _system.getOptions(SystemPropertyOption.class);

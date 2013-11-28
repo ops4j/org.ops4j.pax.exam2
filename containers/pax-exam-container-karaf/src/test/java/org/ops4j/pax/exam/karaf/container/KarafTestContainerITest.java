@@ -33,22 +33,23 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
+import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 @RunWith(PaxExam.class)
 public class KarafTestContainerITest {
 
+    private static final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf", "3.0.0.RC1").type("zip");
     @Inject
     private BundleContext bc;
 
     @Configuration
     public Option[] config() {
         return new Option[] {
-            karafDistributionConfiguration()
-                .frameworkUrl(maven("org.apache.karaf", "apache-karaf", "3.0.0.RC1").type("zip"))
-                .karafVersion("3.0.0.RC1").useDeployFolder(false),
-            configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO) };
+            karafDistributionConfiguration().frameworkUrl(KARAF_URL).karafVersion("3.0.0.RC1").useDeployFolder(false),
+            configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO)
+        };
     }
 
     @Test
