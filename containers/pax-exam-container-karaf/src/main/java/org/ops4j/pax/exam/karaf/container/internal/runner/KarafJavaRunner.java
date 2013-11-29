@@ -34,7 +34,7 @@ public class KarafJavaRunner implements Runner {
     exec(final String[] environment, final File karafBase, final String javaHome, final String[] javaOpts,
          final String[] javaEndorsedDirs,
          final String[] javaExtDirs, final String karafHome, final String karafData, final String karafEtc, final String[] karafOpts,
-         final String[] opts, final String[] classPath, final String main, final String options) {
+         final String[] opts, final String[] classPath, final String main, final String options, final boolean security) {
         Thread thread = new Thread("KarafJavaRunner") {
                 @Override
                 public void run() {
@@ -51,13 +51,17 @@ public class KarafJavaRunner implements Runner {
                             .append("-Dkaraf.base=" + karafBase)
                             .append("-Dkaraf.data=" + karafData)
                             .append("-Dkaraf.etc=" + karafEtc)
-                            .append("-Djava.util.logging.config.file=" + karafEtc + "/java.util.logging.properties")
-                            .append(karafOpts)
+                            .append("-Djava.util.logging.config.file=" + karafEtc + "/java.util.logging.properties");
+                    if (security) {
+                        commandLine.append("-Djavax.management.builder.initial=org.apache.karaf.management.boot.KarafMBeanServerBuilder");
+                    }
+                    commandLine.append(karafOpts)
                             .append(opts)
                             .append("-cp")
                             .append(cp)
                             .append(main)
                             .append(options);
+
                     runner.exec(commandLine, karafBase, environment);
                 }
 

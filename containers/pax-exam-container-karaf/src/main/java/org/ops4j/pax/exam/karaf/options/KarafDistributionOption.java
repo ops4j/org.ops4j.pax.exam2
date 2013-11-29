@@ -86,6 +86,14 @@ public final class KarafDistributionOption {
     }
 
     /**
+     * Returns an option object which can be used to configure the security, especially the MBeanServerBuilder.
+     * By default, it's disabled.
+     */
+    public static KarafDistributionConfigurationSecurityOption configureSecurity() {
+        return new KarafDistributionConfigurationSecurityOption(null);
+    }
+
+    /**
      * Configures which distribution options to use. Relevant are the frameworkURL, the
      * frameworkName and the Karaf version since all of those params are relevant to decide which
      * wrapper configurations to use.

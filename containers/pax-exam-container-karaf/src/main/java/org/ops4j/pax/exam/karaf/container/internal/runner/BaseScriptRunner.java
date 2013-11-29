@@ -39,7 +39,7 @@ public abstract class BaseScriptRunner implements Runner {
     // CHECKSTYLE:SKIP - allow more than 10 params
     public void exec(final String[] environment, final File karafBase, String javaHome, String[] javaOpts,
                      String[] javaEndorsedDirs, String[] javaExtDirs, String karafHome,
-                     String karafData, String karafEtc, String[] karafOpts, String[] opts, String[] classPath, String main, String options) {
+                     String karafData, String karafEtc, String[] karafOpts, String[] opts, String[] classPath, String main, String options, boolean security) {
         makeEnvironmentExecutable(karafBase);
         startSystem(environment, karafBase);
     }

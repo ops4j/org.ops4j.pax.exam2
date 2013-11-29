@@ -54,18 +54,7 @@ import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulator;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulatorFactory;
 import org.ops4j.pax.exam.karaf.container.internal.runner.Runner;
-import org.ops4j.pax.exam.karaf.options.DoNotModifyLogOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionBaseConfigurationOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationConsoleOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFilePutOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
-import org.ops4j.pax.exam.karaf.options.KarafExamSystemConfigurationOption;
-import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
-import org.ops4j.pax.exam.karaf.options.KeepRuntimeFolderOption;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption;
+import org.ops4j.pax.exam.karaf.options.*;
 import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
 import org.ops4j.pax.exam.options.BootDelegationOption;
@@ -199,11 +188,12 @@ public class KarafTestContainer implements TestContainer {
         ArrayList<String> opts = Lists.newArrayList("-Dkaraf.startLocalConsole="
             + shouldLocalConsoleBeStarted(subsystem), "-Dkaraf.startRemoteShell="
             + shouldRemoteShellBeStarted(subsystem));
+        boolean enableMBeanServerBuilder = shouldMBeanServerBuilderBeEnabled(subsystem);
         String[] karafOpts = new String[] {};
         runner.exec(environment, karafBase, javaHome.toString(),
             javaOpts.toArray(new String[] {}), javaEndorsedDirs, javaExtDirs,
             karafHome.toString(), karafData, karafEtc.toString(), karafOpts, opts.toArray(new String[] {}),
-            classPath, main, options);
+            classPath, main, options, enableMBeanServerBuilder);
 
         LOGGER.debug("Test Container started in " + (System.currentTimeMillis() - startedAt)
             + " millis");
@@ -269,6 +259,19 @@ public class KarafTestContainer implements TestContainer {
             }
         }
         return "true";
+    }
+
+    private boolean shouldMBeanServerBuilderBeEnabled(ExamSystem subsystem) {
+        KarafDistributionConfigurationSecurityOption[] securityOptions = subsystem.getOptions(KarafDistributionConfigurationSecurityOption.class);
+        if (securityOptions == null) {
+            return false;
+        }
+        for (KarafDistributionConfigurationSecurityOption securityOption : securityOptions) {
+            if (securityOption.getEnableKarafMBeanServerBuilder() != null) {
+                return securityOption.getEnableKarafMBeanServerBuilder();
+            }
+        }
+        return false;
     }
 
     private void makeScriptsInBinExec(File karafBin) {

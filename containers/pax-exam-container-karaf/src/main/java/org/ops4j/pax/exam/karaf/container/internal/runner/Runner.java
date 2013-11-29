@@ -30,7 +30,7 @@ public interface Runner {
     void exec(final String[] environment, final File karafBase, final String javaHome, final String[] javaOpts,
                               final String[] javaEndorsedDirs,
                               final String[] javaExtDirs, final String karafHome, final String karafData, final String karafEtc, final String[] karafOpts,
-                              final String[] opts, final String[] classPath, final String main, final String options);
+                              final String[] opts, final String[] classPath, final String main, final String options, final boolean security);
 
     /**
      * Shutsdown the runner again.
