@@ -40,6 +40,7 @@ import org.ops4j.pax.exam.options.UrlReference;
  */
 public class DependenciesDeployer {
     
+    private static final String KARAF_FEATURE_NS = "http://karaf.apache.org/xmlns/features/v1.0.0";
     private ExamSystem subsystem;
     private File karafBase;
     private File karafHome;
@@ -120,13 +121,13 @@ public class DependenciesDeployer {
         }
 
         try {
-            File featuresXmlFile = new File(karafBase, "examfeatures.xml");
+            File featuresXmlFile = new File(karafBase, "test-dependencies.xml");
             Writer wr = new FileWriter(featuresXmlFile);
             writeDependenciesFeature(wr, subsystem.getOptions(ProvisionOption.class));
             wr.close();
             String repoUrl = "file:"
                 + featuresXmlFile.toString().replaceAll("\\\\", "/").replaceAll(" ", "%20");
-            return new KarafFeaturesOption(repoUrl, "exam");
+            return new KarafFeaturesOption(repoUrl, "test-dependencies");
         }
         catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -142,12 +143,14 @@ public class DependenciesDeployer {
      */
     static void writeDependenciesFeature(Writer writer, ProvisionOption<?>... provisionOptions) {
         XMLOutputFactory xof =  XMLOutputFactory.newInstance();
+        xof.setProperty("javax.xml.stream.isRepairingNamespaces", true);
         XMLStreamWriter sw = null;
         try {
             sw = xof.createXMLStreamWriter(writer);
             sw.writeStartDocument("UTF-8", "1.0");
+            sw.setDefaultNamespace(KARAF_FEATURE_NS);
             sw.writeCharacters("\n");
-            sw.writeStartElement("", "features", "http://karaf.apache.org/xmlns/features/v1.0.0");
+            sw.writeStartElement("features");
             sw.writeAttribute("name", "test-dependencies");
             sw.writeCharacters("\n");
             sw.writeStartElement("feature");

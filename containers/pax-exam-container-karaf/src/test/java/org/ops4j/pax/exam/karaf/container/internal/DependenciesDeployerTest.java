@@ -33,11 +33,11 @@ public class DependenciesDeployerTest {
         StringWriter wr = new StringWriter();
         DependenciesDeployer.writeDependenciesFeature(wr, option);
         Assert.assertEquals(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<features name=\"test-dependencies\">\n"
-            + "<feature name=\"test-dependencies\">\n"
-            + "<bundle>mvn:mygroup/myArtifactId/1.0</bundle>\n" 
-            + "</feature>\n" 
-            + "</features>\n", wr.toString());
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+            "<features xmlns=\"http://karaf.apache.org/xmlns/features/v1.0.0\" name=\"test-dependencies\">\n" + 
+            "<feature name=\"test-dependencies\">\n" + 
+            "<bundle>mvn:mygroup/myArtifactId/1.0</bundle>\n" + 
+            "</feature>\n" + 
+            "</features>\n", wr.toString());
     }
 }
