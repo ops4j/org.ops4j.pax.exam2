@@ -669,7 +669,7 @@
 
             <dependency>
                 <groupId>org.apache.xbean</groupId>
-                <artifactId>xbean-asm-shaded</artifactId>
+                <artifactId>xbean-asm4-shaded</artifactId>
                 <version>${dependency.xbean.version}</version>
             </dependency>
 
