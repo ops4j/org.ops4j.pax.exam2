@@ -17,8 +17,9 @@
 package org.ops4j.pax.exam.karaf.container.internal;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.util.UUID;
@@ -122,7 +123,7 @@ public class DependenciesDeployer {
 
         try {
             File featuresXmlFile = new File(karafBase, "test-dependencies.xml");
-            Writer wr = new FileWriter(featuresXmlFile);
+            Writer wr = new OutputStreamWriter(new FileOutputStream(featuresXmlFile), "UTF-8");
             writeDependenciesFeature(wr, subsystem.getOptions(ProvisionOption.class));
             wr.close();
             String repoUrl = "file:"
