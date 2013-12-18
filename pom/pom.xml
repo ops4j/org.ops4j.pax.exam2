@@ -943,6 +943,17 @@
             </roles>
             <timezone>UTC+1</timezone>
         </developer>
+        <developer>
+            <id>jbonofre</id>
+            <name>Jean-Baptiste Onofre</name>
+            <email>jb@nanthrax.net</email>
+            <organization>Talend</organization>
+            <organizationUrl>http://www.talend.com</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>UTC+1</timezone>
+        </developer>
     </developers>
 
     <repositories>
