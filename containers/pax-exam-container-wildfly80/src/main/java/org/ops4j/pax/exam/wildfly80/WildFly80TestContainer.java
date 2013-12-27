@@ -81,7 +81,7 @@ public class WildFly80TestContainer implements TestContainer {
     /**
      * Default download URL for JBoss AS distribution.
      */
-    public static final String WILDFLY80_DIST_URL_DEFAULT = "mvn:org.wildfly/wildfly-dist/8.0.0.Beta1/zip";
+    public static final String WILDFLY80_DIST_URL_DEFAULT = "mvn:org.wildfly/wildfly-dist/8.0.0.CR1/zip";
 
     /**
      * Configuration property key for WildFly installation configuration file directory. The files
