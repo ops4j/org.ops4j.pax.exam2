@@ -76,7 +76,7 @@ public class StartContainerMojo extends AbstractMojo {
     /**
      * Test classpath.
      * 
-     * @parameter property="project.testClasspathElements"
+     * @parameter expression="${project.testClasspathElements}"
      * @required
      */
     private String[] classpathElements;
