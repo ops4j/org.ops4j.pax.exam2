@@ -16,32 +16,25 @@
  */
 package org.ops4j.pax.exam.maven;
 
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_KEY;
+import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_RUNNER_KEY;
+import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_PORT_KEY;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
+import java.net.ServerSocket;
 import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.spi.DefaultExamSystem;
+import org.ops4j.exec.DefaultJavaRunner;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 /**
- * Starts a Pax Exam Forked Container in server mode for the given configuration class.
+ * Starts a Pax Exam Container in server mode for the given configuration class. The container
+ * is running in a background process which should be terminated by the {@code stop-container}
+ * goal.
  * 
  * @goal start-container
  * @phase pre-integration-test
@@ -54,8 +47,6 @@ public class StartContainerMojo extends AbstractMojo {
      * Maven defined system property name.
      */
     private static final String BASEDIR = "basedir";
-
-    private static boolean urlStreamHandlerFactoryInstalled;
 
     /**
      * Mojo execution injected through Maven.
@@ -71,7 +62,7 @@ public class StartContainerMojo extends AbstractMojo {
      * 
      * @parameter default-value="${basedir}"
      */
-    protected File basedir;
+    private File basedir;
 
     /**
      * Fully qualified name of a Java class with a {@code @Configuration} method, providing the test
@@ -85,109 +76,47 @@ public class StartContainerMojo extends AbstractMojo {
     /**
      * Test classpath.
      * 
-     * @parameter expression="${project.testClasspathElements}"
+     * @parameter property="project.testClasspathElements"
      * @required
      */
-    private List<String> classpathElements;
+    private String[] classpathElements;
 
-    private ClasspathClassLoader testClassLoader;
-
-    private TestContainer testContainer;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        /*
-         * The test classpath of the project using this plugin is not visible to the classloader of
-         * this plugin, but it may be needed to loaded classes and resources, e.g. from
-         * META-INF/services. So we build our own class loader for the test classpath.
-         */
-        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        getLog().debug("classpath for forked process:");
+        for (String cp : classpathElements) {
+            getLog().debug(cp);
+        }
+        
+        DefaultJavaRunner javaRunner = new DefaultJavaRunner(false);
+        String basedirProp = String.format("-D%s=%s", BASEDIR, basedir.getAbsolutePath());
+        String[] vmOptions = new String[] { basedirProp };
+        String javaHome = System.getProperty("java.home");
+        int port = getFreePort();
+        String[] args = new String[] { configClass, Integer.toString(port) };
+
+        // inherit working directory from this process
+        javaRunner.exec(vmOptions, classpathElements, PaxExamRuntime.class.getName(), args, javaHome, null);
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> context = getPluginContext();
+        
+        context.put(TEST_CONTAINER_RUNNER_KEY + mojoExecution.getExecutionId(), javaRunner);
+        context.put(TEST_CONTAINER_PORT_KEY + mojoExecution.getExecutionId(), port);
+    }
+
+
+    private int getFreePort() throws MojoExecutionException {
         try {
-            ClasspathClassLoader cl = getTestClassLoader();
-            Thread.currentThread().setContextClassLoader(cl);
-            run(cl);
+            ServerSocket serverSocket = new ServerSocket(0);
+            int port = serverSocket.getLocalPort();
+            serverSocket.close();
+            return port;
         }
-        // CHECKSTYLE:SKIP : catch all wanted
-        catch (Exception e) {
-            getLog().error(e);
-            throw new MojoExecutionException("Failed to start Pax Exam server for " + configClass,
-                e);
-        }
-        finally {
-            Thread.currentThread().setContextClassLoader(ccl);
+        catch (IOException exc) {
+            throw new MojoExecutionException("", exc);
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void run(ClassLoader ccl) throws ClassNotFoundException, InstantiationException,
-        IllegalAccessException, InvocationTargetException, IOException, MojoExecutionException {
-        /*
-         * Make sure we can load use Pax URL protocol handlers defined as client project
-         * dependencies.
-         */
-        final PaxUrlStreamHandlerFactory urlStreamHandlerFactory = new PaxUrlStreamHandlerFactory(
-            ccl);
-
-        try {
-            URL.setURLStreamHandlerFactory(urlStreamHandlerFactory);
-            urlStreamHandlerFactoryInstalled = true;
-        }
-        catch (Error e) {
-            if (! urlStreamHandlerFactoryInstalled) {
-                getLog().error(e);
-                String msg = "Cannot install URLStreamHandlerFactory. There may be a conflict with other Mojos.";
-                throw new MojoExecutionException(msg, e);
-            }
-        }
-        Option[] options = getConfigurationOptions();
-        ExamSystem system = DefaultExamSystem.create(options);
-        testContainer = PaxExamRuntime.createContainer(system);
-        testContainer.start();
-        Map context = getPluginContext();
-        context.put(TEST_CONTAINER_KEY + mojoExecution.getExecutionId(), testContainer);
-    }
-
-    private Option[] getConfigurationOptions() throws ClassNotFoundException,
-        InstantiationException, IllegalAccessException, InvocationTargetException {
-        Class<?> klass = Class.forName(configClass, true, testClassLoader);
-        Method m = getConfigurationMethod(klass);
-        Object configClassInstance = klass.newInstance();
-
-        String oldBasedir = System.setProperty(BASEDIR, basedir.getAbsolutePath());
-        try {
-            Option[] options = (Option[]) m.invoke(configClassInstance);
-            return combine(options, systemProperty(BASEDIR).value(basedir.getAbsolutePath()));
-        }
-        finally {
-            if (oldBasedir != null) {
-                System.setProperty(BASEDIR, oldBasedir);
-            }
-            else {
-                System.clearProperty(BASEDIR);
-            }
-        }
-    }
-
-    private Method getConfigurationMethod(Class<?> klass) {
-        Method[] methods = klass.getMethods();
-        for (Method m : methods) {
-            Configuration conf = m.getAnnotation(Configuration.class);
-            if (conf != null) {
-                return m;
-            }
-        }
-        throw new IllegalArgumentException(klass.getName() + " has no @Configuration method");
-    }
-
-    protected ClasspathClassLoader getTestClassLoader() {
-        if (testClassLoader == null) {
-            try {
-                testClassLoader = new ClasspathClassLoader(classpathElements);
-            }
-            catch (MalformedURLException exc) {
-                throw new IllegalStateException("error in classpath", exc);
-            }
-        }
-        return testClassLoader;
-    }
 }

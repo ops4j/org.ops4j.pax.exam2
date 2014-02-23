@@ -16,14 +16,21 @@
  */
 package org.ops4j.pax.exam.maven;
 
+/**
+ * Keys for storing and looking properties of the Pax Exam container background process in
+ * the Maven plugin context. Used for communication between the mojos of this Maven plugin.
+ */
 public class Constants {
 
     /**
-     * Key for storing and looking up the Pax Exam container in the Maven plugin context. Used for
-     * communication between the mojos of this Maven plugin.
+     * Key for the runner for the Pax Exam container background process.
      */
-    public static final String TEST_CONTAINER_KEY = "exam.testContainer";
-    
+    public static final String TEST_CONTAINER_RUNNER_KEY = "exam.testContainerRunner";
+
+    /**
+     * Key for the shutdown port of the Pax Exam container background process.
+     */
+    public static final String TEST_CONTAINER_PORT_KEY = "exam.testContainerPort";
 
     /** Hidden utility class constructor. */
     private Constants() {

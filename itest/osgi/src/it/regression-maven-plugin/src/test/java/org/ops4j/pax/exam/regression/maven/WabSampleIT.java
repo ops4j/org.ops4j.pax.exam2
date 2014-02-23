@@ -16,8 +16,8 @@
  */
 package org.ops4j.pax.exam.regression.maven;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
@@ -27,8 +27,14 @@ import com.sun.jersey.api.client.WebResource;
 public class WabSampleIT {
 
     @Test
-    public void checkPlainTextFromWabServlet() {
+    public void checkPlainTextFromWabServlet() throws InterruptedException {
         Client client = Client.create();
+        
+        // The server is started by the exam-maven-plugin in a background process:
+        // We need to make sure it has finished startup.
+        client.addFilter(new RetryFilter(10, 2000));
+        
+        
         WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
         String response = resource.get(String.class);
         assertThat(response, containsString("wab symbolic name : wab-sample"));

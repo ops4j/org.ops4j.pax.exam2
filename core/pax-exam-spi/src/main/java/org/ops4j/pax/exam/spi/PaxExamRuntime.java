@@ -26,12 +26,22 @@ import static org.ops4j.pax.exam.CoreOptions.serverMode;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.CoreOptions.when;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
@@ -54,7 +64,7 @@ import org.slf4j.LoggerFactory;
 public class PaxExamRuntime {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaxExamRuntime.class);
-    
+
     /** Hidden utility class constructor. */
     private PaxExamRuntime() {
     }
@@ -85,6 +95,87 @@ public class PaxExamRuntime {
      */
     public static TestContainer createContainer(ExamSystem system) {
         return getTestContainerFactory().create(system)[0];
+    }
+
+    /**
+     * Creates and starts a test container using options from a configuration class.
+     * 
+     * @param configurationClassName
+     *            fully qualified class name of a configuration class.
+     * @return started test container
+     * @throws Exception
+     */
+    public static TestContainer createContainer(String configurationClassName) throws Exception {
+        Option[] options = getConfigurationOptions(configurationClassName);
+        ExamSystem system = DefaultExamSystem.create(options);
+        TestContainer testContainer = PaxExamRuntime.createContainer(system);
+        testContainer.start();
+        return testContainer;
+    }
+
+    /**
+     * Opens a server socket listening for text commands on the given port.
+     * Each command is terminated by a newline. The server expects a "stop" command
+     * followed by a "quit" command.
+     * 
+     * @param testContainer
+     * @param localPort
+     */
+    private static void waitForStop(TestContainer testContainer, int localPort) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(localPort);
+            Socket socket = serverSocket.accept();
+
+            InputStreamReader isr = new InputStreamReader(socket.getInputStream(), "UTF-8");
+            BufferedReader reader = new BufferedReader(isr);
+            OutputStream os = socket.getOutputStream();
+            OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
+            PrintWriter pw = new PrintWriter(writer, true);
+            boolean running = true;
+            while (running) {
+                String command = reader.readLine();
+                LOG.debug("command = {}", command);
+                if (command.equals("stop")) {
+                    testContainer.stop();
+                    pw.println("stopped");
+                    writer.flush();
+                    LOG.info("test container stopped");
+                }
+                else if (command.equals("quit")) {
+                    LOG.debug("quitting PaxExamRuntime");
+                    pw.close();
+                    socket.close();
+                    serverSocket.close();
+                    running = false;
+                }
+            }
+        }
+        catch (IOException exc) {
+            LOG.debug("socket error", exc);
+        }
+    }
+
+    private static Option[] getConfigurationOptions(String configurationClassName)
+        throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+        InvocationTargetException {
+        Class<?> klass = Class.forName(configurationClassName, true,
+            PaxExamRuntime.class.getClassLoader());
+        Method m = getConfigurationMethod(klass);
+        Object configClassInstance = klass.newInstance();
+
+        Option[] options = (Option[]) m.invoke(configClassInstance);
+        return options;
+    }
+
+    private static Method getConfigurationMethod(Class<?> klass) {
+        Method[] methods = klass.getMethods();
+        for (Method m : methods) {
+            Configuration conf = m.getAnnotation(Configuration.class);
+            if (conf != null) {
+                return m;
+            }
+        }
+        throw new IllegalArgumentException(klass.getName() + " has no @Configuration method");
     }
 
     public static ExamSystem createTestSystem(Option... options) throws IOException {
@@ -184,5 +275,31 @@ public class PaxExamRuntime {
             // good!
             return;
         }
+    }
+
+    /**
+     * Runs a standalone container in server mode which can be terminated gracefully by sending text
+     * commands over a socket.
+     * <p>
+     * This class must be invoked with two arguments:
+     * <ul>
+     * <li>The fully qualified name of a {@code @Configuration} class
+     * <li>A port number.
+     * </ul>
+     * After starting the container, this process will listen on the given port for a "stop"
+     * command, sending a reply of "stopped". When finally receiving a "quit" command, the process
+     * will exit.
+     * 
+     * @param args
+     *            command line argument
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
+            throw new IllegalArgumentException(
+                "required arguments: <configuration class name> <shutdown port>");
+        }
+        TestContainer testContainer = createContainer(args[0]);
+        waitForStop(testContainer, Integer.parseInt(args[1]));
     }
 }

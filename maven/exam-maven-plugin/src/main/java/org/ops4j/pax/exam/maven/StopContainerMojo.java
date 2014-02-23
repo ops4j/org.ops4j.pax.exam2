@@ -16,20 +16,29 @@
  */
 package org.ops4j.pax.exam.maven;
 
-import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_KEY;
+import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_RUNNER_KEY;
+import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_PORT_KEY;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.exec.DefaultJavaRunner;
 
 /**
- * Stops a Pax Exam Forked Container started by the start-container goal.
+ * Stops a Pax Exam Container started by the start-container goal.
  * 
  * @goal stop-container
  * @phase post-integration-test
- * @description Stops a Pax Exam Forked Container started by the start-container goal.
+ * @description Stops a Pax Exam Container started by the start-container goal.
  */
 public class StopContainerMojo extends AbstractMojo {
 
@@ -43,12 +52,41 @@ public class StopContainerMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Object object = getPluginContext().get(TEST_CONTAINER_KEY + mojoExecution.getExecutionId());
+        Object object = getPluginContext().get(TEST_CONTAINER_RUNNER_KEY + mojoExecution.getExecutionId());
         if (object == null) {
             throw new MojoExecutionException(
                 "No Pax Exam container found. Did you run the start-container goal?");
         }
-        TestContainer testContainer = (TestContainer) object;
-        testContainer.stop();
+        DefaultJavaRunner javaRunner = (DefaultJavaRunner) object;
+        
+        object = getPluginContext().get(TEST_CONTAINER_PORT_KEY + mojoExecution.getExecutionId());
+        if (object == null) {
+            throw new MojoExecutionException(
+                "No Pax Exam container port found. Did you run the start-container goal?");
+        }
+        Integer port = (Integer) object;
+        try {
+            getLog().debug("stopping test container");
+            Socket socket = new Socket((String) null, port);
+            OutputStream os = socket.getOutputStream();
+            OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
+            PrintWriter pw = new PrintWriter(writer, true);
+            InputStreamReader isr = new InputStreamReader(socket.getInputStream(), "UTF-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            pw.println("stop");
+            getLog().debug("quitting test container");
+            reader.readLine();
+            pw.println("quit");
+            reader.close();
+            pw.close();
+            socket.close();            
+        }
+        catch (IOException exc) {
+            getLog().info("exception communicating with background process, terminating process");
+            getLog().info(exc);
+        }
+        
+        javaRunner.shutdown();
     }
 }

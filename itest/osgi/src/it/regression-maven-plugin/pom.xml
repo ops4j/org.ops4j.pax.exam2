@@ -23,6 +23,17 @@
             <artifactId>pax-exam-junit4</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ops4j.pax.tinybundles</groupId>
+                    <artifactId>tinybundles</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.compendium</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
         <dependency>
@@ -230,19 +241,19 @@
             <properties>
                 <pax.exam.container>native</pax.exam.container>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-native</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.ops4j.pax.exam</groupId>
                         <artifactId>exam-maven-plugin</artifactId>
                         <version>${project.version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.ops4j.pax.exam</groupId>
-                                <artifactId>pax-exam-container-native</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
