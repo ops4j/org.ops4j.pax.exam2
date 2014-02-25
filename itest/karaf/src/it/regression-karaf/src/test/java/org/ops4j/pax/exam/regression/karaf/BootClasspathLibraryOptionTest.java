@@ -36,7 +36,8 @@ public class BootClasspathLibraryOptionTest {
     public Option[] config() {
         return new Option[]{
             regressionDefaults(),
-            bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527") };
+            bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527") 
+            };
     }
 
     @Test
@@ -49,7 +50,8 @@ public class BootClasspathLibraryOptionTest {
                 foundJarFiles++;
             }
         }
-        assertEquals(6, foundJarFiles);
+        // Karaf 3.0.0 has 6 boot libs, we expect another one to show up
+        assertEquals(6 + 1, foundJarFiles);
     }
 
 }

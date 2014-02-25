@@ -17,7 +17,8 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
@@ -26,8 +27,8 @@ import java.util.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
@@ -37,26 +38,19 @@ public class BootDelegationOptionTest {
     public Option[] config() {
         return new Option[]{
             regressionDefaults(),
-            bootDelegationPackage("com.sun.*")
+            bootDelegationPackage("com.oracle.*") 
         };
     }
 
     @Test
     public void test() throws Exception {
-        Properties prop = new Properties();
-        prop.load(new FileInputStream("etc/config.properties"));
-        String delegation = prop.get("org.osgi.framework.bootdelegation").toString();
-        assertEquals(new StringBuilder()
-            .append("org.apache.karaf.jaas.boot,")
-            .append("org.apache.karaf.jaas.boot.principal,")
-            .append("sun.*,")
-            .append("com.sun.*,")
-            .append("javax.transaction,")
-            .append("javax.transaction.*,")
-            .append("sun.*,")
-            .append("com.sun.*")
-            .toString(),
-            delegation);
+        Properties actualProps = new Properties();
+        actualProps.load(new FileInputStream("etc/config.properties"));
+        String actualDelegation = actualProps.getProperty("org.osgi.framework.bootdelegation");
+        
+        Properties expectedProps = new Properties();
+        expectedProps.load(BootDelegationOptionTest.class.getResourceAsStream("/expected_bootdelegation.properties"));
+        String expectedDelegation = expectedProps.getProperty("org.osgi.framework.bootdelegation");
+        assertThat(actualDelegation, is(expectedDelegation));
     }
-
 }

@@ -17,7 +17,9 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 
 import java.io.FileInputStream;
@@ -41,10 +43,14 @@ public class SystemPackageOptionTest {
 
     @Test
     public void test() throws Exception {
-        Properties prop = new Properties();
-        prop.load(new FileInputStream("etc/config.properties"));
-        String delegation = prop.get("org.osgi.framework.system.packages.extra").toString();
-        assertEquals("org.osgi.framework.launch", delegation);
-    }
+        Properties actualProps = new Properties();
+        actualProps.load(new FileInputStream("etc/config.properties"));
+        String actualExtra = actualProps.getProperty("org.osgi.framework.system.packages.extra");
+        assertThat(actualExtra, containsString("org.osgi.framework.launch"));
 
+        Properties expectedProps = new Properties();
+        expectedProps.load(BootDelegationOptionTest.class.getResourceAsStream("/expected_extra.properties"));
+        String expectedExtra = expectedProps.getProperty("org.osgi.framework.system.packages.extra");
+        assertThat(actualExtra, is(expectedExtra));
+    }
 }
