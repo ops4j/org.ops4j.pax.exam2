@@ -17,8 +17,7 @@
  */
 package org.ops4j.pax.exam.testng.inject;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.testng.Assert.assertEquals;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -86,6 +85,6 @@ public class SuiteTest implements Notifier, Remote {
         UnicastRemoteObject.unexportObject(this, true);
         UnicastRemoteObject.unexportObject(registry, true);
 
-        assertThat(messages.size(), is(numRestarts));
+        assertEquals(messages.size(), numRestarts);
     }
 }

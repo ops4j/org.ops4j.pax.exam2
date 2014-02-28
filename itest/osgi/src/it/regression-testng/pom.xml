@@ -64,7 +64,6 @@
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-tracker</artifactId>
-            <version>${dependency.swissbox.version}</version>
             <scope>test</scope>
         </dependency>
 
