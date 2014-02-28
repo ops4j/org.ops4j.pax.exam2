@@ -35,7 +35,7 @@
         <dependency.karaf.version>3.0.0</dependency.karaf.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
-        <dependency.openwebbeans.version>1.2.1</dependency.openwebbeans.version>
+        <dependency.openwebbeans.version>1.2.2</dependency.openwebbeans.version>
         <dependency.resin.version>4.0.30</dependency.resin.version>
         <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.5</dependency.testng.version>
