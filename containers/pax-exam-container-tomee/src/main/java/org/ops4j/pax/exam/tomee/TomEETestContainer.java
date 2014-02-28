@@ -36,6 +36,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.config.sys.Tomee;
 import org.apache.tomee.embedded.Configuration;
+import org.apache.tomee.embedded.Container;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
@@ -78,7 +79,7 @@ public class TomEETestContainer implements TestContainer {
 
     private TestDirectory testDirectory;
 
-    private WrappedTomEEContainer tomee;
+    private Container tomee;
 
     private File webappDir;
 
@@ -210,7 +211,7 @@ public class TomEETestContainer implements TestContainer {
             tomeeConfig.setServerXml(serverXml.getAbsolutePath());
         }
 
-        tomee = new WrappedTomEEContainer();
+        tomee = new Container();
         tomee.setup(tomeeConfig);
         try {
             tomee.start();

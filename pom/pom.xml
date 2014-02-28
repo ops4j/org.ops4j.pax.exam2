@@ -39,8 +39,8 @@
         <dependency.resin.version>4.0.30</dependency.resin.version>
         <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.5</dependency.testng.version>
-        <dependency.tomcat.version>7.0.47</dependency.tomcat.version>
-        <dependency.tomee.version>1.6.0</dependency.tomee.version>
+        <dependency.tomcat.version>7.0.52</dependency.tomcat.version>
+        <dependency.tomee.version>1.6.1-SNAPSHOT</dependency.tomee.version>
         <dependency.weld.version>1.1.13.Final</dependency.weld.version>
         <dependency.wildfly.version>8.0.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.15</dependency.xbean.version>
@@ -727,6 +727,18 @@
                 <artifactId>deltaspike-partialbean-module-impl</artifactId>
                 <version>${dependency.deltaspike.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>jquery</artifactId>
+                <version>2.1.0-1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.2.1</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -968,6 +980,17 @@
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>apache-snapshots</id>
+            <name>Apache Snapshots</name>
+            <url>http://repository.apache.org/snapshots/</url>
         </repository>
     </repositories>
 
