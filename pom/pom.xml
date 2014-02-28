@@ -41,7 +41,7 @@
         <dependency.testng.version>6.8.5</dependency.testng.version>
         <dependency.tomcat.version>7.0.52</dependency.tomcat.version>
         <dependency.tomee.version>1.6.1-SNAPSHOT</dependency.tomee.version>
-        <dependency.weld.version>1.1.13.Final</dependency.weld.version>
+        <dependency.weld.version>1.1.16.Final</dependency.weld.version>
         <dependency.wildfly.version>8.0.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.15</dependency.xbean.version>
     </properties>
