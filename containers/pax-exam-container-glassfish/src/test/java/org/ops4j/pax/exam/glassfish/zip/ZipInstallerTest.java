@@ -11,9 +11,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.zip.ZipInstaller;
-
-import com.google.common.io.Files;
 
 public class ZipInstallerTest {
 
@@ -21,7 +20,7 @@ public class ZipInstallerTest {
 
     @Before
     public void setUp() {
-        installDir = Files.createTempDir();
+        installDir = DefaultExamSystem.createTempDir();
     }
 
     @After

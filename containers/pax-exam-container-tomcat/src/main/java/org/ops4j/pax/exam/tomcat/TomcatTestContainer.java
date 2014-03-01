@@ -34,6 +34,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.util.ContextName;
+import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ProbeInvoker;
@@ -48,8 +49,6 @@ import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 /**
  * @author Harald Wellmann
@@ -75,6 +74,10 @@ public class TomcatTestContainer implements TestContainer {
     private TomcatHostConfig hostConfig;
 
     private File webappDir;
+    
+    private boolean deployContext;
+
+    private File contextTarget;
 
     public TomcatTestContainer(ExamSystem system) {
         this.system = system;
@@ -130,7 +133,13 @@ public class TomcatTestContainer implements TestContainer {
         try {
             File warFile = new File(webappDir, applicationName + ".war");
             StreamUtils.copyStream(stream, new FileOutputStream(warFile), true);
-            hostConfig.deployWAR(new ContextName(applicationName), warFile);
+            ContextName cn = new ContextName(applicationName);
+            if (false && contextTarget != null) {
+                hostConfig.deployDescriptor(cn, contextTarget);
+            }
+            else {
+                hostConfig.deployWAR(cn, warFile);
+            }
             deployed.push(applicationName);
         }
         catch (IOException exc) {
@@ -143,9 +152,13 @@ public class TomcatTestContainer implements TestContainer {
             File contextXml = new File(fileName);
             if (contextXml.exists()) {
                 try {
-                    File contextTarget = new File(hostConfig.getConfigBaseName(), applicationName
+                    contextTarget = new File(hostConfig.getConfigBaseName(), applicationName
                         + ".xml");
-                    Files.copy(contextXml, contextTarget);
+                    File contextTargetNew = new File(webappDir, applicationName + "/META-INF/context.xml");
+                    contextTargetNew.getParentFile().mkdirs();
+                    FileUtils.copyFile(contextXml, contextTarget, null);
+                    deployContext = true;
+                    //FileUtils.copyFile(contextXml, contextTargetNew, null);
                     return;
                 }
                 catch (IOException exc) {

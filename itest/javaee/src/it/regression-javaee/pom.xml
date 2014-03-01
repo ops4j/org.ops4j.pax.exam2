@@ -82,6 +82,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- pax-url-aether embeds an older version of this lib -->
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-reflect</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-aether</artifactId>

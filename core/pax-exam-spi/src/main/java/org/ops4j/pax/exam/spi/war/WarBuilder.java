@@ -30,14 +30,13 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.io.ZipExploder;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 /**
  * Builds a WAR according to a {@link WarProbeOption}.
@@ -227,7 +226,7 @@ public class WarBuilder {
                 copyDirectory(source, metaInfDir);
             }
             else {
-                Files.copy(source, new File(metaInfDir, source.getName()));
+                FileUtils.copyFile(source, new File(metaInfDir, source.getName()), null);
             }
         }
 
@@ -239,7 +238,7 @@ public class WarBuilder {
                 copyDirectory(source, webInfDir);
             }
             else {
-                Files.copy(source, new File(webInfDir, source.getName()));
+                FileUtils.copyFile(source, new File(webInfDir, source.getName()), null);
             }
         }
 
@@ -306,7 +305,7 @@ public class WarBuilder {
                 copyDirectory(file, targetDir);
             }
             else {
-                Files.copy(file, new File(toDir, file.getName()));
+                FileUtils.copyFile(file, new File(toDir, file.getName()), null);
             }
         }
     }

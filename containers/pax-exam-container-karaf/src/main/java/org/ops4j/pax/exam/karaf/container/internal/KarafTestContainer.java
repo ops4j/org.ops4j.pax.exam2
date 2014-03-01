@@ -80,9 +80,6 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 public class KarafTestContainer implements TestContainer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KarafTestContainer.class);
@@ -90,7 +87,8 @@ public class KarafTestContainer implements TestContainer {
     private static final String KARAF_TEST_CONTAINER = "KarafTestContainer.start";
     private static final String EXAM_INJECT_PROPERTY = "pax.exam.inject";
     private static final MavenArtifactUrlReference EXAM_REPO_URL = maven()
-        .groupId("org.ops4j.pax.exam").artifactId("pax-exam-features").version(Info.getPaxExamVersion()).type("xml");
+        .groupId("org.ops4j.pax.exam").artifactId("pax-exam-features")
+        .version(Info.getPaxExamVersion()).type("xml");
 
     private final Runner runner;
     private final RMIRegistry registry;
@@ -139,24 +137,26 @@ public class KarafTestContainer implements TestContainer {
             File karafHome = karafBase;
 
             versionAdaptions = createVersionAdapter(karafBase);
-            DependenciesDeployer deployer = new DependenciesDeployer(subsystem, karafBase, karafHome);
+            DependenciesDeployer deployer = new DependenciesDeployer(subsystem, karafBase,
+                karafHome);
             deployer.copyBootClasspathLibraries();
-            
+
             updateLogProperties(karafHome, subsystem);
             setupSystemProperties(karafHome, subsystem);
 
-            List<KarafDistributionConfigurationFileOption> options = Lists.newArrayList(subsystem
-                .getOptions(KarafDistributionConfigurationFileOption.class));
+            List<KarafDistributionConfigurationFileOption> options = new ArrayList<KarafDistributionConfigurationFileOption>(
+                Arrays.asList(subsystem.getOptions(KarafDistributionConfigurationFileOption.class)));
             options.addAll(fromFeatureOptions(subsystem.getOptions(KarafFeaturesOption.class)));
-            options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL, "exam")));
-            
+            options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL,
+                "exam")));
+
             if (framework.isUseDeployFolder()) {
                 deployer.copyReferencedArtifactsToDeployFolder();
             }
             else {
                 options.addAll(fromFeatureOptions(deployer.getDependenciesFeature()));
             }
-            
+
             options.addAll(configureBootDelegation(subsystem));
             options.addAll(configureSystemPackages(subsystem));
             updateUserSetProperties(karafHome, options);
@@ -174,10 +174,8 @@ public class KarafTestContainer implements TestContainer {
         File karafEtc = new File(karafBase, "etc");
         File distributionInfo = new File(karafEtc, "distribution.info");
 
-        framework = new InternalKarafDistributionConfigurationOption(framework,
-            distributionInfo);
-        return KarafManipulatorFactory.createManipulator(framework
-            .getKarafVersion());
+        framework = new InternalKarafDistributionConfigurationOption(framework, distributionInfo);
+        return KarafManipulatorFactory.createManipulator(framework.getKarafVersion());
     }
 
     private void startKaraf(ExamSystem subsystem, File karafBase, File karafHome) {
@@ -191,21 +189,21 @@ public class KarafTestContainer implements TestContainer {
         String main = "org.apache.karaf.main.Main";
         String options = "";
         String[] environment = new String[] {};
-        ArrayList<String> javaOpts = Lists.newArrayList();
+        ArrayList<String> javaOpts = new ArrayList<String>();
         appendVmSettingsFromSystem(javaOpts, subsystem);
         String[] javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
             javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
         String[] javaExtDirs = new String[] { javaHome + "/jre/lib/ext", javaHome + "/lib/ext",
             javaHome + "/lib/ext" };
-        ArrayList<String> opts = Lists.newArrayList("-Dkaraf.startLocalConsole="
+        List<String> opts = Arrays.asList("-Dkaraf.startLocalConsole="
             + shouldLocalConsoleBeStarted(subsystem), "-Dkaraf.startRemoteShell="
             + shouldRemoteShellBeStarted(subsystem));
         boolean enableMBeanServerBuilder = shouldMBeanServerBuilderBeEnabled(subsystem);
         String[] karafOpts = new String[] {};
-        runner.exec(environment, karafBase, javaHome.toString(),
-            javaOpts.toArray(new String[] {}), javaEndorsedDirs, javaExtDirs,
-            karafHome.toString(), karafData, karafEtc.toString(), karafOpts, opts.toArray(new String[] {}),
-            classPath, main, options, enableMBeanServerBuilder);
+        runner.exec(environment, karafBase, javaHome.toString(), javaOpts.toArray(new String[] {}),
+            javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData, karafEtc.toString(),
+            karafOpts, opts.toArray(new String[] {}), classPath, main, options,
+            enableMBeanServerBuilder);
 
         LOGGER.debug("Test Container started in " + (System.currentTimeMillis() - startedAt)
             + " millis");
@@ -213,8 +211,7 @@ public class KarafTestContainer implements TestContainer {
             + subsystem.getTimeout());
 
         if (subsystem.getOptions(ServerModeOption.class).length == 0) {
-            waitForState(
-                org.ops4j.pax.exam.karaf.container.internal.Constants.SYSTEM_BUNDLE,
+            waitForState(org.ops4j.pax.exam.karaf.container.internal.Constants.SYSTEM_BUNDLE,
                 Bundle.ACTIVE, subsystem.getTimeout());
         }
         else {
@@ -232,7 +229,6 @@ public class KarafTestContainer implements TestContainer {
         }
         return deleteRuntime;
     }
-    
 
     private Option getInvokerConfiguration() {
         KarafExamSystemConfigurationOption[] internalConfigurationOptions = system
@@ -274,7 +270,8 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private boolean shouldMBeanServerBuilderBeEnabled(ExamSystem subsystem) {
-        KarafDistributionConfigurationSecurityOption[] securityOptions = subsystem.getOptions(KarafDistributionConfigurationSecurityOption.class);
+        KarafDistributionConfigurationSecurityOption[] securityOptions = subsystem
+            .getOptions(KarafDistributionConfigurationSecurityOption.class);
         if (securityOptions == null) {
             return false;
         }
@@ -320,10 +317,9 @@ public class KarafTestContainer implements TestContainer {
         }
     }
 
-    private void updateUserSetProperties(File karafHome, 
-            List<KarafDistributionConfigurationFileOption> options) throws IOException {
-        HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = Maps
-            .newHashMap();
+    private void updateUserSetProperties(File karafHome,
+        List<KarafDistributionConfigurationFileOption> options) throws IOException {
+        HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = new HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>>();
         for (KarafDistributionConfigurationFileOption option : options) {
             if (!optionMap.containsKey(option.getConfigurationFilePath())) {
                 optionMap.put(option.getConfigurationFilePath(),
@@ -386,9 +382,9 @@ public class KarafTestContainer implements TestContainer {
         ExamSystem subsystem) {
         String systemPackages = JoinUtil.join(subsystem.getOptions(SystemPackageOption.class));
         if (systemPackages.length() == 0) {
-            return Lists.newArrayList();
+            return Arrays.asList();
         }
-        return Lists.newArrayList(new KarafDistributionConfigurationFileExtendOption(
+        return Arrays.asList(new KarafDistributionConfigurationFileExtendOption(
             CustomProperties.SYSTEM_PACKAGES_EXTRA, systemPackages));
     }
 
@@ -396,18 +392,18 @@ public class KarafTestContainer implements TestContainer {
         ExamSystem subsystem) {
         BootDelegationOption[] bootDelegationOptions = subsystem
             .getOptions(BootDelegationOption.class);
-        return Lists.newArrayList(new KarafDistributionConfigurationFileExtendOption(
+        return Arrays.asList(new KarafDistributionConfigurationFileExtendOption(
             CustomProperties.BOOTDELEGATION, JoinUtil.join(bootDelegationOptions)));
     }
 
     private Collection<? extends KarafDistributionConfigurationFileOption> fromFeatureOptions(
         KarafFeaturesOption... featuresOptions) {
-        ArrayList<KarafDistributionConfigurationFileOption> retVal = Lists.newArrayList();
-        
+        ArrayList<KarafDistributionConfigurationFileOption> retVal = new ArrayList<KarafDistributionConfigurationFileOption>();
+
         for (KarafFeaturesOption featuresOption : featuresOptions) {
-            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES, 
+            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES,
                 featuresOption.getURL()));
-            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.BOOT, 
+            retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.BOOT,
                 JoinUtil.join(featuresOption.getFeatures())));
         }
         return retVal;
@@ -482,8 +478,6 @@ public class KarafTestContainer implements TestContainer {
         }
         throw new IllegalStateException("No karaf base dir found in extracted distribution.");
     }
-
-
 
     @Override
     public synchronized TestContainer stop() {

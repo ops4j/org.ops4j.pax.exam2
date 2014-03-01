@@ -30,7 +30,6 @@
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>0.5</dependency.deltaspike.version>
-        <dependency.guava.version>14.0</dependency.guava.version>
         <dependency.glassfish.version>3.1.2.2</dependency.glassfish.version>
         <dependency.glassfish4.version>4.0</dependency.glassfish4.version>
         <dependency.karaf.version>3.0.0</dependency.karaf.version>
@@ -44,7 +43,7 @@
         <dependency.tomee.version>1.6.1-SNAPSHOT</dependency.tomee.version>
         <dependency.weld.version>1.1.16.Final</dependency.weld.version>
         <dependency.wildfly.version>8.0.0.Final</dependency.wildfly.version>
-        <dependency.xbean.version>3.15</dependency.xbean.version>
+        <dependency.xbean.version>3.16</dependency.xbean.version>
     </properties>
 
     <build>

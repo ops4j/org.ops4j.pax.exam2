@@ -16,8 +16,7 @@
  */
 package org.ops4j.pax.exam.regression.cdi.ice;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,24 +54,24 @@ public class VanillaTest {
 
     @Test
     public void checkVanillaFlavour() {
-        assertThat(vanilla.getFlavour(), is("Vanilla"));
+        assertEquals(vanilla.getFlavour(), "Vanilla");
     }
 
     @Test
     public void checkChocolateFlavour() {
-        assertThat(chocolate.getFlavour(), is("Chocolate"));
+        assertEquals(chocolate.getFlavour(), "Chocolate");
     }
 
     @Test
     public void checkDefaultFlavour() {
-        assertThat(defaultFlavour.getFlavour(), is("Vanilla"));
+        assertEquals(defaultFlavour.getFlavour(), "Vanilla");
     }
 
     @Test
     public void checkAllFlavours() {
         List<String> expectedFlavours = new ArrayList<String>(Arrays.asList("Vanilla", "Chocolate"));
-        assertThat(allFlavours.isUnsatisfied(), is(false));
-        assertThat(allFlavours.isAmbiguous(), is(true));
+        assertEquals(allFlavours.isUnsatisfied(), false);
+        assertEquals(allFlavours.isAmbiguous(), true);
         int numFlavours = 0;
         Iterator<IceCreamService> it = allFlavours.iterator();
         while (it.hasNext()) {
@@ -80,7 +79,7 @@ public class VanillaTest {
             String flavour = it.next().getFlavour();
             expectedFlavours.remove(flavour);
         }
-        assertThat(numFlavours, is(2));
-        assertThat(expectedFlavours.isEmpty(), is(true));
+        assertEquals(numFlavours, 2);
+        assertEquals(expectedFlavours.isEmpty(), true);
     }
 }

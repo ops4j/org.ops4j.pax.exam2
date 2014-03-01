@@ -33,10 +33,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.options.JarProbeOption;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
-
-import com.google.common.io.Files;
 
 public class JarBuilderTest {
 
@@ -45,7 +44,7 @@ public class JarBuilderTest {
     
     @Before
     public void before() {
-        tempDir = Files.createTempDir();
+        tempDir = DefaultExamSystem.createTempDir();
     }
 
     @After

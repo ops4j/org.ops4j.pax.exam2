@@ -29,10 +29,9 @@ import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
-
-import com.google.common.io.Files;
 
 public class WarBuilderTest {
 
@@ -53,7 +52,7 @@ public class WarBuilderTest {
     
     @Before
     public void before() {
-        tempDir = Files.createTempDir();
+        tempDir = DefaultExamSystem.createTempDir();
     }
 
     @After
@@ -170,7 +169,7 @@ public class WarBuilderTest {
 
     @Test
     public void buildWarWithName() throws MalformedURLException, IOException {
-        WarBuilder warBuilder = new WarBuilder(Files.createTempDir(), warProbe().library("target/classes").name("foo"));
+        WarBuilder warBuilder = new WarBuilder(DefaultExamSystem.createTempDir(), warProbe().library("target/classes").name("foo"));
         URI uri = warBuilder.buildWar();
         assertThat(new File(uri).getName(), is("foo.war"));
     }

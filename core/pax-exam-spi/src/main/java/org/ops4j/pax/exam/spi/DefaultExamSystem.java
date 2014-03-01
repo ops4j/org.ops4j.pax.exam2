@@ -17,6 +17,10 @@
  */
 package org.ops4j.pax.exam.spi;
 
+import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.OptionUtils.expand;
+import static org.ops4j.pax.exam.OptionUtils.filter;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,12 +49,6 @@ import org.ops4j.store.intern.TemporaryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.OptionUtils.expand;
-import static org.ops4j.pax.exam.OptionUtils.filter;
-
 /**
  * {@literal DefaultExamSystem} represents the default implementation of {@link ExamSystem}.
  * 
@@ -60,6 +58,9 @@ import static org.ops4j.pax.exam.OptionUtils.filter;
 public class DefaultExamSystem implements ExamSystem {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExamSystem.class);
+
+    /** Maximum loop count when creating temp directories. */
+    private static final int TEMP_DIR_ATTEMPTS = 10000;
 
     private final Store<InputStream> store;
     private final File configDirectory;
@@ -94,7 +95,7 @@ public class DefaultExamSystem implements ExamSystem {
             work = new WorkingDirectoryOption(createTemp(null).getAbsolutePath());
             combinedOptions = combine(combinedOptions, work);
         }
-        
+
         cache = createTemp(new File(work.getWorkingDirectory()));
         store = new TemporaryStore(cache, false);
 
@@ -145,7 +146,7 @@ public class DefaultExamSystem implements ExamSystem {
      */
     private synchronized File createTemp(File workingDirectory) throws IOException {
         if (workingDirectory == null) {
-            return Files.createTempDir();
+            return createTempDir();
         }
         else {
             workingDirectory.mkdirs();
@@ -198,7 +199,7 @@ public class DefaultExamSystem implements ExamSystem {
     public File getTempFolder() {
         return cache;
     }
-    
+
     /**
      * @return a relative indication of how to deal with timeouts.
      */
@@ -251,8 +252,7 @@ public class DefaultExamSystem implements ExamSystem {
     }
 
     public TestProbeBuilder createProbe() throws IOException {
-        
-        
+
         WarProbeOption warProbeOption = getSingleOption(WarProbeOption.class);
         if (warProbeOption == null) {
             LOG.debug("creating default probe");
@@ -310,5 +310,20 @@ public class DefaultExamSystem implements ExamSystem {
             return false;
         }
         return true;
+    }
+
+    public static File createTempDir() {
+        File baseDir = new File(System.getProperty("java.io.tmpdir"));
+        String baseName = System.currentTimeMillis() + "-";
+
+        for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
+            File tempDir = new File(baseDir, baseName + counter);
+            if (tempDir.mkdir()) {
+                return tempDir;
+            }
+        }
+        throw new IllegalStateException("Failed to create directory within " + TEMP_DIR_ATTEMPTS
+            + " attempts (tried " + baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
+
     }
 }

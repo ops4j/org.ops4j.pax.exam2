@@ -28,12 +28,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.io.FileUtils;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.zip.ZipInstaller;
 
 import com.caucho.resin.HttpEmbed;
 import com.caucho.resin.ResinEmbed;
 import com.caucho.resin.WebAppEmbed;
-import com.google.common.io.Files;
 
 public class ResinLauncherTest {
 
@@ -41,7 +41,7 @@ public class ResinLauncherTest {
 
     @Before
     public void setUp() {
-        tempDir = Files.createTempDir();
+        tempDir = DefaultExamSystem.createTempDir();
     }
 
     @After
@@ -52,7 +52,7 @@ public class ResinLauncherTest {
     @Test
     public void launchResin() throws InterruptedException, IOException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
-        String tempDir = Files.createTempDir().getAbsolutePath();
+        String tempDir = DefaultExamSystem.createTempDir().getAbsolutePath();
         System.setProperty("resin.home", tempDir);
         ResinEmbed resin = new ResinEmbed();
         resin.setRootDirectory(tempDir);

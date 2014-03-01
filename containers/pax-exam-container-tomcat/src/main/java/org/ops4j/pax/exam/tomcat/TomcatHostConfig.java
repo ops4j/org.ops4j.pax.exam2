@@ -30,6 +30,12 @@ public class TomcatHostConfig extends HostConfig {
         super.deployWAR(cn, war);
         addServiced(cn.getName());
     }
+    
+    @Override
+    protected void deployDescriptor(ContextName cn, File contextXml) {
+        super.deployDescriptor(cn, contextXml);
+        addServiced(cn.getName());
+    }
 
     @Override
     public void unmanageApp(String contextName) {

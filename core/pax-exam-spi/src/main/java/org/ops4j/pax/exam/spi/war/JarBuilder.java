@@ -23,13 +23,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.UUID;
 
+import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.JarProbeOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 /**
  * Builds a JAR according to a {@link JarProbeOption}.
@@ -99,7 +98,7 @@ public class JarBuilder {
                 copyDirectory(source, metaInfDir);
             }
             else {
-                Files.copy(source, new File(metaInfDir, source.getName()));
+                FileUtils.copyFile(source, new File(metaInfDir, source.getName()), null);
             }
         }
 
@@ -140,7 +139,7 @@ public class JarBuilder {
                 copyDirectory(file, targetDir);
             }
             else {
-                Files.copy(file, new File(toDir, file.getName()));
+                FileUtils.copyFile(file, new File(toDir, file.getName()), null);
             }
         }
     }

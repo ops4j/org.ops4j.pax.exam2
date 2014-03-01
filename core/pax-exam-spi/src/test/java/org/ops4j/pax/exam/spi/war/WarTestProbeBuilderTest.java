@@ -8,14 +8,13 @@ import org.junit.Test;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
-
-import com.google.common.io.Files;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 
 public class WarTestProbeBuilderTest {
 
     @Test
     public void createWarTestProbe() throws IOException {
-        TestProbeBuilder builder = new WarTestProbeBuilderImpl(Files.createTempDir());
+        TestProbeBuilder builder = new WarTestProbeBuilderImpl(DefaultExamSystem.createTempDir());
         TestProbeProvider provider = builder.build();
         InputStream is = provider.getStream();
         StreamUtils.copyStream(is, new FileOutputStream("target/out.war"), true);
