@@ -25,11 +25,11 @@ import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_MANAGER_F
 import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_SERVLET_LISTENER;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.deploy.ApplicationListener;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
-import org.apache.catalina.startup.Tomcat;
 import org.ops4j.pax.exam.ConfigurationManager;
 
 public class TomcatContextConfig extends ContextConfig {
@@ -44,7 +44,6 @@ public class TomcatContextConfig extends ContextConfig {
     @Override
     protected synchronized void beforeStart() {
         super.beforeStart();
-        Tomcat.initWebappDefaults(context);
         String listenerName = cm.getProperty("pax.exam.tomcat.listener", "");
         if (listenerName.equals("weld")) {
             registerBeanManager(context, WELD_MANAGER_FACTORY, WELD_SERVLET_LISTENER);
@@ -70,7 +69,7 @@ public class TomcatContextConfig extends ContextConfig {
 
         appContext.getNamingResources().addResourceEnvRef(resourceRef);
 
-        appContext.addApplicationListener(servletListener);
+        appContext.addApplicationListener(new ApplicationListener(servletListener, false));
     }
 
 }

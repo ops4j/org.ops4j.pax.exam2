@@ -29,12 +29,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Stack;
 
+import javax.servlet.ServletException;
+
+import org.apache.catalina.Container;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.catalina.util.ContextName;
-import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ProbeInvoker;
@@ -58,9 +59,6 @@ public class TomcatTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(TomcatTestContainer.class);
 
-    private static final String[] CONTEXT_XML = { "src/test/resources/META-INF/context.xml",
-        "src/main/webapp/META-INF/context.xml", };
-
     private Stack<String> deployed = new Stack<String>();
     
     private String probe;
@@ -75,9 +73,7 @@ public class TomcatTestContainer implements TestContainer {
 
     private File webappDir;
     
-    private boolean deployContext;
-
-    private File contextTarget;
+    private File xmlBase;
 
     public TomcatTestContainer(ExamSystem system) {
         this.system = system;
@@ -95,7 +91,6 @@ public class TomcatTestContainer implements TestContainer {
     public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
         system.getOptions(WarProbeOption.class);
-        copyContextXml(EXAM_APPLICATION_NAME);
         deployModule(EXAM_APPLICATION_NAME, stream);
         return -1;
     }
@@ -133,38 +128,14 @@ public class TomcatTestContainer implements TestContainer {
         try {
             File warFile = new File(webappDir, applicationName + ".war");
             StreamUtils.copyStream(stream, new FileOutputStream(warFile), true);
-            ContextName cn = new ContextName(applicationName);
-            if (false && contextTarget != null) {
-                hostConfig.deployDescriptor(cn, contextTarget);
-            }
-            else {
-                hostConfig.deployWAR(cn, warFile);
-            }
+            tomcat.addWebapp("/" + applicationName, warFile.getAbsolutePath());
             deployed.push(applicationName);
         }
         catch (IOException exc) {
             throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
-    }
-
-    private void copyContextXml(String applicationName) {
-        for (String fileName : CONTEXT_XML) {
-            File contextXml = new File(fileName);
-            if (contextXml.exists()) {
-                try {
-                    contextTarget = new File(hostConfig.getConfigBaseName(), applicationName
-                        + ".xml");
-                    File contextTargetNew = new File(webappDir, applicationName + "/META-INF/context.xml");
-                    contextTargetNew.getParentFile().mkdirs();
-                    FileUtils.copyFile(contextXml, contextTarget, null);
-                    deployContext = true;
-                    //FileUtils.copyFile(contextXml, contextTargetNew, null);
-                    return;
-                }
-                catch (IOException exc) {
-                    throw new TestContainerException(exc);
-                }
-            }
+        catch (ServletException exc) {
+            throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
     }
 
@@ -181,9 +152,11 @@ public class TomcatTestContainer implements TestContainer {
     }
 
     private void undeployModules() {
+        Host host = tomcat.getHost();
         while (!deployed.isEmpty()) {
             String applicationName = deployed.pop();
-            hostConfig.unmanageApp("/" + applicationName);
+            Container child = host.findChild("/" + applicationName);
+            tomcat.getHost().removeChild(child);
         }
     }
 
@@ -194,17 +167,14 @@ public class TomcatTestContainer implements TestContainer {
         webappDir = new File(tempDir, "webapps");
         webappDir.mkdirs();
 
-        tomcat = new Tomcat();
+        tomcat = new PaxExamTomcat();
         tomcat.setBaseDir(tempDir.getPath());
         tomcat.enableNaming();
 
         Host host = tomcat.getHost();
-        host.setDeployOnStartup(false);
-        host.setAutoDeploy(false);
-        host.setConfigClass(TomcatContextConfig.class.getName());
-        hostConfig = new TomcatHostConfig();
-        hostConfig.setUnpackWARs(true);
-        host.addLifecycleListener(hostConfig);
+        xmlBase = new File(tempDir, "conf");
+        xmlBase.mkdirs();
+        host.setXmlBase(xmlBase.getAbsolutePath());
 
         try {
             int httpPort = 9080;
