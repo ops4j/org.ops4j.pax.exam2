@@ -34,7 +34,8 @@ public class PaxExamTomcat extends Tomcat {
 
     private static final String[] CONTEXT_XML = { 
         "src/test/resources/META-INF/context.xml",
-        "src/main/webapp/META-INF/context.xml", };
+        "src/main/webapp/META-INF/context.xml" 
+    };
 
     @Override
     public Context addWebapp(Host host, String url, String name, String path) {
@@ -53,7 +54,8 @@ public class PaxExamTomcat extends Tomcat {
         
         if (host == null) {
             getHost().addChild(ctx);
-        } else {
+        } 
+        else {
             host.addChild(ctx);
         }
 
