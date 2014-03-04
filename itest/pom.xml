@@ -72,7 +72,4 @@
 
     </profiles>
 
-    <modules>
-        <module>samples</module>
-    </modules>
 </project>
