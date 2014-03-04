@@ -18,7 +18,7 @@
 
     <properties>
         <namespace>org.ops4j.pax.exam</namespace>
-        <dependency.paxurl.version>1.6.0</dependency.paxurl.version>
+        <dependency.paxurl.version>2.0.0-SNAPSHOT</dependency.paxurl.version>
         <dependency.swissbox.version>1.7.0</dependency.swissbox.version>
         <dependency.tinybundles.version>2.0.0</dependency.tinybundles.version>
         <dependency.base.version>1.4.0</dependency.base.version>
@@ -27,6 +27,7 @@
         <dependency.osgicore.version>4.2.0</dependency.osgicore.version>
         <dependency.osgicomp.version>4.2.0</dependency.osgicomp.version>
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
+        <dependency.aether.version>0.9.0.M4</dependency.aether.version>
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>0.5</dependency.deltaspike.version>
@@ -743,6 +744,44 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.2.1</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-api</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-impl</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-spi</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-util</artifactId>
+                <version>${dependency.aether.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-cipher</artifactId>
+                <version>1.7</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-sec-dispatcher</artifactId>
+                <version>1.4</version>
+            </dependency>
+            
+
 
         </dependencies>
     </dependencyManagement>
