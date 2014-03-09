@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.multi.cm.EquinoxConstants.EQUINOX_MIRROR;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -45,7 +46,6 @@ public class ConfigurationOptionTest {
     private static final String TEST_KEY         = "test.key";
     private static final String TEST_PROPERTY    = "test.property";
 
-    private static final String EQUINOX_MIRROR   = "http://download.eclipse.org/equinox/drops/R-3.7-201106131736/";
     private static final String TEST_PID         = "org.ops4j.pax.exam.regression.multi.cm.ConfigurationOptionTest";
     private static final String TEST_FACTORY_PID = TEST_PID + ".factory";
 

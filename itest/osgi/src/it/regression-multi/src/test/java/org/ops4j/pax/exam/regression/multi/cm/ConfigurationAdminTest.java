@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.multi.cm.EquinoxConstants.EQUINOX_MIRROR;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -40,7 +41,6 @@ import org.osgi.service.cm.ConfigurationAdmin;
 @ExamReactorStrategy
 public class ConfigurationAdminTest {
 
-    private static final String EQUINOX_MIRROR = "http://archive.eclipse.org/equinox/drops/R-3.7-201106131736/";
     private static final String DEBUG_OPTIONS = "0.org.eclipse.osgi.framework.debug.FrameworkDebugOptions";
 
     @Inject
