@@ -40,7 +40,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 @ExamReactorStrategy
 public class ConfigurationAdminTest {
 
-    private static final String EQUINOX_MIRROR = "http://download.eclipse.org/equinox/drops/R-3.7-201106131736/";
+    private static final String EQUINOX_MIRROR = "http://archive.eclipse.org/equinox/drops/R-3.7-201106131736/";
     private static final String DEBUG_OPTIONS = "0.org.eclipse.osgi.framework.debug.FrameworkDebugOptions";
 
     @Inject
