@@ -597,14 +597,14 @@
             <!-- for dependency convergence -->
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh-external</artifactId>
-                <version>1.0-beta-7</version>
+                <artifactId>wagon-provider-api</artifactId>
+                <version>2.5</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-provider-api</artifactId>
-                <version>1.0-beta-7</version>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>3.0.15</version>
             </dependency>
 
             <dependency>
@@ -613,10 +613,10 @@
                 <version>2.4</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-utils</artifactId>
-                <version>2.0.7</version>
+            <!--dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>1.0-beta-7</version>
             </dependency>
 
             <dependency>
@@ -629,13 +629,7 @@
                 <groupId>ch.qos.cal10n</groupId>
                 <artifactId>cal10n-api</artifactId>
                 <version>0.7.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>2.2.2</version>
-            </dependency>
+            </dependency-->
 
             <dependency>
                 <groupId>org.jboss.xnio</groupId>
