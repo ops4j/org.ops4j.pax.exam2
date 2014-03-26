@@ -40,7 +40,7 @@
         <dependency.resin.version>4.0.30</dependency.resin.version>
         <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.8</dependency.testng.version>
-        <dependency.tomcat.version>7.0.52</dependency.tomcat.version>
+        <dependency.tomcat.version>7.0.53</dependency.tomcat.version>
         <dependency.tomee.version>1.6.1-SNAPSHOT</dependency.tomee.version>
         <dependency.weld.version>1.1.16.Final</dependency.weld.version>
         <dependency.wildfly.version>8.0.0.Final</dependency.wildfly.version>
@@ -1028,6 +1028,17 @@
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots/</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>apache-staging</id>
+            <name>Apache Staging</name>
+            <url>http://repository.apache.org/content/groups/staging/</url>
         </repository>
     </repositories>
 
