@@ -946,7 +946,7 @@
 
     <issueManagement>
         <system>jira</system>
-        <url>http://issues.ops4j.org/jira/browse/PAXEXAM</url>
+        <url>http://team.ops4j.org/browse/PAXEXAM</url>
     </issueManagement>
 
     <developers>
