@@ -21,10 +21,24 @@
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-invoker-servlet</artifactId>
+            <artifactId>pax-exam-invoker-jaxrs2</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>3.0.4.Final</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -72,10 +86,8 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- 
-           pax-url-aether embeds an ancient version of google-collections.
-           This is why we place Guava here. 
-        -->
+        <!-- pax-url-aether embeds an ancient version of google-collections. This is why we place Guava 
+            here. -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -147,7 +159,7 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
-    
+
         <plugins>
 
             <plugin>
@@ -163,15 +175,8 @@
                             </excludes>
                         </configuration>
                     </execution>
-                    <!--execution>
-                        <id>perclass</id>
-                        <configuration>
-                            <forkMode>always</forkMode>
-                            <includes>
-                              <include>**/perclass/**</include>
-                            </includes>
-                        </configuration>
-                    </execution-->
+                    <!--execution> <id>perclass</id> <configuration> <forkMode>always</forkMode> <includes> 
+                        <include>**/perclass/**</include> </includes> </configuration> </execution -->
                 </executions>
                 <configuration>
                     <parallel>none</parallel>

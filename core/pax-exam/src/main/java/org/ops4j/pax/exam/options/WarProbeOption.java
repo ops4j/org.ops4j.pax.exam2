@@ -45,15 +45,20 @@ public class WarProbeOption implements Option {
         "geronimo-jcdi_", //
         "geronimo-jpa_", //
         "glassfish-embedded-", //
+        "hk2-api-", //
         "javaee-api-", //
         "jboss-log-", //
         "jersey-client-", //
+        "jersey-common-", //
         "jstl-", //
-        "myfaces-", "openejb-", //
+        "myfaces-", //
+        "openejb-", //
         "openwebbeans-", //
         "org.eclipse.osgi", //
         "pax-exam-container-", //
         "pax-url-aether-", //
+        "resteasy-client-", //
+        "resteasy-", //
         "scattered-archive-api-", //
         "servlet-api-", //
         "simple-glassfish-api-", //
