@@ -28,7 +28,9 @@ import org.ops4j.io.Pipe;
 public class InternalRunner {
 
     private Process frameworkProcess;
+    private Object frameworkProcessMonitor = new Object();
     private Thread shutdownHook;
+    private final Object shutdownHookMonitor = new Object();
 
     public synchronized void exec(CommandLineBuilder commandLine, final File workingDirectory,
         final String[] envOptions) {
@@ -65,7 +67,7 @@ public class InternalRunner {
     public void shutdown() {
         try {
             if (shutdownHook != null) {
-                synchronized (shutdownHook) {
+                synchronized (shutdownHookMonitor) {
                     if (shutdownHook != null) {
                         Runtime.getRuntime().removeShutdownHook(shutdownHook);
                         frameworkProcess = null;
@@ -85,9 +87,9 @@ public class InternalRunner {
      */
     public void waitForExit() {
         if (shutdownHook != null) {
-            synchronized (shutdownHook) {
+            synchronized (shutdownHookMonitor) {
                 if (shutdownHook != null) {
-                    synchronized (frameworkProcess) {
+                    synchronized (frameworkProcessMonitor) {
                         try {
                             frameworkProcess.waitFor();
                             shutdown();
