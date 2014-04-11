@@ -50,8 +50,9 @@ public class JUnitProbeInvoker implements ProbeInvoker {
     private BundleContext ctx;
     private String clazz;
     private String method;
-
     private Injector injector;
+
+    private Class<?> testClass;
 
     public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext, Injector injector) {
         // parse class and method out of expression:
@@ -60,24 +61,22 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         method = parts[1];
         ctx = bundleContext;
         this.injector = injector; 
-    }
-
-    public void call(Object... args) {
-        Class<?> testClass;
         try {
             testClass = ctx.getBundle().loadClass(clazz);
         }
         catch (ClassNotFoundException e) {
             throw new TestContainerException(e);
         }
+    }
 
-        if (!(findAndInvoke(testClass, args))) {
+    public void call(Object... args) {
+        if (!(findAndInvoke(args))) {
             throw new TestContainerException(" Test " + method + " not found in test class "
                 + testClass.getName());
         }
     }
 
-    private boolean findAndInvoke(Class<?> testClass, Object...args) {
+    private boolean findAndInvoke(Object...args) {
         Integer index = null;
         try {
             /*
@@ -95,7 +94,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
             for (Method m : testClass.getMethods()) {
                 if (m.getName().equals(method)) {
                     // we assume its correct:
-                    invokeViaJUnit(testClass, m, index);
+                    invokeViaJUnit(m, index);
                     return true;
                 }
             }
@@ -117,7 +116,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
      * @param testMethod
      * @throws TestContainerException
      */
-    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod, Integer index) {
+    private void invokeViaJUnit(final Method testMethod, Integer index) {
         Request classRequest = new ContainerTestRunnerClassRequest(testClass, injector, index);
         Description methodDescription = Description.createTestDescription(testClass, method);
         Request request = classRequest.filterWith(methodDescription);
