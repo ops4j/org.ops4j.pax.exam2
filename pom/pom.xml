@@ -1039,40 +1039,4 @@
         </developer>
     </developers>
 
-    <repositories>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>apache-snapshots</id>
-            <name>Apache Snapshots</name>
-            <url>http://repository.apache.org/snapshots/</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>apache-staging</id>
-            <name>Apache Staging</name>
-            <url>http://repository.apache.org/content/groups/staging/</url>
-        </repository>
-    </repositories>
-
 </project>

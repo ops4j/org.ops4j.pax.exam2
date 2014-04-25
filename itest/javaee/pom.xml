@@ -615,6 +615,21 @@
                 </dependency>
 
             </dependencies>
+
+            <repositories>
+                <repository>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <id>apache-snapshots</id>
+                    <name>Apache Snapshots</name>
+                    <url>http://repository.apache.org/snapshots/</url>
+                </repository>
+            </repositories>
+
         </profile>
     </profiles>
 </project>
