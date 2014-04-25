@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.ops4j.pax</groupId>
@@ -10,6 +11,78 @@
     <artifactId>pax-exam-container-tomee</artifactId>
 
     <name>OPS4J Pax Exam TomEE Container</name>
+
+    <properties>
+        <dependency.openwebbeans.version>1.2.1</dependency.openwebbeans.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-ee</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-ee-common</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-ejb</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-impl</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-jsf</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-spi</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-resource</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-web</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>tomee-embedded</artifactId>
+                <version>${dependency.tomee.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 

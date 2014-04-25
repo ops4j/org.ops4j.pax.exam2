@@ -41,7 +41,7 @@
         <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.8</dependency.testng.version>
         <dependency.tomcat.version>7.0.53</dependency.tomcat.version>
-        <dependency.tomee.version>1.6.1-SNAPSHOT</dependency.tomee.version>
+        <dependency.tomee.version>1.6.0.1</dependency.tomee.version>
         <dependency.weld.version>1.1.16.Final</dependency.weld.version>
         <dependency.wildfly.version>8.0.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
@@ -492,7 +492,31 @@
 
             <dependency>
                 <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-ee</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-ee-common</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-ejb</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
                 <artifactId>openwebbeans-impl</artifactId>
+                <version>${dependency.openwebbeans.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openwebbeans</groupId>
+                <artifactId>openwebbeans-jsf</artifactId>
                 <version>${dependency.openwebbeans.version}</version>
             </dependency>
 
