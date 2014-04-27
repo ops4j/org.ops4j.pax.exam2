@@ -60,6 +60,7 @@ public class GenerateLinkFilesMojo extends AbstractMojo {
         catch (ArtifactFilterException ex) {
             throw new MojoExecutionException(ex.getMessage(), ex);
         }
+        // create output directory with link files
         outputDirectory.mkdirs();
         for (Artifact artifact : artifacts) {
             Manifest manifest = getManifest(artifact);
@@ -67,6 +68,7 @@ public class GenerateLinkFilesMojo extends AbstractMojo {
                 createLinkFile(artifact, manifest);
             }
         }
+        // add output directory as test resource directory
         Resource resource = new Resource();
         resource.setDirectory(outputDirectory.toString());
         build.addTestResource(resource);
