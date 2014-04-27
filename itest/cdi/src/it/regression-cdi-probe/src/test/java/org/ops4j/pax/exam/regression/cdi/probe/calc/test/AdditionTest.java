@@ -53,7 +53,7 @@ public class AdditionTest {
     
     @Test
     public void add() {
-        assertThat(calculator.add(2, 3), is(5));
+        assertThat(calculator.operate(2, 3), is(5));
     }
 
 }

@@ -53,7 +53,7 @@ public class MultiplicationTest {
     
     @Test
     public void add() {
-        assertThat(calculator.add(2, 3), is(6));
+        assertThat(calculator.operate(2, 3), is(6));
     }
 
 }

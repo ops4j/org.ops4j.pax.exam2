@@ -25,7 +25,7 @@ public class CalculatorImpl implements Calculator {
     @Inject
     private BinaryOperation addition;
 
-    public int add(int op1, int op2) {
+    public int operate(int op1, int op2) {
         return addition.operate(op1, op2);
     }
 }

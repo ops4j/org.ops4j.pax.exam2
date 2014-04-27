@@ -18,5 +18,5 @@ package org.ops4j.pax.exam.regression.cdi.probe.calc;
 
 public interface Calculator {
 
-    int add(int op1, int op2);
+    int operate(int op1, int op2);
 }

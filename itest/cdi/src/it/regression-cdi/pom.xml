@@ -87,6 +87,7 @@
 
     <build>
         <plugins>
+            <!-- copy persistence unit so Hibernate has a JAR to scan -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

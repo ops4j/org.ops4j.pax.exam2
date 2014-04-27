@@ -15,7 +15,7 @@
     <artifactId>regression-cdi-invalid</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam CDI Container Regression Tests</name>
+    <name>OPS4J Pax Exam CDI Invalid Configuration Regression Tests</name>
 
     <dependencies>
 
