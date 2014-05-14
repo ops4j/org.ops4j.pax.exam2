@@ -309,7 +309,11 @@ public class NativeTestContainer implements TestContainer {
             int startLevel = getStartLevel(bundle);
             sl.setBundleStartLevel(b, startLevel);
             if (bundle.shouldStart()) {
-                b.start();
+                try {
+					b.start();
+				} catch (BundleException e) {
+					throw new BundleException("Error starting bundle " + b.getSymbolicName() + ". " + e.getMessage(), e);
+				}
                 LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
             }
             else {
