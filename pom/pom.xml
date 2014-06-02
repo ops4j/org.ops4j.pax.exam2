@@ -42,7 +42,7 @@
         <dependency.tomcat.version>7.0.53</dependency.tomcat.version>
         <dependency.tomee.version>1.6.0.1</dependency.tomee.version>
         <dependency.weld.version>1.1.16.Final</dependency.weld.version>
-        <dependency.wildfly.version>8.0.0.Final</dependency.wildfly.version>
+        <dependency.wildfly.version>8.1.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
     </properties>
 
