@@ -65,7 +65,7 @@ public class ParameterizedTest {
     public static Option[] config() {
         return new Option[] {
             RegressionConfiguration.regressionDefaults(),
-            mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.0"),
+            mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"),
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", Info.getPaxExamVersion()) };
     }
 
