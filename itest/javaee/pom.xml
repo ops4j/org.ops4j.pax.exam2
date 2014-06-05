@@ -53,7 +53,7 @@
                             <streamLogs>true</streamLogs>
                         </configuration>
                         <executions>
-                            <execution>
+                            <!--execution>
                                 <id>glassfish</id>
                                 <goals>
                                     <goal>run</goal>
@@ -70,8 +70,8 @@
                                         <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
-                            </execution>
-                            <execution>
+                            </execution-->
+                            <!--execution>
                                 <id>glassfish-embedded</id>
                                 <goals>
                                     <goal>run</goal>
@@ -86,7 +86,7 @@
                                         <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
-                            </execution>
+                            </execution-->
                             <execution>
                                 <id>glassfish4-embedded</id>
                                 <goals>
@@ -104,7 +104,7 @@
                                     </pomExcludes>
                                 </configuration>
                             </execution>
-                            <execution>
+                            <!--execution>
                                 <id>jboss</id>
                                 <goals>
                                     <goal>run</goal>
@@ -127,7 +127,7 @@
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/jboss72</cloneProjectsTo>
                                 </configuration>
-                            </execution>
+                            </execution-->
                             <execution>
                                 <id>wildfly80</id>
                                 <goals>
@@ -140,7 +140,7 @@
                                     <cloneProjectsTo>${project.build.directory}/wildfly80</cloneProjectsTo>
                                 </configuration>
                             </execution>
-                            <execution>
+                            <!--execution>
                                 <id>resin</id>
                                 <goals>
                                     <goal>run</goal>
@@ -170,7 +170,7 @@
                                         <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
-                            </execution>
+                            </execution-->
                         </executions>
                     </plugin>
                 </plugins>
