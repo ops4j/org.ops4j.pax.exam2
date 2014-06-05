@@ -35,8 +35,8 @@
                 <module>core/pax-exam-cdi</module>
                 <module>core/pax-exam-spring</module>
                 <module>core/pax-exam-cm</module>
-                <module>forge/pax-exam-testforge</module>
-                <module>drivers/pax-exam-player</module>
+                <!--module>forge/pax-exam-testforge</module-->
+                <!--module>drivers/pax-exam-player</module-->
                 <module>drivers/pax-exam-junit4</module>
                 <module>drivers/pax-exam-testng</module>
                 <module>drivers/pax-exam-testng-servlet-bridge</module>
@@ -56,12 +56,12 @@
                 <module>containers/pax-exam-container-glassfish-embedded</module>
                 <module>containers/pax-exam-container-weld</module>
                 <module>containers/pax-exam-container-openwebbeans</module>
-                <module>containers/pax-exam-container-jboss</module>
-                <module>containers/pax-exam-container-jboss72</module>
-                <module>containers/pax-exam-container-resin</module>
-                <module>containers/pax-exam-container-candi</module>
+                <!--module>containers/pax-exam-container-jboss</module-->
+                <!--module>containers/pax-exam-container-jboss72</module-->
+                <!--module>containers/pax-exam-container-resin</module-->
+                <!--module>containers/pax-exam-container-candi</module-->
                 <module>containers/pax-exam-container-tomcat</module>
-                <module>containers/pax-exam-container-tomee</module>
+                <!--module>containers/pax-exam-container-tomee</module-->
                 <module>containers/pax-exam-container-karaf</module>
                 <module>containers/pax-exam-container-wildfly80</module>
 
