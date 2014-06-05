@@ -114,6 +114,7 @@
                 <configuration>
                     <forkMode>pertest</forkMode>
                     <argLine>-XX:MaxPermSize=192m</argLine>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>

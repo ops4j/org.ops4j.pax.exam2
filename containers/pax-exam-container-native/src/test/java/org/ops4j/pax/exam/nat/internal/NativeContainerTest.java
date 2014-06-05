@@ -51,7 +51,7 @@ public class NativeContainerTest {
     public void starting() throws IOException {
         FrameworkFactory ff = mock(FrameworkFactory.class);
         Framework fw = mock(Framework.class);
-        when(ff.newFramework(Matchers.<Map<?, ?>> anyObject())).thenReturn(fw);
+        when(ff.newFramework(Matchers.<Map<String, String>> anyObject())).thenReturn(fw);
         ExamSystem system = mock(ExamSystem.class);
 
         NativeTestContainer container = new NativeTestContainer(system, ff);

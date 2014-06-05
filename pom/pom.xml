@@ -23,8 +23,8 @@
         <dependency.base.version>1.4.0</dependency.base.version>
         <dependency.slf4j.version>1.6.1</dependency.slf4j.version>
         <dependency.junit.version>4.11</dependency.junit.version>
-        <dependency.osgicore.version>4.2.0</dependency.osgicore.version>
-        <dependency.osgicomp.version>4.2.0</dependency.osgicomp.version>
+        <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
+        <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
         <dependency.aether.version>0.9.0.M4</dependency.aether.version>
         <dependency.asm.version>3.0</dependency.asm.version>
@@ -164,7 +164,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.framework</artifactId>
-                <version>4.0.2</version>
+                <version>4.2.1</version>
             </dependency>
 
             <dependency>

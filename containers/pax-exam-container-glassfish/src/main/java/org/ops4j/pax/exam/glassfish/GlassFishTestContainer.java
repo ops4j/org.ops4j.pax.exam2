@@ -472,7 +472,7 @@ public class GlassFishTestContainer implements TestContainer {
 
             // start OSGi framework
             system = system.fork(buildContainerOptions());
-            Map<String, Object> p = createFrameworkProperties();
+            Map<String, String> p = createFrameworkProperties();
             if (LOG.isDebugEnabled()) {
                 logFrameworkProperties(p);
                 logSystemProperties();
@@ -737,7 +737,7 @@ public class GlassFishTestContainer implements TestContainer {
                 START_LEVEL_SYSTEM_BUNDLES), };
     }
 
-    private void logFrameworkProperties(Map<String, Object> p) {
+    private void logFrameworkProperties(Map<String, String> p) {
         LOG.debug("==== Framework properties:");
         for (String key : p.keySet()) {
             LOG.debug("{} = {}", key, p.get(key));
@@ -800,8 +800,8 @@ public class GlassFishTestContainer implements TestContainer {
         }
     }
 
-    private Map<String, Object> createFrameworkProperties() throws IOException {
-        final Map<String, Object> p = new HashMap<String, Object>();
+    private Map<String, String> createFrameworkProperties() throws IOException {
+        final Map<String, String> p = new HashMap<String, String>();
         p.put(org.osgi.framework.Constants.FRAMEWORK_STORAGE, system.getTempFolder()
             .getAbsolutePath());
         p.put(org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
@@ -810,7 +810,7 @@ public class GlassFishTestContainer implements TestContainer {
             buildString(system.getOptions(BootDelegationOption.class)));
 
         for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
-            p.put(option.getKey(), option.getValue());
+            p.put(option.getKey(), (String) option.getValue());
         }
 
         for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {

@@ -55,7 +55,7 @@ public class DeclarativeServicesTest {
     public Option[] config() {
         return options(regressionDefaults(),
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds").versionAsInProject(),
-            mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.0"), junitBundles());
+            mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"), junitBundles());
     }
 
     @Test

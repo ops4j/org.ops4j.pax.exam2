@@ -165,7 +165,7 @@ public class NativeTestContainer implements TestContainer {
                 systemPackage("org.ops4j.pax.exam.util;version="
                     + skipSnapshotFlag(Info.getPaxExamVersion())),
                 systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url") });
-            Map<String, Object> p = createFrameworkProperties();
+            Map<String, String> p = createFrameworkProperties();
             if (LOG.isDebugEnabled()) {
                 logFrameworkProperties(p);
                 logSystemProperties();
@@ -183,7 +183,7 @@ public class NativeTestContainer implements TestContainer {
         return this;
     }
 
-    private void logFrameworkProperties(Map<String, Object> p) {
+    private void logFrameworkProperties(Map<String, String> p) {
         LOG.debug("==== Framework properties:");
         for (String key : p.keySet()) {
             LOG.debug("{} = {}", key, p.get(key));
@@ -237,8 +237,8 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    private Map<String, Object> createFrameworkProperties() throws IOException {
-        final Map<String, Object> p = new HashMap<String, Object>();
+    private Map<String, String> createFrameworkProperties() throws IOException {
+        final Map<String, String> p = new HashMap<String, String>();
         CleanCachesOption cleanCaches = system.getSingleOption(CleanCachesOption.class);
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
             p.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
@@ -250,7 +250,7 @@ public class NativeTestContainer implements TestContainer {
         p.put(FRAMEWORK_BOOTDELEGATION, buildString(system.getOptions(BootDelegationOption.class)));
 
         for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
-            p.put(option.getKey(), option.getValue());
+            p.put(option.getKey(), (String) option.getValue());
         }
 
         for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {

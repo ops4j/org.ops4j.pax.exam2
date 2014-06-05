@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,7 +69,7 @@ public class WrappedExceptionTest {
         Injector injector = mock(Injector.class);
         Bundle bundle = mock(Bundle.class);
         when(bundleContext.getBundle()).thenReturn(bundle);
-        when(bundle.loadClass(ExceptionSource.class.getName())).thenReturn(ExceptionSource.class);
+        doReturn(ExceptionSource.class).when(bundle).loadClass(ExceptionSource.class.getName());
         JUnitProbeInvoker invoker = new JUnitProbeInvoker(ExceptionSource.class.getName() + ";"
             + method, bundleContext, injector);
         invoker.call(new Object[] {});

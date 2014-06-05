@@ -60,10 +60,10 @@ public class ConfigurationAdminTest {
         assertThat(config, is(notNullValue()));
         config.update();
 
-        @SuppressWarnings("unchecked")
-        Dictionary<String, String> dictionary = config.getProperties();
+        @SuppressWarnings("rawtypes")
+        Dictionary dictionary = config.getProperties();
 
         assertThat(dictionary, is(notNullValue()));
-        assertThat(dictionary.get("service.pid"), is(DEBUG_OPTIONS));
+        assertThat((String) dictionary.get("service.pid"), is(DEBUG_OPTIONS));
     }
 }

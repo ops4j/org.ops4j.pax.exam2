@@ -30,9 +30,9 @@ public class Probe {
 
     private final String service;
     private final ProbeInvoker impl;
-    private final Dictionary<?, ?> dict;
+    private final Dictionary<String, ?> dict;
 
-    public Probe(String service, ProbeInvoker impl, Dictionary<?, ?> dict) {
+    public Probe(String service, ProbeInvoker impl, Dictionary<String, ?> dict) {
         this.service = service;
         this.impl = impl;
         this.dict = dict;
