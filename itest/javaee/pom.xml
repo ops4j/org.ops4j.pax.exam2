@@ -53,40 +53,6 @@
                             <streamLogs>true</streamLogs>
                         </configuration>
                         <executions>
-                            <!--execution>
-                                <id>glassfish</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>glassfish</profile>
-                                        <profile>equinox</profile>
-                                        <profile>glassfish3</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/glassfish</cloneProjectsTo>
-                                    <pomExcludes>
-                                        <pomExclude>regression-javaee-data/pom.xml</pomExclude>
-                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-                                    </pomExcludes>
-                                </configuration>
-                            </execution-->
-                            <!--execution>
-                                <id>glassfish-embedded</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>glassfish-embedded</profile>
-                                        <profile>glassfish3</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/glassfish-embedded</cloneProjectsTo>
-                                    <pomExcludes>
-                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-                                    </pomExcludes>
-                                </configuration>
-                            </execution-->
                             <execution>
                                 <id>glassfish4-embedded</id>
                                 <goals>
@@ -104,30 +70,6 @@
                                     </pomExcludes>
                                 </configuration>
                             </execution>
-                            <!--execution>
-                                <id>jboss</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>jboss</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/jboss</cloneProjectsTo>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>jboss72</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>jboss72</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/jboss72</cloneProjectsTo>
-                                </configuration>
-                            </execution-->
                             <execution>
                                 <id>wildfly80</id>
                                 <goals>
@@ -140,37 +82,6 @@
                                     <cloneProjectsTo>${project.build.directory}/wildfly80</cloneProjectsTo>
                                 </configuration>
                             </execution>
-                            <!--execution>
-                                <id>resin</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>resin</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/resin</cloneProjectsTo>
-                                    <pomExcludes>
-                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-                                    </pomExcludes>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>tomee</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>tomee</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/tomee</cloneProjectsTo>
-                                    <pomExcludes>
-                                        <pomExclude>regression-javaee-data/pom.xml</pomExclude>
-                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-                                    </pomExcludes>
-                                </configuration>
-                            </execution-->
                         </executions>
                     </plugin>
                 </plugins>
@@ -194,6 +105,7 @@
                 </dependency>
             </dependencies>
         </profile>
+
         <profile>
             <id>equinox</id>
             <activation>
@@ -207,42 +119,6 @@
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>org.eclipse.osgi</artifactId>
                     <version>3.6.2.R36x_v20110210</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>glassfish</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>glassfish</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-glassfish</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>glassfish-embedded</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>glassfish-embedded</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-glassfish-embedded</artifactId>
-                    <version>${project.version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -277,120 +153,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-        <profile>
-            <id>jboss</id>
-            <properties>
-                <pax.exam.container>jboss</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-jboss</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-embedded</artifactId>
-                    <version>7.1.1.Final</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                    <version>3.1.0.GA</version>
-                    <scope>test</scope>
-                </dependency>
-
-
-                <dependency>
-
-                    <groupId>org.jboss.logmanager</groupId>
-                    <artifactId>jboss-logmanager</artifactId>
-                    <version>1.2.2.GA</version>
-                    <scope>test</scope>
-                </dependency>
-
-
-
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>jboss72</id>
-            <properties>
-                <pax.exam.container>jboss72</pax.exam.container>
-            </properties>
-
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.as</groupId>
-                        <artifactId>jboss-as-embedded</artifactId>
-                        <version>7.2.0.Final</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.logging</groupId>
-                        <artifactId>jboss-logging</artifactId>
-                        <version>3.1.2.GA</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.logmanager</groupId>
-                        <artifactId>jboss-logmanager</artifactId>
-                        <version>1.4.0.Final</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.xnio</groupId>
-                        <artifactId>xnio-api</artifactId>
-                        <version>3.0.7.GA</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-jboss72</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.as</groupId>
-                    <artifactId>jboss-as-embedded</artifactId>
-                    <version>7.2.0.Final</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                    <version>3.1.2.GA</version>
-                    <scope>test</scope>
-                </dependency>
-
-
-                <dependency>
-
-                    <groupId>org.jboss.logmanager</groupId>
-                    <artifactId>jboss-logmanager</artifactId>
-                    <version>1.4.0.Final</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.jboss.xnio</groupId>
-                    <artifactId>xnio-api</artifactId>
-                    <version>3.0.7.GA</version>
-                    <scope>test</scope>
-                </dependency>
-
-
-
-            </dependencies>
         </profile>
 
         <profile>
@@ -485,151 +247,5 @@
             </dependencies>
         </profile>
 
-        <profile>
-            <id>resin</id>
-            <properties>
-                <pax.exam.container>resin</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-resin</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>com.caucho</groupId>
-                    <artifactId>resin</artifactId>
-                    <version>${dependency.resin.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-entitymanager</artifactId>
-                    <version>3.6.8.Final</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.derby</groupId>
-                    <artifactId>derby</artifactId>
-                    <version>10.8.2.2</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>tomee</id>
-
-            <properties>
-                <pax.exam.container>tomee</pax.exam.container>
-                <dependency.openwebbeans.version>1.2.2</dependency.openwebbeans.version>
-                <dependency.tomee.version>1.6.1-SNAPSHOT</dependency.tomee.version>
-            </properties>
-
-            <dependencyManagement>
-                <dependencies>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-ee</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-ee-common</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-ejb</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-impl</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-jsf</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-spi</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-resource</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>org.apache.openwebbeans</groupId>
-                        <artifactId>openwebbeans-web</artifactId>
-                        <version>${dependency.openwebbeans.version}</version>
-                    </dependency>
-
-
-                    <dependency>
-                        <groupId>org.apache.openejb</groupId>
-                        <artifactId>tomee-embedded</artifactId>
-                        <version>${dependency.tomee.version}</version>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>commons-logging</groupId>
-                                <artifactId>commons-logging</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-
-
-                </dependencies>
-            </dependencyManagement>
-
-            <dependencies>
-
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-tomee</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.derby</groupId>
-                    <artifactId>derby</artifactId>
-                    <version>10.8.2.2</version>
-                    <scope>test</scope>
-                </dependency>
-
-            </dependencies>
-
-            <repositories>
-                <repository>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                    <id>apache-snapshots</id>
-                    <name>Apache Snapshots</name>
-                    <url>http://repository.apache.org/snapshots/</url>
-                </repository>
-            </repositories>
-
-        </profile>
     </profiles>
 </project>
