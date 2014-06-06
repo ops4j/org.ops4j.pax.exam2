@@ -28,6 +28,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
             <artifactId>pax-exam-sample6-service</artifactId>
             <version>${project.version}</version>

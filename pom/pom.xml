@@ -37,9 +37,9 @@
         <dependency.maven.version>3.0.5</dependency.maven.version>
         <dependency.openwebbeans.version>1.2.2</dependency.openwebbeans.version>
         <dependency.resin.version>4.0.30</dependency.resin.version>
-        <dependency.spring.version>3.2.0.RELEASE</dependency.spring.version>
+        <dependency.spring.version>4.0.5.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.8</dependency.testng.version>
-        <dependency.tomcat.version>7.0.53</dependency.tomcat.version>
+        <dependency.tomcat.version>8.0.8</dependency.tomcat.version>
         <dependency.tomee.version>1.6.0.1</dependency.tomee.version>
         <dependency.weld.version>1.1.16.Final</dependency.weld.version>
         <dependency.wildfly.version>8.1.0.Final</dependency.wildfly.version>
@@ -798,7 +798,11 @@
                 </exclusions>
             </dependency>
 
-
+            <dependency>
+                <groupId>javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.12.1.GA</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
