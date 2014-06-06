@@ -19,19 +19,26 @@
     <name>OPS4J Pax Exam Java EE Regression Tests with User-Defined Probe</name>
 
     <dependencies>
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-invoker-servlet</artifactId>
+            <artifactId>pax-exam-invoker-jaxrs2</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
             <artifactId>pax-exam-sample1-service</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
+        
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -53,31 +60,16 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-link</artifactId>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-classpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- 
-           pax-url-aether embeds an ancient version of google-collections.
-           This is why we place Guava here. 
-        -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- pax-url-aether embeds an older version of this lib -->
-        <dependency>
-            <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-reflect</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -86,10 +78,6 @@
             <artifactId>pax-url-aether</artifactId>
             <scope>test</scope>
         </dependency>
-
-
-
-
 
         <!-- For sane logging -->
         <dependency>
@@ -119,13 +107,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-ext</artifactId>
-            <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
 

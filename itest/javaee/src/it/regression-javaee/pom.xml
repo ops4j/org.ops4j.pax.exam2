@@ -18,7 +18,6 @@
     <name>OPS4J Pax Exam Java EE Container Regression Tests</name>
 
     <dependencies>
-
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-invoker-jaxrs2</artifactId>
@@ -29,16 +28,8 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>3.0.4.Final</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -83,21 +74,6 @@
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-classpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- pax-url-aether embeds an ancient version of google-collections. This is why we place Guava 
-            here. -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- pax-url-aether embeds an older version of this lib -->
-        <dependency>
-            <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-reflect</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -151,6 +127,7 @@
         </dependency>
 
     </dependencies>
+
     <build>
 
         <testResources>
