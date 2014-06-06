@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,8 +31,7 @@
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>0.5</dependency.deltaspike.version>
-        <dependency.glassfish.version>3.1.2.2</dependency.glassfish.version>
-        <dependency.glassfish4.version>4.0</dependency.glassfish4.version>
+        <dependency.glassfish.version>4.0</dependency.glassfish.version>
         <dependency.karaf.version>3.0.0</dependency.karaf.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
@@ -636,24 +636,6 @@
                 <version>2.4</version>
             </dependency>
 
-            <!--dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh-external</artifactId>
-                <version>1.0-beta-7</version>
-            </dependency>
-
-            <dependency>
-                <groupId>biz.aQute</groupId>
-                <artifactId>bndlib</artifactId>
-                <version>1.43.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.cal10n</groupId>
-                <artifactId>cal10n-api</artifactId>
-                <version>0.7.4</version>
-            </dependency-->
-
             <dependency>
                 <groupId>org.jboss.xnio</groupId>
                 <artifactId>xnio-api</artifactId>
@@ -767,38 +749,42 @@
                 <artifactId>aether-api</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-impl</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-spi</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-util</artifactId>
                 <version>${dependency.aether.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.sonatype.plexus</groupId>
                 <artifactId>plexus-cipher</artifactId>
                 <version>1.7</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.sonatype.plexus</groupId>
                 <artifactId>plexus-sec-dispatcher</artifactId>
                 <version>1.4</version>
             </dependency>
-            
 
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>14.0</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -846,20 +832,13 @@
             </dependencies>
         </profile>
         <profile>
-            <id>glassfish3</id>
+            <id>glassfish4-embedded</id>
             <activation>
-                <property>
-                    <name>!glassfish.release</name>
-                </property>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <dependencyManagement>
                 <dependencies>
                     <dependency>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                        <version>12.0</version>
-                    </dependency>
-                    <dependency>
                         <groupId>org.glassfish.main.common</groupId>
                         <artifactId>simple-glassfish-api</artifactId>
                         <version>${dependency.glassfish.version}</version>
@@ -868,28 +847,6 @@
                         <groupId>org.glassfish.main.extras</groupId>
                         <artifactId>glassfish-embedded-all</artifactId>
                         <version>${dependency.glassfish.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-        <profile>
-            <id>glassfish4-embedded</id>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                        <version>14.0</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.glassfish.main.common</groupId>
-                        <artifactId>simple-glassfish-api</artifactId>
-                        <version>${dependency.glassfish4.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.glassfish.main.extras</groupId>
-                        <artifactId>glassfish-embedded-all</artifactId>
-                        <version>${dependency.glassfish4.version}</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
