@@ -25,11 +25,11 @@ import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_MANAGER_F
 import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_SERVLET_LISTENER;
 
 import org.apache.catalina.Context;
-import org.apache.catalina.deploy.ApplicationListener;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.tomcat.util.descriptor.web.ApplicationListener;
+import org.apache.tomcat.util.descriptor.web.ContextResource;
+import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
 import org.ops4j.pax.exam.ConfigurationManager;
 
 public class TomcatContextConfig extends ContextConfig {

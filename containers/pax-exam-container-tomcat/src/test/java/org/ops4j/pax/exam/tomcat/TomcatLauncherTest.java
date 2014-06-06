@@ -77,7 +77,7 @@ public class TomcatLauncherTest {
         FileOutputStream os = new FileOutputStream(warTarget);
         StreamUtils.copyStream(is, os, true);
 
-        hostConfig.deployWAR(new ContextName("/wicket-examples"), warTarget);
+        hostConfig.deployWAR(new ContextName("/wicket-examples", true), warTarget);
         hostConfig.unmanageApp("/wicket-examples");
         tomcat.stop();
     }
