@@ -47,22 +47,6 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>candi</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>candi</profile>
-                                        <profile>resin</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/candi</cloneProjectsTo>
-                                    <!-- Resin does not fire a BeforeBeanDiscoveryEvent, which crashes 
-                                        DeltaSpike -->
-                                    <invokerTest>regression-cdi-testng</invokerTest>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>openwebbeans</id>
                                 <goals>
                                     <goal>run</goal>
@@ -72,18 +56,6 @@
                                         <profile>openwebbeans</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/openwebbeans</cloneProjectsTo>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>weld</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>weld</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/weld</cloneProjectsTo>
                                 </configuration>
                             </execution>
                             <execution>
@@ -119,24 +91,6 @@
         </profile>
 
         <profile>
-            <id>candi</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>candi</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-candi</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>openwebbeans</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -160,48 +114,14 @@
         </profile>
 
         <profile>
-            <id>weld</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>weld</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-weld</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>weld2</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <pax.exam.container>weld2</pax.exam.container>
             </properties>
 
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.weld.se</groupId>
-                        <artifactId>weld-se-core</artifactId>
-                        <version>2.1.2.Final</version>
-                        <scope>test</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>javax.enterprise</groupId>
-                        <artifactId>cdi-api</artifactId>
-                        <version>1.1-20130918</version>
-                        <scope>test</scope>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
 
 
             <dependencies>
@@ -214,7 +134,6 @@
                 <dependency>
                     <groupId>org.jboss.weld.se</groupId>
                     <artifactId>weld-se-core</artifactId>
-                    <version>2.1.2.Final</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
