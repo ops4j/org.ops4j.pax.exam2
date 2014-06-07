@@ -16,22 +16,23 @@
  */
 package org.ops4j.pax.exam.regression.multi.server;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isKnopflerfish;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExamServer;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 
 public class WabSampleTest {
 
@@ -77,10 +78,10 @@ public class WabSampleTest {
     @Test
     public void checkPlainTextFromWabServlet() {
         assumeTrue(!isKnopflerfish());
-        Client client = Client.create();
+        Client client = ClientBuilder.newClient();
         String url = String.format("http://localhost:%s/wab/WABServlet", port);
-        WebResource resource = client.resource(url);
-        String response = resource.get(String.class);
+        WebTarget resource = client.target(url);
+        String response = resource.request().get(String.class);
         assertThat(response, containsString("wab symbolic name : wab-sample"));
     }
 }

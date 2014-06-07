@@ -16,18 +16,20 @@
  */
 package org.ops4j.pax.exam.regression.multi.server;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isKnopflerfish;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ops4j.pax.exam.junit.PaxExamServer;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 
 public class ExternalConfigurationTest {
 
@@ -46,17 +48,17 @@ public class ExternalConfigurationTest {
 
     @Test
     public void checkWabSymbolicName() {
-        Client client = Client.create();
-        WebResource resource = client.resource(url);
-        String response = resource.get(String.class);
+        Client client = ClientBuilder.newClient();
+        WebTarget resource = client.target(url);
+        String response = resource.request().get(String.class);
         assertThat(response, containsString("wab symbolic name : wab-sample"));
     }
 
     @Test
     public void checkWabVersion() {
-        Client client = Client.create();
-        WebResource resource = client.resource(url);
-        String response = resource.get(String.class);
+        Client client = ClientBuilder.newClient();
+        WebTarget resource = client.target(url);
+        String response = resource.request().get(String.class);
         assertThat(response, containsString("wab version :3.0.0"));
     }
 }

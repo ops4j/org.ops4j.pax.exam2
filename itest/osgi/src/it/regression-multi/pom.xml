@@ -103,6 +103,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
@@ -118,12 +124,6 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -144,8 +144,7 @@
                 </executions>
             </plugin>
 
-            <!-- unpack the regression-pde-bundle so we have an exploded bundle for 
-                testing -->
+            <!-- unpack the regression-pde-bundle so we have an exploded bundle for testing -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -199,7 +198,7 @@
                         <pax.exam.itest.http.port>${pax.exam.itest.http.port}</pax.exam.itest.http.port>
                     </systemProperties>
                     <excludes>
-                      <!-- This test works locally but not on our slow Hudson server -->
+                        <!-- This test works locally but not on our slow Hudson server -->
                         <exclude>**/ServiceTimeoutInvokerTest.java</exclude>
                     </excludes>
                 </configuration>

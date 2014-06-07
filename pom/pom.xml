@@ -41,7 +41,7 @@
         <dependency.testng.version>6.8.8</dependency.testng.version>
         <dependency.tomcat.version>8.0.8</dependency.tomcat.version>
         <dependency.tomee.version>1.6.0.1</dependency.tomee.version>
-        <dependency.weld.version>1.1.16.Final</dependency.weld.version>
+        <dependency.weld.version>2.1.2.Final</dependency.weld.version>
         <dependency.wildfly.version>8.1.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
     </properties>
@@ -382,7 +382,7 @@
             <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
-                <version>6.0</version>
+                <version>7.0</version>
             </dependency>
 
             <dependency>
@@ -392,9 +392,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-                <version>1.0</version>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>1.1-20130918</version>
             </dependency>
 
             <dependency>
@@ -435,18 +435,6 @@
 
 
             <dependency>
-                <groupId>com.caucho</groupId>
-                <artifactId>resin</artifactId>
-                <version>${dependency.resin.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-embedded</artifactId>
-                <version>7.1.1.Final</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging</artifactId>
                 <version>3.1.0.GA</version>
@@ -457,12 +445,6 @@
                 <groupId>org.jboss.logmanager</groupId>
                 <artifactId>jboss-logmanager</artifactId>
                 <version>1.2.2.GA</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>1.16</version>
             </dependency>
 
             <dependency>
@@ -799,6 +781,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>2.9.1</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>3.12.1.GA</version>
@@ -896,33 +884,7 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>resin</id>
-            <activation>
-                <file>
-                    <exists>src/profile/resin</exists>
-                </file>
-            </activation>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>javassist</groupId>
-                        <artifactId>javassist</artifactId>
-                        <version>3.12.1.GA</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-            <repositories>
-                <repository>
-                    <id>caucho</id>
-                    <name>Caucho Repository</name>
-                    <url>http://caucho.com/m2</url>
-                </repository>
-            </repositories>
-        </profile>
     </profiles>
-
-
 
     <licenses>
         <license>

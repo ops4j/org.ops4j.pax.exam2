@@ -40,6 +40,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
+            <version>1.15</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

@@ -19,24 +19,43 @@ package org.ops4j.pax.exam.regression.maven;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
 import org.junit.Test;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 
 public class WabSampleIT {
 
     @Test
     public void checkPlainTextFromWabServlet() throws InterruptedException {
-        Client client = Client.create();
+        Client client = ClientBuilder.newClient();
+        WebTarget resource = client.target("http://localhost:8181/wab/WABServlet");
         
         // The server is started by the exam-maven-plugin in a background process:
         // We need to make sure it has finished startup.
-        client.addFilter(new RetryFilter(10, 2000));
+        
+        int i = 0;
+        int delay = 1000;
+        int maxRetries = 5;
+
+        String response = null;
+        
+        while (i < maxRetries) {
+            i++;
+
+            try {
+                response = resource.request().get(String.class);
+                break;
+            }
+            catch (ProcessingException exc) {                
+                Thread.sleep(delay);
+            }
+        }
         
         
-        WebResource resource = client.resource("http://localhost:8181/wab/WABServlet");
-        String response = resource.get(String.class);
         assertThat(response, containsString("wab symbolic name : wab-sample"));
     }
 }
