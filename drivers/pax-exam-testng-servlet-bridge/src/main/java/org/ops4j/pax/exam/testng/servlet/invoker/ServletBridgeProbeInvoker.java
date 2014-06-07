@@ -24,11 +24,12 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 
 /**
  * A ProbeInvoker which delegates the test method invocation to JUnit.
@@ -46,7 +47,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
 
     private String clazz;
     private String method;
-    private WebResource testRunner;
+    private WebTarget testRunner;
 
     public ServletBridgeProbeInvoker(String encodedInstruction) {
         try {
@@ -119,7 +120,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
     private void invokeViaJUnit(final Class<?> testClass, final Method testMethod)
         throws IOException, ClassNotFoundException {
         InputStream is = testRunner.queryParam("class", testClass.getName())
-            .queryParam("method", testMethod.getName()).get(InputStream.class);
+            .queryParam("method", testMethod.getName()).request().get(InputStream.class);
 
         ObjectInputStream ois = new ObjectInputStream(is);
         Object object = ois.readObject();
@@ -135,10 +136,10 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
         }
     }
 
-    private WebResource getTestRunner(URI contextRoot) {
+    private WebTarget getTestRunner(URI contextRoot) {
         URI uri = contextRoot.resolve("testrunner");
-        Client client = Client.create();
-        return client.resource(uri);
+        Client client = ClientBuilder.newClient();
+        return client.target(uri);
     }
 
 }
