@@ -38,7 +38,7 @@ public class Probe {
         this.dict = dict;
     }
 
-    public ServiceRegistration register(BundleContext ctx) {
+    public ServiceRegistration<?> register(BundleContext ctx) {
         return ctx.registerService(service, impl, dict);
     }
 }

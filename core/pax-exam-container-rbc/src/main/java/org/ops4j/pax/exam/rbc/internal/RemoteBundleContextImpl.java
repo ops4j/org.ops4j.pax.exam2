@@ -33,7 +33,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.service.startlevel.StartLevel;
+import org.osgi.framework.startlevel.BundleStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,8 +123,8 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
 
     public void setBundleStartLevel(long bundleId, int startLevel) throws RemoteException,
         BundleException {
-        final StartLevel startLevelService = ServiceLookup.getService(bundleContext, StartLevel.class);
-        startLevelService.setBundleStartLevel(bundleContext.getBundle(bundleId), startLevel);
+        Bundle bundle = bundleContext.getBundle(bundleId);
+        bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
     }
 
     public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {

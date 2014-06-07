@@ -69,7 +69,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
             Parser parser = new Parser(bundle.getBundleContext(), testExec, manifestEntries);
             for (Probe p : parser.getProbes()) {
                 final BundleContext bundleContext = BundleUtils.getBundleContext(bundle);
-                final ServiceRegistration serviceRegistration = p.register(bundleContext);
+                final ServiceRegistration<?> serviceRegistration = p.register(bundleContext);
                 registrations.put(bundle, new Registration(p, serviceRegistration));
             }
 
@@ -82,9 +82,9 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
     public void removingEntries(final Bundle bundle, final List<ManifestEntry> manifestEntries) {
         final Registration registration = registrations.remove(bundle);
         if (registration != null) {
-            // Do not unregister as bellow, because the services are automatically unregistered as
+            // Do not unregister as below, because the services are automatically unregistered as
             // soon as the bundle
-            // for which the services are reigistred gets stopped
+            // for which the services are registered gets stopped
             // registration.serviceRegistration.unregister();
             LOG.debug("Unregistered testcase [" + registration.probe + "." + "]");
         }
@@ -97,7 +97,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
 
         final Probe probe;
 
-        public Registration(Probe probe, final ServiceRegistration serviceRegistration) {
+        public Registration(Probe probe, final ServiceRegistration<?> serviceRegistration) {
             this.probe = probe;
         }
     }
