@@ -17,7 +17,6 @@
 
 package org.ops4j.pax.exam.sample4.service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

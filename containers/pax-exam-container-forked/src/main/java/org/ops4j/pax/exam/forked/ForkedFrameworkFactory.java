@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam.forked;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
@@ -37,7 +36,6 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.ops4j.pax.swissbox.framework.RemoteFrameworkImpl;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
