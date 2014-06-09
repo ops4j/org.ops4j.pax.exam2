@@ -114,10 +114,7 @@ public class ForkedTestContainer implements TestContainer {
         try {
             return remoteFramework.installBundle(location);
         }
-        catch (RemoteException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (BundleException exc) {
+        catch (RemoteException | BundleException exc) {
             throw new TestContainerException(exc);
         }
     }
@@ -129,10 +126,7 @@ public class ForkedTestContainer implements TestContainer {
             remoteFramework.startBundle(bundleId);
             return bundleId;
         }
-        catch (RemoteException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (BundleException exc) {
+        catch (RemoteException | BundleException exc) {
             throw new TestContainerException(exc);
         }
     }
@@ -149,20 +143,8 @@ public class ForkedTestContainer implements TestContainer {
             remoteFramework.init();
             installAndStartBundles();
         }
-        catch (BundleException exc) {
+        catch (BundleException | IOException exc) {
             throw new TestContainerException(exc);
-        }
-        catch (IOException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (InterruptedException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (NotBoundException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (URISyntaxException e) {
-            throw new TestContainerException(e);
         }
         return this;
     }
@@ -173,10 +155,7 @@ public class ForkedTestContainer implements TestContainer {
             remoteFramework.stop();
             system.clear();
         }
-        catch (RemoteException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (BundleException exc) {
+        catch (RemoteException | BundleException exc) {
             throw new TestContainerException(exc);
         }
         frameworkFactory.join();
@@ -382,10 +361,7 @@ public class ForkedTestContainer implements TestContainer {
         try {
             remoteFramework.uninstallBundle(probeId);
         }
-        catch (RemoteException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (BundleException exc) {
+        catch (RemoteException | BundleException exc) {
             throw new TestContainerException(exc);
         }
     }

@@ -81,6 +81,7 @@ public class ConfigurationAdminOptions {
      * options similar to apache felix fileinstall
      * 
      * @param folder
+     *            folder containing configuration files
      * @return an option containing all the read configurations
      */
     public static Option configurationFolder(File folder) {
@@ -91,6 +92,7 @@ public class ConfigurationAdminOptions {
      * read all configuration files from a folder and transform them into configuration options
      * 
      * @param folder
+     *            folder containing configuration files
      * @param extension
      *            the file extension to scan for (eg .cfg)
      * @return an option containing all the read configurations

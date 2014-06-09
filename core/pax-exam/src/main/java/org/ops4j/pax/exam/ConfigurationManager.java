@@ -84,6 +84,8 @@ public class ConfigurationManager {
      * 
      * @param key
      *            configuration key
+     * @param defaultValue
+     *            default value for key           
      * @return configuration value, or the default value if the key is not defined
      */
     public String getProperty(String key, String defaultValue) {

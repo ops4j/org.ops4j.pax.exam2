@@ -53,6 +53,8 @@ public class JarBuilder {
     /**
      * Constructs a JAR builder for the given option.
      * 
+     * @param tempDir
+     *            temporary directory
      * @param option
      *            JAR probe option
      */

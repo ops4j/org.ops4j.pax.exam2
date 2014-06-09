@@ -82,7 +82,7 @@ public interface MavenUrlReference extends UrlReference {
      * Sets the artifact version or version range. If version is a SNAPSHOT version the bundle will
      * be set to updatable, otherwise the bundle will not be updated. This handling happens only if
      * the user dows not use the update() by itself (see
-     * {@link org.ops4j.pax.exam.options.ProvisionOption#update(boolean)}).
+     * {@link org.ops4j.pax.exam.options.ProvisionControl#update(Boolean)}).
      * 
      * @param version
      *            artifact version / version range (cannot be null or empty)

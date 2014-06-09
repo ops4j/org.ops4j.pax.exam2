@@ -37,8 +37,8 @@ import org.osgi.framework.BundleReference;
  * the fields of all superclasses. By default, the Injector will wait for a given timeout if no
  * matching service is available.
  * <p>
- * If the field has no {@link @Filter} annotation, the service will be looked up by type with a
- * filter {@code (objectClass=<type>)}. If the field has {@link @Filter} annotation with a non empty
+ * If the field has no {@link Filter} annotation, the service will be looked up by type with a
+ * filter {@code (objectClass=<type>)}. If the field has {@link Filter} annotation with a non empty
  * value, this partial filter string will be taken to build a composite filter of the form
  * {@code (&(objectClass=<type>)<filter>)}.
  * <p>

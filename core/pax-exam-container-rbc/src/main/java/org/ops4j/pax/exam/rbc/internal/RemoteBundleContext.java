@@ -26,8 +26,8 @@ import org.osgi.framework.BundleException;
 
 /**
  * Remote BundleContext like access.
- * <p/>
- * TODO: this is probably somwhat too fluffy (too shaky interface) - improve here
+ * <p>
+ * TODO: this is probably somewhat too fluffy (too shaky interface) - improve here
  * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 10, 2008
@@ -52,6 +52,8 @@ public interface RemoteBundleContext extends Remote {
      *            method name
      * @param methodParamTypes
      *            method parameters types
+     * @param filter
+     *            service filter           
      * @param timeout
      *            timeout for looking up the service
      * @param actualParams
@@ -148,7 +150,7 @@ public interface RemoteBundleContext extends Remote {
      *            bundle id
      * @param state
      *            expected state
-     * @param timeoutInMillis
+     * @param timeout
      *            max time to wait for state
      * @throws RemoteException
      *             - Remote communication related exception (mandatory by RMI)

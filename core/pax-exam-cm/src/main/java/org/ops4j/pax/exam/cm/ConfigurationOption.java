@@ -38,25 +38,24 @@ public interface ConfigurationOption {
      * Add the key/value pair to the overriden options. Only the following "primary property types"
      * are supported by the {@link ConfigurationAdmin}
      * <ul>
-     * <li>primitive types
-     * <li/>
+     * <li>primitive types</li>
      * <li>object variants of primitive types (like Integer, Boolean, and so on)</li>
      * <li>arrays or collections (must be serializable!) of all types</li>
      * </ul>
      * Also make sure not to contain case variants, because they are also not allowed and keep in
      * mind that some properties can't be overriden
      * 
-     * @param key
-     * @param value
+     * @param key property key
+     * @param value property value
      * @return <code>this</code> for chaining
      */
     ConfigurationOption put(String key, Object value);
 
     /**
-     * Putt all properties from the given map to this configuration object, see
+     * Puts all properties from the given map to this configuration object, see
      * {@link #put(String, Object)} for more details
      * 
-     * @param properties
+     * @param properties configuration properties
      * @return <code>this</code> for chaining
      */
     ConfigurationOption putAll(Map<String, ?> properties);
@@ -69,16 +68,16 @@ public interface ConfigurationOption {
     /**
      * Specify if the configuration should be created if it does not yet exits
      * 
-     * @param create
+     * @param create should configuration be created?
      * @return <code>this</code> for chaining
      */
     ConfigurationOption create(boolean create);
 
     /**
-     * Specify if the properties of an exiting configuration should be overriden/extended by the
+     * Specify if the properties of an existing configuration should be overriden/extended by the
      * ones given here, <b>this does not work with factories!</b>
      * 
-     * @param override
+     * @param override should this option override an existing one?
      * @return <code>this</code> for chaining
      */
     ConfigurationOption override(boolean override);
@@ -86,7 +85,7 @@ public interface ConfigurationOption {
     /**
      * Specify if the target of the properties are a factory configuration
      * 
-     * @param factory
+     * @param factory is this a factory configuration?
      * @return <code>this</code> for chaining
      */
     ConfigurationOption factory(boolean factory);

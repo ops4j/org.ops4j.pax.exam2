@@ -39,7 +39,7 @@ public class BundleStartLevelOption implements Option {
      *            initial bundle start level (must be bigger then zero)
      * 
      * @throws IllegalArgumentException
-     *             - If start level is <= 0
+     *             if start level is &lt;= 0
      */
     public BundleStartLevelOption(final int startLevel) {
         if (startLevel <= 0) {

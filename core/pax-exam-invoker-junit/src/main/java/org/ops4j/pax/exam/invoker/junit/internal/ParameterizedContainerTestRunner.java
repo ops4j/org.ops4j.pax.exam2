@@ -61,6 +61,7 @@ public class ParameterizedContainerTestRunner extends BlockJUnit4ClassRunner {
      *            injector for injecting dependencies
      * @param index
      *            parameter set index (counting from 0).
+     * @throws InitializationError when test class cannot be initialized           
      */
     public ParameterizedContainerTestRunner(Class<?> klass, Injector injector, int index)
         throws InitializationError {

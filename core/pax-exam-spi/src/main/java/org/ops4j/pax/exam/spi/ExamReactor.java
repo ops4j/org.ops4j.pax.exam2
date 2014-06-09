@@ -27,7 +27,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
  * control. Instead of directly creating containers out of
  * {@link org.ops4j.pax.exam.TestContainerFactory} it is recommended to use {@link ExamReactor}
  * instead.
- * <p/>
+ * <p>
  * You basically add some {@link Option}s and probes ({@link TestProbeBuilder} and get a retrieve a
  * {@link org.ops4j.pax.exam.spi.StagedExamReactor} that can be used to retrieve containers. Now its
  * up to the reactor and its configuration when to use and re-use the TestContainers.
@@ -47,8 +47,8 @@ public interface ExamReactor {
      * Add the probe that contribute to desired container(s) you will get after calling
      * {@link #stage(StagedExamReactorFactory)}.
      * 
-     * @param addTest
-     *            provider that will (in the end) create a probe to be installed in the target
+     * @param builder
+     *            builder that will (in the end) create a probe to be installed in the target
      *            container.
      */
     void addProbe(TestProbeBuilder builder);
@@ -61,7 +61,7 @@ public interface ExamReactor {
      *            to be used to stage. (usually a strategy)
      * 
      * @return new reactor that can be used to derive TestContainer instances.
-     * @throws IOException
+     * @throws IOException on I/O error
      */
-    StagedExamReactor stage(StagedExamReactorFactory factory) throws IOException;
+    StagedExamReactor stage(StagedExamReactorFactory factory);
 }

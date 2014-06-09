@@ -32,6 +32,7 @@ public class KarafDistributionConfigurationSecurityOption implements Option {
 
     /**
      * Sets -Djavax.management.builder.initial=org.apache.karaf.management.boot.KarafMBeanServerBuilder
+     * @return this for fluent syntax
      */
     public KarafDistributionConfigurationSecurityOption enableKarafMBeanServerBuilder() {
         enableKarafMBeanServerBuilder = true;
@@ -40,6 +41,7 @@ public class KarafDistributionConfigurationSecurityOption implements Option {
 
     /**
      * Does not set KarafMBeanServerBuilder.
+     * @return this for fluent syntax
      */
     public KarafDistributionConfigurationSecurityOption disableKarafMBeanServerBuilder() {
         enableKarafMBeanServerBuilder = false;

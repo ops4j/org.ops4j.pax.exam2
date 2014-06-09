@@ -37,15 +37,16 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         karafVersion = null;
     }
 
-    public KarafDistributionBaseConfigurationOption(String frameworkURL, String name, String karafVersion) {
+    public KarafDistributionBaseConfigurationOption(String frameworkURL, String name,
+        String karafVersion) {
         this.frameworkURL = frameworkURL;
         frameworkURLReference = null;
         this.name = name;
         this.karafVersion = karafVersion;
     }
 
-    public KarafDistributionBaseConfigurationOption(MavenUrlReference frameworkURLReference, String name,
-                                                    String karafVersion) {
+    public KarafDistributionBaseConfigurationOption(MavenUrlReference frameworkURLReference,
+        String name, String karafVersion) {
         frameworkURL = null;
         this.frameworkURLReference = frameworkURLReference;
         this.name = name;
@@ -58,7 +59,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     }
 
     /**
-     * Simply clones the insterted {@link KarafDistributionConfigurationOption}
+     * Simply clones the inserted {@link KarafDistributionConfigurationOption}
+     * @param base option to be cloned
      */
     public KarafDistributionBaseConfigurationOption(KarafDistributionBaseConfigurationOption base) {
         frameworkURL = base.frameworkURL;
@@ -71,6 +73,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     /**
      * Sets the URL of the framework as a String (for example a file).
+     * 
+     * @param _frameworkURL
+     *            framework URL
+     * @return this for fluent syntax           
      */
     public KarafDistributionBaseConfigurationOption frameworkUrl(String _frameworkURL) {
         this.frameworkURL = _frameworkURL;
@@ -79,6 +85,9 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     /**
      * Sets the URL of the frameworks as a maven reference.
+     * @param _frameworkURL
+     *            framework URL
+     * @return this for fluent syntax           
      */
     public KarafDistributionBaseConfigurationOption frameworkUrl(MavenUrlReference _frameworkURL) {
         frameworkURLReference = _frameworkURL;
@@ -86,7 +95,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     }
 
     /**
-     * Set's the name of the framework. This is only used for logging.
+     * Sets the name of the framework. This is only used for logging.
+     * @param _name
+     *            framework name
+     * @return this for fluent syntax           
      */
     public KarafDistributionBaseConfigurationOption name(String _name) {
         this.name = _name;
@@ -94,8 +106,11 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     }
 
     /**
-     * The version of karaf used by the framework. That one is required since there is the high possibility that
-     * configuration is different between various karaf versions.
+     * The version of karaf used by the framework. That one is required since there is the high
+     * possibility that configuration is different between various karaf versions.
+     * @param _karafVersion
+     *            Karaf version
+     * @return this for fluent syntax           
      */
     public KarafDistributionBaseConfigurationOption karafVersion(String _karafVersion) {
         this.karafVersion = _karafVersion;
@@ -103,8 +118,11 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     }
 
     /**
-     * Define the unpack directory for the karaf distribution. In this directory a UUID named directory will be created
-     * for each environment.
+     * Define the unpack directory for the karaf distribution. In this directory a UUID named
+     * directory will be created for each environment.
+     * @param _unpackDirectory
+     *            unpack directory
+     * @return this for fluent syntax           
      */
     public KarafDistributionBaseConfigurationOption unpackDirectory(File _unpackDirectory) {
         this.unpackDirectory = _unpackDirectory;
@@ -112,10 +130,14 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     }
 
     /**
-     * Per default the framework simply copies all referenced artifacts (via Pax Exam DistributionOption) to the deploy
-     * folder of the karaf (based) distribution. If you don't have such a folder (for any reason) you can set this
-     * option to false. PaxExam Karaf will then try to add those deployment urls directly to a features xml instead of
-     * copying those files to the deploy folder.
+     * Per default the framework simply copies all referenced artifacts (via Pax Exam
+     * DistributionOption) to the deploy folder of the karaf (based) distribution. If you don't have
+     * such a folder (for any reason) you can set this option to false. PaxExam Karaf will then try
+     * to add those deployment urls directly to a features xml instead of copying those files to the
+     * deploy folder.
+     * @param _useDeployFolder
+     *            shall artifacts be copied to deploy folder?
+     * @return this for fluent syntax           
      */
     public KarafDistributionBaseConfigurationOption useDeployFolder(boolean _useDeployFolder) {
         this.useDeployFolder = _useDeployFolder;
@@ -124,7 +146,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     public String getFrameworkURL() {
         if (frameworkURL == null && frameworkURLReference == null) {
-            throw new IllegalStateException("Either frameworkurl or frameworkUrlReference need to be set.");
+            throw new IllegalStateException(
+                "Either frameworkurl or frameworkUrlReference need to be set.");
         }
         return frameworkURL != null ? frameworkURL : frameworkURLReference.getURL();
     }

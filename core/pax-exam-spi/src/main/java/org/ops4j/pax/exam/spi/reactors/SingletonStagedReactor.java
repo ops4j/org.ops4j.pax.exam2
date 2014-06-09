@@ -86,6 +86,7 @@ public class SingletonStagedReactor implements StagedExamReactor {
      *            to be used
      * @param mProbes
      *            to be installed on all probes
+     * @return staged reactor           
      */
     public static synchronized StagedExamReactor getInstance(List<TestContainer> containers,
         List<TestProbeBuilder> mProbes) {

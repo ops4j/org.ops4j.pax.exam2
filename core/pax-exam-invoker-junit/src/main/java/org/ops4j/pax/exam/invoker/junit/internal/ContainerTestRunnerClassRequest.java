@@ -24,7 +24,7 @@ import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
 
 /**
- * A JUnit {@link Request} returning a custom {@link Runner} which is aware of an {@link Injector}
+ * A JUnit {@link ClassRequest} returning a custom {@link Runner} which is aware of an {@link Injector}
  * and a {@link BundleContext}.
  * 
  * @author Harald Wellmann

@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.ops4j.exec.DefaultJavaRunner;
+import org.ops4j.exec.ExecutionException;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
@@ -70,8 +71,6 @@ public class ForkedFrameworkFactory {
      * 
      * @param frameworkFactory
      *            OSGi framework factory
-     * @param storage
-     *            framework storage directory for the forked framework
      */
     public ForkedFrameworkFactory(FrameworkFactory frameworkFactory) {
         this.frameworkFactory = frameworkFactory;
@@ -96,15 +95,10 @@ public class ForkedFrameworkFactory {
      *            system properties for the forked Java VM
      * @param frameworkProperties
      *            framework properties for the remote framework
-     * @return
-     * @throws BundleException
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws NotBoundException
+     * @return remote framework
      */
     public RemoteFramework fork(List<String> vmArgs, Map<String, String> systemProperties,
-        Map<String, Object> frameworkProperties) throws BundleException, IOException,
-        InterruptedException, NotBoundException, URISyntaxException {
+        Map<String, Object> frameworkProperties) {
         // TODO make port range configurable
         FreePort freePort = new FreePort(21000, 21099);
         port = freePort.getPort();
@@ -112,17 +106,22 @@ public class ForkedFrameworkFactory {
 
         String rmiName = "ExamRemoteFramework-" + UUID.randomUUID().toString();
 
-        registry = LocateRegistry.createRegistry(port);
+        try {
+            registry = LocateRegistry.createRegistry(port);
 
-        Map<String, String> systemPropsNew = new HashMap<String, String>(systemProperties);
-        systemPropsNew.put(RemoteFramework.RMI_PORT_KEY, Integer.toString(port));
-        systemPropsNew.put(RemoteFramework.RMI_NAME_KEY, rmiName);
-        String[] vmOptions = buildSystemProperties(vmArgs, systemPropsNew);
-        String[] args = buildFrameworkProperties(frameworkProperties);
-        javaRunner = new DefaultJavaRunner(false);
-        javaRunner.exec(vmOptions, buildClasspath(), RemoteFrameworkImpl.class.getName(), args,
-            getJavaHome(), null);
-        return findRemoteFramework(port, rmiName);
+            Map<String, String> systemPropsNew = new HashMap<String, String>(systemProperties);
+            systemPropsNew.put(RemoteFramework.RMI_PORT_KEY, Integer.toString(port));
+            systemPropsNew.put(RemoteFramework.RMI_NAME_KEY, rmiName);
+            String[] vmOptions = buildSystemProperties(vmArgs, systemPropsNew);
+            String[] args = buildFrameworkProperties(frameworkProperties);
+            javaRunner = new DefaultJavaRunner(false);
+            javaRunner.exec(vmOptions, buildClasspath(), RemoteFrameworkImpl.class.getName(), args,
+                getJavaHome(), null);
+            return findRemoteFramework(port, rmiName);
+        }
+        catch (RemoteException | ExecutionException | URISyntaxException exc) {
+            throw new TestContainerException(exc);
+        }
     }
 
     private String[] buildSystemProperties(List<String> vmArgs, Map<String, String> systemProperties) {

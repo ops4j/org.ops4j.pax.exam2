@@ -39,7 +39,7 @@ public class FrameworkStartLevelOption implements Option {
      *            framework start level (must be bigger then zero)
      * 
      * @throws IllegalArgumentException
-     *             - If start level is <= 0
+     *             - If start level is &lt;= 0
      */
     public FrameworkStartLevelOption(final int startLevel) {
         if (startLevel <= 0) {

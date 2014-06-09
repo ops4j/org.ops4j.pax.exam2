@@ -51,8 +51,8 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.cm.Confi
     /**
      * Creates a new {@link ConfigurationOption} for the given id and the given property values
      * 
-     * @param id
-     * @param properties
+     * @param id configuration PID
+     * @param properties configuration properties
      */
     public ConfigurationProvisionOption(String id, Map<String, Object> properties) {
         this.id = id;
@@ -70,8 +70,8 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.cm.Confi
     /**
      * Add the key/value pair to the overriden options
      * 
-     * @param key
-     * @param value
+     * @param key property key
+     * @param value property value
      * @return <code>this</code> for chaining
      */
     @Override
@@ -97,7 +97,7 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.cm.Confi
     /**
      * Specify if the configuration should be created if it does not yet exits
      * 
-     * @param _create
+     * @param _create should this option be created?
      * @return <code>this</code> for chaining
      */
     @Override
@@ -107,10 +107,10 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.cm.Confi
     }
 
     /**
-     * Specify if the properties of an exiting configuration should be overriden/extended by the
+     * Specify if the properties of an existing configuration should be overriden/extended by the
      * ones given here, <b>this does not work with factories!</b>
      * 
-     * @param _override
+     * @param _override should existing properties be overridden
      * @return <code>this</code> for chaining
      */
     @Override
@@ -122,7 +122,7 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.cm.Confi
     /**
      * Specify if the target of the properties are a factory configuration
      * 
-     * @param _factory
+     * @param _factory is this a factory configuration?
      * @return <code>this</code> for chaining
      */
     @Override

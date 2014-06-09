@@ -46,7 +46,7 @@ public class ArchiveExtractor {
      * 
      * @param sourceURL url of the archive to extract
      * @param targetFolder where to extract to
-     * @throws IOException
+     * @throws IOException on I/O error
      */
     public static void extract(URL sourceURL, File targetFolder)
         throws IOException {

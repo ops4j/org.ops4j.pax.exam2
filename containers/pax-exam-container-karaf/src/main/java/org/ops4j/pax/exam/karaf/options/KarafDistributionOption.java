@@ -47,6 +47,7 @@ public final class KarafDistributionOption {
     /**
      * Per default the folder pax-exam is deleting the test directories after a test is over. If you
      * want to keep those directories (for later evaluation) simply set this option.
+     * @return keep runtime folder option
      */
     public static Option keepRuntimeFolder() {
         return new KeepRuntimeFolderOption();
@@ -54,6 +55,8 @@ public final class KarafDistributionOption {
 
     /**
      * Provides an option to configure the internals of the PaxExamKaraf subsystem runner.
+     * @param invoker probe invoker name
+     * @return option
      */
     public static Option useOwnKarafExamSystemConfiguration(String invoker) {
         return new KarafExamSystemConfigurationOption(invoker);
@@ -64,6 +67,7 @@ public final class KarafDistributionOption {
      * we take the freedom of adding a console logger and changing the log level directly. IF you
      * like to configure the file manually (or had so in your distribution) add this option to avoid
      * any automatic modifications to this file!
+     * @return option
      */
     public static Option doNotModifyLogConfiguration() {
         return new DoNotModifyLogOption();
@@ -72,6 +76,8 @@ public final class KarafDistributionOption {
     /**
      * This option allows to configure the start level of the bundles in the exam features
      * descriptor.
+     * @param startLevel bundle start level
+     * @return option
      */
     public static Option useOwnExamBundlesStartLevel(int startLevel) {
         return new ExamBundlesStartLevel(startLevel);
@@ -80,6 +86,7 @@ public final class KarafDistributionOption {
     /**
      * Returns an option object which can be used to configure the -Dkaraf.startLocalConsole and
      * -Dkaraf.startRemoteShell options. By default both are true.
+     * @return option
      */
     public static KarafDistributionConfigurationConsoleOption configureConsole() {
         return new KarafDistributionConfigurationConsoleOption(null, null);
@@ -88,6 +95,7 @@ public final class KarafDistributionOption {
     /**
      * Returns an option object which can be used to configure the security, especially the MBeanServerBuilder.
      * By default, it's disabled.
+     * @return option
      */
     public static KarafDistributionConfigurationSecurityOption configureSecurity() {
         return new KarafDistributionConfigurationSecurityOption(null);
@@ -97,6 +105,10 @@ public final class KarafDistributionOption {
      * Configures which distribution options to use. Relevant are the frameworkURL, the
      * frameworkName and the Karaf version since all of those params are relevant to decide which
      * wrapper configurations to use.
+     * @param frameworkURL frameworkURL
+     * @param name framework name
+     * @param karafVersion Karaf version
+     * @return option
      */
     public static KarafDistributionBaseConfigurationOption karafDistributionConfiguration(
         String frameworkURL, String name, String karafVersion) {
@@ -107,17 +119,22 @@ public final class KarafDistributionOption {
      * Configures which distribution options to use. Relevant are the frameworkURL, the
      * frameworkName and the Karaf version since all of those params are relevant to decide which
      * wrapper configurations to use.
+     * @return option
      */
     public static KarafDistributionBaseConfigurationOption karafDistributionConfiguration() {
         return new KarafDistributionConfigurationOption();
     }
 
     /**
-     * This option allows to configure each configuration fille based on the karaf.home location.
+     * This option allows to configure each configuration file based on the karaf.home location.
      * The value is "put". Which means it is either replaced or added.
-     * <p/>
+     * <p>
      * If you like to extend an option (e.g. make a=b to a=b,c) please make use of the
      * {@link KarafDistributionConfigurationFileExtendOption}.
+     * @param configurationFilePath configuration file path
+     * @param key property key
+     * @param value property value
+     * @return option
      */
     public static Option editConfigurationFilePut(String configurationFilePath, String key,
         String value) {
@@ -125,11 +142,14 @@ public final class KarafDistributionOption {
     }
 
     /**
-     * This option allows to configure each configuration fille based on the karaf.home location.
+     * This option allows to configure each configuration file based on the karaf.home location.
      * The value is "put". Which means it is either replaced or added.
-     * <p/>
+     * <p>
      * If you like to extend an option (e.g. make a=b to a=b,c) please make use of the
      * {@link KarafDistributionConfigurationFileExtendOption}.
+     * @param configurationPointer reference to configuration file
+     * @param value new value
+     * @return option
      */
     public static Option editConfigurationFilePut(ConfigurationPointer configurationPointer,
         String value) {
@@ -141,6 +161,7 @@ public final class KarafDistributionOption {
      * value is "put" which means it is either replaced or added. For simpler configuration you can
      * add a file source. If you want to put all values from this file do not configure any
      * keysToUseFromSource; otherwise define them to use only those specific values.
+     * @return option array
      */
     public static Option[] editConfigurationFilePut(final String configurationFilePath,
         File source, String... keysToUseFromSource) {
@@ -192,9 +213,13 @@ public final class KarafDistributionOption {
      * This option allows to extend configurations in each configuration file based on the
      * karaf.home location. The value extends the current value (e.g. a=b to a=a,b) instead of
      * replacing it. If there is no current value it is added.
-     * <p/>
+     * <p>
      * If you would like to have add or replace functionality please use the
      * {@link KarafDistributionConfigurationFilePutOption} instead.
+     * @param configurationFilePath configuration file path
+     * @param key property key
+     * @param value property value
+     * @return option
      */
     public static Option editConfigurationFileExtend(String configurationFilePath, String key,
         String value) {
@@ -205,9 +230,10 @@ public final class KarafDistributionOption {
      * This option allows to extend configurations in each configuration file based on the
      * karaf.home location. The value extends the current value (e.g. a=b to a=a,b) instead of
      * replacing it. If there is no current value it is added.
-     * <p/>
+     * <p>
      * If you would like to have add or replace functionality please use the
      * {@link KarafDistributionConfigurationFilePutOption} instead.
+     * @return option
      */
     public static Option editConfigurationFileExtend(ConfigurationPointer configurationPointer,
         String value) {
@@ -219,6 +245,7 @@ public final class KarafDistributionOption {
      * value is "extend" which means it is either replaced or added. For simpler configuration you
      * can add a file source. If you want to put all values from this file do not configure any
      * keysToUseFromSource; otherwise define them to use only those specific values.
+     * @return option array
      */
     public static Option[] editConfigurationFileExtend(final String configurationFilePath,
         File source, String... keysToUseFromSource) {
@@ -236,6 +263,7 @@ public final class KarafDistributionOption {
      * This option allows to simply replace an entire configuration file with your own one. Simply
      * point to the configuration file you would like to have replaced and add the source file which
      * should replace it.
+     * @return option
      */
     public static Option replaceConfigurationFile(String configurationFilePath, File source) {
         return new KarafDistributionConfigurationFileReplacementOption(configurationFilePath,
@@ -245,6 +273,7 @@ public final class KarafDistributionOption {
     /**
      * Activates debugging on the embedded Karaf container using the standard 5005 port and holds
      * the vm till you've attached the debugger.
+     * @return option
      */
     public static Option debugConfiguration() {
         return debugConfiguration("5005", true);
@@ -253,6 +282,7 @@ public final class KarafDistributionOption {
     /**
      * A very simple and convinient method to set a specific log level without the need of configure
      * the specific option itself.
+     * @return option
      */
     public static Option logLevel(LogLevel logLevel) {
         return new LogLevelOption(logLevel);
@@ -261,6 +291,7 @@ public final class KarafDistributionOption {
     /**
      * A very simple and convinient method to set a specific log level without the need of configure
      * the specific option itself.
+     * @return option
      */
     public static LogLevelOption logLevel() {
         return new LogLevelOption();
@@ -268,6 +299,7 @@ public final class KarafDistributionOption {
 
     /**
      * Returns an easy option to activate and configure remote debugging for the Karaf container.
+     * @return option
      */
     public static Option debugConfiguration(String port, boolean hold) {
         return new VMOption(format("-Xrunjdwp:transport=dt_socket,server=y,suspend=%s,address=%s",
@@ -275,14 +307,14 @@ public final class KarafDistributionOption {
     }
 
     /**
-     * Creates a {@link FeaturesScannerProvisionOption}.
+     * Creates a {@link KarafFeaturesOption}.
      * 
      * @param repositoryUrl
      *            url of features respository to be scanned
      * @param features
      *            features to be scanned
      * 
-     * @return file scanner option
+     * @return features option
      */
     public static KarafFeaturesOption features(final String repositoryUrl,
         final String... features) {
@@ -290,18 +322,17 @@ public final class KarafDistributionOption {
     }
 
     /**
-     * Creates a {@link FileScannerProvisionOption}.
+     * Creates a {@link KarafFeaturesOption}.
      * 
      * @param repositoryUrl
      *            url of features respository to be scanned
      * @param features
      *            features to be scanned
      * 
-     * @return file scanner option
+     * @return features option
      */
     public static KarafFeaturesOption features(final UrlReference repositoryUrl,
         final String... features) {
         return new KarafFeaturesOption(repositoryUrl, features);
     }
-
 }

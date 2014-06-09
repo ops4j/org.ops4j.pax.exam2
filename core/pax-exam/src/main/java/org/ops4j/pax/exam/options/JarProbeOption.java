@@ -84,12 +84,12 @@ public class JarProbeOption implements Option {
     /**
      * Adds the given resources from the current class path to the JAR.
      * 
-     * @param klass
+     * @param resourcePaths
      *            list of resource paths, relative to the class path root
      * @return {@code this} for fluent syntax
      */
-    public JarProbeOption resources(String... resourcePath) {
-        for (String resource : resourcePath) {
+    public JarProbeOption resources(String... resourcePaths) {
+        for (String resource : resourcePaths) {
             resources.add(resource);
         }
         return this;
@@ -98,8 +98,8 @@ public class JarProbeOption implements Option {
     /**
      * Adds the given resources from the current class path to the WAR in {@code META-INF/}.
      * 
-     * @param klass
-     *            list of resource paths, relative to the class path root
+     * @param resourcePath
+     *            resource path, relative to the class path root
      * @return {@code this} for fluent syntax
      */
     public JarProbeOption metaInfResource(String resourcePath) {

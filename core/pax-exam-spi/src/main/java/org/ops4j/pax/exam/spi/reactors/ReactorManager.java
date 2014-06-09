@@ -70,7 +70,8 @@ import org.slf4j.LoggerFactory;
  * the test probe, where applicable.
  * 
  * <p>
- * This class was factored out from the JUnit4TestRunner of Pax Exam 2.x and does not depend on JUnit.
+ * This class was factored out from the JUnit4TestRunner of Pax Exam 2.x and does not depend on
+ * JUnit.
  * <p>
  * TODO check if there are any concurrency issues. Some methods are synchronized, which is just
  * inherited from the 2.1.0 implementation. The use cases are not quite clear.
@@ -157,6 +158,8 @@ public class ReactorManager {
 
     /**
      * Returns the singleton ReactorManager instance.
+     * 
+     * @return reactor manager
      */
     public static synchronized ReactorManager getInstance() {
         if (instance == null) {
@@ -170,20 +173,21 @@ public class ReactorManager {
      * {@code Configuration} methods of the class are added to the reactor.
      * 
      * @param _testClass
+     *            test class
      * @param testClassInstance
-     * @return
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws IOException
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
+     *            instance of test class
+     * @return reactor
      */
-    public synchronized ExamReactor prepareReactor(Class<?> _testClass, Object testClassInstance)
-        throws InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+    public synchronized ExamReactor prepareReactor(Class<?> _testClass, Object testClassInstance) {
         this.currentTestClass = _testClass;
         this.reactor = createReactor(_testClass);
         testClasses.add(_testClass);
-        addConfigurationsToReactor(_testClass, testClassInstance);
+        try {
+            addConfigurationsToReactor(_testClass, testClassInstance);
+        }
+        catch (IllegalAccessException | InvocationTargetException exc) {
+            throw new TestContainerException(exc);
+        }
         return reactor;
     }
 
@@ -191,12 +195,8 @@ public class ReactorManager {
      * Stages the reactor for the current class.
      * 
      * @return staged reactor
-     * @throws IOException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
      */
-    public StagedExamReactor stageReactor() throws IOException, InstantiationException,
-        IllegalAccessException {
+    public StagedExamReactor stageReactor() {
         StagedExamReactor stagedReactor = reactor.stage(getStagingFactory(currentTestClass));
         return stagedReactor;
     }
@@ -222,14 +222,16 @@ public class ReactorManager {
      * invokes them, adding the returned configuration to the reactor.
      * 
      * @param testClass
+     *            test class
      * @param testClassInstance
+     *            instance of test class
      * @throws IllegalAccessException
+     *             when configuration method is not public
      * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IOException
+     *             when configuration method cannot be invoked
      */
     private void addConfigurationsToReactor(Class<?> testClass, Object testClassInstance)
-        throws IllegalAccessException, InvocationTargetException, IOException {
+        throws IllegalAccessException, InvocationTargetException {
         numConfigurations = 0;
         Method[] methods = testClass.getMethods();
         for (Method m : methods) {
@@ -260,23 +262,25 @@ public class ReactorManager {
      * class.
      * 
      * @param testClass
-     * @return
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @return staging factory
      */
-    private StagedExamReactorFactory getStagingFactory(Class<?> testClass)
-        throws InstantiationException, IllegalAccessException {
+    private StagedExamReactorFactory getStagingFactory(Class<?> testClass) {
         ExamReactorStrategy strategy = testClass.getAnnotation(ExamReactorStrategy.class);
         String strategyName = cm.getProperty(EXAM_REACTOR_STRATEGY_KEY);
         StagedExamReactorFactory fact;
-        if (strategy != null) {
-            fact = strategy.value()[0].newInstance();
-            return fact;
-        }
+        try {
+            if (strategy != null) {
+                fact = strategy.value()[0].newInstance();
+                return fact;
+            }
 
-        fact = annotationHandler.createStagedReactorFactory(testClass);
-        if (fact != null) {
-            return fact;
+            fact = annotationHandler.createStagedReactorFactory(testClass);
+            if (fact != null) {
+                return fact;
+            }
+        }
+        catch (IllegalAccessException | InstantiationException exc) {
+            throw new TestContainerException(exc);
         }
 
         if (strategyName == null) {
@@ -299,12 +303,9 @@ public class ReactorManager {
      * Creates an unstaged reactor for the given test class.
      * 
      * @param testClass
-     * @return
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @return unstaged reactor
      */
-    private DefaultExamReactor createReactor(Class<?> testClass) throws InstantiationException,
-        IllegalAccessException {
+    private DefaultExamReactor createReactor(Class<?> testClass) {
         return new DefaultExamReactor(system, createsTestContainerFactory(testClass));
     }
 
@@ -314,44 +315,47 @@ public class ReactorManager {
      * TODO Do we really need this?
      * 
      * @param testClass
-     * @return
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return test container factory
      */
-    private TestContainerFactory createsTestContainerFactory(Class<?> testClass)
-        throws IllegalAccessException, InstantiationException {
-        ExamFactory f = testClass.getAnnotation(ExamFactory.class);
+    private TestContainerFactory createsTestContainerFactory(Class<?> testClass) {
+        try {
+            ExamFactory f = testClass.getAnnotation(ExamFactory.class);
 
-        TestContainerFactory fact;
-        if (f != null) {
-            fact = f.value().newInstance();
+            TestContainerFactory fact;
+            if (f != null) {
+                fact = f.value().newInstance();
+                return fact;
+            }
+
+            fact = annotationHandler.createTestContainerFactory(testClass);
+
+            if (fact == null) {
+                // default:
+                fact = PaxExamRuntime.getTestContainerFactory();
+            }
             return fact;
         }
-
-        fact = annotationHandler.createTestContainerFactory(testClass);
-
-        if (fact == null) {
-            // default:
-            fact = PaxExamRuntime.getTestContainerFactory();
+        catch (InstantiationException | IllegalAccessException exc) {
+            throw new TestContainerException(exc);
         }
-        return fact;
     }
 
     /**
      * Lazily creates a probe builder. The same probe builder will be reused for all test classes,
      * unless the default builder is overridden in a given class.
      * 
-     * @param testClassInstance
-     * @return
-     * @throws IOException
-     * @throws ExamConfigurationException
+     * @param testClassInstance instance of test class
+     * @return probe builder
+     * @throws IOException when probe cannot be created
+     * @throws ExamConfigurationException when user-defined probe cannot be created
      */
     public TestProbeBuilder createProbeBuilder(Object testClassInstance) throws IOException,
         ExamConfigurationException {
         if (defaultProbeBuilder == null) {
             defaultProbeBuilder = system.createProbe();
         }
-        TestProbeBuilder probeBuilder = overwriteWithUserDefinition(currentTestClass, testClassInstance);
+        TestProbeBuilder probeBuilder = overwriteWithUserDefinition(currentTestClass,
+            testClassInstance);
         if (probeBuilder.getTempDir() == null) {
             probeBuilder.setTempDir(defaultProbeBuilder.getTempDir());
         }
@@ -466,7 +470,7 @@ public class ReactorManager {
     /**
      * Finds an injector factory and creates an injector.
      * 
-     * @return
+     * @return injector
      */
     private Injector findInjector() {
         InjectorFactory injectorFactory = ServiceProviderFinder

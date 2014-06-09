@@ -43,7 +43,9 @@ public class ZipBuilder {
      * must call {@link #close()} to release these resources.
      * 
      * @param zipFile
+     *            archive file to be created
      * @throws IOException
+     *             on I/O error
      */
     public ZipBuilder(File zipFile) throws IOException {
         this.os = new FileOutputStream(zipFile);
@@ -53,13 +55,13 @@ public class ZipBuilder {
     /**
      * Recursively adds a directory tree to the archive. The archive must not be closed.
      * <p>
-     * Example:<br/>
+     * Example:<br>
      * 
      * <pre>
      * sourceDir = /opt/work/classes
      * targetDir = WEB-INF/classes
      * 
-     * /opt/work/classes/com/acme/Foo.class -> WEB-INF/classes/com/acme/Foo.class
+     * /opt/work/classes/com/acme/Foo.class -&gt; WEB-INF/classes/com/acme/Foo.class
      * </pre>
      * 
      * @param sourceDir
@@ -70,6 +72,7 @@ public class ZipBuilder {
      * 
      * @return this for fluent syntax
      * @throws IOException
+     *             on I/O error
      */
     public ZipBuilder addDirectory(File sourceDir, String targetDir) throws IOException {
         addDirectory(sourceDir, sourceDir, jarOutputStream);
@@ -79,7 +82,7 @@ public class ZipBuilder {
     /**
      * Adds a file to the archive. The archive must not be closed.
      * <p>
-     * Example:<br/>
+     * Example:<br>
      * 
      * <pre>
      * sourceFile = C:\opt\work\deps\foo.jar
@@ -89,12 +92,13 @@ public class ZipBuilder {
      * 
      * @param sourceFile
      *            File to be added
-     * @param targetDir
+     * @param targetFile
      *            Relative path for the file within the archive. Regardless of the OS, this path
      *            must use slashes ('/') as separators.
      * 
      * @return this for fluent syntax
      * @throws IOException
+     *             on I/O error
      */
     public ZipBuilder addFile(File sourceFile, String targetFile) throws IOException {
         FileInputStream fis = new FileInputStream(sourceFile);
@@ -110,6 +114,7 @@ public class ZipBuilder {
      * added after calling this method.
      * 
      * @throws IOException
+     *             on I/O error
      */
     public void close() throws IOException {
         if (jarOutputStream != null) {
@@ -180,8 +185,11 @@ public class ZipBuilder {
      * Example: For root {@code C:\work} and file {@code C:\work\com\example\Foo.class}, the result
      * is {@code com/example/Foo.class}
      * 
+     * @param root
+     *            root directory
      * @param file
-     * @return
+     *            relative path
+     * @return normalized file path
      */
     private String normalizePath(File root, File file) {
         String relativePath = file.getPath().substring(root.getPath().length() + 1);

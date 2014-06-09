@@ -45,12 +45,13 @@ public class PersistenceContextProvider {
     /**
      * Use a producer method so that CDI will find this EntityManager.
      * 
-     * @return
-     * @throws IOException
+     * @param emf
+     *            entity manager factory
+     * @return entity manager
      */
     @Produces
     @RequestScoped
-    public EntityManager getEntityManager(EntityManagerFactory emf) throws IOException {
+    public EntityManager getEntityManager(EntityManagerFactory emf) {
         log.debug("producing EntityManager");
         return emf.createEntityManager();
     }

@@ -34,6 +34,7 @@ public class KarafDistributionConfigurationConsoleOption implements Option {
 
     /**
      * Sets the -Dkaraf.startLocalConsole to true
+     * @return this for fluent syntax
      */
     public KarafDistributionConfigurationConsoleOption startLocalConsole() {
         startLocalConsole = true;
@@ -42,6 +43,7 @@ public class KarafDistributionConfigurationConsoleOption implements Option {
 
     /**
      * Sets the -Dkaraf.startLocalConsole to false
+     * @return this for fluent syntax
      */
     public KarafDistributionConfigurationConsoleOption ignoreLocalConsole() {
         startLocalConsole = false;
@@ -50,6 +52,7 @@ public class KarafDistributionConfigurationConsoleOption implements Option {
 
     /**
      * Sets the -Dkaraf.startRemoteShell to true
+     * @return this for fluent syntax
      */
     public KarafDistributionConfigurationConsoleOption startRemoteShell() {
         startRemoteShell = true;
@@ -58,6 +61,7 @@ public class KarafDistributionConfigurationConsoleOption implements Option {
 
     /**
      * Sets the -Dkaraf.startRemoteShell to false
+     * @return this for fluent syntax
      */
     public KarafDistributionConfigurationConsoleOption ignoreRemoteShell() {
         startRemoteShell = false;

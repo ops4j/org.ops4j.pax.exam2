@@ -66,6 +66,8 @@ public class WarBuilder {
     /**
      * Constructs a WAR builder for the given option.
      * 
+     * @param tempDir
+     *            temporary directory
      * @param option
      *            WAR probe option
      */
@@ -123,8 +125,8 @@ public class WarBuilder {
      * Otherwise the file is named <code>$&#123;uuid&#125;.jar</code>, where {@code uuid} represents a random
      * {@link UUID}.
      * 
-     * @param file
-     * @return
+     * @param root root directory with archive contents
+     * @return archive file
      * @throws IOException
      */
     private File toJar(File root) throws IOException {
@@ -136,10 +138,6 @@ public class WarBuilder {
         return jar;
     }
 
-    /**
-     * @param root
-     * @return
-     */
     private String findArtifactName(File root) {
         File pomProperties = FileFinder.findFile(root, "pom.properties");
         if (pomProperties != null) {

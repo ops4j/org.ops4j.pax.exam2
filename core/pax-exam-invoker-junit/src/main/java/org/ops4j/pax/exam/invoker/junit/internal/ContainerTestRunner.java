@@ -48,6 +48,7 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
      *            test class to be run
      * @param injector
      *            injector for injecting dependencies
+     * @throws InitializationError when test class cannot be initialized           
      */
     public ContainerTestRunner(Class<?> klass, Injector injector) throws InitializationError {
         super(klass);

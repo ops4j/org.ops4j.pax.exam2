@@ -121,8 +121,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * 
      * @param system
      *            Pax Exam system configuration
-     * @param frameworkFactory
-     *            OSGi framework factory.
      */
     public EmbeddedGlassFishTestContainer(ExamSystem system) {
         this.system = system;
@@ -307,7 +305,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * Reads the first port number from the domain.xml configuration.
      * 
      * @param domainConfig
-     * @return
+     * @return port number as string
      */
     private String getPortNumber(File domainConfig) {
         try {

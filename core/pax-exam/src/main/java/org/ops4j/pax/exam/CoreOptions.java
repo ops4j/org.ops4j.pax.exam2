@@ -496,6 +496,7 @@ public class CoreOptions {
      * 
      * @param key
      *            system property key
+     * @return option that propagates system properties
      */
     public static PropagateSystemPropertyOption propagateSystemProperty(final String key) {
         return new PropagateSystemPropertyOption(key);
@@ -510,6 +511,7 @@ public class CoreOptions {
      * 
      * @param keys
      *            list of system property keys
+     * @return option that propagates system properties
      */
     public static Option propagateSystemProperties(final String... keys) {
 
@@ -623,6 +625,8 @@ public class CoreOptions {
     /**
      * Creates a {@link CleanCachesOption}.
      * 
+     * @param value
+     *            should caches be cleaned?
      * @return clean caches option
      */
     public static CleanCachesOption cleanCaches(boolean value) {
@@ -811,6 +815,7 @@ public class CoreOptions {
      * @param artifactId
      *            artifact ID
      * @param version
+     *            artifact version
      * @return Maven artifact option
      */
     public static MavenArtifactDeploymentOption mavenWar(final String groupId,
@@ -826,6 +831,7 @@ public class CoreOptions {
      * @param artifactId
      *            artifact ID
      * @param version
+     *            artifact version
      * @return Maven artifact option
      */
     public static MavenArtifactDeploymentOption mavenJar(final String groupId,
@@ -841,6 +847,7 @@ public class CoreOptions {
      * @param artifactId
      *            artifact ID
      * @param version
+     *            artifact version
      * @return Maven artifact option
      */
     public static MavenArtifactDeploymentOption mavenRar(final String groupId,

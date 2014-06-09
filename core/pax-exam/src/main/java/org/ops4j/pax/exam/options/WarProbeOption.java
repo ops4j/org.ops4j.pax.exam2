@@ -126,7 +126,7 @@ public class WarProbeOption implements Option {
      * Adds the library from the URL to the WAR. The URL is assumed to reference a JAR. The JAR will
      * be downloaded if required and its contents will be copied to {@code WEB-INF/lib}.
      * 
-     * @param libraryURL
+     * @param libraryUrl
      *            URL referencing a library JAR
      * @return {@code this} for fluent syntax
      */
@@ -157,8 +157,8 @@ public class WarProbeOption implements Option {
      * required, and then its exploded contents are copied to the root of the WAR. All overlays are
      * copied in the given order. All overlay are copied before any libraries, classes or resources.
      * 
-     * @param overlayPath
-     *            path to overlay
+     * @param overlayUrl
+     *            URL to overlay
      * @return {@code this} for fluent syntax
      */
     public WarProbeOption overlay(UrlReference overlayUrl) {
@@ -184,12 +184,12 @@ public class WarProbeOption implements Option {
     /**
      * Adds the given resources from the current class path to the WAR in {@code WEB-INF/classes}.
      * 
-     * @param klass
+     * @param resourcePaths
      *            list of resource paths, relative to the class path root
      * @return {@code this} for fluent syntax
      */
-    public WarProbeOption resources(String... resourcePath) {
-        for (String resource : resourcePath) {
+    public WarProbeOption resources(String... resourcePaths) {
+        for (String resource : resourcePaths) {
             resources.add(resource);
         }
         return this;
@@ -198,8 +198,8 @@ public class WarProbeOption implements Option {
     /**
      * Adds the given resourcs from the current class path to the WAR in {@code META-INF/}.
      * 
-     * @param klass
-     *            list of resource paths, relative to the class path root
+     * @param resourcePath
+     *            resource path, relative to the class path root
      * @return {@code this} for fluent syntax
      */
     public WarProbeOption metaInfResource(String resourcePath) {
@@ -210,8 +210,8 @@ public class WarProbeOption implements Option {
     /**
      * Adds the given resource from the current class path to the WAR in {@code WEB-INF/}.
      * 
-     * @param klass
-     *            list of resource paths, relative to the class path root
+     * @param resourcePath
+     *            resource path, relative to the class path root
      * @return {@code this} for fluent syntax
      */
     public WarProbeOption webInfResource(String resourcePath) {
@@ -280,7 +280,7 @@ public class WarProbeOption implements Option {
      * <p>
      * Internal API, do no use in application code.
      * 
-     * @return
+     * @return true if libs shall be added from the classpath
      */
     public boolean isClassPathEnabled() {
         return useClasspath;

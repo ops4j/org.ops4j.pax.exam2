@@ -238,7 +238,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
      * @param testClassInstance
      * @param probe
      * @param s
-     * @return
+     * @return test address
      */
     private TestAddress delegateTest(Object testClassInstance, TestProbeBuilder probe,
         FrameworkMethod s) {

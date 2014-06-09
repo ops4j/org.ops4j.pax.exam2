@@ -103,7 +103,7 @@ public class PaxExamRuntime {
      * @param configurationClassName
      *            fully qualified class name of a configuration class.
      * @return started test container
-     * @throws Exception
+     * @throws Exception when options cannot be parsed
      */
     public static TestContainer createContainer(String configurationClassName) throws Exception {
         Option[] options = getConfigurationOptions(configurationClassName);
@@ -292,7 +292,7 @@ public class PaxExamRuntime {
      * 
      * @param args
      *            command line argument
-     * @throws Exception
+     * @throws Exception when options cannot be parsed
      */
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {

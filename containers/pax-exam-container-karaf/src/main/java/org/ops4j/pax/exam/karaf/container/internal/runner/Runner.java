@@ -33,7 +33,7 @@ public interface Runner {
                               final String[] opts, final String[] classPath, final String main, final String options, final boolean security);
 
     /**
-     * Shutsdown the runner again.
+     * Shutdown the runner again.
      */
     void shutdown();
 

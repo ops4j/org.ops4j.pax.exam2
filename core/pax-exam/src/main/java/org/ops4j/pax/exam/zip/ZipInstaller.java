@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Downloads a ZIP archive from a given URL and unpacks it into a given directory.
+ * 
  * @author Harald Wellmann
  *
  */
@@ -41,8 +42,9 @@ public class ZipInstaller {
 
     /**
      * Constructs installer with archive URL and install path.
-     * @param zipUrl
-     * @param installRoot
+     * 
+     * @param zipUrl archive URL
+     * @param installRoot install root directory
      */
     public ZipInstaller(URL zipUrl, String installRoot) {
         this.zipUrl = zipUrl;
@@ -53,7 +55,9 @@ public class ZipInstaller {
      * Constructs installer with archive URL and install directory.
      * 
      * @param zipUrl
-     * @param installRoot
+     *            archive URL
+     * @param installDir
+     *            install directory
      */
     public ZipInstaller(URL zipUrl, File installDir) {
         this.zipUrl = zipUrl;
@@ -62,7 +66,8 @@ public class ZipInstaller {
 
     /**
      * Download and unpacks the archive.
-     * @throws IOException
+     * 
+     * @throws IOException on I/O errors
      */
     public void downloadAndInstall() throws IOException {
         installDir.mkdirs();

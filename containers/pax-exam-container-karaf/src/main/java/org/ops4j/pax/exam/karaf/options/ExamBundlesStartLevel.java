@@ -27,6 +27,9 @@ public class ExamBundlesStartLevel implements Option {
 
     /**
      * Sets the start level of the bundles in the generated exam features descriptor.
+     * 
+     * @param startLevel
+     *            start level
      */
     public ExamBundlesStartLevel(int startLevel) {
         this.startLevel = startLevel;

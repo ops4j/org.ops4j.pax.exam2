@@ -74,7 +74,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
      *            of container
      * @param registry
      *            RMI registry to look at
-     * @param rmiLookupTimeout
+     * @param timeout
      *            timeout for looking up the remote bundle context via RMI (cannot be null)
      */
     public RemoteBundleContextClientImpl(final String name, final Integer registry,

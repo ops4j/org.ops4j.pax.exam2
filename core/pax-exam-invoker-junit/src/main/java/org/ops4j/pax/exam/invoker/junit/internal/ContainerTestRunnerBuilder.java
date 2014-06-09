@@ -30,8 +30,6 @@ public class ContainerTestRunnerBuilder extends RunnerBuilder {
      * Constructs a request for the given class which will be injected with dependencies from the
      * given bundle context by the given injector
      * 
-     * @param testClass
-     *            test class to be run
      * @param injector
      *            injector for injecting dependencies
      * @param index

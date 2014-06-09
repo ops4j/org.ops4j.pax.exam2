@@ -45,6 +45,9 @@ public interface RepositoryOption extends ValueOption<String> {
     /**
      * Defines repository identifier to be referenced in Maven settings.
      * 
+     * @param id
+     *            repository identifier
+     * 
      * @return this for fluent API
      */
     RepositoryOption id(String id);

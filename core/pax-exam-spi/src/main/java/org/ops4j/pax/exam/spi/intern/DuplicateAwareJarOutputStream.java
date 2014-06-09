@@ -29,7 +29,7 @@ import java.util.zip.ZipEntry;
  * This is a more convenient JarOutputStream that imits any writing of duplicate entries. If someone
  * tries to do so, it just does not write anything. Be aware that this could be a source of trouble
  * - but it simplifies merging jars with first come first serve policy.
- * <p/>
+ * <p>
  * Implementation note: some silly class init starvation prevents constructor initialization of
  * entrynames..
  * 

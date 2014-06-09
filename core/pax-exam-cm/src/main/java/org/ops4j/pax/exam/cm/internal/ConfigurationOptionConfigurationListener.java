@@ -54,13 +54,6 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
 
     private Configuration factoryConfiguration;
 
-    /**
-     * @param properties
-     * @param pid
-     * @param factory
-     * @param override
-     * @param create
-     */
     public ConfigurationOptionConfigurationListener(String pid, Map<String, Object> properties,
         BundleContext context, boolean create, boolean override, boolean factory) {
         this.properties = properties;

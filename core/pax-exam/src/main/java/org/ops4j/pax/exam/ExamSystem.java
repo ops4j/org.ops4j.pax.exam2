@@ -34,7 +34,8 @@ public interface ExamSystem {
      * 
      * @param optionType
      *            type of option to be retrieved.
-     * 
+     * @param <T>
+     *            option type
      * @return option matching the parameter type T or null if no option was found. Implementations
      *         may rule of their own how to react when multiple values are found (check their
      *         javadoc).
@@ -47,6 +48,8 @@ public interface ExamSystem {
      * 
      * @param optionType
      *            type of option to be retrieved.
+     * @param <T>
+     *            option type
      * @return options matching the parameter type T. If none was found, this method returns an
      *         empty array.
      */
