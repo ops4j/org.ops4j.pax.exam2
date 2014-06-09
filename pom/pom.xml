@@ -585,12 +585,6 @@
 
             <!-- for dependency convergence -->
             <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-provider-api</artifactId>
-                <version>2.5</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
                 <version>3.0.15</version>
@@ -714,36 +708,6 @@
                 <groupId>org.eclipse.aether</groupId>
                 <artifactId>aether-api</artifactId>
                 <version>${dependency.aether.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-impl</artifactId>
-                <version>${dependency.aether.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-spi</artifactId>
-                <version>${dependency.aether.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-util</artifactId>
-                <version>${dependency.aether.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sonatype.plexus</groupId>
-                <artifactId>plexus-cipher</artifactId>
-                <version>1.7</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sonatype.plexus</groupId>
-                <artifactId>plexus-sec-dispatcher</artifactId>
-                <version>1.4</version>
             </dependency>
 
             <dependency>
