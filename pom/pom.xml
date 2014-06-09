@@ -627,24 +627,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.xbean</groupId>
-                <artifactId>xbean-reflect</artifactId>
-                <version>${dependency.xbean.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.xbean</groupId>
-                <artifactId>xbean-asm4-shaded</artifactId>
-                <version>${dependency.xbean.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.xbean</groupId>
-                <artifactId>xbean-finder-shaded</artifactId>
-                <version>${dependency.xbean.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.deltaspike.core</groupId>
                 <artifactId>deltaspike-core-api</artifactId>
                 <version>${dependency.deltaspike.version}</version>
