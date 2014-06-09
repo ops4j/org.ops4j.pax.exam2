@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.junit.impl;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,19 +80,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
             addTestsToReactor(examReactor, klass, testClassInstance);
             stagedReactor = manager.stageReactor();
         }
-        catch (InstantiationException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (IllegalAccessException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (InvocationTargetException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (IOException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (ExamConfigurationException exc) {
+        catch (InstantiationException | IllegalAccessException | IOException | ExamConfigurationException exc) {
             throw new InitializationError(exc);
         }
     }

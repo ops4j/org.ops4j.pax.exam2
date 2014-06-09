@@ -19,7 +19,6 @@ package org.ops4j.pax.exam.spi;
 
 import static org.ops4j.pax.exam.CoreOptions.options;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,8 +66,7 @@ public class DefaultExamReactor implements ExamReactor {
         probes.add(builder);
     }
 
-    public synchronized StagedExamReactor stage(StagedExamReactorFactory factory)
-        throws IOException {
+    public synchronized StagedExamReactor stage(StagedExamReactorFactory factory) {
         LOG.debug("Staging reactor with probes: " + probes.size() + " using strategy: " + factory);
         List<TestContainer> containers = new ArrayList<TestContainer>();
 

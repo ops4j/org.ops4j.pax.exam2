@@ -17,9 +17,6 @@
  */
 package org.ops4j.pax.exam.junit.impl;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -62,16 +59,7 @@ public class InjectingRunner extends BlockJUnit4ClassRunner {
             manager.prepareReactor(klass, testClassInstance);
             stagedReactor = manager.stageReactor();
         }
-        catch (InstantiationException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (IllegalAccessException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (InvocationTargetException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (IOException exc) {
+        catch (InstantiationException | IllegalAccessException exc) {
             throw new InitializationError(exc);
         }
     }

@@ -36,6 +36,7 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.TimeoutOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
@@ -132,10 +133,15 @@ public class DefaultExamSystem implements ExamSystem {
      * Create a new system based on *this*. The forked System remembers the forked instances in
      * order to clear resources up (if desired).
      */
-    public ExamSystem fork(Option[] options) throws IOException {
-        ExamSystem sys = new DefaultExamSystem(combine(combinedOptions, options));
-        subsystems.add(sys);
-        return sys;
+    public ExamSystem fork(Option[] options) {
+        try {
+            ExamSystem sys = new DefaultExamSystem(combine(combinedOptions, options));
+            subsystems.add(sys);
+            return sys;
+        }
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
+        }
     }
 
     /**

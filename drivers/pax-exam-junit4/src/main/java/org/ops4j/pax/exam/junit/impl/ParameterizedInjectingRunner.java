@@ -16,8 +16,6 @@
  */
 package org.ops4j.pax.exam.junit.impl;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +25,8 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.Suite;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -36,9 +34,9 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 
 /**
- * JUnit runner for parameterized Pax Exam tests without an invoker. This runner is
- * used for CDI mode only.
- * <p> 
+ * JUnit runner for parameterized Pax Exam tests without an invoker. This runner is used for CDI
+ * mode only.
+ * <p>
  * See {@link Parameterized} for more details on specifying parameter sets.
  * <p>
  * Based on {@code org.junit.runners.Parameterized}.
@@ -62,25 +60,11 @@ public class ParameterizedInjectingRunner extends Suite {
         manager = ReactorManager.getInstance();
         manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
 
-        try {
-            manager.prepareReactor(klass, null);
-            stagedReactor = manager.stageReactor();
+        manager.prepareReactor(klass, null);
+        stagedReactor = manager.stageReactor();
 
-            Parameters parameters = getParametersMethod().getAnnotation(Parameters.class);
-            createRunnersForParameters(allParameters(), parameters.name());
-        }
-        catch (InstantiationException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (IllegalAccessException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (InvocationTargetException exc) {
-            throw new InitializationError(exc);
-        }
-        catch (IOException exc) {
-            throw new InitializationError(exc);
-        }
+        Parameters parameters = getParametersMethod().getAnnotation(Parameters.class);
+        createRunnersForParameters(allParameters(), parameters.name());
     }
 
     @Override

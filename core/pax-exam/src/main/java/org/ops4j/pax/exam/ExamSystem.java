@@ -66,7 +66,7 @@ public interface ExamSystem {
      * @throws IOException
      *             in case creation of the new {@link ExamSystem} fails. (IO related).
      */
-    ExamSystem fork(Option[] options) throws IOException;
+    ExamSystem fork(Option[] options);
 
     /**
      * @return the basic directory that Exam should use to look at user-defaults.
