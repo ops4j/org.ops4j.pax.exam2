@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * configuration changes
  */
 public class ConfigurationOptionConfigurationListener implements ConfigurationListener,
-    ServiceTrackerCustomizer {
+    ServiceTrackerCustomizer<ConfigurationAdmin, ConfigurationAdmin> {
 
     private static final Logger LOG = LoggerFactory
         .getLogger(ConfigurationOptionConfigurationListener.class);
@@ -67,8 +67,8 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
     @Override
     public void configurationEvent(ConfigurationEvent event) {
         if (!factory && override && event.getPid().equals(pid)) {
-            ServiceReference reference = event.getReference();
-            ConfigurationAdmin service = (ConfigurationAdmin) context.getService(reference);
+            ServiceReference<ConfigurationAdmin> reference = event.getReference();
+            ConfigurationAdmin service = context.getService(reference);
             if (service != null) {
                 try {
                     checkIfConfigurationNeeded(service);
@@ -101,7 +101,6 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
             }
             else {
                 Configuration configuration = service.getConfiguration(pid, null);
-                @SuppressWarnings("unchecked")
                 Dictionary<String, Object> dictionary = configuration.getProperties();
                 if (dictionary != null) {
                     boolean update = false;
@@ -163,7 +162,7 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
     }
 
     @Override
-    public ConfigurationAdmin addingService(ServiceReference reference) {
+    public ConfigurationAdmin addingService(ServiceReference<ConfigurationAdmin> reference) {
         ConfigurationAdmin service = (ConfigurationAdmin) context.getService(reference);
         if (service != null) {
             checkIfConfigurationNeeded(service);
@@ -172,12 +171,12 @@ public class ConfigurationOptionConfigurationListener implements ConfigurationLi
     }
 
     @Override
-    public void modifiedService(ServiceReference reference, Object service) {
+    public void modifiedService(ServiceReference<ConfigurationAdmin> reference, ConfigurationAdmin service) {
         // don't care
     }
 
     @Override
-    public void removedService(ServiceReference reference, Object service) {
+    public void removedService(ServiceReference<ConfigurationAdmin> reference, ConfigurationAdmin service) {
         if (factoryConfiguration != null) {
             // We delete it here, just in case the ConfigAdmin is restarted so we are not ending up
             // with two factory configs

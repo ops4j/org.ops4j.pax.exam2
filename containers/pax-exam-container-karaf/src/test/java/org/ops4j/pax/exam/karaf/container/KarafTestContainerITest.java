@@ -55,7 +55,7 @@ public class KarafTestContainerITest {
     @Test
     public void checkKarafSystemService() throws Exception {
         assertThat(bc, is(notNullValue()));
-        ServiceReference serviceRef = bc
+        ServiceReference<?> serviceRef = bc
             .getServiceReference("org.apache.karaf.system.SystemService");
         Object service = bc.getService(serviceRef);
         assertThat(service, is(notNullValue()));

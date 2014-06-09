@@ -33,7 +33,7 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class ConfigurationOptionActivator implements BundleActivator {
 
-    private ServiceTracker serviceTracker;
+    private ServiceTracker<ConfigurationAdmin, ConfigurationAdmin> serviceTracker;
 
     @Override
     public void start(BundleContext context) throws Exception {
@@ -51,7 +51,7 @@ public class ConfigurationOptionActivator implements BundleActivator {
                 ConfigurationOptionConfigurationListener listener = new ConfigurationOptionConfigurationListener(
                     pid, overrides, context, create, override, factory);
                 context.registerService(ConfigurationListener.class.getName(), listener, null);
-                serviceTracker = new ServiceTracker(context, ConfigurationAdmin.class.getName(),
+                serviceTracker = new ServiceTracker<ConfigurationAdmin, ConfigurationAdmin>(context, ConfigurationAdmin.class,
                     listener);
                 serviceTracker.open();
             }
