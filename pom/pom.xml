@@ -35,12 +35,9 @@
         <dependency.karaf.version>3.0.0</dependency.karaf.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
-        <dependency.openwebbeans.version>1.2.2</dependency.openwebbeans.version>
-        <dependency.resin.version>4.0.30</dependency.resin.version>
         <dependency.spring.version>4.0.5.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.8</dependency.testng.version>
         <dependency.tomcat.version>8.0.8</dependency.tomcat.version>
-        <dependency.tomee.version>1.6.0.1</dependency.tomee.version>
         <dependency.weld.version>2.1.2.Final</dependency.weld.version>
         <dependency.wildfly.version>8.1.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
@@ -346,12 +343,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.openwebbeans.test</groupId>
-                <artifactId>cditest-owb</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.jboss.weld.se</groupId>
                 <artifactId>weld-se-core</artifactId>
                 <version>${dependency.weld.version}</version>
@@ -416,60 +407,6 @@
                         <artifactId>cdi-api</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-ee</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-ee-common</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-ejb</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-impl</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-jsf</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-spi</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-resource</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-web</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-tomcat7</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
             </dependency>
 
             <dependency>
