@@ -47,18 +47,6 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>openwebbeans</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <profiles>
-                                        <profile>openwebbeans</profile>
-                                    </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/openwebbeans</cloneProjectsTo>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>weld2</id>
                                 <goals>
                                     <goal>run</goal>
@@ -91,29 +79,6 @@
         </profile>
 
         <profile>
-            <id>openwebbeans</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>openwebbeans</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-openwebbeans</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jul-to-slf4j</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>weld2</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -139,7 +104,6 @@
                 <dependency>
                     <groupId>javax.enterprise</groupId>
                     <artifactId>cdi-api</artifactId>
-                    <version>1.1-20130918</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
