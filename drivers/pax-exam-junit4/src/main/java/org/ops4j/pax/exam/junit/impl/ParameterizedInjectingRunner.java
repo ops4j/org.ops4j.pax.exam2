@@ -58,8 +58,6 @@ public class ParameterizedInjectingRunner extends Suite {
         super(klass, NO_RUNNERS);
 
         manager = ReactorManager.getInstance();
-        manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
-
         manager.prepareReactor(klass, null);
         stagedReactor = manager.stageReactor();
 

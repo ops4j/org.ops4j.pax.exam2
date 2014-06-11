@@ -84,7 +84,6 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
         super(klass);
         LOG.info("creating PaxExam runner for {}", klass);
         manager = ReactorManager.getInstance();
-        manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
         try {
             ExamReactor examReactor = manager.prepareReactor(klass, null);
             addTestsToReactor(examReactor, klass, null);

@@ -135,8 +135,6 @@ public class ReactorManager {
 
     private boolean waitForAfterSuiteEvent;
 
-    private AnnotationHandler annotationHandler;
-
     private int numConfigurations;
 
     /**
@@ -254,7 +252,7 @@ public class ReactorManager {
 
     private boolean isConfiguration(Method m) {
         Configuration conf = m.getAnnotation(Configuration.class);
-        return (conf != null) || annotationHandler.isConfiguration(m);
+        return (conf != null);
     }
 
     /**
@@ -271,11 +269,6 @@ public class ReactorManager {
         try {
             if (strategy != null) {
                 fact = strategy.value()[0].newInstance();
-                return fact;
-            }
-
-            fact = annotationHandler.createStagedReactorFactory(testClass);
-            if (fact != null) {
                 return fact;
             }
         }
@@ -321,13 +314,11 @@ public class ReactorManager {
         try {
             ExamFactory f = testClass.getAnnotation(ExamFactory.class);
 
-            TestContainerFactory fact;
+            TestContainerFactory fact = null;
             if (f != null) {
                 fact = f.value().newInstance();
                 return fact;
             }
-
-            fact = annotationHandler.createTestContainerFactory(testClass);
 
             if (fact == null) {
                 // default:
@@ -392,7 +383,7 @@ public class ReactorManager {
 
     private boolean isProbeBuilder(Method m) {
         ProbeBuilder builder = m.getAnnotation(ProbeBuilder.class);
-        return (builder != null) || annotationHandler.isProbeBuilder(m);
+        return (builder != null);
     }
 
     /**
@@ -476,13 +467,5 @@ public class ReactorManager {
         InjectorFactory injectorFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(InjectorFactory.class);
         return injectorFactory.createInjector();
-    }
-
-    /**
-     * @param annotationHandler
-     *            the annotationHandler to set
-     */
-    public void setAnnotationHandler(AnnotationHandler annotationHandler) {
-        this.annotationHandler = annotationHandler;
     }
 }

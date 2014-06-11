@@ -75,7 +75,6 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
         try {
             Object testClassInstance = klass.newInstance();
             manager = ReactorManager.getInstance();
-            manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
             ExamReactor examReactor = manager.prepareReactor(klass, testClassInstance);
             addTestsToReactor(examReactor, klass, testClassInstance);
             stagedReactor = manager.stageReactor();

@@ -55,7 +55,6 @@ public class InjectingRunner extends BlockJUnit4ClassRunner {
         try {
             Object testClassInstance = klass.newInstance();
             manager = ReactorManager.getInstance();
-            manager.setAnnotationHandler(new JUnitLegacyAnnotationHandler());
             manager.prepareReactor(klass, testClassInstance);
             stagedReactor = manager.stageReactor();
         }
