@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam.spi;
 
-import java.io.IOException;
-
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
 
@@ -61,7 +59,6 @@ public interface ExamReactor {
      *            to be used to stage. (usually a strategy)
      * 
      * @return new reactor that can be used to derive TestContainer instances.
-     * @throws IOException on I/O error
      */
     StagedExamReactor stage(StagedExamReactorFactory factory);
 }

@@ -62,9 +62,6 @@ public interface ExamSystem {
      * @return a forked {@link ExamSystem} instance (new instance). The parent ExamSysten (the one
      *         you called fork on) will notice and take care to bring down forked instances on
      *         cleanup (for example).
-     * 
-     * @throws IOException
-     *             in case creation of the new {@link ExamSystem} fails. (IO related).
      */
     ExamSystem fork(Option[] options);
 

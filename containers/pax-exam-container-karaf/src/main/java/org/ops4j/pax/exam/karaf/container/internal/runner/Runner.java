@@ -25,12 +25,44 @@ public interface Runner {
 
     /**
      * Starts the environment in the specific environment.
+     * 
+     * @param environment
+     *            environment variables
+     * @param karafBase
+     *            Karaf base directory
+     * @param javaHome
+     *            Java home directory
+     * @param javaOpts
+     *            Java VM options
+     * @param javaEndorsedDirs
+     *            Java endorsed directories
+     * @param javaExtDirs
+     *            Java extension directories
+     * @param karafHome
+     *            Karaf home directory
+     * @param karafData
+     *            Karaf data directory
+     * @param karafEtc
+     *            Karaf etc directory
+     * @param karafOpts
+     *            Karaf options
+     * @param opts
+     *            options
+     * @param classPath
+     *            Java class path
+     * @param main
+     *            main class
+     * @param options
+     *            program arguments
+     * @param security
+     *            security flag
      */
     // CHECKSTYLE:SKIP - more than 10 params
-    void exec(final String[] environment, final File karafBase, final String javaHome, final String[] javaOpts,
-                              final String[] javaEndorsedDirs,
-                              final String[] javaExtDirs, final String karafHome, final String karafData, final String karafEtc, final String[] karafOpts,
-                              final String[] opts, final String[] classPath, final String main, final String options, final boolean security);
+    void exec(final String[] environment, final File karafBase, final String javaHome,
+        final String[] javaOpts, final String[] javaEndorsedDirs, final String[] javaExtDirs,
+        final String karafHome, final String karafData, final String karafEtc,
+        final String[] karafOpts, final String[] opts, final String[] classPath, final String main,
+        final String options, final boolean security);
 
     /**
      * Shutdown the runner again.

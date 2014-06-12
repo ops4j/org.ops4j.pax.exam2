@@ -26,8 +26,11 @@ public class KarafExamSystemConfigurationOption implements Option {
     private String invoker;
 
     /**
-     * define the pax.exam.invoker property as system property in the environment during creating the subproject.
-     * @param ínvoker name of probe invoker
+     * Define the pax.exam.invoker property as system property in the environment when creating the
+     * subproject.
+     * 
+     * @param invoker
+     *            name of probe invoker
      */
     public KarafExamSystemConfigurationOption(String invoker) {
         this.invoker = invoker;
