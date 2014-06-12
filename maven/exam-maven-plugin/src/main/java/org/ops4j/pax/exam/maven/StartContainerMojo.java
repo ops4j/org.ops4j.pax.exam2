@@ -16,8 +16,8 @@
  */
 package org.ops4j.pax.exam.maven;
 
-import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_RUNNER_KEY;
 import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_PORT_KEY;
+import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_RUNNER_KEY;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,19 +28,18 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.ops4j.exec.DefaultJavaRunner;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 /**
- * Starts a Pax Exam Container in server mode for the given configuration class. The container
- * is running in a background process which should be terminated by the {@code stop-container}
- * goal.
- * 
- * @goal start-container
- * @phase pre-integration-test
- * @requiresDependencyResolution test
- * @description Starts Pax Exam in server mode
+ * Starts a Pax Exam Container in server mode for the given configuration class. The container is
+ * running in a background process which should be terminated by the {@code stop-container} goal.
  */
+@Mojo(name = "start-container", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST)
 public class StartContainerMojo extends AbstractMojo {
 
     /**
@@ -50,37 +49,26 @@ public class StartContainerMojo extends AbstractMojo {
 
     /**
      * Mojo execution injected through Maven.
-     * 
-     * @parameter default-value="${mojoExecution}"
-     * @readonly
      */
+    @Parameter(defaultValue = "${mojoExecution}", required = true)
     private MojoExecution mojoExecution;
 
     /**
      * The base directory of the project being built. This can be obtained in your
      * {@code @Configuration} method integration test via System.getProperty("basedir").
-     * 
-     * @parameter default-value="${basedir}"
      */
+    @Parameter(defaultValue = "${basedir}")
     private File basedir;
 
     /**
      * Fully qualified name of a Java class with a {@code @Configuration} method, providing the test
      * container configuration.
-     * 
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String configClass;
 
-    /**
-     * Test classpath.
-     * 
-     * @parameter expression="${project.testClasspathElements}"
-     * @required
-     */
+    @Parameter(defaultValue = "${project.testClasspathElements}", required = true)
     private String[] classpathElements;
-
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -88,7 +76,7 @@ public class StartContainerMojo extends AbstractMojo {
         for (String cp : classpathElements) {
             getLog().debug(cp);
         }
-        
+
         DefaultJavaRunner javaRunner = new DefaultJavaRunner(false);
         String basedirProp = String.format("-D%s=%s", BASEDIR, basedir.getAbsolutePath());
         String[] vmOptions = new String[] { basedirProp };
@@ -97,15 +85,15 @@ public class StartContainerMojo extends AbstractMojo {
         String[] args = new String[] { configClass, Integer.toString(port) };
 
         // inherit working directory from this process
-        javaRunner.exec(vmOptions, classpathElements, PaxExamRuntime.class.getName(), args, javaHome, null);
-        
+        javaRunner.exec(vmOptions, classpathElements, PaxExamRuntime.class.getName(), args,
+            javaHome, null);
+
         @SuppressWarnings("unchecked")
         Map<String, Object> context = getPluginContext();
-        
+
         context.put(TEST_CONTAINER_RUNNER_KEY + mojoExecution.getExecutionId(), javaRunner);
         context.put(TEST_CONTAINER_PORT_KEY + mojoExecution.getExecutionId(), port);
     }
-
 
     private int getFreePort() throws MojoExecutionException {
         try {

@@ -17,35 +17,27 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 
 /**
- * @goal generate-link-files
- * @phase generate-test-resources
- * @requiresDependencyResolution test
  */
+@Mojo(name = "generate-link-files", defaultPhase = LifecyclePhase.GENERATE_TEST_RESOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateLinkFilesMojo extends AbstractMojo {
 
-    /**
-     * @parameter default-value="${project.artifacts}"
-     * @readonly
-     * @required
-     */
+    @Parameter(defaultValue = "${project.artifacts}", readonly = true, required = true)
     private Set<Artifact> projectArtifacts;
 
-    /**
-     * @parameter default-value="${project.build}"
-     * @readonly
-     * @required
-     */
+    @Parameter(defaultValue = "${project.build}", readonly = true, required = true)
     private Build build;
 
-    /**
-     * @parameter default-value="${project.build.directory}/pax-exam-links"
-     */
+    @Parameter(defaultValue = "${project.build.directory}/pax-exam-links")
     private File outputDirectory;
 
     @SuppressWarnings("unchecked")

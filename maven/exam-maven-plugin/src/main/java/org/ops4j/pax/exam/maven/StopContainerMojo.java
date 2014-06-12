@@ -16,8 +16,8 @@
  */
 package org.ops4j.pax.exam.maven;
 
-import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_RUNNER_KEY;
 import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_PORT_KEY;
+import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_RUNNER_KEY;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,23 +31,18 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.ops4j.exec.DefaultJavaRunner;
 
 /**
  * Stops a Pax Exam Container started by the start-container goal.
- * 
- * @goal stop-container
- * @phase post-integration-test
- * @description Stops a Pax Exam Container started by the start-container goal.
  */
+@Mojo(name = "stop-container", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class StopContainerMojo extends AbstractMojo {
 
-    /**
-     * Mojo execution injected through Maven.
-     * 
-     * @parameter default-value="${mojoExecution}"
-     * @readonly
-     */
+    @Parameter(defaultValue = "${mojoExecution}", readonly = true)
     private MojoExecution mojoExecution;
 
     @Override
