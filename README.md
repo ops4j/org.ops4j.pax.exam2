@@ -3,25 +3,16 @@ Pax Exam
 
 Thanks for looking into Pax Exam.
 This is the official source repository of the OPS4J Pax Exam project for 
-release lines 2.x and 3.x.
+release lines 2.x, 3.x and 4.x.
 It's licensed under the Apache Software License 2.0 by the OPS4J community.
 
 ## Documentation
 
-* <http://team.ops4j.org/wiki/display/PAXEXAM3/Documentation>
-
-You may want to have a look at the Pax Exam 2 Learning project for more help and introductory content:
-
-* <https://github.com/tonit/Learn-PaxExam>
-
-Or check it out directly:
-
-    git clone git://github.com/tonit/Learn-PaxExam.git
-
+* <http://team.ops4j.org/wiki/display/PAXEXAM4/Documentation>
 
 ## Build
 
-You'll need a machine with Java 6+ and Apache Maven 3 installed.
+You'll need a machine with Java 7+ and Apache Maven 3 installed.
 
 Checkout:
 
@@ -29,10 +20,8 @@ Checkout:
     git checkout master
 
 Branches:
-* v2.x   : Maintenance for Pax Exam 2.x (2.6.0 and higher)
-* v3.0.x : 3.0.x releases
-* v3.1.x : 3.1.x releases
-* master : ongoing development for 3.5.0 and higher 
+* v3.x   : Maintenance for Pax Exam 3.x 
+* master : ongoing development for 4.1.0 and higher 
 
 Run Build:
 
@@ -46,7 +35,7 @@ Run build with integration tests
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 3.4.0.
+The current release of Pax Exam is 4.0.0.
 
 ## Issue Tracking
 
@@ -56,7 +45,7 @@ The current release of Pax Exam is 3.4.0.
 
 We have a continuous integration build set up here:
 
-* <http://ci.ops4j.org/jenkins/job/org.ops4j.pax.exam3>
+* <http://ci.ops4j.org/jenkins/job/org.ops4j.pax.exam-4.x>
 
 Snapshot artifacts are being published to:
 
