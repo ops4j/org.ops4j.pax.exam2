@@ -49,6 +49,8 @@ public class SingletonStagedReactor implements StagedExamReactor {
     private List<TestProbeBuilder> probes;
     private Map<TestAddress, TestContainer> testToContainerMap;
 
+   private boolean awaitingBeforeSuite = true;
+
     private SingletonStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
         testToContainerMap = new LinkedHashMap<TestAddress, TestContainer>();
         testContainers = containers;
@@ -124,6 +126,7 @@ public class SingletonStagedReactor implements StagedExamReactor {
 
     @Override
     public void beforeSuite() {
+        awaitingBeforeSuite = false;
         for (TestContainer container : testContainers) {
             container.start();
 
@@ -144,6 +147,7 @@ public class SingletonStagedReactor implements StagedExamReactor {
         for (TestContainer container : testContainers) {
             container.stop();
         }
+        awaitingBeforeSuite = true;
     }
 
     @Override
@@ -153,5 +157,10 @@ public class SingletonStagedReactor implements StagedExamReactor {
 
     @Override
     public void afterClass() {
+    }
+
+    @Override
+    public boolean awaitsBeforeSuite() {
+       return awaitingBeforeSuite;
     }
 }

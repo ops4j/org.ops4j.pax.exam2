@@ -47,4 +47,5 @@ public interface StagedExamReactor {
 
     void afterSuite();
 
+    boolean awaitsBeforeSuite();
 }

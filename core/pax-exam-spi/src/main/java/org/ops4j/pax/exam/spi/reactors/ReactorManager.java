@@ -124,11 +124,6 @@ public class ReactorManager {
     private Set<Class<?>> testClasses = new HashSet<Class<?>>();
 
     /**
-     * Has the suite been started? Set to true when the first test class is about to run.
-     */
-    private boolean suiteStarted;
-
-    /**
      * Configuration property access.
      */
     private ConfigurationManager cm;
@@ -418,7 +413,6 @@ public class ReactorManager {
 
     public void beforeSuite(StagedExamReactor stagedReactor) {
         stagedReactor.beforeSuite();
-        suiteStarted = true;
         waitForAfterSuiteEvent = true;
     }
 
@@ -430,18 +424,16 @@ public class ReactorManager {
     public void afterClass(StagedExamReactor stagedReactor, Class<?> klass) {
         stagedReactor.afterClass();
         testClasses.remove(klass);
-        if (!waitForAfterSuiteEvent && testClasses.isEmpty()) {
+        if (!waitForAfterSuiteEvent && !hasMoreTestClasses()) {
             LOG.info("suite finished");
             stagedReactor.afterSuite();
-            suiteStarted = false;
             testClasses.clear();
             testAddressToMethodMap.clear();
         }
     }
 
     public void beforeClass(StagedExamReactor stagedReactor, Object testClassInstance) {
-        if (!suiteStarted) {
-            suiteStarted = true;
+        if (stagedReactor.awaitsBeforeSuite()) {
             stagedReactor.beforeSuite();
         }
         stagedReactor.beforeClass();
@@ -467,5 +459,9 @@ public class ReactorManager {
         InjectorFactory injectorFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(InjectorFactory.class);
         return injectorFactory.createInjector();
+    }
+
+    protected boolean hasMoreTestClasses() {
+       return !testClasses.isEmpty();
     }
 }
