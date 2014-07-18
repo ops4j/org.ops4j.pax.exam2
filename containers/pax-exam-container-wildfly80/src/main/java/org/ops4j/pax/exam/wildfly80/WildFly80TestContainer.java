@@ -268,13 +268,7 @@ public class WildFly80TestContainer implements TestContainer {
                 + "/Pax-Exam-Probe/"));
             deployModules();
         }
-        catch (ServerStartException exc) {
-            throw new TestContainerException("Problem starting test container.", exc);
-        }
-        catch (URISyntaxException exc) {
-            throw new TestContainerException("Problem starting test container.", exc);
-        }
-        catch (UnknownHostException exc) {
+        catch (ServerStartException | URISyntaxException | UnknownHostException exc) {
             throw new TestContainerException("Problem starting test container.", exc);
         }
         return this;
@@ -317,9 +311,6 @@ public class WildFly80TestContainer implements TestContainer {
                 unpackedRoot.renameTo(installDir);
                 installWildFlyModules();
                 installConfiguration();
-            }
-            catch (MalformedURLException exc) {
-                throw new TestContainerException(exc);
             }
             catch (IOException exc) {
                 throw new TestContainerException("error during WildFly 8.0 installation", exc);
@@ -425,16 +416,7 @@ public class WildFly80TestContainer implements TestContainer {
             mgmtPort += portOffset;
             
         }
-        catch (ParserConfigurationException exc) {
-            throw new IllegalArgumentException(exc);
-        }
-        catch (SAXException exc) {
-            throw new IllegalArgumentException(exc);
-        }
-        catch (IOException exc) {
-            throw new IllegalArgumentException(exc);
-        }
-        catch (XPathExpressionException exc) {
+        catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException exc) {
             throw new IllegalArgumentException(exc);
         }
     }
