@@ -104,7 +104,19 @@ public class WildFly80TestContainer implements TestContainer {
      */
     public static final String WILDFLY80_MODULES_KEY = "pax.exam.wildfly80.modules";
     
+    /**
+     * Configuration property for system properties to be loaded begore starting WildFly.
+     * See {@link ConfigurationManager#loadSystemProperties(String)} for syntax details.
+     */
     public static final String WILDFLY80_SYSTEM_PROPERTIES_KEY = "pax.exam.wildfly80.system.properties";
+
+    /**
+     * Configuration property for JBoss Module loader system packages. Classes from these packages
+     * will be loaded from the system class loader. The value is a comma-separated list of
+     * package names. Each comma may be followed by whitespace. The default value is
+     * {@code org.jboss.logging, org.slf4j}.
+     */
+    public static final String WILDFLY80_SYSTEM_PACKAGES_KEY = "pax.exam.wildfly80.system.packages";
     
 
     private static final Logger LOG = LoggerFactory.getLogger(WildFly80TestContainer.class);
@@ -258,8 +270,7 @@ public class WildFly80TestContainer implements TestContainer {
         parseServerConfiguration(configFile);
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
         server = EmbeddedServerFactory.create(wildFlyHome, null, null,
-        // packages to be loaded from system class loader
-            "org.jboss.logging");
+            getSystemPackages());
         try {
             server.start();
             deploymentManager = ServerDeploymentManager.Factory.create(
@@ -272,6 +283,17 @@ public class WildFly80TestContainer implements TestContainer {
             throw new TestContainerException("Problem starting test container.", exc);
         }
         return this;
+    }
+    
+    /** 
+     * 
+     * @return packages to be loaded from system class loader
+     */
+    private String[] getSystemPackages() {
+        String systemPackagesString = cm.getProperty(WILDFLY80_SYSTEM_PACKAGES_KEY, 
+            "org.jboss.logging, org.slf4j").trim();
+        String[] systemPackages = systemPackagesString.split(",\\s*");
+        return systemPackages;
     }
 
     public void installContainer() {
