@@ -78,6 +78,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam</artifactId>
             <version>${project.version}</version>
