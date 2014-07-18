@@ -169,7 +169,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
                 continue;
             }
             Class<?> frameworkMethodClass = frameworkMethod.getMethod().getDeclaringClass();
-            String className = frameworkMethodClass.getName();
+            String className = getTestClass().getJavaClass().getName();
             String methodName = frameworkMethod.getName();
 
             if (frameworkMethodClass.isAssignableFrom(getTestClass().getJavaClass())) {
