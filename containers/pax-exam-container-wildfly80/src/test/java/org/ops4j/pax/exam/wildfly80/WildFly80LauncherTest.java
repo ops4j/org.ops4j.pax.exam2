@@ -39,6 +39,7 @@ public class WildFly80LauncherTest {
     @Test
     public void launchJBoss() throws ServerStartException, IOException, InterruptedException,
         ExecutionException {
+        System.setProperty("logging.configuration", "file:src/test/resources/logging.properties");
         System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         System.setProperty("org.jboss.logging.provider", "slf4j");
         System.setProperty("jboss.server.config.dir", "target/test-classes/wildfly80-config");
