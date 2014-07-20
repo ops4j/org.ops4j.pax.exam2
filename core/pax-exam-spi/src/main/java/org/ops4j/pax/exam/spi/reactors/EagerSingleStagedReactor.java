@@ -138,4 +138,9 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
 
     public void beforeSuite() {
     }
+
+    @Override
+    public boolean awaitsBeforeSuite() {
+       return false;
+    }
 }
