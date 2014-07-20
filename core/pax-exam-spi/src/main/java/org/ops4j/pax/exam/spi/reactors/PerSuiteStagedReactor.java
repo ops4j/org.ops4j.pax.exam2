@@ -71,4 +71,9 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
     public void beforeSuite() {
         delegate.beforeSuite();
     }
+
+    @Override
+    public boolean awaitsBeforeSuite() {
+       return delegate.awaitsBeforeSuite();
+    }
 }

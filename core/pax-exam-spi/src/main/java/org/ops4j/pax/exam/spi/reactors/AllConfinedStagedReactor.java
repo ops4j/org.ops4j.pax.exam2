@@ -120,4 +120,9 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
     public void beforeSuite() {
         // empty
     }
+
+   @Override
+   public boolean awaitsBeforeSuite() {
+      return false;
+   }
 }
