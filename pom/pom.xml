@@ -34,7 +34,7 @@
         <dependency.karaf.version>3.0.1</dependency.karaf.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
-        <dependency.spring.version>4.0.5.RELEASE</dependency.spring.version>
+        <dependency.spring.version>4.0.6.RELEASE</dependency.spring.version>
         <dependency.testng.version>6.8.8</dependency.testng.version>
         <dependency.tomcat.version>8.0.8</dependency.tomcat.version>
         <dependency.weld.version>2.1.2.Final</dependency.weld.version>
