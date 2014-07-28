@@ -29,7 +29,7 @@
         <dependency.aether.version>1.0.0.v20140518</dependency.aether.version>
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.0</dependency.atinject.version>
-        <dependency.deltaspike.version>0.7</dependency.deltaspike.version>
+        <dependency.deltaspike.version>1.0.1</dependency.deltaspike.version>
         <dependency.glassfish.version>4.0</dependency.glassfish.version>
         <dependency.karaf.version>3.0.0</dependency.karaf.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
