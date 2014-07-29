@@ -30,7 +30,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
+import java.rmi.NoSuchObjectException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,12 +49,14 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulator;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulatorFactory;
@@ -91,7 +98,6 @@ public class KarafTestContainer implements TestContainer {
         .version(Info.getPaxExamVersion()).type("xml");
 
     private final Runner runner;
-    private final RMIRegistry registry;
     private final ExamSystem system;
     private KarafDistributionBaseConfigurationOption framework;
     @SuppressWarnings("unused")
@@ -101,10 +107,11 @@ public class KarafTestContainer implements TestContainer {
 
     private File targetFolder;
 
-    public KarafTestContainer(ExamSystem system, RMIRegistry registry,
+    private Registry rgstry;
+
+    public KarafTestContainer(ExamSystem system,
         KarafDistributionBaseConfigurationOption framework, Runner runner) {
         this.framework = framework;
-        this.registry = registry;
         this.system = system;
         this.runner = runner;
     }
@@ -116,16 +123,24 @@ public class KarafTestContainer implements TestContainer {
 
             Option invokerConfiguration = getInvokerConfiguration();
 
+            //registry.selectGracefully();
+            FreePort freePort = new FreePort(21000, 21099);
+            int port = freePort.getPort();
+            LOGGER.debug("using RMI registry at port {}", port);
+            rgstry = LocateRegistry.createRegistry(port);
+
+            String host = InetAddress.getLocalHost().getHostName();
+            
             ExamSystem subsystem = system
                 .fork(options(
-                    systemProperty(RMI_HOST_PROPERTY).value(registry.getHost()),
-                    systemProperty(RMI_PORT_PROPERTY).value("" + registry.getPort()),
+                    systemProperty(RMI_HOST_PROPERTY).value(host),
+                    systemProperty(RMI_PORT_PROPERTY).value(Integer.toString(port)),
                     systemProperty(RMI_NAME_PROPERTY).value(name),
                     invokerConfiguration,
                     systemProperty(EXAM_INJECT_PROPERTY).value("true"),
                     editConfigurationFileExtend("etc/system.properties", "jline.shutdownhook",
                         "true")));
-            target = new RBCRemoteTarget(name, registry.getPort(), subsystem.getTimeout());
+            target = new RBCRemoteTarget(name, port, subsystem.getTimeout());
 
             System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
@@ -493,6 +508,18 @@ public class KarafTestContainer implements TestContainer {
                 if (runner != null) {
                     runner.shutdown();
                 }
+                try {
+                    UnicastRemoteObject.unexportObject(rgstry, true);
+                    /*
+                     * NOTE: javaRunner.waitForExit() works for Equinox and Felix, but not for Knopflerfish,
+                     * need to investigate why. OTOH, it may be better to kill the process as we're doing
+                     * now, just to be on the safe side.
+                     */
+                }
+                catch (NoSuchObjectException exc) {
+                    throw new TestContainerException(exc);
+                }
+                
             }
             else {
                 throw new RuntimeException("Container never came up");
