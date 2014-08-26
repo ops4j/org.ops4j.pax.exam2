@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileUtils;
 
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -45,6 +46,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.forked.provision.PlatformImpl;
+import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
@@ -52,6 +54,7 @@ import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
@@ -137,7 +140,30 @@ public class ForkedTestContainer implements TestContainer {
             List<String> vmArgs = createVmArguments();
             Map<String, String> systemProperties = createSystemProperties();
             Map<String, Object> frameworkProperties = createFrameworkProperties();
-            remoteFramework = frameworkFactory.fork(vmArgs, systemProperties, frameworkProperties);
+            List<String> beforeFrameworkClasspath = new ArrayList<>();
+            List<String> afterFrameworkClasspath = new ArrayList<>();
+
+            BootClasspathLibraryOption[] bootClasspathLibraryOptions = system
+                    .getOptions(BootClasspathLibraryOption.class);
+            for (BootClasspathLibraryOption bootClasspathLibraryOption : bootClasspathLibraryOptions) {
+                UrlReference libraryUrl = bootClasspathLibraryOption.getLibraryUrl();
+                String library = libraryUrl.getURL();
+
+                // verify that it exists...
+                if (!new File(library).exists()) {
+                    LOG.warn("BootClasspathLibrary not found: {}", library);
+                    continue;
+                }
+
+                if (bootClasspathLibraryOption.isAfterFramework()) {
+                    afterFrameworkClasspath.add(library);
+                } else {
+                    beforeFrameworkClasspath.add(library);
+                }
+            }
+
+            remoteFramework = frameworkFactory.fork(vmArgs, systemProperties, frameworkProperties,
+                    beforeFrameworkClasspath, afterFrameworkClasspath);
             remoteFramework.init();
             installAndStartBundles();
         }

@@ -63,6 +63,10 @@
             <artifactId>pax-swissbox-tracker</artifactId>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -118,13 +122,13 @@
 
     <build>
         <plugins>
-            <!-- copy the regression-pde-bundle so we have a bundle for 
-                testing -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <!-- copy the regression-pde-bundle so we have a bundle
+                            for testing -->
                         <id>copy-pde-bundle</id>
                         <goals>
                             <goal>copy</goal>
@@ -138,6 +142,22 @@
                                     <outputDirectory>${project.build.directory}/bundles</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- copy a non-OSGi jar file for boot classpath
+                            testing -->
+                        <id>copy-non-osgi</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.kohsuke.metainf-services</includeGroupIds>
+                            <includeArtifactIds>metainf-services</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/bundles</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <stripClassifier>true</stripClassifier>
+                            <prependGroupId>false</prependGroupId>
                         </configuration>
                     </execution>
                 </executions>

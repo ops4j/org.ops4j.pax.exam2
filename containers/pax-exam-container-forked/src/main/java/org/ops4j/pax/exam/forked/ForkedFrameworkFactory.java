@@ -93,10 +93,15 @@ public class ForkedFrameworkFactory {
      *            system properties for the forked Java VM
      * @param frameworkProperties
      *            framework properties for the remote framework
+     * @param beforeFrameworkClasspath
+     *            system classpath entries before the framework itself
+     * @param afterFrameworkClasspath
+     *            system classpath entries after the framework itself
      * @return remote framework
      */
     public RemoteFramework fork(List<String> vmArgs, Map<String, String> systemProperties,
-        Map<String, Object> frameworkProperties) {
+        Map<String, Object> frameworkProperties, List<String> beforeFrameworkClasspath,
+        List<String> afterFrameworkClasspath) {
         // TODO make port range configurable
         FreePort freePort = new FreePort(21000, 21099);
         port = freePort.getPort();
@@ -113,13 +118,31 @@ public class ForkedFrameworkFactory {
             String[] vmOptions = buildSystemProperties(vmArgs, systemPropsNew);
             String[] args = buildFrameworkProperties(frameworkProperties);
             javaRunner = new DefaultJavaRunner(false);
-            javaRunner.exec(vmOptions, buildClasspath(), RemoteFrameworkImpl.class.getName(), args,
-                getJavaHome(), null);
+            javaRunner.exec(vmOptions, buildClasspath(beforeFrameworkClasspath, afterFrameworkClasspath),
+                RemoteFrameworkImpl.class.getName(), args, getJavaHome(), null);
             return findRemoteFramework(port, rmiName);
         }
         catch (RemoteException | ExecutionException | URISyntaxException exc) {
             throw new TestContainerException(exc);
         }
+    }
+
+    /**
+     * Forks a Java VM process running an OSGi framework and returns a {@link RemoteFramework}
+     * handle to it.
+     * <p>
+     * 
+     * @param vmArgs
+     *            VM arguments
+     * @param systemProperties
+     *            system properties for the forked Java VM
+     * @param frameworkProperties
+     *            framework properties for the remote framework
+     * @return remote framework
+     */
+    public RemoteFramework fork(List<String> vmArgs, Map<String, String> systemProperties,
+        Map<String, Object> frameworkProperties) {
+        return fork(vmArgs, systemProperties, frameworkProperties, null, null);
     }
 
     private String[] buildSystemProperties(List<String> vmArgs, Map<String, String> systemProperties) {
@@ -151,11 +174,30 @@ public class ForkedFrameworkFactory {
         return javaHome;
     }
 
-    private String[] buildClasspath() throws URISyntaxException {
+    private String[] buildClasspath(List<String> beforeFrameworkClasspath,
+        List<String> afterFrameworkClasspath) throws URISyntaxException {
         String frameworkPath = toPath(frameworkFactory.getClass());
         String launcherPath = toPath(RemoteFrameworkImpl.class);
         String serviceLookupPath = toPath(ServiceLookup.class);
-        return new String[] { frameworkPath, launcherPath, serviceLookupPath };
+
+        int entries = (beforeFrameworkClasspath != null ? beforeFrameworkClasspath.size() : 0)
+            + 3 + (afterFrameworkClasspath != null ? afterFrameworkClasspath.size() : 0);
+        String[] classpath = new String[entries];
+        int i = 0;
+        if (beforeFrameworkClasspath != null) {
+            for (String beforeFrameworkLibrary : beforeFrameworkClasspath) {
+                classpath[i++] = beforeFrameworkLibrary;
+            }
+        }
+        classpath[i++] = frameworkPath;
+        classpath[i++] = launcherPath;
+        classpath[i++] = serviceLookupPath;
+        if (afterFrameworkClasspath != null) {
+            for (String afterFrameworkLibrary : afterFrameworkClasspath) {
+                classpath[i++] = afterFrameworkLibrary;
+            }
+        }
+        return classpath;
     }
 
     static String toPath(Class<?> klass) throws URISyntaxException {

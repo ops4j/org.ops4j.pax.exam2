@@ -19,20 +19,50 @@ package org.ops4j.pax.exam.forked;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.rmi.NotBoundException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.FrameworkFactory;
 
 public class ForkedFrameworkFactoryTest {
+
+    private File storage;
+
+    @Rule
+    public TestName test = new TestName();
+
+    @Before
+    public void beforeTest() {
+        storage = new File("target/storage/" + test.getMethodName());
+        storage.mkdirs();
+    }
+
+    @After
+    public void afterTest() throws IOException {
+        FileUtils.deleteDirectory(storage);
+        storage = null;
+    }
 
     @Test
     public void forkEquinox() throws BundleException, IOException, InterruptedException,
@@ -40,8 +70,6 @@ public class ForkedFrameworkFactoryTest {
         ServiceLoader<FrameworkFactory> loader = ServiceLoader.load(FrameworkFactory.class);
         FrameworkFactory frameworkFactory = loader.iterator().next();
 
-        File storage = new File("target/storage");
-        storage.mkdir();
         ForkedFrameworkFactory forkedFactory = new ForkedFrameworkFactory(frameworkFactory);
 
         Map<String, Object> frameworkProperties = new HashMap<String, Object>();
@@ -61,5 +89,70 @@ public class ForkedFrameworkFactoryTest {
         framework.stop();
 
         forkedFactory.join();
+    }
+
+    @Test
+    public void forkEquinoxWithBootClasspath() throws BundleException, IOException, InterruptedException,
+        NotBoundException, URISyntaxException {
+        ServiceLoader<FrameworkFactory> loader = ServiceLoader.load(FrameworkFactory.class);
+        FrameworkFactory frameworkFactory = loader.iterator().next();
+
+        ForkedFrameworkFactory forkedFactory = new ForkedFrameworkFactory(frameworkFactory);
+
+        
+        List<String> bootClasspath = Arrays.asList(
+                new File("target/bundles/metainf-services.jar").getCanonicalPath()
+        );
+
+        Map<String, Object> frameworkProperties = new HashMap<String, Object>();
+        frameworkProperties.put(Constants.FRAMEWORK_STORAGE, storage.getAbsolutePath());
+        frameworkProperties.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
+            "org.kohsuke.metainf_services");
+        RemoteFramework framework = forkedFactory.fork(Collections.<String> emptyList(),
+            Collections.<String, String> emptyMap(), frameworkProperties, null,
+            bootClasspath);
+        framework.start();
+
+        File testBundle = generateBundle();
+        long bundleId = framework.installBundle("file:" + testBundle.getAbsolutePath());
+        framework.startBundle(bundleId);
+
+        // START>>> not yet implemented
+        // framework.waitForState(bundleId, Bundle.ACTIVE, 1500);
+        Thread.sleep(3000);
+        // <<<END not yet implemented
+        
+        framework.stop();
+
+        forkedFactory.join();
+    }
+
+    private File generateBundle() throws IOException {
+        InputStream stream = TinyBundles.bundle().add(ClasspathTestActivator.class)
+                .set(Constants.BUNDLE_SYMBOLICNAME, "boot.classpath.test.generated")
+                .set(Constants.IMPORT_PACKAGE, "org.osgi.framework, org.kohsuke.metainf_services")
+                .set(Constants.BUNDLE_ACTIVATOR, ClasspathTestActivator.class.getName())
+                .build();
+
+        File bundle = new File("target/bundles/boot-classpath-generated.jar");
+        FileUtils.copyInputStreamToFile(stream, bundle);
+        return bundle;
+    }
+
+    public static class ClasspathTestActivator implements BundleActivator {
+
+        private final String className = "org.kohsuke.metainf_services.AnnotationProcessorImpl";
+
+        @Override
+        public void start(BundleContext bc) throws Exception {
+            Class<?> clazz = getClass().getClassLoader().loadClass(className);
+
+            if (clazz == null) {
+                throw new IllegalStateException("Class '" + className + "' not loaded");
+            }
+        }
+
+        @Override
+        public void stop(BundleContext bc) throws Exception {}
     }
 }
