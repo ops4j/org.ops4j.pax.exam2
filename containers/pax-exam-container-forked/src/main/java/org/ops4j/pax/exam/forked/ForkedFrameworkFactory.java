@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.forked;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
@@ -186,6 +187,10 @@ public class ForkedFrameworkFactory {
         int i = 0;
         if (beforeFrameworkClasspath != null) {
             for (String beforeFrameworkLibrary : beforeFrameworkClasspath) {
+                if (!new File(beforeFrameworkLibrary).exists()) {
+                    throw new TestContainerException(
+                            "Invalid boot classpath library: " + beforeFrameworkLibrary);
+                }
                 classpath[i++] = beforeFrameworkLibrary;
             }
         }
@@ -194,6 +199,10 @@ public class ForkedFrameworkFactory {
         classpath[i++] = serviceLookupPath;
         if (afterFrameworkClasspath != null) {
             for (String afterFrameworkLibrary : afterFrameworkClasspath) {
+                if (!new File(afterFrameworkLibrary).exists()) {
+                    throw new TestContainerException(
+                            "Invalid boot classpath library: " + afterFrameworkLibrary);
+                }
                 classpath[i++] = afterFrameworkLibrary;
             }
         }

@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.io.FileUtils;
 
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -145,20 +144,20 @@ public class ForkedTestContainer implements TestContainer {
 
             BootClasspathLibraryOption[] bootClasspathLibraryOptions = system
                     .getOptions(BootClasspathLibraryOption.class);
-            for (BootClasspathLibraryOption bootClasspathLibraryOption : bootClasspathLibraryOptions) {
-                UrlReference libraryUrl = bootClasspathLibraryOption.getLibraryUrl();
-                String library = libraryUrl.getURL();
 
-                // verify that it exists...
-                if (!new File(library).exists()) {
-                    LOG.warn("BootClasspathLibrary not found: {}", library);
-                    continue;
-                }
+            if (bootClasspathLibraryOptions != null && bootClasspathLibraryOptions.length > 0) {
+                // File tmpDir = new File(system.getTempFolder(), "boot-classpath");
+                // tmpDir.mkdirs();
 
-                if (bootClasspathLibraryOption.isAfterFramework()) {
-                    afterFrameworkClasspath.add(library);
-                } else {
-                    beforeFrameworkClasspath.add(library);
+                for (BootClasspathLibraryOption bootClasspathLibraryOption : bootClasspathLibraryOptions) {
+                    UrlReference libraryUrl = bootClasspathLibraryOption.getLibraryUrl();
+                    String library = localize(libraryUrl.getURL());
+
+                    if (bootClasspathLibraryOption.isAfterFramework()) {
+                        afterFrameworkClasspath.add(library);
+                    } else {
+                        beforeFrameworkClasspath.add(library);
+                    }
                 }
             }
 
@@ -357,6 +356,27 @@ public class ForkedTestContainer implements TestContainer {
             return localBundle.toURI().toURL().toString();
         }
         catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
+        }
+    }
+
+    private String localize(String url) {
+        try {
+            URL realUrl = new URL(url);
+            if (realUrl.getProtocol().equals("reference")) {
+                // must be "reference:file:..."
+                return new URL(realUrl.getPath()).getPath();
+            } else if (realUrl.getProtocol().equals("file")) {
+                return realUrl.getPath();
+            }
+            File artifact = platform.download(system.getTempFolder(), realUrl, url, false, false,
+                false, false);
+            return artifact.getCanonicalPath();
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (IOException exc) {
             throw new TestContainerException(exc);
         }
     }
