@@ -30,7 +30,7 @@
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>1.0.1</dependency.deltaspike.version>
-        <dependency.glassfish.version>4.0</dependency.glassfish.version>
+        <dependency.glassfish.version>4.1</dependency.glassfish.version>
         <dependency.karaf.version>3.0.1</dependency.karaf.version>
         <dependency.logback.version>1.0.6</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
