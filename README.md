@@ -35,7 +35,7 @@ Run build with integration tests
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 4.1.0.
+The current release of Pax Exam is 4.2.0.
 
 ## Issue Tracking
 
