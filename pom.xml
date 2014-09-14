@@ -56,6 +56,7 @@
                 <module>containers/pax-exam-container-wildfly80</module>
 
                 <module>maven/exam-maven-plugin</module>
+                <module>maven/archetypes/exam-osgi-archetype</module>
                 <module>maven/archetypes/exam-wildfly80-archetype</module>
 
             </modules>
