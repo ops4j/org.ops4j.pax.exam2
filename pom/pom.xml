@@ -713,7 +713,66 @@
                 </dependency>
             </dependencies>
         </profile>
+
+        <!-- Profiles for "Sonar" -->
+        <!-- The sonar profile should be activated by setting property 'sonar'. That's important because
+            we need to set an empty 'jacoco.argLine' otherwise. You can't define an empty default for
+            that property
+            in the global properties section because the empty value will override the value from Jacoco. -->
+        <profile>
+            <id>no-sonar</id>
+            <activation>
+                <property>
+                    <name>!sonar</name>
+                </property>
+            </activation>
+            <properties>
+                <jacoco.argLine />
+            </properties>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <property>
+                    <name>sonar</name>
+                </property>
+            </activation>
+            <properties>
+                <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+                <sonar.jacoco.reportPath>${user.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
+                <sonar.exclusions>**/*_.java,**/JtaTransactionStrategy.java</sonar.exclusions>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>jacoco</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>*_javassist_*</exclude>
+                                        <exclude>*$$generated</exclude>
+                                        <exclude>*$Proxy$*</exclude>
+                                    </excludes>
+                                    <append>true</append>
+                                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                                    <propertyName>jacoco.argLine</propertyName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
+
 
     <licenses>
         <license>
