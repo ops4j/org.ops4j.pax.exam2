@@ -78,7 +78,14 @@ public class Parser {
             props.put("driver", invokerType);
             ProbeInvokerFactory factory = ServiceLookup.getService(ctx, ProbeInvokerFactory.class,
                 props);
-            return factory.createProbeInvoker(ctx, expr);
+
+            ProbeInvoker invoker;
+            try {
+               invoker = factory.createProbeInvoker(ctx, expr);
+            } catch (Throwable cause) {
+               invoker = new DelayedFailureTestInvoker("Probe invoker creation failed.", cause);
+            }
+            return invoker;
         }
     }
 
