@@ -139,6 +139,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>wildfly90</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.glassfish.jersey.core</groupId>
+                    <artifactId>jersey-client</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
 

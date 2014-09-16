@@ -163,6 +163,7 @@
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
                         <osgi.console>6666</osgi.console>
+                        <pax.exam.wildfly80.home>${pax.exam.wildfly80.home}</pax.exam.wildfly80.home>
                     </systemProperties>
                 </configuration>
             </plugin>
