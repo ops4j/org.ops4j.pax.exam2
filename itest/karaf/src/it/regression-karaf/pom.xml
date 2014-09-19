@@ -114,6 +114,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -148,50 +160,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>equinox</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <!-- 
-               Karaf uses OSGi 4.3, but Exam defaults to 4.2.
-               The following dependencies keep Dependency Convergence happy. 
-            -->
-            <dependencies>
-                <dependency>
-                    <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.compendium</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>org.eclipse.osgi</artifactId>
-                    <version>3.8.0.v20120430-1750</version>
-                    <scope>provided</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>biz.aQute.bnd</groupId>
-                    <artifactId>bndlib</artifactId>
-                    <version>2.1.0</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.osgi</groupId>
-                            <artifactId>org.osgi.core</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 
 </project>
