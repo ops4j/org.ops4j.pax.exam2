@@ -45,6 +45,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.forked.provision.PlatformImpl;
+import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
@@ -52,6 +53,7 @@ import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
@@ -137,7 +139,30 @@ public class ForkedTestContainer implements TestContainer {
             List<String> vmArgs = createVmArguments();
             Map<String, String> systemProperties = createSystemProperties();
             Map<String, Object> frameworkProperties = createFrameworkProperties();
-            remoteFramework = frameworkFactory.fork(vmArgs, systemProperties, frameworkProperties);
+            List<String> beforeFrameworkClasspath = new ArrayList<>();
+            List<String> afterFrameworkClasspath = new ArrayList<>();
+
+            BootClasspathLibraryOption[] bootClasspathLibraryOptions = system
+                    .getOptions(BootClasspathLibraryOption.class);
+
+            if (bootClasspathLibraryOptions != null && bootClasspathLibraryOptions.length > 0) {
+                // File tmpDir = new File(system.getTempFolder(), "boot-classpath");
+                // tmpDir.mkdirs();
+
+                for (BootClasspathLibraryOption bootClasspathLibraryOption : bootClasspathLibraryOptions) {
+                    UrlReference libraryUrl = bootClasspathLibraryOption.getLibraryUrl();
+                    String library = localize(libraryUrl.getURL());
+
+                    if (bootClasspathLibraryOption.isAfterFramework()) {
+                        afterFrameworkClasspath.add(library);
+                    } else {
+                        beforeFrameworkClasspath.add(library);
+                    }
+                }
+            }
+
+            remoteFramework = frameworkFactory.fork(vmArgs, systemProperties, frameworkProperties,
+                    beforeFrameworkClasspath, afterFrameworkClasspath);
             remoteFramework.init();
             installAndStartBundles();
         }
@@ -331,6 +356,27 @@ public class ForkedTestContainer implements TestContainer {
             return localBundle.toURI().toURL().toString();
         }
         catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
+        }
+    }
+
+    private String localize(String url) {
+        try {
+            URL realUrl = new URL(url);
+            if (realUrl.getProtocol().equals("reference")) {
+                // must be "reference:file:..."
+                return new URL(realUrl.getPath()).getPath();
+            } else if (realUrl.getProtocol().equals("file")) {
+                return realUrl.getPath();
+            }
+            File artifact = platform.download(system.getTempFolder(), realUrl, url, false, false,
+                false, false);
+            return artifact.getCanonicalPath();
+        }
+        catch (MalformedURLException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (IOException exc) {
             throw new TestContainerException(exc);
         }
     }
