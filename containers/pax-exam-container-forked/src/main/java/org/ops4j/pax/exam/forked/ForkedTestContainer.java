@@ -143,26 +143,24 @@ public class ForkedTestContainer implements TestContainer {
             List<String> afterFrameworkClasspath = new ArrayList<>();
 
             BootClasspathLibraryOption[] bootClasspathLibraryOptions = system
-                    .getOptions(BootClasspathLibraryOption.class);
+                .getOptions(BootClasspathLibraryOption.class);
 
             if (bootClasspathLibraryOptions != null && bootClasspathLibraryOptions.length > 0) {
-                // File tmpDir = new File(system.getTempFolder(), "boot-classpath");
-                // tmpDir.mkdirs();
-
                 for (BootClasspathLibraryOption bootClasspathLibraryOption : bootClasspathLibraryOptions) {
                     UrlReference libraryUrl = bootClasspathLibraryOption.getLibraryUrl();
                     String library = localize(libraryUrl.getURL());
 
                     if (bootClasspathLibraryOption.isAfterFramework()) {
                         afterFrameworkClasspath.add(library);
-                    } else {
+                    }
+                    else {
                         beforeFrameworkClasspath.add(library);
                     }
                 }
             }
 
             remoteFramework = frameworkFactory.fork(vmArgs, systemProperties, frameworkProperties,
-                    beforeFrameworkClasspath, afterFrameworkClasspath);
+                beforeFrameworkClasspath, afterFrameworkClasspath);
             remoteFramework.init();
             installAndStartBundles();
         }
@@ -366,7 +364,8 @@ public class ForkedTestContainer implements TestContainer {
             if (realUrl.getProtocol().equals("reference")) {
                 // must be "reference:file:..."
                 return new URL(realUrl.getPath()).getPath();
-            } else if (realUrl.getProtocol().equals("file")) {
+            }
+            else if (realUrl.getProtocol().equals("file")) {
                 return realUrl.getPath();
             }
             File artifact = platform.download(system.getTempFolder(), realUrl, url, false, false,

@@ -44,7 +44,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public class ForkedTestContainerFactoryTest {
- 
+
     @Test
     public void withBootClasspathMvn() throws BundleException, IOException,
         InterruptedException, NotBoundException, URISyntaxException {
@@ -122,7 +122,7 @@ public class ForkedTestContainerFactoryTest {
         CoreOptions.provision("file:" + testBundle.getAbsolutePath());
 
         // this also starts it, so we get the errors...
-        long id = container.install(new FileInputStream(testBundle));
+        container.install(new FileInputStream(testBundle));
 
         container.stop();
     }

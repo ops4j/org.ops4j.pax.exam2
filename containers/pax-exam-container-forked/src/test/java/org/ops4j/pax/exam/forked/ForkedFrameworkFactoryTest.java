@@ -120,7 +120,7 @@ public class ForkedFrameworkFactoryTest {
         // framework.waitForState(bundleId, Bundle.ACTIVE, 1500);
         Thread.sleep(3000);
         // <<<END not yet implemented
-        
+
         framework.stop();
 
         forkedFactory.join();
@@ -142,7 +142,7 @@ public class ForkedFrameworkFactoryTest {
         frameworkProperties.put(Constants.FRAMEWORK_STORAGE, storage.getAbsolutePath());
         frameworkProperties.put(Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
             "org.kohsuke.metainf_services");
-        RemoteFramework framework = forkedFactory.fork(Collections.<String> emptyList(),
+        forkedFactory.fork(Collections.<String> emptyList(),
             Collections.<String, String> emptyMap(), frameworkProperties, null,
             bootClasspath);
     }
