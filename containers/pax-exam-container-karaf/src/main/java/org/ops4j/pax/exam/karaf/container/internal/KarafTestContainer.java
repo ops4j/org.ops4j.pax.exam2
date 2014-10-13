@@ -78,6 +78,7 @@ import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
+import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
@@ -130,7 +131,7 @@ public class KarafTestContainer implements TestContainer {
             rgstry = LocateRegistry.createRegistry(port);
 
             String host = InetAddress.getLocalHost().getHostName();
-            
+
             ExamSystem subsystem = system
                 .fork(options(
                     systemProperty(RMI_HOST_PROPERTY).value(host),
@@ -432,6 +433,14 @@ public class KarafTestContainer implements TestContainer {
         for (SystemPropertyOption systemPropertyOption : customProps) {
             karafPropertyFile.put(systemPropertyOption.getKey(), systemPropertyOption.getValue());
         }
+        for (PropagateSystemPropertyOption option : system.getOptions(PropagateSystemPropertyOption.class)) {
+            String key = option.getKey();
+            String value = System.getProperty(key);
+            if (value != null) {
+                karafPropertyFile.put(key, value);
+            }
+        }
+
         karafPropertyFile.store(new FileOutputStream(customPropertiesFile), "updated by pax-exam");
     }
 
@@ -519,7 +528,7 @@ public class KarafTestContainer implements TestContainer {
                 catch (NoSuchObjectException exc) {
                     throw new TestContainerException(exc);
                 }
-                
+
             }
             else {
                 throw new RuntimeException("Container never came up");
