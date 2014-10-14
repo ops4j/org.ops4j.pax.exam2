@@ -26,16 +26,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.karaf.options.ConfigurationPointer;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionKitConfigurationOption;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
-import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
-import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.sample8.ds.Calculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,15 +49,15 @@ public class CalculatorITest {
         MavenArtifactUrlReference karafUrl = maven()
             .groupId("org.apache.karaf")
             .artifactId("apache-karaf")
-            .version("3.0.0")
-            .type("tar.gz");
+            .version(karafVersion())
+            .type("zip");
 
         MavenUrlReference karafStandardRepo = maven()
             .groupId("org.apache.karaf.features")
             .artifactId("standard")
+            .version(karafVersion())
             .classifier("features")
-            .type("xml")
-            .versionAsInProject();
+            .type("xml");
         return new Option[] {
             // KarafDistributionOption.debugConfiguration("5005", true),
             karafDistributionConfiguration()
@@ -76,7 +72,14 @@ public class CalculatorITest {
                 .versionAsInProject().start(),
        };
     }
-    
+
+    public static String karafVersion() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String karafVersion = cm.getProperty("pax.exam.karaf.version", "3.0.0");
+        return karafVersion;
+    }
+
+
     @Test
     public void testAdd() {
         int result = calculator.add(1, 2);
