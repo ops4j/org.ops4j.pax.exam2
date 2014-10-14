@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.ops4j.pax.exam.itest</groupId>
         <artifactId>exam-itest-web</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
         <relativePath>../../..</relativePath>
     </parent>
 
