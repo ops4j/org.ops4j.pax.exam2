@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
@@ -40,17 +41,24 @@ import org.osgi.framework.ServiceReference;
 @RunWith(PaxExam.class)
 public class KarafTestContainerITest {
 
-    private static final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf", "3.0.0").type("zip");
+    private static final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf", karafVersion()).type("zip");
     @Inject
     private BundleContext bc;
 
     @Configuration
     public Option[] config() {
         return new Option[] {
-            karafDistributionConfiguration().frameworkUrl(KARAF_URL).karafVersion("3.0.0").useDeployFolder(false),
+            karafDistributionConfiguration().frameworkUrl(KARAF_URL).karafVersion(karafVersion()).useDeployFolder(false),
             configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO)
         };
     }
+    
+    public static String karafVersion() {
+        ConfigurationManager cm = new ConfigurationManager();
+        String karafVersion = cm.getProperty("pax.exam.karaf.version", "3.0.2");
+        return karafVersion;
+    }
+    
 
     @Test
     public void checkKarafSystemService() throws Exception {
