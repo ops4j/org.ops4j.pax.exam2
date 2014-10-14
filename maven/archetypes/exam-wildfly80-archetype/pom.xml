@@ -15,6 +15,7 @@
     <packaging>maven-archetype</packaging>
 
     <name>OPS4J Pax Exam WildFly 8.0 Archetype</name>
+    <description>Archetype for Pax Exam tests on WildFly 8.0</description>
 
     <build>
         <extensions>

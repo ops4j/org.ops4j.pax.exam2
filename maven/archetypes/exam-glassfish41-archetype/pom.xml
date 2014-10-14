@@ -15,6 +15,7 @@
     <packaging>maven-archetype</packaging>
 
     <name>OPS4J Pax Exam GlassFish 4.1 Archetype</name>
+    <description>Archetype for Pax Exam tests on GlassFish 4.1</description>
 
     <build>
         <extensions>

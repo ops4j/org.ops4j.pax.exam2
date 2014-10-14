@@ -15,6 +15,7 @@
     <packaging>maven-archetype</packaging>
 
     <name>OPS4J Pax Exam OSGi Archetype</name>
+    <description>Archetype for Pax Exam tests on OSGi frameworks</description>
 
     <build>
         <extensions>
