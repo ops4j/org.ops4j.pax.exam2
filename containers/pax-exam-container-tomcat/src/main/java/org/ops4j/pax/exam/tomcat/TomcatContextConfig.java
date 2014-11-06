@@ -27,7 +27,6 @@ import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_SERVLET_L
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
-import org.apache.tomcat.util.descriptor.web.ApplicationListener;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
 import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -69,7 +68,7 @@ public class TomcatContextConfig extends ContextConfig {
 
         appContext.getNamingResources().addResourceEnvRef(resourceRef);
 
-        appContext.addApplicationListener(new ApplicationListener(servletListener, false));
+        appContext.addApplicationListener(servletListener);
     }
 
 }
