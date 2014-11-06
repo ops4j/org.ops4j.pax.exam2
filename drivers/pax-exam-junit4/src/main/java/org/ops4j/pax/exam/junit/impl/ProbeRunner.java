@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Probe runner, executing tests via an invoker. Used for all operation modes except CDI.
- * 
+ *
  * @author Toni Menzel
  * @author Harald Wellmann
  */
@@ -126,6 +126,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
      * Override to avoid running BeforeClass and AfterClass by the driver. They shall only be run by
      * the container when using a probe invoker.
      */
+    @Override
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
         return statement;
@@ -135,6 +136,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
      * Override to avoid running Before, After and Rule methods by the driver. They shall only be
      * run by the container when using a probe invoker.
      */
+    @Override
     protected Statement methodBlock(FrameworkMethod method) {
         Object test;
         try {
@@ -207,7 +209,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
      * <p>
      * This way, we can register all test methods in the reactor before the actual test execution
      * starts.
-     * 
+     *
      * @param reactor
      * @param testClass
      * @param testClassInstance
@@ -234,7 +236,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
      * FIXME What is this doing, and what is the use case? Parameterized methods break JUnit's
      * default behaviour, and most of these non-standard signatures introduced in 2.0.0 have been
      * dropped since 2.3.0.
-     * 
+     *
      * @param testClassInstance
      * @param probe
      * @param s
@@ -263,6 +265,7 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
      * When using a probe invoker, we replace the super method and invoke the test method indirectly
      * via the reactor.
      */
+    @Override
     protected synchronized Statement methodInvoker(final FrameworkMethod method, final Object test) {
         return new Statement() {
 
