@@ -69,9 +69,6 @@ import org.testng.internal.NoOpTestClass;
  * test class with Pax Exam, add this class as a listener to your test class:
  *
  * <pre>
- *
- *
- *
  * &#064;Listeners(PaxExam.class)
  * public class MyTest {
  *
@@ -186,14 +183,8 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
     public void onStart(ISuite suite) {
         if (!isRunningInTestContainer(suite)) {
             manager = ReactorManager.getInstance();
-            try {
-                stagedReactor = stageReactor(suite);
-                manager.beforeSuite(stagedReactor);
-            }
-            // CHECKSTYLE:SKIP : catch all wanted
-            catch (Exception exc) {
-                throw new TestContainerException(exc);
-            }
+            stagedReactor = stageReactor(suite);
+            manager.beforeSuite(stagedReactor);
         }
     }
 
@@ -236,8 +227,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             Object testClassInstance = testClass.newInstance();
             return stageReactorForClass(testClass, testClassInstance);
         }
-        // CHECKSTYLE:SKIP : catch all wanted
-        catch (Exception exc) {
+        catch (InstantiationException | IllegalAccessException exc) {
             throw new TestContainerException(exc);
         }
     }
@@ -290,15 +280,15 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      *            unstaged reactor
      * @param testClassInstance
      *            not used
-     * @param methods
+     * @param testMethods
      *            all methods of the suite.
      * @throws IOException
      * @throws ExamConfigurationException
      */
     private void addTestsToReactor(ExamReactor reactor, Object testClassInstance,
-        List<ITestNGMethod> methods) throws IOException, ExamConfigurationException {
+        List<ITestNGMethod> testMethods) throws IOException, ExamConfigurationException {
         TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
-        for (ITestNGMethod m : methods) {
+        for (ITestNGMethod m : testMethods) {
             TestAddress address = probe.addTest(m.getRealClass(), m.getMethodName());
             manager.storeTestMethod(address, m);
         }
@@ -380,13 +370,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             tx.begin();
             callBack.runTestMethod(testResult);
         }
-        catch (NamingException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (NotSupportedException exc) {
-            throw new TestContainerException(exc);
-        }
-        catch (SystemException exc) {
+        catch (NamingException | NotSupportedException | SystemException exc) {
             throw new TestContainerException(exc);
         }
         finally {
@@ -405,13 +389,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             try {
                 tx.rollback();
             }
-            catch (IllegalStateException exc) {
-                throw new TestContainerException(exc);
-            }
-            catch (SecurityException exc) {
-                throw new TestContainerException(exc);
-            }
-            catch (SystemException exc) {
+            catch (IllegalStateException | SecurityException | SystemException exc) {
                 throw new TestContainerException(exc);
             }
         }
@@ -499,10 +477,10 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * unchanged method list.
      */
     @Override
-    public List<IMethodInstance> intercept(List<IMethodInstance> methods, ITestContext context) {
+    public List<IMethodInstance> intercept(List<IMethodInstance> testMethods, ITestContext context) {
         if (methodInterceptorCalled || !useProbeInvoker
             || isRunningInTestContainer(context.getSuite())) {
-            return methods;
+            return testMethods;
         }
 
         methodInterceptorCalled = true;
@@ -568,8 +546,8 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             field.setAccessible(true);
             field.set(instance, value);
         }
-        // CHECKSTYLE:SKIP : catch all wanted
-        catch (Exception exc) {
+        catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+            | SecurityException exc) {
             throw new TestContainerException(exc);
         }
     }
