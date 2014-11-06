@@ -26,6 +26,7 @@
                 <module>src/it/regression-multi</module>
                 <module>src/it/regression-plumbing</module>
                 <module>src/it/regression-testng</module>
+                <module>src/it/regression-testng-perclass</module>
             </modules>
         </profile>
 

@@ -67,27 +67,28 @@ import org.testng.internal.NoOpTestClass;
 /**
  * TestNG driver for Pax Exam, implementing a number of ITestNGListener interfaces. To run a TestNG
  * test class with Pax Exam, add this class as a listener to your test class:
- * 
+ *
  * <pre>
- * 
- * 
+ *
+ *
+ *
  * &#064;Listeners(PaxExam.class)
  * public class MyTest {
- * 
+ *
  *     &#064;BeforeMethod
  *     public void setUp() {
  *     }
- * 
+ *
  *     &#064;AfterMethod
  *     public void tearDown() {
  *     }
- * 
+ *
  *     &#064;Test
  *     public void test1() {
  *     }
  * }
  * </pre>
- * 
+ *
  * In OSGi and Java EE modes, Pax Exam processes each test class twice, once by test driver and then
  * again inside the test container. The driver delegates each test method invocation to a probe
  * invoker which excutes the test method inside the container via the probe.
@@ -101,17 +102,16 @@ import org.testng.internal.NoOpTestClass;
  * <p>
  * Dependencies annotated by {@link javax.inject.Inject} get injected into the test class in the
  * container (OSGi and Java EE modes) or by the driver (CDI mode).
- * 
+ *
  * @author Harald Wellmann
  * @since 2.3.0
- * 
+ *
  */
 public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
     public static final String PAX_EXAM_SUITE_NAME = "PaxExamInternal";
 
     private static final Logger LOG = LoggerFactory.getLogger(PaxExam.class);
-
 
     /**
      * Staged reactor for this test class. This may actually be a reactor already staged for a
@@ -147,13 +147,15 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      */
     private Object currentTestClassInstance;
 
+    private List<ITestNGMethod> methods;
+
     public PaxExam() {
         LOG.debug("created ExamTestNGListener");
     }
 
     /**
      * Are we running in the test container or directly under the driver?
-     * 
+     *
      * @param suite
      *            current test suite
      * @return true if running in container
@@ -164,7 +166,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
     /**
      * Are we running in the test container or directly under the driver?
-     * 
+     *
      * @param method
      *            current test method
      * @return true if running in container
@@ -176,10 +178,11 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
     /**
      * Called by TestNG before the suite starts. When running in the container, this is a no op.
      * Otherwise, we create and stage the reactor.
-     * 
+     *
      * @param suite
      *            test suite
      */
+    @Override
     public void onStart(ISuite suite) {
         if (!isRunningInTestContainer(suite)) {
             manager = ReactorManager.getInstance();
@@ -197,10 +200,11 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
     /**
      * Called by TestNG after the suite has finished. When running in the container, this is a no
      * op. Otherwise, we stop the reactor.
-     * 
+     *
      * @param suite
      *            test suite
      */
+    @Override
     public void onFinish(ISuite suite) {
         if (!isRunningInTestContainer(suite)) {
             // fire an afterClass event for the last test class
@@ -218,18 +222,28 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * When using a probe invoker, we register the tests with the reactor.
      * <p>
      * Hack: As there is no way to intercept configuration methods, we disable them by reflection.
-     * 
+     *
      * @param suite
      *            test suite
      * @return staged reactor
      */
     private synchronized StagedExamReactor stageReactor(ISuite suite) {
         try {
-            List<ITestNGMethod> methods = suite.getAllMethods();
+            methods = suite.getAllMethods();
             Class<?> testClass = methods.get(0).getRealClass();
             LOG.debug("test class = {}", testClass);
             disableConfigurationMethods(suite);
             Object testClassInstance = testClass.newInstance();
+            return stageReactorForClass(testClass, testClassInstance);
+        }
+        // CHECKSTYLE:SKIP : catch all wanted
+        catch (Exception exc) {
+            throw new TestContainerException(exc);
+        }
+    }
+
+    private StagedExamReactor stageReactorForClass(Class<?> testClass, Object testClassInstance) {
+        try {
             ExamReactor examReactor = manager.prepareReactor(testClass, testClassInstance);
             useProbeInvoker = !manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI);
             if (useProbeInvoker) {
@@ -237,8 +251,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             }
             return manager.stageReactor();
         }
-        // CHECKSTYLE:SKIP : catch all wanted
-        catch (Exception exc) {
+        catch (IOException | ExamConfigurationException exc) {
             throw new TestContainerException(exc);
         }
     }
@@ -251,7 +264,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * driver.
      * <p>
      * This is a rather ugly hack, but there does not seem to be any other way.
-     * 
+     *
      * @param suite
      *            test suite
      */
@@ -272,7 +285,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * TODO This driver currently assumes that all test classes of the suite use the default probe
      * builder. It builds one probe containing all tests of the suite. This is why the
      * testClassInstance argument is just an arbitrary instance of one of the classes of the suite.
-     * 
+     *
      * @param reactor
      *            unstaged reactor
      * @param testClassInstance
@@ -296,6 +309,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * Callback from TestNG which lets us intercept a test method invocation. The two cases of
      * running in the container or under the driver are handled in separate methods.
      */
+    @Override
     public void run(IHookCallBack callBack, ITestResult testResult) {
         if (isRunningInTestContainer(testResult.getMethod())) {
             runInTestContainer(callBack, testResult);
@@ -310,7 +324,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * <p>
      * TODO Unlike JUnit, TestNG instantiates each test class only once, so maybe we should also
      * inject the dependencies just once.
-     * 
+     *
      * @param callBack
      *            TestNG callback for test method
      * @param testResult
@@ -330,7 +344,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
     /**
      * Checks if the current test method is transactional.
-     * 
+     *
      * @param testResult
      *            TestNG method and result wrapper
      * @return true if the method or the enclosing class is annotated with {@link Transactional}.
@@ -352,7 +366,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
     /**
      * Runs a test method enclosed by a Java EE auto-rollback transaction obtained from the JNDI
      * context.
-     * 
+     *
      * @param callBack
      *            TestNG callback for test method
      * @param testResult
@@ -382,7 +396,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
     /**
      * Rolls back the given transaction, if not null.
-     * 
+     *
      * @param tx
      *            transaction
      */
@@ -406,7 +420,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
     /**
      * Performs field injection on the given object. The injection method is looked up via the Java
      * SE service loader.
-     * 
+     *
      * @param testClassInstance
      *            test class instance
      */
@@ -428,11 +442,13 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * test will be executed in the container context.
      * <p>
      * Otherwise, we directly run the test method.
-     * 
+     *
      * @param callBack
      *            TestNG callback for test method
      * @param testResult
      *            test result container
+     * @throws ExamConfigurationException
+     * @throws IOException
      */
     private void runByDriver(IHookCallBack callBack, ITestResult testResult) {
         LOG.info("running {}", testResult.getName());
@@ -441,6 +457,8 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             if (currentTestClassInstance != null) {
                 manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
             }
+            Class<?> testClass = testClassInstance.getClass();
+            stagedReactor = stageReactorForClass(testClass, testClassInstance);
             if (!useProbeInvoker) {
                 manager.inject(testClassInstance);
             }
@@ -480,6 +498,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * For some reason, TestNG invokes this callback twice. The second time over, we return the
      * unchanged method list.
      */
+    @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> methods, ITestContext context) {
         if (methodInterceptorCalled || !useProbeInvoker
             || isRunningInTestContainer(context.getSuite())) {
@@ -519,7 +538,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * <p>
      * NOTE: Ugly reflection hack, as TestNG does not provide an API for overriding before and after
      * methods.
-     * 
+     *
      * @param testClass
      *            TestNG test class wrapper
      */
@@ -533,7 +552,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
     /**
      * Sets a private field by injection
-     * 
+     *
      * @param klass
      *            Java class where the field is declared
      * @param instance
