@@ -471,6 +471,12 @@ public class KarafTestContainer implements TestContainer {
         for (File jar : jars) {
             cp.add(jar.toString());
         }
+		// do the same for lib/ext
+		File[] extJars = new File(karafHome + "/lib/ext")
+				.listFiles((FileFilter) new WildcardFileFilter("*.jar"));
+		for (File jar : extJars) {
+			cp.add(jar.toString());
+		}
         return cp.toArray(new String[] {});
     }
 
