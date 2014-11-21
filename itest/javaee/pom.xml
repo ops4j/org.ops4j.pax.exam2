@@ -135,7 +135,7 @@
             <id>wildfly80</id>
             <properties>
                 <pax.exam.container>wildfly80</pax.exam.container>
-                <pax.exam.wildfly80.home>${user.dir}/itest/javaee/target/wildfly-8.1.0.Final</pax.exam.wildfly80.home>
+                <pax.exam.wildfly80.home>${user.dir}/itest/javaee/target/wildfly-${dependency.wildfly.version}</pax.exam.wildfly80.home>
             </properties>
 
             <dependencyManagement>
@@ -158,22 +158,22 @@
                     <dependency>
                         <groupId>org.jboss.marshalling</groupId>
                         <artifactId>jboss-marshalling</artifactId>
-                        <version>1.4.6.Final</version>
+                        <version>1.4.9.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.xnio</groupId>
                         <artifactId>xnio-api</artifactId>
-                        <version>3.2.2.Final</version>
+                        <version>3.3.0.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.xnio</groupId>
                         <artifactId>xnio-nio</artifactId>
-                        <version>3.2.2.Final</version>
+                        <version>3.3.0.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.remoting</groupId>
                         <artifactId>jboss-remoting</artifactId>
-                        <version>4.0.3.Final</version>
+                        <version>4.0.6.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.sasl</groupId>

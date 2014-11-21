@@ -81,7 +81,7 @@ public class WildFly80TestContainer implements TestContainer {
     /**
      * Default download URL for JBoss AS distribution.
      */
-    public static final String WILDFLY80_DIST_URL_DEFAULT = "mvn:org.wildfly/wildfly-dist/8.1.0.Final/zip";
+    public static final String WILDFLY80_DIST_URL_DEFAULT = "mvn:org.wildfly/wildfly-dist/8.2.0.Final/zip";
 
     /**
      * Configuration property key for WildFly installation configuration file directory. The files
@@ -92,20 +92,20 @@ public class WildFly80TestContainer implements TestContainer {
     /**
      * Configuration property key for overwriting standalone.xml and other configuration files in an
      * existing WildFly installation. If the value is {@code true}, existing files in
-     * {@code standalone/configuration/} will be overwritten with files from 
+     * {@code standalone/configuration/} will be overwritten with files from
      * {@code wildfly80-config/}, if present. The default value is {@code false}.
      */
     public static final String WILDFLY80_CONFIG_OVERWRITE_KEY = "pax.exam.wildfly80.config.overwrite";
-    
+
     /**
      * Configuration property key for additional JBoss AS modules to be installed. The value is
      * a comma-separated list of URLs. Each URL refers to a zipped module structure which will be unpacked
      * under {@code modules/system/add-ons/pax-exam}.
      */
     public static final String WILDFLY80_MODULES_KEY = "pax.exam.wildfly80.modules";
-    
+
     /**
-     * Configuration property for system properties to be loaded begore starting WildFly.
+     * Configuration property for system properties to be loaded before starting WildFly.
      * See {@link ConfigurationManager#loadSystemProperties(String)} for syntax details.
      */
     public static final String WILDFLY80_SYSTEM_PROPERTIES_KEY = "pax.exam.wildfly80.system.properties";
@@ -117,7 +117,7 @@ public class WildFly80TestContainer implements TestContainer {
      * {@code org.jboss.logging, org.slf4j}.
      */
     public static final String WILDFLY80_SYSTEM_PACKAGES_KEY = "pax.exam.wildfly80.system.packages";
-    
+
 
     private static final Logger LOG = LoggerFactory.getLogger(WildFly80TestContainer.class);
 
@@ -126,7 +126,7 @@ public class WildFly80TestContainer implements TestContainer {
     private static final String MGMT_PORT_XPATH = "/server/socket-binding-group/socket-binding[@name='management-http']/@port";
 
     private final Stack<String> deployed = new Stack<String>();
-    
+
     private String warProbe;
 
     private final ExamSystem system;
@@ -154,6 +154,7 @@ public class WildFly80TestContainer implements TestContainer {
         this.cm = new ConfigurationManager();
     }
 
+    @Override
     public synchronized void call(TestAddress address) {
         TestInstantiationInstruction instruction = testDirectory.lookup(address);
         ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
@@ -162,6 +163,7 @@ public class WildFly80TestContainer implements TestContainer {
         invoker.call(address.arguments());
     }
 
+    @Override
     public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
         system.getOptions(WarProbeOption.class);
@@ -169,6 +171,7 @@ public class WildFly80TestContainer implements TestContainer {
         return -1;
     }
 
+    @Override
     public synchronized long install(InputStream stream) {
         return install("local", stream);
     }
@@ -256,6 +259,7 @@ public class WildFly80TestContainer implements TestContainer {
         }
     }
 
+    @Override
     public TestContainer start() {
         installContainer();
         cm.loadSystemProperties(WILDFLY80_SYSTEM_PROPERTIES_KEY);
@@ -284,13 +288,13 @@ public class WildFly80TestContainer implements TestContainer {
         }
         return this;
     }
-    
-    /** 
-     * 
+
+    /**
+     *
      * @return packages to be loaded from system class loader
      */
     private String[] getSystemPackages() {
-        String systemPackagesString = cm.getProperty(WILDFLY80_SYSTEM_PACKAGES_KEY, 
+        String systemPackagesString = cm.getProperty(WILDFLY80_SYSTEM_PACKAGES_KEY,
             "org.jboss.logging, org.slf4j").trim();
         String[] systemPackages = systemPackagesString.split(",\\s*");
         return systemPackages;
@@ -436,7 +440,7 @@ public class WildFly80TestContainer implements TestContainer {
             int portOffset = Integer.parseInt(portOffsetString);
             httpPort += portOffset;
             mgmtPort += portOffset;
-            
+
         }
         catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException exc) {
             throw new IllegalArgumentException(exc);
@@ -459,6 +463,7 @@ public class WildFly80TestContainer implements TestContainer {
         return result;
     }
 
+    @Override
     public TestContainer stop() {
         cleanup();
         system.clear();
@@ -469,7 +474,7 @@ public class WildFly80TestContainer implements TestContainer {
     public String toString() {
         return "WildFly80";
     }
-    
+
 
     @Override
     public long installProbe(InputStream stream) {
@@ -481,7 +486,7 @@ public class WildFly80TestContainer implements TestContainer {
     @Override
     public void uninstallProbe() {
         undeployModule(warProbe);
-        this.warProbe = null;        
+        this.warProbe = null;
     }
-    
+
 }
