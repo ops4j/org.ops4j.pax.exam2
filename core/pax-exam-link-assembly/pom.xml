@@ -141,13 +141,11 @@
         <dependency>
             <groupId>org.ops4j.pax.tipi</groupId>
             <artifactId>org.ops4j.pax.tipi.hamcrest.core</artifactId>
-            <version>1.3.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.tipi</groupId>
             <artifactId>org.ops4j.pax.tipi.junit</artifactId>
-            <version>4.11.0.1</version>
             <scope>provided</scope>
         </dependency>
 
