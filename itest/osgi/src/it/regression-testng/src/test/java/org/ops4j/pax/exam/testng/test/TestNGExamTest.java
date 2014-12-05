@@ -45,7 +45,7 @@ public class TestNGExamTest {
         mavenBundle("org.testng", "testng", "6.8.5"),
         mavenBundle("com.beust", "jcommander", "1.27"),
         bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
-        bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.12.0.1-SNAPSHOT"),
+        bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.12.0.1"),
         
         /*
          * The following are optional direct and transitive dependencies of TestNG which do not seem

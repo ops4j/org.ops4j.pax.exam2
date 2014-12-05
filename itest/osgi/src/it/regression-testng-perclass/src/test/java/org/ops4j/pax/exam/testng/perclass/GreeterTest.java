@@ -47,7 +47,7 @@ public class GreeterTest {
             mavenBundle("org.testng", "testng", "6.8.8"),
             mavenBundle("com.beust", "jcommander", "1.27"),
             bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
-            bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.12.0.1-SNAPSHOT"),
+            bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.12.0.1"),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde/"),
 
             systemProperty("osgi.console").value("6666"));
