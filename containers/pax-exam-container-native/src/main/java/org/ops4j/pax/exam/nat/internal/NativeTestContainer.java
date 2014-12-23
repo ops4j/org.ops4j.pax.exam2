@@ -57,6 +57,7 @@ import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
+import org.ops4j.pax.swissbox.core.BundleUtils;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -310,11 +311,10 @@ public class NativeTestContainer implements TestContainer {
             int startLevel = getStartLevel(bundle);
             BundleStartLevel sl = b.adapt(BundleStartLevel.class);
             sl.setStartLevel(startLevel);
-            if (bundle.shouldStart()) {
+            if (bundle.shouldStart() && ! isFragment(b)) {
                 try {
                     b.start();
-                } 
-                catch (BundleException e) {
+                } catch (BundleException e) {
                     throw new BundleException("Error starting bundle " + b.getSymbolicName() + ". " + e.getMessage(), e);
                 }
                 LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
@@ -384,14 +384,13 @@ public class NativeTestContainer implements TestContainer {
     private void verifyThatBundlesAreResolved(List<Bundle> bundles) {
         boolean hasUnresolvedBundles = false;
         for (Bundle bundle : bundles) {
-            if (bundle.getState() == Bundle.INSTALLED) {
+            if (bundle.getState() == Bundle.INSTALLED && !isFragment(bundle)) {
                 LOG.error("Bundle [{}] is not resolved", bundle);
                 hasUnresolvedBundles = true;
             }
         }
         ConfigurationManager cm = new ConfigurationManager();
-        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY,
-            "false"));
+        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY, "false"));
         if (hasUnresolvedBundles && failOnUnresolved) {
             throw new TestContainerException(
                 "There are unresolved bundles. See previous ERROR log messages for details.");
@@ -468,5 +467,9 @@ public class NativeTestContainer implements TestContainer {
         catch (BundleException exc) {
             throw new TestContainerException(exc);
         }
+    }
+
+    private boolean isFragment(Bundle bundle) {
+        return bundle.getHeaders().get(org.osgi.framework.Constants.FRAGMENT_HOST) != null;
     }
 }
