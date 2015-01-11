@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.hibernate.ejb.HibernatePersistence;
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.ops4j.pax.exam.sample6.service.LibraryService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,7 +47,7 @@ public class ServiceSpringConfig {
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
         bean.setDataSource(dataSource);
-        bean.setPersistenceProvider(new HibernatePersistence());
+        bean.setPersistenceProvider(new HibernatePersistenceProvider());
         bean.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
         bean.afterPropertiesSet();
         return bean.getObject();
