@@ -32,6 +32,7 @@
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>1.0.1</dependency.deltaspike.version>
         <dependency.glassfish.version>4.1</dependency.glassfish.version>
+        <dependency.httpcomponents.version>4.3.2</dependency.httpcomponents.version>
         <dependency.karaf.version>3.0.2</dependency.karaf.version>
         <dependency.logback.version>1.1.2</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
@@ -650,6 +651,22 @@
                 <version>3.12.1.GA</version>
             </dependency>
 
+            <!-- Apache HTTP Client Dependencies -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${dependency.httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${dependency.httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${dependency.httpcomponents.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

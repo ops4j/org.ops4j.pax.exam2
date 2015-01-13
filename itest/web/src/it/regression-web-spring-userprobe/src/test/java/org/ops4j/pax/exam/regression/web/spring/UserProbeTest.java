@@ -18,6 +18,8 @@
 package org.ops4j.pax.exam.regression.web.spring;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.warProbe;
 import static org.ops4j.pax.exam.Info.getOps4jBaseVersion;
@@ -28,6 +30,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +43,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample6.model.Book;
 import org.ops4j.pax.exam.sample6.service.LibraryService;
+import org.ops4j.pax.exam.spi.container.ContainerConstants;
 
 @RunWith(PaxExam.class)
 public class UserProbeTest {
@@ -77,5 +85,30 @@ public class UserProbeTest {
         assertEquals(2, service.getNumAuthors());
         service.createAuthor("Theodor", "Storm");
         assertEquals(3, service.getNumAuthors());
+    }
+
+    /**
+     * Gets books.html which contains the list of books in a library.
+     * <p>
+     * The html content is based on the defined books.jsp in the sample web module.
+     */
+    @Test
+    public void testGetBooksHttpContent() throws Exception {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:9080" + ContainerConstants.EXAM_CONTEXT_ROOT + "/books.html");
+        CloseableHttpResponse response = httpclient.execute(httpGet);
+        try {
+            // verify http status code
+            assertTrue("Status code must be 200 - OK", 
+                    response.getStatusLine().getStatusCode() == 200);
+
+            // verify html content
+            String content = EntityUtils.toString(response.getEntity());
+            assertNotNull("Content must be provided", content);
+            assertTrue("Content must contain: Steinbeck", content.matches("[\\s\\S]+<td>Steinbeck</td>[\\s\\S]+"));
+        } finally {
+            response.close();
+        }
+        httpclient.close();
     }
 }
