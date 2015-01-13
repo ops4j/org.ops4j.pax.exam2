@@ -211,7 +211,7 @@ public class WarBuilder {
                     copyDirectory(file, webResourceDir);
                 }
                 else {
-                    exploder.processFile(file.getAbsolutePath(), webResourceDir.getAbsolutePath());
+                    exploder.processFile(file, webResourceDir);
                 }
             }
         }
