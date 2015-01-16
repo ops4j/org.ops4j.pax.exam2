@@ -13,6 +13,7 @@
   
   <modules>
     <module>pax-exam-sample1-model</module>
+    <module>pax-exam-sample1-repo</module>
     <module>pax-exam-sample1-service</module>
     <module>pax-exam-sample1-web</module>
     <module>pax-exam-sample2-model</module>
