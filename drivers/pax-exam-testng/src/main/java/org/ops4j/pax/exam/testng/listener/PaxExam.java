@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.testng.listener;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -253,7 +254,19 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             }
             return manager.stageReactor();
         }
-        catch (IOException | ExamConfigurationException exc) {
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (ExamConfigurationException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (InstantiationException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (IllegalAccessException exc) {
+            throw new TestContainerException(exc);
+        }
+        catch (InvocationTargetException exc) {
             throw new TestContainerException(exc);
         }
     }
