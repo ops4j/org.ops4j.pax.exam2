@@ -114,28 +114,24 @@ public class StartContainerMojo extends AbstractMojo {
         }
     }
 
-    private String[] buildProperties()
-    {
-    	ArrayList<String> options = new ArrayList<>();
-    	options.add(String.format("-D%s=%s", BASEDIR, basedir.getAbsolutePath()));
-    	if (propagatedProperties != null)
-    	{
-    		for (String name : propagatedProperties.split("\\s*,\\s*"))
-    		{
-    			String val = System.getProperty(name);
-    			if (val == null)
-    			{
-    				getLog().warn("Property " + name + " should be propagated to pax exam config class, but is " +
-    							"not available in maven project.");
-    			}
-    			else
-    			{
-    				options.add(String.format("-D%s=%s", name, val));
+    private String[] buildProperties() {
+        ArrayList<String> options = new ArrayList<>();
+        options.add(String.format("-D%s=%s", BASEDIR, basedir.getAbsolutePath()));
 
-    				getLog().debug("Propagating property: " + name + "=" + val);
-    			}
-    		}
-    	}
-    	return options.toArray(new String[options.size()]);
+        if (propagatedProperties != null) {
+            for (String name : propagatedProperties.split("\\s*,\\s*")) {
+                String val = System.getProperty(name);
+                if (val == null) {
+                    getLog().warn("Property " + name + " should be propagated to pax exam config class, but is " +
+                        "not available in maven project.");
+                }
+                else {
+                    options.add(String.format("-D%s=%s", name, val));
+
+                    getLog().debug("Propagating property: " + name + "=" + val);
+                }
+            }
+        }
+        return options.toArray(new String[options.size()]);
     }
 }
