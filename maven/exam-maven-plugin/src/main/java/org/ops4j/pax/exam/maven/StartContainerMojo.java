@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.maven.Constants.TEST_CONTAINER_RUNNER_KEY;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -61,6 +62,13 @@ public class StartContainerMojo extends AbstractMojo {
     private File basedir;
 
     /**
+     * Comma separated list of maven properties (possibly set via -D command line switch) to propagate to
+     * exam configuration class.
+     */
+    @Parameter(defaultValue = "")
+    private String propagatedProperties;
+
+    /**
      * Fully qualified name of a Java class with a {@code @Configuration} method, providing the test
      * container configuration.
      */
@@ -78,8 +86,7 @@ public class StartContainerMojo extends AbstractMojo {
         }
 
         DefaultJavaRunner javaRunner = new DefaultJavaRunner(false);
-        String basedirProp = String.format("-D%s=%s", BASEDIR, basedir.getAbsolutePath());
-        String[] vmOptions = new String[] { basedirProp };
+        String[] vmOptions = buildProperties();
         String javaHome = System.getProperty("java.home");
         int port = getFreePort();
         String[] args = new String[] { configClass, Integer.toString(port) };
@@ -107,4 +114,28 @@ public class StartContainerMojo extends AbstractMojo {
         }
     }
 
+    private String[] buildProperties()
+    {
+    	ArrayList<String> options = new ArrayList<>();
+    	options.add(String.format("-D%s=%s", BASEDIR, basedir.getAbsolutePath()));
+    	if (propagatedProperties != null)
+    	{
+    		for (String name : propagatedProperties.split("\\s*,\\s*"))
+    		{
+    			String val = System.getProperty(name);
+    			if (val == null)
+    			{
+    				getLog().warn("Property " + name + " should be propagated to pax exam config class, but is " +
+    							"not available in maven project.");
+    			}
+    			else
+    			{
+    				options.add(String.format("-D%s=%s", name, val));
+
+    				getLog().debug("Propagating property: " + name + "=" + val);
+    			}
+    		}
+    	}
+    	return options.toArray(new String[options.size()]);
+    }
 }
