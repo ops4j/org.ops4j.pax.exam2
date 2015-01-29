@@ -29,6 +29,8 @@ import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,8 +67,7 @@ import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.osgi.framework.startlevel.BundleStartLevel;
-import org.osgi.framework.startlevel.FrameworkStartLevel;
+import org.osgi.service.startlevel.StartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +82,7 @@ import org.slf4j.LoggerFactory;
  * @author Harald Wellmann
  * @since Jan 7, 2010
  */
+@SuppressWarnings("deprecation")
 public class NativeTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
@@ -116,7 +118,7 @@ public class NativeTestContainer implements TestContainer {
             installed.push(b.getBundleId());
             LOG.debug("Installed bundle " + b.getSymbolicName() + " as Bundle ID "
                 + b.getBundleId());
-            setBundleStartLevel(b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE);
+            setBundleStartLevel(b, Constants.START_LEVEL_TEST_BUNDLE);
             b.start();
             return b.getBundleId();
         }
@@ -150,10 +152,37 @@ public class NativeTestContainer implements TestContainer {
         return framework;
     }
     
-    public void setBundleStartLevel(long bundleId, int startLevel) {
-        Bundle bundle = framework.getBundleContext().getBundle(bundleId);
-        BundleStartLevel sl = bundle.adapt(BundleStartLevel.class);
-        sl.setStartLevel(startLevel);
+    public void setBundleStartLevel(Bundle bundle, int startLevel) {
+        Method adaptMethod = getAdaptMethod(bundle);
+        if (adaptMethod != null) {
+            org.osgi.framework.startlevel.BundleStartLevel sl;
+            try {
+                sl = (org.osgi.framework.startlevel.BundleStartLevel)
+                    adaptMethod.invoke(bundle, org.osgi.framework.startlevel.BundleStartLevel.class);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                LOG.error("Unable to call adapt method", e);
+                throw new RuntimeException(e);
+            }
+            sl.setStartLevel(startLevel);
+        } else {
+            org.osgi.service.startlevel.StartLevel sl = ServiceLookup.getService(
+                            framework.getBundleContext(),
+                            org.osgi.service.startlevel.StartLevel.class);
+            sl.setBundleStartLevel(bundle, startLevel);
+        }
+    }
+
+    private Method getAdaptMethod(Object object) {
+        Method[] methods = object.getClass().getMethods();
+        for (Method method : methods) {
+            if ("adapt".equals(method.getName())) {
+                if (method.getParameterTypes().length == 1
+                        && method.getParameterTypes()[0].isLocalClass()) {
+                    return method;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -308,8 +337,7 @@ public class NativeTestContainer implements TestContainer {
             Bundle b = context.installBundle(bundle.getURL());
             bundles.add(b);
             int startLevel = getStartLevel(bundle);
-            BundleStartLevel sl = b.adapt(BundleStartLevel.class);
-            sl.setStartLevel(startLevel);
+            setBundleStartLevel(b, startLevel);
             if (bundle.shouldStart()) {
                 try {
                     b.start();
@@ -325,12 +353,28 @@ public class NativeTestContainer implements TestContainer {
         }
         // All bundles are installed, we can now start the framework...
         framework.start();
-        FrameworkStartLevel fsl = framework.adapt(FrameworkStartLevel.class);
-        setFrameworkStartLevel(context, fsl);
+        StartLevel startLevel = null;
+        Method adaptMethod = getAdaptMethod(framework);
+        if (adaptMethod != null) {
+            org.osgi.framework.startlevel.FrameworkStartLevel fsl;
+            try {
+                fsl = (org.osgi.framework.startlevel.FrameworkStartLevel)
+                adaptMethod.invoke(framework, org.osgi.framework.startlevel.FrameworkStartLevel.class);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                LOG.error("Unable to invoke adapt method", e);
+                throw new RuntimeException(e);
+            }
+            startLevel = new StartLevelAdapter(fsl);
+        } else {
+            startLevel = ServiceLookup.getService(
+                            framework.getBundleContext(),
+                            StartLevel.class);
+        }
+        setFrameworkStartLevel(context, startLevel);
         verifyThatBundlesAreResolved(bundles);
     }
 
-    private void setFrameworkStartLevel(BundleContext context, final FrameworkStartLevel sl) {
+    private void setFrameworkStartLevel(BundleContext context, final StartLevel sl) {
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
         final int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE
