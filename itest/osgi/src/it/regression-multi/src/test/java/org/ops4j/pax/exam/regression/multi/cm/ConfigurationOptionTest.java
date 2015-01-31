@@ -43,29 +43,30 @@ import org.osgi.service.cm.ConfigurationAdmin;
 @ExamReactorStrategy
 public class ConfigurationOptionTest {
 
-    private static final String TEST_KEY         = "test.key";
-    private static final String TEST_PROPERTY    = "test.property";
+    private static final String TEST_KEY = "test.key";
+    private static final String TEST_PROPERTY = "test.property";
 
-    private static final String TEST_PID         = "org.ops4j.pax.exam.regression.multi.cm.ConfigurationOptionTest";
+    private static final String TEST_PID = "org.ops4j.pax.exam.regression.multi.cm.ConfigurationOptionTest";
     private static final String TEST_FACTORY_PID = TEST_PID + ".factory";
 
     @Inject
-    private ConfigurationAdmin  configAdmin;
+    private ConfigurationAdmin configAdmin;
 
     @Configuration()
     public Option[] config() {
-        return options(regressionDefaults(), //default values
-        bundle(EQUINOX_MIRROR + "org.eclipse.equinox.cm_1.0.300.v20110502.jar"), //Config admin 
-        bundle(EQUINOX_MIRROR + "org.eclipse.osgi.services_3.3.0.v20110513.jar"), // service interfaces
-        junitBundles(), //JUnit bundles
-        //Prepare a new configuration...
-        ConfigurationAdminOptions.newConfiguration(TEST_PID) //Create a new config 
-        .put(TEST_KEY, TEST_PROPERTY) //add a property
-        .asOption(), //convert to option
-        //Prepare a new factory-configuration...
-        ConfigurationAdminOptions.factoryConfiguration(TEST_FACTORY_PID) //Create a new factoryconfig
-        .put(TEST_KEY, TEST_PROPERTY) //add a property
-        .asOption() //convert to option
+        return options(
+            regressionDefaults(),
+            bundle(EQUINOX_MIRROR + "org.eclipse.equinox.cm_1.0.300.v20110502.jar"),
+            bundle(EQUINOX_MIRROR + "org.eclipse.osgi.services_3.3.0.v20110513.jar"),
+            junitBundles(),
+            // Prepare a new configuration...
+            ConfigurationAdminOptions.newConfiguration(TEST_PID)
+                .put(TEST_KEY, TEST_PROPERTY)
+                .asOption(),
+            // Prepare a new factory-configuration...
+            ConfigurationAdminOptions.factoryConfiguration(TEST_FACTORY_PID)
+                .put(TEST_KEY, TEST_PROPERTY)
+                .asOption()
         );
     }
 
@@ -73,7 +74,6 @@ public class ConfigurationOptionTest {
     public void testNewConfiguration() throws IOException {
         org.osgi.service.cm.Configuration config = configAdmin.getConfiguration(TEST_PID);
         assertNotNull(config);
-        @SuppressWarnings("unchecked")
         Dictionary<String, ?> dictionary = config.getProperties();
         assertNotNull(dictionary);
         assertEquals(dictionary.get(TEST_KEY), TEST_PROPERTY);
@@ -81,11 +81,12 @@ public class ConfigurationOptionTest {
 
     @Test
     public void testNewFactoryConfiguration() throws IOException, InvalidSyntaxException {
-        org.osgi.service.cm.Configuration[] configurations = configAdmin.listConfigurations("(service.factoryPid=" + TEST_FACTORY_PID + ")");
+        org.osgi.service.cm.Configuration[] configurations = configAdmin
+            .listConfigurations("(service.factoryPid=" + TEST_FACTORY_PID + ")");
         assertNotNull(configurations);
-        assertTrue("one configuration expected, but " + configurations.length + " found", configurations.length == 1);
+        assertTrue("one configuration expected, but " + configurations.length + " found",
+            configurations.length == 1);
         org.osgi.service.cm.Configuration config = configurations[0];
-        @SuppressWarnings("unchecked")
         Dictionary<String, ?> dictionary = config.getProperties();
         assertNotNull(dictionary);
         assertEquals(dictionary.get(TEST_KEY), TEST_PROPERTY);
