@@ -19,6 +19,6 @@ package org.ops4j.pax.exam.sample1.repo;
 import org.apache.deltaspike.data.api.AbstractEntityRepository;
 import org.ops4j.pax.exam.sample1.model.Author;
 
-public abstract class AuthorRepository extends AbstractEntityRepository<Author, Integer>{
-    
+public abstract class AuthorRepository extends AbstractEntityRepository<Author, Integer> {
+
 }
