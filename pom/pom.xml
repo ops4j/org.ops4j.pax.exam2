@@ -84,6 +84,7 @@
                 </executions>
                 <configuration>
                     <configLocation>checkstyle/pax-exam-checks.xml</configLocation>
+                    <excludes>**/HelpMojo.java</excludes>
                 </configuration>
                 <dependencies>
                     <dependency>
