@@ -70,7 +70,7 @@ public class WabSampleTest {
             mavenBundle("org.slf4j", "slf4j-api", "1.6.4"),
             mavenBundle("org.slf4j", "slf4j-simple", "1.6.4").noStart(),
 
-            mavenBundle("org.apache.geronimo.samples.osgi", "wab-sample", "3.0.0")
+            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample11-wab").versionAsInProject()
 
         );
     }
@@ -82,6 +82,6 @@ public class WabSampleTest {
         String url = String.format("http://localhost:%s/wab/WABServlet", port);
         WebTarget resource = client.target(url);
         String response = resource.request().get(String.class);
-        assertThat(response, containsString("wab symbolic name : wab-sample"));
+        assertThat(response, containsString("wab symbolic name : org.ops4j.pax.exam.samples.pax-exam-sample11-wab"));
     }
 }

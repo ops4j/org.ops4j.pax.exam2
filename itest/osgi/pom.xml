@@ -72,16 +72,29 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>equinox-native</id>
+                                <id>equinox-3.6-native</id>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <profiles>
-                                        <profile>equinox</profile>
+                                        <profile>equinox-3.6</profile>
                                         <profile>native</profile>
                                     </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/equinox-native</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-3.6-native</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>equinox-3.7-native</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>equinox-3.7</profile>
+                                        <profile>native</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-3.7-native</cloneProjectsTo>
                                 </configuration>
                             </execution>
                             <execution>
@@ -114,16 +127,29 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>equinox-forked</id>
+                                <id>equinox-3.6-forked</id>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <profiles>
-                                        <profile>equinox</profile>
+                                        <profile>equinox-3.6</profile>
                                         <profile>forked</profile>
                                     </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/equinox-forked</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-3.6-forked</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>equinox-3.7-forked</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>equinox-3.7</profile>
+                                        <profile>forked</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-3.7-forked</cloneProjectsTo>
                                 </configuration>
                             </execution>
                             <execution>
