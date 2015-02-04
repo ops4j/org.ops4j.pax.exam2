@@ -81,7 +81,7 @@ public class ZipInstaller {
 
             LOG.info("unzipping into {}", installDir);
             ZipExploder exploder = new ZipExploder();
-            exploder.processFile(tempFile.getAbsolutePath(), installDir.getAbsolutePath());
+            exploder.processFile(tempFile, installDir);
         }
         finally {
             tempFile.delete();
