@@ -56,6 +56,6 @@ public class WabSampleIT {
         }
         
         
-        assertThat(response, containsString("wab symbolic name : wab-sample"));
+        assertThat(response, containsString("wab symbolic name : org.ops4j.pax.exam.samples.pax-exam-sample11-wab"));
     }
 }

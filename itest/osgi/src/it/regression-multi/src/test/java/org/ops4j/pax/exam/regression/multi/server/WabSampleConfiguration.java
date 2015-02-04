@@ -54,6 +54,6 @@ public class WabSampleConfiguration {
             mavenBundle("org.slf4j", "slf4j-api", "1.6.4"),
             mavenBundle("org.slf4j", "slf4j-simple", "1.6.4").noStart(),
 
-            mavenBundle("org.apache.geronimo.samples.osgi", "wab-sample", "3.0.0"));
+            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample11-wab").versionAsInProject());
     }
 }

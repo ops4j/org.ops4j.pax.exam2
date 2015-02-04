@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-samples</artifactId>
+        <version>4.5.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.ops4j.pax.exam.samples</groupId>
+    <artifactId>pax-exam-sample11-wab</artifactId>
+    <packaging>bundle</packaging>
+
+    <name>OPS4J Pax Exam Sample11 Wab Module</name>
+
+    <description>
+        Inlines Apache Geronimo's wab-sample module in order to define wide range of
+        imported org.osgi.framework package versions. Wab-sample module imports
+        only 1.6 version of the package so it is not adequate for integration tests
+        in various OSGi versions.
+    </description>
+
+    <properties>
+        <bundle.symbolicName>org.ops4j.pax.exam.sample11.wab</bundle.symbolicName>
+        <bundle.namespace>org.ops4j.pax.exam.sample11.wab</bundle.namespace>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Embed-Dependency>wab-sample;inline=true</Embed-Dependency>
+                        <Import-Package>
+                            javax.servlet;version="2.6",
+                            javax.servlet.http;version="2.6",
+                            org.osgi.framework;version="[1.5,2)"
+                        </Import-Package>
+                        <Web-ContextPath>/wab</Web-ContextPath>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.geronimo.samples.osgi</groupId>
+            <artifactId>wab-sample</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+    </dependencies>
+</project>
