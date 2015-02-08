@@ -9,6 +9,7 @@
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
         <version>4.5.0-SNAPSHOT</version>
+        <relativePath>../../../../../pom</relativePath>
     </parent>
 
     <groupId>org.ops4j.pax.exam.itest</groupId>
@@ -219,25 +220,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <properties>
-                <pax.exam.framework>equinox</pax.exam.framework>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.ops4j.pax.exam</groupId>
-                        <artifactId>exam-maven-plugin</artifactId>
-                        <version>${project.version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.eclipse.tycho</groupId>
-                                <artifactId>org.eclipse.osgi</artifactId>
-                                <version>3.7.0.v20110613</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>native</id>
