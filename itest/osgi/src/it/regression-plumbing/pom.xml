@@ -35,6 +35,16 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.ops4j.pax.tinybundles</groupId>
+            <artifactId>tinybundles</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- For sane logging -->
         <dependency>
@@ -125,23 +135,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>felix</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>felix</pax.exam.framework>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.apache.felix.framework</artifactId>
-                    <version>4.2.1</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
         <profile>
             <id>equinox</id>
             <activation>

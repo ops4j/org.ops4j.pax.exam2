@@ -191,31 +191,6 @@
 
     <profiles>
         <profile>
-            <id>felix</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>felix</pax.exam.framework>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.ops4j.pax.exam</groupId>
-                        <artifactId>exam-maven-plugin</artifactId>
-                        <version>${project.version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.felix</groupId>
-                                <artifactId>org.apache.felix.framework</artifactId>
-                                <version>4.2.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>equinox</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
