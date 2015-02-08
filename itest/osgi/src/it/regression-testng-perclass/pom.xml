@@ -163,31 +163,6 @@
                 </dependency>
             </dependencies>
         </profile>
-
-        <profile>
-            <id>knopflerfish</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>knopflerfish</pax.exam.framework>
-            </properties>
-            <repositories>
-                <repository>
-                    <id>knopflerfish-releases</id>
-                    <url>http://www.knopflerfish.org/maven2</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>org.knopflerfish</groupId>
-                    <artifactId>framework</artifactId>
-                    <version>6.0.4</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
         <profile>
             <id>native</id>
             <activation>
