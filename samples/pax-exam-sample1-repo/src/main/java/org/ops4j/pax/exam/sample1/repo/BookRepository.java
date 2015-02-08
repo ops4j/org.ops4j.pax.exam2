@@ -23,7 +23,7 @@ import org.apache.deltaspike.data.api.Repository;
 import org.ops4j.pax.exam.sample1.model.Book;
 
 @Repository
-public interface BookRepository extends EntityRepository<Book, Integer>{
+public interface BookRepository extends EntityRepository<Book, Integer> {
     
     List<Book> findByTitle(String title);
     
