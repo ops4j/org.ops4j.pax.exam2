@@ -38,16 +38,18 @@ public class EchoServlet extends HttpServlet {
         copy(request.getInputStream(), response.getOutputStream(), 4096);
     }
 
-    public static int copy(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
+    public static int copy(final InputStream input, final OutputStream output, final int bufferSize) throws IOException {
         int avail = input.available();
         if (avail > 262144) {
             avail = 262144;
         }
+        final byte[] buffer;
         if (avail > bufferSize) {
-            bufferSize = avail;
+            buffer = new byte[avail];
+        } else {
+            buffer = new byte[bufferSize];
         }
 
-        final byte[] buffer = new byte[bufferSize];
         int n = input.read(buffer);
         int total = 0;
         while (-1 != n) {
