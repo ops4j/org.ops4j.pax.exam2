@@ -689,7 +689,6 @@
                 <dependency>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>org.apache.felix.framework</artifactId>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -709,7 +708,6 @@
                 <dependency>
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>org.eclipse.osgi</artifactId>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -737,7 +735,6 @@
                     <groupId>org.knopflerfish</groupId>
                     <artifactId>framework</artifactId>
                     <version>6.0.4</version>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
