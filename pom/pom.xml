@@ -711,7 +711,6 @@
                 </dependency>
             </dependencies>
         </profile>
-
         <profile>
             <id>knopflerfish</id>
             <activation>
@@ -735,6 +734,27 @@
                     <groupId>org.knopflerfish</groupId>
                     <artifactId>framework</artifactId>
                     <version>6.0.4</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>native</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <pax.exam.container>native</pax.exam.container>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-native</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.ops4j.pax.url</groupId>
+                    <artifactId>pax-url-wrap</artifactId>
+                    <version>${dependency.paxurl.version}</version>
                 </dependency>
             </dependencies>
         </profile>

@@ -157,24 +157,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>native</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>native</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-native</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-            </dependencies>
-        </profile>
-        <profile>
             <id>forked</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
