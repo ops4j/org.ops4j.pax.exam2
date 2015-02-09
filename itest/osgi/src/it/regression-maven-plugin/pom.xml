@@ -196,32 +196,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
-        <profile>
-            <id>forked</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>forked</pax.exam.container>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.ops4j.pax.exam</groupId>
-                        <artifactId>exam-maven-plugin</artifactId>
-                        <version>${project.version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.ops4j.pax.exam</groupId>
-                                <artifactId>pax-exam-container-forked</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
     </profiles>
 
 </project>

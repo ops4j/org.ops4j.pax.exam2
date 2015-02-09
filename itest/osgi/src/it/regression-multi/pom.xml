@@ -258,36 +258,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>forked</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.container>forked</pax.exam.container>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.ops4j.pax.exam</groupId>
-                    <artifactId>pax-exam-container-forked</artifactId>
-                    <version>${project.version}</version>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.ops4j.pax.url</groupId>
-                    <artifactId>pax-url-reference</artifactId>
-                    <version>${dependency.paxurl.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.ops4j.pax.url</groupId>
-                    <artifactId>pax-url-wrap</artifactId>
-                    <version>${dependency.paxurl.version}</version>
-                </dependency>
-
-            </dependencies>
-        </profile>
-
     </profiles>
 
 </project>
