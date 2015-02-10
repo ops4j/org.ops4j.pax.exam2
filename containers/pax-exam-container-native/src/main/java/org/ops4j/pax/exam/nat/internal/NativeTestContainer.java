@@ -232,7 +232,7 @@ public class NativeTestContainer implements TestContainer {
         // If the framework is not stopped, then we're in trouble anyway, so we do not worry
         // about stopping the worker thread.
 
-        if (framework.getState() != Framework.RESOLVED) {
+        if (framework.getState() != Bundle.RESOLVED) {
             String message = "Framework has not yet stopped after " + timeout
                 + " ms. waitForStop did not return";
             throw new TestContainerException(message);
