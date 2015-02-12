@@ -129,12 +129,6 @@
 
     <profiles>
         <profile>
-            <id>equinox</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
             <id>jbosgi</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
