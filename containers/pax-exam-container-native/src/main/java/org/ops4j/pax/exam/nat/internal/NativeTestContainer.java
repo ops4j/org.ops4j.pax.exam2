@@ -65,8 +65,6 @@ import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.osgi.framework.startlevel.BundleStartLevel;
-import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,11 +110,12 @@ public class NativeTestContainer implements TestContainer {
     @Override
     public synchronized long install(String location, InputStream stream) {
         try {
-            Bundle b = framework.getBundleContext().installBundle(location, stream);
+            BundleContext context = framework.getBundleContext();
+            Bundle b = context.installBundle(location, stream);
             installed.push(b.getBundleId());
             LOG.debug("Installed bundle " + b.getSymbolicName() + " as Bundle ID "
                 + b.getBundleId());
-            setBundleStartLevel(b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE);
+            StartLevelUtil.setBundleStartLevel(b, context, Constants.START_LEVEL_TEST_BUNDLE);
             b.start();
             return b.getBundleId();
         }
@@ -148,12 +147,6 @@ public class NativeTestContainer implements TestContainer {
 
     public Bundle getSystemBundle() {
         return framework;
-    }
-    
-    public void setBundleStartLevel(long bundleId, int startLevel) {
-        Bundle bundle = framework.getBundleContext().getBundle(bundleId);
-        BundleStartLevel sl = bundle.adapt(BundleStartLevel.class);
-        sl.setStartLevel(startLevel);
     }
 
     @Override
@@ -302,14 +295,14 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void installAndStartBundles(BundleContext context) throws BundleException {
         List<Bundle> bundles = new ArrayList<Bundle>();
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
             Bundle b = context.installBundle(bundle.getURL());
             bundles.add(b);
             int startLevel = getStartLevel(bundle);
-            BundleStartLevel sl = b.adapt(BundleStartLevel.class);
-            sl.setStartLevel(startLevel);
+            StartLevelUtil.setBundleStartLevel(b, context, startLevel);
             if (bundle.shouldStart()) {
                 try {
                     b.start();
@@ -325,12 +318,13 @@ public class NativeTestContainer implements TestContainer {
         }
         // All bundles are installed, we can now start the framework...
         framework.start();
-        FrameworkStartLevel fsl = framework.adapt(FrameworkStartLevel.class);
-        setFrameworkStartLevel(context, fsl);
+        org.osgi.service.startlevel.StartLevel startLevel = StartLevelUtil.getFrameworkStartLevel(framework);
+        setFrameworkStartLevel(context, startLevel);
         verifyThatBundlesAreResolved(bundles);
     }
 
-    private void setFrameworkStartLevel(BundleContext context, final FrameworkStartLevel sl) {
+    @SuppressWarnings("deprecation")
+    private void setFrameworkStartLevel(BundleContext context, final org.osgi.service.startlevel.StartLevel sl) {
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
         final int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE

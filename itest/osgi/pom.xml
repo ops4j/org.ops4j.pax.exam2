@@ -72,6 +72,19 @@
                         </configuration>
                         <executions>
                             <execution>
+                                <id>equinox-3.6-native</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>equinox-3.6</profile>
+                                        <profile>native</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-3.6-native</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>equinox-native</id>
                                 <goals>
                                     <goal>run</goal>
@@ -111,6 +124,19 @@
                                     <pomExcludes>
                                       <pomExclude>regression-maven-plugin/pom.xml</pomExclude>                                    
                                     </pomExcludes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>equinox-3.6-forked</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>equinox-3.6</profile>
+                                        <profile>forked</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-3.6-forked</cloneProjectsTo>
                                 </configuration>
                             </execution>
                             <execution>
