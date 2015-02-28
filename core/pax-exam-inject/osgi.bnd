@@ -11,7 +11,6 @@ Private-Package:\
   ${bundle.namespace}.*
 
 Import-Package:\
-  !${bundle.namespace},\
-  org.osgi.framework;version="[1.5,2)",\
-  org.slf4j;version="[1.4,2)",\
-  *
+  !${bundle.namespace}, org.slf4j;version="[1.4,2)", *
+  
+  

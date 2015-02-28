@@ -693,26 +693,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>equinox-3.6</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>pax.exam.framework</name>
-                    <value>equinox</value>
-                </property>
-            </activation>
-            <properties>
-                <pax.exam.framework>equinox</pax.exam.framework>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>org.eclipse.osgi</artifactId>
-                    <version>3.6.2.R36x_v20110210</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>equinox</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
