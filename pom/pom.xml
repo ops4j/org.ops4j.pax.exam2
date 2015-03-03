@@ -33,7 +33,7 @@
         <dependency.deltaspike.version>1.0.1</dependency.deltaspike.version>
         <dependency.glassfish.version>4.1</dependency.glassfish.version>
         <dependency.httpcomponents.version>4.3.2</dependency.httpcomponents.version>
-        <dependency.karaf.version>3.0.2</dependency.karaf.version>
+        <dependency.karaf.version>3.0.3</dependency.karaf.version>
         <dependency.logback.version>1.1.2</dependency.logback.version>
         <dependency.maven.version>3.0.5</dependency.maven.version>
         <dependency.spring.version>4.0.6.RELEASE</dependency.spring.version>
