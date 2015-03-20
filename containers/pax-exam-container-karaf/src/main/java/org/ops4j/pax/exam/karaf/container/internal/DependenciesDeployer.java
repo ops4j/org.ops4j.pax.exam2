@@ -164,6 +164,9 @@ public class DependenciesDeployer {
                     continue;
                 }
                 sw.writeStartElement("bundle");
+                if (provisionOption.getStartLevel() != null) {
+                    sw.writeAttribute("start-level", provisionOption.getStartLevel().toString());
+                }
                 sw.writeCharacters(provisionOption.getURL());
                 endElement(sw);
             }

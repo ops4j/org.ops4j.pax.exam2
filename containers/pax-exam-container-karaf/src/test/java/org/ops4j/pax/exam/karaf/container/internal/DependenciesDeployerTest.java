@@ -40,4 +40,18 @@ public class DependenciesDeployerTest {
             "</feature>\n" + 
             "</features>\n", wr.toString());
     }
+
+    @Test
+    public void testDependencyFeatureWithBundleStartLevel() {
+        MavenArtifactProvisionOption option = mavenBundle().groupId("mygroup").artifactId("myArtifactId").version("1.0").startLevel(42);
+        StringWriter wr = new StringWriter();
+        DependenciesDeployer.writeDependenciesFeature(wr, option);
+        Assert.assertEquals(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+            "<features xmlns=\"http://karaf.apache.org/xmlns/features/v1.0.0\" name=\"test-dependencies\">\n" + 
+            "<feature name=\"test-dependencies\">\n" + 
+            "<bundle start-level=\"42\">mvn:mygroup/myArtifactId/1.0</bundle>\n" + 
+            "</feature>\n" + 
+            "</features>\n", wr.toString());
+    }
 }
