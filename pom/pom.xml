@@ -28,7 +28,6 @@
         <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
         <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
-        <dependency.aether.version>1.0.0.v20140518</dependency.aether.version>
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>1.0.1</dependency.deltaspike.version>
@@ -621,12 +620,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.2.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.aether</groupId>
-                <artifactId>aether-api</artifactId>
-                <version>${dependency.aether.version}</version>
             </dependency>
 
             <dependency>
