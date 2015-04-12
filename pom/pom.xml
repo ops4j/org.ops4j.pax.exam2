@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -138,7 +139,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <argLine>${jacoco.argLine}</argLine>                    
+                        <argLine>${jacoco.argLine}</argLine>
                     </configuration>
                 </plugin>
             </plugins>
@@ -285,18 +286,18 @@
                 <artifactId>tinybundles</artifactId>
                 <version>${dependency.tinybundles.version}</version>
             </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.tipi</groupId>
-            <artifactId>org.ops4j.pax.tipi.hamcrest.core</artifactId>
-            <version>${dependency.tipi.hamcrest.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.tipi</groupId>
-            <artifactId>org.ops4j.pax.tipi.junit</artifactId>
-            <version>${dependency.tipi.junit.version}</version>
-            <scope>provided</scope>
-        </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.tipi</groupId>
+                <artifactId>org.ops4j.pax.tipi.hamcrest.core</artifactId>
+                <version>${dependency.tipi.hamcrest.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.tipi</groupId>
+                <artifactId>org.ops4j.pax.tipi.junit</artifactId>
+                <version>${dependency.tipi.junit.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
@@ -712,6 +713,34 @@
             </dependencies>
         </profile>
         <profile>
+            <id>equinox-osgi6</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>pax.exam.framework</name>
+                    <value>equinox</value>
+                </property>
+            </activation>
+            <properties>
+                <pax.exam.framework>equinox</pax.exam.framework>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.tycho</groupId>
+                        <artifactId>org.eclipse.osgi</artifactId>
+                        <version>3.10.0.v20140606-1445</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>org.eclipse.osgi</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>knopflerfish</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -811,7 +840,7 @@
             </activation>
             <properties>
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-                <sonar.jacoco.reportPath>${user.dir}/target/jacoco.exec</sonar.jacoco.reportPath>                
+                <sonar.jacoco.reportPath>${user.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
                 <!-- Workaround for http://jira.codehaus.org/browse/SONARJAVA-759. -->
                 <sonar.java.binaries>${basedir}</sonar.java.binaries>
             </properties>

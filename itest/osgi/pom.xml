@@ -85,6 +85,19 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>equinox-osgi6-native</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>equinox-osgi6</profile>
+                                        <profile>native</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-osgi6-native</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>felix-native</id>
                                 <goals>
                                     <goal>run</goal>
@@ -124,6 +137,19 @@
                                         <profile>forked</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/equinox-forked</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>equinox-osgi6-forked</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>equinox-osgi6</profile>
+                                        <profile>forked</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/equinox-osgi6-forked</cloneProjectsTo>
                                 </configuration>
                             </execution>
                             <execution>
