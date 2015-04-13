@@ -41,7 +41,7 @@
         <dependency.tipi.hamcrest.version>1.3.0.1</dependency.tipi.hamcrest.version>
         <dependency.tipi.junit.version>4.12.0.1</dependency.tipi.junit.version>
         <dependency.tomcat.version>8.0.21</dependency.tomcat.version>
-        <dependency.weld.version>2.2.4.Final</dependency.weld.version>
+        <dependency.weld.version>2.1.2.Final</dependency.weld.version>
         <dependency.wildfly.version>8.2.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
 
