@@ -19,7 +19,7 @@
     <properties>
         <namespace>org.ops4j.pax.exam</namespace>
         <dependency.paxurl.version>2.4.1</dependency.paxurl.version>
-        <dependency.pax.logging.version>1.8.0</dependency.pax.logging.version>
+        <dependency.pax.logging.version>1.8.2</dependency.pax.logging.version>
         <dependency.swissbox.version>1.8.1</dependency.swissbox.version>
         <dependency.tinybundles.version>2.1.1</dependency.tinybundles.version>
         <dependency.base.version>1.5.0</dependency.base.version>
