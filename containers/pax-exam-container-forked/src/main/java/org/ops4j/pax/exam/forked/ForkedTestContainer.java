@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The drawback of this container is that remote debugging is required to debug the tests executed
  * by the forked framework.
- * 
+ *
  * @author Harald Wellmann
  */
 public class ForkedTestContainer implements TestContainer {
@@ -274,11 +274,13 @@ public class ForkedTestContainer implements TestContainer {
     }
 
     private void installAndStartBundles() throws BundleException, RemoteException {
+        File workDir = new File(system.getTempFolder(), "pax-exam-downloads");
+        workDir.mkdirs();
         List<Long> bundleIds = new ArrayList<Long>();
         ProvisionOption<?>[] options = system.getOptions(ProvisionOption.class);
         Map<String, Long> remoteMappings = new HashMap<String, Long>();
         for (ProvisionOption<?> bundle : options) {
-            String localUrl = downloadBundle(bundle.getURL());
+            String localUrl = downloadBundle(workDir, bundle.getURL());
             long bundleId = remoteFramework.installBundle(localUrl);
             remoteMappings.put(bundle.getURL(), bundleId);
         }
@@ -343,13 +345,13 @@ public class ForkedTestContainer implements TestContainer {
         }
     }
 
-    private String downloadBundle(String url) {
+    private String downloadBundle(File workDir, String url) {
         try {
             URL realUrl = new URL(url);
             if (realUrl.getProtocol().equals("reference")) {
                 return url;
             }
-            File localBundle = platform.download(system.getTempFolder(), realUrl, url, false, true,
+            File localBundle = platform.download(workDir, realUrl, url, false, true,
                 true, false);
             return localBundle.toURI().toURL().toString();
         }

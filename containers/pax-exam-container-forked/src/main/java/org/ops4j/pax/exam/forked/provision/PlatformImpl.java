@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Handles the workflow of creating the platform. Concrete platforms should implement only the
  * PlatformBuilder interface. TODO Add unit tests
- * 
+ *
  * @author Alin Dreghiciu, Stuart McCulloch, Harald Wellmann
  * @since August 19, 2007
  */
@@ -52,7 +52,7 @@ public class PlatformImpl {
      */
     /**
      * Downloads files from urls.
-     * 
+     *
      * @param workDir
      *            the directory where to download bundles
      * @param url
@@ -67,10 +67,10 @@ public class PlatformImpl {
      *            if validation fails should or not fail with an exception (or just return null)
      * @param downloadFeeback
      *            whether or not downloading process should display fine grained progres info
-     * 
+     *
      * @return the File corresponding to the downloaded file, or null if the bundle is invalid (not
      *         an osgi bundle)
-     * 
+     *
      * @throws TestContainerException
      *             if the url could not be downloaded
      */
@@ -78,7 +78,7 @@ public class PlatformImpl {
         final Boolean overwrite, final boolean checkAttributes, final boolean failOnValidation,
         final boolean downloadFeeback) {
         LOGGER.debug("Downloading [" + url + "]");
-        File downloadedBundlesFile = new File(workDir, "bundles/downloaded_bundles.properties");
+        File downloadedBundlesFile = new File(workDir, "downloaded_bundles.properties");
         Properties fileNamesForUrls = loadProperties(downloadedBundlesFile);
 
         String downloadedFileName = fileNamesForUrls.getProperty(url.toExternalForm());
@@ -88,7 +88,7 @@ public class PlatformImpl {
             downloadedFileName = hashFileName + ".jar";
 
         }
-        File destination = new File(workDir, "bundles/" + downloadedFileName);
+        File destination = new File(workDir, downloadedFileName);
 
         // download the bundle only if is a forced overwrite or the file does not exist or the file
         // is there but is
@@ -225,12 +225,12 @@ public class PlatformImpl {
      * Validate that the file is an valid bundle. A valid bundle will be a loadable jar file that
      * has manifest and the manifest contains at least an entry for Bundle-SymboliName or
      * Bundle-Name (R3).
-     * 
+     *
      * @param url
      *            original url from where the bundle was created.
      * @param file
      *            file to be validated
-     * 
+     *
      * @throws TestContainerException
      *             if the jar is not a valid bundle
      */
@@ -294,13 +294,13 @@ public class PlatformImpl {
 
     /**
      * Determine name to be used for caching on local file system.
-     * 
+     *
      * @param file
      *            file to be validated
      * @param defaultBundleSymbolicName
      *            default bundle symbolic name to be used if manifest does not have a bundle
      *            symbolic name
-     * 
+     *
      * @return file name based on bundle symbolic name and version
      */
     String determineCachingName(final File file, final String defaultBundleSymbolicName) {
