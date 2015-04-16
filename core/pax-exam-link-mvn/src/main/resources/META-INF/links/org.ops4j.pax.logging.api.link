@@ -1,1 +1,1 @@
-mvn:org.ops4j.pax.logging/pax-logging-api/1.6.4
+mvn:org.ops4j.pax.logging/pax-logging-api/${dependency.pax.logging.version}

@@ -1,1 +1,1 @@
-mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.0
+mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/${dependency.atinject.version}

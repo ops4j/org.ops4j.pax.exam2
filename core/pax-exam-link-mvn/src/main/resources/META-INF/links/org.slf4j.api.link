@@ -1,1 +1,1 @@
-mvn:org.slf4j/slf4j-api/1.5.11
+mvn:org.slf4j/slf4j-api/${dependency.slf4j.version}
