@@ -18,11 +18,10 @@ package org.ops4j.pax.exam.regression.multi.cm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
-import static org.ops4j.pax.exam.regression.multi.cm.EquinoxConstants.EQUINOX_MIRROR;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -56,8 +55,7 @@ public class ConfigurationOptionTest {
     public Option[] config() {
         return options(
             regressionDefaults(),
-            bundle(EQUINOX_MIRROR + "org.eclipse.equinox.cm_1.0.300.v20110502.jar"),
-            bundle(EQUINOX_MIRROR + "org.eclipse.osgi.services_3.3.0.v20110513.jar"),
+            mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject(),
             junitBundles(),
             // Prepare a new configuration...
             ConfigurationAdminOptions.newConfiguration(TEST_PID)

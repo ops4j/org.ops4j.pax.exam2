@@ -17,15 +17,14 @@ package org.ops4j.pax.exam.regression.multi.cm;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
-import static org.ops4j.pax.exam.regression.multi.cm.EquinoxConstants.EQUINOX_MIRROR;
 
 import java.io.IOException;
-import java.util.Dictionary;
 
 import javax.inject.Inject;
 
@@ -35,35 +34,27 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy
 public class ConfigurationAdminTest {
 
-    private static final String DEBUG_OPTIONS = "0.org.eclipse.osgi.framework.debug.FrameworkDebugOptions";
-
     @Inject
     private ConfigurationAdmin configAdmin;
 
     @Configuration()
     public Option[] config() {
-        return options(regressionDefaults(), bundle(EQUINOX_MIRROR
-            + "org.eclipse.equinox.cm_1.0.300.v20110502.jar"), bundle(EQUINOX_MIRROR
-            + "org.eclipse.osgi.services_3.3.0.v20110513.jar"), junitBundles());
+        return options(
+            regressionDefaults(),
+            mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject(),
+            junitBundles());
     }
 
     @Test
-    public void testConfigAdmin() throws IOException {
+    public void testConfigAdmin() throws IOException, InvalidSyntaxException {
         assertThat(configAdmin, is(notNullValue()));
-        org.osgi.service.cm.Configuration config = configAdmin.getConfiguration(DEBUG_OPTIONS);
-        assertThat(config, is(notNullValue()));
-        config.update();
-
-        @SuppressWarnings("rawtypes")
-        Dictionary dictionary = config.getProperties();
-
-        assertThat(dictionary, is(notNullValue()));
-        assertThat((String) dictionary.get("service.pid"), is(DEBUG_OPTIONS));
+        assertThat(configAdmin.listConfigurations(null), is(nullValue()));
     }
 }
