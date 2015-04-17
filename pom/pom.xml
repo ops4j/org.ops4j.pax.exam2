@@ -702,6 +702,34 @@
             </dependencies>
         </profile>
         <profile>
+            <id>felix-osgi6</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>pax.exam.framework</name>
+                    <value>felix</value>
+                </property>
+            </activation>
+            <properties>
+                <pax.exam.framework>felix</pax.exam.framework>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>org.apache.felix.framework</artifactId>
+                        <version>4.6.1</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.apache.felix.framework</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>equinox</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
