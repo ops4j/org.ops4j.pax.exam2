@@ -16,8 +16,12 @@
  */
 package org.ops4j.pax.exam.sample3.calc;
 
+import javax.enterprise.context.Dependent;
+
+@Dependent
 public class Addition implements BinaryOperation {
 
+    @Override
     public int operate(int op1, int op2) {
         return op1 + op2;
     }

@@ -14,14 +14,23 @@
  *  limitations under the License.
  *
  */
-package org.ops4j.pax.exam.regression.cdi.probe.calc;
 
+package org.ops4j.pax.exam.openwebbeans;
 
+import javax.enterprise.inject.spi.BeanManager;
 
-public class Multiplication implements BinaryOperation {
+import org.kohsuke.MetaInfServices;
+import org.ops4j.pax.exam.cdi.spi.BeanManagerProvider;
+
+/**
+ * @author Harald Wellmann
+ * @since 3.0.0
+ */
+@MetaInfServices
+public class OpenWebBeansBeanManagerProvider implements BeanManagerProvider {
 
     @Override
-    public int operate(int op1, int op2) {
-        return op1 * op2;
+    public BeanManager getBeanManager() {
+        return OpenWebBeansTestContainer.getCdiContainer().getBeanManager();
     }
 }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -28,17 +29,18 @@ import javax.persistence.Persistence;
 
 /**
  * Provides a persistence context just for testing.
- * 
+ *
  * @author hwellmann
- * 
+ *
  */
+@Dependent
 public class PersistenceContextProvider {
 
     protected EntityManager em;
 
     /**
      * Use a producer method so that CDI will find this EntityManager.
-     * 
+     *
      * @return
      * @throws IOException
      */

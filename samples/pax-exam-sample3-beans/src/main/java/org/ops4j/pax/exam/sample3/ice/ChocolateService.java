@@ -17,9 +17,13 @@
  */
 package org.ops4j.pax.exam.sample3.ice;
 
+import javax.enterprise.context.Dependent;
+
+@Dependent
 @Chocolate
 public class ChocolateService implements IceCreamService {
 
+    @Override
     public String getFlavour() {
         return "Chocolate";
     }

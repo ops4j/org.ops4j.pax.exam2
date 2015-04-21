@@ -16,8 +16,10 @@
  */
 package org.ops4j.pax.exam.sample3.calc;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+@Dependent
 public class CalculatorImpl implements Calculator {
 
     @Inject

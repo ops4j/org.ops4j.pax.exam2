@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Harald Wellmann.
+ * Copyright 2012 Harald Wellmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.sample3.ice;
+package org.ops4j.pax.exam.openwebbeans;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Default;
+import org.kohsuke.MetaInfServices;
+import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerFactory;
 
-@Dependent
-@Vanilla
-@Default
-public class VanillaService implements IceCreamService {
+/**
+ * @author Harald Wellmann
+ * @since 3.0.0
+ */
+@MetaInfServices
+public class OpenWebBeansTestContainerFactory implements TestContainerFactory {
 
-    @Override
-    public String getFlavour() {
-        return "Vanilla";
+    public TestContainer[] create(ExamSystem system) {
+        OpenWebBeansTestContainer container = new OpenWebBeansTestContainer(system);
+        return new TestContainer[] { container };
     }
 }
