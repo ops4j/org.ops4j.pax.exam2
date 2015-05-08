@@ -29,9 +29,9 @@ import org.ops4j.io.StreamUtils;
 
 /**
  * Builds a ZIP archive from individual files and directories.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 public class ZipBuilder {
 
@@ -41,7 +41,7 @@ public class ZipBuilder {
     /**
      * Creates a ZIP archive in the given file. Allocates underlying file system resources. The user
      * must call {@link #close()} to release these resources.
-     * 
+     *
      * @param zipFile
      *            archive file to be created
      * @throws IOException
@@ -56,26 +56,26 @@ public class ZipBuilder {
      * Recursively adds a directory tree to the archive. The archive must not be closed.
      * <p>
      * Example:<br>
-     * 
+     *
      * <pre>
      * sourceDir = /opt/work/classes
      * targetDir = WEB-INF/classes
-     * 
+     *
      * /opt/work/classes/com/acme/Foo.class -&gt; WEB-INF/classes/com/acme/Foo.class
      * </pre>
-     * 
+     *
      * @param sourceDir
      *            Root directory of tree to be added
      * @param targetDir
      *            Relative path within the archive corresponding to root. Regardless of the OS, this
      *            path must use slashes ('/') as separators.
-     * 
+     *
      * @return this for fluent syntax
      * @throws IOException
      *             on I/O error
      */
     public ZipBuilder addDirectory(File sourceDir, String targetDir) throws IOException {
-        addDirectory(sourceDir, sourceDir, jarOutputStream);
+        addDirectory(sourceDir, sourceDir, targetDir, jarOutputStream);
         return this;
     }
 
@@ -83,19 +83,19 @@ public class ZipBuilder {
      * Adds a file to the archive. The archive must not be closed.
      * <p>
      * Example:<br>
-     * 
+     *
      * <pre>
      * sourceFile = C:\opt\work\deps\foo.jar
      * targetDir = WEB-INF/lib/foo.jar
-     * 
+     *
      * </pre>
-     * 
+     *
      * @param sourceFile
      *            File to be added
      * @param targetFile
      *            Relative path for the file within the archive. Regardless of the OS, this path
      *            must use slashes ('/') as separators.
-     * 
+     *
      * @return this for fluent syntax
      * @throws IOException
      *             on I/O error
@@ -112,7 +112,7 @@ public class ZipBuilder {
     /**
      * Closes the archive and releases file system resources. No more files or directories may be
      * added after calling this method.
-     * 
+     *
      * @throws IOException
      *             on I/O error
      */
@@ -128,7 +128,7 @@ public class ZipBuilder {
     /**
      * Recursively adds the contents of the given directory and all subdirectories to the given ZIP
      * output stream.
-     * 
+     *
      * @param root
      *            an ancestor of {@code directory}, used to determine the relative path within the
      *            archive
@@ -138,29 +138,33 @@ public class ZipBuilder {
      *            ZIP output stream
      * @throws IOException
      */
-    private void addDirectory(File root, File directory, ZipOutputStream zos) throws IOException {
+    private void addDirectory(File root, File directory, String targetPath, ZipOutputStream zos) throws IOException {
+        String prefix = targetPath;
+        if (!prefix.isEmpty() && !prefix.endsWith("/")) {
+            prefix += "/";
+        }
         // directory entries are required, or else bundle classpath may be
         // broken
         if (!directory.equals(root)) {
             String path = normalizePath(root, directory);
-            ZipEntry jarEntry = new ZipEntry(path + "/");
+            ZipEntry jarEntry = new ZipEntry(prefix + path + "/");
             jarOutputStream.putNextEntry(jarEntry);
         }
         File[] children = directory.listFiles();
         // loop through dirList, and zip the files
         for (File child : children) {
             if (child.isDirectory()) {
-                addDirectory(root, child, jarOutputStream);
+                addDirectory(root, child, prefix, jarOutputStream);
             }
             else {
-                addFile(root, child, jarOutputStream);
+                addFile(root, child, prefix, jarOutputStream);
             }
         }
     }
 
     /**
      * Adds a given file to the given ZIP output stream.
-     * 
+     *
      * @param root
      *            an ancestor of {@code file}, used to determine the relative path within the
      *            archive
@@ -170,9 +174,9 @@ public class ZipBuilder {
      *            ZIP output stream
      * @throws IOException
      */
-    private void addFile(File root, File file, ZipOutputStream zos) throws IOException {
+    private void addFile(File root, File file, String prefix, ZipOutputStream zos) throws IOException {
         FileInputStream fis = new FileInputStream(file);
-        ZipEntry jarEntry = new ZipEntry(normalizePath(root, file));
+        ZipEntry jarEntry = new ZipEntry(prefix + normalizePath(root, file));
         zos.putNextEntry(jarEntry);
         StreamUtils.copyStream(fis, zos, false);
         fis.close();
@@ -181,10 +185,10 @@ public class ZipBuilder {
     /**
      * Returns the relative path of the given file with respect to the root directory, with all file
      * separators replaced by slashes.
-     * 
+     *
      * Example: For root {@code C:\work} and file {@code C:\work\com\example\Foo.class}, the result
      * is {@code com/example/Foo.class}
-     * 
+     *
      * @param root
      *            root directory
      * @param file
