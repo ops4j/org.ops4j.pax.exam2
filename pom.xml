@@ -59,6 +59,7 @@
                 <module>maven/exam-maven-plugin</module>
                 <module>maven/archetypes/exam-glassfish41-archetype</module>
                 <module>maven/archetypes/exam-osgi-archetype</module>
+                <module>maven/archetypes/exam-karaf-archetype</module>
                 <module>maven/archetypes/exam-wildfly80-archetype</module>
 
             </modules>
