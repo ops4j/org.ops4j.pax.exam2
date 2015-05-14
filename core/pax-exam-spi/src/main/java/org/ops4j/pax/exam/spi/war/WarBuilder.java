@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Builds a WAR according to a {@link WarProbeOption}.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 public class WarBuilder {
 
@@ -65,7 +65,7 @@ public class WarBuilder {
 
     /**
      * Constructs a WAR builder for the given option.
-     * 
+     *
      * @param tempDir
      *            temporary directory
      * @param option
@@ -78,7 +78,7 @@ public class WarBuilder {
 
     /**
      * Builds a WAR from the given option.
-     * 
+     *
      * @return file URI referencing the WAR in a temporary directory
      */
     public URI buildWar() {
@@ -93,7 +93,7 @@ public class WarBuilder {
             for (String library : option.getLibraries()) {
 
                 File file = toLocalFile(library);
-                
+
                 /*
                  * ScatteredArchive copies all directory class path items to WEB-INF/classes,
                  * so that separate CDI bean deployment archives get merged into one. To avoid
@@ -102,7 +102,7 @@ public class WarBuilder {
                 if (file.isDirectory()) {
                     file = toJar(file);
                 }
-                LOG.debug("including library {}", file);
+                LOG.debug("including library {} = {}", library, file);
                 builder.addFile(file, "WEB-INF/lib/" + file.getName());
             }
             builder.addDirectory(webResourceDir, "");
@@ -124,7 +124,7 @@ public class WarBuilder {
      * <p>
      * Otherwise the file is named <code>$&#123;uuid&#125;.jar</code>, where {@code uuid} represents a random
      * {@link UUID}.
-     * 
+     *
      * @param root root directory with archive contents
      * @return archive file
      * @throws IOException

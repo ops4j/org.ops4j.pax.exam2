@@ -29,22 +29,25 @@ import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
+import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 
 /**
  * Builds a WAR probe.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 public class WarTestProbeBuilderImpl implements TestProbeBuilder {
 
     private File tempDir;
     private WarProbeOption option;
+    private DefaultExamSystem system;
     private final Map<TestAddress, TestInstantiationInstruction> probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
 
-    public WarTestProbeBuilderImpl(File tempDir) {
-        this(tempDir, new WarProbeOption().classPathDefaultExcludes());
+    public WarTestProbeBuilderImpl(File tempDir, DefaultExamSystem system) {
+        this.tempDir = tempDir;
+        this.system = system;
     }
 
     public WarTestProbeBuilderImpl(File tempDir, WarProbeOption option) {
@@ -57,7 +60,7 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
         TestAddress address = new DefaultTestAddress(clazz.getSimpleName() + "." + methodName, args);
         String instruction = clazz.getName() + ";" + methodName;
         /*
-         * args are only used for parameterized tests. A single integer argument is the parameter index. 
+         * args are only used for parameterized tests. A single integer argument is the parameter index.
          */
         if (args.length > 0) {
             instruction = instruction + ";" + args[0];
@@ -88,11 +91,20 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
 
     @Override
     public TestProbeProvider build() {
+        if (option == null) {
+            if (system == null) {
+                option = new WarProbeOption().classPathDefaultExcludes();
+            }
+            else {
+                option = system.getLatestWarProbeOption();
+            }
+        }
         WarBuilder warBuilder = new WarBuilder(tempDir, option);
         URI warUri = warBuilder.buildWar();
         return new WarTestProbeProvider(warUri, getTests());
     }
 
+    @Override
     public Set<TestAddress> getTests() {
         return probeCalls.keySet();
     }

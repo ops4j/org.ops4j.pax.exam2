@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@literal DefaultExamSystem} represents the default implementation of {@link ExamSystem}.
- * 
+ *
  * It takes care of options (including implicit defaults), temporary folders (and their cleanup) and
  * cross cutting parameters that are frequently used like "timeout" values.
  */
@@ -77,10 +77,10 @@ public class DefaultExamSystem implements ExamSystem {
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults. If you need
      * to change the system after it has been created, you fork() it. Forking will not add default
      * options again.
-     * 
+     *
      * @param options
      *            options to be used to define the new system.
-     * 
+     *
      * @throws IOException
      *             in case of an instantiation problem. (IO related)
      */
@@ -114,12 +114,12 @@ public class DefaultExamSystem implements ExamSystem {
      * Creates a fresh ExamSystem. Your options will be combined with internal defaults. If you need
      * to change the system after it has been created, you fork() it. Forking will not add default
      * options again.
-     * 
+     *
      * @param options
      *            options to be used to define the new system.
-     * 
+     *
      * @return a fresh instance of {@literal DefaultExamSystem}
-     * 
+     *
      * @throws IOException
      *             in case of an instantiation problem. (IO related)
      */
@@ -133,6 +133,7 @@ public class DefaultExamSystem implements ExamSystem {
      * Create a new system based on *this*. The forked System remembers the forked instances in
      * order to clear resources up (if desired).
      */
+    @Override
     public ExamSystem fork(Option[] options) {
         try {
             ExamSystem sys = new DefaultExamSystem(combine(combinedOptions, options));
@@ -147,7 +148,7 @@ public class DefaultExamSystem implements ExamSystem {
     /**
      * Creates a fresh temp folder under the mentioned working folder. If workingFolder is null,
      * system wide temp location will be used.
-     * 
+     *
      * @param workingDirectory
      */
     private synchronized File createTemp(File workingDirectory) throws IOException {
@@ -162,8 +163,9 @@ public class DefaultExamSystem implements ExamSystem {
 
     /**
      * Helper method for single options. Last occurence has precedence. (support overwrite).
-     * 
+     *
      */
+    @Override
     public <T extends Option> T getSingleOption(final Class<T> optionType) {
         requestedOptionTypes.add(optionType);
         T[] filter = filter(optionType, combinedOptions);
@@ -187,6 +189,7 @@ public class DefaultExamSystem implements ExamSystem {
         }
     }
 
+    @Override
     public <T extends Option> T[] getOptions(final Class<T> optionType) {
         requestedOptionTypes.add(optionType);
         return filter(optionType, combinedOptions);
@@ -195,6 +198,7 @@ public class DefaultExamSystem implements ExamSystem {
     /**
      * @return the basic directory that Exam should use to look at user-defaults.
      */
+    @Override
     public File getConfigFolder() {
         return configDirectory;
     }
@@ -202,6 +206,7 @@ public class DefaultExamSystem implements ExamSystem {
     /**
      * @return the basic directory that Exam should use for all IO write activities.
      */
+    @Override
     public File getTempFolder() {
         return cache;
     }
@@ -209,6 +214,7 @@ public class DefaultExamSystem implements ExamSystem {
     /**
      * @return a relative indication of how to deal with timeouts.
      */
+    @Override
     public RelativeTimeout getTimeout() {
         return timeout;
     }
@@ -216,6 +222,7 @@ public class DefaultExamSystem implements ExamSystem {
     /**
      * Clears up resources taken by system (like temporary files).
      */
+    @Override
     public void clear() {
         try {
             warnUnusedOptions();
@@ -257,6 +264,7 @@ public class DefaultExamSystem implements ExamSystem {
         return missing;
     }
 
+    @Override
     public TestProbeBuilder createProbe() throws IOException {
 
         WarProbeOption warProbeOption = getSingleOption(WarProbeOption.class);
@@ -272,7 +280,7 @@ public class DefaultExamSystem implements ExamSystem {
                 .findAnyServiceProvider(ConfigurationFactory.class);
             LOG.debug("creating WAR probe");
             if (configurationFactory == null) {
-                return new WarTestProbeBuilderImpl(getTempFolder());
+                return new WarTestProbeBuilderImpl(getTempFolder(), this);
             }
             else {
                 Option[] configuration = configurationFactory.createConfiguration();
@@ -283,10 +291,12 @@ public class DefaultExamSystem implements ExamSystem {
         }
     }
 
+    @Override
     public String createID(String purposeText) {
         return UUID.randomUUID().toString();
     }
 
+    @Override
     public String toString() {
         return "ExamSystem:options=" + combinedOptions.length + ";queried="
             + requestedOptionTypes.size();
@@ -330,6 +340,11 @@ public class DefaultExamSystem implements ExamSystem {
         }
         throw new IllegalStateException("Failed to create directory within " + TEMP_DIR_ATTEMPTS
             + " attempts (tried " + baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
+
+    }
+
+    public WarProbeOption getLatestWarProbeOption() {
+        return subsystems.peek().getSingleOption(WarProbeOption.class);
 
     }
 }
