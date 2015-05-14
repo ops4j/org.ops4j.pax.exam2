@@ -68,14 +68,14 @@ import org.slf4j.LoggerFactory;
  * Manages the exam system and reactor required by a test driver. This class is a singleton and
  * keeps track of all tests in the current test suite and lets a reactor reuse the Exam system and
  * the test probe, where applicable.
- * 
+ *
  * <p>
  * This class was factored out from the JUnit4TestRunner of Pax Exam 2.x and does not depend on
  * JUnit.
  * <p>
  * TODO check if there are any concurrency issues. Some methods are synchronized, which is just
  * inherited from the 2.1.0 implementation. The use cases are not quite clear.
- * 
+ *
  * @author Harald Wellmann
  */
 public class ReactorManager {
@@ -156,7 +156,7 @@ public class ReactorManager {
 
     /**
      * Returns the singleton ReactorManager instance.
-     * 
+     *
      * @return reactor manager
      */
     public static synchronized ReactorManager getInstance() {
@@ -169,7 +169,7 @@ public class ReactorManager {
     /**
      * Prepares the unstaged reactor for the given test class instance. Any configurations from
      * {@code Configuration} methods of the class are added to the reactor.
-     * 
+     *
      * @param _testClass
      *            test class
      * @param testClassInstance
@@ -191,7 +191,7 @@ public class ReactorManager {
 
     /**
      * Stages the reactor for the current class.
-     * 
+     *
      * @return staged reactor
      */
     public StagedExamReactor stageReactor() {
@@ -207,7 +207,8 @@ public class ReactorManager {
             system = DefaultExamSystem.create(new Option[] { timeoutOption });
         }
         else if (EXAM_SYSTEM_JAVAEE.equals(systemType)) {
-            system = DefaultExamSystem.create(new Option[] { new WarProbeOption() });
+            WarProbeOption warProbe = new WarProbeOption().classPathDefaultExcludes();
+            system = DefaultExamSystem.create(new Option[] { warProbe });
         }
         else {
             system = PaxExamRuntime.createTestSystem(timeoutOption);
@@ -218,7 +219,7 @@ public class ReactorManager {
     /**
      * Scans the current test class for declared or inherited {@code @Configuration} methods and
      * invokes them, adding the returned configuration to the reactor.
-     * 
+     *
      * @param testClass
      *            test class
      * @param testClassInstance
@@ -243,7 +244,7 @@ public class ReactorManager {
 
     /**
      * Returns the number of configurations for the current reactor.
-     * 
+     *
      * @return number of configurations
      */
     public int getNumConfigurations() {
@@ -258,7 +259,7 @@ public class ReactorManager {
     /**
      * Creates a staging factory indicated by the {@link ExamReactorStrategy} annotation of the test
      * class.
-     * 
+     *
      * @param testClass
      * @return staging factory
      */
@@ -294,7 +295,7 @@ public class ReactorManager {
 
     /**
      * Creates an unstaged reactor for the given test class.
-     * 
+     *
      * @param testClass
      * @return unstaged reactor
      */
@@ -306,7 +307,7 @@ public class ReactorManager {
      * Creates the test container factory to be used by the reactor.
      * <p>
      * TODO Do we really need this?
-     * 
+     *
      * @param testClass
      * @return test container factory
      */
@@ -334,7 +335,7 @@ public class ReactorManager {
     /**
      * Lazily creates a probe builder. The same probe builder will be reused for all test classes,
      * unless the default builder is overridden in a given class.
-     * 
+     *
      * @param testClassInstance instance of test class
      * @return probe builder
      * @throws IOException when probe cannot be created
@@ -395,7 +396,7 @@ public class ReactorManager {
 
     /**
      * Looks up a test method for a given address.
-     * 
+     *
      * @param address
      *            test method address used by probe
      * @return test method wrapper - the type is only known to the test driver.
@@ -406,7 +407,7 @@ public class ReactorManager {
 
     /**
      * Stores the test method wrapper for a given test address
-     * 
+     *
      * @param address
      *            test method address used by probe
      * @param testMethod
@@ -449,7 +450,7 @@ public class ReactorManager {
 
     /**
      * Performs field injection on the given test class instance.
-     * 
+     *
      * @param test
      *            test class instance
      */
@@ -460,7 +461,7 @@ public class ReactorManager {
 
     /**
      * Finds an injector factory and creates an injector.
-     * 
+     *
      * @return injector
      */
     private Injector findInjector() {
