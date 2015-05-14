@@ -18,11 +18,6 @@
 package org.ops4j.pax.exam.regression.javaee.userprobe;
 
 import static org.junit.Assert.assertEquals;
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.CoreOptions.warProbe;
-import static org.ops4j.pax.exam.Info.getOps4jBaseVersion;
-import static org.ops4j.pax.exam.Info.getPaxExamVersion;
-import static org.ops4j.pax.exam.spi.Probes.builder;
 
 import java.util.List;
 
@@ -30,10 +25,6 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.ProbeBuilder;
-import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.sample1.model.Book;
 import org.ops4j.pax.exam.sample1.service.LibraryService;
@@ -47,38 +38,6 @@ public class UserDefinedProbeTest {
 
     @Inject
     private LibraryService service;
-    
-    //@Configuration
-    public Option[] configuration() {
-        return options(
-            warProbe()
-            .library("target/test-classes")
-            .library(
-                maven("org.ops4j.pax.exam.samples", "pax-exam-sample1-service", getPaxExamVersion()))
-            .library(
-                maven("org.ops4j.pax.exam.samples", "pax-exam-sample1-model", getPaxExamVersion()))
-            .library(maven("org.ops4j.pax.exam", "pax-exam-servlet-bridge", getPaxExamVersion()))
-            .library(maven("org.ops4j.pax.exam", "pax-exam-cdi", getPaxExamVersion()))
-            .library(maven("org.ops4j.pax.exam", "pax-exam", getPaxExamVersion()))
-            .library(maven("org.ops4j.base", "ops4j-base-spi", getOps4jBaseVersion()))
-            .library(maven("junit", "junit", "4.9"))
-            );
-    }
-
-    //@ProbeBuilder
-    public TestProbeBuilder probe(TestProbeBuilder defaultProbe) {
-        return builder(warProbe()
-            .library("target/test-classes")
-            .library(
-                maven("org.ops4j.pax.exam.samples", "pax-exam-sample1-service", getPaxExamVersion()))
-            .library(
-                maven("org.ops4j.pax.exam.samples", "pax-exam-sample1-model", getPaxExamVersion()))
-            .library(maven("org.ops4j.pax.exam", "pax-exam-servlet-bridge", getPaxExamVersion()))
-            .library(maven("org.ops4j.pax.exam", "pax-exam-cdi", getPaxExamVersion()))
-            .library(maven("org.ops4j.pax.exam", "pax-exam", getPaxExamVersion()))
-            .library(maven("org.ops4j.base", "ops4j-base-spi", getOps4jBaseVersion()))
-            .library(maven("junit", "junit", "4.9")));
-    }
 
     @Test
     public void byAuthor() {
