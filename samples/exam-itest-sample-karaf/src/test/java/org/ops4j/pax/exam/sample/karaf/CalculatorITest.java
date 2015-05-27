@@ -72,6 +72,9 @@ public class CalculatorITest {
                 .groupId("org.ops4j.pax.exam.samples")
                 .artifactId("pax-exam-sample8-ds")
                 .versionAsInProject().start(),
+            mavenBundle().groupId("org.ops4j.pax.tipi").artifactId("org.ops4j.pax.tipi.junit").versionAsInProject(),
+            mavenBundle().groupId("org.ops4j.pax.tipi").artifactId("org.ops4j.pax.tipi.hamcrest.core").versionAsInProject(),
+            mavenBundle().groupId("org.ops4j.pax.exam").artifactId("pax-exam-invoker-junit").versionAsInProject()
        };
     }
 
