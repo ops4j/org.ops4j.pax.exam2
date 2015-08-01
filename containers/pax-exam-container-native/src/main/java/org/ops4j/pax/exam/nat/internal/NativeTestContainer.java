@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
+import org.ops4j.pax.exam.FrameworkEventUtils;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeInvoker;
@@ -89,9 +90,9 @@ public class NativeTestContainer implements TestContainer {
     private Long probeId;
 
     private final FrameworkFactory frameworkFactory;
-    private ExamSystem system;
+    protected ExamSystem system;
 
-    private volatile Framework framework;
+    protected volatile Framework framework;
 
     public NativeTestContainer(ExamSystem system, FrameworkFactory frameworkFactory)
         throws IOException {
@@ -156,6 +157,14 @@ public class NativeTestContainer implements TestContainer {
         sl.setStartLevel(startLevel);
     }
 
+    /**
+     * A subclass may override this method to add after {@link Framework#init()} and before
+     * bundles are installed and started.
+     */
+    protected void beforeBundleStartHook() {
+        //
+    }
+
     @Override
     public TestContainer start() {
         try {
@@ -174,6 +183,21 @@ public class NativeTestContainer implements TestContainer {
             }
             framework = frameworkFactory.newFramework(p);
             framework.init();
+            framework.getBundleContext().addFrameworkListener(new FrameworkListener() {
+                @Override
+                public void frameworkEvent(FrameworkEvent frameworkEvent) {
+                    if (frameworkEvent.getType() == FrameworkEvent.ERROR) {
+                        LOG.error(String.format("Framework ERROR event %s", frameworkEvent.toString()),
+                                frameworkEvent.getThrowable());
+                    } else {
+                        LOG.info(String.format("Framework event type %s: %s",
+                                        FrameworkEventUtils.getFrameworkEventString(frameworkEvent.getType()),
+                                        frameworkEvent.toString()),
+                                frameworkEvent.getThrowable());
+                    }
+                }
+            });
+            beforeBundleStartHook();
             installAndStartBundles(framework.getBundleContext());
         }
         catch (BundleException e) {
