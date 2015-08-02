@@ -54,6 +54,7 @@
                 <module>containers/pax-exam-container-tomcat</module>
                 <module>containers/pax-exam-container-karaf</module>
                 <module>containers/pax-exam-container-wildfly80</module>
+                <module>containers/pax-exam-container-wildfly90</module>
                 <module>containers/pax-exam-container-openwebbeans</module>
 
                 <module>maven/exam-maven-plugin</module>
