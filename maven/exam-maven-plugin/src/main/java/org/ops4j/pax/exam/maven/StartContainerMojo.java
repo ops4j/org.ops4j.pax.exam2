@@ -78,6 +78,12 @@ public class StartContainerMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.testClasspathElements}", required = true)
     private String[] classpathElements;
 
+    /**
+     * Additional VM options for the forked container; useful for debugging.
+     */
+    @Parameter
+    private String[] vmOptions;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().debug("classpath for forked process:");
@@ -115,7 +121,16 @@ public class StartContainerMojo extends AbstractMojo {
     }
 
     private String[] buildProperties() {
+        // explicit VM opts first.
         ArrayList<String> options = new ArrayList<>();
+        if (vmOptions != null) {
+            for (String vmOption : vmOptions) {
+                getLog().debug("Adding option " + vmOption);
+                options.add(vmOption);
+            }
+        }
+
+        //then -D
         options.add(String.format("-D%s=%s", BASEDIR, basedir.getAbsolutePath()));
 
         if (propagatedProperties != null) {
@@ -132,6 +147,9 @@ public class StartContainerMojo extends AbstractMojo {
                 }
             }
         }
+
+
+
         return options.toArray(new String[options.size()]);
     }
 }
