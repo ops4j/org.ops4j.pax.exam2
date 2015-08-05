@@ -92,13 +92,13 @@ public class StartContainerMojo extends AbstractMojo {
         }
 
         DefaultJavaRunner javaRunner = new DefaultJavaRunner(false);
-        String[] vmOptions = buildProperties();
+        String[] options = buildProperties();
         String javaHome = System.getProperty("java.home");
         int port = getFreePort();
         String[] args = new String[] { configClass, Integer.toString(port) };
 
         // inherit working directory from this process
-        javaRunner.exec(vmOptions, classpathElements, PaxExamRuntime.class.getName(), args,
+        javaRunner.exec(options, classpathElements, PaxExamRuntime.class.getName(), args,
             javaHome, null);
 
         @SuppressWarnings("unchecked")
