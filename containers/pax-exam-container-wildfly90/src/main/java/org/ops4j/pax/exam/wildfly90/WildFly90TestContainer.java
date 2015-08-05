@@ -262,8 +262,8 @@ public class WildFly90TestContainer implements TestContainer {
         }
         parseServerConfiguration(configFile);
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
-        server = EmbeddedServerFactory.create(wildFlyHome, null, null,
-            getSystemPackages());
+        server = EmbeddedServerFactory.create(wildFlyHome, null,
+            getSystemPackages(), null);
         try {
             server.start();
             deploymentManager = ServerDeploymentManager.Factory.create(

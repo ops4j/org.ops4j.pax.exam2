@@ -255,7 +255,7 @@
         </profile>
 
         <profile>
-            <id>wildfly90</id>
+            <id>wildfly90-on-80</id>
             <properties>
                 <pax.exam.container>wildfly80</pax.exam.container>
                 <pax.exam.wildfly80.home>${basedir}/../../../target/wildfly-9.0.0.Final</pax.exam.wildfly80.home>
@@ -353,6 +353,129 @@
                         <inherited>false</inherited>
                         <executions>
                             <execution>
+                                <id>unpack-wildfly90-on-80</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.wildfly</groupId>
+                                            <artifactId>wildfly-dist</artifactId>
+                                            <version>9.0.0.Final</version>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>wildfly90</id>
+            <properties>
+                <pax.exam.container>wildfly90</pax.exam.container>
+                <pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-9.0.0.Final</pax.exam.wildfly90.home>
+            </properties>
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.wildfly.core</groupId>
+                        <artifactId>wildfly-embedded</artifactId>
+                        <version>1.0.0.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                        <version>3.2.1.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.logmanager</groupId>
+                        <artifactId>jboss-logmanager</artifactId>
+                        <version>2.0.0.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.marshalling</groupId>
+                        <artifactId>jboss-marshalling</artifactId>
+                        <version>1.4.10.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.xnio</groupId>
+                        <artifactId>xnio-api</artifactId>
+                        <version>3.3.1.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.xnio</groupId>
+                        <artifactId>xnio-nio</artifactId>
+                        <version>3.3.1.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.remoting</groupId>
+                        <artifactId>jboss-remoting</artifactId>
+                        <version>4.0.9.Final</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jboss.sasl</groupId>
+                        <artifactId>jboss-sasl</artifactId>
+                        <version>1.0.5.Final</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-wildfly90</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.wildfly.core</groupId>
+                    <artifactId>wildfly-embedded</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+
+                <dependency>
+                    <groupId>org.jboss.logmanager</groupId>
+                    <artifactId>jboss-logmanager</artifactId>
+                    <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-api</artifactId>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.jboss.xnio</groupId>
+                    <artifactId>xnio-nio</artifactId>
+                </dependency>
+
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
                                 <id>unpack-wildfly90</id>
                                 <phase>generate-test-resources</phase>
                                 <goals>
@@ -377,6 +500,7 @@
             </build>
         </profile>
 
+
     </profiles>
 
     <build>
@@ -392,6 +516,7 @@
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
                         <pax.exam.wildfly80.home>${pax.exam.wildfly80.home}</pax.exam.wildfly80.home>
+                        <pax.exam.wildfly90.home>${pax.exam.wildfly90.home}</pax.exam.wildfly90.home>
                     </systemProperties>
                 </configuration>
             </plugin>
