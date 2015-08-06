@@ -146,8 +146,9 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:/jdbc/__default" pool-name="__default" enabled="true" use-java-context="true">
-                    <connection-url>jdbc:h2:mem:default;DB_CLOSE_DELAY=-1</connection-url>
+                <datasource jndi-name="java:/jdbc/movieDatabase" pool-name="movies"
+                    enabled="true" use-java-context="true">
+                    <connection-url>jdbc:h2:mem:movies;DB_CLOSE_DELAY=-1</connection-url>
                     <driver>h2</driver>
                     <security>
                         <user-name>sa</user-name>
