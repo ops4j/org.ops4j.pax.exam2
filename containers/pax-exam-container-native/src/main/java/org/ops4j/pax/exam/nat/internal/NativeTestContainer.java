@@ -90,9 +90,8 @@ public class NativeTestContainer implements TestContainer {
     private Long probeId;
 
     private final FrameworkFactory frameworkFactory;
-    protected ExamSystem system;
-
-    protected volatile Framework framework;
+    private ExamSystem system;
+    private volatile Framework framework;
 
     public NativeTestContainer(ExamSystem system, FrameworkFactory frameworkFactory)
         throws IOException {
@@ -157,14 +156,6 @@ public class NativeTestContainer implements TestContainer {
         sl.setStartLevel(startLevel);
     }
 
-    /**
-     * A subclass may override this method to add after {@link Framework#init()} and before
-     * bundles are installed and started.
-     */
-    protected void beforeBundleStartHook() {
-        //
-    }
-
     @Override
     public TestContainer start() {
         try {
@@ -197,7 +188,6 @@ public class NativeTestContainer implements TestContainer {
                     }
                 }
             });
-            beforeBundleStartHook();
             installAndStartBundles(framework.getBundleContext());
         }
         catch (BundleException e) {
