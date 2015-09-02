@@ -33,6 +33,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.ops4j.exec.DefaultJavaRunner;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
@@ -53,6 +54,12 @@ public class StartContainerMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${mojoExecution}", required = true)
     private MojoExecution mojoExecution;
+
+    /**
+     * The Maven project.
+     */
+    @Parameter(defaultValue = "${project}", readonly = true)
+    protected MavenProject project;
 
     /**
      * The base directory of the project being built. This can be obtained in your
@@ -135,7 +142,10 @@ public class StartContainerMojo extends AbstractMojo {
 
         if (propagatedProperties != null) {
             for (String name : propagatedProperties.split("\\s*,\\s*")) {
-                String val = System.getProperty(name);
+                String val = (String)project.getProperties().get(name);
+                if (val == null) {
+                    val = System.getProperty(name);
+                }
                 if (val == null) {
                     getLog().warn("Property " + name + " should be propagated to pax exam config class, but is " +
                         "not available in maven project.");
