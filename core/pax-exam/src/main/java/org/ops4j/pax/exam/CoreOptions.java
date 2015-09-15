@@ -39,6 +39,7 @@ import org.ops4j.pax.exam.options.MavenArtifactDeploymentOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.OptionalCompositeOption;
+import org.ops4j.pax.exam.options.ProbeInvokerTimeoutOption;
 import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.ServerModeOption;
@@ -884,5 +885,16 @@ public class CoreOptions {
      */
     public static UrlProvisionOption linkBundle(String symbolicName) {
         return bundle(String.format("link:classpath:%s.link", symbolicName));
+    }
+
+    /**
+     * Creates an option to set the timeout for the service lookup of the ProbeInvoker.
+     *
+     * @param timeoutInMillis
+     *            timeout in milliseconds to wait for services to appear
+     * @return ProbeInvokerOption ProbeInvoker timeout option
+     */
+    public static ProbeInvokerTimeoutOption probeInvokerTimeout(long timeoutInMillis) {
+        return new ProbeInvokerTimeoutOption(timeoutInMillis);
     }
 }

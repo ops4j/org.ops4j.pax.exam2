@@ -52,6 +52,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
+import org.ops4j.pax.exam.options.ProbeInvokerTimeoutOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
@@ -104,8 +105,17 @@ public class NativeTestContainer implements TestContainer {
         Map<String, String> props = new HashMap<String, String>();
         props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
         BundleContext bundleContext = framework.getBundleContext();
-        ProbeInvoker probeInvokerService = ServiceLookup.getService(bundleContext,
-            ProbeInvoker.class, props);
+
+        ProbeInvoker probeInvokerService;
+        ProbeInvokerTimeoutOption probeInvokerTimeoutOption = system
+                .getSingleOption(ProbeInvokerTimeoutOption.class);
+        if (probeInvokerTimeoutOption != null) {
+            long timeout = probeInvokerTimeoutOption.getTimeout();
+            probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class, timeout, props);
+        }
+        else {
+            probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class, props);
+        }
         probeInvokerService.call(address.arguments());
     }
 
