@@ -382,6 +382,7 @@
             <properties>
                 <pax.exam.container>wildfly90</pax.exam.container>
                 <pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-9.0.0.Final</pax.exam.wildfly90.home>
+                <pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly90-config</pax.exam.wildfly90.config.dir>
             </properties>
 
             <dependencyManagement>
