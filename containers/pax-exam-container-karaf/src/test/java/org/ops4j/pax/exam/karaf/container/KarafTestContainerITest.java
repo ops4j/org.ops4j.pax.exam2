@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
@@ -49,7 +50,10 @@ public class KarafTestContainerITest {
     public Option[] config() {
         return new Option[] {
             karafDistributionConfiguration().frameworkUrl(KARAF_URL).karafVersion(karafVersion()).useDeployFolder(false),
-            configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO)
+            configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO),
+            mavenBundle().groupId("org.ops4j.pax.tipi").artifactId("org.ops4j.pax.tipi.junit").versionAsInProject(),
+            mavenBundle().groupId("org.ops4j.pax.tipi").artifactId("org.ops4j.pax.tipi.hamcrest.core").versionAsInProject(),
+            mavenBundle().groupId("org.ops4j.pax.exam").artifactId("pax-exam-invoker-junit").versionAsInProject()
         };
     }
     

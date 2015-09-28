@@ -70,8 +70,20 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.ops4j.pax.tipi</groupId>
+            <artifactId>org.ops4j.pax.tipi.junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.tipi</groupId>
+            <artifactId>org.ops4j.pax.tipi.hamcrest.core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-invoker-junit</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
