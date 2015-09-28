@@ -505,7 +505,7 @@
             <id>wildfly100</id>
             <properties>
                 <pax.exam.container>wildfly100</pax.exam.container>
-                <pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-10.0.0.CR1</pax.exam.wildfly90.home>
+                <pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-10.0.0.CR2</pax.exam.wildfly90.home>
                 <pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly100-config</pax.exam.wildfly90.config.dir>
             </properties>
 
@@ -514,12 +514,12 @@
                     <dependency>
                         <groupId>org.wildfly.core</groupId>
                         <artifactId>wildfly-embedded</artifactId>
-                        <version>2.0.0.CR1</version>
+                        <version>2.0.0.CR5</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.logging</groupId>
                         <artifactId>jboss-logging</artifactId>
-                        <version>3.2.1.Final</version>
+                        <version>3.3.0.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.logmanager</groupId>
@@ -544,7 +544,7 @@
                     <dependency>
                         <groupId>org.jboss.remoting</groupId>
                         <artifactId>jboss-remoting</artifactId>
-                        <version>4.0.10.Final</version>
+                        <version>4.0.14.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.sasl</groupId>
@@ -612,7 +612,7 @@
                                         <artifactItem>
                                             <groupId>org.wildfly</groupId>
                                             <artifactId>wildfly-dist</artifactId>
-                                            <version>10.0.0.CR1</version>
+                                            <version>10.0.0.CR2</version>
                                             <type>zip</type>
                                         </artifactItem>
                                     </artifactItems>
