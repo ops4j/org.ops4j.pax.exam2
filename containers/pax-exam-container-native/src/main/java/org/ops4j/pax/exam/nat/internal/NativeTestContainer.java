@@ -104,9 +104,43 @@ public class NativeTestContainer implements TestContainer {
         Map<String, String> props = new HashMap<String, String>();
         props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
         BundleContext bundleContext = framework.getBundleContext();
-        ProbeInvoker probeInvokerService = ServiceLookup.getService(bundleContext,
-            ProbeInvoker.class, props);
+        ProbeInvoker probeInvokerService;
+        Long timeout = determineExamServiceTimeout();
+        if (timeout != null) {
+            probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class, timeout.longValue(), props);
+        }
+        else {
+            probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class, props);
+        }
         probeInvokerService.call(address.arguments());
+    }
+
+    private Long determineExamServiceTimeout() {
+        SystemPropertyOption[] systemPropertyOptions = system
+                .getOptions(SystemPropertyOption.class);
+        SystemPropertyOption examServiceTimeoutOption = null;
+        // Walk the options from end to start, as there may be multiple and we want to use the one that was set last
+        for (int i = systemPropertyOptions.length - 1; i >= 0; i--) {
+            SystemPropertyOption currentOption = systemPropertyOptions[i];
+            if (Constants.EXAM_SERVICE_TIMEOUT_KEY.equals(currentOption.getKey())) {
+                examServiceTimeoutOption = currentOption;
+                break;
+            }
+        }
+        if (examServiceTimeoutOption == null) {
+            return null;
+        }
+            
+        String examServiceTimeoutValue = examServiceTimeoutOption.getValue();
+        try {
+            Long timeout = Long.valueOf(examServiceTimeoutValue);
+            return timeout;
+            
+        } catch (NumberFormatException e) {
+            LOG.warn("Couldn't parse the value '" + examServiceTimeoutValue + "' of the Option "
+                + examServiceTimeoutOption.getKey() + " to a Number (Long). Falling back to default.");
+            return null;
+        }
     }
 
     @Override
