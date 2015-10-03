@@ -18,6 +18,8 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import static org.ops4j.pax.exam.Constants.EXAM_FAIL_ON_UNRESOLVED_KEY;
+import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_DEFAULT;
+import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_KEY;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -77,7 +79,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * When the framework has reached the configured start level, the container checks that all bundles
  * are resolved and throws an exception otherwise.
- * 
+ *
  * @author Toni Menzel
  * @author Harald Wellmann
  * @since Jan 7, 2010
@@ -105,41 +107,21 @@ public class NativeTestContainer implements TestContainer {
         props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
         BundleContext bundleContext = framework.getBundleContext();
         ProbeInvoker probeInvokerService;
-        Long timeout = determineExamServiceTimeout();
-        if (timeout != null) {
-            probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class, timeout.longValue(), props);
-        }
-        else {
-            probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class, props);
-        }
+        probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class,
+            determineExamServiceTimeout(), props);
         probeInvokerService.call(address.arguments());
     }
 
-    private Long determineExamServiceTimeout() {
-        SystemPropertyOption[] systemPropertyOptions = system
-                .getOptions(SystemPropertyOption.class);
-        SystemPropertyOption examServiceTimeoutOption = null;
-        // Walk the options from end to start, as there may be multiple and we want to use the one that was set last
-        for (int i = systemPropertyOptions.length - 1; i >= 0; i--) {
-            SystemPropertyOption currentOption = systemPropertyOptions[i];
-            if (Constants.EXAM_SERVICE_TIMEOUT_KEY.equals(currentOption.getKey())) {
-                examServiceTimeoutOption = currentOption;
-                break;
-            }
-        }
-        if (examServiceTimeoutOption == null) {
-            return null;
-        }
-            
-        String examServiceTimeoutValue = examServiceTimeoutOption.getValue();
+    private long determineExamServiceTimeout() {
+        String timeoutProp = System.getProperty(EXAM_SERVICE_TIMEOUT_KEY,
+            EXAM_SERVICE_TIMEOUT_DEFAULT);
+
         try {
-            Long timeout = Long.valueOf(examServiceTimeoutValue);
-            return timeout;
-            
-        } catch (NumberFormatException e) {
-            LOG.warn("Couldn't parse the value '" + examServiceTimeoutValue + "' of the Option "
-                + examServiceTimeoutOption.getKey() + " to a Number (Long). Falling back to default.");
-            return null;
+            return Long.valueOf(timeoutProp);
+        }
+        catch (NumberFormatException exc) {
+            LOG.warn("Invalid timeout value {}, falling back to default");
+            return Long.valueOf(EXAM_SERVICE_TIMEOUT_DEFAULT);
         }
     }
 
@@ -183,7 +165,7 @@ public class NativeTestContainer implements TestContainer {
     public Bundle getSystemBundle() {
         return framework;
     }
-    
+
     public void setBundleStartLevel(long bundleId, int startLevel) {
         Bundle bundle = framework.getBundleContext().getBundle(bundleId);
         BundleStartLevel sl = bundle.adapt(BundleStartLevel.class);
@@ -209,16 +191,18 @@ public class NativeTestContainer implements TestContainer {
             framework = frameworkFactory.newFramework(p);
             framework.init();
             framework.getBundleContext().addFrameworkListener(new FrameworkListener() {
+
                 @Override
                 public void frameworkEvent(FrameworkEvent frameworkEvent) {
                     if (frameworkEvent.getType() == FrameworkEvent.ERROR) {
-                        LOG.error(String.format("Framework ERROR event %s", frameworkEvent.toString()),
-                                frameworkEvent.getThrowable());
-                    } else {
+                        LOG.error(
+                            String.format("Framework ERROR event %s", frameworkEvent.toString()),
+                            frameworkEvent.getThrowable());
+                    }
+                    else {
                         LOG.info(String.format("Framework event type %s: %s",
-                                        FrameworkEventUtils.getFrameworkEventString(frameworkEvent.getType()),
-                                        frameworkEvent.toString()),
-                                frameworkEvent.getThrowable());
+                            FrameworkEventUtils.getFrameworkEventString(frameworkEvent.getType()),
+                            frameworkEvent.toString()), frameworkEvent.getThrowable());
                     }
                 }
             });
@@ -361,9 +345,10 @@ public class NativeTestContainer implements TestContainer {
             if (bundle.shouldStart()) {
                 try {
                     b.start();
-                } 
+                }
                 catch (BundleException e) {
-                    throw new BundleException("Error starting bundle " + b.getSymbolicName() + ". " + e.getMessage(), e);
+                    throw new BundleException("Error starting bundle " + b.getSymbolicName() + ". "
+                        + e.getMessage(), e);
                 }
                 LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
             }
@@ -473,7 +458,7 @@ public class NativeTestContainer implements TestContainer {
      * Worker thread for shutting down the framework. We'd expect Framework.waitForStop(timeout) to
      * return after the given timeout, but this is not the case with Equinox (tested on 3.6.2 and
      * 3.7.0), so we use this worker thread to avoid blocking the main thread.
-     * 
+     *
      * @author Harald Wellmann
      */
     private class Stopper extends Thread {
