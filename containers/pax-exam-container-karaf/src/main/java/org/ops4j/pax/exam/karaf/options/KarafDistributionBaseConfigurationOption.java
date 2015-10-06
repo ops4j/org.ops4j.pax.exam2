@@ -29,6 +29,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     protected String karafVersion;
     protected File unpackDirectory;
     protected boolean useDeployFolder = true;
+    protected boolean runEmbedded = false;
 
     public KarafDistributionBaseConfigurationOption() {
         frameworkURL = null;
@@ -143,6 +144,19 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         this.useDeployFolder = _useDeployFolder;
         return this;
     }
+    
+    /**
+     * Per default the framework will run Karaf as forked Java process. This can be used to
+     * switch to run Karaf as embedded instance. 
+     * 
+     * @param _runEmbedded
+     * 				shall Karaf be run as embedded instance. 
+     * @return this for fluent syntax
+     */
+    public KarafDistributionBaseConfigurationOption runEmbedded(boolean _runEmbedded) {
+    	this.runEmbedded = _runEmbedded;
+    	return this;
+    }
 
     public String getFrameworkURL() {
         if (frameworkURL == null && frameworkURLReference == null) {
@@ -167,5 +181,9 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     public boolean isUseDeployFolder() {
         return useDeployFolder;
     }
+    
+    public boolean isRunEmbedded() {
+		return runEmbedded;
+	}
 
 }

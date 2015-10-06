@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.rbc.internal;
 
+import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -143,9 +145,12 @@ public class Activator implements BundleActivator {
         if (registerRBCThread != null) {
             registerRBCThread.interrupt();
             String name = getName();
-            registry.unbind(name);
-            UnicastRemoteObject.unexportObject(remoteBundleContext, true);
-
+            try {
+	            registry.unbind(name);
+	            UnicastRemoteObject.unexportObject(remoteBundleContext, true);
+            } catch (NotBoundException | NoSuchObjectException ex) {
+            	LOG.warn("No such Object bound {}", name, ex);
+            }
             // UnicastRemoteObject.unexportObject( registry, true );
             registry = null;
             remoteBundleContext = null;

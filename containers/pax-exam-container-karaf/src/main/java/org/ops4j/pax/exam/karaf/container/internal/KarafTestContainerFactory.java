@@ -23,6 +23,7 @@ import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.pax.exam.karaf.container.internal.runner.KarafEmbeddedRunner;
 import org.ops4j.pax.exam.karaf.container.internal.runner.KarafJavaRunner;
 import org.ops4j.pax.exam.karaf.container.internal.runner.NixRunner;
 import org.ops4j.pax.exam.karaf.container.internal.runner.WindowsRunner;
@@ -68,7 +69,11 @@ public class KarafTestContainerFactory implements TestContainerFactory {
         KarafDistributionBaseConfigurationOption[] options =
                 system.getOptions(KarafDistributionConfigurationOption.class);
         for (KarafDistributionBaseConfigurationOption testContainer : options) {
-            containers.add(new KarafTestContainer(system, testContainer, new KarafJavaRunner()));
+        	if (testContainer.isRunEmbedded()) {
+				containers.add(new KarafTestContainer(system, testContainer, new KarafEmbeddedRunner()));
+			} else {
+				containers.add(new KarafTestContainer(system, testContainer, new KarafJavaRunner()));
+			}
         }
         return containers.toArray(new TestContainer[containers.size()]);
     }

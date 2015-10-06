@@ -25,6 +25,8 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configure
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -48,7 +50,7 @@ public class KarafTestContainerITest {
     @Configuration
     public Option[] config() {
         return new Option[] {
-            karafDistributionConfiguration().frameworkUrl(KARAF_URL).karafVersion(karafVersion()).useDeployFolder(false),
+            karafDistributionConfiguration().frameworkUrl(KARAF_URL).karafVersion(karafVersion()).useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
             configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO)
         };
     }
