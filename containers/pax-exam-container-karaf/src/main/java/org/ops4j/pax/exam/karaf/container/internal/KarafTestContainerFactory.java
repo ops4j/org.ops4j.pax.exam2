@@ -69,11 +69,12 @@ public class KarafTestContainerFactory implements TestContainerFactory {
         KarafDistributionBaseConfigurationOption[] options =
                 system.getOptions(KarafDistributionConfigurationOption.class);
         for (KarafDistributionBaseConfigurationOption testContainer : options) {
-        	if (testContainer.isRunEmbedded()) {
-				containers.add(new KarafTestContainer(system, testContainer, new KarafEmbeddedRunner()));
-			} else {
-				containers.add(new KarafTestContainer(system, testContainer, new KarafJavaRunner()));
-			}
+            if (testContainer.isRunEmbedded()) {
+                containers.add(new KarafTestContainer(system, testContainer, new KarafEmbeddedRunner()));
+            }
+            else {
+                containers.add(new KarafTestContainer(system, testContainer, new KarafJavaRunner()));
+            }
         }
         return containers.toArray(new TestContainer[containers.size()]);
     }
