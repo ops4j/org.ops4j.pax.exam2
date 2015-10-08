@@ -31,7 +31,7 @@
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>1.3.0</dependency.deltaspike.version>
-        <dependency.glassfish.version>4.1</dependency.glassfish.version>
+        <dependency.glassfish.version>4.1.1</dependency.glassfish.version>
         <dependency.httpcomponents.version>4.3.2</dependency.httpcomponents.version>
         <dependency.karaf.version>3.0.3</dependency.karaf.version>
 
