@@ -50,6 +50,7 @@
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-forked</module>
                 <module>containers/pax-exam-container-glassfish-embedded</module>
+                <module>containers/pax-exam-container-sisu</module>
                 <module>containers/pax-exam-container-weld</module>
                 <module>containers/pax-exam-container-tomcat</module>
                 <module>containers/pax-exam-container-karaf</module>
