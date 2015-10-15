@@ -41,7 +41,6 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.JarProbeOption;
 import org.ops4j.pax.exam.spi.war.JarBuilder;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 

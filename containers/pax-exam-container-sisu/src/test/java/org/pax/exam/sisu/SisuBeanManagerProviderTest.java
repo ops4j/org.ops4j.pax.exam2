@@ -19,7 +19,6 @@ package org.pax.exam.sisu;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.junit.After;
@@ -56,6 +55,7 @@ public class SisuBeanManagerProviderTest {
 	 *
 	 */
 	private static class StaticFieldTest {
+		@SuppressWarnings("unused")
 		@Inject
 		private static TestService service;
 		
@@ -65,6 +65,7 @@ public class SisuBeanManagerProviderTest {
 	 *
 	 */
 	private static class FinalFieldTest {
+		@SuppressWarnings("unused")
 		@Inject
 		private final TestService service = new TestService();
 		
