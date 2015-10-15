@@ -1,6 +1,21 @@
+/*
+ * Copyright 2015 Roland Hauser
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 package org.pax.exam.sisu;
 
-import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.System.getProperties;
 import static java.lang.System.setProperty;
 import static java.lang.Thread.currentThread;
@@ -20,14 +35,10 @@ import static org.pax.exam.sisu.SisuTestContainer.getInjector;
 import java.io.File;
 import java.net.URLClassLoader;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.ops4j.pax.exam.Constants;
-import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.options.JarProbeOption;
 
@@ -45,7 +56,7 @@ public class SisuContainerTest {
 	public void setup() {
 		when(system.getTempFolder()).thenReturn(new File("target"));
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -72,7 +83,7 @@ public class SisuContainerTest {
 		assertEquals(NOOP, container.install(null));
 		verifyZeroInteractions(system);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -81,7 +92,7 @@ public class SisuContainerTest {
 		assertEquals(NOOP, container.installProbe(null));
 		verifyZeroInteractions(system);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -110,26 +121,26 @@ public class SisuContainerTest {
 	 */
 	@Test
 	public void startStopWithCurrentContextClassLoader() {
-		assertSame(container,  container.start());
+		assertSame(container, container.start());
 		assertNotNull(getInjector());
 		assertSame(container, container.stop());
 		assertNull(getInjector());
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Test
 	public void startWithSystemClassLoader() {
 		currentThread().setContextClassLoader(null);
-		assertSame(container,  container.start());
+		assertSame(container, container.start());
 		assertNotNull(getInjector());
 		assertNull(currentThread().getContextClassLoader());
 		assertSame(container, container.stop());
 		assertNull(getInjector());
 		assertNull(currentThread().getContextClassLoader());
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -139,27 +150,27 @@ public class SisuContainerTest {
 		currentThread().setContextClassLoader(ctxLdr);
 		JarProbeOption option = jarProbe().resources("exam.properties");
 		when(system.getSingleOption(JarProbeOption.class)).thenReturn(option);
-		assertSame(container,  container.start());
+		assertSame(container, container.start());
 		final ClassLoader ldr = currentThread().getContextClassLoader();
 		assertTrue(ldr instanceof URLClassLoader);
 		assertSame(container, container.stop());
 		assertNull(getInjector());
 		assertSame(ctxLdr, currentThread().getContextClassLoader());
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Test
 	public void stopWhenNotStarted() {
-		assertSame(container,  container.stop());
+		assertSame(container, container.stop());
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Test
 	public void verifyToString() {
-		assertEquals( CONTAINER_NAME, container.toString());
+		assertEquals(CONTAINER_NAME, container.toString());
 	}
 }
