@@ -43,7 +43,7 @@ public class BeanManagerProxyTest {
 		final AnnotatedType type = bman.createAnnotatedType(Object.class);
 		assertNotNull(type);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -53,7 +53,7 @@ public class BeanManagerProxyTest {
 		final InjectionTarget target = bman.createInjectionTarget(mock(AnnotatedType.class));
 		assertNotNull(target);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -62,7 +62,7 @@ public class BeanManagerProxyTest {
 		// Should not throw an exception
 		assertNull(bman.createCreationalContext(null));
 	}
-	
+
 	/**
 	 * 
 	 */

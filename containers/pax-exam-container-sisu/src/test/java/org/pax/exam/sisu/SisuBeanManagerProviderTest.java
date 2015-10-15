@@ -28,21 +28,18 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.cdi.impl.CdiInjector;
 
-
-
 /**
- * @author rolandhauser
  *
  */
 public class SisuBeanManagerProviderTest {
-	
+
 	/**
 	 *
 	 */
 	private static class ValidTest {
 		@Inject
 		private TestService service;
-		
+
 		/**
 		 * @return
 		 */
@@ -50,7 +47,7 @@ public class SisuBeanManagerProviderTest {
 			return service;
 		}
 	}
-	
+
 	/**
 	 *
 	 */
@@ -58,9 +55,9 @@ public class SisuBeanManagerProviderTest {
 		@SuppressWarnings("unused")
 		@Inject
 		private static TestService service;
-		
+
 	}
-	
+
 	/**
 	 *
 	 */
@@ -68,12 +65,12 @@ public class SisuBeanManagerProviderTest {
 		@SuppressWarnings("unused")
 		@Inject
 		private final TestService service = new TestService();
-		
+
 	}
-	
+
 	private final CdiInjector injector = new CdiInjector();
 	private final SisuTestContainer container = new SisuTestContainer(mock(ExamSystem.class));
-	
+
 	/**
 	 * 
 	 */
@@ -81,7 +78,7 @@ public class SisuBeanManagerProviderTest {
 	public void setup() {
 		container.start();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -89,7 +86,7 @@ public class SisuBeanManagerProviderTest {
 	public void tearDown() {
 		container.stop();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -99,7 +96,7 @@ public class SisuBeanManagerProviderTest {
 		injector.injectFields(test);
 		assertNotNull(test.getService());
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -107,7 +104,7 @@ public class SisuBeanManagerProviderTest {
 	public void failWhenInjectFieldIsStatic() {
 		injector.injectFields(new StaticFieldTest());
 	}
-	
+
 	/**
 	 * 
 	 */

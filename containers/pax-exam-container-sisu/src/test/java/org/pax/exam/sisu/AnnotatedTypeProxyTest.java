@@ -29,7 +29,7 @@ public class AnnotatedTypeProxyTest {
 	private final AnnotatedTypeProxy handler = new AnnotatedTypeProxy(Object.class);
 	@SuppressWarnings("rawtypes")
 	private final AnnotatedType type = ProxyFactory.createProxy(AnnotatedType.class, handler);
-	
+
 	/**
 	 * 
 	 */
@@ -37,7 +37,7 @@ public class AnnotatedTypeProxyTest {
 	public void invokeJavaClass() {
 		assertSame(Object.class, type.getJavaClass());
 	}
-	
+
 	/**
 	 * 
 	 */

@@ -34,7 +34,7 @@ public class InjectionTargetProxyTest {
 	private final InjectionTargetProxy handler = new InjectionTargetProxy<>(type);
 	@SuppressWarnings("rawtypes")
 	private final InjectionTarget target = createProxy(InjectionTarget.class, handler);
-	
+
 	/**
 	 * 
 	 */
@@ -43,7 +43,7 @@ public class InjectionTargetProxyTest {
 	public void invokeInject() {
 		target.inject(null, null);
 	}
-	
+
 	/**
 	 * 
 	 */
