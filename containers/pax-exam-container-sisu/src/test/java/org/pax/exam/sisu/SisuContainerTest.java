@@ -35,6 +35,7 @@ import static org.pax.exam.sisu.SisuTestContainer.getInjector;
 import java.io.File;
 import java.net.URLClassLoader;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.pax.exam.Constants;
@@ -48,13 +49,23 @@ import org.ops4j.pax.exam.options.JarProbeOption;
 public class SisuContainerTest {
 	private final ExamSystem system = mock(ExamSystem.class);
 	private final SisuTestContainer container = new SisuTestContainer(system);
+	private ClassLoader contextLdr;
 
 	/**
 	 * 
 	 */
 	@Before
 	public void setup() {
+		contextLdr = currentThread().getContextClassLoader();
 		when(system.getTempFolder()).thenReturn(new File("target"));
+	}
+	
+	/**
+	 * 
+	 */
+	@After
+	public void tearDown() {
+		currentThread().setContextClassLoader(contextLdr);
 	}
 
 	/**
