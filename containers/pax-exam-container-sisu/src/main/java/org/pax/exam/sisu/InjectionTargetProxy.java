@@ -16,62 +16,27 @@
  */
 package org.pax.exam.sisu;
 
-import static java.lang.reflect.Modifier.isFinal;
-import static java.lang.reflect.Modifier.isStatic;
 import static org.pax.exam.sisu.SisuTestContainer.getInjector;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.LinkedList;
-
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.inject.Inject;
-
-import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * @author Roland Hauser
  * @since 4.7.0
  */
 public class InjectionTargetProxy<X> implements InvocationHandler {
-	private final AnnotatedType<X> annotatedType;
 
-	public InjectionTargetProxy(final AnnotatedType<X> annotatedType) {
-		this.annotatedType = annotatedType;
-	}
-
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
+	 * java.lang.reflect.Method, java.lang.Object[])
 	 */
-	private Collection<Field> findFields(Class<?> type, Collection<Field> fields) {
-		if (type != null) {
-			for (final Field field : type.getDeclaredFields()) {
-				if (field.isAnnotationPresent(Inject.class)) {
-					if (isStatic(field.getModifiers())) {
-						throw new TestContainerException("Cannot inject into static field "+field.getName());
-					}
-
-					if (isFinal(field.getModifiers())) {
-						throw new TestContainerException("Cannot inject into final field "+ field.getName());
-					}
-					fields.add(field);
-				}
-			}
-			findFields(type.getSuperclass(), fields);
-		}
-		return fields;
-	}
-
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if ("inject".equals(method.getName())) {
-			for (final Field field : findFields(annotatedType.getJavaClass(), new LinkedList<Field>())) {
-				final Object obj = getInjector().getInstance(field.getType());
-				field.setAccessible(true);
-				field.set(args[0], obj);
-			}
+			getInjector().injectMembers(args[0]);
 			return null;
 		}
 		throw new UnsupportedOperationException("Sisu InjectionTarget proxy only supports inject()");

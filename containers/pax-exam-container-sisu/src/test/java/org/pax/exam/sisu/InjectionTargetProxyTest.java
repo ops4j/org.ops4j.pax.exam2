@@ -16,10 +16,8 @@
  */
 package org.pax.exam.sisu;
 
-import static org.mockito.Mockito.mock;
 import static org.pax.exam.sisu.ProxyFactory.createProxy;
 
-import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.InjectionTarget;
 
 import org.junit.Test;
@@ -29,20 +27,9 @@ import org.junit.Test;
  */
 public class InjectionTargetProxyTest {
 	@SuppressWarnings("rawtypes")
-	private final AnnotatedType type = mock(AnnotatedType.class);
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private final InjectionTargetProxy handler = new InjectionTargetProxy<>(type);
+	private final InjectionTargetProxy handler = new InjectionTargetProxy<>();
 	@SuppressWarnings("rawtypes")
 	private final InjectionTarget target = createProxy(InjectionTarget.class, handler);
-
-	/**
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	@Test
-	public void invokeInject() {
-		target.inject(null, null);
-	}
 
 	/**
 	 * 

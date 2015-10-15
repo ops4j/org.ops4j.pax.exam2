@@ -25,8 +25,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.cdi.impl.CdiInjector;
+
+import com.google.inject.ConfigurationException;
 
 /**
  *
@@ -100,15 +101,7 @@ public class SisuBeanManagerProviderTest {
 	/**
 	 * 
 	 */
-	@Test(expected = TestContainerException.class)
-	public void failWhenInjectFieldIsStatic() {
-		injector.injectFields(new StaticFieldTest());
-	}
-
-	/**
-	 * 
-	 */
-	@Test(expected = TestContainerException.class)
+	@Test(expected = ConfigurationException.class)
 	public void failWhenInjectFieldIsFinal() {
 		injector.injectFields(new FinalFieldTest());
 	}

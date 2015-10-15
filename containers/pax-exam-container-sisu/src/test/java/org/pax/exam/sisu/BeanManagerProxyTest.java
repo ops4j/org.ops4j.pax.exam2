@@ -39,9 +39,7 @@ public class BeanManagerProxyTest {
 	 */
 	@Test
 	public void invokeCreateAnnotatedType() {
-		@SuppressWarnings("rawtypes")
-		final AnnotatedType type = bman.createAnnotatedType(Object.class);
-		assertNotNull(type);
+		assertNull(bman.createAnnotatedType(Object.class));
 	}
 
 	/**
