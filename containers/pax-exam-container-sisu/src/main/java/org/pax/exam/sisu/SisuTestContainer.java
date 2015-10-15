@@ -17,6 +17,8 @@
 package org.pax.exam.sisu;
 
 import static com.google.inject.Guice.createInjector;
+import static java.lang.ClassLoader.getSystemClassLoader;
+import static java.lang.Thread.currentThread;
 
 import java.io.File;
 import java.io.InputStream;
@@ -47,112 +49,107 @@ import com.google.inject.Injector;
  * @since 4.7.0
  */
 public class SisuTestContainer implements TestContainer {
+	private static final Logger LOG = LoggerFactory.getLogger(SisuTestContainer.class);
+	static final String CONTAINER_NAME = "Eclipse Sisu";
+	static final int NOOP = -1;
+	private static Injector injector;
+	private ExamSystem system;
+	private ClassLoader contextClassLoader;
+	private File probeDir;
 
+	public SisuTestContainer(ExamSystem system) {
+		this.system = system;
+	}
 
-    private static final Logger LOG = LoggerFactory.getLogger(SisuTestContainer.class);
+	@Override
+	public void call(TestAddress address) {
+	}
 
-    private static Injector injector;
+	@Override
+	public long install(String location, InputStream stream) {
+		return -1;
+	}
 
-    private boolean isValid;
+	@Override
+	public long install(InputStream stream) {
+		return -1;
+	}
 
-    private ExamSystem system;
+	@Override
+	public TestContainer start() {
+		validateConfiguration();
+		final ClassLoader ldr = setProbeClassLoader();
+		LOG.debug("starting Eclipse Sisu container");
+		injector = createInjector(
+				new WireModule(new SpaceModule(new URLClassSpace(ldr))));
+		return this;
+	}
 
-    private ClassLoader contextClassLoader;
+	private ClassLoader setProbeClassLoader() {
+		ClassLoader ldr = currentThread().getContextClassLoader();
+		JarProbeOption probeOption = system.getSingleOption(JarProbeOption.class);
+		if (probeOption != null) {
+			probeDir = new File(system.getTempFolder(), UUID.randomUUID().toString());
+			probeDir.mkdir();
+			JarBuilder builder = new JarBuilder(probeDir, probeOption);
+			URI jar = builder.buildJar();
+			try {
+				ldr = new URLClassLoader(new URL[] { jar.toURL() });
+				contextClassLoader = currentThread().getContextClassLoader();
+				currentThread().setContextClassLoader(ldr);
+			} catch (MalformedURLException exc) {
+				throw new TestContainerException(exc);
+			}
+		}
+		
+		if (ldr == null) {
+			ldr = getSystemClassLoader();
+		}
+		
+		return ldr;
+	}
 
-    private File probeDir;
+	private void validateConfiguration() {
+		ConfigurationManager cm = new ConfigurationManager();
+		String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
+		if (!Constants.EXAM_SYSTEM_CDI.equals(systemType)) {
+			String msg = "Eclipse Sisu requires pax.exam.system = cdi";
+			throw new TestContainerException(msg);
+		}
+	}
 
-    public SisuTestContainer(ExamSystem system) {
-        this.system = system;
-    }
+	@Override
+	public TestContainer stop() {
+		if (injector != null) {
+			LOG.debug("stopping Eclipse Sisu container");
+			unsetProbeClassLoader();
+			injector = null;
+		}
+		return this;
+	}
 
-    @Override
-    public void call(TestAddress address) {
-    }
+	private void unsetProbeClassLoader() {
+		if (contextClassLoader != null) {
+			currentThread().setContextClassLoader(contextClassLoader);
+		}
+	}
 
-    @Override
-    public long install(String location, InputStream stream) {
-        return -1;
-    }
+	@Override
+	public String toString() {
+		return CONTAINER_NAME;
+	}
 
-    @Override
-    public long install(InputStream stream) {
-        return -1;
-    }
+	public static Injector getInjector() {
+		return injector;
+	}
 
-    @Override
-    public TestContainer start() {
-        validateConfiguration();
-        setProbeClassLoader();
-        LOG.debug("starting Eclipse Sisu container");
-        injector = createInjector(
-        	      new WireModule(                    
-        	        new SpaceModule(                 
-        	          new URLClassSpace( Thread.currentThread().getContextClassLoader() ) 
-        	    )));
-        isValid = true;
-        return this;
-    }
+	@Override
+	public long installProbe(InputStream stream) {
+		return -1;
+	}
 
-    private void setProbeClassLoader() {
-        JarProbeOption probeOption = system.getSingleOption(JarProbeOption.class);
-        if (probeOption == null) {
-            return;
-        }
-
-        probeDir = new File(system.getTempFolder(), UUID.randomUUID().toString());
-        probeDir.mkdir();
-        JarBuilder builder = new JarBuilder(probeDir, probeOption);
-        URI jar = builder.buildJar();
-        try {
-            URLClassLoader classLoader = new URLClassLoader(new URL[] { jar.toURL() });
-            contextClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
-        }
-        catch (MalformedURLException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
-
-    private void validateConfiguration() {
-        ConfigurationManager cm = new ConfigurationManager();
-        String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
-        if (!Constants.EXAM_SYSTEM_CDI.equals(systemType)) {
-            String msg = "OpenWebBeansTestContainer requires pax.exam.system = cdi";
-            throw new TestContainerException(msg);
-        }
-    }
-
-    @Override
-    public TestContainer stop() {
-        if (injector != null && isValid) {
-            LOG.debug("stopping Eclipse Sisu container");
-            unsetProbeClassLoader();
-        }
-        return this;
-    }
-
-    private void unsetProbeClassLoader() {
-        if (contextClassLoader != null) {
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Eclipse Sisu";
-    }
-
-    public static Injector getInjector() {
-        return injector;
-    }
-
-    @Override
-    public long installProbe(InputStream stream) {
-        return -1;
-    }
-
-    @Override
-    public void uninstallProbe() {
-        // not used
-    }
+	@Override
+	public void uninstallProbe() {
+		// not used
+	}
 }

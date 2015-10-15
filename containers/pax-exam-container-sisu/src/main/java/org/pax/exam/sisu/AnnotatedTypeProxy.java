@@ -33,11 +33,9 @@ public class AnnotatedTypeProxy implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if ("getJavaClass".equals(method.getName())) {
-			
-			
 			return targetType;
 		}
-		return null;
+		throw new UnsupportedOperationException("Sisu AnnotatedType proxy only supports getJavaClass()");
 	}
 
 }

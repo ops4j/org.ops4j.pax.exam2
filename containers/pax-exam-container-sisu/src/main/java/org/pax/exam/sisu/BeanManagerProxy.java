@@ -39,7 +39,10 @@ public class BeanManagerProxy implements InvocationHandler {
 		if ("createInjectionTarget".equals(method.getName())) {
 			return createProxy(InjectionTarget.class, new InjectionTargetProxy<>((AnnotatedType)args[0]));
 		}
+		if ("createCreationalContext".equals(method.getName())) {
+			return null;
+		}
 		
-		return null;
+		throw new UnsupportedOperationException("Sisu BeanManager proxy only supports createAnnotatedType(), createInjectionTarget() and createCreationalContext()");
 	}
 }

@@ -62,8 +62,9 @@ public class InjectionTargetProxy<X> implements InvocationHandler {
 				field.setAccessible(true);
 				field.set(args[0], obj);
 			}
-		}
-		return null;
+			return null;
+		} 
+		throw new UnsupportedOperationException("Sisu InjectionTarget proxy only supports inject()");
 	}
 
 }
