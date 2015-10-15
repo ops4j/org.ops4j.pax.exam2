@@ -19,6 +19,7 @@ package org.pax.exam.sisu;
 import static com.google.inject.Guice.createInjector;
 import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.Thread.currentThread;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.File;
 import java.io.InputStream;
@@ -49,7 +50,7 @@ import com.google.inject.Injector;
  * @since 4.7.0
  */
 public class SisuTestContainer implements TestContainer {
-	private static final Logger LOG = LoggerFactory.getLogger(SisuTestContainer.class);
+	private static final Logger LOG = getLogger(SisuTestContainer.class);
 	static final String CONTAINER_NAME = "Eclipse Sisu";
 	static final int NOOP = -1;
 	private static Injector injector;

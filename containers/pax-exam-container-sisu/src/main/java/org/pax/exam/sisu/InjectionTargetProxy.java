@@ -16,17 +16,24 @@
  */
 package org.pax.exam.sisu;
 
+import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isStatic;
 import static org.pax.exam.sisu.SisuTestContainer.getInjector;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.inject.Inject;
+
+import org.ops4j.pax.exam.TestContainerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Roland Hauser
@@ -45,7 +52,14 @@ public class InjectionTargetProxy<X> implements InvocationHandler {
 	private Collection<Field> findFields(Class<?> type, Collection<Field> fields) {
 		if (type != null) {
 			for (final Field field : type.getDeclaredFields()) {
-				if (!isStatic(field.getModifiers()) && field.isAnnotationPresent(Inject.class)) {
+				if (field.isAnnotationPresent(Inject.class)) {
+					if (isStatic(field.getModifiers())) {
+						throw new TestContainerException("Cannot inject into static field "+field.getName());
+					}
+
+					if (isFinal(field.getModifiers())) {
+						throw new TestContainerException("Cannot inject into final field "+ field.getName());
+					}
 					fields.add(field);
 				}
 			}
@@ -58,12 +72,12 @@ public class InjectionTargetProxy<X> implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if ("inject".equals(method.getName())) {
 			for (final Field field : findFields(annotatedType.getJavaClass(), new LinkedList<Field>())) {
-				final Object obj =  getInjector().getInstance(field.getType());
+				final Object obj = getInjector().getInstance(field.getType());
 				field.setAccessible(true);
 				field.set(args[0], obj);
 			}
 			return null;
-		} 
+		}
 		throw new UnsupportedOperationException("Sisu InjectionTarget proxy only supports inject()");
 	}
 

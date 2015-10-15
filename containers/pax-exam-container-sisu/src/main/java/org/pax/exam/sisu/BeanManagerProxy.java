@@ -34,15 +34,14 @@ public class BeanManagerProxy implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if ("createAnnotatedType".equals(method.getName())) {
-			return createProxy(AnnotatedType.class, new AnnotatedTypeProxy((Class<?>)args[0]));
-		}
-		if ("createInjectionTarget".equals(method.getName())) {
-			return createProxy(InjectionTarget.class, new InjectionTargetProxy<>((AnnotatedType)args[0]));
-		}
-		if ("createCreationalContext".equals(method.getName())) {
+			return createProxy(AnnotatedType.class, new AnnotatedTypeProxy((Class<?>) args[0]));
+		} else if ("createInjectionTarget".equals(method.getName())) {
+			return createProxy(InjectionTarget.class, new InjectionTargetProxy<>((AnnotatedType) args[0]));
+		} else if ("createCreationalContext".equals(method.getName())) {
 			return null;
 		}
-		
-		throw new UnsupportedOperationException("Sisu BeanManager proxy only supports createAnnotatedType(), createInjectionTarget() and createCreationalContext()");
+
+		throw new UnsupportedOperationException(
+				"Sisu BeanManager proxy only supports createAnnotatedType(), createInjectionTarget() and createCreationalContext()");
 	}
 }
