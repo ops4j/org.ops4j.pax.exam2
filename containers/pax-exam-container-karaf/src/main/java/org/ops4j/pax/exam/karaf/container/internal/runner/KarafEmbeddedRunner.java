@@ -110,7 +110,7 @@ public class KarafEmbeddedRunner implements Runner {
                 List<File> mainBundles = new ArrayList<File>();
 
                 for (File file : files) {
-                    if (file.isDirectory() && file.getName().contains("/boot")) {
+                    if (file.isDirectory() && file.getName().contains("boot")) {
                         // Karaf4 style
                         mainBundles.addAll(searchMainBundle(file.listFiles()));
                     } 
