@@ -20,8 +20,10 @@ package org.ops4j.pax.exam.wildfly80;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -273,6 +275,7 @@ public class WildFly80TestContainer implements TestContainer {
         }
         parseServerConfiguration(configFile);
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
+        validateManagementPort();
         server = EmbeddedServerFactory.create(wildFlyHome, null, null,
             getSystemPackages());
         try {
@@ -287,6 +290,21 @@ public class WildFly80TestContainer implements TestContainer {
             throw new TestContainerException("Problem starting test container.", exc);
         }
         return this;
+    }
+
+    private void validateManagementPort() {
+        try (Socket socket = new Socket("localhost", mgmtPort)) {
+            throw new TestContainerException(String.format(
+                "Port %d is already taken. Check if a WildFly server is already running and stop it.",
+                mgmtPort));
+
+        }
+        catch (ConnectException exc) {
+            // this is the good case, no server should be listening on the management port
+        }
+        catch (IOException exc) {
+            throw new TestContainerException("Problem validating management port", exc);
+        }
     }
 
     /**

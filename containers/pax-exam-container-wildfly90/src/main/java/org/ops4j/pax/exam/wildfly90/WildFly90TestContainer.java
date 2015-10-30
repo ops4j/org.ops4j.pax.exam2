@@ -1,26 +1,26 @@
 /*
  * Copyright 2015 Harald Wellmann
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied.
  *
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * See the License for the specific language governing permissions and limitations under the
+ * License.
  */
 package org.ops4j.pax.exam.wildfly90;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -97,26 +97,25 @@ public class WildFly90TestContainer implements TestContainer {
     public static final String WILDFLY90_CONFIG_OVERWRITE_KEY = "pax.exam.wildfly90.config.overwrite";
 
     /**
-     * Configuration property key for additional WildFly modules to be installed. The value is
-     * a comma-separated list of URLs. Each URL refers to a zipped module structure which will be unpacked
-     * under {@code modules/system/add-ons/pax-exam}.
+     * Configuration property key for additional WildFly modules to be installed. The value is a
+     * comma-separated list of URLs. Each URL refers to a zipped module structure which will be
+     * unpacked under {@code modules/system/add-ons/pax-exam}.
      */
     public static final String WILDFLY90_MODULES_KEY = "pax.exam.wildfly90.modules";
 
     /**
-     * Configuration property for system properties to be loaded before starting WildFly.
-     * See {@link ConfigurationManager#loadSystemProperties(String)} for syntax details.
+     * Configuration property for system properties to be loaded before starting WildFly. See
+     * {@link ConfigurationManager#loadSystemProperties(String)} for syntax details.
      */
     public static final String WILDFLY90_SYSTEM_PROPERTIES_KEY = "pax.exam.wildfly90.system.properties";
 
     /**
      * Configuration property for JBoss Module loader system packages. Classes from these packages
-     * will be loaded from the system class loader. The value is a comma-separated list of
-     * package names. Each comma may be followed by whitespace. The default value is
+     * will be loaded from the system class loader. The value is a comma-separated list of package
+     * names. Each comma may be followed by whitespace. The default value is
      * {@code org.jboss.logging, org.slf4j}.
      */
     public static final String WILDFLY90_SYSTEM_PACKAGES_KEY = "pax.exam.wildfly90.system.packages";
-
 
     private static final Logger LOG = LoggerFactory.getLogger(WildFly90TestContainer.class);
 
@@ -262,6 +261,7 @@ public class WildFly90TestContainer implements TestContainer {
         }
         parseServerConfiguration(configFile);
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
+        validateManagementPort();
         server = EmbeddedServerFactory.create(wildFlyHome, null,
             getSystemPackages(), null);
         try {
@@ -276,6 +276,21 @@ public class WildFly90TestContainer implements TestContainer {
             throw new TestContainerException("Problem starting test container.", exc);
         }
         return this;
+    }
+
+    private void validateManagementPort() {
+        try (Socket socket = new Socket("localhost", mgmtPort)) {
+            throw new TestContainerException(String.format(
+                "Port %d is already taken. Check if a WildFly server is already running and stop it.",
+                mgmtPort));
+
+        }
+        catch (ConnectException exc) {
+            // this is the good case, no server should be listening on the management port
+        }
+        catch (IOException exc) {
+            throw new TestContainerException("Problem validating management port", exc);
+        }
     }
 
     /**
@@ -303,8 +318,9 @@ public class WildFly90TestContainer implements TestContainer {
         String configDirName = cm.getProperty(WILDFLY90_CONFIG_DIR_KEY,
             "src/test/resources/wildfly90-config");
         configSourceDir = new File(configDirName);
-        boolean overwriteConfig = Boolean.parseBoolean(cm.getProperty(WILDFLY90_CONFIG_OVERWRITE_KEY,
-            "false"));
+        boolean overwriteConfig = Boolean
+            .parseBoolean(cm.getProperty(WILDFLY90_CONFIG_OVERWRITE_KEY,
+                "false"));
 
         if (isValidInstallation()) {
             if (overwriteConfig) {
@@ -386,8 +402,8 @@ public class WildFly90TestContainer implements TestContainer {
     }
 
     /**
-     * Copies all files in a user-defined configuration directory to the WildFly
-     * configuration directory.
+     * Copies all files in a user-defined configuration directory to the WildFly configuration
+     * directory.
      */
     private void installConfiguration() {
         if (!configSourceDir.exists()) {
@@ -404,7 +420,8 @@ public class WildFly90TestContainer implements TestContainer {
                     FileUtils.copyFile(configFile, targetFile, null);
                 }
                 catch (IOException exc) {
-                    throw new TestContainerException("error copying config file " + configFile, exc);
+                    throw new TestContainerException("error copying config file " + configFile,
+                        exc);
                 }
             }
         }
@@ -428,7 +445,8 @@ public class WildFly90TestContainer implements TestContainer {
             mgmtPort += portOffset;
 
         }
-        catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException exc) {
+        catch (ParserConfigurationException | SAXException | IOException
+            | XPathExpressionException exc) {
             throw new IllegalArgumentException(exc);
         }
     }
@@ -460,7 +478,6 @@ public class WildFly90TestContainer implements TestContainer {
     public String toString() {
         return "WildFly90";
     }
-
 
     @Override
     public long installProbe(InputStream stream) {
