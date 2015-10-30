@@ -29,7 +29,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     protected String karafVersion;
     protected File unpackDirectory;
     protected boolean useDeployFolder = true;
-    protected boolean runEmbedded = false;
+    protected boolean runEmbedded;
 
     public KarafDistributionBaseConfigurationOption() {
         frameworkURL = null;
@@ -61,7 +61,9 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     /**
      * Simply clones the inserted {@link KarafDistributionConfigurationOption}
-     * @param base option to be cloned
+     *
+     * @param base
+     *            option to be cloned
      */
     public KarafDistributionBaseConfigurationOption(KarafDistributionBaseConfigurationOption base) {
         frameworkURL = base.frameworkURL;
@@ -74,10 +76,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     /**
      * Sets the URL of the framework as a String (for example a file).
-     * 
+     *
      * @param _frameworkURL
      *            framework URL
-     * @return this for fluent syntax           
+     * @return this for fluent syntax
      */
     public KarafDistributionBaseConfigurationOption frameworkUrl(String _frameworkURL) {
         this.frameworkURL = _frameworkURL;
@@ -86,9 +88,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     /**
      * Sets the URL of the frameworks as a maven reference.
+     *
      * @param _frameworkURL
      *            framework URL
-     * @return this for fluent syntax           
+     * @return this for fluent syntax
      */
     public KarafDistributionBaseConfigurationOption frameworkUrl(MavenUrlReference _frameworkURL) {
         frameworkURLReference = _frameworkURL;
@@ -97,9 +100,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     /**
      * Sets the name of the framework. This is only used for logging.
+     *
      * @param _name
      *            framework name
-     * @return this for fluent syntax           
+     * @return this for fluent syntax
      */
     public KarafDistributionBaseConfigurationOption name(String _name) {
         this.name = _name;
@@ -109,9 +113,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     /**
      * The version of karaf used by the framework. That one is required since there is the high
      * possibility that configuration is different between various karaf versions.
+     *
      * @param _karafVersion
      *            Karaf version
-     * @return this for fluent syntax           
+     * @return this for fluent syntax
      */
     public KarafDistributionBaseConfigurationOption karafVersion(String _karafVersion) {
         this.karafVersion = _karafVersion;
@@ -121,9 +126,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     /**
      * Define the unpack directory for the karaf distribution. In this directory a UUID named
      * directory will be created for each environment.
+     *
      * @param _unpackDirectory
      *            unpack directory
-     * @return this for fluent syntax           
+     * @return this for fluent syntax
      */
     public KarafDistributionBaseConfigurationOption unpackDirectory(File _unpackDirectory) {
         this.unpackDirectory = _unpackDirectory;
@@ -136,26 +142,27 @@ public class KarafDistributionBaseConfigurationOption implements Option {
      * such a folder (for any reason) you can set this option to false. PaxExam Karaf will then try
      * to add those deployment urls directly to a features xml instead of copying those files to the
      * deploy folder.
+     *
      * @param _useDeployFolder
      *            shall artifacts be copied to deploy folder?
-     * @return this for fluent syntax           
+     * @return this for fluent syntax
      */
     public KarafDistributionBaseConfigurationOption useDeployFolder(boolean _useDeployFolder) {
         this.useDeployFolder = _useDeployFolder;
         return this;
     }
-    
+
     /**
-     * Per default the framework will run Karaf as forked Java process. This can be used to
-     * switch to run Karaf as embedded instance. 
-     * 
+     * Per default the framework will run Karaf as forked Java process. This can be used to switch
+     * to run Karaf as embedded instance.
+     *
      * @param _runEmbedded
-     * 				shall Karaf be run as embedded instance. 
+     *            shall Karaf be run as embedded instance.
      * @return this for fluent syntax
      */
     public KarafDistributionBaseConfigurationOption runEmbedded(boolean _runEmbedded) {
-    	this.runEmbedded = _runEmbedded;
-    	return this;
+        this.runEmbedded = _runEmbedded;
+        return this;
     }
 
     public String getFrameworkURL() {
@@ -181,9 +188,9 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     public boolean isUseDeployFolder() {
         return useDeployFolder;
     }
-    
+
     public boolean isRunEmbedded() {
-		return runEmbedded;
-	}
+        return runEmbedded;
+    }
 
 }

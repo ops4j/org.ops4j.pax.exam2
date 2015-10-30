@@ -25,20 +25,21 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Callable;
+
+import org.ops4j.pax.exam.rbc.Constants;
+import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.rbc.Constants;
-import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 
 /**
  * Registers the an instance of RemoteTestRunnerService as RMI service using a port set by system
  * property pax.exam.communication.port.
- * 
+ *
  * Test
- * 
+ *
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since Jun 2, 2008
@@ -63,6 +64,7 @@ public class Activator implements BundleActivator {
 
     private Thread registerRBCThread;
 
+    @Override
     public synchronized void start(final BundleContext bundleContext) throws Exception {
         String host = getHost();
         String name = getName();
@@ -74,6 +76,7 @@ public class Activator implements BundleActivator {
         // !! Absolutely necessary for RMIClassLoading to work
         registerRBCThread = new Thread(new Runnable() {
 
+            @Override
             public void run() {
                 int retries = 0;
                 boolean valid = false;
@@ -104,6 +107,7 @@ public class Activator implements BundleActivator {
 
                 {
 
+                    @Override
                     public Object call() throws RemoteException, BundleException {
                         // try to find port from property
                         int port = getPort();
@@ -137,21 +141,22 @@ public class Activator implements BundleActivator {
             + " to RMI registry");
         remoteBundleContext = new RemoteBundleContextImpl(bundleContext.getBundle(0)
             .getBundleContext());
-        Remote remoteStub = UnicastRemoteObject.exportObject(remoteBundleContext , 0);
+        Remote remoteStub = UnicastRemoteObject.exportObject(remoteBundleContext, 0);
         _registry.rebind(getName(), remoteStub);
     }
 
+    @Override
     public synchronized void stop(BundleContext bundleContext) throws Exception {
         if (registerRBCThread != null) {
             registerRBCThread.interrupt();
             String name = getName();
             try {
-	            registry.unbind(name);
-	            UnicastRemoteObject.unexportObject(remoteBundleContext, true);
-            } catch (NotBoundException | NoSuchObjectException ex) {
-            	LOG.warn("No such Object bound {}", name, ex);
+                registry.unbind(name);
+                UnicastRemoteObject.unexportObject(remoteBundleContext, true);
             }
-            // UnicastRemoteObject.unexportObject( registry, true );
+            catch (NotBoundException | NoSuchObjectException ex) {
+                LOG.warn("No such Object bound {}", name, ex);
+            }
             registry = null;
             remoteBundleContext = null;
             LOG.debug("Container with name " + name + " has removed its RBC");
@@ -160,7 +165,7 @@ public class Activator implements BundleActivator {
 
     /**
      * @return the port where {@link RemoteBundleContext} is being exposed as an RMI service.
-     * 
+     *
      * @throws BundleException
      *             - If communication port cannot be determined
      */

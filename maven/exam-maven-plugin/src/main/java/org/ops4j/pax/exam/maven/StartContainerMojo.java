@@ -59,7 +59,7 @@ public class StartContainerMojo extends AbstractMojo {
      * The Maven project.
      */
     @Parameter(defaultValue = "${project}", readonly = true)
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * The base directory of the project being built. This can be obtained in your
