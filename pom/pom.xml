@@ -47,6 +47,8 @@
         <dependency.weld.version>2.1.2.Final</dependency.weld.version>
         <dependency.wildfly.version>8.2.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
+        <dependency.guice.version>4.0</dependency.guice.version>
+        <dependency.sisu.version>0.3.2</dependency.sisu.version>
 
     </properties>
 
@@ -392,6 +394,17 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            
+            <dependency>
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>${dependency.guice.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.sisu</groupId>
+				<artifactId>org.eclipse.sisu.inject</artifactId>
+				<version>${dependency.sisu.version}</version>
+			</dependency>
 
             <dependency>
                 <groupId>org.jboss</groupId>
