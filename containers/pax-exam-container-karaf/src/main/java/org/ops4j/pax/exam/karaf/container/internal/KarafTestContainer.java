@@ -202,7 +202,7 @@ public class KarafTestContainer implements TestContainer {
         String[] classPath = buildKarafClasspath(karafHome);
         makeScriptsInBinExec(karafBin);
         File javaHome = new File(System.getProperty("java.home"));
-        String main = "org.apache.karaf.main.Main";
+        String main = framework.getKarafMain();
         String options = "";
         String[] environment = new String[] {};
         ArrayList<String> javaOpts = new ArrayList<String>();

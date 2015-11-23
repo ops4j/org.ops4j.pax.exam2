@@ -74,7 +74,7 @@ public class KarafEmbeddedRunner implements Runner {
                         }
 
                         URLClassLoader urlCl = new URLClassLoader(bundleUrls, this.getContextClassLoader());
-                        Class<?> mainClass = urlCl.loadClass("org.apache.karaf.main.Main");
+                        Class<?> mainClass = urlCl.loadClass(main);
                         Constructor<?> constructor = mainClass.getConstructor(String[].class);
                         constructor.setAccessible(true);
                         Object karafInstance = constructor.newInstance(new Object[] { arguments });

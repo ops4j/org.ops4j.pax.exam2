@@ -27,6 +27,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     protected MavenUrlReference frameworkURLReference;
     protected String name;
     protected String karafVersion;
+    protected String karafMain = "org.apache.karaf.main.Main";
     protected File unpackDirectory;
     protected boolean useDeployFolder = true;
     protected boolean runEmbedded;
@@ -70,6 +71,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         frameworkURLReference = base.frameworkURLReference;
         name = base.name;
         karafVersion = base.karafVersion;
+        karafMain = base.karafMain;
         unpackDirectory = base.unpackDirectory;
         useDeployFolder = base.useDeployFolder;
     }
@@ -120,6 +122,18 @@ public class KarafDistributionBaseConfigurationOption implements Option {
      */
     public KarafDistributionBaseConfigurationOption karafVersion(String _karafVersion) {
         this.karafVersion = _karafVersion;
+        return this;
+    }
+
+    /**
+     * The main entry-point used by the framework. Defaults to {@code "org.apache.karaf.main.Main"}.
+     *
+     * @param _karafMain
+     *            Karaf main
+     * @return this for fluent syntax
+     */
+    public KarafDistributionBaseConfigurationOption karafMain(String _karafMain) {
+        this.karafMain = _karafMain;
         return this;
     }
 
@@ -180,6 +194,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     public String getKarafVersion() {
         return karafVersion;
     }
+
+    public String getKarafMain() {
+      return karafMain;
+  }
 
     public File getUnpackDirectory() {
         return unpackDirectory;
