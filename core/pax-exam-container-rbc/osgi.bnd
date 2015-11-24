@@ -22,7 +22,7 @@ Private-Package:\
   ${bundle.namespace}.internal.*
 
 Embed-Dependency:\
-  !slf4j-api, *; scope=compile|runtime; type=!pom
+  artifactId=!slf4j-api; scope=compile|runtime; type=!pom
 
 Embed-Transitive:\
   true
