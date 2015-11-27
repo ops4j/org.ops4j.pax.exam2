@@ -124,7 +124,11 @@ public class DependenciesDeployer {
         try {
             File featuresXmlFile = new File(karafBase, "test-dependencies.xml");
             Writer wr = new OutputStreamWriter(new FileOutputStream(featuresXmlFile), "UTF-8");
-            writeDependenciesFeature(wr, subsystem.getOptions(ProvisionOption.class));
+            
+            ProvisionOption[] provisionOptions = subsystem.getOptions(ProvisionOption.class);
+            KarafFeaturesOption[] karafFeaturesOptions = subsystem.getOptions(KarafFeaturesOption.class);
+            
+			writeDependenciesFeature(wr, provisionOptions, karafFeaturesOptions);
             wr.close();
             String repoUrl = "file:"
                 + featuresXmlFile.toString().replaceAll("\\\\", "/").replaceAll(" ", "%20");
@@ -142,7 +146,7 @@ public class DependenciesDeployer {
      * @param writer where to write the feature xml
      * @param provisionOptions dependencies
      */
-    static void writeDependenciesFeature(Writer writer, ProvisionOption<?>... provisionOptions) {
+    static void writeDependenciesFeature(Writer writer, ProvisionOption<?>[] provisionOptions, KarafFeaturesOption[] karafFeaturesOptions) {
         XMLOutputFactory xof =  XMLOutputFactory.newInstance();
         xof.setProperty("javax.xml.stream.isRepairingNamespaces", true);
         XMLStreamWriter sw = null;
@@ -169,6 +173,13 @@ public class DependenciesDeployer {
                 }
                 sw.writeCharacters(provisionOption.getURL());
                 endElement(sw);
+            }
+            for (KarafFeaturesOption karafFeaturesOption : karafFeaturesOptions) {
+            	for (String karafFeature : karafFeaturesOption.getFeatures()) {
+            		sw.writeStartElement("feature");
+					sw.writeCharacters(karafFeature);
+					endElement(sw);
+				}
             }
             endElement(sw);
             endElement(sw);
