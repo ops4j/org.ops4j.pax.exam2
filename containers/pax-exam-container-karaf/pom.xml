@@ -10,7 +10,7 @@
     <artifactId>pax-exam-container-karaf</artifactId>
 
     <name>OPS4J Pax Exam Karaf Container</name>
-    
+
     <dependencies>
 
         <dependency>
@@ -122,6 +122,10 @@
             <version>${project.version}</version>
             <type>xml</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
         </dependency>
     </dependencies>
 

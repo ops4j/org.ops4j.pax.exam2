@@ -124,7 +124,11 @@ public class DependenciesDeployer {
         try {
             File featuresXmlFile = new File(karafBase, "test-dependencies.xml");
             Writer wr = new OutputStreamWriter(new FileOutputStream(featuresXmlFile), "UTF-8");
-            writeDependenciesFeature(wr, subsystem.getOptions(ProvisionOption.class));
+
+            ProvisionOption<?>[] provisionOptions = subsystem.getOptions(ProvisionOption.class);
+            KarafFeaturesOption[] karafFeaturesOptions = subsystem.getOptions(KarafFeaturesOption.class);
+
+            writeDependenciesFeature(wr, provisionOptions, karafFeaturesOptions);
             wr.close();
             String repoUrl = "file:"
                 + featuresXmlFile.toString().replaceAll("\\\\", "/").replaceAll(" ", "%20");
@@ -140,9 +144,11 @@ public class DependenciesDeployer {
      * in system to the given writer
      * 
      * @param writer where to write the feature xml
-     * @param provisionOptions dependencies
+     * @param provisionOptions bundle dependencies
+     * @param karafFeaturesOptions feature dependencies
      */
-    static void writeDependenciesFeature(Writer writer, ProvisionOption<?>... provisionOptions) {
+    static void writeDependenciesFeature(Writer writer, ProvisionOption<?>[] provisionOptions,
+        KarafFeaturesOption[] karafFeaturesOptions) {
         XMLOutputFactory xof =  XMLOutputFactory.newInstance();
         xof.setProperty("javax.xml.stream.isRepairingNamespaces", true);
         XMLStreamWriter sw = null;
@@ -157,6 +163,7 @@ public class DependenciesDeployer {
             sw.writeStartElement("feature");
             sw.writeAttribute("name", "test-dependencies");
             sw.writeCharacters("\n");
+            // Write bundle dependencies
             for (ProvisionOption<?> provisionOption : provisionOptions) {
                 if (provisionOption.getURL().startsWith("link")
                     || provisionOption.getURL().startsWith("scan-features")) {
@@ -169,6 +176,14 @@ public class DependenciesDeployer {
                 }
                 sw.writeCharacters(provisionOption.getURL());
                 endElement(sw);
+            }
+            // Write feature dependencies
+            for (KarafFeaturesOption karafFeaturesOption : karafFeaturesOptions) {
+                for (String karafFeature : karafFeaturesOption.getFeatures()) {
+                    sw.writeStartElement("feature");
+                    sw.writeCharacters(karafFeature);
+                    endElement(sw);
+                }
             }
             endElement(sw);
             endElement(sw);
