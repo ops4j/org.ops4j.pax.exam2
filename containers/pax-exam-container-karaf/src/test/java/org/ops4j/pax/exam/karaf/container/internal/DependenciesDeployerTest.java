@@ -31,7 +31,8 @@ public class DependenciesDeployerTest {
         option.instructions("Export-Package=my.package.*");
         option.overwriteManifest(OverwriteMode.MERGE);
         StringWriter wr = new StringWriter();
-        DependenciesDeployer.writeDependenciesFeature(wr, new ProvisionOption<?>[] {option}, new KarafFeaturesOption[] {});
+        DependenciesDeployer.writeDependenciesFeature(wr, new ProvisionOption<?>[] { option },
+            new KarafFeaturesOption[] {});
         Assert.assertThat(wr.toString(), StringContains.containsString("<bundle>wrap:mvn:mygroup/myArtifactId/1.0$overwrite=MERGE&amp;Export-Package=my.package.*</bundle>"));
     }
     
