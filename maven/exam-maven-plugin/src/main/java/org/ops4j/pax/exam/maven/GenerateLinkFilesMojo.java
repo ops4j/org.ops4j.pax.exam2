@@ -27,6 +27,12 @@ import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 
 /**
+ * For each dependency that has a manifest, this Mojo creates a file
+ * {@literal ${project.build.directory}/pax-exam-links/BUNDLE_SYMBOLIC_NAME.link}
+ * with content {@literal file:/path/to/local/maven/repo/.../artifactId.jar}.
+ * This allows users to provision a bundle via
+ * {@code bundle("link:classpath:META-INF/pax-exam-links/bundleSymbolicName.jar")}.
+ * The {@code linkBundle(bundleSymbolicName)} option serves as a shortcut.
  */
 @Mojo(name = "generate-link-files", defaultPhase = LifecyclePhase.GENERATE_TEST_RESOURCES, requiresDependencyResolution = ResolutionScope.TEST)
 public class GenerateLinkFilesMojo extends AbstractMojo {
@@ -37,6 +43,9 @@ public class GenerateLinkFilesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build}", readonly = true, required = true)
     private Build build;
 
+    /**
+     * Where to put the link files.
+     */
     @Parameter(defaultValue = "${project.build.directory}/pax-exam-links")
     private File outputDirectory;
 
