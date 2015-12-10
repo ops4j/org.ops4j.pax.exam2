@@ -69,7 +69,7 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
         return this;
     }
 
-    public MavenUrlReference classifier(String _classifier) {
+    public MavenArtifactUrlReference classifier(String _classifier) {
         validateNotEmpty(_classifier, true, "Classifier");
         this.classifier = _classifier;
         return this;
