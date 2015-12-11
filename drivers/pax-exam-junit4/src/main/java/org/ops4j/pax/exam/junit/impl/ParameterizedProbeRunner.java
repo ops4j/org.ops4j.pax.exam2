@@ -20,7 +20,9 @@ package org.ops4j.pax.exam.junit.impl;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,6 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
-import org.ops4j.pax.exam.util.InjectorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,9 +58,8 @@ import org.slf4j.LoggerFactory;
  * JUnit runner for parameterized Pax Exam tests executed via an invoker. This runner is used for
  * all operation modes except CDI. See {@link Parameterized} for more details on specifying
  * parameter sets.
- * 
+ *
  * @author Harald Wellmann
- * 
  */
 public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
 
@@ -68,43 +68,63 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
     /**
      * Reactor manager singleton.
      */
-    private ReactorManager manager;
+    private final ReactorManager manager;
 
-    /**
-     * Staged reactor for this test class. This may actually be a reactor already staged for a
-     * previous test class, depending on the reactor strategy.
-     */
-    private StagedExamReactor stagedReactor;
+    private final Map<TestAddress,ParameterizedContext> testAddressToContext = new HashMap<> ();
+    private final Map<FrameworkMethod, TestAddress> methodToTestAddressMap = new LinkedHashMap<FrameworkMethod, TestAddress>();
+    private String parameterizedName;
 
-    private Map<FrameworkMethod, TestAddress> methodToTestAddressMap = new LinkedHashMap<FrameworkMethod, TestAddress>();
 
-    private Object[] parameters;
+
 
     public ParameterizedProbeRunner(Class<?> klass) throws InitializationError {
         super(klass);
         LOG.info("creating PaxExam runner for {}", klass);
-        manager = ReactorManager.getInstance();
+        this.manager = ReactorManager.getInstance();
+
         try {
-            ExamReactor examReactor = manager.prepareReactor(klass, null);
-            addTestsToReactor(examReactor, klass, null);
-            stagedReactor = manager.stageReactor();
-        }
-        catch (IOException | ExamConfigurationException exc) {
+        	// We use parameterized class instances to initialize
+        	// the tests (in this constructor) and to run the tests.
+        	int index = 0;
+        	for( Object[] params : allParameters()) {
+
+        		// Instantiate the test class and prepare the reactor
+    			Object testClassInstance = getTestClass().getOnlyConstructor().newInstance( params );
+    			ExamReactor examReactor = this.manager.prepareReactor( klass, testClassInstance );
+
+    			// Now, prepare the tests
+    			ParameterizedContext ctx = new ParameterizedContext();
+    			ctx.testClassInstance = testClassInstance;
+        		addTestsToReactor( examReactor, testClassInstance, params, index, ctx );
+
+        		// Complete the reactor
+        		ctx.reactor = this.manager.stageReactor();
+        		index ++;
+        	}
+
+        } catch( Throwable exc ) {
             throw new InitializationError(exc);
         }
     }
 
     /**
-     * We decorate the super method by reactor setup and teardown. This method is called once per
-     * class. Note that the given reactor strategy decides whether or not the setup and teardown
+     * We decorate the super method by reactor setup and teardown.
+     * <p>
+     * This method is called once per class, which is logical, even with parameterized tests.
+     * Note that the given reactor strategy decides whether or not the setup and teardown
      * actually happens at this level.
+     * </p>
      */
     @Override
     public void run(RunNotifier notifier) {
         LOG.info("running test class {}", getTestClass().getName());
         Class<?> testClass = getTestClass().getJavaClass();
+
+        // The reactor has the same kind/class.
+    	// So, we can pick up any instance. The first one will be fine.
+        StagedExamReactor reactor = this.testAddressToContext.values().iterator().next().reactor;
         try {
-            manager.beforeClass(stagedReactor, testClass);
+            this.manager.beforeClass( reactor, testClass);
             super.run(notifier);
         }
         // CHECKSTYLE:SKIP : catch all wanted
@@ -114,7 +134,7 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
             notifier.fireTestFailure(new Failure(description, e));
         }
         finally {
-            manager.afterClass(stagedReactor, testClass);
+            this.manager.afterClass( reactor, testClass);
         }
     }
 
@@ -122,7 +142,8 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      * Override to avoid running BeforeClass and AfterClass by the driver. They shall only be run by
      * the container when using a probe invoker.
      */
-    protected Statement classBlock(final RunNotifier notifier) {
+    @Override
+	protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
         return statement;
     }
@@ -131,7 +152,8 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      * Override to avoid running Before, After and Rule methods by the driver. They shall only be
      * run by the container when using a probe invoker.
      */
-    protected Statement methodBlock(FrameworkMethod method) {
+    @Override
+	protected Statement methodBlock( final FrameworkMethod method ) {
 
         Object test;
         try {
@@ -140,7 +162,7 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
                 @Override
                 // CHECKSTYLE:SKIP : Base class API
                 protected Object runReflectiveCall() throws Throwable {
-                    return createTest();
+                    return retrieveTestClassInstance( method );
                 }
             };
             test = reflectiveCallable.run();
@@ -161,33 +183,39 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      */
     @Override
     protected List<FrameworkMethod> getChildren() {
-        if (methodToTestAddressMap.isEmpty()) {
+        if (this.methodToTestAddressMap.isEmpty()) {
             fillChildren();
         }
-        return new ArrayList<FrameworkMethod>(methodToTestAddressMap.keySet());
+        return new ArrayList<FrameworkMethod>(this.methodToTestAddressMap.keySet());
     }
 
     private void fillChildren() {
-        Set<TestAddress> targets = stagedReactor.getTargets();
-        TestDirectory testDirectory = TestDirectory.getInstance();
-        for (TestAddress address : targets) {
-            FrameworkMethod frameworkMethod = (FrameworkMethod) manager.lookupTestMethod(address
-                .root());
+
+        Set<StagedExamReactor> reactors = new HashSet<> ();
+        for( ParameterizedContext ctx : this.testAddressToContext.values())
+        	reactors.add( ctx.reactor );
+
+        List<TestAddress> addresses = new ArrayList<> ();
+        for( StagedExamReactor reactor : reactors )
+        	addresses.addAll( reactor.getTargets());
+
+        for (TestAddress address : addresses ) {
+            FrameworkMethod frameworkMethod = (FrameworkMethod) this.manager.lookupTestMethod( address.root());
 
             // The reactor may contain targets which do not belong to the current test class
             if (frameworkMethod == null) {
                 continue;
             }
+
             Class<?> frameworkMethodClass = frameworkMethod.getMethod().getDeclaringClass();
             String className = frameworkMethodClass.getName();
             String methodName = frameworkMethod.getName();
 
             if (frameworkMethodClass.isAssignableFrom(getTestClass().getJavaClass())) {
                 FrameworkMethod method = new ParameterizedFrameworkMethod(address, frameworkMethod);
-                testDirectory.add(address, new TestInstantiationInstruction(className + ";"
-                    + methodName));
+                TestDirectory.getInstance().add(address, new TestInstantiationInstruction(className + ";" + methodName));
 
-                methodToTestAddressMap.put(method, address);
+                this.methodToTestAddressMap.put(method, address);
             }
         }
     }
@@ -202,37 +230,40 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      * <p>
      * This way, we can register all test methods in the reactor before the actual test execution
      * starts.
-     * 
+     *
      * @param reactor
      * @param testClass
      * @param testClassInstance
+     * @param params
+     * @param index
+     * @param ctx
      * @throws IOException
      * @throws ExamConfigurationException
      */
-    private void addTestsToReactor(ExamReactor reactor, Class<?> testClass, Object testClassInstance)
-        throws IOException, ExamConfigurationException {
-        TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
+    private void addTestsToReactor( ExamReactor reactor, Object testClassInstance, Object[] params, int index, ParameterizedContext ctx  )
+    throws IOException, ExamConfigurationException {
 
-        Iterator<Object[]> it = null;
-        int index = 0;
-        try {
-            it = allParameters().iterator();
-        }
-        // CHECKSTYLE:SKIP : JUnit API
-        catch (Throwable t) {
-            throw new ExamConfigurationException(t.getMessage());
-        }
+    	TestProbeBuilder probe = this.manager.createProbeBuilder(testClassInstance);
+    	for (FrameworkMethod s : super.getChildren()) {
 
-        while (it.hasNext()) {
-            parameters = it.next();
-            // probe.setAnchor( testClass );
-            for (FrameworkMethod s : super.getChildren()) {
-                // record the method -> adress matching
-                TestAddress address = probe.addTest(testClass, s.getMethod().getName(), index);
-                manager.storeTestMethod(address, s);
-            }
-            index++;
-        }
+    		// record the method -> address matching
+    		TestAddress address;
+    		if( this.parameterizedName != null ) {
+    			String name = this.parameterizedName.
+    					replace( "{index}", String.valueOf( index )).
+    					replace( "{method}", s.getMethod().getName());
+
+    			name = MessageFormat.format( name, params );
+    			address = probe.addTest( testClassInstance.getClass(), s.getMethod().getName(), index, name );
+
+    		} else {
+    			address = probe.addTest( testClassInstance.getClass(), s.getMethod().getName(), index );
+    		}
+
+    		this.testAddressToContext.put( address, ctx );
+    		this.manager.storeTestMethod(address, s);
+    	}
+
         reactor.addProbe(probe);
     }
 
@@ -240,20 +271,22 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      * When using a probe invoker, we replace the super method and invoke the test method indirectly
      * via the reactor.
      */
-    protected synchronized Statement methodInvoker(final FrameworkMethod method, final Object test) {
+    @Override
+	protected synchronized Statement methodInvoker(final FrameworkMethod method, final Object test) {
 
         return new Statement() {
 
             @Override
             // CHECKSTYLE:SKIP : Statement API
             public void evaluate() throws Throwable {
-                TestAddress address = methodToTestAddressMap.get(method);
+                TestAddress address = ParameterizedProbeRunner.this.methodToTestAddressMap.get(method);
                 TestAddress root = address.root();
 
-                LOG.debug("Invoke " + method.getName() + " @ " + address + " Arguments: "
-                    + root.arguments());
+                LOG.debug("Invoke " + method.getName() + " @ " + address + " Arguments: " + Arrays.toString( root.arguments()));
                 try {
-                    stagedReactor.invoke(address);
+                	// Find the right reactor
+                	ParameterizedContext ctx = ParameterizedProbeRunner.this.testAddressToContext.get( address.root());
+                	ctx.reactor.invoke(address);
                 }
                 // CHECKSTYLE:SKIP : StagedExamReactor API
                 catch (Exception e) {
@@ -264,28 +297,33 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
         };
     }
 
-    /**
-     * Creates an instance of the current test class. When using a probe invoker, this simply
-     * delegates to super. Otherwise, we perform injection on the instance created by the super
-     * method.
-     * <p>
-     * In this case, an {@link InjectorFactory} is obtained via SPI lookup.
-     */
-    @Override
-    protected Object createTest() throws Exception {
-        return getTestClass().getOnlyConstructor().newInstance(parameters);
+//    /**
+//     * Creates an instance of the current test class. When using a probe invoker, this simply
+//     * delegates to super. Otherwise, we perform injection on the instance created by the super
+//     * method.
+//     * <p>
+//     * In this case, an {@link InjectorFactory} is obtained via SPI lookup.
+//     */
+    protected Object retrieveTestClassInstance( FrameworkMethod method ) throws Exception {
+
+    	TestAddress address = ParameterizedProbeRunner.this.methodToTestAddressMap.get(method);
+    	ParameterizedContext ctx = this.testAddressToContext.get( address.root());
+        return ctx.testClassInstance;
     }
+
 
     @SuppressWarnings("unchecked")
     // CHECKSTYLE:SKIP - JUnit API
     private Iterable<Object[]> allParameters() throws Throwable {
-        Object params = getParametersMethod().invokeExplosively(null);
-        if (params instanceof Iterable) {
-            return (Iterable<Object[]>) params;
-        }
-        else {
-            throw parametersMethodReturnedWrongType();
-        }
+
+    	Object params = getParametersMethod().invokeExplosively(null);
+    	if (params instanceof Iterable) {
+    		this.parameterizedName = getParametersMethod().getAnnotation( Parameters.class ).name();
+    		return (Iterable<Object[]>) params;
+    	}
+    	else {
+    		throw parametersMethodReturnedWrongType();
+    	}
     }
 
     private FrameworkMethod getParametersMethod() throws Exception {
@@ -322,5 +360,26 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
 
     private boolean fieldsAreAnnotated() {
         return !getAnnotatedFieldsByParameter().isEmpty();
+    }
+
+
+    /**
+     * A bean that allow various bindings.
+     * <p>
+     * Parameterized tests hardly fit into the Exam code organization.
+     * So that parameterized tests rely on the most minimalist assumptions,
+     * we must remember for every test which reactor must be used.
+     * </p>
+     * <p>
+     * Most of the time, this will be useless, except for tests that use different
+     * configurations and use the PerMethod reactor strategy.
+     * </p>
+     *
+     * @author Vincent Zurczak - Linagora
+     */
+    private static class ParameterizedContext {
+
+    	public StagedExamReactor reactor;
+    	public Object testClassInstance;
     }
 }
