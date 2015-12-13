@@ -38,12 +38,17 @@ public class FrameworkEventUtils {
                 Integer value;
                 try {
                     value = (Integer)field.get(null);
-                } catch (IllegalAccessException e) {
+                } 
+                catch (IllegalAccessException e) {
                     throw new RuntimeException("Failed to obtain value of FrameworkEvent." + field.getName());
                 }
                 EVENT_STRINGS.put(value, field.getName());
             }
         }
+    }
+
+    private FrameworkEventUtils() {
+        // hidden constructor
     }
 
     /**
@@ -53,9 +58,5 @@ public class FrameworkEventUtils {
      */
     public static String getFrameworkEventString(int frameworkEventType) {
         return EVENT_STRINGS.get(frameworkEventType);
-    }
-
-    private FrameworkEventUtils() {
-        //
     }
 }
