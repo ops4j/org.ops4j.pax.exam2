@@ -103,7 +103,7 @@ public class WildFly90DeploymentTest {
     }
 
     @Test
-    // @Ignore
+    @Ignore
     public void deployWarIntoRunningServer() throws ServerStartException, IOException,
         InterruptedException, ExecutionException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
