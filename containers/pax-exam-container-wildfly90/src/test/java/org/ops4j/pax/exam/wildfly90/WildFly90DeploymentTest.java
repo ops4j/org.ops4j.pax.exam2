@@ -44,7 +44,7 @@ public class WildFly90DeploymentTest {
 
     @Before
     public void setUp() throws IOException {
-        WildFly90TestContainer tc = new WildFly90TestContainer(null, null);
+        WildFly90TestContainer tc = new WildFly90TestContainer(null);
         tc.installContainer();
     }
 
@@ -103,7 +103,7 @@ public class WildFly90DeploymentTest {
     }
 
     @Test
-    @Ignore
+    // @Ignore
     public void deployWarIntoRunningServer() throws ServerStartException, IOException,
         InterruptedException, ExecutionException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
@@ -112,7 +112,7 @@ public class WildFly90DeploymentTest {
         System.setProperty("jboss.server.config.dir", "target/test-classes/wildfly90-config");
 
         final ModelControllerClient client = ModelControllerClient.Factory
-            .create("localhost", 19990);
+            .create("localhost", 9990);
         ServerDeploymentManager deploymentManager = ServerDeploymentManager.Factory.create(client);
         InitialDeploymentPlanBuilder builder = deploymentManager.newDeploymentPlan();
         String applName = "wicket-examples.war";

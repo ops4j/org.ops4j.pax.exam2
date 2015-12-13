@@ -31,7 +31,7 @@ public class WildFly90LauncherTest {
 
     @Before
     public void setUp() throws IOException {
-        WildFly90TestContainer tc = new WildFly90TestContainer(null, null);
+        WildFly90TestContainer tc = new WildFly90TestContainer(null);
         tc.installContainer();
     }
 

@@ -60,9 +60,9 @@ import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
+import org.ops4j.pax.exam.spi.security.CredentialsCallbackHandler;
 import org.ops4j.pax.exam.zip.ZipInstaller;
 import org.ops4j.spi.ServiceProviderFinder;
-import org.osgi.framework.launch.FrameworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -120,6 +120,33 @@ public class WildFly80TestContainer implements TestContainer {
      */
     public static final String WILDFLY80_SYSTEM_PACKAGES_KEY = "pax.exam.wildfly80.system.packages";
 
+    /**
+     * Configuration property for connecting to a running WildFly server on a given host.
+     * The value of this property is the hostname. If this property is not set, Pax Exam will
+     * launch an embedded WildFly server and stop it at the end of the test suite. Otherwise,
+     * Pax Exam will connect to a server on the given host.
+     */
+    public static final String WILDFLY80_REMOTE_HOST_KEY = "pax.exam.wildfly80.remote.host";
+
+    /**
+     * Configuration property for the HTTP port of a remote WildFly server.
+     */
+    public static final String WILDFLY80_REMOTE_HTTP_PORT_KEY = "pax.exam.wildfly80.remote.http.port";
+
+    /**
+     * Configuration property for the management port of a remote WildFly server.
+     */
+    public static final String WILDFLY80_REMOTE_MGMT_PORT_KEY = "pax.exam.wildfly80.remote.mgmt.port";
+
+    /**
+     * Configuration property for the management user of a remote WildFly server.
+     */
+    public static final String WILDFLY80_REMOTE_USERNAME_KEY = "pax.exam.wildfly80.remote.username";
+
+    /**
+     * Configuration property for the password of the management user of a remote WildFly server.
+     */
+    public static final String WILDFLY80_REMOTE_PASSWORD_KEY = "pax.exam.wildfly80.remote.password";
 
     private static final Logger LOG = LoggerFactory.getLogger(WildFly80TestContainer.class);
 
@@ -150,7 +177,7 @@ public class WildFly80TestContainer implements TestContainer {
 
     private ConfigurationManager cm;
 
-    public WildFly80TestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
+    public WildFly80TestContainer(ExamSystem system) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
         this.cm = new ConfigurationManager();
@@ -227,6 +254,7 @@ public class WildFly80TestContainer implements TestContainer {
     }
 
     public void cleanup() {
+        uninstallProbe();
         undeployModules();
         if (server != null) {
             server.stop();
@@ -263,6 +291,37 @@ public class WildFly80TestContainer implements TestContainer {
 
     @Override
     public TestContainer start() {
+        String host;
+        String httpPortNumber;
+        CredentialsCallbackHandler callbackHandler = null;
+        if (cm.getProperty(WILDFLY80_REMOTE_HOST_KEY) == null) {
+            startEmbeddedServer();
+            host = "localhost";
+            httpPortNumber = Integer.toString(httpPort);
+        }
+        else {
+            host = cm.getProperty(WILDFLY80_REMOTE_HOST_KEY);
+            httpPortNumber = cm.getProperty(WILDFLY80_REMOTE_HTTP_PORT_KEY, "8080");
+            String username = cm.getProperty(WILDFLY80_REMOTE_USERNAME_KEY);
+            String password = cm.getProperty(WILDFLY80_REMOTE_PASSWORD_KEY);
+            callbackHandler  = new CredentialsCallbackHandler(username, password);
+            mgmtPort = Integer.parseInt(cm.getProperty(WILDFLY80_REMOTE_MGMT_PORT_KEY, "9990"));
+        }
+
+        try {
+            deploymentManager = ServerDeploymentManager.Factory.create(
+                InetAddress.getByName(host), mgmtPort, callbackHandler);
+            String uri = String.format("http://%s:%s/Pax-Exam-Probe/", host, httpPortNumber);
+            testDirectory.setAccessPoint(new URI(uri));
+            deployModules();
+        }
+        catch (URISyntaxException | UnknownHostException exc) {
+            throw new TestContainerException("Problem starting test container.", exc);
+        }
+        return this;
+    }
+
+    private void startEmbeddedServer() {
         installContainer();
         cm.loadSystemProperties(WILDFLY80_SYSTEM_PROPERTIES_KEY);
         File tempDir = system.getTempFolder();
@@ -276,20 +335,13 @@ public class WildFly80TestContainer implements TestContainer {
         parseServerConfiguration(configFile);
         System.setProperty("jboss.server.data.dir", dataDir.getAbsolutePath());
         validateManagementPort();
-        server = EmbeddedServerFactory.create(wildFlyHome, null, null,
-            getSystemPackages());
+        server = EmbeddedServerFactory.create(wildFlyHome, null, null, getSystemPackages());
         try {
             server.start();
-            deploymentManager = ServerDeploymentManager.Factory.create(
-                InetAddress.getByName("localhost"), mgmtPort);
-            testDirectory.setAccessPoint(new URI("http://localhost:" + httpPort
-                + "/Pax-Exam-Probe/"));
-            deployModules();
         }
-        catch (ServerStartException | URISyntaxException | UnknownHostException exc) {
-            throw new TestContainerException("Problem starting test container.", exc);
+        catch (ServerStartException exc) {
+            throw new TestContainerException("Problem starting embedded server.", exc);
         }
-        return this;
     }
 
     private void validateManagementPort() {
@@ -503,8 +555,9 @@ public class WildFly80TestContainer implements TestContainer {
 
     @Override
     public void uninstallProbe() {
-        undeployModule(warProbe);
-        this.warProbe = null;
+        if (warProbe != null) {
+            undeployModule(warProbe);
+            this.warProbe = null;
+        }
     }
-
 }

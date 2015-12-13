@@ -36,7 +36,7 @@ public class WildFly90PortConflictTest {
     public void shouldNotStartContainerWhenPortIsTaken() throws IOException  {
         try (ServerSocket socket = new ServerSocket(9990)) {
             ExamSystem system = PaxExamRuntime.createTestSystem();
-            WildFly90TestContainer tc = new WildFly90TestContainer(system, null);
+            WildFly90TestContainer tc = new WildFly90TestContainer(system);
 
             thrown.expect(TestContainerException.class);
             thrown.expectMessage("Port 9990 is already taken.");
