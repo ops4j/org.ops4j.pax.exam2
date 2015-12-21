@@ -53,7 +53,6 @@ public class WarProbeOption implements Option {
         "jstl-", //
         "myfaces-", //
         "openejb-", //
-        "openwebbeans-", //
         "org.eclipse.osgi", //
         "pax-exam-container-", //
         "pax-url-aether-", //

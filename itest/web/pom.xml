@@ -22,11 +22,6 @@
 
         <profile>
             <id>matrix</id>
-            <modules>
-                <module>src/it/regression-web</module>
-                <module>src/it/regression-web-spring</module>
-                <module>src/it/regression-web-spring-userprobe</module>
-            </modules>
         </profile>
 
         <profile>
@@ -112,6 +107,10 @@
                 <pax.exam.cdi.provider>weld</pax.exam.cdi.provider>
             </properties>
 
+            <modules>
+                <module>src/it/regression-web</module>
+            </modules>
+
             <dependencies>
 
                 <dependency>
@@ -127,6 +126,35 @@
                 </dependency>
 
             </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-weld-patch</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.ops4j.pax.exam</groupId>
+                                            <artifactId>pax-exam-patch-weld</artifactId>
+                                            <version>${project.version}</version>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                                    <includes>**/*.class</includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>
@@ -139,6 +167,10 @@
             <properties>
                 <pax.exam.cdi.provider>openwebbeans</pax.exam.cdi.provider>
             </properties>
+
+            <modules>
+                <module>src/it/regression-web</module>
+            </modules>
 
             <dependencies>
 
@@ -181,6 +213,29 @@
             </dependencies>
 
         </profile>
+
+        <profile>
+            <id>spring-web</id>
+
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>src/it/regression-web-spring</module>
+                <module>src/it/regression-web-spring-userprobe</module>
+            </modules>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-atinject_1.0_spec</artifactId>
+                </dependency>
+
+            </dependencies>
+
+        </profile>
+
     </profiles>
 
 
