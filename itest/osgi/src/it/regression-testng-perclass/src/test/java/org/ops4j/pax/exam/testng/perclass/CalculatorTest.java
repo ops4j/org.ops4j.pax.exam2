@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam.testng.perclass;
 
-import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -46,10 +45,7 @@ public class CalculatorTest {
 
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", "4.2.0"),
             mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"),
-            mavenBundle("org.testng", "testng", "6.8.17"),
-            mavenBundle("com.beust", "jcommander", "1.27"),
-            bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/1.3.0.1"),
-            bundle("mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/4.12.0.1"),
+            mavenBundle("org.testng", "testng", "6.9.10"),
             systemProperty("osgi.console").value("6666"));
     }
 

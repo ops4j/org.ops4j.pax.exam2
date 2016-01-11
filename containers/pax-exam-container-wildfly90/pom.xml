@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
         <relativePath>../../pom</relativePath>
     </parent>
     <groupId>org.ops4j.pax.exam</groupId>
@@ -61,6 +61,12 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -162,7 +168,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>                    
+                <configuration>
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <systemPropertyVariables>

@@ -30,7 +30,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 public class WildFly80TestContainerFactory implements TestContainerFactory {
 
     public TestContainer[] create(ExamSystem system) {
-        WildFly80TestContainer container = new WildFly80TestContainer(system, null);
+        WildFly80TestContainer container = new WildFly80TestContainer(system);
         return new TestContainer[] { container };
     }
 }

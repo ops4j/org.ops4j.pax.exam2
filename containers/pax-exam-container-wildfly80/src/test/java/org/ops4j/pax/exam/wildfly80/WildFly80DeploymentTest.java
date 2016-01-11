@@ -44,7 +44,7 @@ public class WildFly80DeploymentTest {
 
     @Before
     public void setUp() throws IOException {
-        WildFly80TestContainer tc = new WildFly80TestContainer(null, null);
+        WildFly80TestContainer tc = new WildFly80TestContainer(null);
         tc.installContainer();
     }
 

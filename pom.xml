@@ -10,7 +10,7 @@
 
     <groupId>org.ops4j.pax</groupId>
     <artifactId>exam-reactor</artifactId>
-    <version>4.8.0-SNAPSHOT</version>
+    <version>4.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OPS4J Pax Exam (Reactor POM)</name>
@@ -62,6 +62,8 @@
                 <module>maven/archetypes/exam-osgi-archetype</module>
                 <module>maven/archetypes/exam-karaf-archetype</module>
                 <module>maven/archetypes/exam-wildfly80-archetype</module>
+
+                <module>patches/pax-exam-patch-weld</module>
 
             </modules>
         </profile>
