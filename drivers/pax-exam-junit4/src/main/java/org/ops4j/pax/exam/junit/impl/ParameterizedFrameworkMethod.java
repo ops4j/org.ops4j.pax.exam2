@@ -20,11 +20,10 @@ import org.junit.runners.model.FrameworkMethod;
 import org.ops4j.pax.exam.TestAddress;
 
 /**
- * Decorates a framework method with a parameter index. Used for parameterized tests
- * with {@code PaxExamParameterized}.
+ * Decorates a framework method with a parameter index. Used for parameterized tests with
+ * {@code PaxExamParameterized}.
  *
  * @author Harald Wellmann
- *
  */
 class ParameterizedFrameworkMethod extends DecoratedFrameworkMethod {
 
@@ -35,14 +34,14 @@ class ParameterizedFrameworkMethod extends DecoratedFrameworkMethod {
     @Override
     public String getName() {
 
-    	// arg[0] must be an integer (at least, for the JUnit runner).
-    	// The customized (parameterized) name is given as a second argument.
+        // arg[0] must be an integer (at least, for the JUnit runner).
+        // The customized (parameterized) name is given as a second argument.
 
-    	String result;
-    	if( this.address.arguments().length > 1 )
-    		result = String.format("%s", this.address.arguments()[1]);
-    	else
-    		result = String.format("%s[%d]", this.frameworkMethod.getName(), this.address.arguments()[0]);
+        String result;
+        if (this.address.arguments().length > 1)
+            result = String.format("%s", this.address.arguments()[1]);
+        else result = String.format("%s[%d]", this.frameworkMethod.getName(),
+            this.address.arguments()[0]);
 
         return result;
     }
