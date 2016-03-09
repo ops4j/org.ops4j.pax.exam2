@@ -65,6 +65,11 @@
                                     <message>This project requires Maven 3</message>
                                 </requireMavenVersion>
                                 <DependencyConvergence />
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>commons-collections:commons-collections</exclude>
+                                    </excludes>
+                                </bannedDependencies>
                             </rules>
                         </configuration>
                         <goals>
@@ -592,12 +597,6 @@
                 <groupId>org.jboss.xnio</groupId>
                 <artifactId>xnio-api</artifactId>
                 <version>3.0.3.GA</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
             </dependency>
 
             <dependency>
