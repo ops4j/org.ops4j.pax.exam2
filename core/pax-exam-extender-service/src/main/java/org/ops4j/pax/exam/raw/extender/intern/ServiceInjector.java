@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.inject.internal;
+package org.ops4j.pax.exam.raw.extender.intern;
 
 import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_DEFAULT;
 import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_KEY;

@@ -17,12 +17,16 @@
  */
 package org.ops4j.pax.exam.raw.extender.intern;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.swissbox.extender.BundleManifestScanner;
 import org.ops4j.pax.swissbox.extender.BundleWatcher;
 import org.ops4j.pax.swissbox.extender.ManifestEntry;
 import org.ops4j.pax.swissbox.extender.RegexKeyManifestFilter;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
  * @author Toni Menzel
@@ -38,12 +42,19 @@ public class Activator implements BundleActivator {
      */
     private BundleWatcher<ManifestEntry> probeWatcher;
 
+    @Override
     public void start(BundleContext bundleContext) throws Exception {
+        Injector injector = new ServiceInjector();
+        Dictionary<String, String> props = new Hashtable<String, String>();
+        props.put("type", "default");
+        bundleContext.registerService(Injector.class.getName(), injector, props);
+
         probeWatcher = new BundleWatcher<ManifestEntry>(bundleContext, new BundleManifestScanner(
             new RegexKeyManifestFilter(PAX_EXAM_HEADER_PREFIX)), new TestBundleObserver());
         probeWatcher.start();
     }
 
+    @Override
     public void stop(BundleContext bundleContext) throws Exception {
         probeWatcher.stop();
     }

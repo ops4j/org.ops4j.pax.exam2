@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.inject.internal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.ops4j.pax.exam.raw.extender.intern.ServiceInjector;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
