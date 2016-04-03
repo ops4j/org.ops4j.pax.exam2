@@ -78,12 +78,6 @@
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-inject</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-invoker-junit</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
