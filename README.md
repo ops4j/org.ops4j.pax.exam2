@@ -34,6 +34,7 @@ Checkout:
 Branches:
 * v3.x   : Maintenance for Pax Exam 3.x 
 * master : ongoing development for 4.x 
+* exam5-milestones : future development for 5.x
 
 Run Build:
 
