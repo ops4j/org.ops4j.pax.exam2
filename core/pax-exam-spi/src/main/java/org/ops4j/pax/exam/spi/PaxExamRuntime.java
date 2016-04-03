@@ -55,11 +55,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Pax Exam runtime.
- * 
+ *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 09, 2008
- * 
+ *
  */
 public class PaxExamRuntime {
 
@@ -72,7 +72,7 @@ public class PaxExamRuntime {
     /**
      * Discovers the regression container. Discovery is performed via ServiceLoader discovery
      * mechanism.
-     * 
+     *
      * @return discovered test container
      */
     public static TestContainerFactory getTestContainerFactory() {
@@ -88,7 +88,7 @@ public class PaxExamRuntime {
      * Convenience factory when just dealing with one container (intentionally). Note, this will
      * break if there is not exaclty one container available and parsed from options. If there are
      * more containers, just the first (whatever comes first) will be picked.
-     * 
+     *
      * @param system
      *            to be used.
      * @return exactly one Test Container.
@@ -99,7 +99,7 @@ public class PaxExamRuntime {
 
     /**
      * Creates and starts a test container using options from a configuration class.
-     * 
+     *
      * @param configurationClassName
      *            fully qualified class name of a configuration class.
      * @return started test container
@@ -117,7 +117,7 @@ public class PaxExamRuntime {
      * Opens a server socket listening for text commands on the given port.
      * Each command is terminated by a newline. The server expects a "stop" command
      * followed by a "quit" command.
-     * 
+     *
      * @param testContainer
      * @param localPort
      */
@@ -196,8 +196,6 @@ public class PaxExamRuntime {
             frameworkStartLevel(Constants.START_LEVEL_TEST_BUNDLE),
             url("link:classpath:META-INF/links/org.ops4j.pax.exam.link").startLevel(
                 START_LEVEL_SYSTEM_BUNDLES),
-            url("link:classpath:META-INF/links/org.ops4j.pax.exam.inject.link").startLevel(
-                START_LEVEL_SYSTEM_BUNDLES),
             url("link:classpath:META-INF/links/org.ops4j.pax.extender.service.link").startLevel(
                 START_LEVEL_SYSTEM_BUNDLES),
             url("link:classpath:META-INF/links/org.osgi.compendium.link").startLevel(
@@ -229,11 +227,11 @@ public class PaxExamRuntime {
 
     /**
      * Select yourself
-     * 
+     *
      * @param select
      *            the exact implementation if you dont want to rely on commons util discovery or
      *            change different containers in a single project.
-     * 
+     *
      * @return discovered regression container
      */
     public static TestContainerFactory getTestContainerFactory(
@@ -289,7 +287,7 @@ public class PaxExamRuntime {
      * After starting the container, this process will listen on the given port for a "stop"
      * command, sending a reply of "stopped". When finally receiving a "quit" command, the process
      * will exit.
-     * 
+     *
      * @param args
      *            command line argument
      * @throws Exception when options cannot be parsed

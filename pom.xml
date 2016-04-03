@@ -27,7 +27,6 @@
                 <module>core/pax-exam</module>
                 <module>core/pax-exam-spi</module>
                 <module>core/pax-exam-extender-service</module>
-                <module>core/pax-exam-inject</module>
                 <module>core/pax-exam-invoker-jaxrs2</module>
                 <module>core/pax-exam-invoker-junit</module>
                 <module>core/pax-exam-servlet-bridge</module>
