@@ -29,6 +29,8 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
@@ -60,9 +62,13 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         clazz = parts[0];
         method = parts[1];
         ctx = bundleContext;
-        this.injector = injector; 
+        this.injector = injector;
+        this.testClass = loadClass(clazz);
+    }
+
+    private Class<?> loadClass(String className) {
         try {
-            testClass = ctx.getBundle().loadClass(clazz);
+            return ctx.getBundle().loadClass(className);
         }
         catch (ClassNotFoundException e) {
             throw new TestContainerException(e);
@@ -156,5 +162,17 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         catch (Throwable ex2) {
             return false;
         }
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        Request request = new ContainerTestRunnerClassRequest(loadClass(description.getClassName()), injector, null);
+        if (description.getMethodName() != null) {
+            Description method = Description.createTestDescription(description.getClassName(), description.getMethodName());
+            request = request.filterWith(method);
+        }
+        JUnitCore junit = new JUnitCore();
+        junit.addListener(new ProbeRunListener(listener));
+        junit.run(request);
     }
 }

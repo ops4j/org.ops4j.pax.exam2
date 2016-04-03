@@ -33,4 +33,6 @@ public interface ProbeInvoker {
      *             - Something to care about..
      */
     void call(Object... args);
+
+    void runTest(TestDescription description, TestListener listener);
 }

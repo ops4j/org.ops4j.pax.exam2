@@ -48,18 +48,19 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
  * embedded in each of the two by default.</li>
  * <li>how to suppress classloader issues caused by CGLIB proxies in Mockito and implicit boot
  * delegation in Felix</li>
- * 
+ *
  * </ul>
  * See PAXEXAM-274.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
 public class MockitoTest {
 
-    @Configuration
+    // FIXME temporarily disabled for PAXEXAM-772
+    //@Configuration
     public Option[] config1() {
         return options(
 
@@ -79,7 +80,7 @@ public class MockitoTest {
             /*
              * Felix has implicit boot delegation enabled by default, which causes the following
              * exception:
-             * 
+             *
              * loader constraint violation in interface itable initialization: when resolving method
              * "org.ops4j.pax.exam.sample9.pde.HelloService$$EnhancerByMockitoWithCGLIB$$451e2809.newInstance(Lorg/mockito/cglib/proxy/Callback;)Ljava/lang/Object;"
              * the class loader (instance of
@@ -89,11 +90,11 @@ public class MockitoTest {
              * org/apache/felix/framework/ModuleImpl$ModuleClassLoaderJava5) for interface
              * org/mockito/cglib/proxy/Factory have different Class objects for the type
              * org/mockito/cglib/proxy/Callback used in the signature
-             * 
+             *
              * The bundle classloader of pax-exam-sample9-pde loads org.mockito.cglib.proxy.Factory
              * via boot delegation from the app class loader, which conflicts with the class loaded
              * by the Mockito bundle class loader.
-             * 
+             *
              * See ModuleImpl.doImplicitBootDelegation() in Felix.
              */
             frameworkProperty("felix.bootdelegation.implicit").value("false")

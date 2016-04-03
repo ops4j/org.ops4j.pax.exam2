@@ -22,15 +22,17 @@ import java.io.InputStream;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * TODO Needs JavaDoc
- * 
+ *
  * @author Toni Menzel
  * @since Jan 25, 2010
  */
@@ -48,22 +50,25 @@ public class RBCRemoteTarget implements TestContainer {
     /**
      * This access is kind of sneaky. Need to improve here. Usually this kind of raw access should
      * not be allowed.
-     * 
+     *
      * @return underlying access
      */
     public RemoteBundleContextClient getClientRBC() {
         return remoteBundleContextClient;
     }
 
+    @Override
     public void call(TestAddress address) {
         LOG.debug("call [" + address + "]");
         remoteBundleContextClient.call(address);
     }
 
+    @Override
     public TestContainer start() {
         return this;
     }
 
+    @Override
     public long install(String location, InputStream probe) {
         LOG.debug("Preparing and Installing bundle (from stream )..");
 
@@ -73,10 +78,12 @@ public class RBCRemoteTarget implements TestContainer {
         return id;
     }
 
+    @Override
     public long install(InputStream probe) {
         return install("local", probe);
     }
 
+    @Override
     public TestContainer stop() {
         remoteBundleContextClient.cleanup();
 
@@ -92,6 +99,12 @@ public class RBCRemoteTarget implements TestContainer {
     @Override
     public void uninstallProbe() {
         remoteBundleContextClient.uninstall(probeId);
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 
 }

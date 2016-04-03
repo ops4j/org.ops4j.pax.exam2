@@ -101,4 +101,9 @@ public interface TestContainer {
      *             - if timeout occured and the regression container cannot be stopped
      */
     TestContainer stop();
+
+    /**
+     * @param description
+     */
+    void runTest(TestDescription description, TestListener listener);
 }

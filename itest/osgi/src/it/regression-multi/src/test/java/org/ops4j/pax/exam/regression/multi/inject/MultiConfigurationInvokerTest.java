@@ -21,6 +21,7 @@ import static org.junit.Assume.assumeTrue;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isEquinox;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.isNativeContainer;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -28,19 +29,20 @@ import org.junit.runner.Result;
 
 /**
  * Check that tests get invoked once per configuration.
- * 
+ *
  * Regression test for PAXEXAM-427.
- * 
+ *
  * @author Harald Wellmann
  */
+@Ignore("PAXEXAM-772")
 public class MultiConfigurationInvokerTest {
 
     @Test
     public void invokeMultiConfigurationTest() {
         JUnitCore junit = new JUnitCore();
         Result result = junit.run(MultiConfigurationTest.class);
-        assertThat(result.getRunCount(), is((2)));
-        assertThat(result.getFailureCount(), is((0)));
+        assertThat(result.getRunCount(), is(2));
+        assertThat(result.getFailureCount(), is(0));
     }
 
     @Test
@@ -55,7 +57,7 @@ public class MultiConfigurationInvokerTest {
         String testName = String.format("%s:%s.%s:Native:EquinoxFactory[1]", method, klass, method);
         Request request = Request.method(MultiConfigurationTest.class, testName);
         Result result = junit.run(request);
-        assertThat(result.getRunCount(), is((1)));
-        assertThat(result.getFailureCount(), is((0)));
+        assertThat(result.getRunCount(), is(1));
+        assertThat(result.getFailureCount(), is(0));
     }
 }

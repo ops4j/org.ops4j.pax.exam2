@@ -51,6 +51,8 @@ import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.FrameworkStartLevelOption;
@@ -110,6 +112,14 @@ public class NativeTestContainer implements TestContainer {
         probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class,
             determineExamServiceTimeout(), props);
         probeInvokerService.call(address.arguments());
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        BundleContext bundleContext = framework.getBundleContext();
+        ProbeInvoker probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class,
+            determineExamServiceTimeout());
+        probeInvokerService.runTest(description, listener);
     }
 
     private long determineExamServiceTimeout() {

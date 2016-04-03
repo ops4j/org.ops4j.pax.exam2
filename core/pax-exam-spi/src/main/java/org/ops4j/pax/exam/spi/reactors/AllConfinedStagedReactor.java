@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
@@ -32,16 +34,19 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 public class AllConfinedStagedReactor implements StagedExamReactor {
 
     private final List<TestProbeBuilder> probes;
+    private final List<TestContainer> containers;
+
     private final Map<TestAddress, TestContainer> map;
 
     /**
      * @param containers
      *            to be used
-     * @param mProbes
+     * @param probes
      *            probes to be installed
      */
-    public AllConfinedStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
-        probes = mProbes;
+    public AllConfinedStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> probes) {
+        this.containers = containers;
+        this.probes = probes;
         map = new LinkedHashMap<TestAddress, TestContainer>();
         int index = 0;
         for (TestContainer container : containers) {
@@ -119,5 +124,23 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
 
     public void beforeSuite() {
         // empty
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) throws Exception {
+        assert (description != null) : "TestDescription must not be null.";
+        if (description.getMethodName() == null) {
+            return;
+        }
+        TestContainer container = containers.get(0);
+        TestProbeBuilder probeBuilder = probes.get(0);
+        container.start();
+        container.installProbe(probeBuilder.build().getStream());
+        try {
+            container.runTest(description, listener);
+        }
+        finally {
+            container.stop();
+        }
     }
 }

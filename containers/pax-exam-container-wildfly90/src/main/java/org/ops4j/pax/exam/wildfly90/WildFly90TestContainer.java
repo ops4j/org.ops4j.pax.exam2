@@ -50,8 +50,10 @@ import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.security.CredentialsCallbackHandler;
@@ -545,5 +547,11 @@ public class WildFly90TestContainer implements TestContainer {
             undeployModule(warProbe);
             this.warProbe = null;
         }
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

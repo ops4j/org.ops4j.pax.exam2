@@ -33,6 +33,8 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.JarProbeOption;
 import org.ops4j.pax.exam.spi.war.JarBuilder;
 import org.slf4j.Logger;
@@ -149,5 +151,11 @@ public class OpenWebBeansTestContainer implements TestContainer {
     @Override
     public void uninstallProbe() {
         // not used
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

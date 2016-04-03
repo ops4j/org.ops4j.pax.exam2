@@ -30,6 +30,8 @@ import javax.ws.rs.client.WebTarget;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 
 /**
  * A ProbeInvoker which delegates the test method invocation to JUnit.
@@ -39,7 +41,7 @@ import org.ops4j.pax.exam.TestContainerException;
  * <p>
  * The test method to be executed is defined by an encoded instruction from
  * {@code org.ops4j.pax.exam.spi.intern.DefaultTestAddress}.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0, Jan 2011
  */
@@ -66,6 +68,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
         }
     }
 
+    @Override
     public void call(Object... args) {
         Class<?> testClass;
         try {
@@ -110,7 +113,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
      * <p>
      * This requires building a {@code Request} which is aware of an {@code Injector} and a
      * {@code BundleContext}.
-     * 
+     *
      * @param testClass
      * @param testMethod
      * @throws TestContainerException
@@ -140,6 +143,12 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
         URI uri = contextRoot.resolve("testrunner");
         Client client = ClientBuilder.newClient();
         return client.target(uri);
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 
 }

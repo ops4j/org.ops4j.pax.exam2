@@ -44,6 +44,8 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.forked.provision.PlatformImpl;
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
@@ -409,5 +411,11 @@ public class ForkedTestContainer implements TestContainer {
         catch (RemoteException | BundleException exc) {
             throw new TestContainerException(exc);
         }
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

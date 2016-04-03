@@ -30,6 +30,8 @@ import javax.ws.rs.client.WebTarget;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 
 
 /**
@@ -40,7 +42,7 @@ import org.ops4j.pax.exam.TestContainerException;
  * <p>
  * The test method to be executed is defined by an encoded instruction from
  * {@code org.ops4j.pax.exam.spi.intern.DefaultTestAddress}.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0, Jan 2011
  */
@@ -67,6 +69,7 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
         }
     }
 
+    @Override
     public void call(Object... args) {
         Class<?> testClass;
         try {
@@ -119,7 +122,7 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
 
     /**
      * Invokes a given method of a given test class via the servlet bridge.
-     * 
+     *
      * @param testClass
      * @param testMethod
      * @param parameterIndex
@@ -156,5 +159,11 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
         URI uri = contextRoot.resolve("testrunner");
         Client client = ClientBuilder.newClient();
         return client.target(uri);
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

@@ -23,6 +23,8 @@ import java.lang.reflect.Method;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
@@ -183,5 +185,10 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         }
 
         return ret;
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
     }
 }
