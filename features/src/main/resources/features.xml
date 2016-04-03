@@ -21,6 +21,5 @@
         <bundle>mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/${dependency.tipi.junit.version}</bundle>
         <bundle>mvn:org.ops4j.pax.exam/pax-exam-invoker-junit/${project.version}</bundle>
         <bundle>mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.0</bundle>
-        <bundle>mvn:org.ops4j.pax.exam/pax-exam-inject/${project.version}</bundle>
     </feature>
 </features>
