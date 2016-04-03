@@ -3,7 +3,7 @@ Pax Exam
 
 Thanks for looking into Pax Exam.
 This is the official source repository of the OPS4J Pax Exam project for 
-release lines 2.x, 3.x and 4.x.
+release lines 2.x, 3.x, 4.x and 5.x.
 It's licensed under the Apache Software License 2.0 by the OPS4J community.
 
 ## Documentation
