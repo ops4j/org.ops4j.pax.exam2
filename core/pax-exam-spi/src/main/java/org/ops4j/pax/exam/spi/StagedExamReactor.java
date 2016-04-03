@@ -18,7 +18,10 @@
 package org.ops4j.pax.exam.spi;
 
 import java.util.Set;
+
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 
 /**
  * Separates logical regression invocations from underlying reactor strategy. You get an instance
@@ -38,6 +41,8 @@ public interface StagedExamReactor {
      *             in case of a problem.
      */
     void invoke(TestAddress address) throws Exception;
+
+    void runTest(TestDescription description, TestListener listener) throws Exception;
 
     void beforeSuite();
 

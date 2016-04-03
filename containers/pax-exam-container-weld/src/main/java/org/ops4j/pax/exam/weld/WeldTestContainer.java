@@ -33,6 +33,8 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.JarProbeOption;
 import org.ops4j.pax.exam.spi.war.JarBuilder;
 import org.slf4j.Logger;
@@ -62,17 +64,21 @@ public class WeldTestContainer implements TestContainer {
         this.system = system;
     }
 
+    @Override
     public void call(TestAddress address) {
     }
 
+    @Override
     public long install(String location, InputStream stream) {
         return -1;
     }
 
+    @Override
     public long install(InputStream stream) {
         return -1;
     }
 
+    @Override
     public TestContainer start() {
         validateConfiguration();
         setProbeClassLoader();
@@ -88,7 +94,7 @@ public class WeldTestContainer implements TestContainer {
         if (probeOption == null) {
             return;
         }
-        
+
         probeDir = new File(system.getTempFolder(), UUID.randomUUID().toString());
         probeDir.mkdir();
         JarBuilder builder = new JarBuilder(probeDir, probeOption);
@@ -112,6 +118,7 @@ public class WeldTestContainer implements TestContainer {
         }
     }
 
+    @Override
     public TestContainer stop() {
         if (weld != null && isValid) {
             LOG.debug("stopping Weld container");
@@ -144,5 +151,11 @@ public class WeldTestContainer implements TestContainer {
     @Override
     public void uninstallProbe() {
         // not used
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

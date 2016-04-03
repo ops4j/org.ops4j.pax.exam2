@@ -46,8 +46,10 @@ import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -67,7 +69,7 @@ import org.xml.sax.SAXException;
  * <p>
  * GlassFish logging is redirected from java.util.logging to SLF4J. The necessary artifacts are
  * provisioned by this container automatically.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0
  */
@@ -95,7 +97,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * Stack of deployed modules. On shutdown, the modules are undeployed in reverse order.
      */
     private Stack<String> deployed = new Stack<String>();
-    
+
     private String warProbe;
 
     /**
@@ -118,7 +120,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
 
     /**
      * Creates a GlassFish container, running on top of an OSGi framework.
-     * 
+     *
      * @param system
      *            Pax Exam system configuration
      */
@@ -132,6 +134,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * directory and invoke it via probe invoker obtained from the Java SE service loader. (This
      * invoker uses a servlet bridge,)
      */
+    @Override
     public synchronized void call(TestAddress address) {
         TestInstantiationInstruction instruction = testDirectory.lookup(address);
         ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
@@ -145,13 +148,14 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * <p>
      * In Java EE mode, the probe is a WAR, enriched by the Pax Exam servlet bridge which allows us
      * to invoke tests running within the container via an HTTP client.
-     * 
+     *
      * @param location
      *            bundle location, not used for WAR probes
      * @param stream
      *            input stream containing probe
      * @return bundle ID, or -1 for WAR
      */
+    @Override
     public synchronized long install(String location, InputStream stream) {
         try {
             // just make sure we don't get an "option not recognized" warning
@@ -164,7 +168,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
              * FIXME The following should work, but does not. For some reason, we cannot directly
              * deploy from a stream. As a workaround, we copy the stream to a temp file and deploy
              * the file.
-             * 
+             *
              * deployer.deploy( stream, "--name", "Pax-Exam-Probe", "--contextroot",
              * "Pax-Exam-Probe" );
              */
@@ -185,6 +189,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
         return -1;
     }
 
+    @Override
     public synchronized long install(InputStream stream) {
         return install("local", stream);
     }
@@ -208,7 +213,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
 
     /**
      * Deploys the module specified by the given option.
-     * 
+     *
      * @param option
      *            deployment option
      */
@@ -270,6 +275,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
     /**
      * Starts the GlassFish container.
      */
+    @Override
     public TestContainer start() {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         ConfigurationManager cm = new ConfigurationManager();
@@ -303,7 +309,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
 
     /**
      * Reads the first port number from the domain.xml configuration.
-     * 
+     *
      * @param domainConfig
      * @return port number as string
      */
@@ -335,6 +341,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
     /**
      * Stops the test container gracefully, undeploying all modules and uninstalling all bundles.
      */
+    @Override
     public TestContainer stop() {
         if (glassFish != null) {
             cleanup();
@@ -366,6 +373,12 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
         }
         catch (GlassFishException exc) {
             throw new TestContainerException(exc);
-        }        
+        }
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

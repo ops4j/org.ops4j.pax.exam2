@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 
@@ -70,5 +72,10 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
 
     public void beforeSuite() {
         delegate.beforeSuite();
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) throws Exception {
+        delegate.runTest(description, listener);
     }
 }

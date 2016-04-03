@@ -26,6 +26,8 @@ import java.util.Set;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
@@ -137,5 +139,17 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
     }
 
     public void beforeSuite() {
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) throws Exception {
+        assert (description != null) : "TestDescription must not be null.";
+
+        if (description.getMethodName() != null) {
+            return;
+        }
+
+        TestContainer testContainer = targetContainer.get(0);
+        testContainer.runTest(description, listener);
     }
 }

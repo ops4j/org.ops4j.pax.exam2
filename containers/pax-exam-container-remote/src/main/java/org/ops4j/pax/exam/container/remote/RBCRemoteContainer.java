@@ -21,11 +21,13 @@ import java.io.InputStream;
 
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 
 /**
  * Graceful delegator to underlying target instance. All other TestContainer services are do nothing
  * calls.
- * 
+ *
  * @author Toni Menzel
  * @since Jan 26, 2010
  */
@@ -37,23 +39,28 @@ public class RBCRemoteContainer implements TestContainer {
         this.target = target;
     }
 
+    @Override
     public void call(TestAddress address) {
         target.call(address);
     }
 
+    @Override
     public long install(String location, InputStream stream) {
         return target.install(location, stream);
     }
 
+    @Override
     public long install(InputStream stream) {
         return install("local", stream);
     }
 
+    @Override
     public TestContainer start() {
         // do nothing
         return this;
     }
 
+    @Override
     public TestContainer stop() {
         return this;
     }
@@ -71,5 +78,11 @@ public class RBCRemoteContainer implements TestContainer {
     @Override
     public void uninstallProbe() {
         target.uninstallProbe();
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

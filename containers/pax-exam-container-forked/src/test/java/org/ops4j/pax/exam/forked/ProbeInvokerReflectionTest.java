@@ -23,13 +23,22 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 
 public class ProbeInvokerReflectionTest {
 
     public static class MyProbeInvoker implements ProbeInvoker {
 
+        @Override
         public void call(Object... args) throws TestContainerException {
             System.out.println("call() invoked");
+        }
+
+        @Override
+        public void runTest(TestDescription description, TestListener listener) {
+            // TODO Auto-generated method stub
+
         }
 
     }

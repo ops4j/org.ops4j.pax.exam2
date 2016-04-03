@@ -45,13 +45,15 @@ public class MultiConfigurationTest {
     @Inject
     private BundleContext bundleContext;
 
-    @Configuration
+    // FIXME temporarily disabled for PAXEXAM-772
+    // @Configuration
     public Option[] createConfiguration1() {
         return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
             + "/target/pax-exam-sample9-pde.jar"),
             systemProperty("pax.exam.language").value("la"), junitBundles());
     }
 
+    // FIXME temporarily disabled for PAXEXAM-772
     @Configuration
     public Option[] createConfiguration2() {
         return options(regressionDefaults(), systemProperty("pax.exam.language").value("en"),

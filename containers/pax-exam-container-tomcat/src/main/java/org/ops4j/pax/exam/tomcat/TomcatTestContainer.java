@@ -43,8 +43,10 @@ import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -60,7 +62,7 @@ public class TomcatTestContainer implements TestContainer {
     private static final Logger LOG = LoggerFactory.getLogger(TomcatTestContainer.class);
 
     private Stack<String> deployed = new Stack<String>();
-    
+
     private String probe;
 
     private ExamSystem system;
@@ -72,7 +74,7 @@ public class TomcatTestContainer implements TestContainer {
     private TomcatHostConfig hostConfig;
 
     private File webappDir;
-    
+
     private File xmlBase;
 
     public TomcatTestContainer(ExamSystem system) {
@@ -80,6 +82,7 @@ public class TomcatTestContainer implements TestContainer {
         this.testDirectory = TestDirectory.getInstance();
     }
 
+    @Override
     public synchronized void call(TestAddress address) {
         TestInstantiationInstruction instruction = testDirectory.lookup(address);
         ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
@@ -88,6 +91,7 @@ public class TomcatTestContainer implements TestContainer {
         invoker.call(address.arguments());
     }
 
+    @Override
     public synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
         system.getOptions(WarProbeOption.class);
@@ -95,6 +99,7 @@ public class TomcatTestContainer implements TestContainer {
         return -1;
     }
 
+    @Override
     public synchronized long install(InputStream stream) {
         return install("local", stream);
     }
@@ -160,6 +165,7 @@ public class TomcatTestContainer implements TestContainer {
         }
     }
 
+    @Override
     public TestContainer start() {
         LOG.info("starting Tomcat");
 
@@ -193,6 +199,7 @@ public class TomcatTestContainer implements TestContainer {
         return this;
     }
 
+    @Override
     public TestContainer stop() {
         cleanup();
         system.clear();
@@ -214,5 +221,11 @@ public class TomcatTestContainer implements TestContainer {
     @Override
     public void uninstallProbe() {
         hostConfig.unmanageApp("/" + probe);
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 }

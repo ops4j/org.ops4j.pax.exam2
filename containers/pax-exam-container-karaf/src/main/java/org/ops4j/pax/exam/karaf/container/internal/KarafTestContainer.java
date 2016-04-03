@@ -58,6 +58,8 @@ import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulator;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulatorFactory;
@@ -675,6 +677,12 @@ public class KarafTestContainer implements TestContainer {
     @Override
     public void uninstallProbe() {
         target.uninstallProbe();
+    }
+
+    @Override
+    public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+
     }
 
 }
