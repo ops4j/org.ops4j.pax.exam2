@@ -18,7 +18,6 @@
         <bundle>mvn:org.ops4j.pax.exam/pax-exam-extender-service/${project.version}</bundle>
         <bundle>mvn:org.ops4j.pax.exam/pax-exam-container-rbc/${project.version}</bundle>
         <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.0</bundle>
-        <bundle>mvn:org.ops4j.pax.exam/pax-exam-inject/${project.version}</bundle>
     </feature>
     <feature name="exam" version="${project.version}">
         <feature version="${project.version}">exam-no-junit</feature>
