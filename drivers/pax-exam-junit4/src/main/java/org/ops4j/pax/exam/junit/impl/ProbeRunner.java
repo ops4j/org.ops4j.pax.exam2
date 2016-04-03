@@ -36,7 +36,6 @@ import org.junit.runners.model.Statement;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -209,42 +208,10 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
         // probe.setAnchor( testClass );
         for (FrameworkMethod s : super.getChildren()) {
             // record the method -> adress matching
-            TestAddress address = delegateTest(testClassInstance, probe, s);
-            if (address == null) {
-                address = probe.addTest(testClass, s.getMethod().getName());
-            }
+            TestAddress address = probe.addTest(testClass, s.getMethod().getName());
             manager.storeTestMethod(address, s);
         }
         reactor.addProbe(probe);
-    }
-
-    /**
-     * FIXME What is this doing, and what is the use case? Parameterized methods break JUnit's
-     * default behaviour, and most of these non-standard signatures introduced in 2.0.0 have been
-     * dropped since 2.3.0.
-     *
-     * @param testClassInstance
-     * @param probe
-     * @param s
-     * @return test address
-     */
-    private TestAddress delegateTest(Object testClassInstance, TestProbeBuilder probe,
-        FrameworkMethod s) {
-        try {
-            Class<?>[] types = s.getMethod().getParameterTypes();
-            if (types.length == 1 && types[0].isAssignableFrom(TestProbeBuilder.class)) {
-                // do some backtracking:
-                return (TestAddress) s.getMethod().invoke(testClassInstance, probe);
-
-            }
-            else {
-                return null;
-            }
-        }
-        // CHECKSTYLE:SKIP : catch all wanted
-        catch (Throwable e) {
-            throw new TestContainerException("Problem delegating to test.", e);
-        }
     }
 
     /**
