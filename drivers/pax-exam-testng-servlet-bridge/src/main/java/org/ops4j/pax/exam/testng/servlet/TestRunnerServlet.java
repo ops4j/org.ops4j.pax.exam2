@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
@@ -42,15 +43,16 @@ import org.testng.xml.XmlTest;
  * container and the test driver.
  * <p>
  * Derived classes shall provide a method of dependency injection.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 @WebServlet(urlPatterns = "/testrunner")
 public class TestRunnerServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         String className = request.getParameter("class");
@@ -85,7 +87,8 @@ public class TestRunnerServlet extends HttpServlet {
 
         ObjectOutputStream oos = new ObjectOutputStream(os);
         for (ITestResult result : listener.getFailedTests()) {
-            oos.writeObject(result.getThrowable());
+            Exception exc = new WrappedTestContainerException(result.getThrowable());
+            oos.writeObject(exc);
         }
         if (listener.getFailedTests().isEmpty()) {
             oos.writeObject("ok");

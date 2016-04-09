@@ -18,12 +18,16 @@
 package org.ops4j.pax.exam;
 
 /**
- * Wrap not serializable exception while extracting as much information as possible 
+ * Wrap not serializable exception while extracting as much information as possible
  */
 public class WrappedTestContainerException extends TestContainerException {
     private static final long serialVersionUID = 2153567650526556189L;
     private String wrappedClassName;
     private String wrappedMessage;
+
+    public WrappedTestContainerException(Throwable exception) {
+        this(exception.getMessage(), exception);
+    }
 
     public WrappedTestContainerException(String message, Throwable exception) {
         super(message);
@@ -31,7 +35,7 @@ public class WrappedTestContainerException extends TestContainerException {
         wrappedMessage = exception.getMessage();
         setStackTrace(exception.getStackTrace());
     }
-    
+
     public String getWrappedClassName() {
         return wrappedClassName;
     }
