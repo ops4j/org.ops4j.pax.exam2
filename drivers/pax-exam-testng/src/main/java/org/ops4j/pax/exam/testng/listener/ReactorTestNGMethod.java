@@ -24,7 +24,7 @@ import org.testng.ITestNGMethod;
 import org.testng.internal.ClonedMethod;
 import org.testng.internal.ConstructorOrMethod;
 
-public class ReactorTestNGMethod extends ClonedMethod {
+class ReactorTestNGMethod extends ClonedMethod {
 
     private static final long serialVersionUID = 1L;
     private TestAddress address;
