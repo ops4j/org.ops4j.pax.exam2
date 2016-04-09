@@ -151,4 +151,9 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
 
     }
 
+    @Override
+    public void runTestClass(String description) {
+        // TODO Auto-generated method stub
+    }
+
 }
