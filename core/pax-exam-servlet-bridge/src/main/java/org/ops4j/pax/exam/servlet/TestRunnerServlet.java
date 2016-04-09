@@ -35,7 +35,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -47,9 +47,9 @@ import org.slf4j.LoggerFactory;
  * container and the test driver.
  * <p>
  * Derived classes shall provide a method of dependency injection.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 @WebServlet(urlPatterns = "/testrunner")
 public class TestRunnerServlet extends HttpServlet {
@@ -64,6 +64,7 @@ public class TestRunnerServlet extends HttpServlet {
         log.info("TestRunnerServlet loaded");
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         String className = request.getParameter("class");
@@ -91,7 +92,7 @@ public class TestRunnerServlet extends HttpServlet {
         if (indexName != null) {
             index = Integer.parseInt(indexName);
         }
-        
+
         Request classRequest = new ContainerTestRunnerClassRequest(clazz, injector, index);
         Description method = Description.createTestDescription(clazz, methodName);
         Request request = classRequest.filterWith(method);
@@ -107,7 +108,7 @@ public class TestRunnerServlet extends HttpServlet {
          */
         ObjectOutputStream oos = new ObjectOutputStream(os);
         for (Failure failure : failures) {
-            Exception exc = new TestContainerException(failure.getTrace());
+            Exception exc = new WrappedTestContainerException(failure.getException());
             oos.writeObject(exc);
         }
         if (failures.isEmpty()) {
