@@ -32,7 +32,7 @@ import org.osgi.framework.BundleContext;
 /**
  * Turns a instruction into a service call. Currently used with encoded instructions from
  * org.ops4j.pax.exam.spi.container.ClassMethodTestAddress
- * 
+ *
  * @author Toni Menzel
  * @since Dec 4, 2009
  */
@@ -63,6 +63,7 @@ public class ProbeInvokerImpl implements ProbeInvoker {
         }
     }
 
+    @Override
     public void call(Object... args) {
         Class<?> testClass;
         try {
@@ -103,17 +104,17 @@ public class ProbeInvokerImpl implements ProbeInvoker {
 
     /**
      * Invokes the bundle context (if possible and required) and executes the regression method.
-     * 
+     *
      * TODO this is a trimmed down minimal version that does not support any junit before/afters or
      * self made injection. The only thing you get here is a parameter injection for BundleContext
      * types.
-     * 
+     *
      * @param testInstance
      *            an instance of the regression class
      * @param testMethod
      *            regression method
      * @param params
-     * 
+     *
      * @throws TestContainerException
      *             - Re-thrown from reflection invokation
      */
@@ -143,16 +144,16 @@ public class ProbeInvokerImpl implements ProbeInvoker {
     /**
      * This method practcally makes sure the method that is going to be invoked has the right types
      * and instances injected as parameters.
-     * 
+     *
      * The following rules apply: You either have no arguments. You have arguments, then
      * BundleContext must be your first. Parameters with @Inject Annotation must come next. All
      * remaining arguments are set the params values.
-     * 
+     *
      * @param testMethod
      *            method in question
      * @param params
      *            derived from caller. Addditional injections may apply
-     * 
+     *
      * @return filled parameters ready for method invokation
      */
     private Object[] injectHook(Method testMethod, Object[] params) {
@@ -189,6 +190,11 @@ public class ProbeInvokerImpl implements ProbeInvoker {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void runTestClass(String description) {
         // TODO Auto-generated method stub
     }
 }

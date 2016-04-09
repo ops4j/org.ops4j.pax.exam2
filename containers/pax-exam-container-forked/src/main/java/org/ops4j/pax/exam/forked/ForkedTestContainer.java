@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.forked;
 
 import static org.ops4j.pax.exam.Constants.EXAM_FAIL_ON_UNRESOLVED_KEY;
+import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
@@ -29,15 +30,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.ops4j.io.StreamUtils;
+import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
@@ -88,6 +93,8 @@ public class ForkedTestContainer implements TestContainer {
     private final String name;
     private Long probeId;
 
+    private FreePort port;
+
     public ForkedTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
         this.frameworkFactory = new ForkedFrameworkFactory(frameworkFactory);
@@ -136,8 +143,11 @@ public class ForkedTestContainer implements TestContainer {
     @Override
     public TestContainer start() {
         try {
-            system = system.fork(new Option[] { systemProperty("java.protocol.handler.pkgs").value(
-                "org.ops4j.pax.url") });
+            port = new FreePort(20000, 21000);
+            system = system.fork(new Option[] {
+                systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url"),
+                systemProperty(EXAM_INVOKER_PORT).value(Integer.toString(port.getPort()))
+                });
             List<String> vmArgs = createVmArguments();
             Map<String, String> systemProperties = createSystemProperties();
             Map<String, Object> frameworkProperties = createFrameworkProperties();
@@ -415,7 +425,22 @@ public class ForkedTestContainer implements TestContainer {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
-        // TODO Auto-generated method stub
+        String filterExpression = "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker))";
+        try {
+            ServerSocket serverSocket = new ServerSocket(port.getPort());
+            TestListenerTask task = new TestListenerTask(serverSocket, listener);
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(task);
 
+            RemoteServiceReference[] references = remoteFramework.getServiceReferences(
+                filterExpression, system.getTimeout().getValue(), TimeUnit.MILLISECONDS);
+            remoteFramework.invokeMethodOnService(references[0], "runTestClass", description.toString());
+            executor.shutdown();
+            serverSocket.close();
+        }
+        // CHECKSTYLE:SKIP
+        catch (Exception exc) {
+            throw new TestContainerException(exc);
+        }
     }
 }

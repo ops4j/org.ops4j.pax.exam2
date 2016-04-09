@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Toni Menzel.
+ * Copyright 2016 Harald Wellmann.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,11 @@
  */
 package org.ops4j.pax.exam;
 
-/**
- * @author Toni Menzel
- * @since Dec 4, 2009
- */
-public interface ProbeInvoker {
 
-    /**
-     * Executes the regression method.
-     *
-     * @param args
-     *            Arguments to the called address.
-     *
-     * @throws TestContainerException
-     *             - Something to care about..
-     */
-    void call(Object... args);
-
-    void runTest(TestDescription description, TestListener listener);
-
-    void runTestClass(String description);
+public enum TestEventType {
+    TEST_STARTED,
+    TEST_FINISHED,
+    TEST_FAILED,
+    TEST_ASSUMPTION_FAILED,
+    TEST_IGNORED
 }
