@@ -214,8 +214,6 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable, I
      * and creating one or more test containers.
      * <p>
      * When using a probe invoker, we register the tests with the reactor.
-     * <p>
-     * Hack: As there is no way to intercept configuration methods, we disable them by reflection.
      *
      * @param suite
      *            test suite
