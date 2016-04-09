@@ -38,9 +38,12 @@ public class ProbeInvokerReflectionTest {
         @Override
         public void runTest(TestDescription description, TestListener listener) {
             // TODO Auto-generated method stub
-
         }
 
+        @Override
+        public void runTestClass(String description) {
+            // TODO Auto-generated method stub
+        }
     }
 
     @Test

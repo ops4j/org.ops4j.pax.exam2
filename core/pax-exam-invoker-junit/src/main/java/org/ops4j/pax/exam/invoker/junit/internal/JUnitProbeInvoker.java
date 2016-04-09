@@ -17,9 +17,14 @@
  */
 package org.ops4j.pax.exam.invoker.junit.internal;
 
+import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
+
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -43,7 +48,7 @@ import org.osgi.framework.BundleContext;
  * <p>
  * The test method to be executed is defined by an encoded instruction from
  * {@code org.ops4j.pax.exam.spi.intern.DefaultTestAddress}.
- * 
+ *
  * @author Harald Wellmann
  * @since 2.3.0, August 2011
  */
@@ -56,7 +61,8 @@ public class JUnitProbeInvoker implements ProbeInvoker {
 
     private Class<?> testClass;
 
-    public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext, Injector injector) {
+    public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext,
+        Injector injector) {
         // parse class and method out of expression:
         String[] parts = encodedInstruction.split(";");
         clazz = parts[0];
@@ -75,14 +81,15 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         }
     }
 
+    @Override
     public void call(Object... args) {
         if (!(findAndInvoke(args))) {
-            throw new TestContainerException(" Test " + method + " not found in test class "
-                + testClass.getName());
+            throw new TestContainerException(
+                " Test " + method + " not found in test class " + testClass.getName());
         }
     }
 
-    private boolean findAndInvoke(Object...args) {
+    private boolean findAndInvoke(Object... args) {
         Integer index = null;
         try {
             /*
@@ -117,7 +124,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
      * <p>
      * This requires building a {@code Request} which is aware of an {@code Injector} and a
      * {@code BundleContext}.
-     * 
+     *
      * @param testClass
      * @param testMethod
      * @throws TestContainerException
@@ -133,24 +140,24 @@ public class JUnitProbeInvoker implements ProbeInvoker {
             throw createTestContainerException(failures.toString(), failures.get(0).getException());
         }
     }
-    
+
     /**
      * Creates exception for test failure and makes sure it is serializable.
+     *
      * @param message
      * @param ex
      * @return serializable exception
      */
     private TestContainerException createTestContainerException(String message, Throwable ex) {
-        return isSerializable(ex)
-            ? new TestContainerException(message, ex) 
+        return isSerializable(ex) ? new TestContainerException(message, ex)
             : new WrappedTestContainerException(message, ex);
     }
 
     /**
-     * Check if given exception is serializable by doing a serialization and 
-     * checking the exception
-     * 
-     * @param ex exception to check
+     * Check if given exception is serializable by doing a serialization and checking the exception
+     *
+     * @param ex
+     *            exception to check
      * @return if the given exception is serializable
      */
     private boolean isSerializable(Throwable ex) {
@@ -166,13 +173,46 @@ public class JUnitProbeInvoker implements ProbeInvoker {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
-        Request request = new ContainerTestRunnerClassRequest(loadClass(description.getClassName()), injector, null);
+        runTestWithJUnit(description, listener);
+    }
+
+    private void runTestWithJUnit(TestDescription description, TestListener listener) {
+        Request request = new ContainerTestRunnerClassRequest(loadClass(description.getClassName()),
+            injector, null);
         if (description.getMethodName() != null) {
-            Description method = Description.createTestDescription(description.getClassName(), description.getMethodName());
+            Description method = Description.createTestDescription(description.getClassName(),
+                description.getMethodName());
             request = request.filterWith(method);
         }
         JUnitCore junit = new JUnitCore();
         junit.addListener(new ProbeRunListener(listener));
         junit.run(request);
+    }
+
+    @Override
+    public void runTestClass(String description) {
+        try (Socket socket = new Socket(InetAddress.getLocalHost(), getPort())) {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            OutputStreamTestListener streamListener = new OutputStreamTestListener(oos);
+            runTestWithJUnit(TestDescription.parse(description), streamListener);
+        }
+        catch (IOException exc) {
+            new TestContainerException(exc);
+        }
+    }
+
+    private int getPort() {
+        String port = ctx.getProperty(EXAM_INVOKER_PORT);
+        if (port == null) {
+            throw new TestContainerException(
+                "System property " + EXAM_INVOKER_PORT + " is not set");
+        }
+        try {
+            return Integer.parseInt(port);
+        }
+        catch (NumberFormatException exc) {
+            throw new TestContainerException(
+                "Cannot parse value of system property " + EXAM_INVOKER_PORT, exc);
+        }
     }
 }

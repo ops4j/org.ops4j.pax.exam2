@@ -24,52 +24,76 @@ import java.io.Serializable;
  *
  */
 public class TestDescription implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     private String className;
     private String methodName;
     private Integer index;
-    
-    
+
     /**
-     * 
+     *
      */
     public TestDescription(String className) {
         this(className, null, null);
     }
-    
+
     public TestDescription(String className, String methodName) {
         this(className, methodName, null);
     }
-    
+
     public TestDescription(String className, String methodName, Integer index) {
         this.className = className;
         this.methodName = methodName;
         this.index = index;
     }
-    
+
     /**
      * @return the className
      */
     public String getClassName() {
         return className;
     }
-    
+
     /**
      * @return the methodName
      */
     public String getMethodName() {
         return methodName;
     }
-    
+
     /**
      * @return the index
      */
     public Integer getIndex() {
         return index;
     }
-    
-    
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(className);
+        if (methodName != null) {
+            builder.append(':');
+            builder.append(methodName);
+        }
+        if (index != null) {
+            builder.append(':');
+            builder.append(index);
+        }
+        return builder.toString();
+    }
+
+    public static TestDescription parse(String s) {
+        String[] parts = s.split(":");
+        switch (parts.length) {
+            case 1:
+                return new TestDescription(parts[0]);
+            case 2:
+                return new TestDescription(parts[0], parts[1]);
+            case 3:
+                return new TestDescription(parts[0], parts[1], Integer.parseInt(parts[2]));
+            default:
+                throw new IllegalArgumentException(s);
+        }
+    }
 }

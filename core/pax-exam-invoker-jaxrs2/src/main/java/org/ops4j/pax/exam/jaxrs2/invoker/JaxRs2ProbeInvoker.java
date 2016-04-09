@@ -166,4 +166,10 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void runTestClass(String description) {
+        // TODO Auto-generated method stub
+
+    }
 }
