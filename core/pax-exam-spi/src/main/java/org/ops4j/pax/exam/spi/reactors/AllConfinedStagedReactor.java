@@ -34,7 +34,7 @@ import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 public class AllConfinedStagedReactor implements StagedExamReactor {
 
     private final List<TestProbeBuilder> probes;
-    private final List<TestContainer> containers;
+    private final List<TestContainer> testContainers;
 
     private final Map<TestAddress, TestContainer> map;
 
@@ -45,7 +45,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
      *            probes to be installed
      */
     public AllConfinedStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> probes) {
-        this.containers = containers;
+        this.testContainers = containers;
         this.probes = probes;
         map = new LinkedHashMap<TestAddress, TestContainer>();
         int index = 0;
@@ -73,6 +73,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
         // empty
     }
 
+    @Override
     public void invoke(TestAddress address) throws Exception {
         assert (address != null) : "TestAddress must not be null.";
         // you can directly invoke:
@@ -94,6 +95,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
 
     }
 
+    @Override
     public Set<TestAddress> getTargets() {
         return map.keySet();
     }
@@ -102,6 +104,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
         // empty
     }
 
+    @Override
     public void afterSuite() {
         // empty
     }
@@ -114,14 +117,17 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
         // empty
     }
 
+    @Override
     public void afterClass() {
         // empty
     }
 
+    @Override
     public void beforeClass() {
         // empty
     }
 
+    @Override
     public void beforeSuite() {
         // empty
     }
@@ -132,7 +138,7 @@ public class AllConfinedStagedReactor implements StagedExamReactor {
         if (description.getMethodName() == null) {
             return;
         }
-        TestContainer container = containers.get(0);
+        TestContainer container = testContainers.get(0);
         TestProbeBuilder probeBuilder = probes.get(0);
         container.start();
         container.installProbe(probeBuilder.build().getStream());

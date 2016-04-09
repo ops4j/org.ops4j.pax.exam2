@@ -180,9 +180,9 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         Request request = new ContainerTestRunnerClassRequest(loadClass(description.getClassName()),
             injector, null);
         if (description.getMethodName() != null) {
-            Description method = Description.createTestDescription(description.getClassName(),
+            Description methodName = Description.createTestDescription(description.getClassName(),
                 description.getMethodName());
-            request = request.filterWith(method);
+            request = request.filterWith(methodName);
         }
         JUnitCore junit = new JUnitCore();
         junit.addListener(new ProbeRunListener(listener));
