@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.testng.listener;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +48,7 @@ import org.ops4j.pax.exam.util.Transactional;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.IClassListener;
 import org.testng.IConfigurable;
 import org.testng.IConfigureCallBack;
 import org.testng.IHookCallBack;
@@ -57,6 +57,7 @@ import org.testng.IMethodInstance;
 import org.testng.IMethodInterceptor;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
+import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
@@ -102,7 +103,8 @@ import org.testng.internal.MethodInstance;
  * @since 2.3.0
  *
  */
-public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable, IConfigurable {
+public class PaxExam
+    implements ISuiteListener, IClassListener, IMethodInterceptor, IHookable, IConfigurable {
 
     public static final String PAX_EXAM_SUITE_NAME = "PaxExamInternal";
 
@@ -143,6 +145,9 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable, I
     private Object currentTestClassInstance;
 
     private List<ITestNGMethod> methods;
+
+    private int numMethodsInvoked;
+    private int numMethodsPerClass;
 
     public PaxExam() {
         LOG.debug("created ExamTestNGListener");
@@ -201,11 +206,55 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable, I
     @Override
     public void onFinish(ISuite suite) {
         if (!isRunningInTestContainer(suite)) {
-            // fire an afterClass event for the last test class
-            if (currentTestClassInstance != null) {
-                manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
-            }
             manager.afterSuite(stagedReactor);
+        }
+    }
+
+    /**
+     * NOTE: This callback is invoked once per method, so we count the methods per class to
+     * fire our internal event only once.
+     */
+    @Override
+    public void onBeforeClass(ITestClass testClass, IMethodInstance mi) {
+        if (numMethodsInvoked == 0) {
+            numMethodsPerClass = testClass.getTestMethods().length;
+            onceBeforeClass(testClass, mi);
+        }
+    }
+
+    private void onceBeforeClass(ITestClass testClass, IMethodInstance mi) {
+        if (!isRunningInTestContainer(mi.getMethod())) {
+            Object testClassInstance = mi.getInstance();
+            Class<?> klass = testClassInstance.getClass();
+            stagedReactor = stageReactorForClass(klass, testClassInstance);
+            if (!useProbeInvoker) {
+                manager.inject(testClassInstance);
+            }
+            manager.beforeClass(stagedReactor, testClassInstance);
+            currentTestClassInstance = testClassInstance;
+        }
+    }
+
+    /**
+     * NOTE: This callback is invoked once per method, so we count the methods per class to
+     * fire our internal event only once.
+     */
+    @Override
+    public void onAfterClass(ITestClass testClass, IMethodInstance mi) {
+        numMethodsInvoked++;
+        if (numMethodsInvoked == numMethodsPerClass) {
+            onceAfterClass(testClass, mi);
+            numMethodsInvoked = 0;
+        }
+    }
+
+    /**
+     * @param testClass
+     * @param mi
+     */
+    private void onceAfterClass(ITestClass testClass, IMethodInstance mi) {
+        if (!isRunningInTestContainer(mi.getMethod())) {
+            manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
         }
     }
 
@@ -407,19 +456,6 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable, I
      */
     private void runByDriver(IHookCallBack callBack, ITestResult testResult) {
         LOG.info("running {}", testResult.getName());
-        Object testClassInstance = testResult.getMethod().getInstance();
-        if (testClassInstance != currentTestClassInstance) {
-            if (currentTestClassInstance != null) {
-                manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
-            }
-            Class<?> testClass = testClassInstance.getClass();
-            stagedReactor = stageReactorForClass(testClass, testClassInstance);
-            if (!useProbeInvoker) {
-                manager.inject(testClassInstance);
-            }
-            manager.beforeClass(stagedReactor, testClassInstance);
-            currentTestClassInstance = testClassInstance;
-        }
 
         if (!useProbeInvoker) {
             callBack.runTestMethod(testResult);
@@ -484,7 +520,6 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable, I
                 .getRealClass().getName() + ";" + javaMethod.getName()));
 
         }
-        Collections.sort(newInstances, new IMethodInstanceComparator());
         return newInstances;
     }
 
@@ -494,4 +529,5 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable, I
             callBack.runConfigurationMethod(testResult);
         }
     }
+
 }
