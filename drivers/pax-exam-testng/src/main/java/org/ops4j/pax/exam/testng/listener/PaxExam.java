@@ -17,35 +17,8 @@
  */
 package org.ops4j.pax.exam.testng.listener;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-
-import org.ops4j.pax.exam.Constants;
-import org.ops4j.pax.exam.ExamConfigurationException;
-import org.ops4j.pax.exam.ExceptionHelper;
-import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestDirectory;
-import org.ops4j.pax.exam.TestInstantiationInstruction;
-import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.spi.ExamReactor;
-import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.reactors.ReactorManager;
-import org.ops4j.pax.exam.util.Injector;
-import org.ops4j.pax.exam.util.InjectorFactory;
-import org.ops4j.pax.exam.util.Transactional;
-import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IClassListener;
@@ -61,7 +34,6 @@ import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
-import org.testng.internal.MethodInstance;
 
 /**
  * TestNG driver for Pax Exam, implementing a number of ITestNGListener interfaces. To run a TestNG
@@ -89,13 +61,6 @@ import org.testng.internal.MethodInstance;
  * again inside the test container. The driver delegates each test method invocation to a probe
  * invoker which excutes the test method inside the container via the probe.
  * <p>
- * It would be nice to separate these two aspects and handle them in two separate listeners, but
- * TestNG has no way to override or disable the listener annotated on the test class.
- * <p>
- * TestNG provides a listener callback for configuration methods, but it does not let us intercept
- * them. For this reason, we use an ugly reflection hack to disable them when running under the
- * driver and to make sure they get executed inside the test container only.
- * <p>
  * Dependencies annotated by {@link javax.inject.Inject} get injected into the test class in the
  * container (OSGi and Java EE modes) or by the driver (CDI mode).
  *
@@ -110,41 +75,16 @@ public class PaxExam
 
     private static final Logger LOG = LoggerFactory.getLogger(PaxExam.class);
 
-    /**
-     * Staged reactor for this test class. This may actually be a reactor already staged for a
-     * previous test class, depending on the reactor strategy.
-     */
-    private StagedExamReactor stagedReactor;
-
-    /**
-     * Maps method names to test addresses. The method names are qualified by class and container
-     * names. Each method of the test class is cloned for each container.
-     */
-    private Map<String, TestAddress> methodToAddressMap = new LinkedHashMap<String, TestAddress>();
-
-    /**
-     * Reactor manager singleton.
-     */
-    private ReactorManager manager;
-
-    /**
-     * Shall we use a probe invoker, or invoke test methods directly?
-     */
-    private boolean useProbeInvoker;
-
-    /**
-     * The test class currently executed. We use this to generate beforeClass and afterClass events,
-     * which we do not receive from TestNG.
-     */
-    private Object currentTestClassInstance;
-
-    private List<ITestNGMethod> methods;
-
     private int numMethodsInvoked;
     private int numMethodsPerClass;
 
+    private DriverListener driverListener;
+    private ContainerListener containerListener;
+
     public PaxExam() {
         LOG.debug("created ExamTestNGListener");
+        this.driverListener = new DriverListener();
+        this.containerListener = new ContainerListener();
     }
 
     /**
@@ -184,9 +124,7 @@ public class PaxExam
     @Override
     public void onStart(ISuite suite) {
         if (!isRunningInTestContainer(suite)) {
-            manager = ReactorManager.getInstance();
-            stagedReactor = stageReactor(suite);
-            manager.beforeSuite(stagedReactor);
+            driverListener.onStart(suite);
         }
     }
 
@@ -200,7 +138,7 @@ public class PaxExam
     @Override
     public void onFinish(ISuite suite) {
         if (!isRunningInTestContainer(suite)) {
-            manager.afterSuite(stagedReactor);
+            driverListener.onFinish(suite);
         }
     }
 
@@ -218,14 +156,7 @@ public class PaxExam
 
     private void onceBeforeClass(ITestClass testClass, IMethodInstance mi) {
         if (!isRunningInTestContainer(mi.getMethod())) {
-            Object testClassInstance = mi.getInstance();
-            Class<?> klass = testClassInstance.getClass();
-            stagedReactor = stageReactorForClass(klass, testClassInstance);
-            if (!useProbeInvoker) {
-                manager.inject(testClassInstance);
-            }
-            manager.beforeClass(stagedReactor, testClassInstance);
-            currentTestClassInstance = testClassInstance;
+            driverListener.onBeforeClass(testClass, mi);
         }
     }
 
@@ -248,71 +179,8 @@ public class PaxExam
      */
     private void onceAfterClass(ITestClass testClass, IMethodInstance mi) {
         if (!isRunningInTestContainer(mi.getMethod())) {
-            manager.afterClass(stagedReactor, currentTestClassInstance.getClass());
+            driverListener.onAfterClass(testClass, mi);
         }
-    }
-
-    /**
-     * Stages the reactor. This involves building the probe including all test methods of the suite
-     * and creating one or more test containers.
-     * <p>
-     * When using a probe invoker, we register the tests with the reactor.
-     *
-     * @param suite
-     *            test suite
-     * @return staged reactor
-     */
-    private synchronized StagedExamReactor stageReactor(ISuite suite) {
-        try {
-            methods = suite.getAllMethods();
-            Class<?> testClass = methods.get(0).getRealClass();
-            LOG.debug("test class = {}", testClass);
-            Object testClassInstance = testClass.newInstance();
-            return stageReactorForClass(testClass, testClassInstance);
-        }
-        catch (InstantiationException | IllegalAccessException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
-
-    private StagedExamReactor stageReactorForClass(Class<?> testClass, Object testClassInstance) {
-        try {
-            ExamReactor examReactor = manager.prepareReactor(testClass, testClassInstance);
-            useProbeInvoker = !manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI);
-            if (useProbeInvoker) {
-                addTestsToReactor(examReactor, testClassInstance, methods);
-            }
-            return manager.stageReactor();
-        }
-        catch (IOException | ExamConfigurationException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
-
-    /**
-     * Adds all tests of the suite to the reactor and creates a probe builder.
-     * <p>
-     * TODO This driver currently assumes that all test classes of the suite use the default probe
-     * builder. It builds one probe containing all tests of the suite. This is why the
-     * testClassInstance argument is just an arbitrary instance of one of the classes of the suite.
-     *
-     * @param reactor
-     *            unstaged reactor
-     * @param testClassInstance
-     *            not used
-     * @param testMethods
-     *            all methods of the suite.
-     * @throws IOException
-     * @throws ExamConfigurationException
-     */
-    private void addTestsToReactor(ExamReactor reactor, Object testClassInstance,
-        List<ITestNGMethod> testMethods) throws IOException, ExamConfigurationException {
-        TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
-        for (ITestNGMethod m : testMethods) {
-            TestAddress address = probe.addTest(m.getRealClass(), m.getMethodName());
-            manager.storeTestMethod(address, m);
-        }
-        reactor.addProbe(probe);
     }
 
     /**
@@ -322,201 +190,33 @@ public class PaxExam
     @Override
     public void run(IHookCallBack callBack, ITestResult testResult) {
         if (isRunningInTestContainer(testResult.getMethod())) {
-            runInTestContainer(callBack, testResult);
+            containerListener.run(callBack, testResult);
         }
         else {
-            runByDriver(callBack, testResult);
+            driverListener.run(callBack, testResult);
         }
     }
 
     /**
-     * Runs a test method in the container. Before invoking the method, we inject its dependencies.
-     * <p>
-     * TODO Unlike JUnit, TestNG instantiates each test class only once, so maybe we should also
-     * inject the dependencies just once.
-     *
-     * @param callBack
-     *            TestNG callback for test method
-     * @param testResult
-     *            test result container
-     */
-    private void runInTestContainer(IHookCallBack callBack, ITestResult testResult) {
-        Object testClassInstance = testResult.getInstance();
-        inject(testClassInstance);
-        if (isTransactional(testResult)) {
-            runInTransaction(callBack, testResult);
-        }
-        else {
-            callBack.runTestMethod(testResult);
-        }
-        return;
-    }
-
-    /**
-     * Checks if the current test method is transactional.
-     *
-     * @param testResult
-     *            TestNG method and result wrapper
-     * @return true if the method or the enclosing class is annotated with {@link Transactional}.
-     */
-    private boolean isTransactional(ITestResult testResult) {
-        boolean transactional = false;
-        Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
-        if (method.getAnnotation(Transactional.class) != null) {
-            transactional = true;
-        }
-        else {
-            if (method.getDeclaringClass().getAnnotation(Transactional.class) != null) {
-                transactional = true;
-            }
-        }
-        return transactional;
-    }
-
-    /**
-     * Runs a test method enclosed by a Java EE auto-rollback transaction obtained from the JNDI
-     * context.
-     *
-     * @param callBack
-     *            TestNG callback for test method
-     * @param testResult
-     *            test result container
-     */
-    private void runInTransaction(IHookCallBack callBack, ITestResult testResult) {
-        UserTransaction tx = null;
-        try {
-            InitialContext ctx = new InitialContext();
-            tx = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
-            tx.begin();
-            callBack.runTestMethod(testResult);
-        }
-        catch (NamingException | NotSupportedException | SystemException exc) {
-            throw new TestContainerException(exc);
-        }
-        finally {
-            rollback(tx);
-        }
-    }
-
-    /**
-     * Rolls back the given transaction, if not null.
-     *
-     * @param tx
-     *            transaction
-     */
-    private void rollback(UserTransaction tx) {
-        if (tx != null) {
-            try {
-                tx.rollback();
-            }
-            catch (IllegalStateException | SecurityException | SystemException exc) {
-                throw new TestContainerException(exc);
-            }
-        }
-    }
-
-    /**
-     * Performs field injection on the given object. The injection method is looked up via the Java
-     * SE service loader.
-     *
-     * @param testClassInstance
-     *            test class instance
-     */
-    private void inject(Object testClassInstance) {
-        InjectorFactory injectorFactory = ServiceProviderFinder
-            .loadUniqueServiceProvider(InjectorFactory.class);
-        Injector injector = injectorFactory.createInjector();
-        injector.injectFields(testClassInstance);
-    }
-
-    /**
-     * Runs a test method under the driver.
-     * <p>
-     * Fires beforeClass and afterClass events when the current class changes, as we do not get
-     * these events from TestNG. This requires the test methods to be sorted by class, see
-     * {@link #intercept(List, ITestContext)}.
-     * <p>
-     * When using a probe invoker, we delegate the test method invocation to the invoker so that the
-     * test will be executed in the container context.
-     * <p>
-     * Otherwise, we directly run the test method.
-     *
-     * @param callBack
-     *            TestNG callback for test method
-     * @param testResult
-     *            test result container
-     * @throws ExamConfigurationException
-     * @throws IOException
-     */
-    private void runByDriver(IHookCallBack callBack, ITestResult testResult) {
-        LOG.info("running {}", testResult.getName());
-
-        if (!useProbeInvoker) {
-            callBack.runTestMethod(testResult);
-            return;
-        }
-
-        TestAddress address = methodToAddressMap.get(testResult.getName());
-        TestAddress root = address.root();
-
-        LOG.debug("Invoke " + testResult.getName() + " @ " + address + " Arguments: "
-            + root.arguments());
-        try {
-            stagedReactor.invoke(address);
-            testResult.setStatus(ITestResult.SUCCESS);
-        }
-        // CHECKSTYLE:SKIP : StagedExamReactor API
-        catch (Exception e) {
-            Throwable t = ExceptionHelper.unwind(e);
-            LOG.error("Exception", e);
-            testResult.setStatus(ITestResult.FAILURE);
-            testResult.setThrowable(t);
-        }
-    }
-
-    /**
-     * Callback from TestNG which lets us manipulate the list of test methods in the suite. When
-     * running under the driver and using a probe invoker, we now construct the test addresses to be
-     * used be the probe invoker, and we sort the methods by class to make sure we can fire
-     * beforeClass and afterClass events later on.
+     * Leave test methods unchanged when running in the container.
      */
     @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> testMethods, ITestContext context) {
-        if (!useProbeInvoker || isRunningInTestContainer(context.getSuite())) {
+        if (isRunningInTestContainer(context.getSuite())) {
             return testMethods;
         }
-
-        boolean mangleMethodNames = manager.getNumConfigurations() > 1;
-        TestDirectory testDirectory = TestDirectory.getInstance();
-        List<IMethodInstance> newInstances = new ArrayList<IMethodInstance>();
-        Set<TestAddress> targets = stagedReactor.getTargets();
-        for (TestAddress address : targets) {
-            ITestNGMethod frameworkMethod = (ITestNGMethod) manager
-                .lookupTestMethod(address.root());
-            if (frameworkMethod == null) {
-                continue;
-            }
-            Method javaMethod = frameworkMethod.getConstructorOrMethod().getMethod();
-
-            if (mangleMethodNames) {
-                frameworkMethod = new ReactorTestNGMethod(frameworkMethod, javaMethod, address);
-            }
-
-            MethodInstance newInstance = new MethodInstance(frameworkMethod);
-            newInstances.add(newInstance);
-            methodToAddressMap.put(frameworkMethod.getMethodName(), address);
-            testDirectory.add(address, new TestInstantiationInstruction(frameworkMethod
-                .getRealClass().getName() + ";" + javaMethod.getName()));
-
+        else {
+            return driverListener.intercept(testMethods, context);
         }
-        return newInstances;
     }
 
+    /**
+     * Ignore configuration methods when running under the driver.
+     */
     @Override
     public void run(IConfigureCallBack callBack, ITestResult testResult) {
         if (isRunningInTestContainer(testResult)) {
             callBack.runConfigurationMethod(testResult);
         }
     }
-
 }
