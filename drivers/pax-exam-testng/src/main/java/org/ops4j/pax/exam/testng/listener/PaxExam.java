@@ -133,12 +133,6 @@ public class PaxExam
     private boolean useProbeInvoker;
 
     /**
-     * TestNG calls our intercept() method twice. We remember the first call and do nothing when
-     * called again.
-     */
-    private boolean methodInterceptorCalled;
-
-    /**
      * The test class currently executed. We use this to generate beforeClass and afterClass events,
      * which we do not receive from TestNG.
      */
@@ -485,18 +479,13 @@ public class PaxExam
      * running under the driver and using a probe invoker, we now construct the test addresses to be
      * used be the probe invoker, and we sort the methods by class to make sure we can fire
      * beforeClass and afterClass events later on.
-     * <p>
-     * For some reason, TestNG invokes this callback twice. The second time over, we return the
-     * unchanged method list.
      */
     @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> testMethods, ITestContext context) {
-        if (methodInterceptorCalled || !useProbeInvoker
-            || isRunningInTestContainer(context.getSuite())) {
+        if (!useProbeInvoker || isRunningInTestContainer(context.getSuite())) {
             return testMethods;
         }
 
-        methodInterceptorCalled = true;
         boolean mangleMethodNames = manager.getNumConfigurations() > 1;
         TestDirectory testDirectory = TestDirectory.getInstance();
         List<IMethodInstance> newInstances = new ArrayList<IMethodInstance>();
