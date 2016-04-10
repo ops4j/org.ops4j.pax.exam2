@@ -224,7 +224,8 @@ public class ProbeRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected Statement childrenInvoker(RunNotifier notifier) {
-        if (stagedReactor.getClass().getName().contains("AllConfined")) {
+        // FIXME use more robust criteria
+        if (stagedReactor.getClass().getName().contains("PerMethod")) {
             return super.childrenInvoker(notifier);
         }
         else {
