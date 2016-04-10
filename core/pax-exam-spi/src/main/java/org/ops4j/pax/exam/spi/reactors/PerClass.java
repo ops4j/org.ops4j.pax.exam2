@@ -17,14 +17,24 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
+import java.util.List;
+
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
+
 /**
  * This reactor factory creates a test reactor which restarts the test container for each test
  * class.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0
  */
-@SuppressWarnings("deprecation")
-public class PerClass extends EagerSingleStagedReactorFactory {
+public class PerClass implements StagedExamReactorFactory {
 
+    @Override
+    public StagedExamReactor create(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+        return new PerClassStagedReactor(containers, mProbes);
+    }
 }

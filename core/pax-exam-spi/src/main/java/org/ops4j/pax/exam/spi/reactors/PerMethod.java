@@ -17,14 +17,24 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
+import java.util.List;
+
+import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
+
 /**
  * This reactor factory creates a test reactor which restarts the test container for each test
  * method.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0
  */
-@SuppressWarnings("deprecation")
-public class PerMethod extends AllConfinedStagedReactorFactory {
+public class PerMethod implements StagedExamReactorFactory {
 
+    @Override
+    public StagedExamReactor create(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+        return new PerMethodStagedReactor(containers, mProbes);
+    }
 }

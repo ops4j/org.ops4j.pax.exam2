@@ -31,6 +31,6 @@ public class AllConfinedStagedReactorTest extends BaseStagedReactorTest {
     @Override
     protected StagedExamReactor getReactor(List<TestContainer> containers,
         List<TestProbeBuilder> providers) {
-        return new AllConfinedStagedReactor(containers, providers);
+        return new PerMethodStagedReactor(containers, providers);
     }
 }

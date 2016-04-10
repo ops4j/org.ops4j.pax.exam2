@@ -31,6 +31,6 @@ public class EagerSingleStagedReactorTest extends BaseStagedReactorTest {
     @Override
     protected StagedExamReactor getReactor(List<TestContainer> containers,
         List<TestProbeBuilder> providers) {
-        return new EagerSingleStagedReactor(containers, providers);
+        return new PerClassStagedReactor(containers, providers);
     }
 }
