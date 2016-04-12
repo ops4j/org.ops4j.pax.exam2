@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam.testng.test;
 
-import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
@@ -26,7 +25,9 @@ import static org.testng.Assert.assertNotNull;
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.testng.inject.InjectConfigurationFactory;
 import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.testng.annotations.Listeners;
@@ -41,9 +42,11 @@ public class TestNGExamTest {
     @Configuration
     public Option[] config() {
         return options(
-
-        mavenBundle("org.testng", "testng", "6.9.10"),
-        systemProperty("osgi.console").value("6666"));
+            InjectConfigurationFactory.regressionDefaults(),
+            mavenBundle("org.testng", "testng", "6.9.10"),
+            mavenBundle("com.beust", "jcommander", "1.48"),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-testng", Info.getPaxExamVersion()),
+            systemProperty("osgi.console").value("6666"));
     }
 
     @Test

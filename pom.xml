@@ -36,6 +36,7 @@
                 <module>drivers/pax-exam-junit4</module>
                 <module>drivers/pax-exam-testng</module>
                 <module>drivers/pax-exam-testng-servlet-bridge</module>
+                <module>drivers/pax-exam-invoker-testng</module>
 
                 <module>core/pax-exam-link-mvn</module>
                 <module>core/pax-exam-link-assembly</module>

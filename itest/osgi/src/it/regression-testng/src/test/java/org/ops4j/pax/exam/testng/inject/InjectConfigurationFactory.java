@@ -17,6 +17,12 @@
  */
 package org.ops4j.pax.exam.testng.inject;
 
+import static org.ops4j.pax.exam.Constants.START_LEVEL_SYSTEM_BUNDLES;
+import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
+import static org.ops4j.pax.exam.CoreOptions.bundle;
+import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
+import static org.ops4j.pax.exam.CoreOptions.composite;
+import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.propagateSystemProperty;
@@ -24,6 +30,7 @@ import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
 
 import org.ops4j.pax.exam.ConfigurationFactory;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.util.PathUtils;
 
@@ -32,10 +39,32 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
     @Override
     public Option[] createConfiguration() {
         return options(
+            regressionDefaults(),
             propagateSystemProperty("pax.exam.regression.rmi"),
             mavenBundle("org.testng", "testng", "6.9.10"),
+            mavenBundle("com.beust", "jcommander", "1.48"),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-testng", Info.getPaxExamVersion()),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde/"),
 
+            systemProperty("pax.exam.invoker").value("testng"),
             systemProperty("osgi.console").value("6666"));
+    }
+
+    public static Option regressionDefaults() {
+        return composite(
+
+            cleanCaches(),
+
+            // we're running with pax.exam.logging = none, so add SLF4J and logback bundles
+            bundle("link:classpath:META-INF/links/org.slf4j.api.link").startLevel(START_LEVEL_SYSTEM_BUNDLES),
+            bundle("link:classpath:META-INF/links/ch.qos.logback.classic.link").startLevel(START_LEVEL_SYSTEM_BUNDLES),
+            bundle("link:classpath:META-INF/links/ch.qos.logback.core.link").startLevel(START_LEVEL_SYSTEM_BUNDLES),
+
+            // Set logback configuration via system property.
+            // This way, both the driver and the container use the same configuration
+            systemProperty("logback.configurationFile").value(
+                "file:" + PathUtils.getBaseDir() + "/src/test/resources/logback.xml"),
+
+            frameworkStartLevel(START_LEVEL_TEST_BUNDLE));
     }
 }

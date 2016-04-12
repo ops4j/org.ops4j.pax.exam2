@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNotNull;
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.sample9.pde.HelloService;
 import org.ops4j.pax.exam.testng.listener.PaxExam;
@@ -44,6 +45,8 @@ public class GreeterTest {
         return options(
             propagateSystemProperty("pax.exam.regression.rmi"),
             mavenBundle("org.testng", "testng", "6.9.10"),
+            mavenBundle("com.beust", "jcommander", "1.48"),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-testng", Info.getPaxExamVersion()),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde/"),
 
             systemProperty("osgi.console").value("6666"));

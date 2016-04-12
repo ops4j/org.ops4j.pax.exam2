@@ -19,6 +19,9 @@ package org.ops4j.pax.exam.testng.listener;
 
 import java.util.List;
 
+import org.ops4j.spi.ServiceProviderFinder;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IClassListener;
@@ -32,7 +35,6 @@ import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestClass;
 import org.testng.ITestContext;
-import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 
 /**
@@ -78,40 +80,26 @@ public class PaxExam
     private int numMethodsInvoked;
     private int numMethodsPerClass;
 
-    private DriverListener driverListener;
-    private ContainerListener containerListener;
+    private CombinedListener driverListener;
+    private CombinedListener containerListener;
+
+    private Bundle bundle;
 
     public PaxExam() {
-        LOG.debug("created ExamTestNGListener");
-        this.driverListener = new DriverListener();
+        bundle = FrameworkUtil.getBundle(CombinedListener.class);
+        if (bundle == null) {
+            this.driverListener = ServiceProviderFinder.findAnyServiceProvider(CombinedListener.class);
+        }
         this.containerListener = new ContainerListener();
     }
 
     /**
      * Are we running in the test container or directly under the driver?
      *
-     * @param suite
-     *            current test suite
      * @return true if running in container
      */
-    private boolean isRunningInTestContainer(ISuite suite) {
-        return suite.getName().equals(PAX_EXAM_SUITE_NAME);
-    }
-
-    /**
-     * Are we running in the test container or directly under the driver?
-     *
-     * @param method
-     *            current test method
-     * @return true if running in container
-     */
-    private boolean isRunningInTestContainer(ITestNGMethod method) {
-        return method.getXmlTest().getSuite().getName().equals(PAX_EXAM_SUITE_NAME);
-    }
-
-    private boolean isRunningInTestContainer(ITestResult result) {
-        return result.getMethod().getTestClass().getXmlTest().getSuite().getName()
-            .equals(PAX_EXAM_SUITE_NAME);
+    private boolean isRunningInTestContainer() {
+        return bundle != null;
     }
 
     /**
@@ -123,7 +111,7 @@ public class PaxExam
      */
     @Override
     public void onStart(ISuite suite) {
-        if (!isRunningInTestContainer(suite)) {
+        if (!isRunningInTestContainer()) {
             driverListener.onStart(suite);
         }
     }
@@ -137,7 +125,7 @@ public class PaxExam
      */
     @Override
     public void onFinish(ISuite suite) {
-        if (!isRunningInTestContainer(suite)) {
+        if (!isRunningInTestContainer()) {
             driverListener.onFinish(suite);
         }
     }
@@ -155,7 +143,7 @@ public class PaxExam
     }
 
     private void onceBeforeClass(ITestClass testClass, IMethodInstance mi) {
-        if (!isRunningInTestContainer(mi.getMethod())) {
+        if (!isRunningInTestContainer()) {
             driverListener.onBeforeClass(testClass, mi);
         }
     }
@@ -178,7 +166,7 @@ public class PaxExam
      * @param mi
      */
     private void onceAfterClass(ITestClass testClass, IMethodInstance mi) {
-        if (!isRunningInTestContainer(mi.getMethod())) {
+        if (!isRunningInTestContainer()) {
             driverListener.onAfterClass(testClass, mi);
         }
     }
@@ -189,7 +177,7 @@ public class PaxExam
      */
     @Override
     public void run(IHookCallBack callBack, ITestResult testResult) {
-        if (isRunningInTestContainer(testResult.getMethod())) {
+        if (isRunningInTestContainer()) {
             containerListener.run(callBack, testResult);
         }
         else {
@@ -202,7 +190,7 @@ public class PaxExam
      */
     @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> testMethods, ITestContext context) {
-        if (isRunningInTestContainer(context.getSuite())) {
+        if (isRunningInTestContainer()) {
             return testMethods;
         }
         else {
@@ -215,7 +203,7 @@ public class PaxExam
      */
     @Override
     public void run(IConfigureCallBack callBack, ITestResult testResult) {
-        if (isRunningInTestContainer(testResult)) {
+        if (isRunningInTestContainer()) {
             callBack.runConfigurationMethod(testResult);
         }
     }

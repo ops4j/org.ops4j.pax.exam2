@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNotNull;
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.sample8.ds.Calculator;
 import org.ops4j.pax.exam.testng.listener.PaxExam;
@@ -46,6 +47,8 @@ public class CalculatorTest {
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", "4.2.0"),
             mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"),
             mavenBundle("org.testng", "testng", "6.9.10"),
+            mavenBundle("com.beust", "jcommander", "1.48"),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-testng", Info.getPaxExamVersion()),
             systemProperty("osgi.console").value("6666"));
     }
 

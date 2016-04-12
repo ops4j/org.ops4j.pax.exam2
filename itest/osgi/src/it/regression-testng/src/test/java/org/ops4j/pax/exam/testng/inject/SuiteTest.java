@@ -64,7 +64,7 @@ public class SuiteTest implements Notifier, Remote {
     @Test
     public void runSuiteWithPerMethodStrategy() throws Exception {
         System.setProperty(Constants.EXAM_REACTOR_STRATEGY_KEY, "PerMethod");
-        checkNumberOfRestartsInSuite(3);
+        checkNumberOfRestartsInSuite(4);
     }
 
     private void checkNumberOfRestartsInSuite(int numRestarts) throws Exception {
