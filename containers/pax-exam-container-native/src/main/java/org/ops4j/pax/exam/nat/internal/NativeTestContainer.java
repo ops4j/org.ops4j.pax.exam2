@@ -210,7 +210,7 @@ public class NativeTestContainer implements TestContainer {
                             frameworkEvent.getThrowable());
                     }
                     else {
-                        LOG.info(String.format("Framework event type %s: %s",
+                        LOG.debug(String.format("Framework event type %s: %s",
                             FrameworkEventUtils.getFrameworkEventString(frameworkEvent.getType()),
                             frameworkEvent.toString()), frameworkEvent.getThrowable());
                     }
