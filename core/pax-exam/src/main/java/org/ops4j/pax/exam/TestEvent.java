@@ -41,14 +41,6 @@ public class TestEvent implements Serializable {
 
 
     /**
-     * @return the serialversionuid
-     */
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
-
-
-    /**
      * @return the type
      */
     public TestEventType getType() {

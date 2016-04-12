@@ -29,6 +29,7 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 @Listeners(PaxExam.class)
+//@ExamReactorStrategy(PerClass.class)
 public class FilterTest {
 
     @Inject

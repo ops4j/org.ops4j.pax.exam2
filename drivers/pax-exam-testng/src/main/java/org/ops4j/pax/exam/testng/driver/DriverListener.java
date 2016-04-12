@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.testng.listener;
+package org.ops4j.pax.exam.testng.driver;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,25 +26,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
-import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestDirectory;
+import org.ops4j.pax.exam.TestEvent;
+import org.ops4j.pax.exam.TestEventType;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
+import org.ops4j.pax.exam.testng.listener.CombinedListener;
+import org.ops4j.pax.exam.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IHookCallBack;
-import org.testng.IHookable;
 import org.testng.IMethodInstance;
-import org.testng.IMethodInterceptor;
 import org.testng.ISuite;
-import org.testng.ISuiteListener;
 import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
@@ -56,7 +59,8 @@ import org.testng.internal.MethodInstance;
  * @author Harald Wellmann
  * @since 5.0.0
  */
-class DriverListener implements ISuiteListener, IMethodInterceptor, IHookable {
+@MetaInfServices
+public class DriverListener implements CombinedListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverListener.class);
 
@@ -84,6 +88,8 @@ class DriverListener implements ISuiteListener, IMethodInterceptor, IHookable {
 
     private List<ITestNGMethod> methods;
 
+    private TestNGTestListener resultListener;
+
     /**
      * Called by TestNG before the suite starts. When running in the container, this is a no op.
      * Otherwise, we create and stage the reactor.
@@ -110,6 +116,7 @@ class DriverListener implements ISuiteListener, IMethodInterceptor, IHookable {
         manager.afterSuite(stagedReactor);
     }
 
+    @Override
     public void onBeforeClass(ITestClass testClass, IMethodInstance mi) {
         Object testClassInstance = mi.getInstance();
         Class<?> klass = testClassInstance.getClass();
@@ -118,12 +125,29 @@ class DriverListener implements ISuiteListener, IMethodInterceptor, IHookable {
             manager.inject(testClassInstance);
         }
         manager.beforeClass(stagedReactor, testClassInstance);
+        resultListener = new TestNGTestListener();
+
+        if (!restartPerMethod()) {
+            TestDescription description = new TestDescription(testClass.getName());
+            try {
+                stagedReactor.runTest(description, resultListener);
+            }
+            catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean restartPerMethod() {
+        return stagedReactor.getClass().getName().contains("PerMethod");
     }
 
     /**
      * @param testClass
      * @param mi
      */
+    @Override
     public void onAfterClass(ITestClass testClass, IMethodInstance mi) {
         manager.afterClass(stagedReactor, testClass.getRealClass());
     }
@@ -219,19 +243,31 @@ class DriverListener implements ISuiteListener, IMethodInterceptor, IHookable {
             return;
         }
 
-        TestAddress address = methodToAddressMap.get(testResult.getName());
+        TestDescription description = toDescription(testResult);
+        if (restartPerMethod()) {
+            try {
+                stagedReactor.runTest(description, resultListener);
+            }
+            catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else {
+            TestEvent testEvent = resultListener.getResult(description);
+            if (testEvent == null) {
+                System.out.println("description = " + description);
+                System.out.println(resultListener.getKeys());
+            }
+            if (testEvent.getType() == TestEventType.TEST_FAILED) {
+                throw Exceptions.unchecked(new InvocationTargetException(testEvent.getException()));
+            }
+        }
+    }
 
-        try {
-            stagedReactor.invoke(address);
-            testResult.setStatus(ITestResult.SUCCESS);
-        }
-        // CHECKSTYLE:SKIP : StagedExamReactor API
-        catch (Exception e) {
-            Throwable t = ExceptionHelper.unwind(e);
-            LOG.error("Exception", e);
-            testResult.setStatus(ITestResult.FAILURE);
-            testResult.setThrowable(t);
-        }
+    private TestDescription toDescription(ITestResult testResult) {
+        return new TestDescription(testResult.getTestClass().getName(),
+            testResult.getMethod().getMethodName());
     }
 
     /**

@@ -19,10 +19,10 @@
     <name>OPS4J Pax Exam Regression - Native Container + TestNG</name>
 
     <dependencies>
-        <!-- For sane logging -->
+
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -78,6 +78,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -109,7 +115,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>pertest</forkMode>
+                    <forkMode>once</forkMode>
+                    <parallel>none</parallel>
+                    <threadCount>1</threadCount>
+                    <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
@@ -119,38 +128,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>jbosgi</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>jbosgi</pax.exam.framework>
-            </properties>
-            <repositories>
-                <repository>
-                    <id>jboss-public</id>
-                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.osgi.framework</groupId>
-                    <artifactId>jbosgi-framework-aggregated</artifactId>
-                    <version>1.1.0</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                    <version>3.1.0.CR2</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
 
 </project>

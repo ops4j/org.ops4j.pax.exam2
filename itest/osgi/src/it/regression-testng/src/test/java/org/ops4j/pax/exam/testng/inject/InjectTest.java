@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.ops4j.pax.exam.sample9.pde.HelloService;
 import org.ops4j.pax.exam.testng.listener.PaxExam;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -31,9 +32,19 @@ public class InjectTest {
     @Inject
     private HelloService helloService;
 
+    @BeforeMethod
+    public void before() {
+        System.out.println("**** before Method");
+    }
+
     @Test
     public void getInjectedService() {
         assertNotNull(helloService);
         assertEquals(helloService.getMessage(), "Hello Pax!");
+    }
+
+    @Test
+    public void method2() {
+        System.out.println("method2");
     }
 }
