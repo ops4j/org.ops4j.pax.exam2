@@ -551,7 +551,9 @@ public class WildFly90TestContainer implements TestContainer {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
-        // TODO Auto-generated method stub
-
+        ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
+        ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker("", ";");
+        invoker.runTest(description, listener);
     }
 }

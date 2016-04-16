@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.testng.listener;
 
 import org.testng.IClassListener;
+import org.testng.IConfigurable;
 import org.testng.IHookable;
 import org.testng.IMethodInterceptor;
 import org.testng.ISuiteListener;
@@ -29,6 +30,6 @@ import org.testng.ISuiteListener;
  * @since 5.0.0
  */
 public interface CombinedListener
-    extends ISuiteListener, IClassListener, IMethodInterceptor, IHookable {
+    extends ISuiteListener, IClassListener, IMethodInterceptor, IHookable, IConfigurable {
 
 }

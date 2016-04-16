@@ -17,13 +17,21 @@
  */
 package org.ops4j.pax.exam.testng.listener;
 
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_KEY;
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_TEST;
+
 import java.util.List;
 
+import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
+import org.ops4j.spi.ServiceProviderFinder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.testng.IConfigureCallBack;
 import org.testng.IHookCallBack;
+import org.testng.IHookable;
 import org.testng.IMethodInstance;
 import org.testng.ISuite;
 import org.testng.ITestClass;
@@ -39,6 +47,18 @@ import org.testng.ITestResult;
  */
 class ContainerListener implements CombinedListener {
 
+
+    private String systemType;
+
+    /**
+     *
+     */
+    public ContainerListener() {
+        ConfigurationManager cm = new ConfigurationManager();
+        systemType = cm.getProperty(EXAM_SYSTEM_KEY, EXAM_SYSTEM_TEST);
+    }
+
+
     /**
      * Runs a test method in the container. We wrap the method in an auto-rollback transaction
      * if required.
@@ -52,7 +72,14 @@ class ContainerListener implements CombinedListener {
     public void run(IHookCallBack callBack, ITestResult testResult) {
         Object testClassInstance = testResult.getInstance();
         inject(testClassInstance);
-        callBack.runTestMethod(testResult);
+
+        IHookable hookable = ServiceProviderFinder.findAnyServiceProvider(IHookable.class);
+        if (hookable == null) {
+            callBack.runTestMethod(testResult);
+        }
+        else {
+            hookable.run(callBack, testResult);
+        }
     }
 
     /**
@@ -63,9 +90,17 @@ class ContainerListener implements CombinedListener {
      *            test class instance
      */
     private void inject(Object testClassInstance) {
-        BundleContext bc = FrameworkUtil.getBundle(getClass()).getBundleContext();
-        Injector injector = ServiceLookup.getService(bc, Injector.class);
-        injector.injectFields(testClassInstance);
+        if (systemType.equals(EXAM_SYSTEM_TEST)) {
+            BundleContext bc = FrameworkUtil.getBundle(getClass()).getBundleContext();
+            Injector injector = ServiceLookup.getService(bc, Injector.class);
+            injector.injectFields(testClassInstance);
+        }
+        else {
+            InjectorFactory injectorFactory = ServiceProviderFinder
+                .loadUniqueServiceProvider(InjectorFactory.class);
+            Injector injector = injectorFactory.createInjector();
+            injector.injectFields(testClassInstance);
+        }
     }
 
     @Override
@@ -87,5 +122,10 @@ class ContainerListener implements CombinedListener {
 
     @Override
     public void onAfterClass(ITestClass testClass, IMethodInstance mi) {
+    }
+
+    @Override
+    public void run(IConfigureCallBack callBack, ITestResult testResult) {
+        callBack.runConfigurationMethod(testResult);
     }
 }
