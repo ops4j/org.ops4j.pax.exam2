@@ -78,12 +78,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -115,14 +109,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>once</forkMode>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
                     <parallel>none</parallel>
                     <threadCount>1</threadCount>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
-                        <pax.exam.itest.http.port>${pax.exam.itest.http.port}</pax.exam.itest.http.port>
                     </systemProperties>
                 </configuration>
             </plugin>
