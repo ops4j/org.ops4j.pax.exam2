@@ -29,9 +29,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ops4j.pax.exam.WrappedTestContainerException;
-import org.testng.ITestResult;
-import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlInclude;
@@ -71,27 +68,24 @@ public class TestRunnerServlet extends HttpServlet {
 
     private void runSuite(OutputStream os, Class<?> clazz, String methodName) throws IOException {
 
+        ObjectOutputStream oos = new ObjectOutputStream(os);
+
         TestNG testNG = new TestNG();
         testNG.setUseDefaultListeners(false);
-        TestListenerAdapter listener = new TestListenerAdapter();
+        testNG.setVerbose(0);
+        ContainerResultListener listener = new ContainerResultListener(oos);
+        testNG.addListener(listener);
         XmlSuite suite = new XmlSuite();
         suite.setName("PaxExamInternal");
         XmlTest xmlTest = new XmlTest(suite);
         XmlClass xmlClass = new XmlClass(clazz);
         xmlTest.getClasses().add(xmlClass);
-        XmlInclude xmlInclude = new XmlInclude(methodName);
-        xmlClass.getIncludedMethods().add(xmlInclude);
+        if (methodName != null) {
+            XmlInclude xmlInclude = new XmlInclude(methodName);
+            xmlClass.getIncludedMethods().add(xmlInclude);
+        }
 
         testNG.setXmlSuites(Arrays.asList(suite));
         testNG.run();
-
-        ObjectOutputStream oos = new ObjectOutputStream(os);
-        for (ITestResult result : listener.getFailedTests()) {
-            Exception exc = new WrappedTestContainerException(result.getThrowable());
-            oos.writeObject(exc);
-        }
-        if (listener.getFailedTests().isEmpty()) {
-            oos.writeObject("ok");
-        }
     }
 }

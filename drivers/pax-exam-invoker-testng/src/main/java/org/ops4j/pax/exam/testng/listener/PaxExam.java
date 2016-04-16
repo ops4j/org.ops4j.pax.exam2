@@ -20,22 +20,14 @@ package org.ops4j.pax.exam.testng.listener;
 import java.util.List;
 
 import org.ops4j.spi.ServiceProviderFinder;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.IClassListener;
-import org.testng.IConfigurable;
 import org.testng.IConfigureCallBack;
 import org.testng.IHookCallBack;
-import org.testng.IHookable;
 import org.testng.IMethodInstance;
-import org.testng.IMethodInterceptor;
 import org.testng.ISuite;
-import org.testng.ISuiteListener;
 import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
+import org.testng.xml.XmlTest;
 
 /**
  * TestNG driver for Pax Exam, implementing a number of ITestNGListener interfaces. To run a TestNG
@@ -70,27 +62,39 @@ import org.testng.ITestResult;
  * @since 2.3.0
  *
  */
-public class PaxExam
-    implements ISuiteListener, IClassListener, IMethodInterceptor, IHookable, IConfigurable {
+public class PaxExam implements CombinedListener {
 
     public static final String PAX_EXAM_SUITE_NAME = "PaxExamInternal";
-
-    private static final Logger LOG = LoggerFactory.getLogger(PaxExam.class);
 
     private int numMethodsInvoked;
     private int numMethodsPerClass;
 
-    private CombinedListener driverListener;
-    private CombinedListener containerListener;
+    private CombinedListener delegate;
 
-    private Bundle bundle;
-
-    public PaxExam() {
-        bundle = FrameworkUtil.getBundle(CombinedListener.class);
-        if (bundle == null) {
-            this.driverListener = ServiceProviderFinder.findAnyServiceProvider(CombinedListener.class);
+    private CombinedListener getDelegate(ISuite suite) {
+        if (delegate == null) {
+            initDelegate(isRunningInTestContainer(suite));
         }
-        this.containerListener = new ContainerListener();
+        return delegate;
+    }
+
+    private CombinedListener getDelegate(XmlTest xmlTest) {
+        if (delegate == null) {
+            initDelegate(isRunningInTestContainer(xmlTest));
+        }
+        return delegate;
+    }
+
+    /**
+     * @param runningInTestContainer
+     */
+    private void initDelegate(boolean runningInTestContainer) {
+        if (runningInTestContainer) {
+            delegate = new ContainerListener();
+        }
+        else {
+            delegate = ServiceProviderFinder.findAnyServiceProvider(CombinedListener.class);
+        }
     }
 
     /**
@@ -98,8 +102,12 @@ public class PaxExam
      *
      * @return true if running in container
      */
-    private boolean isRunningInTestContainer() {
-        return bundle != null;
+    private boolean isRunningInTestContainer(ISuite suite) {
+        return PAX_EXAM_SUITE_NAME.equals(suite.getName());
+    }
+
+    private boolean isRunningInTestContainer(XmlTest xmlTest) {
+        return PAX_EXAM_SUITE_NAME.equals(xmlTest.getSuite().getName());
     }
 
     /**
@@ -111,9 +119,7 @@ public class PaxExam
      */
     @Override
     public void onStart(ISuite suite) {
-        if (!isRunningInTestContainer()) {
-            driverListener.onStart(suite);
-        }
+       getDelegate(suite).onStart(suite);
     }
 
     /**
@@ -125,9 +131,7 @@ public class PaxExam
      */
     @Override
     public void onFinish(ISuite suite) {
-        if (!isRunningInTestContainer()) {
-            driverListener.onFinish(suite);
-        }
+        getDelegate(suite).onFinish(suite);
     }
 
     /**
@@ -143,9 +147,7 @@ public class PaxExam
     }
 
     private void onceBeforeClass(ITestClass testClass, IMethodInstance mi) {
-        if (!isRunningInTestContainer()) {
-            driverListener.onBeforeClass(testClass, mi);
-        }
+        getDelegate(testClass.getXmlTest()).onBeforeClass(testClass, mi);
     }
 
     /**
@@ -166,9 +168,7 @@ public class PaxExam
      * @param mi
      */
     private void onceAfterClass(ITestClass testClass, IMethodInstance mi) {
-        if (!isRunningInTestContainer()) {
-            driverListener.onAfterClass(testClass, mi);
-        }
+        getDelegate(testClass.getXmlTest()).onAfterClass(testClass, mi);
     }
 
     /**
@@ -177,12 +177,7 @@ public class PaxExam
      */
     @Override
     public void run(IHookCallBack callBack, ITestResult testResult) {
-        if (isRunningInTestContainer()) {
-            containerListener.run(callBack, testResult);
-        }
-        else {
-            driverListener.run(callBack, testResult);
-        }
+        getDelegate(testResult.getTestClass().getXmlTest()).run(callBack, testResult);
     }
 
     /**
@@ -190,12 +185,7 @@ public class PaxExam
      */
     @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> testMethods, ITestContext context) {
-        if (isRunningInTestContainer()) {
-            return testMethods;
-        }
-        else {
-            return driverListener.intercept(testMethods, context);
-        }
+        return getDelegate(context.getCurrentXmlTest()).intercept(testMethods, context);
     }
 
     /**
@@ -203,8 +193,6 @@ public class PaxExam
      */
     @Override
     public void run(IConfigureCallBack callBack, ITestResult testResult) {
-        if (isRunningInTestContainer()) {
-            callBack.runConfigurationMethod(testResult);
-        }
+        getDelegate(testResult.getTestClass().getXmlTest()).run(callBack, testResult);
     }
 }

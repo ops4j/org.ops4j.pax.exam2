@@ -44,6 +44,7 @@ import org.ops4j.pax.exam.testng.listener.CombinedListener;
 import org.ops4j.pax.exam.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.IConfigureCallBack;
 import org.testng.IHookCallBack;
 import org.testng.IMethodInstance;
 import org.testng.ISuite;
@@ -255,10 +256,6 @@ public class DriverListener implements CombinedListener {
         }
         else {
             TestEvent testEvent = resultListener.getResult(description);
-            if (testEvent == null) {
-                System.out.println("description = " + description);
-                System.out.println(resultListener.getKeys());
-            }
             if (testEvent.getType() == TestEventType.TEST_FAILED) {
                 throw Exceptions.unchecked(new InvocationTargetException(testEvent.getException()));
             }
@@ -307,5 +304,10 @@ public class DriverListener implements CombinedListener {
 
         }
         return newInstances;
+    }
+
+    @Override
+    public void run(IConfigureCallBack callBack, ITestResult testResult) {
+        // configuration methods are run in the container only
     }
 }
