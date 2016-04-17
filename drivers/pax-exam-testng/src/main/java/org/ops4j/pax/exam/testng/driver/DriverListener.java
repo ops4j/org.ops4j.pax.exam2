@@ -133,9 +133,9 @@ public class DriverListener implements CombinedListener {
             try {
                 stagedReactor.runTest(description, resultListener);
             }
-            catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            // CHECKSTYLE:SKIP - catch all wanted
+            catch (Exception exc) {
+                throw Exceptions.unchecked(exc);
             }
         }
     }
@@ -249,9 +249,9 @@ public class DriverListener implements CombinedListener {
             try {
                 stagedReactor.runTest(description, resultListener);
             }
-            catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            // CHECKSTYLE:SKIP - catch all wanted
+            catch (Exception exc) {
+                throw Exceptions.unchecked(exc);
             }
         }
         else {
