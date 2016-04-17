@@ -180,15 +180,16 @@ public class TestNGProbeInvoker implements ProbeInvoker {
     public void runTest(final TestDescription description, final TestListener listener) {
         ClassLoader classLoader = ctx.getBundle().adapt(BundleWiring.class).getClassLoader();
         try {
-            ContextClassLoaderUtils.doWithClassLoader(classLoader, new Callable<Void>(){
+            ContextClassLoaderUtils.doWithClassLoader(classLoader, new Callable<Void>() {
 
                 @Override
-                public Void call() throws Exception {
+                public Void call() {
                     runTestWithTestNG(description, listener);
                     return null;
                 }
             });
         }
+        // CHECKSTYLE:SKIP - doWithClassLoader API
         catch (Exception exc) {
             throw Exceptions.unchecked(exc);
         }
