@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.Future;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -163,8 +164,13 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
-        // TODO Auto-generated method stub
-
+        WebTarget target = testRunner.queryParam("class", description.getClassName());
+        if (description.getMethodName() != null) {
+            target = target.queryParam("method", description.getMethodName());
+        }
+        Future<InputStream> is = target.request().async().get(InputStream.class);
+        TestListenerTask task = new TestListenerTask(is, listener);
+        task.run();
     }
 
     @Override

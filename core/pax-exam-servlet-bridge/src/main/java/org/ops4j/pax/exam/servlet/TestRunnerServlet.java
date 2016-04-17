@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.servlet;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -33,9 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
-import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -93,26 +89,15 @@ public class TestRunnerServlet extends HttpServlet {
             index = Integer.parseInt(indexName);
         }
 
-        Request classRequest = new ContainerTestRunnerClassRequest(clazz, injector, index);
-        Description method = Description.createTestDescription(clazz, methodName);
-        Request request = classRequest.filterWith(method);
+        Request request = new ContainerTestRunnerClassRequest(clazz, injector, index);
 
-        JUnitCore core = new JUnitCore();
-        Result result = core.run(request);
-        List<Failure> failures = result.getFailures();
-
-        /*
-         * The invoker may not be able to deserialize the original exception due to different
-         * classloaders. For this reason, we only take the stack trace and wrap it in a
-         * TestContainerException.
-         */
+        if (methodName != null) {
+            Description method = Description.createTestDescription(clazz, methodName);
+            request = request.filterWith(method);
+        }
         ObjectOutputStream oos = new ObjectOutputStream(os);
-        for (Failure failure : failures) {
-            Exception exc = new WrappedTestContainerException(failure.getException());
-            oos.writeObject(exc);
-        }
-        if (failures.isEmpty()) {
-            oos.writeObject("ok");
-        }
+        JUnitCore junit = new JUnitCore();
+        junit.addListener(new ContainerTestListener(oos));
+        junit.run(request);
     }
 }
