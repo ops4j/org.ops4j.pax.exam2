@@ -29,14 +29,15 @@ import java.util.List;
 
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
 import org.junit.runner.Result;
+import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.WrappedTestContainerException;
+import org.ops4j.pax.exam.util.Exceptions;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
 
@@ -130,14 +131,20 @@ public class JUnitProbeInvoker implements ProbeInvoker {
      * @throws TestContainerException
      */
     private void invokeViaJUnit(final Method testMethod, Integer index) {
-        Request classRequest = new ContainerTestRunnerClassRequest(testClass, injector, index);
-        Description methodDescription = Description.createTestDescription(testClass, method);
-        Request request = classRequest.filterWith(methodDescription);
-        JUnitCore junit = new JUnitCore();
-        Result result = junit.run(request);
-        List<Failure> failures = result.getFailures();
-        if (!failures.isEmpty()) {
-            throw createTestContainerException(failures.toString(), failures.get(0).getException());
+        try {
+            ContainerTestRunner runner = new ContainerTestRunner(testClass, injector);
+            Description methodDescription = Description.createTestDescription(testClass, method);
+            runner.filter(Filter.matchMethodDescription(methodDescription));
+            JUnitCore junit = new JUnitCore();
+            Result result = junit.run(runner);
+            List<Failure> failures = result.getFailures();
+            if (!failures.isEmpty()) {
+                throw createTestContainerException(failures.toString(),
+                    failures.get(0).getException());
+            }
+        }
+        catch (Exception exc) {
+            throw Exceptions.unchecked(exc);
         }
     }
 
@@ -177,16 +184,22 @@ public class JUnitProbeInvoker implements ProbeInvoker {
     }
 
     private void runTestWithJUnit(TestDescription description, TestListener listener) {
-        Request request = new ContainerTestRunnerClassRequest(loadClass(description.getClassName()),
-            injector, null);
-        if (description.getMethodName() != null) {
-            Description methodName = Description.createTestDescription(description.getClassName(),
-                description.getMethodName());
-            request = request.filterWith(methodName);
+        try {
+            ContainerTestRunner runner = new ContainerTestRunner(
+                loadClass(description.getClassName()), injector);
+            if (description.getMethodName() != null) {
+                Description methodName = Description
+                    .createTestDescription(description.getClassName(), description.getMethodName());
+                runner.filter(Filter.matchMethodDescription(methodName));
+            }
+
+            JUnitCore junit = new JUnitCore();
+            junit.addListener(new ProbeRunListener(listener));
+            junit.run(runner);
         }
-        JUnitCore junit = new JUnitCore();
-        junit.addListener(new ProbeRunListener(listener));
-        junit.run(request);
+        catch (Exception exc) {
+            throw Exceptions.unchecked(exc);
+        }
     }
 
     @Override

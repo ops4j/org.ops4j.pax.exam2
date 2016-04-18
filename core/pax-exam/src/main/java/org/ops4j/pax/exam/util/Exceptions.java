@@ -55,13 +55,13 @@ public class Exceptions {
      *            checked exception
      * @return syntactically, a runtime exception (but never actually returns)
      */
-    public static RuntimeException unchecked(Exception exc) {
+    public static RuntimeException unchecked(Throwable exc) {
         Exceptions.<RuntimeException> adapt(exc);
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Exception> void adapt(Exception exc) throws T {
+    private static <T extends Exception> void adapt(Throwable exc) throws T {
         throw (T) exc;
     }
 }

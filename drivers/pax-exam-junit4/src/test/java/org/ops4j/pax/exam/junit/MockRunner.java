@@ -26,6 +26,8 @@ import org.junit.runner.manipulation.Sortable;
 import org.junit.runner.manipulation.Sorter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
+import org.ops4j.pax.exam.junit.ExtensibleRunner;
+import org.ops4j.pax.exam.junit.PaxExamParameterized;
 
 /**
  * Default JUnit runner for Pax Exam. To use this runner, annotate your test class with
@@ -58,12 +60,12 @@ import org.junit.runners.model.InitializationError;
  *
  * @author Harald Wellmann
  */
-public class PaxExam extends Runner implements Filterable, Sortable {
+public class MockRunner extends Runner implements Filterable, Sortable {
 
     private ExtensibleRunner delegate;
 
-    public PaxExam(Class<?> klass) throws InitializationError {
-        DriverExtension extension = new DriverExtension(klass);
+    public MockRunner(Class<?> klass) throws InitializationError {
+        MockDriverExtension extension = new MockDriverExtension(klass);
         delegate = new ExtensibleRunner(klass, extension);
         extension.setBase(delegate);
     }
