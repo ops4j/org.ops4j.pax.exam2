@@ -30,8 +30,8 @@ import org.ops4j.pax.exam.TestListener;
  *
  */
 public class JUnitTestListener implements TestListener {
-    
-    
+
+
     private RunNotifier notifier;
 
     public JUnitTestListener(RunNotifier notifier) {
@@ -55,18 +55,18 @@ public class JUnitTestListener implements TestListener {
 
     @Override
     public void testAssumptionFailure(TestFailure failure) {
-        //notifier.fireTestAssumptionFailed(convertFailure(failure));
+        notifier.fireTestAssumptionFailed(convertFailure(failure));
     }
 
     @Override
     public void testIgnored(TestDescription description) {
-        //notifier.fireTestIgnored(convertDescription(description));
+        notifier.fireTestIgnored(convertDescription(description));
     }
-    
+
     public static Description convertDescription(TestDescription description) {
         return Description.createTestDescription(description.getClassName(), description.getMethodName());
     }
-    
+
     public static Failure convertFailure(TestFailure failure) {
         return new Failure(convertDescription(failure.getDescription()), failure.getException());
     }

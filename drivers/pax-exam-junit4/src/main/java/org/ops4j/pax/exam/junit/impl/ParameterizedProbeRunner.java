@@ -43,8 +43,10 @@ import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestInstantiationInstruction;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
@@ -57,9 +59,9 @@ import org.slf4j.LoggerFactory;
  * JUnit runner for parameterized Pax Exam tests executed via an invoker. This runner is used for
  * all operation modes except CDI. See {@link Parameterized} for more details on specifying
  * parameter sets.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
 
@@ -79,6 +81,8 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
     private Map<FrameworkMethod, TestAddress> methodToTestAddressMap = new LinkedHashMap<FrameworkMethod, TestAddress>();
 
     private Object[] parameters;
+
+    private TestListener listener;
 
     public ParameterizedProbeRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -105,7 +109,10 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
         Class<?> testClass = getTestClass().getJavaClass();
         try {
             manager.beforeClass(stagedReactor, testClass);
+            listener = new ClassLevelFailureListener(notifier);
             super.run(notifier);
+            listener = new JUnitTestListener(notifier);
+            stagedReactor.runTest(new TestDescription(getTestClass().getName(), null, 0), listener);
         }
         // CHECKSTYLE:SKIP : catch all wanted
         catch (Throwable e) {
@@ -122,6 +129,7 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      * Override to avoid running BeforeClass and AfterClass by the driver. They shall only be run by
      * the container when using a probe invoker.
      */
+    @Override
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
         return statement;
@@ -131,6 +139,7 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      * Override to avoid running Before, After and Rule methods by the driver. They shall only be
      * run by the container when using a probe invoker.
      */
+    @Override
     protected Statement methodBlock(FrameworkMethod method) {
 
         Object test;
@@ -202,7 +211,7 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
      * <p>
      * This way, we can register all test methods in the reactor before the actual test execution
      * starts.
-     * 
+     *
      * @param reactor
      * @param testClass
      * @param testClassInstance
@@ -236,10 +245,31 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
         reactor.addProbe(probe);
     }
 
+    @Override
+    protected Statement childrenInvoker(RunNotifier notifier) {
+        // FIXME use more robust criteria
+        if (stagedReactor.getClass().getName().contains("PerMethod")) {
+            return super.childrenInvoker(notifier);
+        }
+        else {
+            return new Statement() {
+
+                @Override
+                // CHECKSTYLE:SKIP : Statement API
+                public void evaluate() throws Throwable {
+                    // empty
+                }
+            };
+        }
+    }
+
+
+
     /**
      * When using a probe invoker, we replace the super method and invoke the test method indirectly
      * via the reactor.
      */
+    @Override
     protected synchronized Statement methodInvoker(final FrameworkMethod method, final Object test) {
 
         return new Statement() {
@@ -247,13 +277,11 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
             @Override
             // CHECKSTYLE:SKIP : Statement API
             public void evaluate() throws Throwable {
-                TestAddress address = methodToTestAddressMap.get(method);
-                TestAddress root = address.root();
+                TestDescription description = new TestDescription(getTestClass().getName(), method.getName());
 
-                LOG.debug("Invoke " + method.getName() + " @ " + address + " Arguments: "
-                    + root.arguments());
+                LOG.debug("Invoke {}", description);
                 try {
-                    stagedReactor.invoke(address);
+                    stagedReactor.runTest(description, listener);
                 }
                 // CHECKSTYLE:SKIP : StagedExamReactor API
                 catch (Exception e) {

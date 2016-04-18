@@ -25,9 +25,11 @@ import static org.mockito.Mockito.verify;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ops4j.pax.exam.util.Injector;
@@ -43,12 +45,12 @@ public class DelegatingTest {
     private BundleContext bc;
 
     @Test
-    public void switchRunner() {
+    public void switchRunner() throws InitializationError, NoTestsRemainException {
         JUnitCore junit = new JUnitCore();
         Description method = Description.createTestDescription(SimpleTestHidden.class, "doNothing");
-        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector, null);
-        Request request = classRequest.filterWith(method);
-        Result result = junit.run(request);
+        ContainerTestRunner runner = new ContainerTestRunner(SimpleTestHidden.class, injector);
+        runner.filter(Filter.matchMethodDescription(method));
+        Result result = junit.run(runner);
         assertTrue(result.getFailures().isEmpty());
 
         verify(injector).injectFields(isNotNull());
@@ -59,9 +61,9 @@ public class DelegatingTest {
         JUnitCore junit = new JUnitCore();
         Description method = Description.createTestDescription(SimpleTestHidden.class,
             "failingTest");
-        Request classRequest = new ContainerTestRunnerClassRequest(SimpleTestHidden.class, injector, null);
-        Request request = classRequest.filterWith(method);
-        Result result = junit.run(request);
+        ContainerTestRunner runner = new ContainerTestRunner(SimpleTestHidden.class, injector);
+        runner.filter(Filter.matchMethodDescription(method));
+        Result result = junit.run(runner);
         assertEquals(1, result.getFailures().size());
         verify(injector).injectFields(isNotNull());
     }
