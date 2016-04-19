@@ -15,14 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit;
+package org.ops4j.pax.exam.junit.impl;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.ParentRunner;
+import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.TestClass;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
@@ -30,7 +38,7 @@ import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.junit.impl.JUnitTestListener;
+import org.ops4j.pax.exam.junit.RunnerExtension;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
@@ -42,9 +50,11 @@ import org.slf4j.LoggerFactory;
  * @author hwellmann
  *
  */
-public class DriverExtension extends RunnerExtension {
+public class ParameterizedDriverExtension extends RunnerExtension {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DriverExtension.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterizedDriverExtension.class);
+
+    private final List<Runner> runners = new ArrayList<>();
 
     private Class<?> testClass;
 
@@ -52,41 +62,34 @@ public class DriverExtension extends RunnerExtension {
 
     private StagedExamReactor stagedReactor;
 
-    private ExtensibleRunner base;
+    private ExtensibleSuite base;
 
     /**
      * @throws InitializationError
      *
      */
-    public DriverExtension(Class<?> klass) throws InitializationError {
+    public ParameterizedDriverExtension(Class<?> klass) throws InitializationError {
         this.testClass = klass;
-    }
 
-    /**
-     * @return the base
-     */
-    public ParentRunner<FrameworkMethod> getBase() {
-        return base;
     }
 
     /**
      * @param base the base to set
      * @throws InitializationError
      */
-    public void setBase(ExtensibleRunner base) throws InitializationError {
+    public void setBase(ExtensibleSuite base) throws InitializationError {
         this.base = base;
-        LOG.info("creating PaxExam runner for {}", testClass);
+        manager = ReactorManager.getInstance();
+        ExamReactor reactor = manager.prepareReactor(testClass, null);
         try {
-            Object testClassInstance = testClass.newInstance();
-            manager = ReactorManager.getInstance();
-            ExamReactor examReactor = manager.prepareReactor(testClass, testClassInstance);
-            addTestsToReactor(examReactor, testClass, testClassInstance);
+            addTestsToReactor(reactor, testClass, null);
             stagedReactor = manager.stageReactor();
         }
-        catch (InstantiationException | IllegalAccessException | IOException | ExamConfigurationException exc) {
-            throw new InitializationError(exc);
+        catch (IOException | ExamConfigurationException exc) {
+            throw Exceptions.unchecked(exc);
         }
     }
+
 
 
     /**
@@ -108,13 +111,32 @@ public class DriverExtension extends RunnerExtension {
      */
     private void addTestsToReactor(ExamReactor reactor, Class<?> testClass, Object testClassInstance)
         throws IOException, ExamConfigurationException {
+
+        if (manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI)){
+            return;
+        }
+
         TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
 
-        // probe.setAnchor( testClass );
-        for (FrameworkMethod s : base.getChildren()) {
-            // record the method -> adress matching
-            TestAddress address = probe.addTest(testClass, s.getMethod().getName());
-            manager.storeTestMethod(address, s);
+        Iterator<Object[]> it = null;
+        int index = 0;
+        try {
+            it = allParameters().iterator();
+        }
+        // CHECKSTYLE:SKIP : JUnit API
+        catch (Throwable t) {
+            throw new ExamConfigurationException(t.getMessage());
+        }
+
+        while (it.hasNext()) {
+            it.next();
+            // probe.setAnchor( testClass );
+            for (FrameworkMethod s : getTestClass().getAnnotatedMethods(Test.class)) {
+                // record the method -> adress matching
+                TestAddress address = probe.addTest(testClass, s.getMethod().getName(), index);
+                manager.storeTestMethod(address, s);
+            }
+            index++;
         }
         reactor.addProbe(probe);
     }
@@ -166,7 +188,7 @@ public class DriverExtension extends RunnerExtension {
     public void delegateClassBlock(RunNotifier notifier) {
         TestListener listener = new JUnitTestListener(notifier);
         try {
-            stagedReactor.runTest(new TestDescription(testClass.getName()), listener);
+            stagedReactor.runTest(new TestDescription(testClass.getName(), null, 0), listener);
         }
         catch (Exception exc) {
             throw Exceptions.unchecked(exc);
@@ -188,4 +210,59 @@ public class DriverExtension extends RunnerExtension {
             throw Exceptions.unchecked(t);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    private Iterable<Object[]> allParameters() throws InitializationError {
+        Object parameters;
+        try {
+            parameters = getParametersMethod().invokeExplosively(null);
+        }
+        // CHECKSTYLE:SKIP - JUnit API
+        catch (Throwable t) {
+            throw new InitializationError(t);
+        }
+        if (parameters instanceof Iterable) {
+            return (Iterable<Object[]>) parameters;
+        }
+        else {
+            throw parametersMethodReturnedWrongType();
+        }
+    }
+
+    private FrameworkMethod getParametersMethod() throws InitializationError {
+        List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(Parameters.class);
+        for (FrameworkMethod each : methods) {
+            if (each.isStatic() && each.isPublic()) {
+                return each;
+            }
+        }
+
+        throw new InitializationError("No public static parameters method on class "
+            + getTestClass().getName());
+    }
+
+    private InitializationError parametersMethodReturnedWrongType() throws InitializationError {
+        String className = getTestClass().getName();
+        String methodName = getParametersMethod().getName();
+        String message = MessageFormat.format("{0}.{1}() must return an Iterable of arrays.",
+            className, methodName);
+        return new InitializationError(message);
+    }
+
+    private TestClass getTestClass() {
+        return base.getTestClass();
+    }
+
+    public List<Runner> getChildren() {
+        return runners;
+    }
+
+    public Description describeChild(Runner child) {
+        return child.getDescription();
+    }
+
+    public void runChild(Runner child, RunNotifier notifier) {
+        child.run(notifier);
+    }
+
 }
