@@ -24,28 +24,28 @@ import java.io.Serializable;
  *
  */
 public class TestFailure implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     private TestDescription description;
     private Throwable exception;
-    
-    
+
+
     /**
-     * 
+     *
      */
     public TestFailure(TestDescription description, Throwable exception) {
         this.description = description;
-        this.exception = exception;
+        this.exception = WrappedTestContainerException.wrapIfNeeded(exception);
     }
-    
+
     /**
      * @return the description
      */
     public TestDescription getDescription() {
         return description;
     }
-    
+
     /**
      * @return the exception
      */

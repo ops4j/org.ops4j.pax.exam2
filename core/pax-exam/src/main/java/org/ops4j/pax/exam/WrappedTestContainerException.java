@@ -17,6 +17,10 @@
  */
 package org.ops4j.pax.exam;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 /**
  * Wrap not serializable exception while extracting as much information as possible
  */
@@ -44,4 +48,24 @@ public class WrappedTestContainerException extends TestContainerException {
         return wrappedMessage;
     }
 
+    public static Throwable wrapIfNeeded(Throwable exc) {
+        return isSerializable(exc) ? exc : new WrappedTestContainerException(exc.getMessage(), exc);
+    }
+
+    /**
+     * Check if given exception is serializable by doing a serialization and checking the exception
+     *
+     * @param ex
+     *            exception to check
+     * @return if the given exception is serializable
+     */
+    private static boolean isSerializable(Throwable exc) {
+        try (ObjectOutputStream os = new ObjectOutputStream(new ByteArrayOutputStream())) {
+            os.writeObject(exc);
+            return true;
+        }
+        catch (IOException ioe) {
+            return false;
+        }
+    }
 }
