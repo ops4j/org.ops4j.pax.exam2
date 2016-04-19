@@ -168,6 +168,9 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
         if (description.getMethodName() != null) {
             target = target.queryParam("method", description.getMethodName());
         }
+        if (description.getIndex() != null) {
+            target = target.queryParam("index", description.getIndex());
+        }
         Future<InputStream> is = target.request().async().get(InputStream.class);
         TestListenerTask task = new TestListenerTask(is, listener);
         task.run();
