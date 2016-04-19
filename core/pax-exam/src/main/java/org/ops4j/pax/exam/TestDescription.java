@@ -43,9 +43,17 @@ public class TestDescription implements Serializable {
     }
 
     public TestDescription(String className, String methodName, Integer index) {
-        this.className = className;
-        this.methodName = methodName;
+        this.className = nonEmpty(className);
+        this.methodName = nonEmpty(methodName);
         this.index = index;
+    }
+
+    private static String nonEmpty(String s) {
+        if (s == null) {
+            return null;
+        }
+        String t = s.trim();
+        return t.isEmpty() ? null : t;
     }
 
     /**
@@ -74,12 +82,12 @@ public class TestDescription implements Serializable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(className);
+        builder.append(':');
         if (methodName != null) {
-            builder.append(':');
             builder.append(methodName);
         }
+        builder.append(':');
         if (index != null) {
-            builder.append(':');
             builder.append(index);
         }
         return builder.toString();

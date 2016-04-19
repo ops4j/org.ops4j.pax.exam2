@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.URL;
@@ -441,6 +442,10 @@ public class ForkedTestContainer implements TestContainer {
             serverSocket.close();
         }
         // CHECKSTYLE:SKIP
+        catch (InvocationTargetException exc) {
+            LOG.error("", exc.getCause());
+            throw new TestContainerException(exc.getCause());
+        }
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }
