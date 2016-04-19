@@ -31,7 +31,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runners.ParentRunner;
+import org.junit.runners.model.InitializationError;
+import org.ops4j.pax.exam.util.Exceptions;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.spi.ServiceProviderFinder;
@@ -78,7 +82,8 @@ public class TestRunnerServlet extends HttpServlet {
         }
     }
 
-    private void runSuite(OutputStream os, Class<?> clazz, String methodName, String indexName) throws IOException {
+    private void runSuite(OutputStream os, Class<?> clazz, String methodName, String indexName)
+        throws IOException {
 
         InjectorFactory injectorFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(InjectorFactory.class);
@@ -89,15 +94,32 @@ public class TestRunnerServlet extends HttpServlet {
             index = Integer.parseInt(indexName);
         }
 
-        Request request = new ContainerTestRunnerClassRequest(clazz, injector, index);
+        try {
+            ParentRunner<?> runner = createRunner(clazz, injector, index);
 
-        if (methodName != null) {
-            Description method = Description.createTestDescription(clazz, methodName);
-            request = request.filterWith(method);
+            if (methodName != null) {
+                Description method = Description.createTestDescription(clazz, methodName);
+                runner.filter(Filter.matchMethodDescription(method));
+            }
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            JUnitCore junit = new JUnitCore();
+            junit.addListener(new ContainerTestListener(oos));
+            junit.run(runner);
         }
-        ObjectOutputStream oos = new ObjectOutputStream(os);
-        JUnitCore junit = new JUnitCore();
-        junit.addListener(new ContainerTestListener(oos));
-        junit.run(request);
+        catch (InitializationError | NoTestsRemainException exc) {
+            throw Exceptions.unchecked(exc);
+        }
+    }
+
+    private ParentRunner<?> createRunner(Class<?> clazz, Injector injector, Integer index)
+        throws InitializationError {
+        if (index == null) {
+            return new ContainerTestRunner(clazz, injector);
+        }
+        else {
+            return new ParameterizedSuite(clazz, injector);
+        }
     }
 }
+
+
