@@ -29,7 +29,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     protected String karafVersion;
     protected String karafMain = "org.apache.karaf.main.Main";
     protected File unpackDirectory;
-    protected boolean useDeployFolder = true;
+    protected boolean useDeployFolder;
     protected boolean runEmbedded;
 
     public KarafDistributionBaseConfigurationOption() {
