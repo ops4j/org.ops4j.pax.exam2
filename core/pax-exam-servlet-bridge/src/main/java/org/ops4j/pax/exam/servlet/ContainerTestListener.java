@@ -55,7 +55,7 @@ public class ContainerTestListener extends RunListener {
     @Override
     public void testFailure(Failure failure) throws Exception {
         TestDescription description = convertDescription(failure.getDescription());
-        Exception exc = new WrappedTestContainerException(failure.getException());
+        Throwable exc = WrappedTestContainerException.wrapIfNeeded(failure.getException());
         writeEvent(new TestEvent(TestEventType.TEST_FAILED, description, exc));
     }
 

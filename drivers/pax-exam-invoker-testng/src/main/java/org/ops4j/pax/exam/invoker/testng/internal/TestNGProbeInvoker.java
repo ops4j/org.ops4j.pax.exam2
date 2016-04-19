@@ -17,10 +17,6 @@
  */
 package org.ops4j.pax.exam.invoker.testng.internal;
 
-import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,7 +26,6 @@ import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
-import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Exceptions;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
@@ -47,7 +42,6 @@ public class TestNGProbeInvoker implements ProbeInvoker {
     private BundleContext ctx;
     private String clazz;
     private String method;
-    private Injector injector;
 
     private Class<?> testClass;
 
@@ -58,7 +52,6 @@ public class TestNGProbeInvoker implements ProbeInvoker {
         clazz = parts[0];
         method = parts[1];
         ctx = bundleContext;
-        this.injector = injector;
         this.testClass = loadClass(clazz);
     }
 
@@ -123,7 +116,6 @@ public class TestNGProbeInvoker implements ProbeInvoker {
 
         TestNG testNG = new TestNG();
         testNG.setUseDefaultListeners(false);
-        ContainerResultListener listener = new ContainerResultListener(null);
         XmlSuite suite = new XmlSuite();
         suite.setName("PaxExamInternal");
         XmlTest xmlTest = new XmlTest(suite);
@@ -144,36 +136,6 @@ public class TestNGProbeInvoker implements ProbeInvoker {
 //            oos.writeObject("ok");
 //        }
 
-    }
-
-    /**
-     * Creates exception for test failure and makes sure it is serializable.
-     *
-     * @param message
-     * @param ex
-     * @return serializable exception
-     */
-    private TestContainerException createTestContainerException(String message, Throwable ex) {
-        return isSerializable(ex) ? new TestContainerException(message, ex)
-            : new WrappedTestContainerException(message, ex);
-    }
-
-    /**
-     * Check if given exception is serializable by doing a serialization and checking the exception
-     *
-     * @param ex
-     *            exception to check
-     * @return if the given exception is serializable
-     */
-    private boolean isSerializable(Throwable ex) {
-        try {
-            new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(ex);
-            return true;
-        }
-        // CHECKSTYLE:SKIP
-        catch (Throwable ex2) {
-            return false;
-        }
     }
 
     @Override
@@ -220,20 +182,5 @@ public class TestNGProbeInvoker implements ProbeInvoker {
 
     @Override
     public void runTestClass(String description) {
-    }
-
-    private int getPort() {
-        String port = ctx.getProperty(EXAM_INVOKER_PORT);
-        if (port == null) {
-            throw new TestContainerException(
-                "System property " + EXAM_INVOKER_PORT + " is not set");
-        }
-        try {
-            return Integer.parseInt(port);
-        }
-        catch (NumberFormatException exc) {
-            throw new TestContainerException(
-                "Cannot parse value of system property " + EXAM_INVOKER_PORT, exc);
-        }
     }
 }

@@ -17,19 +17,18 @@
  */
 package org.ops4j.pax.exam.invoker.junit.internal;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.isA;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestFailure;
+import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.Bundle;
@@ -40,28 +39,20 @@ public class WrappedExceptionTest {
     private static final String SHOULD_BE_WRAPPED = "This should not be serializable. So it should be wrapped";
     private static final String SHOULD_NOT_BE_WRAPPED = "This should be serializable. So it should not be wrapped";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private TestFailure savedFailure;
 
     @Test
     public void testSerializableException() throws ClassNotFoundException {
-        thrown.expect(TestContainerException.class);
-        thrown.expect(not(isA(WrappedTestContainerException.class)));
-        thrown.expectCause(isA(RuntimeException.class));
-        thrown.expectCause(hasMessage(is(SHOULD_NOT_BE_WRAPPED)));
-
         callWithMethod("serializable");
+        assertThat(savedFailure.getException(), instanceOf(RuntimeException.class));
+        assertThat(savedFailure.getException().getMessage(), is(SHOULD_NOT_BE_WRAPPED));
     }
 
     @Test
     public void testNotSerializableException() throws ClassNotFoundException {
-        try {
-            callWithMethod("notSerializable");
-        }
-        catch (WrappedTestContainerException e) {
-            assertThat(e.getWrappedMessage(), is(SHOULD_BE_WRAPPED));
-            assertThat(e.getWrappedClassName(), is(MyNotSerializableException.class.getName()));
-        }
+        callWithMethod("notSerializable");
+        assertThat(savedFailure.getException(), instanceOf(WrappedTestContainerException.class));
+        assertThat(savedFailure.getException().getMessage(), is(SHOULD_BE_WRAPPED));
     }
 
     private void callWithMethod(String method) throws ClassNotFoundException {
@@ -72,7 +63,9 @@ public class WrappedExceptionTest {
         doReturn(ExceptionSource.class).when(bundle).loadClass(ExceptionSource.class.getName());
         JUnitProbeInvoker invoker = new JUnitProbeInvoker(ExceptionSource.class.getName() + ";"
             + method, bundleContext, injector);
-        invoker.call(new Object[] {});
+        TestDescription description = new TestDescription(ExceptionSource.class.getName(), method);
+        invoker.runTest(description, new MyTestListener());
+        assertThat(savedFailure, is(notNullValue()));
     }
 
     public static class ExceptionSource {
@@ -105,4 +98,31 @@ public class WrappedExceptionTest {
         public class NotSerializablePart {
         }
     }
+
+    private class MyTestListener implements TestListener {
+
+        @Override
+        public void testStarted(TestDescription description) {
+        }
+
+        @Override
+        public void testFinished(TestDescription description) {
+        }
+
+        @Override
+        public void testFailure(TestFailure failure) {
+            savedFailure = failure;
+        }
+
+        @Override
+        public void testAssumptionFailure(TestFailure failure) {
+            savedFailure = failure;
+        }
+
+        @Override
+        public void testIgnored(TestDescription description) {
+        }
+
+    }
+
 }
