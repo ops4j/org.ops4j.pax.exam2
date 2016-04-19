@@ -17,6 +17,8 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import java.util.List;
+
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -28,10 +30,8 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
-import org.ops4j.pax.exam.Constants;
-import org.ops4j.pax.exam.junit.impl.ParameterizedInjectingRunner;
-import org.ops4j.pax.exam.junit.impl.ParameterizedProbeRunner;
-import org.ops4j.pax.exam.spi.reactors.ReactorManager;
+import org.ops4j.pax.exam.junit.impl.ExtensibleSuite;
+import org.ops4j.pax.exam.junit.impl.ParameterizedDriverExtension;
 
 /**
  * JUnit runner for parameterized Pax Exam tests. See {@link Parameterized} for more details on
@@ -39,28 +39,20 @@ import org.ops4j.pax.exam.spi.reactors.ReactorManager;
  * <p>
  * See {@link PaxExam} for more information on other annotations supported on Pax Exam test classes
  * or methods.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
-public class PaxExamParameterized extends Runner implements Filterable, Sortable {
+public class PaxExamParameterized extends ParentRunner<Runner> implements Filterable, Sortable {
 
-    private ParentRunner<?> delegate;
-    private Class<?> testClass;
+    private ExtensibleSuite delegate;
+    private ParameterizedDriverExtension extension;
 
     public PaxExamParameterized(Class<?> klass) throws InitializationError {
-        this.testClass = klass;
-        createDelegate();
-    }
-
-    private void createDelegate() throws InitializationError {
-        ReactorManager manager = ReactorManager.getInstance();
-        if (manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI)) {
-            delegate = new ParameterizedInjectingRunner(testClass);
-        }
-        else {
-            delegate = new ParameterizedProbeRunner(testClass);
-        }
+        super(klass);
+        extension = new ParameterizedDriverExtension(klass);
+        delegate = new ExtensibleSuite(klass, extension);
+        extension.setBase(delegate);
     }
 
     @Override
@@ -81,5 +73,20 @@ public class PaxExamParameterized extends Runner implements Filterable, Sortable
     @Override
     public void sort(Sorter sorter) {
         delegate.sort(sorter);
+    }
+
+    @Override
+    protected List<Runner> getChildren() {
+        return extension.getChildren();
+    }
+
+    @Override
+    protected Description describeChild(Runner child) {
+        return extension.describeChild(child);
+    }
+
+    @Override
+    protected void runChild(Runner child, RunNotifier notifier) {
+        extension.runChild(child, notifier);
     }
 }

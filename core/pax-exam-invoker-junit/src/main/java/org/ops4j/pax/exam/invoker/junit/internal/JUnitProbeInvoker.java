@@ -32,6 +32,8 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.Failure;
+import org.junit.runners.ParentRunner;
+import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -56,7 +58,6 @@ import org.osgi.framework.BundleContext;
 public class JUnitProbeInvoker implements ProbeInvoker {
 
     private BundleContext ctx;
-    private String clazz;
     private String method;
     private Injector injector;
 
@@ -64,13 +65,8 @@ public class JUnitProbeInvoker implements ProbeInvoker {
 
     public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext,
         Injector injector) {
-        // parse class and method out of expression:
-        String[] parts = encodedInstruction.split(";");
-        clazz = parts[0];
-        method = parts[1];
-        ctx = bundleContext;
+        this.ctx = bundleContext;
         this.injector = injector;
-        this.testClass = loadClass(clazz);
     }
 
     private Class<?> loadClass(String className) {
@@ -132,7 +128,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
      */
     private void invokeViaJUnit(final Method testMethod, Integer index) {
         try {
-            ContainerTestRunner runner = new ContainerTestRunner(testClass, injector);
+            ParentRunner<?> runner = createRunner(index);
             Description methodDescription = Description.createTestDescription(testClass, method);
             runner.filter(Filter.matchMethodDescription(methodDescription));
             JUnitCore junit = new JUnitCore();
@@ -145,6 +141,27 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         }
         catch (Exception exc) {
             throw Exceptions.unchecked(exc);
+        }
+    }
+
+    private ParentRunner<?> createRunner(Integer index) throws InitializationError {
+        if (index == null) {
+            return new ContainerTestRunner(testClass, injector);
+        }
+        else {
+            return new ParameterizedContainerTestRunner(testClass, injector, index);
+        }
+    }
+
+    private ParentRunner<?> createRunner(TestDescription description) throws InitializationError {
+        testClass = loadClass(description.getClassName());
+        Integer index = description.getIndex();
+        if (index == null) {
+            return new ContainerTestRunner(testClass, injector);
+        }
+        else {
+            ParameterizedSuite runner = new ParameterizedSuite(testClass, injector);
+            return runner;
         }
     }
 
@@ -185,8 +202,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
 
     private void runTestWithJUnit(TestDescription description, TestListener listener) {
         try {
-            ContainerTestRunner runner = new ContainerTestRunner(
-                loadClass(description.getClassName()), injector);
+            ParentRunner<?> runner = createRunner(description);
             if (description.getMethodName() != null) {
                 Description methodName = Description
                     .createTestDescription(description.getClassName(), description.getMethodName());
