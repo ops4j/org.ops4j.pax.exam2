@@ -17,11 +17,13 @@
  */
 package org.ops4j.pax.exam.rbc.client;
 
-import java.io.InputStream;
-
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.rbc.internal.NoSuchServiceException;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
+
+import java.io.InputStream;
+import java.rmi.RemoteException;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
@@ -45,6 +47,8 @@ public interface RemoteBundleContextClient {
     void stop();
 
     void waitForState(final long bundleId, final int state, final RelativeTimeout timeout);
+
+    void waitForService(String serviceClassName, RelativeTimeout timeout) throws NoSuchServiceException, RemoteException;
 
     void call(TestAddress address);
 }

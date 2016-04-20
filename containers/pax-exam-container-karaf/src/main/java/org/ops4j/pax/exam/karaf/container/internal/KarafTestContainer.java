@@ -233,6 +233,16 @@ public class KarafTestContainer implements TestContainer {
         else {
             LOGGER
                 .info("System runs in Server Mode. Which means, no Test facility bundles available on target system.");
+        for (WaitForServiceOption waitForServiceOption : subsystem.getOptions(WaitForServiceOption.class)) {
+            LOGGER.info("Waiting for service {}, timeout:[{}]", waitForServiceOption.getServiceClassName(), waitForServiceOption.getTimeout().toString());
+            try {
+                waitForService(waitForServiceOption.getServiceClassName(), waitForServiceOption.getTimeout());
+                LOGGER.info("Service {} has been found in the test container", waitForServiceOption.getServiceClassName());
+            } catch (NoSuchServiceException e) {
+                LOGGER.error("Service {} could not be found in the test container", waitForServiceOption.getServiceClassName());
+            } catch (RemoteException e) {
+                LOGGER.error("Error waiting for service {} in the test container: {}", waitForServiceOption.getServiceClassName(), e.toString());
+            }
         }
     }
 
@@ -578,6 +588,10 @@ public class KarafTestContainer implements TestContainer {
 
     private void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         target.getClientRBC().waitForState(bundleId, state, timeout);
+    }
+
+    private void waitForService(String serviceClassName, final RelativeTimeout timeout) throws NoSuchServiceException, RemoteException {
+        target.getClientRBC().waitForService(serviceClassName, timeout);
     }
 
     @Override

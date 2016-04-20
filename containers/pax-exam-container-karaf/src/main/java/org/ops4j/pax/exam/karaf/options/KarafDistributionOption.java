@@ -65,6 +65,10 @@ public final class KarafDistributionOption {
         return new KarafExamSystemConfigurationOption(invoker);
     }
 
+    public static Option waitForServiceOption(String serviceClassName, long timeout){
+        return new WaitForServiceOption(serviceClassName, timeout);
+    }
+
     /**
      * The karaf pax-logging configuration is typically not a file manipulated very often. Therefore
      * we take the freedom of adding a console logger and changing the log level directly. IF you

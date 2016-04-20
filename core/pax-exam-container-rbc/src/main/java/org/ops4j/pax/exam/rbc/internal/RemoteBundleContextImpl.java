@@ -80,6 +80,12 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         return serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
     }
 
+    @Override
+    public void waitForService(String serviceClassName, String filter, RelativeTimeout timeout) throws NoSuchServiceException, RemoteException {
+        LOG.trace("Retrieving service of [" + serviceClassName + "]");
+        ServiceLookup.getService(bundleContext, serviceClassName, timeout.getValue(), filter);
+    }
+
     public long installBundle(final String bundleUrl) throws BundleException {
         LOG.trace("Install bundle from URL [" + bundleUrl + "]");
         return bundleContext.installBundle(bundleUrl).getBundleId();

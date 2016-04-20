@@ -75,6 +75,8 @@ public interface RemoteBundleContext extends Remote {
         NoSuchServiceException, NoSuchMethodException, IllegalAccessException,
         InvocationTargetException;
 
+    void waitForService(final String serviceClassName, final String filter, final RelativeTimeout timeout) throws NoSuchServiceException, RemoteException;
+
     /**
      * Installs a bundle remotly.
      * 
