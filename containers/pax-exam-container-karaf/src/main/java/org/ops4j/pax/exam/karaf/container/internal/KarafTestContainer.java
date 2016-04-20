@@ -16,77 +16,38 @@
  */
 package org.ops4j.pax.exam.karaf.container.internal;
 
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
-import static org.ops4j.pax.exam.rbc.Constants.RMI_HOST_PROPERTY;
-import static org.ops4j.pax.exam.rbc.Constants.RMI_NAME_PROPERTY;
-import static org.ops4j.pax.exam.rbc.Constants.RMI_PORT_PROPERTY;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.rmi.NoSuchObjectException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.ops4j.net.FreePort;
-import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.Info;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.*;
 import org.ops4j.pax.exam.container.remote.RBCRemoteTarget;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulator;
 import org.ops4j.pax.exam.karaf.container.internal.adaptions.KarafManipulatorFactory;
 import org.ops4j.pax.exam.karaf.container.internal.runner.Runner;
-import org.ops4j.pax.exam.karaf.options.DoNotModifyLogOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionBaseConfigurationOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationConsoleOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileExtendOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFilePutOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationFileReplacementOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionConfigurationSecurityOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
-import org.ops4j.pax.exam.karaf.options.KarafExamSystemConfigurationOption;
-import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
-import org.ops4j.pax.exam.karaf.options.KeepRuntimeFolderOption;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption;
+import org.ops4j.pax.exam.karaf.options.*;
 import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
-import org.ops4j.pax.exam.options.BootDelegationOption;
-import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
-import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
-import org.ops4j.pax.exam.options.ServerModeOption;
-import org.ops4j.pax.exam.options.SystemPackageOption;
-import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.*;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
+import org.ops4j.pax.exam.rbc.internal.NoSuchServiceException;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.URL;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
+
+import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
+import static org.ops4j.pax.exam.rbc.Constants.*;
 
 public class KarafTestContainer implements TestContainer {
 
@@ -231,8 +192,9 @@ public class KarafTestContainer implements TestContainer {
                 Bundle.ACTIVE, subsystem.getTimeout());
         }
         else {
-            LOGGER
-                .info("System runs in Server Mode. Which means, no Test facility bundles available on target system.");
+            LOGGER.info("System runs in Server Mode. Which means, no Test facility bundles available on target system.");
+        }
+
         for (WaitForServiceOption waitForServiceOption : subsystem.getOptions(WaitForServiceOption.class)) {
             LOGGER.info("Waiting for service {}, timeout:[{}]", waitForServiceOption.getServiceClassName(), waitForServiceOption.getTimeout().toString());
             try {
