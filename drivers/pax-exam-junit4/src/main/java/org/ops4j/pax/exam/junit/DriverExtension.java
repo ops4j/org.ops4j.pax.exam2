@@ -80,7 +80,7 @@ public class DriverExtension extends RunnerExtension {
             Object testClassInstance = testClass.newInstance();
             manager = ReactorManager.getInstance();
             ExamReactor examReactor = manager.prepareReactor(testClass, testClassInstance);
-            addTestsToReactor(examReactor, testClass, testClassInstance);
+            addTestsToReactor(examReactor, testClassInstance);
             stagedReactor = manager.stageReactor();
         }
         catch (InstantiationException | IllegalAccessException | IOException | ExamConfigurationException exc) {
@@ -101,12 +101,11 @@ public class DriverExtension extends RunnerExtension {
      * starts.
      *
      * @param reactor
-     * @param testClass
      * @param testClassInstance
      * @throws IOException
      * @throws ExamConfigurationException
      */
-    private void addTestsToReactor(ExamReactor reactor, Class<?> testClass, Object testClassInstance)
+    private void addTestsToReactor(ExamReactor reactor, Object testClassInstance)
         throws IOException, ExamConfigurationException {
         TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
 
@@ -168,6 +167,7 @@ public class DriverExtension extends RunnerExtension {
         try {
             stagedReactor.runTest(new TestDescription(testClass.getName()), listener);
         }
+        // CHECKSTYLE:SKIP : StagedExamReactor API
         catch (Exception exc) {
             throw Exceptions.unchecked(exc);
         }
