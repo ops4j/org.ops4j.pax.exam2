@@ -25,9 +25,9 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
-import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestFailure;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.impl.JUnitTestListener;
@@ -178,14 +178,15 @@ public class DriverExtension extends RunnerExtension {
         TestDescription description = new TestDescription(testClass.getName(), method.getName());
 
         LOG.debug("Invoke {}", description);
+        JUnitTestListener testListener = new JUnitTestListener(notifier);
         try {
-            JUnitTestListener testListener = new JUnitTestListener(notifier);
             stagedReactor.runTest(description, testListener);
         }
         // CHECKSTYLE:SKIP : StagedExamReactor API
-        catch (Exception e) {
-            Throwable t = ExceptionHelper.unwind(e);
-            throw Exceptions.unchecked(t);
+        catch (Exception exc) {
+            testListener.testStarted(description);
+            testListener.testFailure(new TestFailure(description, exc));
+            testListener.testFinished(description);
         }
     }
 }
