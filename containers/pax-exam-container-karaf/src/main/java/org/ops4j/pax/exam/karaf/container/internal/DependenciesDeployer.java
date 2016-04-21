@@ -65,7 +65,7 @@ public class DependenciesDeployer {
             UrlReference libraryUrl = bootClasspathLibraryOption.getLibraryUrl();
             FileUtils.copyURLToFile(
                 new URL(libraryUrl.getURL()),
-                createFileNameWithRandomPrefixFromUrlAtTarget(libraryUrl.getURL(), new File(
+                createUnique(libraryUrl.getURL(), new File(
                     karafHome + "/lib"), new String[] { "jar" }));
         }
     }
@@ -79,10 +79,8 @@ public class DependenciesDeployer {
         ProvisionOption<?>[] options = subsystem.getOptions(ProvisionOption.class);
         for (ProvisionOption<?> option : options) {
             try {
-                FileUtils.copyURLToFile(
-                    new URL(option.getURL()),
-                    createFileNameWithRandomPrefixFromUrlAtTarget(option.getURL(), deploy,
-                        fileEndings));
+                File target = createUnique(option.getURL(), deploy, fileEndings);
+                FileUtils.copyURLToFile(new URL(option.getURL()), target);
             }
             // CHECKSTYLE:SKIP
             catch (Exception e) {
@@ -91,12 +89,11 @@ public class DependenciesDeployer {
         }
     }
 
-    private File createFileNameWithRandomPrefixFromUrlAtTarget(String url, File deploy,
-        String[] fileEndings) {
+    private File createUnique(String url, File deploy, String[] fileEndings) {
         String prefix = UUID.randomUUID().toString();
         String realEnding = extractPossibleFileEndingIfMavenArtifact(url, fileEndings);
         String fileName = new File(url).getName();
-        return new File(deploy + "/" + prefix + "_" + fileName + "." + realEnding);
+        return new File(deploy, prefix + "_" + fileName + "." + realEnding);
     }
 
     private String extractPossibleFileEndingIfMavenArtifact(String url, String[] fileEndings) {
