@@ -69,6 +69,7 @@ public class ExtensibleSuite extends Suite {
         return new Statement() {
 
             @Override
+            // CHECKSTYLE:SKIP : JUnit API
             public void evaluate() throws Throwable {
                 extension.beforeClassBlock(notifier);
                 try {

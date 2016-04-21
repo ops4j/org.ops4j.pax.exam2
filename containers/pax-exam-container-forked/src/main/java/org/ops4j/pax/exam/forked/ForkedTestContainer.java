@@ -441,11 +441,11 @@ public class ForkedTestContainer implements TestContainer {
             executor.shutdown();
             serverSocket.close();
         }
-        // CHECKSTYLE:SKIP
         catch (InvocationTargetException exc) {
             LOG.error("", exc.getCause());
             throw new TestContainerException(exc.getCause());
         }
+        // CHECKSTYLE:SKIP
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }

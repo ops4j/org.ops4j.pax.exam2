@@ -31,6 +31,7 @@ import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.Failure;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -139,7 +140,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
                     failures.get(0).getException());
             }
         }
-        catch (Exception exc) {
+        catch (InitializationError | NoTestsRemainException exc) {
             throw Exceptions.unchecked(exc);
         }
     }
@@ -213,7 +214,7 @@ public class JUnitProbeInvoker implements ProbeInvoker {
             junit.addListener(new ProbeRunListener(listener));
             junit.run(runner);
         }
-        catch (Exception exc) {
+        catch (InitializationError | NoTestsRemainException exc) {
             throw Exceptions.unchecked(exc);
         }
     }

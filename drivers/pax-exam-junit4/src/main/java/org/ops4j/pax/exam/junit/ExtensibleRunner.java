@@ -48,6 +48,7 @@ public class ExtensibleRunner extends BlockJUnit4ClassRunner {
         return new Statement() {
 
             @Override
+            // CHECKSTYLE:SKIP : JUnit API
             public void evaluate() throws Throwable {
                 extension.beforeClassBlock(notifier);
                 try {
@@ -77,6 +78,7 @@ public class ExtensibleRunner extends BlockJUnit4ClassRunner {
         return new Statement() {
 
             @Override
+            // CHECKSTYLE:SKIP : JUnit API
             public void evaluate() throws Throwable {
                 extension.beforeMethodBlock(method);
                 try {

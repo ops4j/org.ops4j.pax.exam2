@@ -82,7 +82,7 @@ public class ParameterizedDriverExtension extends RunnerExtension {
         manager = ReactorManager.getInstance();
         ExamReactor reactor = manager.prepareReactor(testClass, null);
         try {
-            addTestsToReactor(reactor, testClass, null);
+            addTestsToReactor(reactor, null);
             stagedReactor = manager.stageReactor();
         }
         catch (IOException | ExamConfigurationException exc) {
@@ -104,15 +104,14 @@ public class ParameterizedDriverExtension extends RunnerExtension {
      * starts.
      *
      * @param reactor
-     * @param testClass
      * @param testClassInstance
      * @throws IOException
      * @throws ExamConfigurationException
      */
-    private void addTestsToReactor(ExamReactor reactor, Class<?> testClass, Object testClassInstance)
+    private void addTestsToReactor(ExamReactor reactor, Object testClassInstance)
         throws IOException, ExamConfigurationException {
 
-        if (manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI)){
+        if (manager.getSystemType().equals(Constants.EXAM_SYSTEM_CDI)) {
             return;
         }
 
@@ -190,6 +189,7 @@ public class ParameterizedDriverExtension extends RunnerExtension {
         try {
             stagedReactor.runTest(new TestDescription(testClass.getName(), null, 0), listener);
         }
+        // CHECKSTYLE:SKIP : StagedExamReactor API
         catch (Exception exc) {
             throw Exceptions.unchecked(exc);
         }
