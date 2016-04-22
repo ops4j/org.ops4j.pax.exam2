@@ -34,6 +34,7 @@ Checkout:
 Branches:
 * v3.x   : Maintenance for Pax Exam 3.x 
 * master : ongoing development for 4.x 
+* exam5-milestones : future development for 5.x
 
 Run Build:
 
@@ -47,7 +48,7 @@ Run build with integration tests
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 4.8.0.
+The current release of Pax Exam is 4.9.0.
 
 ## Issue Tracking
 
