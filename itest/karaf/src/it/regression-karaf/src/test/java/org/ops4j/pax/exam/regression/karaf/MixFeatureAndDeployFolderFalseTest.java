@@ -45,7 +45,7 @@ public class MixFeatureAndDeployFolderFalseTest {
 
     @Inject
     private FeaturesService featuresService;
-    
+
     @Inject
     BootFinished bootFinished;
 
@@ -56,10 +56,9 @@ public class MixFeatureAndDeployFolderFalseTest {
                 .frameworkUrl(
                     maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
                         .version(karafVersion())),
-                //.useDeployFolder(false),
                 configureConsole().ignoreLocalConsole(),
                 editConfigurationFilePut(FeaturesCfg.BOOT,
-                "config,standard,region,package,ssh"),
+                "config,system,shell,bundle"),
             features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
                 .classifier("features").version(karafVersion()), "kar") };
     }
