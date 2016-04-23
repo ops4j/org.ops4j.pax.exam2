@@ -17,7 +17,7 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.bootClasspathLibrary;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
@@ -32,26 +32,22 @@ import org.ops4j.pax.exam.junit.PaxExam;
 @RunWith(PaxExam.class)
 public class BootClasspathLibraryOptionTest {
 
-    @Configuration
-    public Option[] config() {
-        return new Option[]{
-            regressionDefaults(),
-            bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527") 
-            };
-    }
+	@Configuration
+	public Option[] config() {
+		return new Option[] { regressionDefaults(),
+				bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527") };
+	}
 
-    @Test
-    public void test() throws Exception {
-        File file = new File("lib");
-        File[] files = file.listFiles();
-        int foundJarFiles = 0;
-        for (File libFile : files) {
-            if (libFile.getName().endsWith("jar")) {
-                foundJarFiles++;
-            }
-        }
-        // Karaf 4.1.1 has 2 boot libs, we expect another one to show up
-        assertEquals(2 + 1, foundJarFiles);
-    }
+	@Test
+	public void test() throws Exception {
+		File file = new File("lib");
+		boolean foundJarFile = false;
+		for (File libFile : file.listFiles()) {
+			if (libFile.getName().endsWith("20031116.223527.jar")) {
+				foundJarFile = true;
+			}
+		}
+		assertTrue(foundJarFile);
+	}
 
 }
