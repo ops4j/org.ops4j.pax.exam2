@@ -57,7 +57,7 @@ public class TestListenerTask implements Runnable {
 
     @Override
     public void run() {
-        try (ObjectInputStream ois = openObjectInputStream()){
+        try (ObjectInputStream ois = openObjectInputStream()) {
             while (!closed) {
                 Object obj = ois.readObject();
                 if (obj instanceof TestEvent) {
