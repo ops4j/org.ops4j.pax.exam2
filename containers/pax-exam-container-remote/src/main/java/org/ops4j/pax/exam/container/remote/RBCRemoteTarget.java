@@ -31,6 +31,7 @@ import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.client.intern.RemoteBundleContextClientImpl;
+import org.ops4j.pax.exam.spi.listener.TestListenerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

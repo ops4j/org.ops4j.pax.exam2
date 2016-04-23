@@ -15,12 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.testng.servlet.invoker;
+package org.ops4j.pax.exam.spi.listener;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -28,24 +30,34 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestEvent;
 import org.ops4j.pax.exam.TestFailure;
 import org.ops4j.pax.exam.TestListener;
+import org.ops4j.pax.exam.util.Exceptions;
 
 /**
  * @author Harald Wellmann
  */
 public class TestListenerTask implements Runnable {
 
-    private Future<InputStream> is;
+    private ServerSocket serverSocket;
     private TestListener delegate;
     private boolean closed;
+    private Future<InputStream> isFuture;
 
-    public TestListenerTask(Future<InputStream> is, TestListener delegate) {
-        this.is = is;
+    /**
+     *
+     */
+    public TestListenerTask(ServerSocket serverSocket, TestListener delegate) {
+        this.serverSocket = serverSocket;
+        this.delegate = delegate;
+    }
+
+    public TestListenerTask(Future<InputStream> isFuture, TestListener delegate) {
+        this.isFuture = isFuture;
         this.delegate = delegate;
     }
 
     @Override
     public void run() {
-        try (ObjectInputStream ois = new ObjectInputStream(is.get())) {
+        try (ObjectInputStream ois = openObjectInputStream()){
             while (!closed) {
                 Object obj = ois.readObject();
                 if (obj instanceof TestEvent) {
@@ -57,14 +69,35 @@ public class TestListenerTask implements Runnable {
         catch (EOFException exc) {
             closed = true;
         }
-        catch (ExecutionException exc) {
-            throw new TestContainerException(exc.getCause());
-        }
-        catch (ClassNotFoundException | IOException | InterruptedException exc) {
+        catch (ClassNotFoundException | IOException exc) {
             throw new TestContainerException(exc);
         }
     }
 
+    /**
+     * @return
+     * @throws IOException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    private ObjectInputStream openObjectInputStream() throws IOException {
+        if (serverSocket != null) {
+            Socket socket = serverSocket.accept();
+            return new ObjectInputStream(socket.getInputStream());
+        }
+        else {
+            try {
+                return new ObjectInputStream(isFuture.get());
+            }
+            catch (InterruptedException | ExecutionException exc) {
+                throw Exceptions.unchecked(exc);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
     private void handleEvent(TestEvent event) {
         switch (event.getType()) {
             case TEST_ASSUMPTION_FAILED:

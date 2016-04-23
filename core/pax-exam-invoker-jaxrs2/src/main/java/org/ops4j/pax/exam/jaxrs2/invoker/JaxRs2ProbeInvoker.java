@@ -33,6 +33,7 @@ import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
+import org.ops4j.pax.exam.spi.listener.TestListenerTask;
 
 
 /**
