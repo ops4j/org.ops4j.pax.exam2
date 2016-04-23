@@ -41,6 +41,7 @@ public class UseFeatureInsteadOfDeployFolderTest {
     @Configuration
     public Option[] config() {
         return options(RegressionConfiguration.regressionDefaults(),
+            mavenBundle("org.slf4j", "slf4j-simple", "1.6.1"),
             mavenBundle("org.slf4j", "slf4j-api", "1.6.1"));
     }
 
