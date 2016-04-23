@@ -131,6 +131,7 @@ public class ServletTest {
             .add(EchoServlet.class)
             .add(ServletActivator.class)
             .set(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())
+            .set(Constants.BUNDLE_MANIFESTVERSION, "2")
             .build(withBnd());
     }
 }
