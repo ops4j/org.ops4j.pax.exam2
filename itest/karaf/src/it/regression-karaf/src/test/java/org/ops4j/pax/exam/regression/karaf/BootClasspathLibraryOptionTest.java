@@ -17,7 +17,7 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.bootClasspathLibrary;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
@@ -36,22 +36,19 @@ public class BootClasspathLibraryOptionTest {
     public Option[] config() {
         return new Option[]{
             regressionDefaults(),
-            bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527") 
+            bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527")
             };
     }
 
     @Test
     public void test() throws Exception {
         File file = new File("lib");
-        File[] files = file.listFiles();
-        int foundJarFiles = 0;
-        for (File libFile : files) {
-            if (libFile.getName().endsWith("jar")) {
-                foundJarFiles++;
+        boolean foundJarFile = false;
+        for (File libFile : file.listFiles()) {
+            if (libFile.getName().endsWith("20031116.223527.jar")) {
+                foundJarFile = true;
             }
         }
-        // Karaf 3.0.0 has 6 boot libs, we expect another one to show up
-        assertEquals(6 + 1, foundJarFiles);
+        assertTrue(foundJarFile);
     }
-
 }
