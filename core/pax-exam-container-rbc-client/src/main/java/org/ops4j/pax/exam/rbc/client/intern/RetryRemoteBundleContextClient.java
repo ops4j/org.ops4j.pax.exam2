@@ -49,8 +49,8 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
         proxy = (RemoteBundleContextClient) Proxy.newProxyInstance(getClass().getClassLoader(),
             new Class<?>[] { RemoteBundleContextClient.class }, new InvocationHandler() {
 
-                // CHECKSTYLE:SKIP : InvocationHandler API
                 @Override
+                // CHECKSTYLE:SKIP : InvocationHandler API
                 public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
                     Object ret = null;
                     Exception lastError = null;
