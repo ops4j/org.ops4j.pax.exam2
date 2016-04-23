@@ -65,6 +65,7 @@ import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
+import org.ops4j.pax.exam.spi.listener.TestListenerTask;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.ops4j.pax.swissbox.framework.RemoteServiceReference;
 import org.osgi.framework.Bundle;
