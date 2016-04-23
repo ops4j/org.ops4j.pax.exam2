@@ -57,7 +57,7 @@ public class KarafWithBundleTest {
     protected BundleContext bundleContext;
 
     private ServletListener webListener;
-    
+
     /**
      * To make sure the tests run only when the boot features are fully installed
      */
@@ -110,7 +110,7 @@ public class KarafWithBundleTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[]{ 
+        return new Option[]{
             regressionDefaults("target/paxexam/unpack2/"),
             keepRuntimeFolder(),
             //logLevel(LogLevel.DEBUG),
@@ -123,6 +123,7 @@ public class KarafWithBundleTest {
             streamBundle(bundle()
                 .add(EchoServlet.class)
                 .add(ServletActivator.class)
+                .set(Constants.BUNDLE_MANIFESTVERSION, "2")
                 .set(Constants.BUNDLE_SYMBOLICNAME, "MyBundleTest")
                 .set(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
