@@ -21,11 +21,12 @@ import java.io.InputStream;
 
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 
 /**
  * A {@link RemoteBundleContext} client, that takes away RMI handling.
- * 
+ *
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @author Toni Menzel (toni@okidokiteam.com)
  * @since 0.3.0, December 15, 2008
@@ -33,7 +34,7 @@ import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
 public interface RemoteBundleContextClient {
 
     long install(String location, InputStream stream);
-    
+
     void uninstall(long bundleId);
 
     void cleanup();
@@ -47,4 +48,6 @@ public interface RemoteBundleContextClient {
     void waitForState(final long bundleId, final int state, final RelativeTimeout timeout);
 
     void call(TestAddress address);
+
+    void runTestClass(TestDescription description);
 }

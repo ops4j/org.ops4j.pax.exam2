@@ -22,12 +22,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.NoSuchObjectException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -48,6 +50,7 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
             new Class<?>[] { RemoteBundleContextClient.class }, new InvocationHandler() {
 
                 // CHECKSTYLE:SKIP : InvocationHandler API
+                @Override
                 public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
                     Object ret = null;
                     Exception lastError = null;
@@ -98,30 +101,37 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
             });
     }
 
+    @Override
     public long install(String location, InputStream stream) {
         return proxy.install(location, stream);
     }
 
+    @Override
     public void cleanup() {
         proxy.cleanup();
     }
 
+    @Override
     public void setBundleStartLevel(long bundleId, int startLevel) {
         proxy.setBundleStartLevel(bundleId, startLevel);
     }
 
+    @Override
     public void start() {
         proxy.start();
     }
 
+    @Override
     public void stop() {
         proxy.stop();
     }
 
+    @Override
     public void waitForState(long bundleId, int state, RelativeTimeout timeout) {
         proxy.waitForState(bundleId, state, timeout);
     }
 
+    @Override
     public void call(TestAddress address) {
         proxy.call(address);
     }
@@ -129,5 +139,10 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
     @Override
     public void uninstall(long bundleId) {
         proxy.uninstall(bundleId);
+    }
+
+    @Override
+    public void runTestClass(TestDescription description) {
+        proxy.runTestClass(description);
     }
 }

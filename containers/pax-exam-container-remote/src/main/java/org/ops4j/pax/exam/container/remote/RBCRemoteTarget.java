@@ -17,11 +17,16 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.ServerSocket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
@@ -42,8 +47,10 @@ public class RBCRemoteTarget implements TestContainer {
 
     private RemoteBundleContextClient remoteBundleContextClient;
     private Long probeId;
+    private int invokerPort;
 
-    public RBCRemoteTarget(String name, Integer registry, RelativeTimeout timeout) {
+    public RBCRemoteTarget(String name, Integer registry, int invokerPort, RelativeTimeout timeout) {
+        this.invokerPort = invokerPort;
         remoteBundleContextClient = new RemoteBundleContextClientImpl(name, registry, timeout);
     }
 
@@ -103,8 +110,19 @@ public class RBCRemoteTarget implements TestContainer {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
-        // TODO Auto-generated method stub
+        try {
+            ServerSocket serverSocket = new ServerSocket(invokerPort);
+            TestListenerTask task = new TestListenerTask(serverSocket, listener);
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(task);
 
+            remoteBundleContextClient.runTestClass(description);
+            executor.shutdown();
+            serverSocket.close();
+        }
+        catch (IOException exc) {
+            throw new TestContainerException(exc);
+        }
     }
 
 }
