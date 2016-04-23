@@ -131,6 +131,8 @@ public class KarafTestContainer implements TestContainer {
             int port = freePort.getPort();
             LOGGER.debug("using RMI registry at port {}", port);
             rgstry = LocateRegistry.createRegistry(port);
+            FreePort invokerPortRange = new FreePort(21100, 21199);
+            int invokerPort = invokerPortRange.getPort();
 
             String host = InetAddress.getLocalHost().getHostName();
 
@@ -139,11 +141,12 @@ public class KarafTestContainer implements TestContainer {
                     systemProperty(RMI_HOST_PROPERTY).value(host),
                     systemProperty(RMI_PORT_PROPERTY).value(Integer.toString(port)),
                     systemProperty(RMI_NAME_PROPERTY).value(name),
+                    systemProperty("pax.exam.invoker.port").value(Integer.toString(invokerPort)),
                     invokerConfiguration,
                     systemProperty(EXAM_INJECT_PROPERTY).value("true"),
                     editConfigurationFileExtend("etc/system.properties", "jline.shutdownhook",
                         "true")));
-            target = new RBCRemoteTarget(name, port, subsystem.getTimeout());
+            target = new RBCRemoteTarget(name, port, invokerPort, subsystem.getTimeout());
 
             System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
@@ -614,8 +617,7 @@ public class KarafTestContainer implements TestContainer {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
-        // TODO Auto-generated method stub
-
+        target.runTest(description, listener);
     }
 
 }

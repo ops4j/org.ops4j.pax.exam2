@@ -34,9 +34,11 @@ import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.internal.NoSuchServiceException;
 import org.ops4j.pax.exam.rbc.internal.RemoteBundleContext;
+import org.ops4j.pax.exam.util.Exceptions;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +71,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     /**
      * Constructor.
-     * 
+     *
      * @param name
      *            of container
      * @param registry
@@ -96,30 +98,23 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
                 /**
                  * Delegates the call to remote bundle context.
                  */
+                @Override
                 public Object invoke(final Object proxy, final Method method, final Object[] params) {
                     try {
                         return getRemoteBundleContext().remoteCall(method.getDeclaringClass(),
                             method.getName(), method.getParameterTypes(), filter, timeout, params);
                     }
-                    catch (InvocationTargetException e) {
-                        throw new RuntimeException(e.getCause());
+                    catch (InvocationTargetException exc) {
+                        throw Exceptions.unchecked(exc.getCause());
                     }
-                    catch (RemoteException e) {
-                        throw new RuntimeException("Remote exception", e);
-                    }
-                    catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    catch (NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                    catch (NoSuchServiceException e) {
-                        throw new RuntimeException(e);
+                    catch (RemoteException | NoSuchMethodException | IllegalAccessException | NoSuchServiceException  exc) {
+                        throw Exceptions.unchecked(exc);
                     }
                 }
             });
     }
 
+    @Override
     public long install(String location, InputStream stream) {
         // turn this into a local url because we don't want pass the stream any further.
         try {
@@ -152,6 +147,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         return out.toByteArray();
     }
 
+    @Override
     public void cleanup() {
         try {
             while (!installed.isEmpty()) {
@@ -168,6 +164,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     }
 
+    @Override
     public void setBundleStartLevel(final long bundleId, final int startLevel) {
         try {
             getRemoteBundleContext().setBundleStartLevel(bundleId, startLevel);
@@ -180,6 +177,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
+    @Override
     public void start() {
         try {
             getRemoteBundleContext().startBundle(0);
@@ -192,6 +190,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
+    @Override
     public void stop() {
         try {
             getRemoteBundleContext().stopBundle(0);
@@ -206,6 +205,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
+    @Override
     public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         try {
             getRemoteBundleContext().waitForState(bundleId, state, timeout);
@@ -221,7 +221,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     /**
      * Looks up the {@link RemoteBundleContext} via RMI. The lookup will timeout in the specified
      * number of millis.
-     * 
+     *
      * @return remote bundle context
      */
     private synchronized RemoteBundleContext getRemoteBundleContext() {
@@ -261,6 +261,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     }
 
+    @Override
     public void call(TestAddress address) {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier()
             + ")";
@@ -282,6 +283,19 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
         catch (BundleException exc) {
             throw new RuntimeException(exc);
+        }
+    }
+
+    @Override
+    public void runTestClass(TestDescription description) {
+        try {
+            getRemoteBundleContext().remoteCall(ProbeInvoker.class, "runTestClass",
+                new Class<?>[] { String.class }, null, rmiLookupTimeout,
+                new Object[] { description.toString() });
+        }
+        catch (RemoteException | NoSuchMethodException | IllegalAccessException
+            | InvocationTargetException | NoSuchServiceException exc) {
+            throw Exceptions.unchecked(exc);
         }
     }
 }
