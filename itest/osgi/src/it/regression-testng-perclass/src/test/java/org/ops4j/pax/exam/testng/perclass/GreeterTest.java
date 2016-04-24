@@ -49,6 +49,7 @@ public class GreeterTest {
             mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-testng", Info.getPaxExamVersion()),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde/"),
 
+            systemProperty("pax.exam.invoker").value("testng"),
             systemProperty("osgi.console").value("6666"));
     }
 
