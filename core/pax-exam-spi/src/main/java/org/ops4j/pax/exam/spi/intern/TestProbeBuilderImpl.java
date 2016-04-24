@@ -24,7 +24,6 @@ import static org.ops4j.pax.tinybundles.core.TinyBundles.withClassicBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ import org.osgi.framework.Constants;
 
 /**
  * Default implementation allows you to dynamically create a probe from current classpath.
- * 
+ *
  * @author Toni Menzel
  * @since Dec 2, 2009
  */
@@ -70,6 +69,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         extraProperties = new Properties();
     }
 
+    @Override
     public TestAddress addTest(Class<?> clazz, String methodName, Object... args) {
         TestAddress address = new DefaultTestAddress(clazz.getName() + "." + methodName, args);
         probeCalls.put(address,
@@ -78,16 +78,9 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         return address;
     }
 
+    @Override
     public TestAddress addTest(Class<?> clazz, Object... args) {
         return addTest(clazz, DEFAULT_PROBE_METHOD_NAME, args);
-    }
-
-    public List<TestAddress> addTests(Class<?> clazz, Method... methods) {
-        List<TestAddress> list = new ArrayList<TestAddress>();
-        for (Method method : methods) {
-            list.add(addTest(clazz, method.getName()));
-        }
-        return list;
     }
 
     public TestProbeBuilder addAnchor(Class<?> clazz) {
@@ -95,6 +88,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         return this;
     }
 
+    @Override
     public TestProbeBuilder setHeader(String key, String value) {
         extraProperties.put(key, value);
         return this;
@@ -103,6 +97,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     // when your testclass contains clutter in non-test methods,
     // bnd generates too many impports.
     // This makes packages optional.
+    @Override
     public TestProbeBuilder ignorePackageOf(Class<?>... classes) {
         for (Class<?> c : classes) {
             ignorePackages.add(c.getPackage().getName());
@@ -111,11 +106,8 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         return this;
     }
 
+    @Override
     public TestProbeProvider build() {
-        if (anchors.size() == 0) {
-            throw new TestContainerException("No tests added to setup!");
-        }
-
         constructProbeTag(extraProperties);
         try {
             TinyBundle bundle = prepareProbeBundle(createExtraIgnores());
@@ -161,9 +153,9 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     /**
      * @param clazz
      *            to find the root classes folder for.
-     * 
+     *
      * @return A File instance being the exact folder on disk or null, if it hasn't been found.
-     * 
+     *
      * @throws java.io.IOException
      *             if a problem occurs (method crawls folders on disk..)
      */
@@ -200,6 +192,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         }
     }
 
+    @Override
     public Set<TestAddress> getTests() {
         return probeCalls.keySet();
     }

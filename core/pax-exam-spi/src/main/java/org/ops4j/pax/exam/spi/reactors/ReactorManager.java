@@ -394,29 +394,6 @@ public class ReactorManager {
         return systemType;
     }
 
-    /**
-     * Looks up a test method for a given address.
-     *
-     * @param address
-     *            test method address used by probe
-     * @return test method wrapper - the type is only known to the test driver.
-     */
-    public Object lookupTestMethod(TestAddress address) {
-        return testAddressToMethodMap.get(address);
-    }
-
-    /**
-     * Stores the test method wrapper for a given test address
-     *
-     * @param address
-     *            test method address used by probe
-     * @param testMethod
-     *            test method wrapper - the type is only known to the test driver
-     */
-    public void storeTestMethod(TestAddress address, Object testMethod) {
-        testAddressToMethodMap.put(address, testMethod);
-    }
-
     public void beforeSuite(StagedExamReactor stagedReactor) {
         stagedReactor.beforeSuite();
         suiteStarted = true;
