@@ -18,8 +18,6 @@
 package org.ops4j.pax.exam;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,8 +30,6 @@ public interface TestProbeBuilder {
 
     TestAddress addTest(Class<?> clazz, Object... args);
 
-    List<TestAddress> addTests(Class<?> clazz, Method... m);
-
     Set<TestAddress> getTests();
 
     TestProbeBuilder setHeader(String key, String value);
@@ -41,8 +37,8 @@ public interface TestProbeBuilder {
     TestProbeBuilder ignorePackageOf(Class<?>... classes);
 
     TestProbeProvider build();
-    
+
     File getTempDir();
-    
+
     void setTempDir(File tempDir);
 }

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -34,7 +33,6 @@ import org.junit.runners.model.TestClass;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExceptionHelper;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -118,7 +116,6 @@ public class ParameterizedDriverExtension extends RunnerExtension {
         TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
 
         Iterator<Object[]> it = null;
-        int index = 0;
         try {
             it = allParameters().iterator();
         }
@@ -129,13 +126,7 @@ public class ParameterizedDriverExtension extends RunnerExtension {
 
         while (it.hasNext()) {
             it.next();
-            // probe.setAnchor( testClass );
-            for (FrameworkMethod s : getTestClass().getAnnotatedMethods(Test.class)) {
-                // record the method -> adress matching
-                TestAddress address = probe.addTest(testClass, s.getMethod().getName(), index);
-                manager.storeTestMethod(address, s);
-            }
-            index++;
+            probe.addTest(testClass);
         }
         reactor.addProbe(probe);
     }

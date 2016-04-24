@@ -17,15 +17,11 @@
 package org.ops4j.pax.exam.spi.war;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
 import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
@@ -43,7 +39,6 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
     private File tempDir;
     private WarProbeOption option;
     private DefaultExamSystem system;
-    private final Map<TestAddress, TestInstantiationInstruction> probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
 
     public WarTestProbeBuilderImpl(File tempDir, DefaultExamSystem system) {
         this.tempDir = tempDir;
@@ -65,18 +60,12 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
         if (args.length > 0) {
             instruction = instruction + ";" + args[0];
         }
-        probeCalls.put(address, new TestInstantiationInstruction(instruction));
         return address;
     }
 
     @Override
     public TestAddress addTest(Class<?> clazz, Object... args) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<TestAddress> addTests(Class<?> clazz, Method... m) {
-        throw new UnsupportedOperationException();
+        return addTest(clazz, "foo", args);
     }
 
     @Override
@@ -106,7 +95,7 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
 
     @Override
     public Set<TestAddress> getTests() {
-        return probeCalls.keySet();
+        return Collections.emptySet();
     }
 
     @Override

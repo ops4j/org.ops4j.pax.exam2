@@ -19,23 +19,15 @@ package org.ops4j.pax.exam.testng.driver;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
-import org.ops4j.pax.exam.TestDirectory;
 import org.ops4j.pax.exam.TestEvent;
 import org.ops4j.pax.exam.TestEventType;
-import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
@@ -52,7 +44,6 @@ import org.testng.ITestClass;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
-import org.testng.internal.MethodInstance;
 
 /**
  * TestNG listener delegate running directly under the driver.
@@ -70,12 +61,6 @@ public class DriverListener implements CombinedListener {
      * previous test class, depending on the reactor strategy.
      */
     private StagedExamReactor stagedReactor;
-
-    /**
-     * Maps method names to test addresses. The method names are qualified by class and container
-     * names. Each method of the test class is cloned for each container.
-     */
-    private Map<String, TestAddress> methodToAddressMap = new LinkedHashMap<String, TestAddress>();
 
     /**
      * Reactor manager singleton.
@@ -209,10 +194,7 @@ public class DriverListener implements CombinedListener {
     private void addTestsToReactor(ExamReactor reactor, Object testClassInstance,
         List<ITestNGMethod> testMethods) throws IOException, ExamConfigurationException {
         TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
-        for (ITestNGMethod m : testMethods) {
-            TestAddress address = probe.addTest(m.getRealClass(), m.getMethodName());
-            manager.storeTestMethod(address, m);
-        }
+        probe.addTest(testClassInstance.getClass());
         reactor.addProbe(probe);
     }
 
@@ -276,34 +258,7 @@ public class DriverListener implements CombinedListener {
     @Override
     public List<IMethodInstance> intercept(List<IMethodInstance> testMethods,
         ITestContext context) {
-        if (!useProbeInvoker) {
-            return testMethods;
-        }
-
-        boolean mangleMethodNames = manager.getNumConfigurations() > 1;
-        TestDirectory testDirectory = TestDirectory.getInstance();
-        List<IMethodInstance> newInstances = new ArrayList<IMethodInstance>();
-        Set<TestAddress> targets = stagedReactor.getTargets();
-        for (TestAddress address : targets) {
-            ITestNGMethod frameworkMethod = (ITestNGMethod) manager
-                .lookupTestMethod(address.root());
-            if (frameworkMethod == null) {
-                continue;
-            }
-            Method javaMethod = frameworkMethod.getConstructorOrMethod().getMethod();
-
-            if (mangleMethodNames) {
-                frameworkMethod = new ReactorTestNGMethod(frameworkMethod, javaMethod, address);
-            }
-
-            MethodInstance newInstance = new MethodInstance(frameworkMethod);
-            newInstances.add(newInstance);
-            methodToAddressMap.put(frameworkMethod.getMethodName(), address);
-            testDirectory.add(address, new TestInstantiationInstruction(
-                frameworkMethod.getRealClass().getName() + ";" + javaMethod.getName()));
-
-        }
-        return newInstances;
+        return testMethods;
     }
 
     @Override

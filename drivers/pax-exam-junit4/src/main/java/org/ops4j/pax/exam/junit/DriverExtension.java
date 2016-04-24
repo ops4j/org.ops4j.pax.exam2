@@ -25,7 +25,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestFailure;
 import org.ops4j.pax.exam.TestListener;
@@ -108,13 +107,7 @@ public class DriverExtension extends RunnerExtension {
     private void addTestsToReactor(ExamReactor reactor, Object testClassInstance)
         throws IOException, ExamConfigurationException {
         TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
-
-        // probe.setAnchor( testClass );
-        for (FrameworkMethod s : base.getChildren()) {
-            // record the method -> adress matching
-            TestAddress address = probe.addTest(testClass, s.getMethod().getName());
-            manager.storeTestMethod(address, s);
-        }
+        probe.addTest(testClass);
         reactor.addProbe(probe);
     }
 
