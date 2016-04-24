@@ -47,7 +47,6 @@ import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -102,22 +101,6 @@ public class ForkedTestContainer implements TestContainer {
         this.frameworkFactory = new ForkedFrameworkFactory(frameworkFactory);
         this.platform = new PlatformImpl();
         this.name = "Forked:" + frameworkFactory.getClass().getSimpleName();
-    }
-
-    @Override
-    public void call(TestAddress address) {
-        String filterExpression = "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker)(Probe-Signature="
-            + address.root().identifier() + "))";
-        try {
-            RemoteServiceReference[] references = remoteFramework.getServiceReferences(
-                filterExpression, system.getTimeout().getValue(), TimeUnit.MILLISECONDS);
-            remoteFramework.invokeMethodOnService(references[0], "call",
-                (Object) address.arguments());
-        }
-        // CHECKSTYLE:SKIP
-        catch (Exception exc) {
-            throw new TestContainerException(exc);
-        }
     }
 
     @Override

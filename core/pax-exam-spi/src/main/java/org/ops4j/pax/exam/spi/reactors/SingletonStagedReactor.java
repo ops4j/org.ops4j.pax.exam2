@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A singleton reactor which starts the container and installs the probes just once. The teardown
  * logic is postponed to a JVM shutdown hook.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0
  */
@@ -88,7 +88,7 @@ public class SingletonStagedReactor implements StagedExamReactor {
      *            to be used
      * @param mProbes
      *            to be installed on all probes
-     * @return staged reactor           
+     * @return staged reactor
      */
     public static synchronized StagedExamReactor getInstance(List<TestContainer> containers,
         List<TestProbeBuilder> mProbes) {
@@ -105,17 +105,7 @@ public class SingletonStagedReactor implements StagedExamReactor {
         return instance;
     }
 
-    public void invoke(TestAddress address) throws Exception {
-        assert (address != null) : "TestAddress must not be null.";
-
-        TestContainer testContainer = testToContainerMap.get(address);
-        if (testContainer == null) {
-            throw new IllegalArgumentException("TestAddress " + address
-                + " not from this reactor? Got it from getTargets() really?");
-        }
-        testContainer.call(address);
-    }
-
+    @Override
     public Set<TestAddress> getTargets() {
         buildTestMap(testContainers, probes);
         return testToContainerMap.keySet();
@@ -142,6 +132,7 @@ public class SingletonStagedReactor implements StagedExamReactor {
         }
     }
 
+    @Override
     public void afterSuite() {
         for (TestContainer container : testContainers) {
             container.stop();

@@ -40,12 +40,10 @@ import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.ProbeInvokerFactory;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestDirectory;
-import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
@@ -80,15 +78,6 @@ public class TomcatTestContainer implements TestContainer {
     public TomcatTestContainer(ExamSystem system) {
         this.system = system;
         this.testDirectory = TestDirectory.getInstance();
-    }
-
-    @Override
-    public synchronized void call(TestAddress address) {
-        TestInstantiationInstruction instruction = testDirectory.lookup(address);
-        ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
-            .loadUniqueServiceProvider(ProbeInvokerFactory.class);
-        ProbeInvoker invoker = probeInvokerFactory.createProbeInvoker(null, instruction.toString());
-        invoker.call(address.arguments());
     }
 
     @Override

@@ -48,7 +48,6 @@ import org.ops4j.pax.exam.FrameworkEventUtils;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeInvoker;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -89,7 +88,6 @@ import org.slf4j.LoggerFactory;
 public class NativeTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
-    private static final String PROBE_SIGNATURE_KEY = "Probe-Signature";
     private final Stack<Long> installed = new Stack<Long>();
     private Long probeId;
 
@@ -101,17 +99,6 @@ public class NativeTestContainer implements TestContainer {
         throws IOException {
         this.frameworkFactory = frameworkFactory;
         this.system = system;
-    }
-
-    @Override
-    public synchronized void call(TestAddress address) {
-        Map<String, String> props = new HashMap<String, String>();
-        props.put(PROBE_SIGNATURE_KEY, address.root().identifier());
-        BundleContext bundleContext = framework.getBundleContext();
-        ProbeInvoker probeInvokerService;
-        probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class,
-            determineExamServiceTimeout(), props);
-        probeInvokerService.call(address.arguments());
     }
 
     @Override

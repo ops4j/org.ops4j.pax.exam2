@@ -30,7 +30,6 @@ import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamSystem;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -60,10 +59,6 @@ public class OpenWebBeansTestContainer implements TestContainer {
 
     public OpenWebBeansTestContainer(ExamSystem system) {
         this.system = system;
-    }
-
-    @Override
-    public void call(TestAddress address) {
     }
 
     @Override
