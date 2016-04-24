@@ -70,17 +70,12 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     }
 
     @Override
-    public TestAddress addTest(Class<?> clazz, String methodName, Object... args) {
-        TestAddress address = new DefaultTestAddress(clazz.getName() + "." + methodName, args);
+    public TestAddress addTest(Class<?> clazz) {
+        TestAddress address = new DefaultTestAddress(clazz.getName() + "." + DEFAULT_PROBE_METHOD_NAME);
         probeCalls.put(address,
-            new TestInstantiationInstruction(clazz.getName() + ";" + methodName));
+            new TestInstantiationInstruction(clazz.getName() + ";" + DEFAULT_PROBE_METHOD_NAME));
         addAnchor(clazz);
         return address;
-    }
-
-    @Override
-    public TestAddress addTest(Class<?> clazz, Object... args) {
-        return addTest(clazz, DEFAULT_PROBE_METHOD_NAME, args);
     }
 
     public TestProbeBuilder addAnchor(Class<?> clazz) {
