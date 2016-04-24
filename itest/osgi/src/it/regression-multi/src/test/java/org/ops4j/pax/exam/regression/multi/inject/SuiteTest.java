@@ -47,7 +47,7 @@ public class SuiteTest implements Notifier, Remote {
 
     @Override
     public void send(String msg) throws RemoteException {
-        System.out.println("received: " + msg);
+        LOG.debug("received: {}", msg);
         messages.add(msg);
     }
 

@@ -111,8 +111,8 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         constructProbeTag(extraProperties);
         try {
             TinyBundle bundle = prepareProbeBundle(createExtraIgnores());
-            return new DefaultTestProbeProvider(getTests(), store, store.store(bundle
-                .build(withClassicBuilder())));
+            return new DefaultTestProbeProvider(store,
+                store.store(bundle.build(withClassicBuilder())));
 
         }
         catch (IOException e) {
@@ -190,11 +190,6 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         else {
             return new CollectFromItems(anchors);
         }
-    }
-
-    @Override
-    public Set<TestAddress> getTests() {
-        return probeCalls.keySet();
     }
 
     private Properties createExtraIgnores() {

@@ -17,12 +17,10 @@ package org.ops4j.pax.exam.spi.intern;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
@@ -32,13 +30,11 @@ import org.ops4j.store.Store;
  */
 public class DefaultTestProbeProvider implements TestProbeProvider {
 
-    private Set<TestAddress> tests;
     private Handle probe;
     private Store<InputStream> store;
     private String formattedInfo = "";
 
-    public DefaultTestProbeProvider(Set<TestAddress> tests, Store<InputStream> store, Handle probe) {
-        this.tests = tests;
+    public DefaultTestProbeProvider(Store<InputStream> store, Handle probe) {
         this.store = store;
         this.probe = probe;
 
@@ -46,14 +42,12 @@ public class DefaultTestProbeProvider implements TestProbeProvider {
         formattedInfo = constuctInfo();
     }
 
-    public Set<TestAddress> getTests() {
-        return tests;
-    }
-
+    @Override
     public InputStream getStream() throws IOException {
         return store.load(probe);
     }
 
+    @Override
     public String toString() {
         return formattedInfo;
     }
@@ -69,12 +63,6 @@ public class DefaultTestProbeProvider implements TestProbeProvider {
             in = new JarInputStream(store.load(probe));
             Manifest man = in.getManifest();
             Attributes mainAttributes = man.getMainAttributes();
-
-            info += "[Tests: " + "\n";
-            for (TestAddress t : tests) {
-                info += "    SIG=" + t + "\n";
-            }
-            info += "]" + "\n";
 
             info += "[Headers: " + "\n";
             for (Object key : mainAttributes.keySet()) {

@@ -22,11 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ops4j.pax.exam.Constants;
-import org.ops4j.pax.swissbox.core.BundleUtils;
 import org.ops4j.pax.swissbox.extender.BundleObserver;
 import org.ops4j.pax.swissbox.extender.ManifestEntry;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +54,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
     /**
      * Registers specified regression case as a service.
      */
+    @Override
     public void addingEntries(final Bundle bundle, final List<ManifestEntry> manifestEntries) {
         String testExec = null;
         for (ManifestEntry manifestEntry : manifestEntries) {
@@ -68,8 +67,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
         if (testExec != null) {
             Parser parser = new Parser(bundle.getBundleContext(), testExec, manifestEntries);
             for (Probe p : parser.getProbes()) {
-                final BundleContext bundleContext = BundleUtils.getBundleContext(bundle);
-                final ServiceRegistration<?> serviceRegistration = p.register(bundleContext);
+                final ServiceRegistration<?> serviceRegistration = p.register(bundle.getBundleContext());
                 registrations.put(bundle, new Registration(p, serviceRegistration));
             }
 
@@ -79,6 +77,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
     /**
      * Unregisters prior registered regression for the service.
      */
+    @Override
     public void removingEntries(final Bundle bundle, final List<ManifestEntry> manifestEntries) {
         final Registration registration = registrations.remove(bundle);
         if (registration != null) {

@@ -17,9 +17,6 @@
  */
 package org.ops4j.pax.exam.spi;
 
-import java.util.Set;
-
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 
@@ -28,8 +25,6 @@ import org.ops4j.pax.exam.TestListener;
  * from {@link org.ops4j.pax.exam.spi.ExamReactor}
  */
 public interface StagedExamReactor {
-
-    Set<TestAddress> getTargets();
 
     void runTest(TestDescription description, TestListener listener) throws Exception;
 

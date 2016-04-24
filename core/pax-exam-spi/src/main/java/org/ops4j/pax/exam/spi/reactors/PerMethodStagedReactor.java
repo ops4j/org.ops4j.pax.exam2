@@ -15,18 +15,13 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 
 /**
  * This will use new containers for any regression (hence confined)
@@ -35,8 +30,6 @@ public class PerMethodStagedReactor implements StagedExamReactor {
 
     private final List<TestProbeBuilder> probes;
     private final List<TestContainer> testContainers;
-
-    private final Map<TestAddress, TestContainer> map;
 
     /**
      * @param containers
@@ -47,35 +40,10 @@ public class PerMethodStagedReactor implements StagedExamReactor {
     public PerMethodStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> probes) {
         this.testContainers = containers;
         this.probes = probes;
-        map = new LinkedHashMap<TestAddress, TestContainer>();
-        int index = 0;
-        for (TestContainer container : containers) {
-            String caption = buildCaption(containers, container, index);
-            for (TestProbeBuilder builder : probes) {
-                for (TestAddress a : builder.getTests()) {
-                    map.put(new DefaultTestAddress(a, caption), container);
-                }
-            }
-            index++;
-        }
-    }
-
-    private String buildCaption(List<TestContainer> containers, TestContainer container, int index) {
-        if (containers.size() == 1) {
-            return container.toString();
-        }
-        else {
-            return String.format("%s[%d]", container.toString(), index);
-        }
     }
 
     public void setUp() {
         // empty
-    }
-
-    @Override
-    public Set<TestAddress> getTargets() {
-        return map.keySet();
     }
 
     public void tearDown() {

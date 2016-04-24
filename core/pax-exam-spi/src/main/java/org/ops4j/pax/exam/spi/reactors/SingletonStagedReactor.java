@@ -18,19 +18,14 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,38 +44,10 @@ public class SingletonStagedReactor implements StagedExamReactor {
 
     private List<TestContainer> testContainers;
     private List<TestProbeBuilder> probes;
-    private Map<TestAddress, TestContainer> testToContainerMap;
 
     private SingletonStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
-        testToContainerMap = new LinkedHashMap<TestAddress, TestContainer>();
         testContainers = containers;
         probes = mProbes;
-    }
-
-    private void buildTestMap(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
-        int index = 0;
-        for (TestContainer container : containers) {
-            String caption = buildCaption(containers, container, index);
-            for (TestProbeBuilder builder : mProbes) {
-                // each probe has addresses.
-                for (TestAddress a : builder.getTests()) {
-                    // we need to create a new, because "a" exists for each test container
-                    // this new address makes the test (reachable via getTargets() ) reachable
-                    // directly.
-                    testToContainerMap.put(new DefaultTestAddress(a, caption), container);
-                }
-            }
-            index++;
-        }
-    }
-
-    private String buildCaption(List<TestContainer> containers, TestContainer container, int index) {
-        if (containers.size() == 1) {
-            return container.toString();
-        }
-        else {
-            return String.format("%s[%d]", container.toString(), index);
-        }
     }
 
     /**
@@ -103,12 +70,6 @@ public class SingletonStagedReactor implements StagedExamReactor {
             }
         }
         return instance;
-    }
-
-    @Override
-    public Set<TestAddress> getTargets() {
-        buildTestMap(testContainers, probes);
-        return testToContainerMap.keySet();
     }
 
     public void tearDown() {

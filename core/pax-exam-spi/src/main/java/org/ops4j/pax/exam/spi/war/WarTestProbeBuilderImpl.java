@@ -18,8 +18,6 @@ package org.ops4j.pax.exam.spi.war;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Collections;
-import java.util.Set;
 
 import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -90,12 +88,7 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
         }
         WarBuilder warBuilder = new WarBuilder(tempDir, option);
         URI warUri = warBuilder.buildWar();
-        return new WarTestProbeProvider(warUri, getTests());
-    }
-
-    @Override
-    public Set<TestAddress> getTests() {
-        return Collections.emptySet();
+        return new WarTestProbeProvider(warUri);
     }
 
     @Override
