@@ -17,10 +17,7 @@
  */
 package org.ops4j.pax.exam.testng.servlet.invoker;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.Future;
@@ -49,8 +46,6 @@ import org.ops4j.pax.exam.spi.listener.TestListenerTask;
  */
 public class ServletBridgeProbeInvoker implements ProbeInvoker {
 
-    private String clazz;
-    private String method;
     private WebTarget testRunner;
 
     public ServletBridgeProbeInvoker(String encodedInstruction) {
@@ -60,84 +55,11 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
             if (parts.length != 3) {
                 throw new TestContainerException("invalid test instruction: " + encodedInstruction);
             }
-            clazz = parts[0];
-            method = parts[1];
             URI contextRoot = new URI(parts[2]);
             this.testRunner = getTestRunner(contextRoot);
         }
         catch (URISyntaxException exc) {
             throw new TestContainerException(exc);
-        }
-    }
-
-    @Override
-    public void call(Object... args) {
-        Class<?> testClass;
-        try {
-            testClass = getClass().getClassLoader().loadClass(clazz);
-        }
-        catch (ClassNotFoundException e) {
-            throw new TestContainerException(e);
-        }
-
-        if (!(findAndInvoke(testClass))) {
-            throw new TestContainerException(" Test " + method + " not found in test class "
-                + testClass.getName());
-        }
-    }
-
-    private boolean findAndInvoke(Class<?> testClass) {
-        try {
-            // find matching method
-            for (Method m : testClass.getMethods()) {
-                if (m.getName().equals(method)) {
-                    // we assume its correct:
-                    invokeViaJUnit(testClass, m);
-                    return true;
-                }
-            }
-        }
-        catch (NoClassDefFoundError e) {
-            throw new TestContainerException(e);
-        }
-        catch (IOException e) {
-            throw new TestContainerException(e);
-        }
-        catch (ClassNotFoundException e) {
-            throw new TestContainerException(e);
-        }
-        return false;
-    }
-
-    /**
-     * Invokes a given method of a given test class via {@link JUnitCore} and injects dependencies
-     * into the instantiated test class.
-     * <p>
-     * This requires building a {@code Request} which is aware of an {@code Injector} and a
-     * {@code BundleContext}.
-     *
-     * @param testClass
-     * @param testMethod
-     * @throws TestContainerException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void invokeViaJUnit(final Class<?> testClass, final Method testMethod)
-        throws IOException, ClassNotFoundException {
-        InputStream is = testRunner.queryParam("class", testClass.getName())
-            .queryParam("method", testMethod.getName()).request().get(InputStream.class);
-
-        ObjectInputStream ois = new ObjectInputStream(is);
-        Object object = ois.readObject();
-        if (object instanceof Throwable) {
-            Throwable t = (Throwable) object;
-            throw new TestContainerException(t);
-        }
-        else if (object instanceof String) {
-            // ok
-        }
-        else {
-            throw new IllegalStateException();
         }
     }
 

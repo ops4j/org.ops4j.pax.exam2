@@ -79,14 +79,6 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         }
     }
 
-    @Override
-    public void call(Object... args) {
-        if (!(findAndInvoke(args))) {
-            throw new TestContainerException(
-                " Test " + method + " not found in test class " + testClass.getName());
-        }
-    }
-
     private boolean findAndInvoke(Object... args) {
         Integer index = null;
         try {

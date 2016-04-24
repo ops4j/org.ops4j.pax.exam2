@@ -33,7 +33,6 @@ import java.util.Stack;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.internal.NoSuchServiceException;
@@ -259,14 +258,6 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
         return remoteBundleContext;
 
-    }
-
-    @Override
-    public void call(TestAddress address) {
-        String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier()
-            + ")";
-        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression, rmiLookupTimeout);
-        service.call(address.arguments());
     }
 
     public String getName() {
