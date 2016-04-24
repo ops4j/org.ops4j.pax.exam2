@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * High Level Access to the Probe (bundle) as well as its {@link TestAddress}es you can invoke.
+ * High Level Access to the Probe (bundle).
  *
  * @author Toni Menzel
  * @since Jan 29, 2010

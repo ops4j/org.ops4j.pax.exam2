@@ -19,12 +19,10 @@ package org.ops4j.pax.exam.spi.war;
 import java.io.File;
 import java.net.URI;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
-import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 
 /**
  * Builds a WAR probe.
@@ -49,8 +47,7 @@ public class WarTestProbeBuilderImpl implements TestProbeBuilder {
     }
 
     @Override
-    public TestAddress addTest(Class<?> clazz) {
-        return new DefaultTestAddress(clazz.getSimpleName() + "." + "_dummy");
+    public void addTest(Class<?> clazz) {
     }
 
     @Override

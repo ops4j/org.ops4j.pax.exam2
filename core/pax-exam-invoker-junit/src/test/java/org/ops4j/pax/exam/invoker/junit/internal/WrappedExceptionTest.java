@@ -61,8 +61,7 @@ public class WrappedExceptionTest {
         Bundle bundle = mock(Bundle.class);
         when(bundleContext.getBundle()).thenReturn(bundle);
         doReturn(ExceptionSource.class).when(bundle).loadClass(ExceptionSource.class.getName());
-        JUnitProbeInvoker invoker = new JUnitProbeInvoker(ExceptionSource.class.getName() + ";"
-            + method, bundleContext, injector);
+        JUnitProbeInvoker invoker = new JUnitProbeInvoker(bundleContext, injector);
         TestDescription description = new TestDescription(ExceptionSource.class.getName(), method);
         invoker.runTest(description, new MyTestListener());
         assertThat(savedFailure, is(notNullValue()));

@@ -29,15 +29,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ContentCollector;
@@ -53,9 +50,6 @@ import org.osgi.framework.Constants;
  */
 public class TestProbeBuilderImpl implements TestProbeBuilder {
 
-    private static final String DEFAULT_PROBE_METHOD_NAME = "probe";
-
-    private final Map<TestAddress, TestInstantiationInstruction> probeCalls = new LinkedHashMap<TestAddress, TestInstantiationInstruction>();
     private final List<Class<?>> anchors;
     private final Properties extraProperties;
     private final Set<String> ignorePackages = new HashSet<String>();
@@ -70,12 +64,8 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     }
 
     @Override
-    public TestAddress addTest(Class<?> clazz) {
-        TestAddress address = new DefaultTestAddress(clazz.getName() + "." + DEFAULT_PROBE_METHOD_NAME);
-        probeCalls.put(address,
-            new TestInstantiationInstruction(clazz.getName() + ";" + DEFAULT_PROBE_METHOD_NAME));
+    public void addTest(Class<?> clazz) {
         addAnchor(clazz);
-        return address;
     }
 
     public TestProbeBuilder addAnchor(Class<?> clazz) {
@@ -103,7 +93,6 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
 
     @Override
     public TestProbeProvider build() {
-        constructProbeTag(extraProperties);
         try {
             TinyBundle bundle = prepareProbeBundle(createExtraIgnores());
             return new DefaultTestProbeProvider(store,
@@ -118,6 +107,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     private TinyBundle prepareProbeBundle(Properties p) throws IOException {
         TinyBundle bundle = bundle(store).set(Constants.DYNAMICIMPORT_PACKAGE, "*");
 
+        bundle.set(PROBE_EXECUTABLE, "");
         bundle.set(Constants.BUNDLE_SYMBOLICNAME, "");
         bundle.set(Constants.BUNDLE_MANIFESTVERSION, "2");
         for (Object key : extraProperties.keySet()) {
@@ -198,18 +188,6 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         }
         properties.put("Ignore-Package", sb.toString());
         return properties;
-    }
-
-    private void constructProbeTag(Properties p) {
-        // construct out of added Tests
-        StringBuilder sbKeyChain = new StringBuilder();
-
-        for (TestAddress address : probeCalls.keySet()) {
-            sbKeyChain.append(address.identifier());
-            sbKeyChain.append(",");
-            p.put(address.identifier(), probeCalls.get(address).toString());
-        }
-        p.put(PROBE_EXECUTABLE, sbKeyChain.toString());
     }
 
     @Override
