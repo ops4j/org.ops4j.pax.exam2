@@ -19,30 +19,21 @@ package org.ops4j.pax.exam.spi.war;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Set;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestProbeProvider;
 
 /**
  * Provides a WAR probe as an input stream.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 public class WarTestProbeProvider implements TestProbeProvider {
 
     private URI warUri;
-    private Set<TestAddress> testAddresses;
 
-    public WarTestProbeProvider(URI uri, Set<TestAddress> testAddresses) {
+    public WarTestProbeProvider(URI uri) {
         this.warUri = uri;
-        this.testAddresses = testAddresses;
-    }
-
-    @Override
-    public Set<TestAddress> getTests() {
-        return testAddresses;
     }
 
     @Override

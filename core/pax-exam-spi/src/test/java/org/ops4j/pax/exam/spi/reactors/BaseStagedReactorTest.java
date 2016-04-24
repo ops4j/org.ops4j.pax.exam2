@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -43,6 +44,6 @@ public abstract class BaseStagedReactorTest {
         List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
 
         StagedExamReactor reactor = getReactor(containers, providers);
-        assertThat(reactor.getTargets().size(), is(0));
+        assertThat(reactor, is(notNullValue()));
     }
 }

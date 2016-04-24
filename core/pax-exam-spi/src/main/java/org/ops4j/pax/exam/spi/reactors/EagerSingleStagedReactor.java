@@ -45,7 +45,6 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
 
     private final List<TestContainer> targetContainer;
     private final List<TestProbeBuilder> probes;
-    private final Map<TestAddress, TestContainer> map;
 
     /**
      * @param containers
@@ -54,33 +53,8 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
      *            to be installed on all probes
      */
     public EagerSingleStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
-        map = new LinkedHashMap<TestAddress, TestContainer>();
         targetContainer = containers;
         probes = mProbes;
-
-        int index = 0;
-        for (TestContainer container : containers) {
-            String caption = buildCaption(containers, container, index);
-            for (TestProbeBuilder builder : mProbes) {
-                // each probe has addresses.
-                for (TestAddress a : builder.getTests()) {
-                    // we need to create a new, because "a" exists for each test container
-                    // this new address makes the test (reachable via getTargets() ) reachable
-                    // directly.
-                    map.put(new DefaultTestAddress(a, caption), container);
-                }
-            }
-            index++;
-        }
-    }
-
-    private String buildCaption(List<TestContainer> containers, TestContainer container, int index) {
-        if (containers.size() == 1) {
-            return container.toString();
-        }
-        else {
-            return String.format("%s[%d]", container.toString(), index);
-        }
     }
 
     public void setUp() {
@@ -100,10 +74,6 @@ public class EagerSingleStagedReactor implements StagedExamReactor {
         }
     }
 
-    @Override
-    public Set<TestAddress> getTargets() {
-        return map.keySet();
-    }
 
     public void tearDown() {
         for (TestContainer container : targetContainer) {

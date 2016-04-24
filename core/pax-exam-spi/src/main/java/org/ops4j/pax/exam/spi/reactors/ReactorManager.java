@@ -34,7 +34,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,8 +44,6 @@ import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
-import org.ops4j.pax.exam.ProbeInvoker;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -108,15 +105,6 @@ public class ReactorManager {
      * configuration.
      */
     private TestProbeBuilder defaultProbeBuilder;
-
-    /**
-     * Maps test addresses to driver-dependent test method wrappers. A test address is a unique
-     * identifier for a test method in a given container which is used by a {@link ProbeInvoker} for
-     * indirectly invoking the test method in the container.
-     * <p>
-     * This map is not used when tests are executed directly, i.e. without invoker.
-     */
-    private Map<TestAddress, Object> testAddressToMethodMap = new LinkedHashMap<TestAddress, Object>();
 
     /**
      * Set of test classes in suite.
@@ -422,7 +410,6 @@ public class ReactorManager {
             stagedReactor.afterSuite();
             suiteStarted = false;
             testClasses.clear();
-            testAddressToMethodMap.clear();
         }
     }
 

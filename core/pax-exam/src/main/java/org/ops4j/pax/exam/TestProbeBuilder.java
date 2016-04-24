@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam;
 
 import java.io.File;
-import java.util.Set;
 
 /**
  * @author Toni Menzel
@@ -29,8 +28,6 @@ public interface TestProbeBuilder {
     TestAddress addTest(Class<?> clazz, String methodName, Object... args);
 
     TestAddress addTest(Class<?> clazz, Object... args);
-
-    Set<TestAddress> getTests();
 
     TestProbeBuilder setHeader(String key, String value);
 
