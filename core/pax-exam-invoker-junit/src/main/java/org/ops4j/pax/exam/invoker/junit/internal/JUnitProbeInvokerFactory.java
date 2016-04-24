@@ -25,14 +25,15 @@ import org.osgi.framework.BundleContext;
 
 /**
  * A {@link ProbeInvokerFactory} which creates {@link JUnitProbeInvoker}s.
- * 
+ *
  * @author Harald Wellmann
  */
 public class JUnitProbeInvokerFactory implements ProbeInvokerFactory {
 
+    @Override
     public ProbeInvoker createProbeInvoker(Object context, String expr) {
         BundleContext ctx = (BundleContext) context;
         Injector injector = ServiceLookup.getService(ctx, Injector.class);
-        return new JUnitProbeInvoker(expr, ctx, injector);
+        return new JUnitProbeInvoker(ctx, injector);
     }
 }

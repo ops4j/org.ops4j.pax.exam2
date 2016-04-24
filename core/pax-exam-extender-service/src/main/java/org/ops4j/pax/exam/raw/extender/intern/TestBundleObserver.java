@@ -18,13 +18,19 @@
 package org.ops4j.pax.exam.raw.extender.intern;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.ops4j.pax.exam.Constants;
+import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.ProbeInvokerFactory;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.extender.BundleObserver;
 import org.ops4j.pax.swissbox.extender.ManifestEntry;
+import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,63 +48,58 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
     /**
      * Holder for regression runner registrations per bundle.
      */
-    private final Map<Bundle, Registration> registrations;
+    private final Map<Bundle, ServiceRegistration<?>> registrations;
 
     /**
      * Constructor.
      */
     TestBundleObserver() {
-        registrations = new HashMap<Bundle, Registration>();
+        registrations = new HashMap<Bundle, ServiceRegistration<?>>();
     }
 
     /**
      * Registers specified regression case as a service.
      */
     @Override
-    public void addingEntries(final Bundle bundle, final List<ManifestEntry> manifestEntries) {
-        String testExec = null;
+    public void addingEntries(Bundle bundle, List<ManifestEntry> manifestEntries) {
         for (ManifestEntry manifestEntry : manifestEntries) {
 
             if (Constants.PROBE_EXECUTABLE.equals(manifestEntry.getKey())) {
-                testExec = manifestEntry.getValue();
+                BundleContext bc = bundle.getBundleContext();
+                ServiceRegistration<ProbeInvoker> registration = bc.registerService(ProbeInvoker.class, createInvoker(bc), new Hashtable<String, Object>());
+                registrations.put(bundle, registration);
                 break;
             }
         }
-        if (testExec != null) {
-            Parser parser = new Parser(bundle.getBundleContext(), testExec, manifestEntries);
-            for (Probe p : parser.getProbes()) {
-                final ServiceRegistration<?> serviceRegistration = p.register(bundle.getBundleContext());
-                registrations.put(bundle, new Registration(p, serviceRegistration));
-            }
+    }
 
+    private ProbeInvoker createInvoker(BundleContext ctx) {
+        String invokerType = System.getProperty("pax.exam.invoker");
+        if (invokerType == null) {
+            throw new TestContainerException("System property pax.exam.invoker must be defined");
+        }
+        else {
+            Map<String, String> props = new HashMap<String, String>();
+            props.put("driver", invokerType);
+            ProbeInvokerFactory factory = ServiceLookup.getService(ctx, ProbeInvokerFactory.class,
+                props);
+            return factory.createProbeInvoker(ctx, null);
         }
     }
+
 
     /**
      * Unregisters prior registered regression for the service.
      */
     @Override
     public void removingEntries(final Bundle bundle, final List<ManifestEntry> manifestEntries) {
-        final Registration registration = registrations.remove(bundle);
+        ServiceRegistration<?> registration = registrations.remove(bundle);
         if (registration != null) {
             // Do not unregister as below, because the services are automatically unregistered as
             // soon as the bundle
             // for which the services are registered gets stopped
             // registration.serviceRegistration.unregister();
-            LOG.debug("Unregistered testcase [" + registration.probe + "." + "]");
+            LOG.debug("Unregistered ProbeInvoker for bundle {}", bundle);
         }
     }
-
-    /**
-     * Registration holder.
-     */
-    private static class Registration {
-
-        final Probe probe;
-
-        public Registration(Probe probe, final ServiceRegistration<?> serviceRegistration) {
-            this.probe = probe;
-        }
-    }
-
 }

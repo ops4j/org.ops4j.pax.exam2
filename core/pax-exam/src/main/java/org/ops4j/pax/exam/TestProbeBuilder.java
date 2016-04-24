@@ -25,7 +25,7 @@ import java.io.File;
  */
 public interface TestProbeBuilder {
 
-    TestAddress addTest(Class<?> clazz);
+    void addTest(Class<?> clazz);
 
     TestProbeBuilder setHeader(String key, String value);
 

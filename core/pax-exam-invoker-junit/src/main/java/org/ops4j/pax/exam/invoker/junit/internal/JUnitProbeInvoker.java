@@ -19,27 +19,21 @@ package org.ops4j.pax.exam.invoker.junit.internal;
 
 import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.List;
 
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.notification.Failure;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
-import org.ops4j.pax.exam.WrappedTestContainerException;
 import org.ops4j.pax.exam.util.Exceptions;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
@@ -59,13 +53,11 @@ import org.osgi.framework.BundleContext;
 public class JUnitProbeInvoker implements ProbeInvoker {
 
     private BundleContext ctx;
-    private String method;
     private Injector injector;
 
     private Class<?> testClass;
 
-    public JUnitProbeInvoker(String encodedInstruction, BundleContext bundleContext,
-        Injector injector) {
+    public JUnitProbeInvoker(BundleContext bundleContext, Injector injector) {
         this.ctx = bundleContext;
         this.injector = injector;
     }
@@ -79,73 +71,6 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         }
     }
 
-    private boolean findAndInvoke(Object... args) {
-        Integer index = null;
-        try {
-            /*
-             * If args are present, we expect exactly one integer argument, defining the index of
-             * the parameter set for a parameterized test.
-             */
-            if (args.length > 0) {
-                if (!(args[0] instanceof Integer)) {
-                    throw new TestContainerException("Integer argument expected");
-                }
-                index = (Integer) args[0];
-            }
-
-            // find matching method
-            for (Method m : testClass.getMethods()) {
-                if (m.getName().equals(method)) {
-                    // we assume its correct:
-                    invokeViaJUnit(m, index);
-                    return true;
-                }
-            }
-        }
-        catch (NoClassDefFoundError e) {
-            throw new TestContainerException(e);
-        }
-        return false;
-    }
-
-    /**
-     * Invokes a given method of a given test class via {@link JUnitCore} and injects dependencies
-     * into the instantiated test class.
-     * <p>
-     * This requires building a {@code Request} which is aware of an {@code Injector} and a
-     * {@code BundleContext}.
-     *
-     * @param testClass
-     * @param testMethod
-     * @throws TestContainerException
-     */
-    private void invokeViaJUnit(final Method testMethod, Integer index) {
-        try {
-            ParentRunner<?> runner = createRunner(index);
-            Description methodDescription = Description.createTestDescription(testClass, method);
-            runner.filter(Filter.matchMethodDescription(methodDescription));
-            JUnitCore junit = new JUnitCore();
-            Result result = junit.run(runner);
-            List<Failure> failures = result.getFailures();
-            if (!failures.isEmpty()) {
-                throw createTestContainerException(failures.toString(),
-                    failures.get(0).getException());
-            }
-        }
-        catch (InitializationError | NoTestsRemainException exc) {
-            throw Exceptions.unchecked(exc);
-        }
-    }
-
-    private ParentRunner<?> createRunner(Integer index) throws InitializationError {
-        if (index == null) {
-            return new ContainerTestRunner(testClass, injector);
-        }
-        else {
-            return new ParameterizedContainerTestRunner(testClass, injector, index);
-        }
-    }
-
     private ParentRunner<?> createRunner(TestDescription description) throws InitializationError {
         testClass = loadClass(description.getClassName());
         Integer index = description.getIndex();
@@ -155,36 +80,6 @@ public class JUnitProbeInvoker implements ProbeInvoker {
         else {
             ParameterizedSuite runner = new ParameterizedSuite(testClass, injector);
             return runner;
-        }
-    }
-
-    /**
-     * Creates exception for test failure and makes sure it is serializable.
-     *
-     * @param message
-     * @param ex
-     * @return serializable exception
-     */
-    private TestContainerException createTestContainerException(String message, Throwable ex) {
-        return isSerializable(ex) ? new TestContainerException(message, ex)
-            : new WrappedTestContainerException(message, ex);
-    }
-
-    /**
-     * Check if given exception is serializable by doing a serialization and checking the exception
-     *
-     * @param ex
-     *            exception to check
-     * @return if the given exception is serializable
-     */
-    private boolean isSerializable(Throwable ex) {
-        try {
-            new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(ex);
-            return true;
-        }
-        // CHECKSTYLE:SKIP
-        catch (Throwable ex2) {
-            return false;
         }
     }
 
