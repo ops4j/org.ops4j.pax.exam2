@@ -46,6 +46,7 @@ public class TestNGExamTest {
             mavenBundle("org.testng", "testng", "6.9.10"),
             mavenBundle("com.beust", "jcommander", "1.48"),
             mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-testng", Info.getPaxExamVersion()),
+            systemProperty("pax.exam.invoker").value("testng"),
             systemProperty("osgi.console").value("6666"));
     }
 
