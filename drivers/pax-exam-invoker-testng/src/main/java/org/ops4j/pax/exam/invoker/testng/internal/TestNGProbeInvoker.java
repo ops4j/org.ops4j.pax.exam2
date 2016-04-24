@@ -17,13 +17,10 @@
  */
 package org.ops4j.pax.exam.invoker.testng.internal;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import org.ops4j.pax.exam.ProbeInvoker;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.util.Exceptions;
@@ -41,101 +38,13 @@ public class TestNGProbeInvoker implements ProbeInvoker {
 
     private BundleContext ctx;
     private String clazz;
-    private String method;
-
-    private Class<?> testClass;
 
     public TestNGProbeInvoker(String encodedInstruction, BundleContext bundleContext,
         Injector injector) {
         // parse class and method out of expression:
         String[] parts = encodedInstruction.split(";");
         clazz = parts[0];
-        method = parts[1];
         ctx = bundleContext;
-        this.testClass = loadClass(clazz);
-    }
-
-    private Class<?> loadClass(String className) {
-        try {
-            return ctx.getBundle().loadClass(className);
-        }
-        catch (ClassNotFoundException e) {
-            throw new TestContainerException(e);
-        }
-    }
-
-    @Override
-    public void call(Object... args) {
-        if (!(findAndInvoke(args))) {
-            throw new TestContainerException(
-                " Test " + method + " not found in test class " + testClass.getName());
-        }
-    }
-
-    private boolean findAndInvoke(Object... args) {
-        Integer index = null;
-        try {
-            /*
-             * If args are present, we expect exactly one integer argument, defining the index of
-             * the parameter set for a parameterized test.
-             */
-            if (args.length > 0) {
-                if (!(args[0] instanceof Integer)) {
-                    throw new TestContainerException("Integer argument expected");
-                }
-                index = (Integer) args[0];
-            }
-
-            // find matching method
-            for (Method m : testClass.getMethods()) {
-                if (m.getName().equals(method)) {
-                    // we assume its correct:
-                    invokeViaTestNG(m, index);
-                    return true;
-                }
-            }
-        }
-        catch (NoClassDefFoundError e) {
-            throw new TestContainerException(e);
-        }
-        return false;
-    }
-
-    /**
-     * Invokes a given method of a given test class via {@link JUnitCore} and injects dependencies
-     * into the instantiated test class.
-     * <p>
-     * This requires building a {@code Request} which is aware of an {@code Injector} and a
-     * {@code BundleContext}.
-     *
-     * @param testClass
-     * @param testMethod
-     * @throws TestContainerException
-     */
-    private void invokeViaTestNG(final Method testMethod, Integer index) {
-
-        TestNG testNG = new TestNG();
-        testNG.setUseDefaultListeners(false);
-        XmlSuite suite = new XmlSuite();
-        suite.setName("PaxExamInternal");
-        XmlTest xmlTest = new XmlTest(suite);
-        XmlClass xmlClass = new XmlClass(clazz);
-        xmlTest.getClasses().add(xmlClass);
-        XmlInclude xmlInclude = new XmlInclude(testMethod.getName());
-        xmlClass.getIncludedMethods().add(xmlInclude);
-
-        testNG.setXmlSuites(Arrays.asList(suite));
-        testNG.run();
-
-//        ObjectOutputStream oos = new ObjectOutputStream(os);
-//        for (ITestResult result : listener.getFailedTests()) {
-//            Exception exc = new WrappedTestContainerException(result.getThrowable());
-//            oos.writeObject(exc);
-//        }
-//        if (listener.getFailedTests().isEmpty()) {
-//            oos.writeObject("ok");
-//        }
-
     }
 
     @Override

@@ -275,14 +275,6 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         return reg;
     }
 
-    @Override
-    public void call(TestAddress address) {
-        String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier()
-            + ")";
-        ProbeInvoker service = getService(ProbeInvoker.class, filterExpression, rmiLookupTimeout);
-        service.call(address.arguments());
-    }
-
     public String getName() {
         return name;
     }

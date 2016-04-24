@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.ProbeInvoker;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 
@@ -31,18 +30,13 @@ public class ProbeInvokerReflectionTest {
     public static class MyProbeInvoker implements ProbeInvoker {
 
         @Override
-        public void call(Object... args) throws TestContainerException {
-            System.out.println("call() invoked");
-        }
-
-        @Override
         public void runTest(TestDescription description, TestListener listener) {
-            // TODO Auto-generated method stub
+            // not used
         }
 
         @Override
         public void runTestClass(String description) {
-            // TODO Auto-generated method stub
+            System.out.println("runTestClass() invoked");
         }
     }
 
@@ -50,7 +44,7 @@ public class ProbeInvokerReflectionTest {
     public void callInvokerByReflection() throws SecurityException, NoSuchMethodException,
         IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         Object target = new MyProbeInvoker();
-        Method method = target.getClass().getMethod("call", Object[].class);
-        method.invoke(target, (Object) new Object[] {});
+        Method method = target.getClass().getMethod("runTestClass", String.class);
+        method.invoke(target, "");
     }
 }

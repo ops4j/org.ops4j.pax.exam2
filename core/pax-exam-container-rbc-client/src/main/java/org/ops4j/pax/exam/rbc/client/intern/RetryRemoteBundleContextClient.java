@@ -25,7 +25,6 @@ import java.rmi.NoSuchObjectException;
 
 import org.ops4j.pax.exam.ExceptionHelper;
 import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.slf4j.Logger;
@@ -129,11 +128,6 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
     @Override
     public void waitForState(long bundleId, int state, RelativeTimeout timeout) {
         proxy.waitForState(bundleId, state, timeout);
-    }
-
-    @Override
-    public void call(TestAddress address) {
-        proxy.call(address);
     }
 
     @Override

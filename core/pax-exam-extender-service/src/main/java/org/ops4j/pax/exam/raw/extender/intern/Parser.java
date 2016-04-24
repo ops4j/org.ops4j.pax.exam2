@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.ProbeInvokerFactory;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.extender.ManifestEntry;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
@@ -71,7 +72,7 @@ public class Parser {
     private ProbeInvoker createInvoker(BundleContext ctx, String expr) {
         String invokerType = System.getProperty("pax.exam.invoker");
         if (invokerType == null) {
-            return new ProbeInvokerImpl(expr, ctx);
+            throw new TestContainerException("System property pax.exam.invoker must be defined");
         }
         else {
             Map<String, String> props = new HashMap<String, String>();

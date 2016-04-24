@@ -17,10 +17,7 @@
  */
 package org.ops4j.pax.exam.jaxrs2.invoker;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.Future;
@@ -50,8 +47,6 @@ import org.ops4j.pax.exam.spi.listener.TestListenerTask;
  */
 public class JaxRs2ProbeInvoker implements ProbeInvoker {
 
-    private String clazz;
-    private String method;
     private WebTarget testRunner;
 
     public JaxRs2ProbeInvoker(String encodedInstruction) {
@@ -61,99 +56,11 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
             if (parts.length != 3) {
                 throw new TestContainerException("invalid test instruction: " + encodedInstruction);
             }
-            clazz = parts[0];
-            method = parts[1];
             URI contextRoot = new URI(parts[2]);
             this.testRunner = getTestRunner(contextRoot);
         }
         catch (URISyntaxException exc) {
             throw new TestContainerException(exc);
-        }
-    }
-
-    @Override
-    public void call(Object... args) {
-        Class<?> testClass;
-        try {
-            testClass = getClass().getClassLoader().loadClass(clazz);
-        }
-        catch (ClassNotFoundException e) {
-            throw new TestContainerException(e);
-        }
-
-        if (!(findAndInvoke(testClass, args))) {
-            throw new TestContainerException(" Test " + method + " not found in test class "
-                + testClass.getName());
-        }
-    }
-
-    private boolean findAndInvoke(Class<?> testClass, Object... args) {
-        Integer index = null;
-        try {
-            /*
-             * If args are present, we expect exactly one integer argument, defining the index of
-             * the parameter set for a parameterized test.
-             */
-            if (args.length > 0) {
-                if (!(args[0] instanceof Integer)) {
-                    throw new TestContainerException("Integer argument expected");
-                }
-                index = (Integer) args[0];
-            }
-
-            // find matching method
-            for (Method m : testClass.getMethods()) {
-                if (m.getName().equals(method)) {
-                    // we assume its correct:
-                    invokeViaServletBridge(testClass, m, index);
-                    return true;
-                }
-            }
-        }
-        catch (NoClassDefFoundError e) {
-            throw new TestContainerException(e);
-        }
-        catch (IOException e) {
-            throw new TestContainerException(e);
-        }
-        catch (ClassNotFoundException e) {
-            throw new TestContainerException(e);
-        }
-        return false;
-    }
-
-    /**
-     * Invokes a given method of a given test class via the servlet bridge.
-     *
-     * @param testClass
-     * @param testMethod
-     * @param parameterIndex
-     *            index of parameter set (counting from 0) for parameterized test, null for plain
-     *            tests
-     * @throws TestContainerException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void invokeViaServletBridge(final Class<?> testClass, final Method testMethod,
-        Integer parameterIndex) throws IOException, ClassNotFoundException {
-        WebTarget webResource = testRunner.queryParam("class", testClass.getName()) //
-            .queryParam("method", testMethod.getName());
-        if (parameterIndex != null) {
-            webResource = webResource.queryParam("index", Integer.toString(parameterIndex));
-        }
-        InputStream is = webResource.request().get(InputStream.class);
-
-        ObjectInputStream ois = new ObjectInputStream(is);
-        Object object = ois.readObject();
-        if (object instanceof Throwable) {
-            Throwable t = (Throwable) object;
-            throw new TestContainerException(t);
-        }
-        else if (object instanceof String) {
-            // ok
-        }
-        else {
-            throw new IllegalStateException();
         }
     }
 
