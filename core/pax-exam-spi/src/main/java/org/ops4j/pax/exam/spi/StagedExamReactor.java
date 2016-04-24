@@ -31,17 +31,6 @@ public interface StagedExamReactor {
 
     Set<TestAddress> getTargets();
 
-    /**
-     * Invoke an actual regression. The reactor implementation will take care of (perhaps)
-     * instantiating a TestContainer or reusing an existing one and passing the parseForTests.
-     * 
-     * @param address
-     *            reference to a concrete, single regression.
-     * @throws Exception
-     *             in case of a problem.
-     */
-    void invoke(TestAddress address) throws Exception;
-
     void runTest(TestDescription description, TestListener listener) throws Exception;
 
     void beforeSuite();

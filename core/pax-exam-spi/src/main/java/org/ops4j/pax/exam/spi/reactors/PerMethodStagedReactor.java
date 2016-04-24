@@ -74,28 +74,6 @@ public class PerMethodStagedReactor implements StagedExamReactor {
     }
 
     @Override
-    public void invoke(TestAddress address) throws Exception {
-        assert (address != null) : "TestAddress must not be null.";
-        // you can directly invoke:
-        TestContainer container = map.get(address);
-        if (container == null) {
-            throw new IllegalArgumentException("TestAddress " + address
-                + " not from this reactor? Got it from getTargets() really?");
-        }
-        container.start();
-        try {
-            for (TestProbeBuilder builder : probes) {
-                container.installProbe(builder.build().getStream());
-            }
-            container.call(address);
-        }
-        finally {
-            container.stop();
-        }
-
-    }
-
-    @Override
     public Set<TestAddress> getTargets() {
         return map.keySet();
     }

@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -63,12 +62,6 @@ public class RBCRemoteTarget implements TestContainer {
      */
     public RemoteBundleContextClient getClientRBC() {
         return remoteBundleContextClient;
-    }
-
-    @Override
-    public void call(TestAddress address) {
-        LOG.debug("call [" + address + "]");
-        remoteBundleContextClient.call(address);
     }
 
     @Override

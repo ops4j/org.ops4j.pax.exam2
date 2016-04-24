@@ -54,7 +54,6 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -583,11 +582,6 @@ public class KarafTestContainer implements TestContainer {
 
     private void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         target.getClientRBC().waitForState(bundleId, state, timeout);
-    }
-
-    @Override
-    public synchronized void call(TestAddress address) {
-        target.call(address);
     }
 
     @Override

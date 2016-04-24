@@ -33,7 +33,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
  * Since the test drivers create a new reactor per test class, this implementation delegates to a
  * {@link SingletonStagedReactor} which remembers its state and does not restart the test
  * containers.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0
  */
@@ -45,10 +45,7 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
         this.delegate = SingletonStagedReactor.getInstance(containers, mProbes);
     }
 
-    public void invoke(TestAddress address) throws Exception {
-        delegate.invoke(address);
-    }
-
+    @Override
     public Set<TestAddress> getTargets() {
         return delegate.getTargets();
     }
@@ -64,12 +61,15 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
     public void beforeTest() {
     }
 
+    @Override
     public void afterClass() {
     }
 
+    @Override
     public void beforeClass() {
     }
 
+    @Override
     public void beforeSuite() {
         delegate.beforeSuite();
     }

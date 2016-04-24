@@ -19,7 +19,6 @@ package org.ops4j.pax.exam.container.remote;
 
 import java.io.InputStream;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
@@ -37,11 +36,6 @@ public class RBCRemoteContainer implements TestContainer {
 
     public RBCRemoteContainer(final TestContainer target) {
         this.target = target;
-    }
-
-    @Override
-    public void call(TestAddress address) {
-        target.call(address);
     }
 
     @Override

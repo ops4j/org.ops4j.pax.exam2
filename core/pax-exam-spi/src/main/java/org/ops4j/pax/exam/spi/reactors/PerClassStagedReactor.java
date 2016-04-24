@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * One target only reactor implementation (simpliest and fastest)
- * 
+ *
  * @author tonit
  */
 public class PerClassStagedReactor implements StagedExamReactor {
@@ -100,17 +100,7 @@ public class PerClassStagedReactor implements StagedExamReactor {
         }
     }
 
-    public void invoke(TestAddress address) throws Exception {
-        assert (address != null) : "TestAddress must not be null.";
-
-        TestContainer testContainer = map.get(address);
-        if (testContainer == null) {
-            throw new IllegalArgumentException("TestAddress " + address
-                + " not from this reactor? Got it from getTargets() really?");
-        }
-        testContainer.call(address);
-    }
-
+    @Override
     public Set<TestAddress> getTargets() {
         return map.keySet();
     }
@@ -121,6 +111,7 @@ public class PerClassStagedReactor implements StagedExamReactor {
         }
     }
 
+    @Override
     public void afterSuite() {
     }
 
@@ -130,14 +121,17 @@ public class PerClassStagedReactor implements StagedExamReactor {
     public void beforeTest() {
     }
 
+    @Override
     public void afterClass() {
         tearDown();
     }
 
+    @Override
     public void beforeClass() {
         setUp();
     }
 
+    @Override
     public void beforeSuite() {
     }
 
