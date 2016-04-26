@@ -31,9 +31,9 @@ import org.ops4j.pax.exam.Option;
  * <p>
  * Users should create instances of this class using {@link CoreOptions#warProbe()} and then invoke
  * methods of this class in fluent syntax to configure the WAR probe.
- * 
+ *
  * @author hwellmann
- * 
+ *
  */
 public class WarProbeOption implements Option {
 
@@ -92,7 +92,7 @@ public class WarProbeOption implements Option {
 
     /**
      * Sets the application name of this WAR.
-     * 
+     *
      * @param _name
      *            application name
      * @return {@code this} for fluent syntax
@@ -111,7 +111,7 @@ public class WarProbeOption implements Option {
      * <p>
      * If the path is not a directory, it is assumed to be a JAR, and its contents will be copied to
      * {@code WEB-INF/lib}.
-     * 
+     *
      * @param libraryPath
      *            path to library
      * @return {@code this} for fluent syntax
@@ -124,7 +124,7 @@ public class WarProbeOption implements Option {
     /**
      * Adds the library from the URL to the WAR. The URL is assumed to reference a JAR. The JAR will
      * be downloaded if required and its contents will be copied to {@code WEB-INF/lib}.
-     * 
+     *
      * @param libraryUrl
      *            URL referencing a library JAR
      * @return {@code this} for fluent syntax
@@ -140,7 +140,7 @@ public class WarProbeOption implements Option {
      * the root of the WAR. If the overlay path is an archive, its exploded contents are copied to
      * the root of the WAR. All overlays are copied in the given order. All overlay are copied
      * before any libraries, classes or resources.
-     * 
+     *
      * @param overlayPath
      *            path to overlay
      * @return {@code this} for fluent syntax
@@ -155,7 +155,7 @@ public class WarProbeOption implements Option {
      * Maven WAR Plugin. The URL is assumed to reference an archive. The archive is downloaded if
      * required, and then its exploded contents are copied to the root of the WAR. All overlays are
      * copied in the given order. All overlay are copied before any libraries, classes or resources.
-     * 
+     *
      * @param overlayUrl
      *            URL to overlay
      * @return {@code this} for fluent syntax
@@ -167,7 +167,7 @@ public class WarProbeOption implements Option {
 
     /**
      * Adds the given classes to the WAR in {@code WEB-INF/classes}.
-     * 
+     *
      * @param klass
      *            list of classes
      * @return {@code this} for fluent syntax
@@ -182,7 +182,7 @@ public class WarProbeOption implements Option {
 
     /**
      * Adds the given resources from the current class path to the WAR in {@code WEB-INF/classes}.
-     * 
+     *
      * @param resourcePaths
      *            list of resource paths, relative to the class path root
      * @return {@code this} for fluent syntax
@@ -196,7 +196,7 @@ public class WarProbeOption implements Option {
 
     /**
      * Adds the given resourcs from the current class path to the WAR in {@code META-INF/}.
-     * 
+     *
      * @param resourcePath
      *            resource path, relative to the class path root
      * @return {@code this} for fluent syntax
@@ -208,7 +208,7 @@ public class WarProbeOption implements Option {
 
     /**
      * Adds the given resource from the current class path to the WAR in {@code WEB-INF/}.
-     * 
+     *
      * @param resourcePath
      *            resource path, relative to the class path root
      * @return {@code this} for fluent syntax
@@ -220,7 +220,7 @@ public class WarProbeOption implements Option {
 
     /**
      * Automatically add libraries and class folders from the current classpath.
-     * 
+     *
      * @param includeDefaultFilters
      *            should the default classpath excludes be applied?
      * @return {@code this} for fluent syntax
@@ -238,7 +238,7 @@ public class WarProbeOption implements Option {
     /**
      * Automatically add libraries and class folders from the current classpath, applying the
      * default classpath excludes.
-     * 
+     *
      * @return {@code this} for fluent syntax
      */
     public WarProbeOption classPathDefaultExcludes() {
@@ -249,7 +249,7 @@ public class WarProbeOption implements Option {
     /**
      * This option implies {@code autoClasspath(false)} and adds the given regular expressions to
      * the classpath filters.
-     * 
+     *
      * @param excludeRegExp
      *            list of regular expressions. Classpath libraries or folders matching any of these
      *            will be excluded
@@ -267,7 +267,7 @@ public class WarProbeOption implements Option {
      * Returns the application name of this WAR.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return application name
      */
     public String getName() {
@@ -278,7 +278,7 @@ public class WarProbeOption implements Option {
      * Shall libraries and class folders be added automatically from the current classpath?
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return true if libs shall be added from the classpath
      */
     public boolean isClassPathEnabled() {
@@ -289,7 +289,7 @@ public class WarProbeOption implements Option {
      * Returns the WEB-INF libraries.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return libraries (possibly empty but not null)
      */
     public List<String> getLibraries() {
@@ -300,7 +300,7 @@ public class WarProbeOption implements Option {
      * Returns the overlays.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return overlays (possibly empty but not null)
      */
     public List<String> getOverlays() {
@@ -311,7 +311,7 @@ public class WarProbeOption implements Option {
      * Returns the classpath filters.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return filters (possibly empty but not null)
      */
     public List<String> getClassPathFilters() {
@@ -322,7 +322,7 @@ public class WarProbeOption implements Option {
      * Returns the META-INF resources.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return resources (possibly empty but not null)
      */
     public List<String> getMetaInfResources() {
@@ -333,7 +333,7 @@ public class WarProbeOption implements Option {
      * Returns the WEB-INF resources.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return resources (possibly empty but not null)
      */
     public List<String> getWebInfResources() {
@@ -344,7 +344,7 @@ public class WarProbeOption implements Option {
      * Returns the classpath resources.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return resources (possibly empty but not null)
      */
     public List<String> getResources() {
@@ -355,7 +355,7 @@ public class WarProbeOption implements Option {
      * Returns the classes to be added to WEB-INF/classes.
      * <p>
      * Internal API, do no use in application code.
-     * 
+     *
      * @return classes (possibly empty but not null)
      */
     public List<Class<?>> getClasses() {

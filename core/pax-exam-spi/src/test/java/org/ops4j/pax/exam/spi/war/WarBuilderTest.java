@@ -72,7 +72,7 @@ public class WarBuilderTest {
     public void buildWar() throws MalformedURLException, IOException {
         war = localCopy(warProbe().library("target/classes"));
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
-        assertThat(war.getEntry("WEB-INF/classes/org/ops4j/pax/exam/spi/Probes.class"),
+        assertThat(war.getEntry("WEB-INF/lib/pax-exam-spi-" + Info.getPaxExamVersion() + ".jar"),
             is(notNullValue()));
     }
 
