@@ -34,6 +34,6 @@ public class TestNGProbeInvokerFactory implements ProbeInvokerFactory {
     public ProbeInvoker createProbeInvoker(Object context, String expr) {
         BundleContext ctx = (BundleContext) context;
         Injector injector = ServiceLookup.getService(ctx, Injector.class);
-        return new TestNGProbeInvoker(expr, ctx, injector);
+        return new TestNGProbeInvoker(ctx, injector);
     }
 }

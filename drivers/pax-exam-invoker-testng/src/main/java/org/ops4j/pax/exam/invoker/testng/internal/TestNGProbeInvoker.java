@@ -37,13 +37,8 @@ import org.testng.xml.XmlTest;
 public class TestNGProbeInvoker implements ProbeInvoker {
 
     private BundleContext ctx;
-    private String clazz;
 
-    public TestNGProbeInvoker(String encodedInstruction, BundleContext bundleContext,
-        Injector injector) {
-        // parse class and method out of expression:
-        String[] parts = encodedInstruction.split(";");
-        clazz = parts[0];
+    public TestNGProbeInvoker(BundleContext bundleContext, Injector injector) {
         ctx = bundleContext;
     }
 
@@ -76,7 +71,7 @@ public class TestNGProbeInvoker implements ProbeInvoker {
         XmlSuite suite = new XmlSuite();
         suite.setName("PaxExamInternal");
         XmlTest xmlTest = new XmlTest(suite);
-        XmlClass xmlClass = new XmlClass(clazz);
+        XmlClass xmlClass = new XmlClass(description.getClassName());
         xmlTest.getClasses().add(xmlClass);
         if (description.getMethodName() != null) {
             XmlInclude xmlInclude = new XmlInclude(description.getMethodName());
