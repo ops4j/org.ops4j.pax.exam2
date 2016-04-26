@@ -40,12 +40,10 @@ import java.util.Set;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamConfigurationException;
-import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestContainerFactory;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
@@ -288,36 +286,7 @@ public class ReactorManager {
      * @return unstaged reactor
      */
     private DefaultExamReactor createReactor(Class<?> testClass) {
-        return new DefaultExamReactor(system, createsTestContainerFactory(testClass));
-    }
-
-    /**
-     * Creates the test container factory to be used by the reactor.
-     * <p>
-     * TODO Do we really need this?
-     *
-     * @param testClass
-     * @return test container factory
-     */
-    private TestContainerFactory createsTestContainerFactory(Class<?> testClass) {
-        try {
-            ExamFactory f = testClass.getAnnotation(ExamFactory.class);
-
-            TestContainerFactory fact = null;
-            if (f != null) {
-                fact = f.value().newInstance();
-                return fact;
-            }
-
-            if (fact == null) {
-                // default:
-                fact = PaxExamRuntime.getTestContainerFactory();
-            }
-            return fact;
-        }
-        catch (InstantiationException | IllegalAccessException exc) {
-            throw new TestContainerException(exc);
-        }
+        return new DefaultExamReactor(system, PaxExamRuntime.getTestContainerFactory());
     }
 
     /**
