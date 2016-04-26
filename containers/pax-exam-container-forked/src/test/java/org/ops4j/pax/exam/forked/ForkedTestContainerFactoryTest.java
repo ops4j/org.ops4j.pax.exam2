@@ -17,6 +17,13 @@
  */
 package org.ops4j.pax.exam.forked;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.ExamSystem;
@@ -60,23 +66,19 @@ public class ForkedTestContainerFactoryTest {
 
         try {
             startWithBootClasspath(null);
-            Assert.fail("This should have failed");
+            fail("This should have failed");
         } catch (TestContainerException x) {
             Throwable cause = x.getCause();
 
             // BundleException from BundleActivator.start() ...
-            Assert.assertNotNull(cause);
-            Assert.assertEquals(BundleException.class.getName(),
-                cause.getClass().getName());
+            assertThat(cause, is(notNullValue()));
+            assertThat(cause, instanceOf(BundleException.class));
 
             // ClassNotFoundException from within BundleActivator.start() ...
             cause = cause.getCause();
-            Assert.assertNotNull(cause);
-            Assert.assertEquals(ClassNotFoundException.class.getName(),
-                cause.getClass().getName());
-
-            Assert.assertEquals("org.kohsuke.metainf_services.AnnotationProcessorImpl",
-                cause.getMessage());
+            assertThat(cause, is(notNullValue()));
+            assertThat(cause, instanceOf(ClassNotFoundException.class));
+            assertThat(cause.getMessage(), containsString("org.kohsuke.metainf_services.AnnotationProcessorImpl"));
         }
     }
 
@@ -112,8 +114,8 @@ public class ForkedTestContainerFactoryTest {
         ForkedTestContainerFactory factory = new ForkedTestContainerFactory();
         TestContainer[] containers = factory.create(system);
 
-        Assert.assertNotNull(containers);
-        Assert.assertNotNull(containers[0]);
+        assertThat(containers, is(notNullValue()));
+        assertThat(containers[0], is(notNullValue()));
 
         ForkedTestContainer container = (ForkedTestContainer) containers[0];
         container.start();
