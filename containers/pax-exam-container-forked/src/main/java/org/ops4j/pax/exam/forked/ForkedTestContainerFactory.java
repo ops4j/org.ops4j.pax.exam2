@@ -17,38 +17,28 @@
  */
 package org.ops4j.pax.exam.forked;
 
-import static org.ops4j.pax.swissbox.framework.FrameworkFactoryFinder.findFrameworkFactories;
-
-import java.util.List;
-
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.spi.ServiceProviderFinder;
 import org.osgi.framework.launch.FrameworkFactory;
 
 /**
- * A {@link TestContainerFactory} creating a {@link ForkedTestContainer} for each OSGi
+ * A {@link TestContainerFactory} creating a {@link ForkedTestContainer} for the unique OSGi
  * {@code FrameworkFactory} found by the JRE ServiceLoader on the classpath.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 @MetaInfServices
 public class ForkedTestContainerFactory implements TestContainerFactory {
 
+    @Override
     public TestContainer[] create(final ExamSystem system) {
-        List<FrameworkFactory> frameworkFactories = findFrameworkFactories();
-        if (frameworkFactories.isEmpty()) {
-            throw new TestContainerException(
-                "No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath");
-        }
-        TestContainer[] containers = new TestContainer[frameworkFactories.size()];
-        int index = 0;
-        for (FrameworkFactory frameworkFactory : frameworkFactories) {
-            containers[index++] = new ForkedTestContainer(system, frameworkFactory);
-        }
-        return containers;
+        FrameworkFactory frameworkFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(FrameworkFactory.class);
+        TestContainer container = new ForkedTestContainer(system, frameworkFactory);
+        return new TestContainer[] { container };
     }
 }
