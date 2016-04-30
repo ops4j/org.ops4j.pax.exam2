@@ -17,12 +17,14 @@
  */
 package org.ops4j.pax.exam.nat.internal;
 
+import static java.util.stream.Collectors.joining;
 import static org.ops4j.pax.exam.Constants.EXAM_FAIL_ON_UNRESOLVED_KEY;
 import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_DEFAULT;
 import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_KEY;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.osgi.framework.Bundle.INSTALLED;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE_CLEAN;
@@ -31,9 +33,8 @@ import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.Stack;
@@ -66,7 +67,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkEvent;
-import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.framework.startlevel.BundleStartLevel;
@@ -88,7 +88,7 @@ import org.slf4j.LoggerFactory;
 public class NativeTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
-    private final Stack<Long> installed = new Stack<Long>();
+    private final Stack<Bundle> installed = new Stack<>();
     private Long probeId;
 
     private final FrameworkFactory frameworkFactory;
@@ -126,17 +126,15 @@ public class NativeTestContainer implements TestContainer {
     public synchronized long install(String location, InputStream stream) {
         try {
             Bundle b = framework.getBundleContext().installBundle(location, stream);
-            installed.push(b.getBundleId());
-            LOG.debug("Installed bundle " + b.getSymbolicName() + " as Bundle ID "
-                + b.getBundleId());
+            installed.push(b);
+            LOG.debug("Installed bundle {} as Bundle ID {}", b.getSymbolicName(), b.getBundleId());
             setBundleStartLevel(b.getBundleId(), Constants.START_LEVEL_TEST_BUNDLE);
             b.start();
             return b.getBundleId();
         }
-        catch (BundleException e) {
-            e.printStackTrace();
+        catch (BundleException exc) {
+            throw new TestContainerException(exc);
         }
-        return -1;
     }
 
     @Override
@@ -145,22 +143,16 @@ public class NativeTestContainer implements TestContainer {
     }
 
     public synchronized void cleanup() {
-        while ((!installed.isEmpty())) {
+        while (!installed.isEmpty()) {
+            Bundle bundle = installed.pop();
             try {
-                Long id = installed.pop();
-                Bundle bundle = framework.getBundleContext().getBundle(id);
                 bundle.uninstall();
-                LOG.debug("Uninstalled bundle " + id);
+                LOG.debug("Uninstalled bundle [{}]", bundle);
             }
-            catch (BundleException e) {
-                // Sometimes bundles go mad when install + uninstall happens too
-                // fast.
+            catch (BundleException exc) {
+                LOG.debug("Cannot uninstall bundle " + bundle, exc);
             }
         }
-    }
-
-    public Bundle getSystemBundle() {
-        return framework;
     }
 
     public void setBundleStartLevel(long bundleId, int startLevel) {
@@ -180,53 +172,51 @@ public class NativeTestContainer implements TestContainer {
                 systemPackage("org.ops4j.pax.exam.util;version="
                     + skipSnapshotFlag(Info.getPaxExamVersion())),
                 systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url") });
-            Map<String, String> p = createFrameworkProperties();
-            if (LOG.isDebugEnabled()) {
-                logFrameworkProperties(p);
-                logSystemProperties();
-            }
-            framework = frameworkFactory.newFramework(p);
-            framework.init();
-            framework.getBundleContext().addFrameworkListener(new FrameworkListener() {
-
-                @Override
-                public void frameworkEvent(FrameworkEvent frameworkEvent) {
-                    if (frameworkEvent.getType() == FrameworkEvent.ERROR) {
-                        LOG.error(
-                            String.format("Framework ERROR event %s", frameworkEvent.toString()),
-                            frameworkEvent.getThrowable());
-                    }
-                    else {
-                        LOG.debug(String.format("Framework event type %s: %s",
-                            FrameworkEventUtils.getFrameworkEventString(frameworkEvent.getType()),
-                            frameworkEvent.toString()), frameworkEvent.getThrowable());
-                    }
-                }
-            });
-            installAndStartBundles(framework.getBundleContext());
+            setSystemProperties();
+            createFramework(createFrameworkProperties());
+            installAndStartBundles();
+            startFramework();
         }
-        catch (BundleException e) {
-            throw new TestContainerException("Problem starting test container.", e);
-        }
-        catch (IOException e) {
-            throw new TestContainerException("Problem starting test container.", e);
+        catch (BundleException | IOException exc) {
+            throw new TestContainerException("Problem starting test container.", exc);
         }
         return this;
     }
 
-    private void logFrameworkProperties(Map<String, String> p) {
-        LOG.debug("==== Framework properties:");
-        for (String key : p.keySet()) {
-            LOG.debug("{} = {}", key, p.get(key));
+    private void createFramework(Map<String, String> p) throws BundleException {
+        framework = frameworkFactory.newFramework(p);
+        framework.init();
+        framework.getBundleContext().addFrameworkListener(this::logFrameworkEvent);
+    }
+
+    private void startFramework() throws BundleException {
+        framework.start();
+        setFrameworkStartLevel();
+        verifyThatBundlesAreResolved();
+    }
+
+    private void logFrameworkEvent(FrameworkEvent frameworkEvent) {
+        if (frameworkEvent.getType() == FrameworkEvent.ERROR) {
+            LOG.error(
+                String.format("Framework ERROR event %s", frameworkEvent.toString()),
+                frameworkEvent.getThrowable());
         }
+        else {
+            LOG.debug(String.format("Framework event type %s: %s",
+                FrameworkEventUtils.getFrameworkEventString(frameworkEvent.getType()),
+                frameworkEvent.toString()), frameworkEvent.getThrowable());
+        }
+    }
+
+    private void logFrameworkProperties(Map<String, String> map) {
+        LOG.debug("==== Framework properties:");
+        map.forEach((k, v) -> LOG.debug("{} = {}", k, v));
     }
 
     private void logSystemProperties() {
         LOG.debug("==== System properties:");
-        SortedMap<Object, Object> map = new TreeMap<Object, Object>(System.getProperties());
-        for (Map.Entry<Object, Object> entry : map.entrySet()) {
-            LOG.debug("{} = {}", entry.getKey(), entry.getValue());
-        }
+        SortedMap<Object, Object> map = new TreeMap<>(System.getProperties());
+        map.forEach((k, v) -> LOG.debug("{} = {}", k, v));
     }
 
     @Override
@@ -238,11 +228,11 @@ public class NativeTestContainer implements TestContainer {
                 framework = null;
                 system.clear();
             }
-            catch (BundleException e) {
-                LOG.warn("Problem during stopping fw.", e);
+            catch (BundleException exc) {
+                LOG.warn("Problem during stopping fw.", exc);
             }
-            catch (InterruptedException e) {
-                LOG.warn("InterruptedException during stopping fw.", e);
+            catch (InterruptedException exc) {
+                LOG.warn("InterruptedException during stopping fw.", exc);
             }
         }
         else {
@@ -269,7 +259,7 @@ public class NativeTestContainer implements TestContainer {
     }
 
     private Map<String, String> createFrameworkProperties() throws IOException {
-        final Map<String, String> p = new HashMap<String, String>();
+        final Map<String, String> p = new HashMap<>();
         CleanCachesOption cleanCaches = system.getSingleOption(CleanCachesOption.class);
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
             p.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
@@ -284,6 +274,13 @@ public class NativeTestContainer implements TestContainer {
             p.put(option.getKey(), (String) option.getValue());
         }
 
+        if (LOG.isDebugEnabled()) {
+            logFrameworkProperties(p);
+        }
+        return p;
+    }
+
+    private void setSystemProperties() {
         for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {
             System.setProperty(option.getKey(), option.getValue());
         }
@@ -292,92 +289,53 @@ public class NativeTestContainer implements TestContainer {
         if (!repositories.isEmpty()) {
             System.setProperty("org.ops4j.pax.url.mvn.repositories", repositories);
         }
-        return p;
+        if (LOG.isDebugEnabled()) {
+            logSystemProperties();
+        }
     }
 
     private String buildString(ValueOption<?>[] options) {
-        return buildString(new String[0], options, new String[0]);
+        return Arrays.stream(options).map(o -> o.getValue().toString()).collect(joining(","));
     }
 
-    @SuppressWarnings("unused")
-    private String buildString(String[] prepend, ValueOption<?>[] options) {
-        return buildString(prepend, options, new String[0]);
+    private void installAndStartBundles() throws BundleException {
+        Arrays.stream(system.getOptions(ProvisionOption.class))
+            .forEach(this::installAndStartBundle);
     }
 
-    @SuppressWarnings("unused")
-    private String buildString(ValueOption<?>[] options, String[] append) {
-        return buildString(new String[0], options, append);
-    }
-
-    private String buildString(String[] prepend, ValueOption<?>[] options, String[] append) {
-        StringBuilder builder = new StringBuilder();
-        for (String a : prepend) {
-            builder.append(a);
-            builder.append(",");
-        }
-        for (ValueOption<?> option : options) {
-            builder.append(option.getValue());
-            builder.append(",");
-        }
-        for (String a : append) {
-            builder.append(a);
-            builder.append(",");
-        }
-        if (builder.length() > 0) {
-            return builder.substring(0, builder.length() - 1);
-        }
-        else {
-            return "";
-        }
-    }
-
-    private void installAndStartBundles(BundleContext context) throws BundleException {
-        List<Bundle> bundles = new ArrayList<Bundle>();
-        for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
-            Bundle b = context.installBundle(bundle.getURL());
-            bundles.add(b);
+    private void installAndStartBundle(ProvisionOption<?> bundle) {
+        try {
+            Bundle b = framework.getBundleContext().installBundle(bundle.getURL());
             int startLevel = getStartLevel(bundle);
             BundleStartLevel sl = b.adapt(BundleStartLevel.class);
             sl.setStartLevel(startLevel);
             if (bundle.shouldStart()) {
-                try {
-                    b.start();
-                }
-                catch (BundleException e) {
-                    throw new BundleException("Error starting bundle " + b.getSymbolicName() + ". "
-                        + e.getMessage(), e);
-                }
+                b.start();
                 LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
             }
             else {
                 LOG.debug("+ Install (no start) {}", bundle);
             }
         }
-        // All bundles are installed, we can now start the framework...
-        framework.start();
-        FrameworkStartLevel fsl = framework.adapt(FrameworkStartLevel.class);
-        setFrameworkStartLevel(context, fsl);
-        verifyThatBundlesAreResolved(bundles);
+        catch (BundleException exc) {
+            throw new TestContainerException("Error starting bundle " + bundle.getURL(), exc);
+        }
     }
 
-    private void setFrameworkStartLevel(BundleContext context, final FrameworkStartLevel sl) {
+    private void setFrameworkStartLevel() {
+        FrameworkStartLevel sl = framework.adapt(FrameworkStartLevel.class);
         FrameworkStartLevelOption startLevelOption = system
             .getSingleOption(FrameworkStartLevelOption.class);
         final int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE
             : startLevelOption.getStartLevel();
         LOG.debug("Jump to startlevel: " + startLevel);
         final CountDownLatch latch = new CountDownLatch(1);
-        context.addFrameworkListener(new FrameworkListener() {
-
-            @Override
-            public void frameworkEvent(FrameworkEvent frameworkEvent) {
-                if (frameworkEvent.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
-                    if (sl.getStartLevel() == startLevel) {
-                        latch.countDown();
-                    }
+        framework.getBundleContext().addFrameworkListener(frameworkEvent -> {
+            if (frameworkEvent.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
+                if (sl.getStartLevel() == startLevel) {
+                    latch.countDown();
                 }
-            }
-        });
+            }});
         sl.setStartLevel(startLevel);
 
         // Check the current start level before starting to wait.
@@ -400,25 +358,21 @@ public class NativeTestContainer implements TestContainer {
                     throw new TestContainerException(msg);
                 }
                 else {
-                    // We reached the requested start level.
                     LOG.debug("requested start level reached");
                 }
 
             }
         }
-        catch (InterruptedException e) {
-            throw new TestContainerException(e);
+        catch (InterruptedException exc) {
+            throw new TestContainerException(exc);
         }
     }
 
-    private void verifyThatBundlesAreResolved(List<Bundle> bundles) {
-        boolean hasUnresolvedBundles = false;
-        for (Bundle bundle : bundles) {
-            if (bundle.getState() == Bundle.INSTALLED) {
-                LOG.error("Bundle [{}] is not resolved", bundle);
-                hasUnresolvedBundles = true;
-            }
-        }
+    private void verifyThatBundlesAreResolved() {
+        boolean hasUnresolvedBundles = Arrays.stream(framework.getBundleContext().getBundles())
+            .filter(b -> b.getState() == INSTALLED)
+            .peek(b -> LOG.error("Bundle [{}] is not resolved", b)).count() > 0;
+
         ConfigurationManager cm = new ConfigurationManager();
         boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY,
             "false"));
