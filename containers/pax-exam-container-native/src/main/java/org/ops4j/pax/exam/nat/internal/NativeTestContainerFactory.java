@@ -18,43 +18,35 @@
 package org.ops4j.pax.exam.nat.internal;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
 
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
+import org.ops4j.spi.ServiceProviderFinder;
 import org.osgi.framework.launch.FrameworkFactory;
 
 /**
+ * A {@link TestContainerFactory} creating a {@link NativeTestContainer} for the unique OSGi
+ * {@code FrameworkFactory} found by the JRE ServiceLoader on the classpath.
+ *
  * @author Toni Menzel
  * @since Jan 7, 2010
  */
 @MetaInfServices
 public class NativeTestContainerFactory implements TestContainerFactory {
 
+    @Override
     public TestContainer[] create(ExamSystem system) {
-        List<TestContainer> containers = new ArrayList<TestContainer>();
-        Iterator<FrameworkFactory> factories = ServiceLoader.load(FrameworkFactory.class)
-            .iterator();
-        boolean factoryFound = false;
-        while (factories.hasNext()) {
-            try {
-                containers.add(new NativeTestContainer(system, factories.next()));
-                factoryFound = true;
-            }
-            catch (IOException e) {
-                throw new TestContainerException("Problem initializing container.", e);
-            }
+        FrameworkFactory frameworkFactory = ServiceProviderFinder
+            .loadUniqueServiceProvider(FrameworkFactory.class);
+        try {
+            TestContainer container = new NativeTestContainer(system, frameworkFactory);
+            return new TestContainer[] { container };
         }
-        if (!factoryFound) {
-            throw new TestContainerException(
-                "No service org.osgi.framework.launch.FrameworkFactory found in META-INF/services on classpath");
+        catch (IOException exc) {
+            throw new TestContainerException("Problem initializing container.", exc);
         }
-        return containers.toArray(new TestContainer[containers.size()]);
     }
 }
