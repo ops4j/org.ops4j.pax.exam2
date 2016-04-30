@@ -29,8 +29,8 @@ import org.ops4j.pax.exam.TestContainerFactory;
 @MetaInfServices
 public class WeldTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create(ExamSystem system) {
-        WeldTestContainer container = new WeldTestContainer(system);
-        return new TestContainer[] { container };
+    @Override
+    public TestContainer create(ExamSystem system) {
+        return new WeldTestContainer(system);
     }
 }

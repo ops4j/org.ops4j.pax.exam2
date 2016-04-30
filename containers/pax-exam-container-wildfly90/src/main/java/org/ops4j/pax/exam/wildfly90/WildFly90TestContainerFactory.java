@@ -29,8 +29,8 @@ import org.ops4j.pax.exam.TestContainerFactory;
 @MetaInfServices
 public class WildFly90TestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create(ExamSystem system) {
-        WildFly90TestContainer container = new WildFly90TestContainer(system);
-        return new TestContainer[] { container };
+    @Override
+    public TestContainer create(ExamSystem system) {
+        return new WildFly90TestContainer(system);
     }
 }

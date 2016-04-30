@@ -29,8 +29,8 @@ import org.ops4j.pax.exam.TestContainerFactory;
 @MetaInfServices
 public class TomcatTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create(ExamSystem system) {
-        TomcatTestContainer container = new TomcatTestContainer(system);
-        return new TestContainer[] { container };
+    @Override
+    public TestContainer create(ExamSystem system) {
+        return new TomcatTestContainer(system);
     }
 }

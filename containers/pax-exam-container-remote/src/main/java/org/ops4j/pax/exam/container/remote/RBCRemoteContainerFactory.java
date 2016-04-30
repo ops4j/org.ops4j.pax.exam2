@@ -30,9 +30,8 @@ public class RBCRemoteContainerFactory implements TestContainerFactory {
     /**
      * Not used yet.
      */
-    public TestContainer[] create(final ExamSystem system) {
-        return new TestContainer[] {
-
-        };
+    @Override
+    public TestContainer create(final ExamSystem system) {
+        return null;
     }
 }

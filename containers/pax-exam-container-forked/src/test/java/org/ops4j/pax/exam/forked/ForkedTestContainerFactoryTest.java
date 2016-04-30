@@ -112,12 +112,10 @@ public class ForkedTestContainerFactoryTest {
         Option[] opts = options.toArray(new Option[options.size()]);
         ExamSystem system = PaxExamRuntime.createServerSystem(opts);
         ForkedTestContainerFactory factory = new ForkedTestContainerFactory();
-        TestContainer[] containers = factory.create(system);
+        TestContainer container = factory.create(system);
 
-        assertThat(containers, is(notNullValue()));
-        assertThat(containers[0], is(notNullValue()));
+        assertThat(container, is(notNullValue()));
 
-        ForkedTestContainer container = (ForkedTestContainer) containers[0];
         container.start();
 
         File testBundle = generateBundle();
