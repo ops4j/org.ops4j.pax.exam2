@@ -29,8 +29,8 @@ import org.ops4j.pax.exam.TestContainerFactory;
 @MetaInfServices
 public class OpenWebBeansTestContainerFactory implements TestContainerFactory {
 
-    public TestContainer[] create(ExamSystem system) {
-        OpenWebBeansTestContainer container = new OpenWebBeansTestContainer(system);
-        return new TestContainer[] { container };
+    @Override
+    public TestContainer create(ExamSystem system) {
+        return  new OpenWebBeansTestContainer(system);
     }
 }

@@ -34,18 +34,15 @@ import org.ops4j.pax.exam.karaf.options.KarafDistributionKitConfigurationOption.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@MetaInfServices   
+@MetaInfServices
 public class KarafTestContainerFactory implements TestContainerFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KarafTestContainer.class);
     private static final boolean IS_WINDOWS_OS = System.getProperty("os.name").toLowerCase().contains("windows");
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public TestContainer[] create(ExamSystem system) {
-        List<TestContainer> containers = new ArrayList<TestContainer>();
+    public TestContainer create(ExamSystem system) {
+        List<TestContainer> containers = new ArrayList<>();
         KarafDistributionKitConfigurationOption[] kitOptions =
                 system.getOptions(KarafDistributionKitConfigurationOption.class);
         for (KarafDistributionKitConfigurationOption kitOption : kitOptions) {
@@ -56,7 +53,7 @@ public class KarafTestContainerFactory implements TestContainerFactory {
                     continue;
                 }
                 LOGGER.info("Ignore windows settings on non windows platforms");
-            } 
+            }
             else {
                 if (!IS_WINDOWS_OS) {
                     containers.add(new KarafTestContainer(system, kitOption, new NixRunner(kitOption
@@ -76,7 +73,7 @@ public class KarafTestContainerFactory implements TestContainerFactory {
                 containers.add(new KarafTestContainer(system, testContainer, new KarafJavaRunner()));
             }
         }
-        return containers.toArray(new TestContainer[containers.size()]);
+        return containers.get(0);
     }
 
 }

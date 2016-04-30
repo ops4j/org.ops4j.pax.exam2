@@ -25,7 +25,7 @@ import org.ops4j.pax.exam.TestContainerFactory;
 /**
  * A {@link TestContainerFactory} for GlassFish test containers. This factory is published in
  * META-INF/services.
- * 
+ *
  * @author Harald Wellmann
  * @since 3.0.0
  */
@@ -34,11 +34,11 @@ public class EmbeddedGlassFishTestContainerFactory implements TestContainerFacto
 
     /**
      * Creates an Embedded GlassFish test container for the given exam system.
-     * 
+     *
      * @return array with one element
      */
-    public TestContainer[] create(ExamSystem system) {
-        EmbeddedGlassFishTestContainer container = new EmbeddedGlassFishTestContainer(system);
-        return new TestContainer[] { container };
+    @Override
+    public TestContainer create(ExamSystem system) {
+        return new EmbeddedGlassFishTestContainer(system);
     }
 }

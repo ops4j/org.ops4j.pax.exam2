@@ -94,7 +94,7 @@ public class PaxExamRuntime {
      * @return exactly one Test Container.
      */
     public static TestContainer createContainer(ExamSystem system) {
-        return getTestContainerFactory().create(system)[0];
+        return getTestContainerFactory().create(system);
     }
 
     /**

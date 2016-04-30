@@ -38,12 +38,11 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class NativeTestContainerFactory implements TestContainerFactory {
 
     @Override
-    public TestContainer[] create(ExamSystem system) {
+    public TestContainer create(ExamSystem system) {
         FrameworkFactory frameworkFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(FrameworkFactory.class);
         try {
-            TestContainer container = new NativeTestContainer(system, frameworkFactory);
-            return new TestContainer[] { container };
+            return new NativeTestContainer(system, frameworkFactory);
         }
         catch (IOException exc) {
             throw new TestContainerException("Problem initializing container.", exc);

@@ -35,10 +35,9 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class ForkedTestContainerFactory implements TestContainerFactory {
 
     @Override
-    public TestContainer[] create(final ExamSystem system) {
+    public TestContainer create(final ExamSystem system) {
         FrameworkFactory frameworkFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(FrameworkFactory.class);
-        TestContainer container = new ForkedTestContainer(system, frameworkFactory);
-        return new TestContainer[] { container };
+        return new ForkedTestContainer(system, frameworkFactory);
     }
 }
