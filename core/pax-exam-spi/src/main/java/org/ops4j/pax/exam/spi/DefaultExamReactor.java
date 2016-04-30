@@ -22,6 +22,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ops4j.pax.exam.ConfigurationFactory;
 import org.ops4j.pax.exam.ExamSystem;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * control to map probes to their configurations or vice versa. In essence, this implements the
  * Container re-start/re-use policy topic by collecting relevant tests and configurations and
  * passing them to a (user selected factory (see stage()).
- * 
+ *
  * @author tonit
  */
 public class DefaultExamReactor implements ExamReactor {
@@ -53,21 +54,24 @@ public class DefaultExamReactor implements ExamReactor {
 
     public DefaultExamReactor(ExamSystem system, TestContainerFactory factory) {
         this.system = system;
-        this.configurations = new ArrayList<Option[]>();
-        this.probes = new ArrayList<TestProbeBuilder>();
+        this.configurations = new ArrayList<>();
+        this.probes = new ArrayList<>();
         this.testContainerFactory = factory;
     }
 
+    @Override
     public synchronized void addConfiguration(Option[] configuration) {
         configurations.add(configuration);
     }
 
+    @Override
     public synchronized void addProbe(TestProbeBuilder builder) {
         probes.add(builder);
     }
 
+    @Override
     public synchronized StagedExamReactor stage(StagedExamReactorFactory factory) {
-        LOG.debug("Staging reactor with probes: " + probes.size() + " using strategy: " + factory);
+        LOG.debug("Staging reactor with {} probes using {} strategy", probes.size(), factory.getClass().getName());
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
         if (configurations.isEmpty()) {
@@ -82,6 +86,7 @@ public class DefaultExamReactor implements ExamReactor {
             LOG.debug("No configuration given. Setting an empty one.");
             configurations.add(options());
         }
+        configurations.stream().map(system::fork).map(testContainerFactory::create).collect(Collectors.toList());
         for (Option[] config : configurations) {
             containers.addAll(Arrays.asList(testContainerFactory.create(system.fork(config))));
         }

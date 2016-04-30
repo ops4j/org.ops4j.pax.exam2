@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -402,10 +403,7 @@ public class WildFly90TestContainer implements TestContainer {
         File addOnsDir = new File(wildFlyHome, "modules/system/add-ons/pax-exam");
         addOnsDir.mkdirs();
 
-        String[] modules = modulesList.split(",\\s*");
-        for (String module : modules) {
-            installWildFlyModule(module, addOnsDir);
-        }
+        Arrays.stream(modulesList.split(",\\s*")).forEach(m -> installWildFlyModule(m, addOnsDir));
     }
 
     private void installWildFlyModule(String module, File moduleDir) {
