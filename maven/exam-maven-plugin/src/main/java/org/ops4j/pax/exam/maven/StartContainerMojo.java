@@ -91,8 +91,19 @@ public class StartContainerMojo extends AbstractMojo {
     @Parameter
     private String[] vmOptions;
 
+    /**
+     * If true, skip execution.
+     */
+    @Parameter
+    private boolean skip;
+
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            return;
+        }
+
         getLog().debug("classpath for forked process:");
         for (String cp : classpathElements) {
             getLog().debug(cp);
