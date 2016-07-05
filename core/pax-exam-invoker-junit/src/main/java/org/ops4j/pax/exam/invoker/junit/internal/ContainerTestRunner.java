@@ -27,6 +27,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import org.ops4j.pax.exam.RerunTestException;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -95,13 +96,11 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
             statement.evaluate();
         } catch (AssumptionViolatedException e) {
             eachNotifier.addFailedAssumption(e);
-        } catch (Throwable e) {
-            if (e.getMessage().equals("rerun this test pls")) {
-                retry = true;
-                throw new RuntimeException("rerun this test pls");
-            } else {
-                eachNotifier.addFailure(e);
-            }
+        } catch (RerunTestException e) {
+            retry = true;
+            throw e;
+        } catch (Throwable t) {
+            eachNotifier.addFailure(t);
         } finally {
             if (!retry) {
                 eachNotifier.fireTestFinished();
