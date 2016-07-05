@@ -77,7 +77,19 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         IllegalAccessException, InvocationTargetException {
         LOG.trace("Remote call of [" + serviceType.getName() + "." + methodName + "]");
         Object service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(), filter);
-        return serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
+        Object obj = null;
+        try {
+            obj = serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
+        } catch (InvocationTargetException t) {
+            if (t.getTargetException().getMessage().contains("rerun this test pls")) {
+                LOG.debug("rerun the test");
+                service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(), filter);
+                obj = serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
+            } else {
+                throw t;
+            }
+        }
+        return obj;
     }
 
     public long installBundle(final String bundleUrl) throws BundleException {
