@@ -207,8 +207,13 @@ public class KarafTestContainer implements TestContainer {
         String[] environment = new String[] {};
         ArrayList<String> javaOpts = new ArrayList<String>();
         appendVmSettingsFromSystem(javaOpts, subsystem);
-        String[] javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
-            javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
+        String[] javaEndorsedDirs = null;
+        if (System.getProperty("java.version").startsWith("9")) {
+            javaEndorsedDirs = new String[] {};
+        } else {
+            javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
+                                                       javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
+        }
         String[] javaExtDirs = new String[] { javaHome + "/jre/lib/ext", javaHome + "/lib/ext",
             javaHome + "/lib/ext" };
         List<String> opts = Arrays.asList("-Dkaraf.startLocalConsole="
@@ -579,6 +584,7 @@ public class KarafTestContainer implements TestContainer {
     private void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         target.getClientRBC().waitForState(bundleId, state, timeout);
     }
+    
 
     @Override
     public synchronized void call(TestAddress address) {
