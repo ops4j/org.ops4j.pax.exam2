@@ -17,11 +17,17 @@
  */
 package org.ops4j.pax.exam.invoker.junit.internal;
 
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
+
+import org.ops4j.pax.exam.RerunTestException;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -65,6 +71,40 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
         LOG.info("running {} in reactor", method.getName());
-        super.runChild(method, notifier);
+        runChildWithRetry(method, notifier);
+    }
+    
+    
+    protected void runChildWithRetry(final FrameworkMethod method, RunNotifier notifier) {
+        Description description = describeChild(method);
+        if (isIgnored(method)) {
+            notifier.fireTestIgnored(description);
+        } else {
+            runLeafWithRetry(methodBlock(method), description, notifier);
+        }
+    }
+    
+    /**
+     * Runs a {@link Statement} that represents a leaf (aka atomic) test.
+     */
+    protected final void runLeafWithRetry(Statement statement, Description description,
+            RunNotifier notifier) {
+        EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
+        eachNotifier.fireTestStarted();
+        boolean retry = false;
+        try {
+            statement.evaluate();
+        } catch (AssumptionViolatedException e) {
+            eachNotifier.addFailedAssumption(e);
+        } catch (RerunTestException e) {
+            retry = true;
+            throw e;
+        } catch (Throwable t) {
+            eachNotifier.addFailure(t);
+        } finally {
+            if (!retry) {
+                eachNotifier.fireTestFinished();
+            }
+        }
     }
 }

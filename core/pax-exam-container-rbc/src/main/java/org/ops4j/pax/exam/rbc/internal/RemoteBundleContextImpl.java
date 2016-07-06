@@ -27,6 +27,7 @@ import java.rmi.RemoteException;
 import java.util.Dictionary;
 
 import org.ops4j.pax.exam.RelativeTimeout;
+import org.ops4j.pax.exam.RerunTestException;
 import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.Bundle;
@@ -77,7 +78,19 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         IllegalAccessException, InvocationTargetException {
         LOG.trace("Remote call of [" + serviceType.getName() + "." + methodName + "]");
         Object service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(), filter);
-        return serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
+        Object obj = null;
+        try {
+            obj = serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
+        } catch (InvocationTargetException t) {
+            if (t.getTargetException().getCause() instanceof RerunTestException) {
+                LOG.debug("rerun the test");
+                service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(), filter);
+                obj = serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
+            } else {
+                throw t;
+            }
+        }
+        return obj;
     }
 
     public long installBundle(final String bundleUrl) throws BundleException {
