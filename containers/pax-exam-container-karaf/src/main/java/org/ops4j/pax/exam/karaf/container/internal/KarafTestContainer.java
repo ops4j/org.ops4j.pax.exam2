@@ -187,7 +187,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private KarafManipulator createVersionAdapter(File karafBase) {
-        File karafEtc = new File(karafBase, "etc");
+        File karafEtc = new File(karafBase, framework.getKarafEtc());
         File distributionInfo = new File(karafEtc, "distribution.info");
 
         framework = new InternalKarafDistributionConfigurationOption(framework, distributionInfo);
@@ -197,8 +197,8 @@ public class KarafTestContainer implements TestContainer {
     private void startKaraf(ExamSystem subsystem, File karafBase, File karafHome) {
         long startedAt = System.currentTimeMillis();
         File karafBin = new File(karafBase, "bin");
-        File karafEtc = new File(karafBase, "etc");
-        String karafData = karafHome + "/data";
+        File karafEtc = new File(karafBase, framework.getKarafEtc());
+        File karafData = new File(karafBase, framework.getKarafData());
         String[] classPath = buildKarafClasspath(karafHome);
         makeScriptsInBinExec(karafBin);
         File javaHome = new File(System.getProperty("java.home"));
@@ -222,7 +222,7 @@ public class KarafTestContainer implements TestContainer {
         boolean enableMBeanServerBuilder = shouldMBeanServerBuilderBeEnabled(subsystem);
         String[] karafOpts = new String[] {};
         runner.exec(environment, karafBase, javaHome.toString(), javaOpts.toArray(new String[] {}),
-            javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData, karafEtc.toString(),
+            javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData.toString(), karafEtc.toString(),
             karafOpts, opts.toArray(new String[] {}), classPath, main, options,
             enableMBeanServerBuilder);
 
@@ -364,10 +364,18 @@ public class KarafTestContainer implements TestContainer {
             }
             optionEntries.get(option.getKey()).add(option);
         }
+        String karafData = framework.getKarafData();
+        String karafEtc = framework.getKarafEtc();
         Set<String> configFiles = optionMap.keySet();
         for (String configFile : configFiles) {
-
-            KarafPropertiesFile karafPropertiesFile = new KarafPropertiesFile(karafHome, configFile);
+            String location = configFile;
+            if (location.startsWith("data/") && !location.startsWith(karafData)) {
+              location = karafData + location.substring(4);
+            }
+            if (location.startsWith("etc/") && !location.startsWith(karafEtc)) {
+              location = karafEtc + location.substring(3);
+            }
+            KarafPropertiesFile karafPropertiesFile = new KarafPropertiesFile(karafHome, location);
             karafPropertiesFile.load();
             Collection<List<KarafDistributionConfigurationFileOption>> optionsToApply = optionMap
                 .get(configFile).values();
@@ -431,7 +439,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private void setupSystemProperties(File karafHome, ExamSystem _system) throws IOException {
-        File customPropertiesFile = new File(karafHome + "/etc/system.properties");
+        File customPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/system.properties");
         SystemPropertyOption[] customProps = _system.getOptions(SystemPropertyOption.class);
         Properties karafPropertyFile = new Properties();
         karafPropertyFile.load(new FileInputStream(customPropertiesFile));
@@ -456,7 +464,7 @@ public class KarafTestContainer implements TestContainer {
             return;
         }
         String realLogLevel = retrieveRealLogLevel(_system);
-        File customPropertiesFile = new File(karafHome + "/etc/org.ops4j.pax.logging.cfg");
+        File customPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/org.ops4j.pax.logging.cfg");
         Properties karafPropertyFile = new Properties();
         karafPropertyFile.load(new FileInputStream(customPropertiesFile));
         karafPropertyFile.put("log4j.rootLogger", realLogLevel + ", out, stdout, osgi:*");

@@ -28,6 +28,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     protected String name;
     protected String karafVersion;
     protected String karafMain = "org.apache.karaf.main.Main";
+    protected String karafData = "data";
+    protected String karafEtc = "etc";
     protected File unpackDirectory;
     protected boolean useDeployFolder;
     protected boolean runEmbedded;
@@ -72,6 +74,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         name = base.name;
         karafVersion = base.karafVersion;
         karafMain = base.karafMain;
+        karafData = base.karafData;
+        karafEtc = base.karafEtc;
         unpackDirectory = base.unpackDirectory;
         useDeployFolder = base.useDeployFolder;
     }
@@ -138,6 +142,30 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     }
 
     /**
+     * Sets the location of karaf.data relative to the installation. Defaults to {@code "data"}.
+     *
+     * @param _karafData
+     *            Karaf data
+     * @return this for fluent syntax
+     */
+    public KarafDistributionBaseConfigurationOption karafData(String _karafData) {
+        this.karafData = _karafData;
+        return this;
+    }
+
+    /**
+     * Sets the location of karaf.etc relative to the installation. Defaults to {@code "etc"}.
+     *
+     * @param _karafEtc
+     *            Karaf etc
+     * @return this for fluent syntax
+     */
+    public KarafDistributionBaseConfigurationOption karafEtc(String _karafEtc) {
+        this.karafEtc = _karafEtc;
+        return this;
+    }
+
+    /**
      * Define the unpack directory for the karaf distribution. In this directory a UUID named
      * directory will be created for each environment.
      *
@@ -197,7 +225,15 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     public String getKarafMain() {
       return karafMain;
-  }
+    }
+
+    public String getKarafData() {
+      return karafData;
+    }
+
+    public String getKarafEtc() {
+      return karafEtc;
+    }
 
     public File getUnpackDirectory() {
         return unpackDirectory;
