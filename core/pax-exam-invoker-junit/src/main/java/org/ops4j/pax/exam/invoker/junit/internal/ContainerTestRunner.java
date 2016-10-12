@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.invoker.junit.internal;
 
+import org.junit.Ignore;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
@@ -77,7 +78,7 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
     
     protected void runChildWithRetry(final FrameworkMethod method, RunNotifier notifier) {
         Description description = describeChild(method);
-        if (isIgnored(method)) {
+        if (method.getAnnotation(Ignore.class) != null) {
             notifier.fireTestIgnored(description);
         } else {
             runLeafWithRetry(methodBlock(method), description, notifier);
