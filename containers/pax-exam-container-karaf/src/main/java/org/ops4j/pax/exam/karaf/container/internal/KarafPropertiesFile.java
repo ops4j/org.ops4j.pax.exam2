@@ -39,6 +39,10 @@ public class KarafPropertiesFile {
         properties = new Properties();
     }
 
+    public boolean exists() {
+        return propertyFile.exists();
+    }
+
     public void load() throws IOException {
         if (!propertyFile.exists()) {
             return;

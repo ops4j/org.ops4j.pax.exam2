@@ -368,14 +368,16 @@ public class KarafTestContainer implements TestContainer {
         String karafEtc = framework.getKarafEtc();
         Set<String> configFiles = optionMap.keySet();
         for (String configFile : configFiles) {
-            String location = configFile;
-            if (location.startsWith("data/") && !location.startsWith(karafData)) {
-              location = karafData + location.substring(4);
+            KarafPropertiesFile karafPropertiesFile = new KarafPropertiesFile(karafHome, configFile);
+            if (!karafPropertiesFile.exists()) {
+              // might have custom data/etc directory, so try the customized location
+              if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
+                karafPropertiesFile = new KarafPropertiesFile(karafHome, karafData + configFile.substring(4));
+              }
+              if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
+                karafPropertiesFile = new KarafPropertiesFile(karafHome, karafEtc + configFile.substring(3));
+              }
             }
-            if (location.startsWith("etc/") && !location.startsWith(karafEtc)) {
-              location = karafEtc + location.substring(3);
-            }
-            KarafPropertiesFile karafPropertiesFile = new KarafPropertiesFile(karafHome, location);
             karafPropertiesFile.load();
             Collection<List<KarafDistributionConfigurationFileOption>> optionsToApply = optionMap
                 .get(configFile).values();
