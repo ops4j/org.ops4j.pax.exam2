@@ -370,13 +370,19 @@ public class KarafTestContainer implements TestContainer {
         for (String configFile : configFiles) {
             KarafPropertiesFile karafPropertiesFile = new KarafPropertiesFile(karafHome, configFile);
             if (!karafPropertiesFile.exists()) {
-              // might have custom data/etc directory, so try the customized location
-              if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
-                karafPropertiesFile = new KarafPropertiesFile(karafHome, karafData + configFile.substring(4));
-              }
-              if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
-                karafPropertiesFile = new KarafPropertiesFile(karafHome, karafEtc + configFile.substring(3));
-              }
+                // some property options will come from Pax-Exam and use the default data/etc locations,
+                // in those cases when the property file doesn't exist and we have custom data/etc paths
+                // we need to consider the custom location and use that - but only if it matches+exists
+                KarafPropertiesFile customPropertiesFile = null;
+                if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
+                    customPropertiesFile = new KarafPropertiesFile(karafHome, karafData + configFile.substring(4));
+                }
+                if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
+                    customPropertiesFile = new KarafPropertiesFile(karafHome, karafEtc + configFile.substring(3));
+                }
+                if (customPropertiesFile != null && customPropertiesFile.exists()) {
+                    karafPropertiesFile = customPropertiesFile;
+                }
             }
             karafPropertiesFile.load();
             Collection<List<KarafDistributionConfigurationFileOption>> optionsToApply = optionMap
