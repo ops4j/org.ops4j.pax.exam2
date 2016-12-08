@@ -31,9 +31,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.io.FileUtils;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
-import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
-import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.exam.options.UrlReference;
+import org.ops4j.pax.exam.karaf.options.SystemBundleOption;
+import org.ops4j.pax.exam.options.*;
 
 /**
  * Deploys exam and the user specified dependencies and creates the 
@@ -69,7 +68,25 @@ public class DependenciesDeployer {
                     karafHome + "/lib"), new String[] { "jar" }));
         }
     }
-    
+
+    /**
+     *
+     * Copies SystemBundleOption entries into the Karaf system folder using the Maven repository folder convention.
+     *
+     * @throws IOException if copy fails
+     */
+    public void copySystemLibraries() throws IOException {
+        SystemBundleOption[] systemBundleOptions = subsystem
+                .getOptions(SystemBundleOption.class);
+        for (SystemBundleOption systemBundleOption : systemBundleOptions) {
+            UrlReference libraryUrl = systemBundleOption.getLibraryUrl();
+            String destPath = karafHome + "/system" + systemBundleOption.getRepositoryPath();
+            FileUtils.copyURLToFile(
+                    new URL(libraryUrl.getURL()),
+                    new File(destPath));
+        }
+    }
+
     /**
      * Copy dependencies specified as ProvisionOption in system to the deploy folder
      */

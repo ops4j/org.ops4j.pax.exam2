@@ -29,6 +29,8 @@ import java.util.Set;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
+import org.ops4j.pax.exam.options.CompositeOption;
+import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.extra.VMOption;
 
@@ -107,6 +109,34 @@ public final class KarafDistributionOption {
      */
     public static KarafDistributionConfigurationSecurityOption configureSecurity() {
         return new KarafDistributionConfigurationSecurityOption(null);
+    }
+
+    /**
+     * Returns an option to adding an artifact to the Karaf system directory using the provided file.
+     * A corresponding (maven) entry will also be placed into the startup.properties configuration.
+     *
+     * @return
+     */
+    public static CompositeOption systemBundle(String aGroup, String artifact, String version, File file) {
+        return new DefaultCompositeOption(
+                new SystemBundleOption(aGroup, artifact, version, file),
+                editConfigurationFilePut("etc/startup.properties",
+                        "mvn:" + aGroup + "/" + artifact + "/" + version, "5")
+        );
+    }
+
+    /**
+     * Returns an option to adding an artifact to the Karaf system directory using the provided file.
+     * A corresponding (maven) entry will also be placed into the startup.properties configuration.
+     *
+     * @return
+     */
+    public static CompositeOption systemBundle(String aGroup, String artifact, String version) {
+        return new DefaultCompositeOption(
+                new SystemBundleOption(aGroup, artifact, version),
+                editConfigurationFilePut("etc/startup.properties",
+                        "mvn:" + aGroup + "/" + artifact + "/" + version, "5")
+        );
     }
 
     /**
