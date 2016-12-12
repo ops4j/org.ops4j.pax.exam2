@@ -16,16 +16,17 @@
  */
 package org.ops4j.pax.exam.karaf.options;
 
+import java.io.File;
+import java.net.MalformedURLException;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.RawUrlReference;
 import org.ops4j.pax.exam.options.UrlReference;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
 /**
- * Copies the specified file into the Karaf system folder. (A Karaf folder that follows the m2 directory structure)
+ * Copies the specified file into the Karaf system folder. (A Karaf folder that follows the m2
+ * directory structure). The artifact will also be added to the startup.properties
  */
 public class SystemBundleOption implements Option {
 
@@ -34,32 +35,53 @@ public class SystemBundleOption implements Option {
     private String version;
     private File file;
 
-
+    /**
+     * Installs the specified artifact into the Karaf system folder and adds an entry to
+     * startup.properties
+     *
+     * @see SystemBundleOption
+     */
     public SystemBundleOption(String aGroup, String artifact, String version, File file) {
         addSystemBundle(aGroup, artifact, version, file);
     }
 
+    /**
+     * Installs the specified artifact into the Karaf system folder and adds an entry to
+     * startup.properties
+     *
+     * @see SystemBundleOption
+     */
     public SystemBundleOption(String aGroup, String artifact, String version) {
         addSystemBundle(aGroup, artifact, version);
     }
 
+    /**
+     * @return The Maven group ID
+     */
     public String getGroup() {
         return group;
     }
 
+    /**
+     * @return The Maven artifact ID
+     */
     public String getArtifact() {
         return artifact;
     }
 
+    /**
+     * @return The Maven version ID
+     */
     public String getVersion() {
         return version;
     }
 
-    public SystemBundleOption addSystemBundle(String aGroup, String artifact, String version) {
+    private SystemBundleOption addSystemBundle(String aGroup, String artifact, String version) {
         return addSystemBundle(aGroup, artifact, version, null);
     }
 
-    public SystemBundleOption addSystemBundle(String aGroup, String artifact, String version, File file) {
+    private SystemBundleOption addSystemBundle(String aGroup, String artifact, String version,
+        File file) {
         this.group = aGroup;
         this.artifact = artifact;
         this.version = version;
@@ -68,26 +90,27 @@ public class SystemBundleOption implements Option {
     }
 
     /**
-     *
      * @return The URL to fetch the artifact
      */
     public UrlReference getLibraryUrl() {
         if (file != null) {
             try {
                 return new RawUrlReference(file.toURI().toURL().toString());
-            } catch (MalformedURLException e) {
+            }
+            catch (MalformedURLException e) {
                 e.printStackTrace();
                 return null;
             }
-        } else {
-            return new MavenArtifactUrlReference().groupId(group).artifactId(artifact).version(version);
+        }
+        else {
+            return new MavenArtifactUrlReference().groupId(group).artifactId(artifact)
+                .version(version);
         }
     }
 
     /**
-     *
-     * @return The maven repository path to the artifact.  Must start with <strong>/</strong>.
-     * This path should not include the /system prefix.
+     * @return The maven repository path to the artifact. Must start with <strong>/</strong>. This
+     *         path should not include the /system prefix.
      */
     public String getRepositoryPath() {
         String path = "/" + getGroup().replace(".", "/");
@@ -95,7 +118,8 @@ public class SystemBundleOption implements Option {
         path += "/" + getVersion();
         if (file != null) {
             path += "/" + file.getName();
-        } else {
+        }
+        else {
             path += "/" + getArtifact() + "-" + getVersion() + ".jar";
         }
         return path;

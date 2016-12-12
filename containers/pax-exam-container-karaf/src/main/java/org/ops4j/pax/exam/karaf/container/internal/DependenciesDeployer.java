@@ -32,7 +32,9 @@ import org.apache.commons.io.FileUtils;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
 import org.ops4j.pax.exam.karaf.options.SystemBundleOption;
-import org.ops4j.pax.exam.options.*;
+import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
+import org.ops4j.pax.exam.options.ProvisionOption;
+import org.ops4j.pax.exam.options.UrlReference;
 
 /**
  * Deploys exam and the user specified dependencies and creates the 
