@@ -39,6 +39,10 @@ Branches:
 Run Build:
 
     mvn clean install
+    
+Run build without long running javaee tests
+
+	mvn clean install -P \!javaee
 
 Run build with integration tests
 
