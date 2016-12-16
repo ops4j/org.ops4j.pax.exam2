@@ -75,7 +75,7 @@ public class KarafPropertiesFile {
             FileUtils.copyFile(source, propertyFile);
         } 
         catch (IOException e) {
-            throw new IllegalStateException("It is required to replace propertyFile", e);
+            throw new IllegalStateException("Error occured while replacing file " + propertyFile, e);
         }
     }
 
