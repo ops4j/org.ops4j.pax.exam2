@@ -82,6 +82,7 @@ import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.extra.EnvironmentOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.osgi.framework.Bundle;
@@ -204,7 +205,11 @@ public class KarafTestContainer implements TestContainer {
         File javaHome = new File(System.getProperty("java.home"));
         String main = framework.getKarafMain();
         String options = "";
-        String[] environment = new String[] {};
+        List<String> environment = new ArrayList<>();
+        EnvironmentOption[] environmentOptions = subsystem.getOptions(EnvironmentOption.class);
+        for (EnvironmentOption environmentOption : environmentOptions) {
+            environment.add(environmentOption.getEnvironment());
+        }
         ArrayList<String> javaOpts = new ArrayList<String>();
         appendVmSettingsFromSystem(javaOpts, subsystem);
         String[] javaEndorsedDirs = null;
@@ -221,7 +226,8 @@ public class KarafTestContainer implements TestContainer {
             + shouldRemoteShellBeStarted(subsystem));
         boolean enableMBeanServerBuilder = shouldMBeanServerBuilderBeEnabled(subsystem);
         String[] karafOpts = new String[] {};
-        runner.exec(environment, karafBase, javaHome.toString(), javaOpts.toArray(new String[] {}),
+        String[] env = environment.toArray(new String[environment.size()]);
+        runner.exec(env, karafBase, javaHome.toString(), javaOpts.toArray(new String[] {}),
             javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData.toString(), karafEtc.toString(),
             karafOpts, opts.toArray(new String[] {}), classPath, main, options,
             enableMBeanServerBuilder);
