@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.felix.cm.file.ConfigurationHandler;
 
 public class KarafPropertiesFile {
 
@@ -67,7 +68,13 @@ public class KarafPropertiesFile {
     }
 
     public void store() throws IOException {
-        properties.store(new FileOutputStream(propertyFile), "Modified by paxexam");
+        final FileOutputStream fos = new FileOutputStream(propertyFile);
+        if (propertyFile.getPath().endsWith(".config")) {
+            ConfigurationHandler.write(fos, properties);
+        } else {
+            properties.store(fos, "Modified by paxexam");
+        }
+        fos.close();
     }
 
     public void replace(File source) {
