@@ -218,6 +218,11 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
+    @Override
+    public void waitForService(String serviceClassName, RelativeTimeout timeout) throws NoSuchServiceException, RemoteException {
+        getRemoteBundleContext().waitForService(serviceClassName, null, timeout);
+    }
+
     /**
      * Looks up the {@link RemoteBundleContext} via RMI. The lookup will timeout in the specified
      * number of millis.

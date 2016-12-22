@@ -17,17 +17,20 @@
  */
 package org.ops4j.pax.exam.rbc.client.intern;
 
+import org.ops4j.pax.exam.ExceptionHelper;
+import org.ops4j.pax.exam.RelativeTimeout;
+import org.ops4j.pax.exam.TestAddress;
+import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
+import org.ops4j.pax.exam.rbc.internal.NoSuchServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.NoSuchObjectException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.ops4j.pax.exam.ExceptionHelper;
-import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestAddress;
-import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
+import java.rmi.RemoteException;
 
 /**
  *
@@ -120,6 +123,11 @@ public class RetryRemoteBundleContextClient implements RemoteBundleContextClient
 
     public void waitForState(long bundleId, int state, RelativeTimeout timeout) {
         proxy.waitForState(bundleId, state, timeout);
+    }
+
+    @Override
+    public void waitForService(String serviceClassName, RelativeTimeout timeout) throws NoSuchServiceException, RemoteException {
+        proxy.waitForService(serviceClassName, timeout);
     }
 
     public void call(TestAddress address) {
