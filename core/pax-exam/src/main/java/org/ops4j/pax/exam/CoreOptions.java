@@ -51,6 +51,7 @@ import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.options.WrappedUrlProvisionOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
+import org.ops4j.pax.exam.options.extra.EnvironmentOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOptionImpl;
 import org.ops4j.pax.exam.options.extra.VMOption;
@@ -884,5 +885,49 @@ public class CoreOptions {
      */
     public static UrlProvisionOption linkBundle(String symbolicName) {
         return bundle(String.format("link:classpath:%s.link", symbolicName));
+    }
+
+    /**
+     * Creates a composite option of {@link EnvironmentOption}s.
+     *
+     * @param environmentVariables
+     *            process environment variables (cannot be null or containing null entries)
+     *
+     * @return composite option of environment variables
+     *
+     * @throws IllegalArgumentException
+     *             - If environmentVariables array is null or contains null entries
+     */
+    public static Option environment(final String... environmentVariables) {
+        validateNotEmptyContent(environmentVariables, true, "Environment variable options");
+        final List<EnvironmentOption> options = new ArrayList<EnvironmentOption>();
+        for (String environmentVariable : environmentVariables) {
+            options.add(environment(environmentVariable));
+        }
+        return environment(options.toArray(new EnvironmentOption[options.size()]));
+    }
+
+    /**
+     * Creates a composite option of {@link EnvironmentOption}s.
+     *
+     * @param environmentOptions
+     *            process environment variable options
+     *
+     * @return composite option of process environment variable options
+     */
+    public static Option environment(final EnvironmentOption... environmentOptions) {
+        return new DefaultCompositeOption(environmentOptions);
+    }
+
+    /**
+     * Creates a {@link EnvironmentOption}.
+     *
+     * @param environmentVariable
+     *            process environment variable
+     *
+     * @return process environment variable option
+     */
+    public static EnvironmentOption environment(final String environmentVariable) {
+        return new EnvironmentOption(environmentVariable);
     }
 }
