@@ -26,13 +26,13 @@ public abstract class KarafDistributionConfigurationFileOption implements Option
 
     private String configurationFilePath;
     private String key;
-    private String value;
+    private Object value;
 
-    public KarafDistributionConfigurationFileOption(ConfigurationPointer pointer, String value) {
+    public KarafDistributionConfigurationFileOption(ConfigurationPointer pointer, Object value) {
         this(pointer.getConfigurationFilePath(), pointer.getKey(), value);
     }
 
-    public KarafDistributionConfigurationFileOption(String configurationFilePath, String key, String value) {
+    public KarafDistributionConfigurationFileOption(String configurationFilePath, String key, Object value) {
         this.configurationFilePath = configurationFilePath;
         this.key = key;
         this.value = value;
@@ -50,7 +50,7 @@ public abstract class KarafDistributionConfigurationFileOption implements Option
         return key;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 

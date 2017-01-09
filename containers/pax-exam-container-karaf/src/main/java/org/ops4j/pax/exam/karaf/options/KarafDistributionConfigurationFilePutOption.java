@@ -25,11 +25,11 @@ package org.ops4j.pax.exam.karaf.options;
  */
 public class KarafDistributionConfigurationFilePutOption extends KarafDistributionConfigurationFileOption {
 
-    public KarafDistributionConfigurationFilePutOption(String configurationFilePath, String key, String value) {
+    public KarafDistributionConfigurationFilePutOption(String configurationFilePath, String key, Object value) {
         super(configurationFilePath, key, value);
     }
 
-    public KarafDistributionConfigurationFilePutOption(ConfigurationPointer pointer, String value) {
+    public KarafDistributionConfigurationFilePutOption(ConfigurationPointer pointer, Object value) {
         super(pointer, value);
     }
 

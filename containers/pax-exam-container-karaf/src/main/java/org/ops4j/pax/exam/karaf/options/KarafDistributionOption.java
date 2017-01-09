@@ -154,7 +154,7 @@ public final class KarafDistributionOption {
      * @return option
      */
     public static Option editConfigurationFilePut(String configurationFilePath, String key,
-        String value) {
+        Object value) {
         return new KarafDistributionConfigurationFilePutOption(configurationFilePath, key, value);
     }
 
@@ -172,7 +172,7 @@ public final class KarafDistributionOption {
      * @return option
      */
     public static Option editConfigurationFilePut(ConfigurationPointer configurationPointer,
-        String value) {
+        Object value) {
         return new KarafDistributionConfigurationFilePutOption(configurationPointer, value);
     }
 
@@ -195,7 +195,7 @@ public final class KarafDistributionOption {
         return createOptionListFromFile(source, new FileOptionFactory() {
 
             @Override
-            public Option createOption(String key, String value) {
+            public Option createOption(String key, Object value) {
                 return new KarafDistributionConfigurationFilePutOption(configurationFilePath, key,
                     value);
             }
@@ -204,7 +204,7 @@ public final class KarafDistributionOption {
 
     private interface FileOptionFactory {
 
-        Option createOption(String key, String value);
+        Option createOption(String key, Object value);
     }
 
     private static Option[] createOptionListFromFile(File source, FileOptionFactory optionFactory,
@@ -224,13 +224,13 @@ public final class KarafDistributionOption {
             Set<Object> keySet = props.keySet();
             for (Object key : keySet) {
                 Object value = props.get(key);
-                options.add(optionFactory.createOption((String) key, (String) value));
+                options.add(optionFactory.createOption((String) key, value));
             }
         }
         else {
             for (String key : keysToUseFromSource) {
                 Object value = props.get(key);
-                options.add(optionFactory.createOption(key, (String) value));
+                options.add(optionFactory.createOption(key, value));
             }
         }
         return options.toArray(new Option[] {});
@@ -253,7 +253,7 @@ public final class KarafDistributionOption {
      * @return option
      */
     public static Option editConfigurationFileExtend(String configurationFilePath, String key,
-        String value) {
+        Object value) {
         return new KarafDistributionConfigurationFileExtendOption(configurationFilePath, key, value);
     }
 
@@ -273,7 +273,7 @@ public final class KarafDistributionOption {
      * @return option
      */
     public static Option editConfigurationFileExtend(ConfigurationPointer configurationPointer,
-        String value) {
+        Object value) {
         return new KarafDistributionConfigurationFileExtendOption(configurationPointer, value);
     }
 
@@ -296,7 +296,7 @@ public final class KarafDistributionOption {
         return createOptionListFromFile(source, new FileOptionFactory() {
 
             @Override
-            public Option createOption(String key, String value) {
+            public Option createOption(String key, Object value) {
                 return new KarafDistributionConfigurationFileExtendOption(configurationFilePath,
                     key, value);
             }

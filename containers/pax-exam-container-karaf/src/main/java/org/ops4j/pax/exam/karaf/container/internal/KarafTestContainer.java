@@ -374,40 +374,40 @@ public class KarafTestContainer implements TestContainer {
         String karafEtc = framework.getKarafEtc();
         Set<String> configFiles = optionMap.keySet();
         for (String configFile : configFiles) {
-            KarafPropertiesFile karafPropertiesFile = new KarafPropertiesFile(karafHome, configFile);
-            if (!karafPropertiesFile.exists()) {
+            KarafConfigurationFile karafConfigurationFile = KarafConfigurationFileFactory.create(karafHome, configFile);
+            if (!karafConfigurationFile.exists()) {
                 // some property options will come from Pax-Exam and use the default data/etc locations,
                 // in those cases when the property file doesn't exist and we have custom data/etc paths
                 // we need to consider the custom location and use that - but only if it matches+exists
-                KarafPropertiesFile customPropertiesFile = null;
+                KarafConfigurationFile customConfigurationFile = null;
                 if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
-                    customPropertiesFile = new KarafPropertiesFile(karafHome, karafData + configFile.substring(4));
+                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafData + configFile.substring(4));
                 }
                 if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
-                    customPropertiesFile = new KarafPropertiesFile(karafHome, karafEtc + configFile.substring(3));
+                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafEtc + configFile.substring(3));
                 }
-                if (customPropertiesFile != null && customPropertiesFile.exists()) {
-                    karafPropertiesFile = customPropertiesFile;
+                if (customConfigurationFile != null && customConfigurationFile.exists()) {
+                    karafConfigurationFile = customConfigurationFile;
                 }
             }
-            karafPropertiesFile.load();
+            karafConfigurationFile.load();
             Collection<List<KarafDistributionConfigurationFileOption>> optionsToApply = optionMap
                 .get(configFile).values();
             boolean store = true;
             for (List<KarafDistributionConfigurationFileOption> optionListToApply : optionsToApply) {
                 for (KarafDistributionConfigurationFileOption optionToApply : optionListToApply) {
                     if (optionToApply instanceof KarafDistributionConfigurationFilePutOption) {
-                        karafPropertiesFile.put(optionToApply.getKey(), optionToApply.getValue());
+                        karafConfigurationFile.put(optionToApply.getKey(), optionToApply.getValue());
                     }
                     else if (optionToApply instanceof KarafDistributionConfigurationFileReplacementOption) {
-                        karafPropertiesFile
+                        karafConfigurationFile
                             .replace(((KarafDistributionConfigurationFileReplacementOption) optionToApply)
                                 .getSource());
                         store = false;
                         break;
                     }
                     else {
-                        karafPropertiesFile
+                        karafConfigurationFile
                             .extend(optionToApply.getKey(), optionToApply.getValue());
                     }
                 }
@@ -416,7 +416,7 @@ public class KarafTestContainer implements TestContainer {
                 }
             }
             if (store) {
-                karafPropertiesFile.store();
+                karafConfigurationFile.store();
             }
         }
     }
