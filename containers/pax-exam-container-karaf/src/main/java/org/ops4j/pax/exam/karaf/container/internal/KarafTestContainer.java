@@ -118,6 +118,10 @@ public class KarafTestContainer implements TestContainer {
         this.runner = runner;
     }
 
+    public File getTargetFolder() {
+        return targetFolder;
+    }
+
     @Override
     public synchronized TestContainer start() {
         try {
