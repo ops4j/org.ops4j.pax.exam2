@@ -115,7 +115,7 @@ public class KarafEmbeddedRunner implements Runner {
                         mainBundles.addAll(searchMainBundle(file.listFiles()));
                     } 
                     else {
-                        if (file.getPath().contains("/boot")) {
+                        if (file.getPath().contains(File.separator+ "boot")) {
                             // karaf 4.x
                             mainBundles.add(file);
                         } 
