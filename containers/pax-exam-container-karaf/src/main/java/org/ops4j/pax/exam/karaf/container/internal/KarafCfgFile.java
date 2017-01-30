@@ -23,9 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
- * @link https://sling.apache.org/documentation/bundles/configuration-installer-factory.html#property-files-cfg
- */
 public class KarafCfgFile extends KarafConfigurationFile {
 
     private final Properties properties = new Properties();
