@@ -29,7 +29,6 @@ import org.jboss.weld.resources.spi.ResourceLoadingException;
 
 /**
  * A simple resource loader.
- * <p/>
  * Uses {@link WeldResourceLoader}'s classloader if the Thread Context Classloader isn't available
  *
  * @author Pete Muir
