@@ -28,9 +28,6 @@ import java.util.Hashtable;
 
 import org.apache.felix.cm.file.ConfigurationHandler;
 
-/**
- * @link https://sling.apache.org/documentation/bundles/configuration-installer-factory.html#configuration-files-config
- */
 public class KarafConfigFile extends KarafConfigurationFile {
 
     private Dictionary configuration = new Hashtable();
