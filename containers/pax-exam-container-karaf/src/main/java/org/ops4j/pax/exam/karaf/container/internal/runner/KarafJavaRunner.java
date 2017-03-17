@@ -60,7 +60,7 @@ public class KarafJavaRunner implements Runner {
                             .append("--add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED")
                             .append("--add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED")
                             .append("--add-modules")
-                            .append("java.annotations.common,java.corba,java.transaction,java.xml.bind,java.xml.ws,jdk.xml.bind")
+                            .append("java.xml.ws.annotation,java.corba,java.transaction,java.xml.bind,java.xml.ws,jdk.xml.bind")
                             .append("-Dkaraf.instances=" + karafHome + "/instances")
                             .append("-Dkaraf.home=" + karafHome)
                             .append("-Dkaraf.base=" + karafBase)
