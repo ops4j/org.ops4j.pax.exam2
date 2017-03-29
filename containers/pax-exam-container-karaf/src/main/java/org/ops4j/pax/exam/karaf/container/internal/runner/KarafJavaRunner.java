@@ -59,6 +59,7 @@ public class KarafJavaRunner implements Runner {
                             .append("--add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED")
                             .append("--add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED")
                             .append("--add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED")
+                            .append("--add-exports=java.xml.ws/com.sun.xml.internal.messaging.saaj.soap.impl=ALL-UNNAMED")
                             .append("--add-modules")
                             .append("java.xml.ws.annotation,java.corba,java.transaction,java.xml.bind,java.xml.ws,jdk.xml.bind")
                             .append("-Dkaraf.instances=" + karafHome + "/instances")
