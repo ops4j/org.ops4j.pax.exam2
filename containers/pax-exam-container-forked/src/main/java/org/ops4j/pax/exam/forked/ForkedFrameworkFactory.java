@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.forked;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
@@ -111,9 +112,12 @@ public class ForkedFrameworkFactory {
         String rmiName = "ExamRemoteFramework-" + UUID.randomUUID().toString();
 
         try {
+            String address = InetAddress.getLoopbackAddress().getHostAddress();
+            System.setProperty("java.rmi.server.hostname", address);
             registry = LocateRegistry.createRegistry(port);
 
             Map<String, String> systemPropsNew = new HashMap<>(systemProperties);
+            systemPropsNew.put("java.rmi.server.hostname", address);
             systemPropsNew.put(RemoteFramework.RMI_PORT_KEY, Integer.toString(port));
             systemPropsNew.put(RemoteFramework.RMI_NAME_KEY, rmiName);
             String[] vmOptions = buildSystemProperties(vmArgs, systemPropsNew);
@@ -220,7 +224,8 @@ public class ForkedFrameworkFactory {
 
         do {
             try {
-                Registry reg = LocateRegistry.getRegistry(_port);
+                String address = InetAddress.getLoopbackAddress().getHostAddress();
+                Registry reg = LocateRegistry.getRegistry(address, _port);
                 framework = (RemoteFramework) reg.lookup(rmiName);
             }
             catch (RemoteException e) {
