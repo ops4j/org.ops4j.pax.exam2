@@ -69,7 +69,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     /**
      * Constructor.
-     * 
+     *
      * @param name
      *            of container
      * @param registry
@@ -84,7 +84,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         this.registry = registry;
         this.name = name;
         rmiLookupTimeout = timeout;
-        installed = new Stack<Long>();
+        installed = new Stack<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -96,6 +96,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
                 /**
                  * Delegates the call to remote bundle context.
                  */
+                @Override
                 public Object invoke(final Object proxy, final Method method, final Object[] params) {
                     try {
                         return getRemoteBundleContext().remoteCall(method.getDeclaringClass(),
@@ -120,6 +121,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
             });
     }
 
+    @Override
     public long install(String location, InputStream stream) {
         // turn this into a local url because we don't want pass the stream any further.
         try {
@@ -152,6 +154,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         return out.toByteArray();
     }
 
+    @Override
     public void cleanup() {
         try {
             while (!installed.isEmpty()) {
@@ -168,6 +171,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     }
 
+    @Override
     public void setBundleStartLevel(final long bundleId, final int startLevel) {
         try {
             getRemoteBundleContext().setBundleStartLevel(bundleId, startLevel);
@@ -180,6 +184,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
+    @Override
     public void start() {
         try {
             getRemoteBundleContext().startBundle(0);
@@ -192,6 +197,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
+    @Override
     public void stop() {
         try {
             getRemoteBundleContext().stopBundle(0);
@@ -206,6 +212,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
     }
 
+    @Override
     public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         try {
             getRemoteBundleContext().waitForState(bundleId, state, timeout);
@@ -221,7 +228,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
     /**
      * Looks up the {@link RemoteBundleContext} via RMI. The lookup will timeout in the specified
      * number of millis.
-     * 
+     *
      * @return remote bundle context
      */
     private synchronized RemoteBundleContext getRemoteBundleContext() {
@@ -261,6 +268,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
     }
 
+    @Override
     public void call(TestAddress address) {
         String filterExpression = "(" + PROBE_SIGNATURE_KEY + "=" + address.root().identifier()
             + ")";

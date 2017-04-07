@@ -54,13 +54,12 @@ public class KarafTestContainerITest {
             configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO)
         };
     }
-    
+
     public static String karafVersion() {
         ConfigurationManager cm = new ConfigurationManager();
         String karafVersion = cm.getProperty("pax.exam.karaf.version", "3.0.2");
         return karafVersion;
     }
-    
 
     @Test
     public void checkKarafSystemService() throws Exception {
