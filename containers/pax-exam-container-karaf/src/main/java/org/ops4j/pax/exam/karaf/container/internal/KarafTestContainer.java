@@ -161,7 +161,7 @@ public class KarafTestContainer implements TestContainer {
             updateLogProperties(karafHome, subsystem);
             setupSystemProperties(karafHome, subsystem);
 
-            List<KarafDistributionConfigurationFileOption> options = new ArrayList<KarafDistributionConfigurationFileOption>(
+            List<KarafDistributionConfigurationFileOption> options = new ArrayList<>(
                 Arrays.asList(subsystem.getOptions(KarafDistributionConfigurationFileOption.class)));
             options.addAll(fromFeatureOptions(subsystem.getOptions(KarafFeaturesOption.class)));
             options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL,
@@ -210,7 +210,7 @@ public class KarafTestContainer implements TestContainer {
         for (EnvironmentOption environmentOption : environmentOptions) {
             environment.add(environmentOption.getEnvironment());
         }
-        ArrayList<String> javaOpts = new ArrayList<String>();
+        ArrayList<String> javaOpts = new ArrayList<>();
         appendVmSettingsFromSystem(javaOpts, subsystem);
         String[] javaEndorsedDirs = null;
         if (System.getProperty("java.version").startsWith("9")) {
@@ -346,7 +346,7 @@ public class KarafTestContainer implements TestContainer {
 
     private void updateUserSetProperties(File karafHome,
         List<KarafDistributionConfigurationFileOption> options) throws IOException {
-        HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = new HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>>();
+        HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = new HashMap<>();
         for (KarafDistributionConfigurationFileOption option : options) {
             if (!optionMap.containsKey(option.getConfigurationFilePath())) {
                 optionMap.put(option.getConfigurationFilePath(),
@@ -441,7 +441,7 @@ public class KarafTestContainer implements TestContainer {
 
     private Collection<? extends KarafDistributionConfigurationFileOption> fromFeatureOptions(
         KarafFeaturesOption... featuresOptions) {
-        ArrayList<KarafDistributionConfigurationFileOption> retVal = new ArrayList<KarafDistributionConfigurationFileOption>();
+        ArrayList<KarafDistributionConfigurationFileOption> retVal = new ArrayList<>();
 
         for (KarafFeaturesOption featuresOption : featuresOptions) {
             retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES,
@@ -492,7 +492,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private String[] buildKarafClasspath(File karafHome) {
-        List<String> cp = new ArrayList<String>();
+        List<String> cp = new ArrayList<>();
         File[] jars = new File(karafHome + "/lib").listFiles((FileFilter) new WildcardFileFilter(
             "*.jar"));
         for (File jar : jars) {
@@ -521,7 +521,7 @@ public class KarafTestContainer implements TestContainer {
      * Since we might get quite deep use a simple breath first search algorithm
      */
     private File searchKarafBase(File _targetFolder) {
-        Queue<File> searchNext = new LinkedList<File>();
+        Queue<File> searchNext = new LinkedList<>();
         searchNext.add(_targetFolder);
         while (!searchNext.isEmpty()) {
             File head = searchNext.poll();
@@ -606,7 +606,7 @@ public class KarafTestContainer implements TestContainer {
     private void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         target.getClientRBC().waitForState(bundleId, state, timeout);
     }
-    
+
 
     @Override
     public synchronized void call(TestAddress address) {
