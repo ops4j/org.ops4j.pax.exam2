@@ -128,13 +128,15 @@ public class KarafTestContainer implements TestContainer {
             //registry.selectGracefully();
             FreePort freePort = new FreePort(21000, 21099);
             int port = freePort.getPort();
-            LOGGER.debug("using RMI registry at port {}", port);
-            rgstry = LocateRegistry.createRegistry(port);
 
-            String host = InetAddress.getLocalHost().getHostName();
+            String host = InetAddress.getLoopbackAddress().getHostAddress();
+            LOGGER.info("Creating RMI registry server on {}:{}", host, port);
+            System.setProperty("java.rmi.server.hostname", host);
+            rgstry = LocateRegistry.createRegistry(port);
 
             ExamSystem subsystem = system
                 .fork(options(
+                    systemProperty("java.rmi.server.hostname").value(host),
                     systemProperty(RMI_HOST_PROPERTY).value(host),
                     systemProperty(RMI_PORT_PROPERTY).value(Integer.toString(port)),
                     systemProperty(RMI_NAME_PROPERTY).value(name),
