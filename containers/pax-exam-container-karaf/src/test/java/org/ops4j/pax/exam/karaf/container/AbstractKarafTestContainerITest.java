@@ -43,16 +43,18 @@ import org.osgi.framework.ServiceReference;
 @RunWith(PaxExam.class)
 public abstract class AbstractKarafTestContainerITest {
 
-    private static final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf").type("zip");
+    private final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf").type("zip");
 
     @Inject
     private BundleContext bc;
 
     @Configuration
     public Option[] config() {
+        String karafVersion = karafVersion();
         return new Option[] {
-            karafDistributionConfiguration().frameworkUrl(KARAF_URL).karafVersion(karafVersion()).useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
-            configureConsole().ignoreLocalConsole().startRemoteShell(), logLevel(LogLevel.INFO)
+            karafDistributionConfiguration().frameworkUrl(KARAF_URL.version(karafVersion))
+                .karafVersion(karafVersion).useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
+            configureConsole().startLocalConsole().ignoreRemoteShell(), logLevel(LogLevel.INFO)
         };
     }
 

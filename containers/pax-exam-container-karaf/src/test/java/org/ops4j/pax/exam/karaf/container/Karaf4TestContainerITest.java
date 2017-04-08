@@ -21,6 +21,6 @@ public class Karaf4TestContainerITest extends AbstractKarafTestContainerITest {
 
     @Override
     protected String getDefaultKarafVersion() {
-        return "3.0.8";
+        return "4.1.1";
     }
 }
