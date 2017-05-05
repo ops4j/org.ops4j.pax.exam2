@@ -27,6 +27,7 @@ import static org.ops4j.pax.exam.rbc.Constants.RMI_PORT_PROPERTY;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -160,8 +161,8 @@ public class KarafTestContainer implements TestContainer {
                 karafHome);
             deployer.copyBootClasspathLibraries();
 
-            updateLogProperties(karafHome, subsystem);
             setupSystemProperties(karafHome, subsystem);
+            updateLogProperties(karafHome, subsystem);
 
             List<KarafDistributionConfigurationFileOption> options = new ArrayList<>(
                 Arrays.asList(subsystem.getOptions(KarafDistributionConfigurationFileOption.class)));
@@ -479,12 +480,39 @@ public class KarafTestContainer implements TestContainer {
             LOGGER.info("Log file should not be modified by the test framework");
             return;
         }
+
+        LoggingBackend loggingBackend = getLoggingBackend(karafHome);
         String realLogLevel = retrieveRealLogLevel(_system);
+
         File customPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/org.ops4j.pax.logging.cfg");
         Properties karafPropertyFile = new Properties();
         karafPropertyFile.load(new FileInputStream(customPropertiesFile));
-        karafPropertyFile.put("log4j.rootLogger", realLogLevel + ", out, stdout, osgi:*");
+        loggingBackend.updatePaxLoggingConfiguration(karafPropertyFile, realLogLevel);
         karafPropertyFile.store(new FileOutputStream(customPropertiesFile), "updated by pax-exam");
+    }
+
+    private LoggingBackend getLoggingBackend(File karafHome) throws IOException, FileNotFoundException {
+        File customisedSystemPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/startup.properties");
+        InputStream customisedSystemPropertiesInputStream = null;
+        try {
+            customisedSystemPropertiesInputStream = new FileInputStream(customisedSystemPropertiesFile);
+            Properties customisedSystemProperties = new Properties();
+            customisedSystemProperties.load(customisedSystemPropertiesInputStream);
+
+            Set<Object> systemPropertyNames = customisedSystemProperties.keySet();
+            for (Object systemPropertyName : systemPropertyNames) {
+                if (systemPropertyName.toString().contains("pax-logging-log4j2")) {
+                    return LoggingBackend.LOG4J2;
+                }
+            }
+
+            return LoggingBackend.LOG4J;
+
+        } finally {
+            if (customisedSystemPropertiesInputStream != null) {
+                customisedSystemPropertiesInputStream.close();
+            }
+        }
     }
 
     private String retrieveRealLogLevel(ExamSystem _system) {
