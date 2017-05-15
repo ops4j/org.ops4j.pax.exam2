@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.karaf.options.libraries.OverrideJUnitBundlesOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.ops4j.pax.exam.options.extra.VMOption;
@@ -393,5 +394,14 @@ public final class KarafDistributionOption {
     public static KarafFeaturesOption features(final UrlReference repositoryUrl,
         final String... features) {
         return new KarafFeaturesOption(repositoryUrl, features);
+    }
+    
+    /**
+     * A convenience method that disables the default Junit deployment.
+     *
+     * @return option
+     */
+    public static OverrideJUnitBundlesOption overrideJUnitBundles() {
+        return new OverrideJUnitBundlesOption();
     }
 }

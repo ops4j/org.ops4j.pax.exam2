@@ -37,6 +37,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -73,6 +74,17 @@ public abstract class AbstractKarafTestContainerITest {
             .getServiceReference("org.apache.karaf.system.SystemService");
         Object service = bc.getService(serviceRef);
         assertThat(service, is(notNullValue()));
+    }
+    
+    public Bundle findBundle(String symbolicName) {
+        Bundle[] bundles = bc.getBundles();
+        for (Bundle bundle : bundles) {
+            if (bundle.getSymbolicName().equals(symbolicName)) {
+                return bundle;
+            }
+        }
+    
+        return null;
     }
 
 }

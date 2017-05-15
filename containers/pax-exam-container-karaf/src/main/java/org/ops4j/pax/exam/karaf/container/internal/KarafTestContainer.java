@@ -77,6 +77,7 @@ import org.ops4j.pax.exam.karaf.options.KeepRuntimeFolderOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
+import org.ops4j.pax.exam.karaf.options.libraries.OverrideJUnitBundlesOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
@@ -167,8 +168,10 @@ public class KarafTestContainer implements TestContainer {
             List<KarafDistributionConfigurationFileOption> options = new ArrayList<>(
                 Arrays.asList(subsystem.getOptions(KarafDistributionConfigurationFileOption.class)));
             options.addAll(fromFeatureOptions(subsystem.getOptions(KarafFeaturesOption.class)));
-            options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL,
-                "exam")));
+            String usedExamFeature = shouldInjectJUnitBundles(system)
+                    ? "exam"
+                    : "exam-no-junit";
+            options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL, usedExamFeature)));
 
             if (framework.isUseDeployFolder()) {
                 deployer.copyReferencedArtifactsToDeployFolder();
@@ -190,6 +193,12 @@ public class KarafTestContainer implements TestContainer {
         return this;
     }
 
+    private boolean shouldInjectJUnitBundles(ExamSystem _system) {
+        Option[] options = _system.getOptions(OverrideJUnitBundlesOption.class);  
+        LOGGER.info("Found {} options when requesting OverrideJUnitBundlesOption.class", options.length);
+        return options.length == 0;
+    }
+    
     private KarafManipulator createVersionAdapter(File karafBase) {
         File karafEtc = new File(karafBase, framework.getKarafEtc());
         File distributionInfo = new File(karafEtc, "distribution.info");
