@@ -112,6 +112,7 @@ public class KarafTestContainer implements TestContainer {
     private File targetFolder;
 
     private Registry rgstry;
+    private FreePort freePort;
 
     public KarafTestContainer(ExamSystem system,
         KarafDistributionBaseConfigurationOption framework, Runner runner) {
@@ -128,7 +129,7 @@ public class KarafTestContainer implements TestContainer {
             Option invokerConfiguration = getInvokerConfiguration();
 
             //registry.selectGracefully();
-            FreePort freePort = new FreePort(21000, 21099);
+            freePort = new FreePort(21000, 21099);
             int port = freePort.getPort();
 
             String host = InetAddress.getLoopbackAddress().getHostAddress();
@@ -617,6 +618,11 @@ public class KarafTestContainer implements TestContainer {
             }
         }
         finally {
+            try {
+                freePort.close();
+            } catch (Exception e) {
+                LOGGER.warn("Closing port threw an exception. It is likely already closed", e);
+            }
             started = false;
             target = null;
             if (shouldDeleteRuntime()) {
