@@ -1,3 +1,10 @@
 machine:
   java:
     version: openjdk8
+
+dependencies:
+  override:
+    # https://issues.apache.org/jira/browse/MDEP-516
+    # alternative, just: mvn -B dependency:resolve-plugins
+    - mvn --fail-never dependency:go-offline || true
+
