@@ -8,3 +8,8 @@ dependencies:
     # alternative, just: mvn -B dependency:resolve-plugins
     - mvn --fail-never dependency:go-offline || true
 
+test:
+  override:
+    # Pax Exam Karaf needs 'install', CircleCI's default phase 'integration-test' is not sufficient
+    - mvn install
+
