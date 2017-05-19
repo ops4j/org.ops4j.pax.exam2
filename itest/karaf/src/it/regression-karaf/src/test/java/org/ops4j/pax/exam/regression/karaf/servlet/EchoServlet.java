@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.ops4j.pax.exam.regression.karaf.supports;
+package org.ops4j.pax.exam.regression.karaf.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
