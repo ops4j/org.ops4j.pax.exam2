@@ -31,6 +31,19 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>apache-karaf</artifactId>
+            <version>${dependency.karaf.version}</version>
+            <type>tar.gz</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
@@ -39,6 +52,12 @@
             <type>xml</type>
             <classifier>features</classifier>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -135,8 +154,6 @@
                 <version>1.4.0</version>
                 <executions>
                     <execution>
-                        <id>generate-depends-file</id>
-                        <phase>generate-resources</phase>
                         <goals>
                             <goal>generate-depends-file</goal>
                         </goals>

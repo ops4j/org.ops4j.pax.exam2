@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
@@ -29,15 +28,13 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 @RunWith(PaxExam.class)
 public class DuplicatedPropertyEntryTest {
 
     @Inject
-    private BundleContext ctx;
+    private ConfigurationAdmin configAdmin;
 
     @Configuration
     public Option[] config() {
@@ -48,19 +45,8 @@ public class DuplicatedPropertyEntryTest {
     }
 
     @Test
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void testConfiguration_shouldHaveWrittenTheLaterOne() throws Exception {
-        ServiceReference[] allServiceReferences = ctx.getAllServiceReferences(ConfigurationAdmin.class.getName(), null);
-        for (ServiceReference serviceReference : allServiceReferences) {
-            ConfigurationAdmin service = (ConfigurationAdmin) ctx.getService(serviceReference);
-            try {
-                org.osgi.service.cm.Configuration configuration = service.getConfiguration("tests");
-                assertEquals("myvalue2", configuration.getProperties().get("mykey"));
-                return;
-            } catch (Exception e) {
-                // continue
-            }
-        }
-        fail();
+        org.osgi.service.cm.Configuration configuration = configAdmin.getConfiguration("tests");
+        assertEquals("myvalue2", configuration.getProperties().get("mykey"));
     }
 }

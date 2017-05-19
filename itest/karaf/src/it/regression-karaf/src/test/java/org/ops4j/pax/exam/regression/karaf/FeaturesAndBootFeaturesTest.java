@@ -19,12 +19,11 @@ package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.karafVersion;
+import static org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg.BOOT;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.featureRepoStandard;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -35,13 +34,9 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
 
-/**
- * This test should validate if the versionAsInProject tags work as expected.
- */
 @RunWith(PaxExam.class)
-public class MixFeatureAndDeployFolderFalseTest {
+public class FeaturesAndBootFeaturesTest {
 
     @Inject
     private FeaturesService featuresService;
@@ -52,22 +47,18 @@ public class MixFeatureAndDeployFolderFalseTest {
     @Configuration
     public Option[] config() {
         return new Option[]{
-            karafDistributionConfiguration()
-                .frameworkUrl(
-                    maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("zip")
-                        .version(karafVersion())),
-                //.useDeployFolder(false),
-                configureConsole().ignoreLocalConsole(),
-                editConfigurationFilePut(FeaturesCfg.BOOT,
-                "config,standard,region,package,ssh"),
-            features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
-                .classifier("features").version(karafVersion()), "kar") };
+            regressionDefaults(),
+            editConfigurationFilePut(BOOT, "config, log, framework, feature"),
+            features(featureRepoStandard(), "kar")
+        };
     }
 
     @Test
     public void test() throws Exception {
-        assertFalse(featuresService.isInstalled(featuresService.getFeature("management")));
-        assertTrue(featuresService.isInstalled(featuresService.getFeature("kar")));
+        assertFalse("Feature management should not be installed",
+                    featuresService.isInstalled(featuresService.getFeature("management")));
+        assertTrue("Feature kar should be installed",
+                   featuresService.isInstalled(featuresService.getFeature("kar")));
     }
 
 }

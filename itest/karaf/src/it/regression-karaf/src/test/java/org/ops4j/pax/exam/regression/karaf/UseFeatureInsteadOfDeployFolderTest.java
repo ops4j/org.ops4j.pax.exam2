@@ -23,6 +23,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -43,6 +44,7 @@ public class UseFeatureInsteadOfDeployFolderTest {
             mavenBundle("org.slf4j", "slf4j-api", "1.6.1"));
     }
 
+    @Ignore
     @Test
     public void test() throws Exception {
         for (Bundle b : bc.getBundles()) {
