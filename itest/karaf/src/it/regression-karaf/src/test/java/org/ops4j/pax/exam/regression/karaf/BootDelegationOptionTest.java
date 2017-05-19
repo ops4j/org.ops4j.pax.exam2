@@ -17,7 +17,7 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.bootDelegationPackage;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
@@ -51,6 +51,6 @@ public class BootDelegationOptionTest {
         Properties expectedProps = new Properties();
         expectedProps.load(BootDelegationOptionTest.class.getResourceAsStream("/expected_bootdelegation.properties"));
         String expectedDelegation = expectedProps.getProperty("org.osgi.framework.bootdelegation");
-        assertThat(actualDelegation, is(expectedDelegation));
+        assertThat(actualDelegation, equalTo(expectedDelegation));
     }
 }

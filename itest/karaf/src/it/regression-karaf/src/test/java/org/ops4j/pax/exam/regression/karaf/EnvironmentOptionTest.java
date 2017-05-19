@@ -25,7 +25,6 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.options.extra.EnvironmentOption;
-import org.ops4j.pax.exam.options.extra.VMOption;
 
 @RunWith(PaxExam.class)
 public class EnvironmentOptionTest {

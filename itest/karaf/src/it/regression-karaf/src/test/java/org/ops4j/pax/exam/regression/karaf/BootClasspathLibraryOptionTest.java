@@ -50,8 +50,8 @@ public class BootClasspathLibraryOptionTest {
                 foundJarFiles++;
             }
         }
-        // Karaf 3.0.0 has 6 boot libs, we expect another one to show up
-        assertEquals(6 + 1, foundJarFiles);
+        // Karaf 4.1.1 has 2 boot libs, we expect another one to show up
+        assertEquals(2 + 1, foundJarFiles);
     }
 
 }
