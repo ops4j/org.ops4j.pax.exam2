@@ -656,8 +656,8 @@ public class KarafTestContainer implements TestContainer {
     }
 
     @Override
-    public long installProbe(InputStream stream) {
-        return target.installProbe(stream);
+    public void installProbe(InputStream stream) throws IOException {
+        target.installProbe(stream);
     }
 
     @Override

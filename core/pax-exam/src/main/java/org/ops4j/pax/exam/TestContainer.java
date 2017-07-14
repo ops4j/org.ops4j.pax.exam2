@@ -18,6 +18,7 @@
  */
 package org.ops4j.pax.exam;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -52,10 +53,9 @@ public interface TestContainer {
      *
      * @param stream
      *            probe bundle
-     *
-     * @return bundle ID of probe bundle, or -1 if not in OSGi mode
+     * @throws IOException TODO
      */
-    long installProbe(InputStream stream);
+    void installProbe(InputStream stream) throws IOException;
 
 
     /**

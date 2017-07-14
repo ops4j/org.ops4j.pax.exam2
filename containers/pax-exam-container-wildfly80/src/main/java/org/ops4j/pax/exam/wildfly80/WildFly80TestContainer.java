@@ -536,10 +536,9 @@ public class WildFly80TestContainer implements TestContainer {
 
 
     @Override
-    public long installProbe(InputStream stream) {
+    public void installProbe(InputStream stream) throws IOException {
         install(stream);
         this.warProbe = deployed.pop();
-        return -1;
     }
 
     private void uninstallProbe() {

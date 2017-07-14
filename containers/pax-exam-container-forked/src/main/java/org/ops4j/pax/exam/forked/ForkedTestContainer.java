@@ -92,7 +92,6 @@ public class ForkedTestContainer implements TestContainer {
     private RemoteFramework remoteFramework;
     private final PlatformImpl platform;
     private final String name;
-    private Long probeId;
 
     private FreePort port;
 
@@ -384,9 +383,8 @@ public class ForkedTestContainer implements TestContainer {
     }
 
     @Override
-    public long installProbe(InputStream stream) {
-        this.probeId = install(stream);
-        return probeId;
+    public void installProbe(InputStream stream) throws IOException {
+        install(stream);
     }
 
 

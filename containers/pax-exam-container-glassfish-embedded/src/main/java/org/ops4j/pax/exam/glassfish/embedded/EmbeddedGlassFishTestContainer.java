@@ -96,7 +96,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      */
     private Stack<String> deployed = new Stack<String>();
 
-    private String warProbe;
 
     /**
      * Pax Exam system with configuration options.
@@ -341,10 +340,8 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
     }
 
     @Override
-    public long installProbe(InputStream stream) {
+    public void installProbe(InputStream stream) throws IOException {
         install(stream);
-        this.warProbe = deployed.pop();
-        return -1;
     }
 
     @Override

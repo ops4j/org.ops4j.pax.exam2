@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.container.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.ops4j.pax.exam.TestContainer;
@@ -55,8 +56,8 @@ public class RBCRemoteContainer implements TestContainer {
     }
 
     @Override
-    public long installProbe(InputStream stream) {
-        return target.installProbe(stream);
+    public void installProbe(InputStream stream) throws IOException {
+        target.installProbe(stream);
     }
 
     @Override

@@ -61,8 +61,6 @@ public class TomcatTestContainer implements TestContainer {
 
     private Stack<String> deployed = new Stack<String>();
 
-    private String probe;
-
     private ExamSystem system;
 
     private TestDirectory testDirectory;
@@ -196,10 +194,8 @@ public class TomcatTestContainer implements TestContainer {
     }
 
     @Override
-    public long installProbe(InputStream stream) {
+    public void installProbe(InputStream stream) throws IOException {
         install("local", stream);
-        probe = deployed.pop();
-        return -1;
     }
 
     @Override

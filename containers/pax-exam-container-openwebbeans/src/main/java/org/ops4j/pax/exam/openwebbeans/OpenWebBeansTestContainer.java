@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.openwebbeans;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -129,8 +130,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
     }
 
     @Override
-    public long installProbe(InputStream stream) {
-        return -1;
+    public void installProbe(InputStream stream) throws IOException {
     }
 
 

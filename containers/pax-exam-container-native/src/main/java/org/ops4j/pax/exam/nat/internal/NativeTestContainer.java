@@ -89,7 +89,6 @@ public class NativeTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NativeTestContainer.class);
     private final Stack<Bundle> installed = new Stack<>();
-    private Long probeId;
 
     private final FrameworkFactory frameworkFactory;
     private ExamSystem system;
@@ -434,10 +433,8 @@ public class NativeTestContainer implements TestContainer {
     }
 
     @Override
-    public synchronized long installProbe(InputStream stream) {
-        probeId = install(stream);
-        installed.pop();
-        return probeId;
+    public synchronized void installProbe(InputStream stream) throws IOException {
+        install(stream);
     }
 
 }
