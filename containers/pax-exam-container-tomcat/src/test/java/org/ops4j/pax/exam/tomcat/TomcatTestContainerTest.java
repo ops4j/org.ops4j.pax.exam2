@@ -56,7 +56,7 @@ public class TomcatTestContainerTest {
         TomcatTestContainer container = new TomcatTestContainer(system);
         container.start();
         InputStream is = new URL("mvn:org.apache.wicket/wicket-examples/1.5.3/war").openStream();
-        container.install(is);
+        container.installProbe(is);
         is.close();
         container.stop();
     }

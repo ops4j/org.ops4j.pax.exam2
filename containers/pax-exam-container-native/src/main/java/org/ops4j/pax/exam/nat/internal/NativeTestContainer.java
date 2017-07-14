@@ -122,8 +122,7 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    @Override
-    public synchronized long install(String location, InputStream stream) {
+    private synchronized long install(String location, InputStream stream) {
         try {
             Bundle b = framework.getBundleContext().installBundle(location, stream);
             installed.push(b);
@@ -137,8 +136,7 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    @Override
-    public synchronized long install(InputStream stream) {
+    private synchronized long install(InputStream stream) {
         return install("local", stream);
     }
 

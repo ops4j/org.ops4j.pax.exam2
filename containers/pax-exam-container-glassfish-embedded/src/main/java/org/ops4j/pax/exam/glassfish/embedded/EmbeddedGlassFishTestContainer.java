@@ -139,8 +139,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      *            input stream containing probe
      * @return bundle ID, or -1 for WAR
      */
-    @Override
-    public synchronized long install(String location, InputStream stream) {
+    private synchronized long install(String location, InputStream stream) {
         try {
             // just make sure we don't get an "option not recognized" warning
             system.getOptions(WarProbeOption.class);
@@ -173,8 +172,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
         return -1;
     }
 
-    @Override
-    public synchronized long install(InputStream stream) {
+    private synchronized long install(InputStream stream) {
         return install("local", stream);
     }
 

@@ -181,16 +181,14 @@ public class WildFly90TestContainer implements TestContainer {
         this.cm = new ConfigurationManager();
     }
 
-    @Override
-    public synchronized long install(String location, InputStream stream) {
+    private synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
         system.getOptions(WarProbeOption.class);
         deployModule("Pax-Exam-Probe", stream);
         return -1;
     }
 
-    @Override
-    public synchronized long install(InputStream stream) {
+    private synchronized long install(InputStream stream) {
         return install("local", stream);
     }
 

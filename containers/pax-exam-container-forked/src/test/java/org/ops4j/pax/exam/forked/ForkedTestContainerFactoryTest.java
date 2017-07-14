@@ -122,7 +122,7 @@ public class ForkedTestContainerFactoryTest {
         CoreOptions.provision("file:" + testBundle.getAbsolutePath());
 
         // this also starts it, so we get the errors...
-        container.install(new FileInputStream(testBundle));
+        container.installProbe(new FileInputStream(testBundle));
 
         container.stop();
     }

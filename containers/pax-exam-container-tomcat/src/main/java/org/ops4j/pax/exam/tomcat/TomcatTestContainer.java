@@ -80,18 +80,13 @@ public class TomcatTestContainer implements TestContainer {
         this.testDirectory = TestDirectory.getInstance();
     }
 
-    @Override
-    public synchronized long install(String location, InputStream stream) {
+    private synchronized long install(String location, InputStream stream) {
         // just make sure we don't get an "option not recognized" warning
         system.getOptions(WarProbeOption.class);
         deployModule(EXAM_APPLICATION_NAME, stream);
         return -1;
     }
 
-    @Override
-    public synchronized long install(InputStream stream) {
-        return install("local", stream);
-    }
 
     public void deployModules() {
         UrlDeploymentOption[] deploymentOptions = system.getOptions(UrlDeploymentOption.class);

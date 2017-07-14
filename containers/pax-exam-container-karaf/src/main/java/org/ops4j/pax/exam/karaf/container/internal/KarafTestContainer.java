@@ -650,17 +650,6 @@ public class KarafTestContainer implements TestContainer {
         target.getClientRBC().waitForState(bundleId, state, timeout);
     }
 
-
-    @Override
-    public synchronized long install(InputStream stream) {
-        return install("local", stream);
-    }
-
-    @Override
-    public synchronized long install(String location, InputStream stream) {
-        return target.install(location, stream);
-    }
-
     @Override
     public String toString() {
         return "KarafTestContainer{" + framework.getFrameworkURL() + "}";

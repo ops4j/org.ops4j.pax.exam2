@@ -39,16 +39,6 @@ public class RBCRemoteContainer implements TestContainer {
     }
 
     @Override
-    public long install(String location, InputStream stream) {
-        return target.install(location, stream);
-    }
-
-    @Override
-    public long install(InputStream stream) {
-        return install("local", stream);
-    }
-
-    @Override
     public TestContainer start() {
         // do nothing
         return this;
@@ -66,7 +56,7 @@ public class RBCRemoteContainer implements TestContainer {
 
     @Override
     public long installProbe(InputStream stream) {
-        return install(stream);
+        return target.installProbe(stream);
     }
 
     @Override

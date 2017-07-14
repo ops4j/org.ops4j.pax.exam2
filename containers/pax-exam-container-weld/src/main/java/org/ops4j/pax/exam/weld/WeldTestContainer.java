@@ -64,16 +64,6 @@ public class WeldTestContainer implements TestContainer {
     }
 
     @Override
-    public long install(String location, InputStream stream) {
-        return -1;
-    }
-
-    @Override
-    public long install(InputStream stream) {
-        return -1;
-    }
-
-    @Override
     public TestContainer start() {
         validateConfiguration();
         setProbeClassLoader();

@@ -103,18 +103,7 @@ public class ForkedTestContainer implements TestContainer {
         this.name = "Forked:" + frameworkFactory.getClass().getSimpleName();
     }
 
-    @Override
-    public long install(String location, InputStream stream) {
-        try {
-            return remoteFramework.installBundle(location);
-        }
-        catch (RemoteException | BundleException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
-
-    @Override
-    public long install(InputStream stream) {
+    private long install(InputStream stream) {
         try {
             long bundleId = remoteFramework.installBundle("local", pack(stream));
             remoteFramework.startBundle(bundleId);

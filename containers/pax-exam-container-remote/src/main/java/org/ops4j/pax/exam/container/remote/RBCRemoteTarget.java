@@ -69,8 +69,7 @@ public class RBCRemoteTarget implements TestContainer {
         return this;
     }
 
-    @Override
-    public long install(String location, InputStream probe) {
+    private long install(String location, InputStream probe) {
         LOG.debug("Preparing and Installing bundle (from stream )..");
 
         long id = 0;
@@ -79,8 +78,7 @@ public class RBCRemoteTarget implements TestContainer {
         return id;
     }
 
-    @Override
-    public long install(InputStream probe) {
+    private long install(InputStream probe) {
         return install("local", probe);
     }
 

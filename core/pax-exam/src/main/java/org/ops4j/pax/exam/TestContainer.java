@@ -45,23 +45,6 @@ public interface TestContainer {
      */
     TestContainer start();
 
-    /**
-     * @param stream
-     *            stream the content
-     *
-     * @return Bundle ID
-     */
-    long install(InputStream stream);
-
-    /**
-     * @param location
-     *            update location of the installed stream. (used on bundle.update())
-     * @param stream
-     *            stream the content
-     *
-     * @return Bundle ID
-     */
-    long install(String location, InputStream stream);
 
     /**
      * Installs a probe from the given stream. A test container supports at most one probe at a
