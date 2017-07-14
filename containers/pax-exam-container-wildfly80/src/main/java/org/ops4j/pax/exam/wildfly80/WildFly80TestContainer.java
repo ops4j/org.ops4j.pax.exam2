@@ -279,7 +279,7 @@ public class WildFly80TestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
+    public void start() {
         String host;
         String httpPortNumber;
         CredentialsCallbackHandler callbackHandler = null;
@@ -307,7 +307,6 @@ public class WildFly80TestContainer implements TestContainer {
         catch (URISyntaxException | UnknownHostException exc) {
             throw new TestContainerException("Problem starting test container.", exc);
         }
-        return this;
     }
 
     private void startEmbeddedServer() {
@@ -523,10 +522,9 @@ public class WildFly80TestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer stop() {
+    public void stop() {
         cleanup();
         system.clear();
-        return this;
     }
 
     @Override

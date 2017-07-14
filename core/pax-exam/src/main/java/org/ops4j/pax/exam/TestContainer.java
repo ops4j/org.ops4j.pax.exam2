@@ -39,12 +39,14 @@ public interface TestContainer {
     /**
      * Starts the test container.
      *
-     * @return this for fluent api
-     *
      * @throws TimeoutException
-     *             - if timeout occured and the test container cannot be started
+     *             - if timeout occurred and the test container cannot be started
+     * @throws TestContainerException
+     *             - if container setup failed
+     * @throws IOException
+     *             - in case of I/O problem
      */
-    TestContainer start();
+    void start() throws TimeoutException, TestContainerException, IOException;
 
 
     /**
@@ -53,7 +55,8 @@ public interface TestContainer {
      *
      * @param stream
      *            probe bundle
-     * @throws IOException TODO
+     * @throws IOException 
+     *            if I/O error occurs
      */
     void installProbe(InputStream stream) throws IOException;
 
@@ -62,15 +65,19 @@ public interface TestContainer {
      * Stops the regression container. Implementations should take care of calling cleanup()
      * internally, too.
      *
-     * @return this for fluent api
-     *
      * @throws TimeoutException
-     *             - if timeout occured and the regression container cannot be stopped
+     *             - if timeout occurred and the regression container cannot be stopped
+     * @throws TestContainerException
+     *             - if container tear down failed
+     * @throws IOException
+     *             - in case of I/O problem
      */
-    TestContainer stop();
+     void stop() throws TestContainerException, IOException;
 
     /**
      * @param description
+     * @throws IOException  
+     *         - in case of I/O problem
      */
-    void runTest(TestDescription description, TestListener listener);
+    void runTest(TestDescription description, TestListener listener) throws IOException;
 }

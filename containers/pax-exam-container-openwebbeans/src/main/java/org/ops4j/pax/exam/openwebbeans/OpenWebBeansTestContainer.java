@@ -63,7 +63,7 @@ public class OpenWebBeansTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
+    public void start() {
         validateConfiguration();
         setProbeClassLoader();
         LOG.debug("starting OpenWebBeans container");
@@ -71,7 +71,6 @@ public class OpenWebBeansTestContainer implements TestContainer {
         container.boot();
         container.getContextControl().startContexts();
         isValid = true;
-        return this;
     }
 
     private void setProbeClassLoader() {
@@ -104,14 +103,13 @@ public class OpenWebBeansTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer stop() {
+    public void stop() {
         if (container != null && isValid) {
             LOG.debug("stopping OpenWebBeans container");
             container.getContextControl().stopContexts();
             container.shutdown();
             unsetProbeClassLoader();
         }
-        return this;
     }
 
     private void unsetProbeClassLoader() {

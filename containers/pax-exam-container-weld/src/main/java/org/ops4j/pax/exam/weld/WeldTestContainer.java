@@ -65,14 +65,13 @@ public class WeldTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
+    public void start() {
         validateConfiguration();
         setProbeClassLoader();
         LOG.debug("starting Weld container");
         weld = new Weld();
         weldContainer = weld.initialize();
         isValid = true;
-        return this;
     }
 
     private void setProbeClassLoader() {
@@ -105,13 +104,12 @@ public class WeldTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer stop() {
+    public void stop() {
         if (weld != null && isValid) {
             LOG.debug("stopping Weld container");
             weld.shutdown();
             unsetProbeClassLoader();
         }
-        return this;
     }
 
     private void unsetProbeClassLoader() {

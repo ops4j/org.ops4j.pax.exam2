@@ -257,7 +257,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * Starts the GlassFish container.
      */
     @Override
-    public TestContainer start() {
+    public void start() {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
         ConfigurationManager cm = new ConfigurationManager();
         configDirName = cm.getProperty(GLASSFISH_CONFIG_DIR_KEY,
@@ -285,7 +285,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
         catch (URISyntaxException e) {
             throw new TestContainerException("Problem starting test container.", e);
         }
-        return this;
     }
 
     /**
@@ -323,7 +322,7 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
      * Stops the test container gracefully, undeploying all modules and uninstalling all bundles.
      */
     @Override
-    public TestContainer stop() {
+    public void stop() {
         if (glassFish != null) {
             cleanup();
             system.clear();
@@ -331,7 +330,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
         else {
             LOG.warn("Framework does not exist. Called start() before ? ");
         }
-        return this;
     }
 
     @Override

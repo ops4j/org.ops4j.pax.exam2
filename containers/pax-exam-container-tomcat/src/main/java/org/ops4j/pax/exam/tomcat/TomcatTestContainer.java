@@ -148,7 +148,7 @@ public class TomcatTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
+    public void start() {
         LOG.info("starting Tomcat");
 
         File tempDir = system.getTempFolder();
@@ -178,14 +178,12 @@ public class TomcatTestContainer implements TestContainer {
         catch (LifecycleException exc) {
             new TestContainerException(exc);
         }
-        return this;
     }
 
     @Override
-    public TestContainer stop() {
+    public void stop() {
         cleanup();
         system.clear();
-        return this;
     }
 
     @Override

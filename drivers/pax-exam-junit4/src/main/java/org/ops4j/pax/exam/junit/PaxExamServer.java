@@ -16,6 +16,7 @@
  */
 package org.ops4j.pax.exam.junit;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.junit.rules.ExternalResource;
@@ -25,6 +26,7 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.spi.DefaultExamSystem;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
@@ -89,7 +91,11 @@ public class PaxExamServer extends ExternalResource {
 
     @Override
     protected void after() {
-        testContainer.stop();
+        try {
+			testContainer.stop();
+		} catch (IOException e) {
+			throw new TestContainerException(e);
+		}
     }
 
     private Option[] getConfigurationOptions() throws Exception {

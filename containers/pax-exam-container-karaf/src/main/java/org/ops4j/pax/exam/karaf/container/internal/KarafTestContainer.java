@@ -122,8 +122,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     @Override
-    public synchronized TestContainer start() {
-        try {
+    public synchronized void start() throws IOException {
             String name = system.createID(KARAF_TEST_CONTAINER);
 
             Option invokerConfiguration = getInvokerConfiguration();
@@ -190,11 +189,6 @@ public class KarafTestContainer implements TestContainer {
 
             startKaraf(subsystem, karafBase, karafHome);
             started = true;
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Problem starting container", e);
-        }
-        return this;
     }
 
     private boolean shouldInjectJUnitBundles(ExamSystem _system) {
@@ -590,7 +584,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     @Override
-    public synchronized TestContainer stop() {
+    public synchronized void stop() {
         LOGGER.debug("Shutting down the test container (Pax Runner)");
         try {
             if (started) {
@@ -633,7 +627,6 @@ public class KarafTestContainer implements TestContainer {
                 }
             }
         }
-        return this;
     }
 
     private void forceCleanup() {
@@ -661,7 +654,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     @Override
-    public void runTest(TestDescription description, TestListener listener) {
+    public void runTest(TestDescription description, TestListener listener) throws IOException {
     	 target.runTest(description, listener);
 
     }

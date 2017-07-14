@@ -114,7 +114,7 @@ public class ForkedTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
+    public void start() throws IOException {
         try {
             port = new FreePort(20000, 21000);
             system = system.fork(new Option[] {
@@ -149,14 +149,13 @@ public class ForkedTestContainer implements TestContainer {
             remoteFramework.init();
             installAndStartBundles();
         }
-        catch (BundleException | IOException exc) {
+        catch (BundleException exc) {
             throw new TestContainerException(exc);
         }
-        return this;
     }
 
     @Override
-    public TestContainer stop() {
+    public void stop() {
         try {
             remoteFramework.stop();
             system.clear();
@@ -166,7 +165,6 @@ public class ForkedTestContainer implements TestContainer {
         }
         frameworkFactory.join();
         system.clear();
-        return this;
     }
 
     private byte[] pack(InputStream stream) {

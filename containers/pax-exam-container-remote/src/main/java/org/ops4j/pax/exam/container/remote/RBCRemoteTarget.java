@@ -64,8 +64,7 @@ public class RBCRemoteTarget implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
-        return this;
+    public void start() {
     }
 
     private long install(String location, InputStream probe) {
@@ -82,10 +81,8 @@ public class RBCRemoteTarget implements TestContainer {
     }
 
     @Override
-    public TestContainer stop() {
+    public void stop() {
         remoteBundleContextClient.cleanup();
-
-        return this;
     }
 
     @Override
@@ -94,20 +91,14 @@ public class RBCRemoteTarget implements TestContainer {
     }
 
     @Override
-    public void runTest(TestDescription description, TestListener listener) {
-        try {
+    public void runTest(TestDescription description, TestListener listener) throws IOException {
             ServerSocket serverSocket = new ServerSocket(invokerPort);
             TestListenerTask task = new TestListenerTask(serverSocket, listener);
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(task);
-
             remoteBundleContextClient.runTestClass(description);
             executor.shutdown();
             serverSocket.close();
-        }
-        catch (IOException exc) {
-            throw new TestContainerException(exc);
-        }
     }
 
 }

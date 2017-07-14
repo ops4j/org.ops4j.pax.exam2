@@ -40,14 +40,12 @@ public class RBCRemoteContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
+    public void start() {
         // do nothing
-        return this;
     }
 
     @Override
-    public TestContainer stop() {
-        return this;
+    public void stop() {
     }
 
     @Override
@@ -61,8 +59,7 @@ public class RBCRemoteContainer implements TestContainer {
     }
 
     @Override
-    public void runTest(TestDescription description, TestListener listener) {
-        // TODO Auto-generated method stub
-
+    public void runTest(TestDescription description, TestListener listener) throws IOException {
+    	target.runTest(description, listener);
     }
 }

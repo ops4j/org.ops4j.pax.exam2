@@ -159,7 +159,7 @@ public class NativeTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer start() {
+    public void start() throws IOException {
         try {
             system = system.fork(new Option[] {
                 systemPackage("org.ops4j.pax.exam;version="
@@ -174,10 +174,9 @@ public class NativeTestContainer implements TestContainer {
             installAndStartBundles();
             startFramework();
         }
-        catch (BundleException | IOException exc) {
+        catch (BundleException exc) {
             throw new TestContainerException("Problem starting test container.", exc);
         }
-        return this;
     }
 
     private void createFramework(Map<String, String> p) throws BundleException {
@@ -217,7 +216,7 @@ public class NativeTestContainer implements TestContainer {
     }
 
     @Override
-    public TestContainer stop() {
+    public void stop() {
         if (framework != null) {
             try {
                 cleanup();
@@ -235,7 +234,6 @@ public class NativeTestContainer implements TestContainer {
         else {
             LOG.warn("Framework does not exist. Called start() before ? ");
         }
-        return this;
     }
 
     private void stopOrAbort() throws BundleException, InterruptedException {
@@ -255,7 +253,7 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    private Map<String, String> createFrameworkProperties() throws IOException {
+    private Map<String, String> createFrameworkProperties() {
         final Map<String, String> p = new HashMap<>();
         CleanCachesOption cleanCaches = system.getSingleOption(CleanCachesOption.class);
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
