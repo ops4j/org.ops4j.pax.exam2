@@ -16,9 +16,10 @@
 
     <modules>
         <module>pax-exam-container-forked</module>
-        <module>pax-exam-container-glassfish-embedded</module>
-        <module>pax-exam-container-karaf</module>
         <module>pax-exam-container-native</module>
+        <module>pax-exam-container-karaf</module>
+        <module>pax-exam-container-eclipse</module>
+        <module>pax-exam-container-glassfish-embedded</module>
         <module>pax-exam-container-openwebbeans</module>
         <module>pax-exam-container-remote</module>
         <module>pax-exam-container-tomcat</module>
