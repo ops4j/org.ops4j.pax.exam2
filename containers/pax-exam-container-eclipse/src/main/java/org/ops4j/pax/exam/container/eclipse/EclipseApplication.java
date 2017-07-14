@@ -15,7 +15,6 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.ops4j.pax.exam.options.CompositeOption;
@@ -73,10 +72,4 @@ public interface EclipseApplication extends CompositeOption {
      */
     EclipseApplication mustFailWith(Class<Throwable> t);
 
-    /**
-     * Check the result of the application, only used internally
-     * 
-     * @param resultFuture
-     */
-    void checkResult(Future<Object> resultFuture);
 }

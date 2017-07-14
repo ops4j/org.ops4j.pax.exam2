@@ -26,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.eclipse.EclipseApplication;
+import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseLauncher;
 import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
 import org.ops4j.pax.exam.container.eclipse.EclipsePlatformOption;
@@ -48,7 +49,8 @@ public final class EclipseApplicationImpl implements EclipseApplication {
     private boolean mustNotFail;
     private Class<Throwable> expectedThrowable;
 
-    public EclipseApplicationImpl(final EclipseLauncher launcher, Option... options) {
+    public EclipseApplicationImpl(final EclipseLauncher launcher, boolean ignore,
+        Option... options) {
         if (options != null) {
             this.options.addAll(Arrays.asList(options));
         }
@@ -57,6 +59,62 @@ public final class EclipseApplicationImpl implements EclipseApplication {
             @Override
             public EclipseLauncher getLauncher() {
                 return launcher;
+            }
+        });
+        this.options.add(new EclipseApplicationOption() {
+
+            @Override
+            public void checkResult(Future<Object> resultFuture) {
+                if (!mustReturn) {
+                    // don't care if it must not return at all...
+                    return;
+                }
+                try {
+                    Object actualValue = resultFuture.get(timeoutValue, timeUnit);
+                    if (mustReturnValue) {
+                        if (actualValue == null) {
+                            if (returnValue != null) {
+                                throw new TestContainerException("Application returned null but "
+                                    + returnValue + " was expected!");
+                            }
+                        }
+                        else if (!actualValue.equals(returnValue)) {
+                            throw new TestContainerException("Application returned " + actualValue
+                                + " but " + returnValue + " was expected!");
+                        }
+                    }
+                }
+                catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                catch (ExecutionException ex) {
+                    Throwable e = ex.getCause();
+                    if (mustNotFail || (expectedThrowable == null && e != null)) {
+                        throw new TestContainerException(
+                            "Execution of EclipseApplication has failed!", e);
+                    }
+                    else if (e != null && e.getClass().isAssignableFrom(expectedThrowable)) {
+                        // all fine!
+                        return;
+                    }
+                    else {
+                        throw new TestContainerException("Application has thrown " + e + " but "
+                            + expectedThrowable.getName() + " was expected!");
+                    }
+                }
+                catch (TimeoutException e) {
+                    throw new TestContainerException(
+                        "Waiting for EclipseApplication to return timed out!");
+                }
+                if (expectedThrowable != null) {
+                    throw new TestContainerException(
+                        "Application has not thrown " + expectedThrowable.getName());
+                }
+            }
+
+            @Override
+            public boolean isIgnore() {
+                return ignore;
             }
         });
     }
@@ -73,53 +131,6 @@ public final class EclipseApplicationImpl implements EclipseApplication {
         this.returnValue = value;
         this.mustReturnValue = true;
         return this;
-    }
-
-    @Override
-    public void checkResult(Future<Object> resultFuture) {
-        if (!mustReturn) {
-            // don't care if it must not return at all...
-            return;
-        }
-        try {
-            Object actualValue = resultFuture.get(timeoutValue, timeUnit);
-            if (mustReturnValue) {
-                if (actualValue == null) {
-                    if (returnValue != null) {
-                        throw new TestContainerException(
-                            "Application returned null but " + returnValue + " was expected!");
-                    }
-                }
-                else if (!actualValue.equals(returnValue)) {
-                    throw new TestContainerException("Application returned " + actualValue + " but "
-                        + returnValue + " was expected!");
-                }
-            }
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        catch (ExecutionException ex) {
-            Throwable e = ex.getCause();
-            if (mustNotFail || (expectedThrowable == null && e != null)) {
-                throw new TestContainerException("Execution of EclipseApplication has failed!", e);
-            }
-            else if (e != null && e.getClass().isAssignableFrom(expectedThrowable)) {
-                // all fine!
-                return;
-            }
-            else {
-                throw new TestContainerException("Application has thrown " + e + " but "
-                    + expectedThrowable.getName() + " was expected!");
-            }
-        }
-        catch (TimeoutException e) {
-            throw new TestContainerException("Waiting for EclipseApplication to return timed out!");
-        }
-        if (expectedThrowable != null) {
-            throw new TestContainerException(
-                "Application has not thrown " + expectedThrowable.getName());
-        }
     }
 
     @Override

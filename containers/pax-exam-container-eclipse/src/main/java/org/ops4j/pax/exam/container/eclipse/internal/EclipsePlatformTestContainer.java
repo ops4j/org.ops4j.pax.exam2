@@ -50,7 +50,7 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
-import org.ops4j.pax.exam.container.eclipse.EclipseApplication;
+import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
@@ -105,7 +105,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
             systemPackage(
                 "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag(Info.getPaxExamVersion())),
             systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url") });
-        EclipseApplication application = fork.getSingleOption(EclipseApplication.class);
+        EclipseApplicationOption application = fork.getSingleOption(EclipseApplicationOption.class);
         File tempFolder = fork.getTempFolder();
         Map<String, String> initialProperties = createFrameworkProperties(fork,
             createEclipseDefaults(tempFolder));
@@ -130,22 +130,39 @@ public class EclipsePlatformTestContainer implements TestContainer {
                     envInfoTracker.open();
                     final EnvironmentInfo equinoxConfig = (EnvironmentInfo) envInfoTracker
                         .waitForService(determineExamServiceTimeout());
-                    ignoreApp = Boolean
-                        .valueOf(equinoxConfig.getProperty(EclipseStarter.PROP_IGNOREAPP));
+                    String property = equinoxConfig.getProperty(EclipseStarter.PROP_IGNOREAPP);
+                    if (property != null) {
+                        ignoreApp = Boolean.valueOf(property);
+                    }
+                    else {
+                        ignoreApp = application.isIgnore();
+                    }
                 }
                 finally {
                     envInfoTracker.close();
                 }
             }
-            if (!ignoreApp) {
+            if (ignoreApp) {
+                LOG.info("No Eclipse Application selected...");
+            }
+            else {
                 applicationResult.set(appExecutor.submit(new Callable<Object>() {
 
                     @Override
                     public Object call() throws Exception {
                         LOG.info("Launching Application...");
-                        return EclipseStarter.run(null);
+                        try {
+                            Object run = EclipseStarter.run(null);
+                            LOG.info("Eclipse Application endend with returncode: {}", run);
+                            return run;
+                        }
+                        catch (Exception e) {
+                            LOG.info("Eclipse Application endend with error: {}", e.toString());
+                            throw e;
+                        }
                     }
                 }));
+
             }
         }
         catch (Exception e) {
@@ -308,7 +325,8 @@ public class EclipsePlatformTestContainer implements TestContainer {
         LOG.info("Stopping EclipsePlatform...");
         try {
             shutdownEclipse();
-            EclipseApplication application = system.getSingleOption(EclipseApplication.class);
+            EclipseApplicationOption application = system
+                .getSingleOption(EclipseApplicationOption.class);
             if (application != null) {
                 Future<Object> result = applicationResult.getAndSet(null);
                 if (result != null) {
