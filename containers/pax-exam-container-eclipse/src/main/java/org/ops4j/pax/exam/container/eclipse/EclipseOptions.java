@@ -53,13 +53,13 @@ public class EclipseOptions {
 
         @Override
         public EclipseApplication ignoreApp() {
-            return new EclipseApplicationImpl(this,
+            return new EclipseApplicationImpl(this, true,
                 CoreOptions.frameworkProperty("eclipse.ignoreApp").value(true));
         }
 
         @Override
         public EclipseApplication application(String applicationID) {
-            return new EclipseApplicationImpl(this,
+            return new EclipseApplicationImpl(this, false,
                 CoreOptions.frameworkProperty("eclipse.application").value(applicationID));
         }
 
@@ -74,7 +74,7 @@ public class EclipseOptions {
 
                 @Override
                 public EclipseApplication application(String applicationID) {
-                    return new EclipseApplicationImpl(EclipseLauncherImpl.this,
+                    return new EclipseApplicationImpl(EclipseLauncherImpl.this, false,
                         CoreOptions.frameworkProperty("eclipse.application").value(applicationID),
                         CoreOptions.frameworkProperty("eclipse.product").value(productID));
                 }
