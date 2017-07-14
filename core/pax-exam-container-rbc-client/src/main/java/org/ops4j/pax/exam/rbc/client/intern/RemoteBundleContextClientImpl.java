@@ -33,7 +33,6 @@ import java.util.Stack;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.RelativeTimeout;
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.ops4j.pax.exam.rbc.internal.NoSuchServiceException;

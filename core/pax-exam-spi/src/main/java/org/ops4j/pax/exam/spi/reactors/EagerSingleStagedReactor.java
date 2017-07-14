@@ -23,14 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
-import org.ops4j.pax.exam.spi.intern.DefaultTestAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
