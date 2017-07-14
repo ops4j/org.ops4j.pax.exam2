@@ -60,11 +60,6 @@ public class RBCRemoteContainer implements TestContainer {
     }
 
     @Override
-    public void uninstallProbe() {
-        target.uninstallProbe();
-    }
-
-    @Override
     public void runTest(TestDescription description, TestListener listener) {
         // TODO Auto-generated method stub
 

@@ -133,10 +133,6 @@ public class OpenWebBeansTestContainer implements TestContainer {
         return -1;
     }
 
-    @Override
-    public void uninstallProbe() {
-        // not used
-    }
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {

@@ -348,17 +348,6 @@ public class EmbeddedGlassFishTestContainer implements TestContainer {
     }
 
     @Override
-    public void uninstallProbe() {
-        try {
-            glassFish.getDeployer().undeploy(warProbe);
-            this.warProbe = null;
-        }
-        catch (GlassFishException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
-
-    @Override
     public void runTest(TestDescription description, TestListener listener) {
         ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(ProbeInvokerFactory.class);

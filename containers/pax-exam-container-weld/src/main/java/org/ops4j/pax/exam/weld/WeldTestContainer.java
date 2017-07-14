@@ -134,11 +134,6 @@ public class WeldTestContainer implements TestContainer {
     }
 
     @Override
-    public void uninstallProbe() {
-        // not used
-    }
-
-    @Override
     public void runTest(TestDescription description, TestListener listener) {
         // TODO Auto-generated method stub
 

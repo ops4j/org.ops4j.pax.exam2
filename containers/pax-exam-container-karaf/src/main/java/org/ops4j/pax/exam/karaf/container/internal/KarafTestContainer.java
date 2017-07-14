@@ -661,11 +661,6 @@ public class KarafTestContainer implements TestContainer {
     }
 
     @Override
-    public void uninstallProbe() {
-        target.uninstallProbe();
-    }
-
-    @Override
     public void runTest(TestDescription description, TestListener listener) {
     	 target.runTest(description, listener);
 

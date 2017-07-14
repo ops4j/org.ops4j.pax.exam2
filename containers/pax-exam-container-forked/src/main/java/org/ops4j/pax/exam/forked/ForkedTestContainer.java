@@ -389,15 +389,6 @@ public class ForkedTestContainer implements TestContainer {
         return probeId;
     }
 
-    @Override
-    public void uninstallProbe() {
-        try {
-            remoteFramework.uninstallBundle(probeId);
-        }
-        catch (RemoteException | BundleException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {

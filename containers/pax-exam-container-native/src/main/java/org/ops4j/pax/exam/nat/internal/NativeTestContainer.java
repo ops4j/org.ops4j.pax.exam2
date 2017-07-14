@@ -440,15 +440,4 @@ public class NativeTestContainer implements TestContainer {
         return probeId;
     }
 
-    @Override
-    public synchronized void uninstallProbe() {
-        Bundle bundle = framework.getBundleContext().getBundle(probeId);
-        try {
-            bundle.uninstall();
-            probeId = null;
-        }
-        catch (BundleException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
 }

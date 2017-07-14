@@ -203,11 +203,6 @@ public class TomcatTestContainer implements TestContainer {
     }
 
     @Override
-    public void uninstallProbe() {
-        hostConfig.unmanageApp("/" + probe);
-    }
-
-    @Override
     public void runTest(TestDescription description, TestListener listener) {
         ProbeInvokerFactory probeInvokerFactory = ServiceProviderFinder
             .loadUniqueServiceProvider(ProbeInvokerFactory.class);

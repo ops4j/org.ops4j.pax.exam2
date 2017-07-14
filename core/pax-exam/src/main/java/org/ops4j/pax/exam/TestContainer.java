@@ -57,13 +57,6 @@ public interface TestContainer {
      */
     long installProbe(InputStream stream);
 
-    /**
-     * Uninstalls the current probe. The container keeps running and can be reused with a new probe.
-     *
-     * @throws TestContainerException
-     *             if no probe installed.
-     */
-    void uninstallProbe();
 
     /**
      * Stops the regression container. Implementations should take care of calling cleanup()

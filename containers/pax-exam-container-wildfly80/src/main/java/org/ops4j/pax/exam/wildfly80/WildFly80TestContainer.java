@@ -542,8 +542,7 @@ public class WildFly80TestContainer implements TestContainer {
         return -1;
     }
 
-    @Override
-    public void uninstallProbe() {
+    private void uninstallProbe() {
         if (warProbe != null) {
             undeployModule(warProbe);
             this.warProbe = null;

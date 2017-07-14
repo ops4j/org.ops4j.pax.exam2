@@ -96,11 +96,6 @@ public class RBCRemoteTarget implements TestContainer {
     }
 
     @Override
-    public void uninstallProbe() {
-        remoteBundleContextClient.uninstall(probeId);
-    }
-
-    @Override
     public void runTest(TestDescription description, TestListener listener) {
         try {
             ServerSocket serverSocket = new ServerSocket(invokerPort);
