@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class InstallationEclipseBundleSource implements EclipseBundleSource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceEclipseBundleSource.class);
+    private static final Logger LOG = LoggerFactory
+        .getLogger(InstallationEclipseBundleSource.class);
 
     private final BundleInfoMap<File> bundleMap = new BundleInfoMap<>();
 
