@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource.EclipseProjectSource;
 import org.ops4j.pax.exam.container.eclipse.impl.EclipseApplicationImpl;
 import org.ops4j.pax.exam.container.eclipse.impl.InstallationEclipseBundleSource;
 import org.ops4j.pax.exam.options.ProvisionControl;
@@ -92,8 +93,9 @@ public class EclipseOptions {
      * 
      * @param folder
      * @return
+     * @throws IOException
      */
-    public static EclipseBundleSource fromInstallation(final File baseFolder) {
+    public static EclipseBundleSource fromInstallation(final File baseFolder) throws IOException {
         return new InstallationEclipseBundleSource(baseFolder);
     }
 
@@ -104,7 +106,8 @@ public class EclipseOptions {
      * @return
      * @throws IOException
      */
-    public static EclipseBundleSource fromWorkspace(final File workspaceFolder) throws IOException {
+    public static EclipseProjectSource fromWorkspace(final File workspaceFolder)
+        throws IOException {
         // return new WorkspaceEclipseBundleSource(workspaceFolder);
         throw new UnsupportedOperationException("not yet implemented, sorry");
     }
@@ -112,28 +115,6 @@ public class EclipseOptions {
     public static EclipseBundleSource withFallback(final EclipseBundleSource primary,
         final EclipseBundleSource... fallbacks) {
         return new EclipseBundleSource() {
-
-            @Override
-            public Option resolve(String bundleName, String bundleVersion, String bundleFile)
-                throws IOException, FileNotFoundException {
-                FileNotFoundException fnfe = new FileNotFoundException(
-                    "bundle not found in any sources");
-                try {
-                    return primary.resolve(bundleName, bundleVersion, bundleFile);
-                }
-                catch (FileNotFoundException ep) {
-                    fnfe.addSuppressed(ep);
-                    for (EclipseBundleSource fallback : fallbacks) {
-                        try {
-                            return fallback.resolve(bundleName, bundleVersion, bundleFile);
-                        }
-                        catch (FileNotFoundException ef) {
-                            fnfe.addSuppressed(ef);
-                        }
-                    }
-                }
-                throw fnfe;
-            }
 
             @Override
             public Option resolve(String bundleName, String bundleVersion)
@@ -181,8 +162,7 @@ public class EclipseOptions {
                             // we don't want to load the configurator or eclipse itself...
                             continue;
                         }
-                        Option bundle = bundleSource.resolve(bundleInfo[0], bundleInfo[1],
-                            bundleInfo[2]);
+                        Option bundle = bundleSource.resolve(bundleInfo[0], bundleInfo[1]);
                         if (bundle instanceof ProvisionControl<?>) {
                             ProvisionControl<?> control = (ProvisionControl<?>) bundle;
                             control.startLevel(Integer.parseInt(bundleInfo[3]));

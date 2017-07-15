@@ -43,19 +43,6 @@ public interface EclipseBundleSource {
         throws IOException, BundleNotFoundException;
 
     /**
-     * Resolves a bundle by the given name and version given a hint about the naming of the bundle
-     * in the files-system
-     * 
-     * @param bundleName
-     * @param bundleVersion
-     * @param bundleFile
-     * @return
-     * @throws IOException
-     */
-    Option resolve(String bundleName, String bundleVersion, String bundleFile)
-        throws IOException, BundleNotFoundException;
-
-    /**
      * thrown when a bundle can't be resolved
      */
     public static final class BundleNotFoundException extends FileNotFoundException {
@@ -66,6 +53,11 @@ public interface EclipseBundleSource {
             super(s);
         }
 
+    }
+
+    public interface EclipseProjectSource extends EclipseBundleSource {
+
+        Option getProject(String projectName);
     }
 
 }
