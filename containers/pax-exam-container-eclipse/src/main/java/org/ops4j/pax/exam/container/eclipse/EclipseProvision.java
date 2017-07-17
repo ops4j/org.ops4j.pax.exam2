@@ -41,4 +41,6 @@ public interface EclipseProvision {
      *             if reading failed
      */
     Option simpleconfigurator(InputStream bundleFile) throws IOException;
+
+    Option product(InputStream productDefinition) throws IOException;
 }
