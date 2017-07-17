@@ -98,6 +98,8 @@ public class EclipsePlatformTestContainer implements TestContainer {
     @Override
     public void start() {
         ExamSystem fork = system.fork(new Option[] {
+            systemPackage("org.ops4j.pax.exam.container.eclipse;version="
+                + skipSnapshotFlag(Info.getPaxExamVersion())),
             systemPackage(
                 "org.ops4j.pax.exam;version=" + skipSnapshotFlag(Info.getPaxExamVersion())),
             systemPackage(
