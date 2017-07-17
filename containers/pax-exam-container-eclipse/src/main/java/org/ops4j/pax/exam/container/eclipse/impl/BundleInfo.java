@@ -15,6 +15,10 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -81,6 +85,38 @@ public class BundleInfo<Context> implements Comparable<BundleInfo<Context>> {
 
     @Override
     public String toString() {
-        return symbolicName + ":" + version + ":" + context;
+        if (context == null) {
+            return symbolicName + ":" + version;
+        }
+        else {
+            return symbolicName + ":" + version + ":" + context;
+        }
+    }
+
+    public static boolean isBundle(Manifest manifest) {
+        if (manifest != null) {
+            Attributes attributes = manifest.getMainAttributes();
+            return attributes.containsKey(new Attributes.Name(Constants.BUNDLE_SYMBOLICNAME))
+                && attributes.containsKey(new Attributes.Name(Constants.BUNDLE_VERSION));
+        }
+        return false;
+    }
+
+    public static Manifest readManifest(File folder) throws IOException {
+        File metaInf = new File(folder, "META-INF");
+        if (metaInf.exists()) {
+            try (FileInputStream is = new FileInputStream(new File(metaInf, "MANIFEST.MF"))) {
+                Manifest manifest = new Manifest(is);
+                return manifest;
+            }
+        }
+        else {
+            throw new FileNotFoundException(
+                "can't find folder META-INF in folder " + folder.getAbsolutePath());
+        }
+    }
+
+    public static <T> BundleInfo<T> readExplodedBundle(File folder, T context) throws IOException {
+        return new BundleInfo<T>(readManifest(folder), context);
     }
 }

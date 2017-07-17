@@ -16,7 +16,6 @@
 package org.ops4j.pax.exam.container.eclipse.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.jar.JarFile;
@@ -53,35 +52,34 @@ public final class InstallationEclipseBundleSource implements EclipseBundleSourc
         }
         for (File file : pluginsFolder.listFiles()) {
             if (file.isDirectory()) {
-                readExplodedBundle(file);
+                try {
+                    BundleInfo<File> explodedBundle = BundleInfo.readExplodedBundle(file, file);
+                    LOG.info("Add exploded bundle {}...", explodedBundle);
+                    bundleMap.add(explodedBundle);
+                }
+                catch (IOException e) {
+                    LOG.warn("Can't read exploded bundle from folder {} ({})...", file.getName(),
+                        e.toString());
+                }
             }
             else if (file.getName().toLowerCase().endsWith(".jar")) {
                 try {
                     try (JarFile jarFile = new JarFile(file)) {
-                        BundleInfo<File> bundleInfo = new BundleInfo<File>(jarFile.getManifest(),
-                            file);
-                        LOG.info("Add bundle {}...", bundleInfo);
-                        bundleMap.add(bundleInfo);
+                        Manifest mf = jarFile.getManifest();
+                        if (BundleInfo.isBundle(mf)) {
+                            BundleInfo<File> bundleInfo = new BundleInfo<File>(mf, file);
+                            LOG.info("Add bundle {}...", bundleInfo);
+                            bundleMap.add(bundleInfo);
+                        }
+                        else {
+                            LOG.info("Skip file {} it is not a bundle... {}", file,
+                                mf.getMainAttributes());
+                        }
                     }
                 }
-                catch (IOException e) {
+                catch (IOException | IllegalArgumentException e) {
                     LOG.warn("can't read jar file {} ({})", file, e.toString());
                 }
-            }
-        }
-    }
-
-    private void readExplodedBundle(File file) {
-        File metaInf = new File(file, "META-INF");
-        if (metaInf.exists()) {
-            try (FileInputStream is = new FileInputStream(new File(metaInf, "MANIFEST.MF"))) {
-                Manifest manifest = new Manifest(is);
-                BundleInfo<File> bundleInfo = new BundleInfo<File>(manifest, file);
-                LOG.info("Add exploded bundle {}...", bundleInfo);
-                bundleMap.add(bundleInfo);
-            }
-            catch (IOException e) {
-                LOG.warn("Can't read manifest for exploded Bundle {}...", file.getName());
             }
         }
     }

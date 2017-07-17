@@ -81,7 +81,8 @@ public class BundleInfoMap<BundleInfoContext> {
         }
     }
 
-    private boolean matchWithoutQualifier(Version version, BundleInfo<BundleInfoContext> bundleInfo) {
+    private boolean matchWithoutQualifier(Version version,
+        BundleInfo<BundleInfoContext> bundleInfo) {
         if (version.getMajor() == bundleInfo.getVersion().getMajor()) {
             if (version.getMinor() == bundleInfo.getVersion().getMinor()) {
                 if (version.getMicro() == bundleInfo.getVersion().getMicro()) {

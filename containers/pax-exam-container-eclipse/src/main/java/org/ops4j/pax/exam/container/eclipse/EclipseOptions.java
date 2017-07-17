@@ -22,14 +22,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource.EclipseProjectSource;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.EclipseApplicationImpl;
 import org.ops4j.pax.exam.container.eclipse.impl.InstallationEclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.impl.TargetEclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.impl.WorkspaceEclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser.PluginConfiguration;
 import org.ops4j.pax.exam.options.ProvisionControl;
+import org.osgi.framework.Version;
 
 /**
  * Static Options to configure the EclipseContainer
@@ -108,8 +117,12 @@ public class EclipseOptions {
      */
     public static EclipseProjectSource fromWorkspace(final File workspaceFolder)
         throws IOException {
-        // return new WorkspaceEclipseBundleSource(workspaceFolder);
-        throw new UnsupportedOperationException("not yet implemented, sorry");
+        return new WorkspaceEclipseBundleSource(workspaceFolder);
+        // throw new UnsupportedOperationException("not yet implemented, sorry");
+    }
+
+    public static EclipseBundleSource fromTarget(InputStream targetDefinition) throws IOException {
+        return new TargetEclipseBundleSource(targetDefinition);
     }
 
     public static EclipseBundleSource withFallback(final EclipseBundleSource primary,
@@ -120,7 +133,7 @@ public class EclipseOptions {
             public Option resolve(String bundleName, String bundleVersion)
                 throws IOException, FileNotFoundException {
                 FileNotFoundException fnfe = new FileNotFoundException(
-                    "bundle not found in any sources");
+                    "bundle " + bundleName + ":" + bundleVersion + " not found in any sources");
                 try {
                     return primary.resolve(bundleName, bundleVersion);
                 }
@@ -141,7 +154,16 @@ public class EclipseOptions {
         };
     }
 
-    public static EclipseProvision provision(final EclipseBundleSource bundleSource) {
+    public static EclipseProvision provision(final EclipseBundleSource bundleSource,
+        String... ignoreItems) {
+        final Set<String> ignored = new HashSet<>();
+        if (ignoreItems != null) {
+            ignored.addAll(Arrays.asList(ignoreItems));
+        }
+        // We provide this by default
+        ignored.add("org.eclipse.osgi");
+        // We do the job of the configurator
+        ignored.add("org.eclipse.equinox.simpleconfigurator");
         return new EclipseProvision() {
 
             @Override
@@ -157,21 +179,83 @@ public class EclipseOptions {
                             continue;
                         }
                         String[] bundleInfo = line.split(",");
-                        if (bundleInfo[0].equals("org.eclipse.osgi")
-                            || bundleInfo[0].equals("org.eclipse.equinox.simpleconfigurator")) {
-                            // we don't want to load the configurator or eclipse itself...
+                        String bsn = bundleInfo[0];
+                        String version = bundleInfo[1];
+                        if (isIgnored(bsn, version)) {
                             continue;
                         }
-                        Option bundle = bundleSource.resolve(bundleInfo[0], bundleInfo[1]);
+                        Option bundle = bundleSource.resolve(bsn, version);
                         if (bundle instanceof ProvisionControl<?>) {
                             ProvisionControl<?> control = (ProvisionControl<?>) bundle;
-                            control.startLevel(Integer.parseInt(bundleInfo[3]));
-                            control.start(Boolean.valueOf(bundleInfo[4]));
+                            String sl = bundleInfo[3];
+                            String start = bundleInfo[4];
+                            control.startLevel(Integer.parseInt(sl));
+                            control.start(Boolean.valueOf(start));
                         }
                         bundles.add(bundle);
                     }
                 }
                 return CoreOptions.composite(bundles.toArray(new Option[0]));
+            }
+
+            private boolean isIgnored(String bsn, String version) {
+                return isIgnored(bsn, (version == null || version.isEmpty()) ? Version.emptyVersion
+                    : Version.parseVersion(version));
+            }
+
+            private boolean isIgnored(String bsn, Version version) {
+                if (ignored.contains(bsn)) {
+                    return true;
+                }
+                StringBuilder sb = new StringBuilder(bsn);
+                sb.append(':');
+                sb.append(version.getMajor());
+                if (ignored.contains(sb.toString())) {
+                    return true;
+                }
+                sb.append('.');
+                sb.append(version.getMinor());
+                if (ignored.contains(sb.toString())) {
+                    return true;
+                }
+                sb.append('.');
+                sb.append(version.getMicro());
+                if (ignored.contains(sb.toString())) {
+                    return true;
+                }
+                else {
+                    sb.append('.');
+                    sb.append(version.getQualifier());
+                    return ignored.contains(sb.toString());
+                }
+            }
+
+            @Override
+            public Option product(InputStream productDefinition) throws IOException {
+                final List<Option> options = new ArrayList<>();
+                ProductParser parser = new ProductParser(productDefinition);
+                for (BundleInfo<PluginConfiguration> bundleInfo : parser.getPlugins()) {
+                    if (isIgnored(bundleInfo.getSymbolicName(), bundleInfo.getVersion())) {
+                        continue;
+                    }
+                    Option bundle = bundleSource.resolve(bundleInfo.getSymbolicName(),
+                        bundleInfo.getVersion().toString());
+                    if (bundle instanceof ProvisionControl<?>) {
+                        ProvisionControl<?> control = (ProvisionControl<?>) bundle;
+                        PluginConfiguration context = bundleInfo.getContext();
+                        if (context == null) {
+                            control.start(false);
+                        }
+                        else {
+                            control.start(context.autoStart);
+                            if (context.startLevel > 0) {
+                                control.startLevel(context.startLevel);
+                            }
+                        }
+                    }
+                    options.add(bundle);
+                }
+                return CoreOptions.composite(options.toArray(new Option[0]));
             }
         };
     }

@@ -57,7 +57,7 @@ public interface EclipseBundleSource {
 
     public interface EclipseProjectSource extends EclipseBundleSource {
 
-        Option getProject(String projectName);
+        EclipseProject getProject(String projectName) throws BundleNotFoundException;
     }
 
 }
