@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.container.eclipse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.ops4j.pax.exam.Option;
+import org.osgi.framework.Version;
 
 /**
  * 
@@ -29,8 +29,6 @@ import org.ops4j.pax.exam.Option;
  */
 public interface EclipseBundleSource {
 
-    public static final String ANY_VERSION = "0.0.0";
-
     /**
      * Resolves a bundle by the given name and version
      * 
@@ -39,7 +37,10 @@ public interface EclipseBundleSource {
      * @return
      * @throws IOException
      */
-    Option resolve(String bundleName, String bundleVersion)
+    EclipseBundleOption bundle(String bundleName, Version bundleVersion)
+        throws IOException, BundleNotFoundException;
+
+    EclipseFeatureOption feature(String featureName, Version featureVersion)
         throws IOException, BundleNotFoundException;
 
     /**
@@ -57,7 +58,7 @@ public interface EclipseBundleSource {
 
     public interface EclipseProjectSource extends EclipseBundleSource {
 
-        EclipseProject getProject(String projectName) throws BundleNotFoundException;
+        EclipseProject project(String projectName) throws BundleNotFoundException;
     }
 
 }

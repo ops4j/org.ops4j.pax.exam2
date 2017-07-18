@@ -40,8 +40,14 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource.EclipseProjectSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
+import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseProject;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.osgi.framework.Version;
@@ -56,13 +62,12 @@ import org.slf4j.LoggerFactory;
  */
 public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
 
-    private static final String MANIFEST_MF = "META-INF/MANIFEST.MF";
-
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceEclipseBundleSource.class);
 
     private static final String PREFIX_URI = "URI//";
 
     private final BundleInfoMap<ProjectParser> bundleMap = new BundleInfoMap<>();
+    private final BundleInfoMap<FeatureProject> featureMap = new BundleInfoMap<>();
 
     private final Map<String, ProjectParser> projectMap = new HashMap<>();
 
@@ -99,19 +104,33 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
                             bundleMap.add(bundle);
                         }
                         catch (Exception e) {
-                            LOG.warn("can't read project {} ({})", project, e.toString());
+                            LOG.warn("can't read plugin-project {} ({})", project, e.toString());
                         }
                     }
                     else if (project.hasNature(ProjectParser.MAVEN2_NATURE)) {
                         // TODO
                     }
                     else {
-                        LOG.info("Skipping project {} without plugin/maven2 nature...",
+                        LOG.info("Skipping java-project {} without plugin/maven2 nature...",
                             project.getName());
                     }
                 }
+                else if (project.hasNature(ProjectParser.FEATURE_NATURE)) {
+                    try {
+                        FeatureParser feature = new FeatureParser(projectFolder);
+                        FeatureProject featureProject = new FeatureProject(project, feature);
+                        BundleInfo<FeatureProject> featureInfo = new BundleInfo<>(feature.getId(),
+                            feature.getVersion(), featureProject);
+                        LOG.info("Add feature {} ...", featureInfo);
+                        featureMap.add(featureInfo);
+                    }
+                    catch (Exception e) {
+                        LOG.warn("can't read feature-project {} ({})", project, e.toString());
+                    }
+                }
                 else {
-                    LOG.info("Skipping project {} without java nature...", project.getName());
+                    LOG.info("Skipping project {} without supported project-natures...",
+                        project.getName());
                 }
             }
             else {
@@ -152,19 +171,69 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     }
 
     @Override
-    public Option resolve(String bundleName, String bundleVersion)
+    public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
         throws IOException, FileNotFoundException {
-        ProjectParser context = bundleMap.getContext(bundleName,
-            Version.parseVersion(bundleVersion));
-        if (context == null || !context.isValid()) {
+        BundleInfo<ProjectParser> bundleInfo = bundleMap.get(bundleName, bundleVersion);
+        if (bundleInfo == null || !bundleInfo.getContext().isValid()) {
             throw new BundleNotFoundException("can't find bundle " + bundleName + ":"
                 + bundleVersion + " in workspace " + workspaceFolder.getAbsolutePath());
         }
-        return projectToOption(context);
+        return new AbstractEclipseBundleOption<ProjectParser>(bundleInfo) {
+
+            @Override
+            protected Option toOption(BundleInfo<ProjectParser> bundleInfo) {
+                try {
+                    return projectToOption(bundleInfo.getContext());
+                }
+                catch (IOException e) {
+                    throw new TestContainerException("option creation failed", e);
+                }
+            }
+        };
     }
 
     @Override
-    public EclipseProject getProject(String projectName) throws BundleNotFoundException {
+    public EclipseFeatureOption feature(String featureName, Version featureVersion)
+        throws IOException, BundleNotFoundException {
+        BundleInfo<FeatureProject> bundleInfo = featureMap.get(featureName, featureVersion);
+        if (bundleInfo == null) {
+            throw new BundleNotFoundException("can't find feature " + featureName + ":"
+                + featureVersion + " in workspace " + workspaceFolder.getAbsolutePath());
+        }
+        return new AbstractEclipseFeatureOption<FeatureProject>(bundleInfo) {
+
+            @Override
+            protected List<? extends EclipseFeature> getIncluded(
+                BundleInfo<FeatureProject> bundleInfo) {
+                return bundleInfo.getContext().feature.getIncluded();
+            }
+
+            @Override
+            protected List<? extends EclipseBundle> getBundles(
+                BundleInfo<FeatureProject> bundleInfo) {
+                return bundleInfo.getContext().feature.getPlugins();
+            }
+
+            @Override
+            protected boolean isOptional(BundleInfo<FeatureProject> bundleInfo) {
+                return false;
+            }
+
+            @Override
+            protected Option toOption(BundleInfo<FeatureProject> bundleInfo) {
+                try {
+                    return projectToOption(bundleInfo.getContext().project);
+                }
+                catch (IOException e) {
+                    throw new TestContainerException("creation of option failed", e);
+                }
+            }
+
+        };
+    }
+
+    @Override
+    public EclipseProject project(String projectName) throws BundleNotFoundException {
         ProjectParser context = projectMap.get(projectName);
         if (context == null || !context.isValid()) {
             throw new BundleNotFoundException("can't find project " + projectName + " in workspace "
@@ -188,7 +257,7 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
         ByteArrayOutputStream projectStream = new ByteArrayOutputStream();
         Manifest manifest = null;
         if (context.hasNature(ProjectParser.JAVA_NATURE)
-            && new File(context.getProjectFolder(), MANIFEST_MF).exists()) {
+            && BundleInfo.isBundle(context.getProjectFolder())) {
             manifest = BundleInfo.readManifest(context.getProjectFolder());
             try (JarOutputStream jar = new JarOutputStream(projectStream, manifest)) {
                 writeProjectTo(context, jar);
@@ -201,7 +270,7 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
         }
         UrlProvisionOption bundle = CoreOptions
             .streamBundle(new ByteArrayInputStream(projectStream.toByteArray()));
-        if (BundleInfo.isBundle(manifest)) {
+        if (BundleInfo.isBundle(manifest) || context.hasNature(ProjectParser.FEATURE_NATURE)) {
             return bundle;
         }
         else {
@@ -212,9 +281,10 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     private static void writeProjectTo(ProjectParser project, JarOutputStream jar)
         throws IOException {
         Set<String> copied = new HashSet<>();
-        copied.add(MANIFEST_MF);
+        copied.add(BundleInfo.MANIFEST_LOCATION);
         copyFolder(project.getOutputFolder(), "", jar, copied);
-        if (project.hasNature(ProjectParser.PLUGIN_NATURE)) {
+        if (project.hasNature(ProjectParser.PLUGIN_NATURE)
+            || project.hasNature(ProjectParser.FEATURE_NATURE)) {
             addBuildProperties(project, jar, copied);
         }
     }
@@ -269,6 +339,23 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
             IOUtils.copy(input, jar);
         }
         jar.closeEntry();
+    }
+
+    private static final class FeatureProject {
+
+        private final ProjectParser project;
+        private final FeatureParser feature;
+
+        public FeatureProject(ProjectParser project, FeatureParser feature) {
+            this.project = project;
+            this.feature = feature;
+        }
+
+        @Override
+        public String toString() {
+            return project.toString();
+        }
+
     }
 
 }

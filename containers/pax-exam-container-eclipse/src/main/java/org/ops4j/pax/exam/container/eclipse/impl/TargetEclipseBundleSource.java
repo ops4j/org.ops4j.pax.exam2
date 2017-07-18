@@ -21,13 +21,17 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.DirectoryTargetPlatformLocation;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.PathTargetPlatformLocation;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.ProfileTargetPlatformLocation;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.TargetPlatformLocation;
+import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,23 +51,20 @@ public class TargetEclipseBundleSource implements EclipseBundleSource {
         TargetPlatformParser target = new TargetPlatformParser(targetDefinition);
         List<TargetPlatformLocation> locations = target.getLocations();
         for (TargetPlatformLocation location : locations) {
-            if (location instanceof DirectoryTargetPlatformLocation) {
-                File folder = resolveFolder((DirectoryTargetPlatformLocation) location,
+            if (location instanceof DirectoryTargetPlatformLocation
+                || location instanceof ProfileTargetPlatformLocation) {
+                File folder = resolveFolder((PathTargetPlatformLocation) location,
                     targetDefinition);
-                bundleSources.add(new InstallationEclipseBundleSource(folder));
+                bundleSources.add(new DirectoryEclipseBundleSource(folder));
             }
             else {
                 LOG.warn("location of type {} is currently not supported!", location.type);
             }
         }
-        if (bundleSources.size() > 0) {
-            EclipseBundleSource primary = bundleSources.remove(0);
-            bundleSource = EclipseOptions.withFallback(primary,
-                bundleSources.toArray(new EclipseBundleSource[0]));
-        }
+        bundleSource = EclipseOptions.combine(bundleSources.toArray(new EclipseBundleSource[0]));
     }
 
-    private File resolveFolder(DirectoryTargetPlatformLocation locations, InputStream stream)
+    private File resolveFolder(PathTargetPlatformLocation locations, InputStream stream)
         throws IOException {
         String path = locations.path;
         if (stream instanceof ProjectFileInputStream) {
@@ -80,9 +81,15 @@ public class TargetEclipseBundleSource implements EclipseBundleSource {
     }
 
     @Override
-    public Option resolve(String bundleName, String bundleVersion)
+    public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
         throws IOException, BundleNotFoundException {
-        return bundleSource.resolve(bundleName, bundleVersion);
+        return bundleSource.bundle(bundleName, bundleVersion);
+    }
+
+    @Override
+    public EclipseFeatureOption feature(String featureName, Version featureVersion)
+        throws IOException, BundleNotFoundException {
+        return bundleSource.feature(featureName, featureVersion);
     }
 
 }

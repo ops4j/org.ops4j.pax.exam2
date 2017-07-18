@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -33,7 +34,11 @@ import org.osgi.framework.Version;
  *
  * @param <Context>
  */
-public class BundleInfo<Context> implements Comparable<BundleInfo<Context>> {
+public class BundleInfo<Context> implements Comparable<BundleInfo<Context>>, EclipseBundle {
+
+    public static final String MANIFEST_LOCATION = "META-INF/MANIFEST.MF";
+
+    public static final String FEATURE_XML_LOCATION = "feature.xml";
 
     private String symbolicName;
     private Context context;
@@ -53,10 +58,12 @@ public class BundleInfo<Context> implements Comparable<BundleInfo<Context>> {
         this.context = context;
     }
 
+    @Override
     public String getSymbolicName() {
         return symbolicName;
     }
 
+    @Override
     public Version getVersion() {
         return version;
     }
@@ -102,6 +109,18 @@ public class BundleInfo<Context> implements Comparable<BundleInfo<Context>> {
         return false;
     }
 
+    public static boolean isBundle(File folder) {
+        if (new File(folder, BundleInfo.MANIFEST_LOCATION).exists()) {
+            try {
+                return isBundle(readManifest(folder));
+            }
+            catch (IOException e) {
+                // not a valid bundle then...
+            }
+        }
+        return false;
+    }
+
     public static Manifest readManifest(File folder) throws IOException {
         File metaInf = new File(folder, "META-INF");
         if (metaInf.exists()) {
@@ -119,4 +138,5 @@ public class BundleInfo<Context> implements Comparable<BundleInfo<Context>> {
     public static <T> BundleInfo<T> readExplodedBundle(File folder, T context) throws IOException {
         return new BundleInfo<T>(readManifest(folder), context);
     }
+
 }

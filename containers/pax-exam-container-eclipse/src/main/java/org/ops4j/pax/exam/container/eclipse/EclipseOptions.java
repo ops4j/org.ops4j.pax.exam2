@@ -23,22 +23,28 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource.BundleNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource.EclipseProjectSource;
 import org.ops4j.pax.exam.container.eclipse.impl.BundleInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.DirectoryEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.EclipseApplicationImpl;
-import org.ops4j.pax.exam.container.eclipse.impl.InstallationEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.TargetEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.WorkspaceEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser.PluginConfiguration;
 import org.ops4j.pax.exam.options.ProvisionControl;
 import org.osgi.framework.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Static Options to configure the EclipseContainer
@@ -47,6 +53,8 @@ import org.osgi.framework.Version;
  *
  */
 public class EclipseOptions {
+
+    private static final Logger PROVISION_LOGGER = LoggerFactory.getLogger(EclipseProvision.class);
 
     private static final class EclipseLauncherImpl implements EclipseLauncher {
 
@@ -105,7 +113,7 @@ public class EclipseOptions {
      * @throws IOException
      */
     public static EclipseBundleSource fromInstallation(final File baseFolder) throws IOException {
-        return new InstallationEclipseBundleSource(baseFolder);
+        return new DirectoryEclipseBundleSource(baseFolder);
     }
 
     /**
@@ -125,33 +133,43 @@ public class EclipseOptions {
         return new TargetEclipseBundleSource(targetDefinition);
     }
 
-    public static EclipseBundleSource withFallback(final EclipseBundleSource primary,
-        final EclipseBundleSource... fallbacks) {
+    public static EclipseBundleSource combine(final EclipseBundleSource... sources) {
         return new EclipseBundleSource() {
 
             @Override
-            public Option resolve(String bundleName, String bundleVersion)
+            public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
                 throws IOException, FileNotFoundException {
-                FileNotFoundException fnfe = new FileNotFoundException(
+                BundleNotFoundException fnfe = new BundleNotFoundException(
                     "bundle " + bundleName + ":" + bundleVersion + " not found in any sources");
-                try {
-                    return primary.resolve(bundleName, bundleVersion);
+                for (EclipseBundleSource fallback : sources) {
+                    try {
+                        return fallback.bundle(bundleName, bundleVersion);
+                    }
+                    catch (BundleNotFoundException ef) {
+                        fnfe.addSuppressed(ef);
+                    }
                 }
-                catch (FileNotFoundException ep) {
-                    fnfe.addSuppressed(ep);
-                    for (EclipseBundleSource fallback : fallbacks) {
-                        try {
-                            return fallback.resolve(bundleName, bundleVersion);
-                        }
-                        catch (FileNotFoundException ef) {
-                            fnfe.addSuppressed(ef);
-                        }
+                throw fnfe;
+            }
+
+            @Override
+            public EclipseFeatureOption feature(String featureName, Version featureVersion)
+                throws IOException {
+                BundleNotFoundException fnfe = new BundleNotFoundException(
+                    "feature " + featureName + ":" + featureVersion + " not found in any sources");
+                for (EclipseBundleSource fallback : sources) {
+                    try {
+                        return fallback.feature(featureName, featureVersion);
+                    }
+                    catch (BundleNotFoundException ef) {
+                        fnfe.addSuppressed(ef);
                     }
                 }
                 throw fnfe;
             }
 
         };
+
     }
 
     public static EclipseProvision provision(final EclipseBundleSource bundleSource,
@@ -166,11 +184,15 @@ public class EclipseOptions {
         ignored.add("org.eclipse.equinox.simpleconfigurator");
         return new EclipseProvision() {
 
+            List<Option> bundles = new ArrayList<>();
+
+            Set<String> featuresAdded = new HashSet<>();
+
             @Override
-            public Option simpleconfigurator(InputStream bundleFile) throws IOException {
+            public EclipseProvision simpleconfigurator(InputStream bundleFile) throws IOException {
                 // We parse the file and add bundle(...) Options, later we might just provision the
                 // simple configurator, but then we must find a way to fetch/install it ...
-                final List<Option> bundles = new ArrayList<>();
+                Map<String, Option> local = new HashMap<>();
                 try (
                     BufferedReader reader = new BufferedReader(new InputStreamReader(bundleFile))) {
                     String line;
@@ -180,11 +202,11 @@ public class EclipseOptions {
                         }
                         String[] bundleInfo = line.split(",");
                         String bsn = bundleInfo[0];
-                        String version = bundleInfo[1];
+                        Version version = version(bundleInfo[1]);
                         if (isIgnored(bsn, version)) {
                             continue;
                         }
-                        Option bundle = bundleSource.resolve(bsn, version);
+                        EclipseBundleOption bundle = bundleSource.bundle(bsn, version);
                         if (bundle instanceof ProvisionControl<?>) {
                             ProvisionControl<?> control = (ProvisionControl<?>) bundle;
                             String sl = bundleInfo[3];
@@ -192,15 +214,116 @@ public class EclipseOptions {
                             control.startLevel(Integer.parseInt(sl));
                             control.start(Boolean.valueOf(start));
                         }
-                        bundles.add(bundle);
+                        local.put(getKey(bundle), bundle);
                     }
                 }
-                return CoreOptions.composite(bundles.toArray(new Option[0]));
+                addAll(local);
+                return this;
             }
 
-            private boolean isIgnored(String bsn, String version) {
-                return isIgnored(bsn, (version == null || version.isEmpty()) ? Version.emptyVersion
-                    : Version.parseVersion(version));
+            @Override
+            public EclipseProvision product(InputStream productDefinition) throws IOException {
+                Map<String, Option> local = new HashMap<>();
+                ProductParser parser = new ProductParser(productDefinition);
+                for (BundleInfo<PluginConfiguration> bundleInfo : parser.getPlugins()) {
+                    if (isIgnored(bundleInfo.getSymbolicName(), bundleInfo.getVersion())) {
+                        continue;
+                    }
+                    EclipseBundleOption bundle = bundleSource.bundle(bundleInfo.getSymbolicName(),
+                        bundleInfo.getVersion());
+                    if (bundle instanceof ProvisionControl<?>) {
+                        ProvisionControl<?> control = (ProvisionControl<?>) bundle;
+                        PluginConfiguration context = bundleInfo.getContext();
+                        if (context == null) {
+                            control.start(false);
+                        }
+                        else {
+                            control.start(context.autoStart);
+                            if (context.startLevel > 0) {
+                                control.startLevel(context.startLevel);
+                            }
+                        }
+                    }
+                    local.put(getKey(bundle), bundle);
+                }
+                addAll(local);
+                return this;
+            }
+
+            @Override
+            public EclipseProvision feature(String name, Version version) throws IOException {
+                Map<String, Option> localOptions = new HashMap<>();
+                Set<String> localFeatures = new HashSet<>(featuresAdded);
+                Set<String> localBundles = new HashSet<>();
+                addFeature(bundleSource.feature(name, version), localOptions, localFeatures,
+                    localBundles);
+                addAll(localOptions);
+                featuresAdded.addAll(localFeatures);
+                return this;
+            }
+
+            private void addFeature(EclipseFeatureOption feature, Map<String, Option> localOptions,
+                Set<String> localFeatures, Set<String> localBundles)
+                throws BundleNotFoundException, IOException {
+                String featureId = getKey(feature);
+                if (localFeatures.contains(featureId)) {
+                    // this feature was already added so return to prevent loops
+                    return;
+                }
+                localFeatures.add(featureId);
+                for (EclipseBundle eclipseBundle : feature.getBundles()) {
+                    String bundleKey = getKey(eclipseBundle);
+                    if (isIgnored(eclipseBundle.getSymbolicName(), eclipseBundle.getVersion())
+                        || localBundles.contains(bundleKey)) {
+                        // the bundle is either ignored or installed by another feature already...
+                        continue;
+                    }
+                    // resolve bundl and add it to the local store
+                    EclipseBundleOption bundle = bundleSource
+                        .bundle(eclipseBundle.getSymbolicName(), eclipseBundle.getVersion());
+                    localBundles.add(bundleKey);
+                    localOptions.put(bundleKey, bundle);
+                }
+                List<EclipseFeature> included = feature.getIncluded();
+                for (EclipseFeature includedFeature : included) {
+                    try {
+                        EclipseFeatureOption includedFeatureOption = bundleSource.feature(
+                            includedFeature.getSymbolicName(), includedFeature.getVersion());
+                        addFeature(includedFeatureOption, localOptions, localFeatures,
+                            localBundles);
+                    }
+                    catch (BundleNotFoundException e) {
+                        if (!includedFeature.isOptional()) {
+                            throw e;
+                        }
+                        else {
+                            PROVISION_LOGGER.info(
+                                "ignore optional feature {} because it can't be resolved: {}",
+                                getKey(includedFeature), e.toString());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public Option[] getOptions() {
+                return bundles.toArray(new Option[0]);
+            }
+
+            private String getKey(EclipseBundle bundle) {
+                return bundle.getSymbolicName() + ":" + bundle.getVersion();
+            }
+
+            private void addAll(Map<String, Option> local) {
+                for (Entry<String, Option> entry : local.entrySet()) {
+                    ignored.add(entry.getKey());
+                    bundles.add(entry.getValue());
+                }
+            }
+
+            private Version version(String version) {
+                return (version == null || version.isEmpty()) ? Version.emptyVersion
+                    : Version.parseVersion(version);
             }
 
             private boolean isIgnored(String bsn, Version version) {
@@ -230,33 +353,6 @@ public class EclipseOptions {
                 }
             }
 
-            @Override
-            public Option product(InputStream productDefinition) throws IOException {
-                final List<Option> options = new ArrayList<>();
-                ProductParser parser = new ProductParser(productDefinition);
-                for (BundleInfo<PluginConfiguration> bundleInfo : parser.getPlugins()) {
-                    if (isIgnored(bundleInfo.getSymbolicName(), bundleInfo.getVersion())) {
-                        continue;
-                    }
-                    Option bundle = bundleSource.resolve(bundleInfo.getSymbolicName(),
-                        bundleInfo.getVersion().toString());
-                    if (bundle instanceof ProvisionControl<?>) {
-                        ProvisionControl<?> control = (ProvisionControl<?>) bundle;
-                        PluginConfiguration context = bundleInfo.getContext();
-                        if (context == null) {
-                            control.start(false);
-                        }
-                        else {
-                            control.start(context.autoStart);
-                            if (context.startLevel > 0) {
-                                control.startLevel(context.startLevel);
-                            }
-                        }
-                    }
-                    options.add(bundle);
-                }
-                return CoreOptions.composite(options.toArray(new Option[0]));
-            }
         };
     }
 

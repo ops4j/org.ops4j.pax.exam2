@@ -18,7 +18,8 @@ package org.ops4j.pax.exam.container.eclipse;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.CompositeOption;
+import org.osgi.framework.Version;
 
 /**
  *
@@ -27,7 +28,7 @@ import org.ops4j.pax.exam.Option;
  * @author Christoph Läubrich
  *
  */
-public interface EclipseProvision {
+public interface EclipseProvision extends CompositeOption {
 
     /**
      * Provisions bundles from a bundle file as defined by the
@@ -40,7 +41,10 @@ public interface EclipseProvision {
      * @throws IOException
      *             if reading failed
      */
-    Option simpleconfigurator(InputStream bundleFile) throws IOException;
+    EclipseProvision simpleconfigurator(InputStream bundleFile) throws IOException;
 
-    Option product(InputStream productDefinition) throws IOException;
+    EclipseProvision product(InputStream productDefinition) throws IOException;
+
+    EclipseProvision feature(String name, Version version) throws IOException;
+
 }

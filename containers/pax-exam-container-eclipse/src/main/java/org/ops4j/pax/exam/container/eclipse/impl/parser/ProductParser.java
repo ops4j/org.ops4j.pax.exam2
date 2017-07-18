@@ -15,9 +15,6 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -72,12 +69,6 @@ public class ProductParser extends AbstractParser {
         catch (XPathExpressionException e) {
             throw new IOException("parsing product failed!", e);
         }
-    }
-
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-        ProductParser productParser = new ProductParser(new FileInputStream(new File(
-            "C:/checkout/plugins/grafikconverter/de.laeubisoft.grafikconverter.gui/GrafikConverterGui.product")));
-        System.out.println(productParser.getPlugins().toString().replace(",", "\r\n"));
     }
 
     public List<BundleInfo<PluginConfiguration>> getPlugins() {
