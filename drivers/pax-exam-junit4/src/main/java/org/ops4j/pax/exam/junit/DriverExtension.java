@@ -32,6 +32,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.impl.JUnitTestListener;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
+import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 import org.ops4j.pax.exam.util.Exceptions;
 import org.slf4j.Logger;
@@ -120,7 +121,7 @@ public class DriverExtension extends RunnerExtension {
 
     @Override
     public boolean shouldDelegateMethod() {
-        return stagedReactor.getClass().getName().contains("PerMethod");
+        return stagedReactor.getClass().isAssignableFrom(AllConfinedStagedReactor.class);
     }
 
     @Override
