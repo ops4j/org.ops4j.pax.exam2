@@ -16,6 +16,7 @@
 
     <modules>
         <module>pax-exam</module>
+        <module>pax-exam-bnd</module>
         <module>pax-exam-cdi</module>
         <module>pax-exam-cm</module>
         <module>pax-exam-container-rbc</module>
