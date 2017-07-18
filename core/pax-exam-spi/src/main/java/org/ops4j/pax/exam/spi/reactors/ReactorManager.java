@@ -32,6 +32,7 @@ import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_TEST;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -233,6 +234,15 @@ public class ReactorManager {
                 // consider as option, so prepare that one:
                 reactor.addConfiguration(((Option[]) m.invoke(testClassInstance)));
                 numConfigurations++;
+            }
+        }
+        failOnUnusedConfiguration(testClass.getDeclaredMethods());
+    }
+
+    private void failOnUnusedConfiguration(Method[] declaredMethods) {
+        for (Method m : declaredMethods) {
+            if (isConfiguration(m) && !Modifier.isPublic(m.getModifiers())) {
+                throw new RuntimeException("Configuration method \"" + m.getDeclaringClass().getName() + "#" + m.getName() + "\" must be public.");
             }
         }
     }
