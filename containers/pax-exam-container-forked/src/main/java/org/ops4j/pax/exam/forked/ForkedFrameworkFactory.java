@@ -125,7 +125,7 @@ public class ForkedFrameworkFactory {
             javaRunner = new DefaultJavaRunner(false);
             javaRunner.exec(vmOptions, buildClasspath(beforeFrameworkClasspath, afterFrameworkClasspath),
                 RemoteFrameworkImpl.class.getName(), args, getJavaHome(), null);
-            return findRemoteFramework(port, rmiName);
+            return findRemoteFramework(address, port, rmiName);
         }
         catch (RemoteException | ExecutionException | URISyntaxException exc) {
             throw new TestContainerException(exc);
@@ -217,21 +217,17 @@ public class ForkedFrameworkFactory {
         return klass.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
     }
 
-    private RemoteFramework findRemoteFramework(int _port, String rmiName) {
+    private RemoteFramework findRemoteFramework(String address, int _port, String rmiName) {
         RemoteFramework framework = null;
         Throwable reason = null;
         long startedTrying = System.currentTimeMillis();
-
+        LOG.info("Connecting to host: " + address + " port: " + _port);
         do {
             try {
-                String address = InetAddress.getLoopbackAddress().getHostAddress();
                 Registry reg = LocateRegistry.getRegistry(address, _port);
                 framework = (RemoteFramework) reg.lookup(rmiName);
             }
-            catch (RemoteException e) {
-                reason = e;
-            }
-            catch (NotBoundException e) {
+            catch (RemoteException | NotBoundException e) {
                 reason = e;
             }
         }
