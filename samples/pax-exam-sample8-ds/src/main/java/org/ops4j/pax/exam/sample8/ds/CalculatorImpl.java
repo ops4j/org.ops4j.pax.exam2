@@ -16,10 +16,15 @@
  */
 package org.ops4j.pax.exam.sample8.ds;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component
 public class CalculatorImpl implements Calculator {
 
     private BinaryOperation addition;
 
+    @Reference
     protected void setAddition(BinaryOperation addition) {
         this.addition = addition;
     }
