@@ -11,9 +11,23 @@
 
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-cm</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <name>OPS4J Pax Exam Configuration Admin Options</name>
+    
+     <properties>
+        <bundle.symbolicName>${namespace}.cm</bundle.symbolicName>
+        <bundle.namespace>${namespace}.cm</bundle.namespace>
+    </properties>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>

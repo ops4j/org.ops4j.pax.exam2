@@ -50,7 +50,7 @@ public class ConfigurationAdminOptions {
      * @return empty configuration
      */
     public static ConfigurationOption newConfiguration(String pid) {
-        return new ConfigurationProvisionOption(pid, new HashMap<String, Object>());
+        return new org.ops4j.pax.exam.cm.internal.ConfigurationProvisionOption(pid, new HashMap<String, Object>());
     }
 
     /**
@@ -61,7 +61,7 @@ public class ConfigurationAdminOptions {
      * @return empty configuration
      */
     public static ConfigurationOption overrideConfiguration(String pid) {
-        return new ConfigurationProvisionOption(pid, new HashMap<String, Object>()).override(true)
+        return new org.ops4j.pax.exam.cm.internal.ConfigurationProvisionOption(pid, new HashMap<String, Object>()).override(true)
             .create(false);
     }
 
@@ -73,7 +73,7 @@ public class ConfigurationAdminOptions {
      * @return an empty factory configuration
      */
     public static ConfigurationOption factoryConfiguration(String pid) {
-        return new ConfigurationProvisionOption(pid, new HashMap<String, Object>()).factory(true);
+        return new org.ops4j.pax.exam.cm.internal.ConfigurationProvisionOption(pid, new HashMap<String, Object>()).factory(true);
     }
 
     /**
@@ -116,7 +116,7 @@ public class ConfigurationAdminOptions {
                 name = name.substring(0, name.length() - extension.length());
             }
             String[] split = name.split("-");
-            ConfigurationProvisionOption cfg = new ConfigurationProvisionOption(split[0],
+            org.ops4j.pax.exam.cm.internal.ConfigurationProvisionOption cfg = new org.ops4j.pax.exam.cm.internal.ConfigurationProvisionOption(split[0],
                 new HashMap<String, Object>());
             cfg.factory(split.length > 1);
             Properties properties = new Properties();

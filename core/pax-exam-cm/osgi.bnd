@@ -1,0 +1,17 @@
+Bundle-Version>:\
+  ${pom.version}
+
+Bundle-SymbolicName:\
+  ${bundle.symbolicName}
+
+Import-Package:\
+  org.ops4j.pax.exam; version="${project.version}",\
+  org.osgi.service.cm,\
+  *;resolution:=optional 
+
+Export-Package:\
+  ${bundle.namespace}; version="${project.version}"
+
+Private-Package:\
+  ${bundle.namespace}.internal.*
+
