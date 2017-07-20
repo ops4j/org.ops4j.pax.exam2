@@ -261,33 +261,16 @@ public class ForkedTestContainer implements TestContainer {
         workDir.mkdirs();
         List<Long> bundleIds = new ArrayList<Long>();
         ProvisionOption<?>[] options = system.getOptions(ProvisionOption.class);
-        Map<String, Long> remoteMappings = new HashMap<String, Long>();
         Map<Long, String> bundlesById = new HashMap<Long, String>();
         for (ProvisionOption<?> bundle : options) {
             String localUrl = downloadBundle(workDir, bundle.getURL());
-            long bundleId = remoteFramework.installBundle(localUrl);
-            remoteMappings.put(bundle.getURL(), bundleId);
-            bundlesById.put(bundleId, bundle.getURL());
-        }
-        // All bundles are installed, we can now start the framework...
-        remoteFramework.start();
-
-        // iterate over the bundles, set start level and start them
-        // TODO Simplify with new method in Pax Swissbox 1.7.0:
-        // remoteFramework.installBundle(localUrl, startLevel, autostart);
-        for (ProvisionOption<?> bundle : options) {
-            int startLevel = getStartLevel(bundle);
-            Long bundleId = remoteMappings.get(bundle.getURL());
-            remoteFramework.setBundleStartLevel(bundleId, startLevel);
+            long id = remoteFramework.installBundle(localUrl, bundle.shouldStart(),getStartLevel(bundle));
+            bundlesById.put(id,bundle.getURL());
             if (bundle.shouldStart()) {
-                bundleIds.add(bundleId);
-                remoteFramework.startBundle(bundleId);
-                LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
-            }
-            else {
-                LOG.debug("+ Install (no start) {}", bundle);
+                bundleIds.add(id);
             }
         }
+        remoteFramework.start();
         setFrameworkStartLevel();
         verifyThatBundlesAreResolved(bundleIds, bundlesById);
     }
