@@ -55,19 +55,19 @@ public class FeatureParser extends AbstractParser {
             Element element = parse(stream);
             id = getAttribute(element, "id", true);
             label = getAttribute(element, "label", false);
-            version = string2Version(getAttribute(element, "version", false));
+            version = stringToVersion(getAttribute(element, "version", false));
             for (Node node : evaluate(element, "/feature/plugin")) {
                 String pluginId = getAttribute(node, "id", true);
                 String pluginVersion = getAttribute(node, "version", false);
                 String pluginUnpack = getAttribute(node, "unpack", false);
-                plugins.add(new BundleInfo<Boolean>(pluginId, string2Version(pluginVersion),
+                plugins.add(new BundleInfo<Boolean>(pluginId, stringToVersion(pluginVersion),
                     Boolean.parseBoolean(pluginUnpack)));
             }
             for (Node node : evaluate(element, "/feature/includes")) {
                 String pluginId = getAttribute(node, "id", true);
                 String pluginVersion = getAttribute(node, "version", false);
                 String pluginOptional = getAttribute(node, "unpack", false);
-                included.add(new FeatureBundleInfo(pluginId, string2Version(pluginVersion),
+                included.add(new FeatureBundleInfo(pluginId, stringToVersion(pluginVersion),
                     Boolean.parseBoolean(pluginOptional)));
             }
 
@@ -78,11 +78,6 @@ public class FeatureParser extends AbstractParser {
         finally {
             stream.close();
         }
-    }
-
-    private Version string2Version(String pluginVersion) {
-        return pluginVersion == null || pluginVersion.isEmpty() ? Version.emptyVersion
-            : Version.parseVersion(pluginVersion);
     }
 
     public String getId() {

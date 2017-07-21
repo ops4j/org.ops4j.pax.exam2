@@ -57,6 +57,11 @@ public abstract class AbstractEclipseFeatureOption<T> extends AbstractEclipseBun
         return isOptional(bundleInfo);
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ":" + bundleInfo;
+    }
+
     protected abstract List<? extends EclipseFeature> getIncluded(BundleInfo<T> bundleInfo);
 
     protected abstract List<? extends EclipseBundle> getBundles(BundleInfo<T> bundleInfo);

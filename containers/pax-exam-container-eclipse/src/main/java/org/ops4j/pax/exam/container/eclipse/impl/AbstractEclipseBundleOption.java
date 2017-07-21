@@ -52,5 +52,10 @@ public abstract class AbstractEclipseBundleOption<T>
         return CoreOptions.options(toOption(bundleInfo));
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ":" + bundleInfo.toString();
+    }
+
     protected abstract Option toOption(BundleInfo<T> bundleInfo);
 }

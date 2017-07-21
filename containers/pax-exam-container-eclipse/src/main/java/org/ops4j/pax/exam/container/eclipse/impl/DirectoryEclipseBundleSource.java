@@ -32,6 +32,7 @@ import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,169 +44,232 @@ import org.slf4j.LoggerFactory;
  */
 public final class DirectoryEclipseBundleSource implements EclipseBundleSource {
 
+    private static final String FEATURES_FOLDER = "features";
+
+    private static final String PLUGINS_FOLDER = "plugins";
+
     private static final Logger LOG = LoggerFactory.getLogger(DirectoryEclipseBundleSource.class);
 
     private final BundleInfoMap<File> bundleMap = new BundleInfoMap<>();
 
     private final BundleInfoMap<FeatureFile> featureMap = new BundleInfoMap<>();
 
-    public DirectoryEclipseBundleSource(File baseFolder) throws IOException {
-        File pluginsFolder = new File(baseFolder, "plugins");
-        File featuresFolder = new File(baseFolder, "features");
-        if (!pluginsFolder.exists() && !featuresFolder.exists()) {
-            pluginsFolder = baseFolder;
-            featuresFolder = baseFolder;
+    private DirectoryEclipseBundleSource(File folder, boolean readPlugins, boolean readFeatures)
+        throws IOException {
+        String info;
+        if (readFeatures && readPlugins) {
+            info = "bundle/feature";
         }
-        // TODO: we should optimize the case where pluginfolder == featuresfolder and then exclude
-        // all files we have added as bundles from the set of files that are considered features, or
-        // we can even merge the searchfeature/searchbundle in some way?
-        if (pluginsFolder.exists()) {
-            readPlugins(pluginsFolder);
+        else if (readFeatures) {
+            info = "feature";
         }
-        if (featuresFolder.exists()) {
-            readFeatures(featuresFolder);
+        else {
+            info = "bundle";
+        }
+        File[] files = folder.listFiles();
+        for (File file : files) {
+            try {
+                if (readFeatures) {
+                    if (readFeature(file)) {
+                        continue;
+                    }
+                }
+                if (readPlugins) {
+                    if (readPlugin(file)) {
+                        continue;
+                    }
+                }
+                LOG.info("Skip {}, it is not a ", info, file.getAbsolutePath());
+            }
+            catch (Exception e) {
+                LOG.warn("Can't read {} from folder {} ({})...",
+                    new Object[] { info, file.getName(), e.toString() });
+            }
         }
     }
 
-    private void readFeatures(File featuresFolder) {
-        for (File file : featuresFolder.listFiles()) {
-            if (file.isDirectory()) {
-                File featureFile = new File(file, BundleInfo.FEATURE_XML_LOCATION);
-                if (featureFile.exists()) {
-                    try {
-                        FeatureParser featureParser = new FeatureParser(
-                            new FileInputStream(featureFile));
-                        BundleInfo<FeatureFile> explodedFeature = new BundleInfo<DirectoryEclipseBundleSource.FeatureFile>(
-                            featureParser.getId(), featureParser.getVersion(),
-                            new FeatureFile(file, featureParser));
-                        featureMap.add(explodedFeature);
-                        LOG.info("Add exploded feature {}...", explodedFeature);
-                    }
-                    catch (IOException e) {
-                        LOG.warn("Can't read exploded feature from folder {} ({})...",
-                            file.getName(), e.toString());
-                    }
-                }
-            }
-            else if (file.getName().toLowerCase().endsWith(".jar")) {
-                try {
-                    try (JarFile jarFile = new JarFile(file)) {
-                        ZipEntry entry = jarFile.getEntry(BundleInfo.FEATURE_XML_LOCATION);
-                        if (entry != null) {
-                            FeatureParser featureParser = new FeatureParser(
-                                jarFile.getInputStream(entry));
-                            BundleInfo<FeatureFile> feature = new BundleInfo<DirectoryEclipseBundleSource.FeatureFile>(
-                                featureParser.getId(), featureParser.getVersion(),
-                                new FeatureFile(file, featureParser));
-                            featureMap.add(feature);
-                            LOG.info("Add feature {}...", feature);
-                        }
-                        else {
-                            LOG.info("Skip file {} it is not a feature... ", file);
-                        }
-                    }
-                }
-                catch (IOException | IllegalArgumentException e) {
-                    LOG.warn("can't read jar file {} ({})", file, e.toString());
+    private boolean readPlugin(File file) throws IOException {
+        if (file.isDirectory() && BundleInfo.isBundle(file)) {
+            BundleInfo<File> explodedBundle = BundleInfo.readExplodedBundle(file, file);
+            LOG.info("Add exploded bundle {}...", explodedBundle);
+            bundleMap.add(explodedBundle);
+            return true;
+        }
+        else if (file.getName().toLowerCase().endsWith(".jar")) {
+            try (JarFile jarFile = new JarFile(file)) {
+                Manifest mf = jarFile.getManifest();
+                if (BundleInfo.isBundle(mf)) {
+                    BundleInfo<File> bundleInfo = new BundleInfo<File>(mf, file);
+                    LOG.info("Add bundle {}...", bundleInfo);
+                    bundleMap.add(bundleInfo);
+                    return true;
                 }
             }
         }
-
+        return false;
     }
 
-    private void readPlugins(File pluginsFolder) {
-        for (File file : pluginsFolder.listFiles()) {
-            if (file.isDirectory() && BundleInfo.isBundle(file)) {
-                try {
-                    BundleInfo<File> explodedBundle = BundleInfo.readExplodedBundle(file, file);
-                    LOG.info("Add exploded bundle {}...", explodedBundle);
-                    bundleMap.add(explodedBundle);
-                }
-                catch (IOException e) {
-                    LOG.warn("Can't read exploded bundle from folder {} ({})...", file.getName(),
-                        e.toString());
-                }
+    private boolean readFeature(File file) throws IOException {
+        if (file.isDirectory()) {
+            File featureFile = new File(file, BundleInfo.FEATURE_XML_LOCATION);
+            if (featureFile.exists()) {
+                FeatureParser featureParser = new FeatureParser(new FileInputStream(featureFile));
+                BundleInfo<FeatureFile> explodedFeature = new BundleInfo<DirectoryEclipseBundleSource.FeatureFile>(
+                    featureParser.getId(), featureParser.getVersion(),
+                    new FeatureFile(file, featureParser));
+                featureMap.add(explodedFeature);
+                LOG.info("Add exploded feature {}...", explodedFeature);
+                return true;
             }
-            else if (file.getName().toLowerCase().endsWith(".jar")) {
-                try {
-                    try (JarFile jarFile = new JarFile(file)) {
-                        Manifest mf = jarFile.getManifest();
-                        if (BundleInfo.isBundle(mf)) {
-                            BundleInfo<File> bundleInfo = new BundleInfo<File>(mf, file);
-                            LOG.info("Add bundle {}...", bundleInfo);
-                            bundleMap.add(bundleInfo);
-                        }
-                        else {
-                            LOG.info("Skip file {} it is not a bundle... ", file);
-                        }
-                    }
-                }
-                catch (IOException | IllegalArgumentException e) {
-                    LOG.warn("can't read jar file {} ({})", file, e.toString());
+        }
+        else if (file.getName().toLowerCase().endsWith(".jar")) {
+            try (JarFile jarFile = new JarFile(file)) {
+                ZipEntry entry = jarFile.getEntry(BundleInfo.FEATURE_XML_LOCATION);
+                if (entry != null) {
+                    FeatureParser featureParser = new FeatureParser(jarFile.getInputStream(entry));
+                    BundleInfo<FeatureFile> feature = new BundleInfo<DirectoryEclipseBundleSource.FeatureFile>(
+                        featureParser.getId(), featureParser.getVersion(),
+                        new FeatureFile(file, featureParser));
+                    featureMap.add(feature);
+                    LOG.info("Add feature {}...", feature);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     @Override
     public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
         throws BundleNotFoundException {
-        final BundleInfo<File> bundleInfo = bundleMap.get(bundleName, bundleVersion);
+        final BundleInfo<File> bundleInfo = bundleMap.get(bundleName, bundleVersion, false);
         if (bundleInfo == null) {
             throw new BundleNotFoundException(
                 "Can't resolve bundle '" + bundleName + ":" + bundleVersion + "'");
         }
-        final File file = bundleInfo.getContext();
-        if (!file.exists()) {
-            throw new BundleNotFoundException(
-                "Can't resolve bundle '" + file.getAbsolutePath() + "' does not exists");
-        }
-        return new AbstractEclipseBundleOption<File>(bundleInfo) {
+        return new DirectoryEclipseBundleOption(bundleInfo);
+    }
 
-            @Override
-            protected Option toOption(BundleInfo<File> bundleInfo) {
-                return CoreOptions.bundle(bundleInfo.getContext().getAbsolutePath());
-            }
-        };
+    @Override
+    public EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
+        throws IOException, BundleNotFoundException {
+        final BundleInfo<File> bundleInfo = bundleMap.get(bundleName, bundleVersionRange);
+        if (bundleInfo == null) {
+            throw new BundleNotFoundException(
+                "Can't resolve bundle '" + bundleName + ":" + bundleVersionRange + "'");
+        }
+        return new DirectoryEclipseBundleOption(bundleInfo);
     }
 
     @Override
     public EclipseFeatureOption feature(final String featureName, Version featureVersion)
         throws IOException, BundleNotFoundException {
-        final BundleInfo<FeatureFile> bundleInfo = featureMap.get(featureName, featureVersion);
+        final BundleInfo<FeatureFile> bundleInfo = featureMap.get(featureName, featureVersion,
+            false);
         if (bundleInfo == null) {
             throw new BundleNotFoundException(
                 "Can't resolve feature '" + featureName + ":" + featureVersion + "'");
         }
-        final File file = bundleInfo.getContext().file;
-        if (!file.exists()) {
+        return new DirectoryEclipseFeatureOption(bundleInfo);
+    }
+
+    @Override
+    public EclipseFeatureOption feature(String featureName, VersionRange featureVersionRange)
+        throws IOException, BundleNotFoundException {
+        final BundleInfo<FeatureFile> bundleInfo = featureMap.get(featureName, featureVersionRange);
+        if (bundleInfo == null) {
             throw new BundleNotFoundException(
-                "Can't resolve feature '" + file.getAbsolutePath() + "' does not exists");
+                "Can't resolve feature '" + featureName + ":" + featureVersionRange + "'");
         }
-        return new AbstractEclipseFeatureOption<FeatureFile>(bundleInfo) {
+        return new DirectoryEclipseFeatureOption(bundleInfo);
+    }
 
-            @Override
-            protected List<? extends EclipseFeature> getIncluded(
-                BundleInfo<FeatureFile> bundleInfo) {
-                return bundleInfo.getContext().feature.getIncluded();
+    private final class DirectoryEclipseFeatureOption
+        extends AbstractEclipseFeatureOption<FeatureFile> {
+
+        private DirectoryEclipseFeatureOption(BundleInfo<FeatureFile> bundleInfo)
+            throws BundleNotFoundException {
+            super(bundleInfo);
+            File file = bundleInfo.getContext().file;
+            if (!file.exists()) {
+                throw new BundleNotFoundException(
+                    "Can't resolve bundle '" + file.getAbsolutePath() + "' does not exists");
             }
+        }
 
-            @Override
-            protected List<? extends EclipseBundle> getBundles(BundleInfo<FeatureFile> bundleInfo) {
-                return bundleInfo.getContext().feature.getPlugins();
+        @Override
+        protected List<? extends EclipseFeature> getIncluded(BundleInfo<FeatureFile> bundleInfo) {
+            return bundleInfo.getContext().feature.getIncluded();
+        }
+
+        @Override
+        protected List<? extends EclipseBundle> getBundles(BundleInfo<FeatureFile> bundleInfo) {
+            return bundleInfo.getContext().feature.getPlugins();
+        }
+
+        @Override
+        protected boolean isOptional(BundleInfo<FeatureFile> bundleInfo) {
+            return false;
+        }
+
+        @Override
+        protected Option toOption(BundleInfo<FeatureFile> bundleInfo) {
+            return CoreOptions.bundle(bundleInfo.getContext().file.getAbsolutePath());
+        }
+    }
+
+    private final class DirectoryEclipseBundleOption extends AbstractEclipseBundleOption<File> {
+
+        private DirectoryEclipseBundleOption(BundleInfo<File> bundleInfo)
+            throws BundleNotFoundException {
+            super(bundleInfo);
+            final File file = bundleInfo.getContext();
+            if (!file.exists()) {
+                throw new BundleNotFoundException(
+                    "Can't resolve bundle '" + file.getAbsolutePath() + "' does not exists");
             }
+        }
 
-            @Override
-            protected boolean isOptional(BundleInfo<FeatureFile> bundleInfo) {
-                return false;
-            }
+        @Override
+        protected Option toOption(BundleInfo<File> bundleInfo) {
+            return CoreOptions.bundle(bundleInfo.getContext().getAbsolutePath());
+        }
+    }
 
-            @Override
-            protected Option toOption(BundleInfo<FeatureFile> bundleInfo) {
-                return CoreOptions.bundle(bundleInfo.getContext().file.getAbsolutePath());
-            }
+    private static final class PluginFeatureEclipseBundleSource implements EclipseBundleSource {
 
-        };
+        private DirectoryEclipseBundleSource pluginSource;
+        private DirectoryEclipseBundleSource featureSource;
+
+        public PluginFeatureEclipseBundleSource(DirectoryEclipseBundleSource pluginSource,
+            DirectoryEclipseBundleSource featureSource) {
+            this.pluginSource = pluginSource;
+            this.featureSource = featureSource;
+        }
+
+        @Override
+        public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
+            throws IOException, BundleNotFoundException {
+            return pluginSource.bundle(bundleName, bundleVersion);
+        }
+
+        @Override
+        public EclipseFeatureOption feature(String featureName, Version featureVersion)
+            throws IOException, BundleNotFoundException {
+            return featureSource.feature(featureName, featureVersion);
+        }
+
+        @Override
+        public EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
+            throws IOException, BundleNotFoundException {
+            return pluginSource.bundle(bundleName, bundleVersionRange);
+        }
+
+        @Override
+        public EclipseFeatureOption feature(String featureName, VersionRange featureVersionRange)
+            throws IOException, BundleNotFoundException {
+            return featureSource.feature(featureName, featureVersionRange);
+        }
     }
 
     private static final class FeatureFile {
@@ -222,6 +286,33 @@ public final class DirectoryEclipseBundleSource implements EclipseBundleSource {
         public String toString() {
             return file.getAbsolutePath();
         }
+    }
+
+    public static EclipseBundleSource create(File folder) throws IOException {
+        if (FEATURES_FOLDER.equalsIgnoreCase(folder.getName())
+            || PLUGINS_FOLDER.equalsIgnoreCase(folder.getName())) {
+            folder = folder.getParentFile();
+        }
+        File pluginsFolder = new File(folder, PLUGINS_FOLDER);
+        File featuresFolder = new File(folder, FEATURES_FOLDER);
+        DirectoryEclipseBundleSource pluginSource = null;
+        if (pluginsFolder.exists()) {
+            pluginSource = new DirectoryEclipseBundleSource(pluginsFolder, true, false);
+            if (!featuresFolder.exists()) {
+                return pluginSource;
+            }
+        }
+        if (featuresFolder.exists()) {
+            DirectoryEclipseBundleSource featureSource = new DirectoryEclipseBundleSource(
+                pluginsFolder, false, true);
+            if (pluginSource == null) {
+                return featureSource;
+            }
+            else {
+                return new PluginFeatureEclipseBundleSource(pluginSource, featureSource);
+            }
+        }
+        return new DirectoryEclipseBundleSource(folder, true, true);
     }
 
 }

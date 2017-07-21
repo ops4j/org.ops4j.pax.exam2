@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.ops4j.pax.exam.container.eclipse.impl.BundleInfo;
-import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -55,15 +54,8 @@ public class ProductParser extends AbstractParser {
             for (Node node : evaluate(document, "/product/plugins/plugin")) {
                 String id = getAttribute(node, "id", true);
                 String version = getAttribute(node, "version", false);
-                Version bundleVersion;
-                if (version == null || version.isEmpty()) {
-                    bundleVersion = Version.emptyVersion;
-                }
-                else {
-                    bundleVersion = Version.parseVersion(version);
-                }
-                plugins
-                    .add(new BundleInfo<PluginConfiguration>(id, bundleVersion, configs.get(id)));
+                plugins.add(new BundleInfo<PluginConfiguration>(id, stringToVersion(version),
+                    configs.get(id)));
             }
         }
         catch (XPathExpressionException e) {

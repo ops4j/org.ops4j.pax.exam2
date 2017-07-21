@@ -45,11 +45,17 @@ public class BundleInfo<Context> implements Comparable<BundleInfo<Context>>, Ecl
     private Version version;
 
     public BundleInfo(Manifest manifest, Context context) {
-        Attributes attributes = manifest.getMainAttributes();
-        this.context = context;
-        this.symbolicName = notNull(attributes, Constants.BUNDLE_SYMBOLICNAME).split(";")[0];
-        this.version = Version
-            .parseVersion(notNull(attributes, Constants.BUNDLE_VERSION).split(";")[0]);
+        this(manifest.getMainAttributes(), context);
+    }
+
+    public BundleInfo(Attributes attributes, Context context) {
+        this(notNull(attributes, Constants.BUNDLE_SYMBOLICNAME).split(";")[0],
+            Version.parseVersion(notNull(attributes, Constants.BUNDLE_VERSION).split(";")[0]),
+            context);
+    }
+
+    public BundleInfo(EclipseBundle bundle, Context context) {
+        this(bundle.getSymbolicName(), bundle.getVersion(), context);
     }
 
     public BundleInfo(String symbolicName, Version version, Context context) {

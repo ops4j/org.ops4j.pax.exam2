@@ -17,7 +17,9 @@ package org.ops4j.pax.exam.container.eclipse.impl.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,6 +28,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -115,7 +118,7 @@ public abstract class AbstractParser {
         }
     }
 
-    private static String toPath(Node node) {
+    protected static String toPath(Node node) {
         String name = node.getNodeName();
         Node parentNode = node.getParentNode();
         if (parentNode == null) {
@@ -124,6 +127,22 @@ public abstract class AbstractParser {
         else {
             return toPath(parentNode) + "/" + name;
         }
+    }
+
+    protected static Map<String, String> attributesToMap(Node node) {
+        Map<String, String> flags = new HashMap<>();
+        NamedNodeMap attributes = node.getAttributes();
+        int length = attributes.getLength();
+        for (int i = 0; i < length; i++) {
+            Node item = attributes.item(i);
+            flags.put(item.getNodeName(), item.getNodeValue());
+        }
+        return flags;
+    }
+
+    protected static Version stringToVersion(String version) {
+        return version == null || version.isEmpty() ? Version.emptyVersion
+            : Version.parseVersion(version);
     }
 
     /**

@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * A Map for finding {@link BundleInfo} of a given symbolic name and version
@@ -46,6 +48,11 @@ public class BundleInfoMap<BundleInfoContext> {
             bundles.put(bundleInfo.getSymbolicName(), list);
         }
         list.add(bundleInfo);
+        Collections.sort(list, Collections.reverseOrder());
+    }
+
+    public BundleInfo<BundleInfoContext> get(EclipseBundle bundle, boolean strict) {
+        return get(bundle.getSymbolicName(), bundle.getVersion(), strict);
     }
 
     /**
@@ -54,51 +61,52 @@ public class BundleInfoMap<BundleInfoContext> {
      * @param version
      * @return the best matching {@link BundleInfo} or <code>null</code> if no such is found
      */
-    public BundleInfo<BundleInfoContext> get(String symbolicName, Version version) {
+    public BundleInfo<BundleInfoContext> get(String symbolicName, Version version, boolean strict) {
         List<BundleInfo<BundleInfoContext>> list = bundles.get(symbolicName);
-        if (list != null) {
+        if (list != null && !list.isEmpty()) {
             if (version == null || Version.emptyVersion.equals(version)) {
                 return Collections.max(list);
             }
-            BundleInfo<BundleInfoContext> mostlyMatch = null;
             for (BundleInfo<BundleInfoContext> bundleInfo : list) {
                 if (version.equals(bundleInfo.getVersion())) {
                     // perfect match...
                     return bundleInfo;
                 }
-                else if (matchWithoutQualifier(version, bundleInfo)) {
-                    if (mostlyMatch != null
-                        && mostlyMatch.getVersion().compareTo(bundleInfo.getVersion()) > 0) {
-                        continue;
-                    }
-                    mostlyMatch = bundleInfo;
-                }
             }
-            return mostlyMatch;
-        }
-        else {
-            return null;
-        }
-    }
-
-    private boolean matchWithoutQualifier(Version version,
-        BundleInfo<BundleInfoContext> bundleInfo) {
-        if (version.getMajor() == bundleInfo.getVersion().getMajor()) {
-            if (version.getMinor() == bundleInfo.getVersion().getMinor()) {
-                if (version.getMicro() == bundleInfo.getVersion().getMicro()) {
-                    return true;
-                }
+            if (!strict) {
+                // now try to find one without qualifier then...
+                String base = version.getMajor() + "." + version.getMinor() + ".";
+                String lower = base + version.getMicro();
+                String upper = base + version.getMicro() + 1;
+                return get(symbolicName, VersionRange.valueOf("[" + lower + "," + upper + ")"));
             }
         }
-        return false;
+        return null;
     }
 
-    public BundleInfoContext getContext(String symbolicName, Version version) {
-        BundleInfo<BundleInfoContext> bundleInfo = get(symbolicName, version);
-        if (bundleInfo == null) {
-            return null;
+    /**
+     * 
+     * @param symbolicName
+     * @param versionRange
+     * @return the bundleinfo with the highest version that matches the given range
+     */
+    public BundleInfo<BundleInfoContext> get(String symbolicName, VersionRange versionRange) {
+        List<BundleInfo<BundleInfoContext>> list = bundles.get(symbolicName);
+        if (list != null && !list.isEmpty()) {
+            for (BundleInfo<BundleInfoContext> bundleInfo : list) {
+                if (versionRange.includes(bundleInfo.getVersion())) {
+                    return bundleInfo;
+                }
+            }
         }
-        return bundleInfo.getContext();
+        return null;
+    }
+
+    /**
+     * @return a map view of this BundleInfo
+     */
+    public Map<String, List<BundleInfo<BundleInfoContext>>> asMap() {
+        return Collections.unmodifiableMap(bundles);
     }
 
 }

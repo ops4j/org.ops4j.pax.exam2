@@ -51,6 +51,7 @@ import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,63 +174,45 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     @Override
     public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
         throws IOException, FileNotFoundException {
-        BundleInfo<ProjectParser> bundleInfo = bundleMap.get(bundleName, bundleVersion);
+        BundleInfo<ProjectParser> bundleInfo = bundleMap.get(bundleName, bundleVersion, false);
         if (bundleInfo == null || !bundleInfo.getContext().isValid()) {
             throw new BundleNotFoundException("can't find bundle " + bundleName + ":"
                 + bundleVersion + " in workspace " + workspaceFolder.getAbsolutePath());
         }
-        return new AbstractEclipseBundleOption<ProjectParser>(bundleInfo) {
+        return new WorkspaceEclipseBundleOption(bundleInfo);
+    }
 
-            @Override
-            protected Option toOption(BundleInfo<ProjectParser> bundleInfo) {
-                try {
-                    return projectToOption(bundleInfo.getContext());
-                }
-                catch (IOException e) {
-                    throw new TestContainerException("option creation failed", e);
-                }
-            }
-        };
+    @Override
+    public EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
+        throws IOException, BundleNotFoundException {
+        BundleInfo<ProjectParser> bundleInfo = bundleMap.get(bundleName, bundleVersionRange);
+        if (bundleInfo == null || !bundleInfo.getContext().isValid()) {
+            throw new BundleNotFoundException("can't find bundle " + bundleName + ":"
+                + bundleVersionRange + " in workspace " + workspaceFolder.getAbsolutePath());
+        }
+        return new WorkspaceEclipseBundleOption(bundleInfo);
     }
 
     @Override
     public EclipseFeatureOption feature(String featureName, Version featureVersion)
         throws IOException, BundleNotFoundException {
-        BundleInfo<FeatureProject> bundleInfo = featureMap.get(featureName, featureVersion);
+        BundleInfo<FeatureProject> bundleInfo = featureMap.get(featureName, featureVersion, false);
         if (bundleInfo == null) {
             throw new BundleNotFoundException("can't find feature " + featureName + ":"
                 + featureVersion + " in workspace " + workspaceFolder.getAbsolutePath());
         }
-        return new AbstractEclipseFeatureOption<FeatureProject>(bundleInfo) {
+        return new WorkspaceEclipseFeatureOption(bundleInfo);
+    }
 
-            @Override
-            protected List<? extends EclipseFeature> getIncluded(
-                BundleInfo<FeatureProject> bundleInfo) {
-                return bundleInfo.getContext().feature.getIncluded();
-            }
-
-            @Override
-            protected List<? extends EclipseBundle> getBundles(
-                BundleInfo<FeatureProject> bundleInfo) {
-                return bundleInfo.getContext().feature.getPlugins();
-            }
-
-            @Override
-            protected boolean isOptional(BundleInfo<FeatureProject> bundleInfo) {
-                return false;
-            }
-
-            @Override
-            protected Option toOption(BundleInfo<FeatureProject> bundleInfo) {
-                try {
-                    return projectToOption(bundleInfo.getContext().project);
-                }
-                catch (IOException e) {
-                    throw new TestContainerException("creation of option failed", e);
-                }
-            }
-
-        };
+    @Override
+    public EclipseFeatureOption feature(String featureName, VersionRange featureVersionRange)
+        throws IOException, BundleNotFoundException {
+        BundleInfo<FeatureProject> bundleInfo = featureMap.get(featureName, featureVersionRange);
+        if (bundleInfo == null) {
+            throw new BundleNotFoundException("can't find feature " + featureName + ":"
+                + featureVersionRange + " in workspace " + workspaceFolder.getAbsolutePath());
+        }
+        return new WorkspaceEclipseFeatureOption(bundleInfo);
     }
 
     @Override
@@ -339,6 +322,58 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
             IOUtils.copy(input, jar);
         }
         jar.closeEntry();
+    }
+
+    private final class WorkspaceEclipseBundleOption
+        extends AbstractEclipseBundleOption<ProjectParser> {
+
+        private WorkspaceEclipseBundleOption(BundleInfo<ProjectParser> bundleInfo) {
+            super(bundleInfo);
+        }
+
+        @Override
+        protected Option toOption(BundleInfo<ProjectParser> bundleInfo) {
+            try {
+                return projectToOption(bundleInfo.getContext());
+            }
+            catch (IOException e) {
+                throw new TestContainerException("option creation failed", e);
+            }
+        }
+    }
+
+    private static final class WorkspaceEclipseFeatureOption
+        extends AbstractEclipseFeatureOption<FeatureProject> {
+
+        private WorkspaceEclipseFeatureOption(BundleInfo<FeatureProject> bundleInfo) {
+            super(bundleInfo);
+        }
+
+        @Override
+        protected List<? extends EclipseFeature> getIncluded(
+            BundleInfo<FeatureProject> bundleInfo) {
+            return bundleInfo.getContext().feature.getIncluded();
+        }
+
+        @Override
+        protected List<? extends EclipseBundle> getBundles(BundleInfo<FeatureProject> bundleInfo) {
+            return bundleInfo.getContext().feature.getPlugins();
+        }
+
+        @Override
+        protected boolean isOptional(BundleInfo<FeatureProject> bundleInfo) {
+            return false;
+        }
+
+        @Override
+        protected Option toOption(BundleInfo<FeatureProject> bundleInfo) {
+            try {
+                return projectToOption(bundleInfo.getContext().project);
+            }
+            catch (IOException e) {
+                throw new TestContainerException("creation of option failed", e);
+            }
+        }
     }
 
     private static final class FeatureProject {

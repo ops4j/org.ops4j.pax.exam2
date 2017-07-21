@@ -17,8 +17,10 @@ package org.ops4j.pax.exam.container.eclipse;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * 
@@ -40,7 +42,13 @@ public interface EclipseBundleSource {
     EclipseBundleOption bundle(String bundleName, Version bundleVersion)
         throws IOException, BundleNotFoundException;
 
+    EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
+        throws IOException, BundleNotFoundException;
+
     EclipseFeatureOption feature(String featureName, Version featureVersion)
+        throws IOException, BundleNotFoundException;
+
+    EclipseFeatureOption feature(String featureName, VersionRange featureVersionRange)
         throws IOException, BundleNotFoundException;
 
     /**
@@ -56,9 +64,57 @@ public interface EclipseBundleSource {
 
     }
 
+    /**
+     * a source that can suplly raw eclipse projects also
+     */
     public interface EclipseProjectSource extends EclipseBundleSource {
 
         EclipseProject project(String projectName) throws BundleNotFoundException;
+    }
+
+    /**
+     * 
+     * a source that can supply IUs (installable units)
+     */
+    public interface EclipseUnitSource extends EclipseBundleSource {
+
+        public enum IncludeMode {
+            /**
+             * Allow to add software with missing dependencies
+             */
+            SLICER,
+            /**
+             * include all required software
+             */
+            PLANNER;
+        }
+
+        /**
+         * 
+         * @param id
+         * @param version
+         * @param other
+         *            other repositories that should be queried to find dependent units
+         * @return a list of resolved artifacts from this unit including all its requirements
+         * @throws BundleNotFoundException
+         *             if this unit was not found in this source
+         */
+        public List<EclipseBundleOption> unit(String id, Version version, IncludeMode mode)
+            throws IOException, BundleNotFoundException;
+
+        /**
+         * 
+         * @param id
+         * @param version
+         * @param other
+         *            other repositories that should be queried to find dependent units
+         * @return a list of resolved artifacts from this unit including all its requirements
+         * @throws BundleNotFoundException
+         *             if this unit was not found in this source
+         */
+        public List<EclipseBundleOption> unit(String id, VersionRange versionRange,
+            IncludeMode mode) throws IOException, BundleNotFoundException;
+
     }
 
 }

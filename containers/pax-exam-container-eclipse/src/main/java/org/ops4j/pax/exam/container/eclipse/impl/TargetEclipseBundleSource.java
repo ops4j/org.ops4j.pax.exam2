@@ -28,10 +28,12 @@ import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.DirectoryTargetPlatformLocation;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.FeatureTargetPlatformLocation;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.PathTargetPlatformLocation;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.ProfileTargetPlatformLocation;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.TargetPlatformParser.TargetPlatformLocation;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +57,17 @@ public class TargetEclipseBundleSource implements EclipseBundleSource {
                 || location instanceof ProfileTargetPlatformLocation) {
                 File folder = resolveFolder((PathTargetPlatformLocation) location,
                     targetDefinition);
-                bundleSources.add(new DirectoryEclipseBundleSource(folder));
+                bundleSources.add(DirectoryEclipseBundleSource.create(folder));
+            }
+            else if (location instanceof FeatureTargetPlatformLocation) {
+                FeatureTargetPlatformLocation featureLocation = (FeatureTargetPlatformLocation) location;
+                File folder = resolveFolder((PathTargetPlatformLocation) location,
+                    targetDefinition);
+                EclipseBundleSource source = DirectoryEclipseBundleSource.create(folder);
+                EclipseFeatureOption feature = source.feature(featureLocation.id,
+                    featureLocation.version);
+                bundleSources.add(
+                    new FeatureEclipseBundleSource(source, new EclipseFeatureOption[] { feature }));
             }
             else {
                 LOG.warn("location of type {} is currently not supported!", location.type);
@@ -87,9 +99,21 @@ public class TargetEclipseBundleSource implements EclipseBundleSource {
     }
 
     @Override
+    public EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
+        throws IOException, BundleNotFoundException {
+        return bundleSource.bundle(bundleName, bundleVersionRange);
+    }
+
+    @Override
     public EclipseFeatureOption feature(String featureName, Version featureVersion)
         throws IOException, BundleNotFoundException {
         return bundleSource.feature(featureName, featureVersion);
+    }
+
+    @Override
+    public EclipseFeatureOption feature(String featureName, VersionRange featureVersionRange)
+        throws IOException, BundleNotFoundException {
+        return bundleSource.feature(featureName, featureVersionRange);
     }
 
 }
