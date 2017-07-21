@@ -15,13 +15,11 @@ import static org.ops4j.pax.exam.CoreOptions.url;
 public class BndtoolsOption implements Option {
 
     private final Workspace workspace;
-    private final File location;
 
     public BndtoolsOption(File location) {
         try {
-            workspace = Workspace.getWorkspace(location);
+            workspace = Workspace.findWorkspace(location);
             workspace.setOffline(false);
-            this.location = location;
         } catch (Exception e) {
             throw new RuntimeException("Underlying Bnd Exception: ",e);
         }
@@ -53,9 +51,8 @@ public class BndtoolsOption implements Option {
      * @return this.
      */
     public Option fromBndrun(String runFileSpec)  {
-
         try {
-            File runFile = new File(location, runFileSpec);
+            File runFile = workspace.getFile(runFileSpec);
             Run bndRunInstruction = new Run(workspace, runFile.getParentFile(), runFile);
             return bndToExam(bndRunInstruction);
         } catch (Exception e) {

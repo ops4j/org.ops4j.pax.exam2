@@ -9,7 +9,7 @@ public class BndtoolsOptions {
     }
 
     public static BndtoolsOption workspace() {
-        return new BndtoolsOption( new File("."));
+        return new BndtoolsOption( new File(".").getAbsoluteFile());
     }
 
     public static BndtoolsOption workspace(String location) {
