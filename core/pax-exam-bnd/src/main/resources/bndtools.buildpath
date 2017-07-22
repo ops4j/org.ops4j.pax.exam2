@@ -18,4 +18,4 @@ exam: org.ops4j.pax.exam,\
 	org.ops4j.pax.url.commons,\
 	org.ops4j.pax.url.link,\
 	org.ops4j.pax.url.classpath,\
-	org.ops4j.pax.exam.pax-exam-bnd
+	org.ops4j.pax.exam.bnd
