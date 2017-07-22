@@ -19,6 +19,7 @@
         <module>pax-exam-junit4</module>
         <module>pax-exam-testng</module>
         <module>pax-exam-testng-servlet-bridge</module>
+        <module>pax-exam-acceptance</module>
     </modules>
 
 </project>
