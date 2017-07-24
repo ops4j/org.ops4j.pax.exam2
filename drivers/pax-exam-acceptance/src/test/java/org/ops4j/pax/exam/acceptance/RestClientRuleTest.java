@@ -2,6 +2,7 @@ package org.ops4j.pax.exam.acceptance;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.acceptance.junit4.ClientRule;
 import org.ops4j.pax.exam.acceptance.junit4.OSGiTestSubjectRule;
 import org.ops4j.pax.exam.acceptance.rest.api.RestClient;
@@ -18,9 +19,15 @@ public class RestClientRuleTest {
                             bundle("mvn:org.apache.felix/org.apache.felix.scr/2.0.12"),
                             bundle("mvn:org.apache.felix/org.apache.felix.http.jetty/3.1.6"),
                             bundle("mvn:org.apache.felix/org.apache.felix.http.servlet-api/1.1.2"),
-                            bundle("mvn:org.apache.felix/org.apache.felix.webconsole/4.2.16/jar/all")
-                    )), RestClient.class, new ClientConfiguration("admin", "admin")
+                            bundle("mvn:org.apache.felix/org.apache.felix.webconsole/4.2.16/jar/all"),
+                            bundle("mvn:org.apache.felix/org.apache.felix.configadmin/1.8.14")
+                    ), getSessionSpec()
+            ), RestClient.class, new ClientConfiguration("admin", "admin")
             );
+
+    private SessionSpec getSessionSpec() {
+        return new SessionSpec("localhost",new FreePort(8287,8380).getPort(),5);
+    }
 
     @Test
     public void workflowTest() {
