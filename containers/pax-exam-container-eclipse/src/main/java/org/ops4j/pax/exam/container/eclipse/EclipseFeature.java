@@ -21,7 +21,7 @@ package org.ops4j.pax.exam.container.eclipse;
  * @author Christoph Läubrich
  *
  */
-public interface EclipseFeature extends EclipseBundle {
+public interface EclipseFeature extends EclipseVersionedArtifact {
 
     public boolean isOptional();
 

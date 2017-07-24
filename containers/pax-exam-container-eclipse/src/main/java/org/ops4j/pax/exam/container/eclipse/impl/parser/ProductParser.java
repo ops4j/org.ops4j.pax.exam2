@@ -25,7 +25,7 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.ops4j.pax.exam.container.eclipse.impl.BundleInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
  */
 public class ProductParser extends AbstractParser {
 
-    private List<BundleInfo<PluginConfiguration>> plugins = new ArrayList<>();
+    private List<ArtifactInfo<PluginConfiguration>> plugins = new ArrayList<>();
 
     public ProductParser(InputStream stream) throws IOException {
         try {
@@ -54,7 +54,7 @@ public class ProductParser extends AbstractParser {
             for (Node node : evaluate(document, "/product/plugins/plugin")) {
                 String id = getAttribute(node, "id", true);
                 String version = getAttribute(node, "version", false);
-                plugins.add(new BundleInfo<PluginConfiguration>(id, stringToVersion(version),
+                plugins.add(new ArtifactInfo<PluginConfiguration>(id, stringToVersion(version),
                     configs.get(id)));
             }
         }
@@ -63,7 +63,7 @@ public class ProductParser extends AbstractParser {
         }
     }
 
-    public List<BundleInfo<PluginConfiguration>> getPlugins() {
+    public List<ArtifactInfo<PluginConfiguration>> getPlugins() {
         return Collections.unmodifiableList(plugins);
     }
 

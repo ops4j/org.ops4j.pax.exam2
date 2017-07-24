@@ -35,9 +35,9 @@ import org.ops4j.pax.exam.options.CompositeOption;
 public abstract class AbstractEclipseFeatureOption<T> extends AbstractEclipseBundleOption<T>
     implements EclipseFeatureOption, CompositeOption {
 
-    private BundleInfo<T> bundleInfo;
+    private ArtifactInfo<T> bundleInfo;
 
-    public AbstractEclipseFeatureOption(BundleInfo<T> bundleInfo) {
+    public AbstractEclipseFeatureOption(ArtifactInfo<T> bundleInfo) {
         super(bundleInfo);
         this.bundleInfo = bundleInfo;
     }
@@ -62,11 +62,11 @@ public abstract class AbstractEclipseFeatureOption<T> extends AbstractEclipseBun
         return getClass().getSimpleName() + ":" + bundleInfo;
     }
 
-    protected abstract List<? extends EclipseFeature> getIncluded(BundleInfo<T> bundleInfo);
+    protected abstract List<? extends EclipseFeature> getIncluded(ArtifactInfo<T> bundleInfo);
 
-    protected abstract List<? extends EclipseBundle> getBundles(BundleInfo<T> bundleInfo);
+    protected abstract List<? extends EclipseBundle> getBundles(ArtifactInfo<T> bundleInfo);
 
-    protected abstract boolean isOptional(BundleInfo<T> bundleInfo);
+    protected abstract boolean isOptional(ArtifactInfo<T> bundleInfo);
 
-    protected abstract Option toOption(BundleInfo<T> bundleInfo);
+    protected abstract Option toOption(ArtifactInfo<T> bundleInfo);
 }

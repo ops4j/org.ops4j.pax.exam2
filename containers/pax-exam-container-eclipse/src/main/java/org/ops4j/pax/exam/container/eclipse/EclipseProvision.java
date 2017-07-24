@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.ops4j.pax.exam.options.CompositeOption;
-import org.osgi.framework.Version;
 
 /**
  *
@@ -29,6 +28,17 @@ import org.osgi.framework.Version;
  *
  */
 public interface EclipseProvision extends CompositeOption {
+
+    public enum IncludeMode {
+        /**
+         * Allow to add software with missing Units
+         */
+        SLICER,
+        /**
+         * include (and require) all dependent Units
+         */
+        PLANNER;
+    }
 
     /**
      * Provisions bundles from a bundle file as defined by the
@@ -45,6 +55,8 @@ public interface EclipseProvision extends CompositeOption {
 
     EclipseProvision product(InputStream productDefinition) throws IOException;
 
-    EclipseProvision feature(String name, Version version) throws IOException;
+    EclipseProvision feature(EclipseFeature feature) throws IOException;
+
+    EclipseProvision units(IncludeMode mode, EclipseInstallableUnit... units) throws IOException;
 
 }

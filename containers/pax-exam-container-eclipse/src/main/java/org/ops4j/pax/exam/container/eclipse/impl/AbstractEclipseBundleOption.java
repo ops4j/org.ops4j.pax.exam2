@@ -22,7 +22,7 @@ import org.ops4j.pax.exam.options.CompositeOption;
 import org.osgi.framework.Version;
 
 /**
- * Abstrect helper class to reduce the work to do when providing EclipseBundleOptions
+ * Abstract helper class to reduce the work to do when providing EclipseBundleOptions
  * 
  * @author Christoph Läubrich
  *
@@ -31,9 +31,9 @@ import org.osgi.framework.Version;
 public abstract class AbstractEclipseBundleOption<T>
     implements EclipseBundleOption, CompositeOption {
 
-    private final BundleInfo<T> bundleInfo;
+    private final ArtifactInfo<T> bundleInfo;
 
-    public AbstractEclipseBundleOption(BundleInfo<T> bundleInfo) {
+    public AbstractEclipseBundleOption(ArtifactInfo<T> bundleInfo) {
         this.bundleInfo = bundleInfo;
     }
 
@@ -43,8 +43,8 @@ public abstract class AbstractEclipseBundleOption<T>
     }
 
     @Override
-    public String getSymbolicName() {
-        return bundleInfo.getSymbolicName();
+    public String getId() {
+        return bundleInfo.getId();
     }
 
     @Override
@@ -57,5 +57,5 @@ public abstract class AbstractEclipseBundleOption<T>
         return getClass().getSimpleName() + ":" + bundleInfo.toString();
     }
 
-    protected abstract Option toOption(BundleInfo<T> bundleInfo);
+    protected abstract Option toOption(ArtifactInfo<T> bundleInfo);
 }

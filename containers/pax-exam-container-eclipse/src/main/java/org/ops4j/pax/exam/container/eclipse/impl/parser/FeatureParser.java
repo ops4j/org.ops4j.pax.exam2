@@ -25,8 +25,9 @@ import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
-import org.ops4j.pax.exam.container.eclipse.impl.BundleInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -43,11 +44,11 @@ public class FeatureParser extends AbstractParser {
     private String label;
     private Version version;
 
-    private final List<BundleInfo<Boolean>> plugins = new ArrayList<>();
-    private final List<FeatureBundleInfo> included = new ArrayList<>();
+    private final List<PluginInfo> plugins = new ArrayList<>();
+    private final List<FeatureInfo> included = new ArrayList<>();
 
     public FeatureParser(File folder) throws IOException {
-        this(new FileInputStream(new File(folder, BundleInfo.FEATURE_XML_LOCATION)));
+        this(new FileInputStream(new File(folder, ArtifactInfo.FEATURE_XML_LOCATION)));
     }
 
     public FeatureParser(InputStream stream) throws IOException {
@@ -60,14 +61,14 @@ public class FeatureParser extends AbstractParser {
                 String pluginId = getAttribute(node, "id", true);
                 String pluginVersion = getAttribute(node, "version", false);
                 String pluginUnpack = getAttribute(node, "unpack", false);
-                plugins.add(new BundleInfo<Boolean>(pluginId, stringToVersion(pluginVersion),
+                plugins.add(new PluginInfo(pluginId, stringToVersion(pluginVersion),
                     Boolean.parseBoolean(pluginUnpack)));
             }
             for (Node node : evaluate(element, "/feature/includes")) {
                 String pluginId = getAttribute(node, "id", true);
                 String pluginVersion = getAttribute(node, "version", false);
                 String pluginOptional = getAttribute(node, "unpack", false);
-                included.add(new FeatureBundleInfo(pluginId, stringToVersion(pluginVersion),
+                included.add(new FeatureInfo(pluginId, stringToVersion(pluginVersion),
                     Boolean.parseBoolean(pluginOptional)));
             }
 
@@ -92,17 +93,25 @@ public class FeatureParser extends AbstractParser {
         return version;
     }
 
-    public List<BundleInfo<Boolean>> getPlugins() {
+    public List<PluginInfo> getPlugins() {
         return Collections.unmodifiableList(plugins);
     }
 
-    public List<FeatureBundleInfo> getIncluded() {
+    public List<FeatureInfo> getIncluded() {
         return Collections.unmodifiableList(included);
     }
 
-    public class FeatureBundleInfo extends BundleInfo<Boolean> implements EclipseFeature {
+    public class PluginInfo extends ArtifactInfo<Boolean> implements EclipseBundle {
 
-        public FeatureBundleInfo(String symbolicName, Version version, boolean context) {
+        public PluginInfo(String symbolicName, Version version, Boolean context) {
+            super(symbolicName, version, context);
+        }
+
+    }
+
+    public class FeatureInfo extends ArtifactInfo<Boolean> implements EclipseFeature {
+
+        public FeatureInfo(String symbolicName, Version version, boolean context) {
             super(symbolicName, version, context);
         }
 

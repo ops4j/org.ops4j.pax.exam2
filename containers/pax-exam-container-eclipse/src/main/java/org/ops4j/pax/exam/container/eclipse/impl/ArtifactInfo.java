@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
+import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -34,52 +34,53 @@ import org.osgi.framework.Version;
  *
  * @param <Context>
  */
-public class BundleInfo<Context> implements Comparable<BundleInfo<Context>>, EclipseBundle {
+public class ArtifactInfo<Context>
+    implements Comparable<ArtifactInfo<Context>>, EclipseVersionedArtifact {
 
     public static final String MANIFEST_LOCATION = "META-INF/MANIFEST.MF";
 
     public static final String FEATURE_XML_LOCATION = "feature.xml";
 
-    private String symbolicName;
-    private Context context;
-    private Version version;
+    private final String symbolicName;
+    private final Context context;
+    private final Version version;
 
-    public BundleInfo(Manifest manifest, Context context) {
+    public ArtifactInfo(Manifest manifest, Context context) {
         this(manifest.getMainAttributes(), context);
     }
 
-    public BundleInfo(Attributes attributes, Context context) {
+    public ArtifactInfo(Attributes attributes, Context context) {
         this(notNull(attributes, Constants.BUNDLE_SYMBOLICNAME).split(";")[0],
             Version.parseVersion(notNull(attributes, Constants.BUNDLE_VERSION).split(";")[0]),
             context);
     }
 
-    public BundleInfo(EclipseBundle bundle, Context context) {
-        this(bundle.getSymbolicName(), bundle.getVersion(), context);
+    public ArtifactInfo(EclipseVersionedArtifact bundle, Context context) {
+        this(bundle.getId(), bundle.getVersion(), context);
     }
 
-    public BundleInfo(String symbolicName, Version version, Context context) {
+    public ArtifactInfo(String symbolicName, Version version, Context context) {
         this.symbolicName = symbolicName;
         this.version = version;
         this.context = context;
     }
 
     @Override
-    public String getSymbolicName() {
+    public final String getId() {
         return symbolicName;
     }
 
     @Override
-    public Version getVersion() {
+    public final Version getVersion() {
         return version;
     }
 
-    public Context getContext() {
+    public final Context getContext() {
         return context;
     }
 
     @Override
-    public int compareTo(BundleInfo<Context> o) {
+    public int compareTo(ArtifactInfo<Context> o) {
         int cmp = symbolicName.compareTo(o.symbolicName);
         if (cmp == 0) {
             return version.compareTo(o.version);
@@ -116,7 +117,7 @@ public class BundleInfo<Context> implements Comparable<BundleInfo<Context>>, Ecl
     }
 
     public static boolean isBundle(File folder) {
-        if (new File(folder, BundleInfo.MANIFEST_LOCATION).exists()) {
+        if (new File(folder, ArtifactInfo.MANIFEST_LOCATION).exists()) {
             try {
                 return isBundle(readManifest(folder));
             }
@@ -141,8 +142,9 @@ public class BundleInfo<Context> implements Comparable<BundleInfo<Context>>, Ecl
         }
     }
 
-    public static <T> BundleInfo<T> readExplodedBundle(File folder, T context) throws IOException {
-        return new BundleInfo<T>(readManifest(folder), context);
+    public static <T> ArtifactInfo<T> readExplodedBundle(File folder, T context)
+        throws IOException {
+        return new ArtifactInfo<T>(readManifest(folder), context);
     }
 
 }

@@ -15,12 +15,26 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
+import org.osgi.framework.Version;
+
 /**
- * represents the meta-data of Bundle
+ * A versioned artefact that might be provisioned
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseBundle extends EclipseVersionedArtifact {
+public interface EclipseVersionedArtifact {
+
+    String getId();
+
+    Version getVersion();
+
+    public interface EclipseClassifiedVersionedArtifact extends EclipseVersionedArtifact {
+
+        public static final String CLASSIFIER_BUNDLE = "osgi.bundle";
+        public static final String CLASSIFIER_FEATURE = "org.eclipse.update.feature";
+
+        String getClassifier();
+    }
 
 }

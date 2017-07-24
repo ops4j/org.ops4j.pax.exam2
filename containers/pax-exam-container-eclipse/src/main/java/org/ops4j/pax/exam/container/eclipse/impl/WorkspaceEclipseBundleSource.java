@@ -41,43 +41,45 @@ import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
+import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseProjectSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
-import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource.EclipseProjectSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseProject;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
-import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Scanns a Workspace folder and the conaining project to make them useable for pax-exam tests
+ * Scans a Workspace folder and the containing project to make them useable for pax-exam tests
  * 
  * @author Christoph Läubrich
  *
  */
-public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
+public class WorkspaceEclipseBundleSource
+    extends AbstractEclipseFeatureSource<ProjectParser, WorkspaceEclipseBundleSource.FeatureProject>
+    implements EclipseProjectSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceEclipseBundleSource.class);
 
     private static final String PREFIX_URI = "URI//";
 
-    private final BundleInfoMap<ProjectParser> bundleMap = new BundleInfoMap<>();
-    private final BundleInfoMap<FeatureProject> featureMap = new BundleInfoMap<>();
-
     private final Map<String, ProjectParser> projectMap = new HashMap<>();
 
-    private File workspaceFolder;
+    private final File workspaceFolder;
 
     public WorkspaceEclipseBundleSource(File workspaceFolder) throws IOException {
         this.workspaceFolder = workspaceFolder;
-        List<File> projectLocations = new ArrayList<>();
+        // TODO are there any other usefull information we might want to read e.g. target platform?
+        readProjects();
+    }
 
+    private void readProjects() throws IOException, FileNotFoundException {
+        List<File> projectLocations = new ArrayList<>();
         File projectsFolder = new File(workspaceFolder,
             ".metadata/.plugins/org.eclipse.core.resources/.projects");
         if (projectsFolder.exists()) {
@@ -99,17 +101,17 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
                         // the project must have a META-INF at the root folder like an exploded
                         // bundle...
                         try {
-                            BundleInfo<ProjectParser> bundle = BundleInfo
+                            ArtifactInfo<ProjectParser> bundle = ArtifactInfo
                                 .readExplodedBundle(projectFolder, project);
                             LOG.info("Add bundle {} ...", bundle);
-                            bundleMap.add(bundle);
+                            getBundles().add(bundle);
                         }
                         catch (Exception e) {
                             LOG.warn("can't read plugin-project {} ({})", project, e.toString());
                         }
                     }
                     else if (project.hasNature(ProjectParser.MAVEN2_NATURE)) {
-                        // TODO
+                        // TODO convert to maven url option or something??
                     }
                     else {
                         LOG.info("Skipping java-project {} without plugin/maven2 nature...",
@@ -120,10 +122,10 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
                     try {
                         FeatureParser feature = new FeatureParser(projectFolder);
                         FeatureProject featureProject = new FeatureProject(project, feature);
-                        BundleInfo<FeatureProject> featureInfo = new BundleInfo<>(feature.getId(),
-                            feature.getVersion(), featureProject);
+                        ArtifactInfo<FeatureProject> featureInfo = new ArtifactInfo<>(
+                            feature.getId(), feature.getVersion(), featureProject);
                         LOG.info("Add feature {} ...", featureInfo);
-                        featureMap.add(featureInfo);
+                        getFeatures().add(featureInfo);
                     }
                     catch (Exception e) {
                         LOG.warn("can't read feature-project {} ({})", project, e.toString());
@@ -141,8 +143,8 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     }
 
     private void readProjectsFromFolder(File workspaceFolder) {
+        // TODO
         throw new UnsupportedOperationException("not implemented yet :-(");
-
     }
 
     private void readProjectsFromEclipseWorkspace(File workspaceFolder, List<File> projectLocations,
@@ -172,55 +174,11 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     }
 
     @Override
-    public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
-        throws IOException, FileNotFoundException {
-        BundleInfo<ProjectParser> bundleInfo = bundleMap.get(bundleName, bundleVersion, false);
-        if (bundleInfo == null || !bundleInfo.getContext().isValid()) {
-            throw new BundleNotFoundException("can't find bundle " + bundleName + ":"
-                + bundleVersion + " in workspace " + workspaceFolder.getAbsolutePath());
-        }
-        return new WorkspaceEclipseBundleOption(bundleInfo);
-    }
-
-    @Override
-    public EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
-        throws IOException, BundleNotFoundException {
-        BundleInfo<ProjectParser> bundleInfo = bundleMap.get(bundleName, bundleVersionRange);
-        if (bundleInfo == null || !bundleInfo.getContext().isValid()) {
-            throw new BundleNotFoundException("can't find bundle " + bundleName + ":"
-                + bundleVersionRange + " in workspace " + workspaceFolder.getAbsolutePath());
-        }
-        return new WorkspaceEclipseBundleOption(bundleInfo);
-    }
-
-    @Override
-    public EclipseFeatureOption feature(String featureName, Version featureVersion)
-        throws IOException, BundleNotFoundException {
-        BundleInfo<FeatureProject> bundleInfo = featureMap.get(featureName, featureVersion, false);
-        if (bundleInfo == null) {
-            throw new BundleNotFoundException("can't find feature " + featureName + ":"
-                + featureVersion + " in workspace " + workspaceFolder.getAbsolutePath());
-        }
-        return new WorkspaceEclipseFeatureOption(bundleInfo);
-    }
-
-    @Override
-    public EclipseFeatureOption feature(String featureName, VersionRange featureVersionRange)
-        throws IOException, BundleNotFoundException {
-        BundleInfo<FeatureProject> bundleInfo = featureMap.get(featureName, featureVersionRange);
-        if (bundleInfo == null) {
-            throw new BundleNotFoundException("can't find feature " + featureName + ":"
-                + featureVersionRange + " in workspace " + workspaceFolder.getAbsolutePath());
-        }
-        return new WorkspaceEclipseFeatureOption(bundleInfo);
-    }
-
-    @Override
-    public EclipseProject project(String projectName) throws BundleNotFoundException {
+    public EclipseProject project(String projectName) throws ArtifactNotFoundException {
         ProjectParser context = projectMap.get(projectName);
         if (context == null || !context.isValid()) {
-            throw new BundleNotFoundException("can't find project " + projectName + " in workspace "
-                + workspaceFolder.getAbsolutePath());
+            throw new ArtifactNotFoundException("can't find project " + projectName
+                + " in workspace " + workspaceFolder.getAbsolutePath());
         }
         return new EclipseProject() {
 
@@ -240,8 +198,8 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
         ByteArrayOutputStream projectStream = new ByteArrayOutputStream();
         Manifest manifest = null;
         if (context.hasNature(ProjectParser.JAVA_NATURE)
-            && BundleInfo.isBundle(context.getProjectFolder())) {
-            manifest = BundleInfo.readManifest(context.getProjectFolder());
+            && ArtifactInfo.isBundle(context.getProjectFolder())) {
+            manifest = ArtifactInfo.readManifest(context.getProjectFolder());
             try (JarOutputStream jar = new JarOutputStream(projectStream, manifest)) {
                 writeProjectTo(context, jar);
             }
@@ -253,7 +211,7 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
         }
         UrlProvisionOption bundle = CoreOptions
             .streamBundle(new ByteArrayInputStream(projectStream.toByteArray()));
-        if (BundleInfo.isBundle(manifest) || context.hasNature(ProjectParser.FEATURE_NATURE)) {
+        if (ArtifactInfo.isBundle(manifest) || context.hasNature(ProjectParser.FEATURE_NATURE)) {
             return bundle;
         }
         else {
@@ -264,7 +222,7 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     private static void writeProjectTo(ProjectParser project, JarOutputStream jar)
         throws IOException {
         Set<String> copied = new HashSet<>();
-        copied.add(BundleInfo.MANIFEST_LOCATION);
+        copied.add(ArtifactInfo.MANIFEST_LOCATION);
         copyFolder(project.getOutputFolder(), "", jar, copied);
         if (project.hasNature(ProjectParser.PLUGIN_NATURE)
             || project.hasNature(ProjectParser.FEATURE_NATURE)) {
@@ -327,12 +285,12 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     private final class WorkspaceEclipseBundleOption
         extends AbstractEclipseBundleOption<ProjectParser> {
 
-        private WorkspaceEclipseBundleOption(BundleInfo<ProjectParser> bundleInfo) {
+        private WorkspaceEclipseBundleOption(ArtifactInfo<ProjectParser> bundleInfo) {
             super(bundleInfo);
         }
 
         @Override
-        protected Option toOption(BundleInfo<ProjectParser> bundleInfo) {
+        protected Option toOption(ArtifactInfo<ProjectParser> bundleInfo) {
             try {
                 return projectToOption(bundleInfo.getContext());
             }
@@ -345,28 +303,29 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
     private static final class WorkspaceEclipseFeatureOption
         extends AbstractEclipseFeatureOption<FeatureProject> {
 
-        private WorkspaceEclipseFeatureOption(BundleInfo<FeatureProject> bundleInfo) {
+        private WorkspaceEclipseFeatureOption(ArtifactInfo<FeatureProject> bundleInfo) {
             super(bundleInfo);
         }
 
         @Override
         protected List<? extends EclipseFeature> getIncluded(
-            BundleInfo<FeatureProject> bundleInfo) {
+            ArtifactInfo<FeatureProject> bundleInfo) {
             return bundleInfo.getContext().feature.getIncluded();
         }
 
         @Override
-        protected List<? extends EclipseBundle> getBundles(BundleInfo<FeatureProject> bundleInfo) {
+        protected List<? extends EclipseBundle> getBundles(
+            ArtifactInfo<FeatureProject> bundleInfo) {
             return bundleInfo.getContext().feature.getPlugins();
         }
 
         @Override
-        protected boolean isOptional(BundleInfo<FeatureProject> bundleInfo) {
+        protected boolean isOptional(ArtifactInfo<FeatureProject> bundleInfo) {
             return false;
         }
 
         @Override
-        protected Option toOption(BundleInfo<FeatureProject> bundleInfo) {
+        protected Option toOption(ArtifactInfo<FeatureProject> bundleInfo) {
             try {
                 return projectToOption(bundleInfo.getContext().project);
             }
@@ -376,7 +335,7 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
         }
     }
 
-    private static final class FeatureProject {
+    static final class FeatureProject {
 
         private final ProjectParser project;
         private final FeatureParser feature;
@@ -391,6 +350,16 @@ public class WorkspaceEclipseBundleSource implements EclipseProjectSource {
             return project.toString();
         }
 
+    }
+
+    @Override
+    protected EclipseFeatureOption getFeature(ArtifactInfo<FeatureProject> featureInfo) {
+        return new WorkspaceEclipseFeatureOption(featureInfo);
+    }
+
+    @Override
+    protected EclipseBundleOption getBundle(ArtifactInfo<ProjectParser> bundleInfo) {
+        return new WorkspaceEclipseBundleOption(bundleInfo);
     }
 
 }

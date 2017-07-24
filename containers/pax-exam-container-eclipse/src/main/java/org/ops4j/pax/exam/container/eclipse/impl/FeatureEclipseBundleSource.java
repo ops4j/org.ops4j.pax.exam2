@@ -16,16 +16,14 @@
 package org.ops4j.pax.exam.container.eclipse.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
+import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
-import org.ops4j.pax.exam.container.eclipse.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
-import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
+import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,17 +34,16 @@ import org.slf4j.LoggerFactory;
  * @author Christoph Läubrich
  *
  */
-public class FeatureEclipseBundleSource implements EclipseBundleSource {
+public class FeatureEclipseBundleSource
+    extends AbstractEclipseFeatureSource<EclipseBundleOption, EclipseFeatureOption> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeatureEclipseBundleSource.class);
 
-    private BundleInfoMap<EclipseFeatureOption> features = new BundleInfoMap<>();
-    private BundleInfoMap<EclipseBundleOption> bundles = new BundleInfoMap<>();
-
-    private EclipseBundleSource bundleSource;
+    private final EclipseBundleSource bundleSource;
 
     public FeatureEclipseBundleSource(EclipseBundleSource bundleSource,
-        EclipseFeatureOption[] includedFeatures) throws BundleNotFoundException, IOException {
+        Collection<EclipseFeatureOption> includedFeatures)
+        throws ArtifactNotFoundException, IOException {
         this.bundleSource = bundleSource;
         for (EclipseFeatureOption feature : includedFeatures) {
             addFeature(feature);
@@ -54,96 +51,57 @@ public class FeatureEclipseBundleSource implements EclipseBundleSource {
     }
 
     private void addFeature(EclipseFeatureOption feature)
-        throws BundleNotFoundException, IOException {
-        if (features.get(feature, true) != null) {
+        throws ArtifactNotFoundException, IOException {
+        if (getFeatures().get(feature) != null) {
             // we already added this feature so break out now...
             return;
         }
-        features.add(new BundleInfo<EclipseFeatureOption>(feature, feature));
-        for (EclipseBundle bundle : feature.getBundles()) {
-            if (bundles.get(bundle, true) != null) {
+        getFeatures().add(new ArtifactInfo<EclipseFeatureOption>(feature, feature));
+        for (EclipseVersionedArtifact bundle : feature.getBundles()) {
+            if (getBundles().get(bundle) != null) {
                 // we already have included this bundle
                 continue;
             }
-            EclipseBundleOption resolvedBundle = bundleSource.bundle(bundle.getSymbolicName(),
-                bundle.getVersion());
-            bundles.add(new BundleInfo<EclipseBundleOption>(resolvedBundle, resolvedBundle));
+            EclipseBundleOption resolvedBundle = bundleSource.bundle(bundle.getId());
+            getBundles().add(new ArtifactInfo<EclipseBundleOption>(resolvedBundle, resolvedBundle));
         }
         List<EclipseFeature> included = feature.getIncluded();
         for (EclipseFeature includedFeature : included) {
             try {
-                addFeature(bundleSource.feature(includedFeature.getSymbolicName(),
-                    includedFeature.getVersion()));
+                if (bundleSource instanceof EclipseFeatureSource) {
+                    addFeature(
+                        ((EclipseFeatureSource) bundleSource).feature(includedFeature.getId()));
+                }
+                else if (includedFeature.isOptional()) {
+                    LOG.info(
+                        "ignore optional feature {}:{} because it can't be resolved without an EclipseFeatureSource",
+                        includedFeature.getId(), includedFeature.getVersion());
+                }
+                else {
+                    throw new ArtifactNotFoundException(includedFeature);
+                }
             }
-            catch (BundleNotFoundException e) {
+            catch (ArtifactNotFoundException e) {
                 if (!includedFeature.isOptional()) {
                     throw e;
                 }
                 else {
                     LOG.info("ignore optional feature {}:{} because it can't be resolved: {}",
-                        new Object[] { includedFeature.getSymbolicName(),
-                            includedFeature.getVersion(), e.toString() });
+                        new Object[] { includedFeature.getId(), includedFeature.getVersion(),
+                            e.toString() });
                 }
             }
         }
     }
 
-    /**
-     * 
-     * @return all bundles that are resolved by the feature set of this source
-     */
-    public List<EclipseBundleOption> getIncludedBundles() {
-        ArrayList<EclipseBundleOption> list = new ArrayList<>();
-        for (List<BundleInfo<EclipseBundleOption>> eclipseBundleOption : bundles.asMap().values()) {
-            for (BundleInfo<EclipseBundleOption> bundleInfo : eclipseBundleOption) {
-                list.add(bundleInfo.getContext());
-            }
-        }
-        return list;
+    @Override
+    protected EclipseFeatureOption getFeature(ArtifactInfo<EclipseFeatureOption> featureInfo) {
+        return featureInfo.getContext();
     }
 
     @Override
-    public EclipseBundleOption bundle(String bundleName, Version bundleVersion)
-        throws IOException, BundleNotFoundException {
-        BundleInfo<EclipseBundleOption> info = bundles.get(bundleName, bundleVersion, false);
-        if (info == null) {
-            throw new BundleNotFoundException(
-                "can't find feature " + bundleName + ":" + bundleVersion);
-        }
-        return info.getContext();
-    }
-
-    @Override
-    public EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
-        throws IOException, BundleNotFoundException {
-        BundleInfo<EclipseBundleOption> info = bundles.get(bundleName, bundleVersionRange);
-        if (info == null) {
-            throw new BundleNotFoundException(
-                "can't find feature " + bundleName + ":" + bundleVersionRange);
-        }
-        return info.getContext();
-    }
-
-    @Override
-    public EclipseFeatureOption feature(String featureName, Version featureVersion)
-        throws IOException, BundleNotFoundException {
-        BundleInfo<EclipseFeatureOption> info = features.get(featureName, featureVersion, false);
-        if (info == null) {
-            throw new BundleNotFoundException(
-                "can't find feature " + featureName + ":" + featureVersion);
-        }
-        return info.getContext();
-    }
-
-    @Override
-    public EclipseFeatureOption feature(String featureName, VersionRange featureVersionRange)
-        throws IOException, BundleNotFoundException {
-        BundleInfo<EclipseFeatureOption> info = features.get(featureName, featureVersionRange);
-        if (info == null) {
-            throw new BundleNotFoundException(
-                "can't find feature " + featureName + ":" + featureVersionRange);
-        }
-        return info.getContext();
+    protected EclipseBundleOption getBundle(ArtifactInfo<EclipseBundleOption> bundleInfo) {
+        return bundleInfo.getContext();
     }
 
 }

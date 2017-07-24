@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.ops4j.pax.exam.container.eclipse.EclipseProvision.IncludeMode;
+import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,7 +39,7 @@ import org.w3c.dom.Node;
  */
 public class TargetPlatformParser extends AbstractParser {
 
-    private List<TargetPlatformLocation> locations = new ArrayList<>();
+    private final List<TargetPlatformLocation> locations = new ArrayList<>();
 
     public TargetPlatformParser(InputStream stream) throws IOException {
         Element document = parse(stream);
@@ -61,16 +63,21 @@ public class TargetPlatformParser extends AbstractParser {
                 else if (type == LocationType.InstallableUnit) {
                     String repository = (String) getXPath().evaluate("./repository[location]", node,
                         XPathConstants.STRING);
-                    List<String> units = new ArrayList<>();
+                    List<ArtifactInfo<?>> units = new ArrayList<>();
                     for (Node unit : evaluate(node, "./unit")) {
-                        String str = getAttribute(unit, "id", true);
-                        String v = getAttribute(unit, "version", false);
-                        if (v != null && !v.isEmpty()) {
-                            str = str + ":" + v;
-                        }
-                        units.add(str);
+                        String id = getAttribute(unit, "id", true);
+                        Version version = stringToVersion(getAttribute(unit, "version", false));
+                        units.add(new ArtifactInfo<Void>(id, version, null));
                     }
-                    locations.add(new InstallableUnitTargetPlatformLocation(repository, units,
+                    IncludeMode mode;
+                    try {
+                        mode = IncludeMode.valueOf(getAttribute(node, "includeMode", false));
+                    }
+                    catch (RuntimeException e) {
+                        // default to slicer mode...
+                        mode = IncludeMode.SLICER;
+                    }
+                    locations.add(new InstallableUnitTargetPlatformLocation(repository, units, mode,
                         attributesToMap(node)));
                 }
             }
@@ -159,16 +166,19 @@ public class TargetPlatformParser extends AbstractParser {
 
     public static class InstallableUnitTargetPlatformLocation extends TargetPlatformLocation {
 
-        public final List<String> units;
+        public final List<ArtifactInfo<?>> units;
 
         public final String repository;
 
         public final Map<String, String> flags;
 
-        private InstallableUnitTargetPlatformLocation(String repository, List<String> units,
-            Map<String, String> flags) {
+        public final IncludeMode mode;
+
+        private InstallableUnitTargetPlatformLocation(String repository,
+            List<ArtifactInfo<?>> units, IncludeMode mode, Map<String, String> flags) {
             super(LocationType.InstallableUnit);
             this.repository = repository;
+            this.mode = mode;
             this.flags = Collections.unmodifiableMap(flags);
             this.units = Collections.unmodifiableList(units);
         }

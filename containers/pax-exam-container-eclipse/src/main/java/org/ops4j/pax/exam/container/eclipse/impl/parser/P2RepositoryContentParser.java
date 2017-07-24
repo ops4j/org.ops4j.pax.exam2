@@ -23,13 +23,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.ops4j.pax.exam.container.eclipse.impl.BundleInfo;
-import org.ops4j.pax.exam.container.eclipse.impl.BundleInfoMap;
+import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
+import org.ops4j.pax.exam.container.eclipse.impl.repository.Artifact;
+import org.ops4j.pax.exam.container.eclipse.impl.repository.Provides;
+import org.ops4j.pax.exam.container.eclipse.impl.repository.Requires;
+import org.ops4j.pax.exam.container.eclipse.impl.repository.Unit;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 import org.w3c.dom.Element;
@@ -41,47 +45,31 @@ import org.w3c.dom.Node;
  * @author Christoph Läubrich
  *
  */
-public class P2RepositoryContentParser extends AbstractParser {
+public class P2RepositoryContentParser extends RepositoryXMLParser {
 
     private static final String CONTENT_FILE = "content";
 
-    private BundleInfoMap<Unit> unitMap = new BundleInfoMap<>();
-    private List<Unit> units = new ArrayList<>();
-
-    public P2RepositoryContentParser(URL url) throws IOException {
-        Element content = readXML(new URL(url, CONTENT_FILE + ".jar"), CONTENT_FILE);
-        try {
-            for (Node node : evaluate(content, "/repository/units/unit")) {
-                String unitID = getAttribute(node, "id", true);
-                Version version = stringToVersion(getAttribute(node, "version", false));
-                Unit unit = createUnit(node, unitID, version);
-                unitMap.add(new BundleInfo<P2RepositoryContentParser.Unit>(unitID, version, unit));
-                units.add(unit);
-            }
-        }
-        catch (XPathExpressionException e) {
-            throw new IOException(e);
-        }
-    }
+    private final ArtifactInfoMap<Unit> unitMap = new ArtifactInfoMap<>();
+    private final List<Unit> units = new ArrayList<>();
 
     public Collection<Unit> getUnits() {
         return Collections.unmodifiableCollection(units);
     }
 
     public Unit getUnit(String id, Version version) {
-        BundleInfo<Unit> info = unitMap.get(id, version, true);
+        ArtifactInfo<Unit> info = unitMap.get(id, version);
         if (info == null) {
             return null;
         }
         return info.getContext();
     }
 
-    public Unit getUnit(String id, VersionRange versionRange) {
-        BundleInfo<Unit> info = unitMap.get(id, versionRange);
-        if (info == null) {
-            return null;
-        }
-        return info.getContext();
+    public int getCount() {
+        return units.size();
+    }
+
+    public ArtifactInfoMap<Unit> getUnitMap() {
+        return unitMap;
     }
 
     private static Unit createUnit(Node node, String unitID, Version unitVersion)
@@ -138,99 +126,21 @@ public class P2RepositoryContentParser extends AbstractParser {
         return map;
     }
 
-    private static Element readXML(URL url, String xmlFile) throws IOException {
-        String searchFile = xmlFile + ".xml";
-        try (JarInputStream stream = new JarInputStream(url.openStream())) {
-            JarEntry entry;
-            while ((entry = stream.getNextJarEntry()) != null) {
-                if (entry.getName().equals(searchFile)) {
-                    return parse(stream);
-                }
-            }
+    @Override
+    protected void readXML(URL baseUrl, Element content)
+        throws IOException, XPathException, InvalidSyntaxException {
+        for (Node node : evaluate(content, "/repository/units/unit")) {
+            String unitID = getAttribute(node, "id", true);
+            Version version = stringToVersion(getAttribute(node, "version", false));
+            Unit unit = createUnit(node, unitID, version);
+            unitMap.add(new ArtifactInfo<Unit>(unitID, version, unit));
+            units.add(unit);
         }
-        throw new IOException("file " + searchFile + " not found at URL " + url);
     }
 
-    public static final class Unit {
-
-        public final String id;
-        public final Version version;
-        public final Map<String, String> properties;
-        public final List<Provides> provides;
-        public final List<Requires> requires;
-        public final List<Artifact> artifacts;
-
-        public Unit(String id, Version version, Map<String, String> properties,
-            List<Provides> provides, List<Requires> requires, List<Artifact> artifacts) {
-            this.id = id;
-            this.version = version;
-            this.properties = Collections.unmodifiableMap(properties);
-            this.provides = Collections.unmodifiableList(provides);
-            this.requires = Collections.unmodifiableList(requires);
-            this.artifacts = Collections.unmodifiableList(artifacts);
-        }
-
-        @Override
-        public String toString() {
-            return "Unit:" + id + ":" + version;
-        }
-
+    @Override
+    protected String getXMLName() {
+        return CONTENT_FILE;
     }
 
-    public static final class Artifact {
-
-        public final String id;
-        public final Version version;
-        public final String classifier;
-
-        public Artifact(String id, Version version, String classifier) {
-            this.id = id;
-            this.version = version;
-            this.classifier = classifier;
-        }
-
-        @Override
-        public String toString() {
-            return "Artifact:" + id + ":" + version + ":" + classifier;
-        }
-
-    }
-
-    public static final class Provides {
-
-        public final String namespace;
-        public final String name;
-        public final Version version;
-
-        public Provides(String namespace, String name, Version version) {
-            this.namespace = namespace;
-            this.name = name;
-            this.version = version;
-        }
-
-        @Override
-        public String toString() {
-            return "Provides:" + namespace + ":" + name + ":" + version;
-        }
-
-    }
-
-    public static final class Requires {
-
-        public final String namespace;
-        public final String name;
-        public final VersionRange versionRange;
-
-        public Requires(String namespace, String name, VersionRange versionRange) {
-            this.namespace = namespace;
-            this.name = name;
-            this.versionRange = versionRange;
-        }
-
-        @Override
-        public String toString() {
-            return "Requires:" + namespace + ":" + name + ":" + versionRange;
-        }
-
-    }
 }
