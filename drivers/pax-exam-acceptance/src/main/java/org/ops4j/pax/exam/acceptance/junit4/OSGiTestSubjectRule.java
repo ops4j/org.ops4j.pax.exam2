@@ -31,7 +31,6 @@ public class OSGiTestSubjectRule implements TestSubjectRule {
 
     public OSGiTestSubjectRule(Option options, SessionSpec spec) {
         sessionSpec = spec;
-        System.out.println("------------- Port is " + spec.getPort());
         // put into OSGi system to know. This is a very stupid assumption.
         // Need a way to map SessionSpecs to .. ExamOptions in a rather generic way.
         m_options = composite(
