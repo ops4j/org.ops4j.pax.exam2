@@ -1,0 +1,15 @@
+# All restassured deps to be used with Pax Exam Acceptance.
+
+acceptance-rest-client: \
+    io.rest-assured:rest-assured,\
+    io.rest-assured:rest-assured-common,\
+    groovy,\
+    org.apache.httpcomponents:httpclient,\
+    org.apache.httpcomponents:httpcore,\
+    org.apache.httpcomponents:httpmime,\
+    org.apache.commons.lang3,\
+    io.rest-assured:json-path,\
+    io.rest-assured:xml-path,\
+    org.apache.commons.codec,\
+    org.apache.commons.logging,\
+    groovy-json

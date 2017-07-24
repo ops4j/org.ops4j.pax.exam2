@@ -1,0 +1,42 @@
+# Use this in Bndtools:
+# 1. Configure a BndPomRepository:
+#  -plugin.6.BndPom = \
+#      		aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
+#          snapshotUrls=file://${user.home}/.m2(repository/; \
+#          releaseUrls=https://repo1.maven.org/maven2/; \
+#          pom=${.}/ext/pom.xml; \
+#         name=BndPom Repo
+
+# 2. First configure the pom linked above and put at least this starter dependency in your workspace:
+#       <dependency>
+#  			<groupId>org.ops4j.pax.exam</groupId>
+#  			<artifactId>pax-exam-starter-acceptance</artifactId>
+#  			<version>${pax.exam.version}</version>
+#  		</dependency>
+
+# 2. Then import the dependency into the test project: -include: jar:file://${repo;org.ops4j.pax.exam.bnd}!/bndtools.bnd
+
+exam: org.ops4j.pax.exam,\
+	org.ops4j.pax.exam:pax-exam-link-assembly,\
+	org.ops4j.pax.exam:pax-exam-junit4,\
+	org.ops4j.pax.exam:pax-exam-spi,\
+	org.ops4j.pax.exam.cm,\
+	org.ops4j.base.util.property,\
+	org.ops4j.base.lang,\
+	org.ops4j.base.store,\
+	org.ops4j.pax.exam:pax-exam-container-forked,\
+	org.ops4j.base.exec,\
+	org.ops4j.base.io,\
+	org.ops4j.base.monitors,\
+	org.ops4j.base.net,\
+	org.ops4j.base.spi,\
+	org.ops4j.pax.swissbox.framework,\
+	org.ops4j.pax.swissbox.lifecycle,\
+	org.ops4j.pax.swissbox.tracker,\
+	org.ops4j.pax.tinybundles,\
+	org.ops4j.pax.url.commons,\
+	org.ops4j.pax.url.link,\
+	org.ops4j.pax.url.classpath,\
+	org.ops4j.pax.exam.bnd,\
+    org.ops4j.pax.exam.acceptance
+
