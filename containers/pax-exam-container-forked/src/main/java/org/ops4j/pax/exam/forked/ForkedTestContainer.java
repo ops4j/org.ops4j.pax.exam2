@@ -94,6 +94,7 @@ public class ForkedTestContainer implements TestContainer {
     private final String name;
 
     private FreePort port;
+    private HashMap<Long, String> bundlesById;
 
     public ForkedTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
         this.system = system;
@@ -261,7 +262,7 @@ public class ForkedTestContainer implements TestContainer {
         workDir.mkdirs();
         List<Long> bundleIds = new ArrayList<Long>();
         ProvisionOption<?>[] options = system.getOptions(ProvisionOption.class);
-        Map<Long, String> bundlesById = new HashMap<Long, String>();
+        bundlesById = new HashMap<Long, String>();
         for (ProvisionOption<?> bundle : options) {
             String localUrl = downloadBundle(workDir, bundle.getURL());
             long id = remoteFramework.installBundle(localUrl, bundle.shouldStart(),getStartLevel(bundle));
