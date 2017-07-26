@@ -9,6 +9,8 @@ import org.ops4j.pax.exam.acceptance.rest.api.RestResult;
 
 import static io.restassured.RestAssured.given;
 
+import java.util.concurrent.ExecutionException;
+
 
 public class RestClientImpl implements RestClient {
 
@@ -38,12 +40,12 @@ public class RestClientImpl implements RestClient {
     public RestResult get(String s) {
         Response res = null;
         int retries = this.env.getRetries();
-
+        Exception retryException = null;
         for (int i = 0;i<retries;i++) {
             try {
                 res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).when().get(s);
                 if (res.statusCode() != 404) {
-                    return new RestResultImpl(res);
+                    return new RestResultImpl(res, null);
                 }
                 Thread.sleep(200);
 
@@ -53,14 +55,16 @@ public class RestClientImpl implements RestClient {
                 // retries..
             }
         }
-        return new RestResultImpl(res);
+        return new RestResultImpl(res, retryException);
     }
 
     private class RestResultImpl implements RestResult {
         private final Response response;
+		private Exception e;
 
-        public RestResultImpl(Response res) {
+        public RestResultImpl(Response res, Exception e) {
             this.response = res;
+			this.e = e;
         }
 
         @Override
@@ -70,6 +74,13 @@ public class RestClientImpl implements RestClient {
 
         @Override
         public void statusCode(int status) {
+        	if (response == null) {
+        		if (e != null) {
+        			throw new RuntimeException("failed after maximum retries", e);
+        		} else {
+        			throw new IllegalStateException("no response");
+        		}
+        	}
             response.then().statusCode(status);
         }
     }
