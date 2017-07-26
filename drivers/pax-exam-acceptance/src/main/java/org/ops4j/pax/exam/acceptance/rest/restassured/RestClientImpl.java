@@ -39,13 +39,13 @@ public class RestClientImpl implements RestClient {
     @Override
     public RestResult get(String s) {
         Response res = null;
-        int retries = this.env.getRetries();
+        int retries = this.env.getRetries() * 3;
         Exception retryException = null;
         for (int i = 0;i<retries;i++) {
             try {
                 res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).when().get(s);
                 if (res.statusCode() != 404) {
-                    return new RestResultImpl(res, null);
+                    return new RestResultImpl(res, null, retries);
                 }
                 Thread.sleep(200);
 
@@ -53,18 +53,21 @@ public class RestClientImpl implements RestClient {
                 Thread.interrupted();
             } catch (Exception e ) {
                 // retries..
+            	retryException = e;
             }
         }
-        return new RestResultImpl(res, retryException);
+        return new RestResultImpl(res, retryException, this.env.getRetries());
     }
 
     private class RestResultImpl implements RestResult {
         private final Response response;
 		private Exception e;
+		private int retries;
 
-        public RestResultImpl(Response res, Exception e) {
+        public RestResultImpl(Response res, Exception e, int retries) {
             this.response = res;
 			this.e = e;
+			this.retries = retries;
         }
 
         @Override
@@ -76,7 +79,7 @@ public class RestClientImpl implements RestClient {
         public void statusCode(int status) {
         	if (response == null) {
         		if (e != null) {
-        			throw new RuntimeException("failed after maximum retries", e);
+        			throw new RuntimeException("failed after maximum retries "+retries, e);
         		} else {
         			throw new IllegalStateException("no response");
         		}
