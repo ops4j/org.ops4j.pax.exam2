@@ -58,7 +58,7 @@ public class TestBundleObserver implements BundleObserver<ManifestEntry> {
     }
 
     /**
-     * Registers specified regression case as a service.
+     * Registers specified test case as a service.
      */
     @Override
     public void addingEntries(Bundle bundle, List<ManifestEntry> manifestEntries) {
