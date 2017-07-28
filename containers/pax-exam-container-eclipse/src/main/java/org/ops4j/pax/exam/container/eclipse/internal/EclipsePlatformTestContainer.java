@@ -59,7 +59,6 @@ import org.ops4j.pax.exam.options.SystemPropertyOption;
 import org.ops4j.pax.exam.options.ValueOption;
 import org.ops4j.pax.exam.options.extra.CleanCachesOption;
 import org.ops4j.pax.exam.options.extra.RepositoryOption;
-import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -82,14 +81,16 @@ public class EclipsePlatformTestContainer implements TestContainer {
 
     private static final Logger LOG = LoggerFactory.getLogger(EclipsePlatformTestContainer.class);
 
-    private ExamSystem system;
+    private final ExamSystem system;
 
     private BundleContext frameworkContext;
 
-    private ExecutorService appExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService appExecutor = Executors.newSingleThreadExecutor();
 
-    private AtomicReference<Future<Object>> applicationResult = new AtomicReference<Future<Object>>(
+    private final AtomicReference<Future<Object>> applicationResult = new AtomicReference<Future<Object>>(
         null);
+
+    private ServiceTracker<ProbeInvoker, ProbeInvoker> probeInvoker;
 
     public EclipsePlatformTestContainer(ExamSystem system) {
         this.system = system;
@@ -121,6 +122,8 @@ public class EclipsePlatformTestContainer implements TestContainer {
             logProperties("Framework-Properties", initialProperties);
             frameworkContext = EclipseStarter.startup(new String[] {}, null);
             LOG.info("Framework is up and running!");
+            probeInvoker = new ServiceTracker<>(frameworkContext, ProbeInvoker.class, null);
+            probeInvoker.open();
             ServiceTracker<EnvironmentInfo, Object> envInfoTracker = new ServiceTracker<>(
                 frameworkContext, EnvironmentInfo.class, null);
             boolean ignoreApp;
@@ -324,6 +327,9 @@ public class EclipsePlatformTestContainer implements TestContainer {
 
     @Override
     public void stop() {
+        if (probeInvoker != null) {
+            probeInvoker.close();
+        }
         LOG.info("Stopping EclipsePlatform...");
         try {
             shutdownEclipse();
@@ -368,9 +374,14 @@ public class EclipsePlatformTestContainer implements TestContainer {
     }
 
     @Override
-    public void runTest(TestDescription description, TestListener listener) {
-        ProbeInvoker probeInvokerService = ServiceLookup.getService(frameworkContext,
-            ProbeInvoker.class, determineExamServiceTimeout());
+    public void runTest(TestDescription description, TestListener listener)
+        throws InterruptedException {
+        long serviceTimeout = determineExamServiceTimeout();
+        ProbeInvoker probeInvokerService = probeInvoker.waitForService(serviceTimeout);
+        if (probeInvokerService == null) {
+            throw new TestContainerException(
+                "can't fetch ProbeInvoker within " + serviceTimeout + "ms");
+        }
         probeInvokerService.runTest(description, listener);
     }
 
