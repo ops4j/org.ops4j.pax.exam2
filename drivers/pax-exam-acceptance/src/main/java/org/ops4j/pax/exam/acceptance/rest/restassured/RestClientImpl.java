@@ -10,6 +10,7 @@ import org.ops4j.pax.exam.acceptance.rest.api.RestResult;
 import static io.restassured.RestAssured.given;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 
 public class RestClientImpl implements RestClient {
@@ -47,13 +48,15 @@ public class RestClientImpl implements RestClient {
                 if (res.statusCode() != 404) {
                     return new RestResultImpl(res, null, retries);
                 }
-                Thread.sleep(200);
-
-            } catch (InterruptedException e) {
-                Thread.interrupted();
             } catch (Exception e ) {
                 // retries..
             	retryException = e;
+            }
+            try {
+            TimeUnit.MILLISECONDS.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+                return new RestResultImpl(null, e, retries);
             }
         }
         return new RestResultImpl(res, retryException, this.env.getRetries());
