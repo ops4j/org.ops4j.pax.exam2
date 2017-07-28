@@ -29,12 +29,12 @@
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>biz.aQute.bndlib</artifactId>
-            <version>3.3.0</version>
+            <version>3.4.0</version>
         </dependency>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>biz.aQute.repository</artifactId>
-            <version>3.3.0</version>
+            <version>3.4.0</version>
         </dependency>
 
     </dependencies>

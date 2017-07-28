@@ -14,6 +14,10 @@ import org.ops4j.pax.exam.acceptance.rest.api.RestClient;
 import org.ops4j.pax.exam.acceptance.rest.restassured.RestClientImpl;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
+import static org.ops4j.pax.exam.CoreOptions.composite;
+import static org.ops4j.pax.exam.cm.ConfigurationAdminOptions.newConfiguration;
+
+
 public class OSGiTestSubjectRule implements TestSubjectRule {
 
     private final Option m_options;
@@ -25,12 +29,15 @@ public class OSGiTestSubjectRule implements TestSubjectRule {
 
     private final SessionSpec sessionSpec;
 
-    public OSGiTestSubjectRule(Option options) {
-        m_options = options;
-        // TODO: convert options to effective environment spec
-        sessionSpec = new SessionSpec();
-        sessionSpec.setHost("localhost");
-        sessionSpec.setPort(8080);
+    public OSGiTestSubjectRule(Option options, SessionSpec spec) {
+        sessionSpec = spec;
+        // put into OSGi system to know. This is a very stupid assumption.
+        // Need a way to map SessionSpecs to .. ExamOptions in a rather generic way.
+        m_options = composite(
+            options,
+                newConfiguration("org.apache.felix.http")
+                .put("org.osgi.service.http.port",spec.getPort())
+                .asOption());
     }
 
 

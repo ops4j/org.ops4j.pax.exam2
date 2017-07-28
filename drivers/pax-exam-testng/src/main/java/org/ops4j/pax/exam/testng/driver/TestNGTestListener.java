@@ -70,7 +70,11 @@ public class TestNGTestListener implements TestListener {
     }
 
     public TestEvent getResult(TestDescription description) {
-        return resultMap.get(description);
+        TestEvent event = resultMap.get(description);
+        if (event == null) {
+        	throw new IllegalStateException("Test "+description+" was never run!");
+        }
+		return event;
     }
 
     public Set<TestDescription> getKeys() {

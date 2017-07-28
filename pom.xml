@@ -31,6 +31,8 @@
                 <module>containers</module>
                 <module>maven</module>
                 <module>patches</module>
+                <module>starters</module>
+
             </modules>
         </profile>
         <profile>
