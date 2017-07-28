@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.ops4j.pax.exam.TestContainer;
+import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 
@@ -59,7 +60,7 @@ public class RBCRemoteContainer implements TestContainer {
     }
 
     @Override
-    public void runTest(TestDescription description, TestListener listener) throws IOException {
+    public void runTest(TestDescription description, TestListener listener) throws IOException, TestContainerException, InterruptedException {
     	target.runTest(description, listener);
     }
 }

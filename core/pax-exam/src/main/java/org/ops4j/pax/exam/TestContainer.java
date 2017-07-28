@@ -48,18 +48,16 @@ public interface TestContainer {
      */
     void start() throws TimeoutException, TestContainerException, IOException;
 
-
     /**
      * Installs a probe from the given stream. A test container supports at most one probe at a
      * time. The installed probe (if any) can be uninstalled using {@link #uninstallProbe()}.
      *
      * @param stream
      *            probe bundle
-     * @throws IOException 
-     *            if I/O error occurs
+     * @throws IOException
+     *             if I/O error occurs
      */
     void installProbe(InputStream stream) throws IOException;
-
 
     /**
      * Stops the regression container. Implementations should take care of calling cleanup()
@@ -72,12 +70,17 @@ public interface TestContainer {
      * @throws IOException
      *             - in case of I/O problem
      */
-     void stop() throws TestContainerException, IOException;
+    void stop() throws TestContainerException, IOException;
 
     /**
      * @param description
-     * @throws IOException  
-     *         - in case of I/O problem
+     * @throws IOException
+     *             - in case of I/O problem
+     * @throws TestContainerException
+     *             - in case the test can not be run in container
+     * @throws InterruptedException
+     *             in case test run was interrupted
      */
-    void runTest(TestDescription description, TestListener listener) throws IOException;
+    void runTest(TestDescription description, TestListener listener)
+        throws IOException, TestContainerException, InterruptedException;
 }
