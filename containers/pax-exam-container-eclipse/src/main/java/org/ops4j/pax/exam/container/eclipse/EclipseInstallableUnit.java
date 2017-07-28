@@ -15,8 +15,11 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Collection;
 
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
@@ -30,21 +33,17 @@ import org.osgi.framework.VersionRange;
  */
 public interface EclipseInstallableUnit extends EclipseVersionedArtifact {
 
-    public static final String NAMESPACE_IU = "org.eclipse.equinox.p2.iu";
-    public static final String NAMESPACE_BUNDLE = "osgi.bundle";
-    public static final String NAMESPACE_PACKAGE = "java.package";
-
     /**
      * 
      * @return the repository this unit comes from
      */
     EclipseUnitSource getSource();
 
-    List<UnitRequirement> getRequirements();
+    Collection<UnitRequirement> getRequirements();
 
-    List<EclipseClassifiedVersionedArtifact> getArtifacts();
+    ResolvedArtifacts resolveArtifacts() throws ArtifactNotFoundException, IOException;
 
-    List<UnitProviding> getProvided();
+    Collection<UnitProviding> getProvided();
 
     public static interface UnitProviding {
 
@@ -63,6 +62,13 @@ public interface EclipseInstallableUnit extends EclipseVersionedArtifact {
 
         VersionRange getVersionRange();
 
+    }
+
+    public static interface ResolvedArtifacts extends EclipseBundleSource, EclipseFeatureSource {
+
+        public Collection<EclipseBundleOption> getBundles() throws IOException;
+
+        public Collection<EclipseFeatureOption> getFeatures() throws IOException;
     }
 
 }

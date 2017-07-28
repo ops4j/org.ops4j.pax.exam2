@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.container.eclipse;
+package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
-import org.osgi.framework.Version;
+import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
 
 /**
- * A versioned artefact that might be provisioned
+ * Extension of versioned artefact that is classified by the repository
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
+public interface EclipseClassifiedVersionedArtifact extends EclipseVersionedArtifact {
 
-    String getId();
+    public static final String CLASSIFIER_BUNDLE = "osgi.bundle";
+    public static final String CLASSIFIER_FEATURE = "org.eclipse.update.feature";
 
-    Version getVersion();
-
+    String getClassifier();
 }

@@ -40,6 +40,8 @@ import org.w3c.dom.Node;
  */
 public class ProjectParser extends AbstractParser {
 
+    private static final String PROJECT_FILE = ".project";
+
     private static final Logger LOG = LoggerFactory.getLogger(ProjectParser.class);
 
     public static final String PLUGIN_NATURE = "org.eclipse.pde.PluginNature";
@@ -49,16 +51,16 @@ public class ProjectParser extends AbstractParser {
 
     private boolean valid;
     private String projectName;
-    private Set<String> natures = new LinkedHashSet<>();
-    private File projectFolder;
-    private ClasspathParser classpath;
+    private final Set<String> natures = new LinkedHashSet<>();
+    private final File projectFolder;
+    private final ClasspathParser classpath;
 
     private final Properties buildProperties = new Properties();
 
     public ProjectParser(File projectFolder) {
         this.projectFolder = projectFolder;
         this.classpath = new ClasspathParser(projectFolder);
-        File file = new File(projectFolder, ".project");
+        File file = new File(projectFolder, PROJECT_FILE);
         if (file.exists()) {
             try {
                 Element document = parse(new FileInputStream(file));
@@ -85,6 +87,11 @@ public class ProjectParser extends AbstractParser {
                 LOG.warn("can't parse {}", buildPropertiesFile.getAbsolutePath(), e);
             }
         }
+    }
+
+    public static boolean isProjectFolder(File folder) {
+        File file = new File(folder, PROJECT_FILE);
+        return file.exists();
     }
 
     public boolean hasNature(String name) {

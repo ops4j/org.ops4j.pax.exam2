@@ -15,9 +15,9 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +58,7 @@ public final class ResolvedRequirements {
             && resolved.get(requires.getName(), requires.getVersionRange()) != null;
     }
 
-    public void addResolved(List<UnitProviding> providedRequirements) {
+    public void addResolved(Collection<? extends UnitProviding> providedRequirements) {
         for (UnitProviding provided : providedRequirements) {
             ArtifactInfoMap<UnitProviding> resolved = resolvedMap.get(provided.getNamespace());
             if (resolved == null) {

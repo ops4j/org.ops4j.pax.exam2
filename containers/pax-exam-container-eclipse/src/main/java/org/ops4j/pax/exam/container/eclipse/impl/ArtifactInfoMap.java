@@ -34,6 +34,9 @@ import org.osgi.framework.VersionRange;
  */
 public class ArtifactInfoMap<BundleInfoContext> {
 
+    public static final VersionRange HIGHEST_VERSION = new VersionRange(VersionRange.LEFT_CLOSED,
+        Version.emptyVersion, null, VersionRange.RIGHT_CLOSED);
+
     private final Map<String, List<ArtifactInfo<BundleInfoContext>>> artifacts = new HashMap<>();
 
     /**
@@ -62,6 +65,9 @@ public class ArtifactInfoMap<BundleInfoContext> {
      * @return the best matching {@link ArtifactInfo} or <code>null</code> if no such is found
      */
     public ArtifactInfo<BundleInfoContext> get(String symbolicName, Version version) {
+        if (Version.emptyVersion.equals(version)) {
+            return get(symbolicName, HIGHEST_VERSION);
+        }
         List<ArtifactInfo<BundleInfoContext>> list = artifacts.get(symbolicName);
         if (list != null && !list.isEmpty()) {
             for (ArtifactInfo<BundleInfoContext> bundleInfo : list) {

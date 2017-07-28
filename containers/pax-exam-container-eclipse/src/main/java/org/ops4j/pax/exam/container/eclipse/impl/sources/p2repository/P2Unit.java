@@ -13,20 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.container.eclipse;
+package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
-import org.osgi.framework.Version;
+import org.ops4j.pax.exam.container.eclipse.impl.repository.Unit;
 
 /**
- * A versioned artefact that might be provisioned
+ * Represents a Unit in the P2 repro
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
+public class P2Unit {
 
-    String getId();
+    private final Unit unit;
+    private final String reproName;
 
-    Version getVersion();
+    public P2Unit(Unit unit, String reproName) {
+        this.unit = unit;
+        this.reproName = reproName;
+    }
 
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public String getReproName() {
+        return reproName;
+    }
 }

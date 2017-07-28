@@ -15,18 +15,17 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import org.osgi.framework.Version;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseProjectSource;
 
 /**
- * A versioned artefact that might be provisioned
+ * a workspace is the source of features, bundles and projects
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
-
-    String getId();
-
-    Version getVersion();
+public interface EclipseWorkspace
+    extends EclipseBundleSource, EclipseFeatureSource, EclipseProjectSource {
 
 }

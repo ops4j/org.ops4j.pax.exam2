@@ -13,20 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.container.eclipse;
+package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
-import org.osgi.framework.Version;
+import java.net.URL;
 
 /**
- * A versioned artefact that might be provisioned
+ * A P2 feature
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
+public class P2Feature {
 
-    String getId();
+    private final URL url;
+    private final String reproName;
 
-    Version getVersion();
+    public P2Feature(URL url, String reproName) {
+        this.url = url;
+        this.reproName = reproName;
+    }
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public String getReproName() {
+        return reproName;
+    }
 
 }

@@ -15,14 +15,12 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import org.ops4j.pax.exam.Option;
-
 /**
  * A bundle that can be added to PaxExam
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseBundleOption extends EclipseBundle, Option {
+public interface EclipseBundleOption extends EclipseBundle, EclipseVersionedArtifactOption {
 
 }

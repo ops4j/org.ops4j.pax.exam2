@@ -32,12 +32,12 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseProject
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.ops4j.pax.exam.container.eclipse.impl.CombinedSource;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseProvision;
-import org.ops4j.pax.exam.container.eclipse.impl.DirectoryEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.EclipseApplicationImpl;
-import org.ops4j.pax.exam.container.eclipse.impl.FeatureEclipseBundleSource;
-import org.ops4j.pax.exam.container.eclipse.impl.TargetEclipseBundleSource;
-import org.ops4j.pax.exam.container.eclipse.impl.WorkspaceEclipseBundleSource;
-import org.ops4j.pax.exam.container.eclipse.impl.repository.P2EclipseRepositorySource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.directory.DirectoryResolver;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.feature.FeatureResolver;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository.P2Resolver;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.target.TargetResolver;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.workspace.WorkspaceResolver;
 
 /**
  * Static Options to configure the EclipseContainer
@@ -103,8 +103,8 @@ public class EclipseOptions {
      * @return
      * @throws IOException
      */
-    public static EclipseFeatureSource fromInstallation(final File baseFolder) throws IOException {
-        return DirectoryEclipseBundleSource.create(baseFolder);
+    public static EclipseInstallation fromInstallation(final File baseFolder) throws IOException {
+        return new DirectoryResolver(baseFolder);
     }
 
     /**
@@ -114,21 +114,27 @@ public class EclipseOptions {
      * @return
      * @throws IOException
      */
-    public static EclipseProjectSource fromWorkspace(final File workspaceFolder)
+    public static EclipseWorkspace fromWorkspace(final File workspaceFolder) throws IOException {
+        return new WorkspaceResolver(workspaceFolder);
+    }
+
+    public static EclipseTargetPlatform fromTarget(InputStream targetDefinition)
         throws IOException {
-        return new WorkspaceEclipseBundleSource(workspaceFolder);
+        return new TargetResolver(targetDefinition);
     }
 
-    public static EclipseFeatureSource fromTarget(InputStream targetDefinition) throws IOException {
-        return new TargetEclipseBundleSource(targetDefinition);
+    public static EclipseRepository createRepository(URL url, String name) throws IOException {
+        return new P2Resolver(name, url);
     }
 
-    public static EclipseUnitSource createRepository(URL url, String name) throws IOException {
-        return new P2EclipseRepositorySource(url, name);
+    public static <Source extends EclipseBundleSource & EclipseFeatureSource> EclipseBundleSource fromFeatures(
+        Source source, EclipseFeature... features) throws ArtifactNotFoundException, IOException {
+        return fromFeatures(source, source, features);
     }
 
-    public static EclipseBundleSource fromFeatures(EclipseFeatureSource featureSource,
-        EclipseFeature... features) throws ArtifactNotFoundException, IOException {
+    public static EclipseBundleSource fromFeatures(EclipseBundleSource bundleSource,
+        EclipseFeatureSource featureSource, EclipseFeature... features)
+        throws ArtifactNotFoundException, IOException {
         List<EclipseFeatureOption> bootFeatures = new ArrayList<>();
         for (EclipseFeature feature : features) {
             if (feature instanceof EclipseFeatureOption) {
@@ -138,7 +144,7 @@ public class EclipseOptions {
                 bootFeatures.add(featureSource.feature(feature.getId()));
             }
         }
-        return new FeatureEclipseBundleSource(featureSource, bootFeatures);
+        return new FeatureResolver(bundleSource, featureSource, bootFeatures);
     }
 
     public static CombinedEclipseArtifactSource combine(final EclipseArtifactSource... sources) {
@@ -160,7 +166,7 @@ public class EclipseOptions {
     }
 
     public static interface CombinedEclipseArtifactSource
-        extends EclipseFeatureSource, EclipseProjectSource, EclipseUnitSource {
+        extends EclipseFeatureSource, EclipseProjectSource, EclipseUnitSource, EclipseBundleSource {
 
     }
 

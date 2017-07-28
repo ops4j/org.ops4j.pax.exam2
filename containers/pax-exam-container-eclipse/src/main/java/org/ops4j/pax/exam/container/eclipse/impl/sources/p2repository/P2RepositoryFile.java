@@ -13,20 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.container.eclipse;
+package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
-import org.osgi.framework.Version;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+
+import org.w3c.dom.Element;
 
 /**
- * A versioned artefact that might be provisioned
+ * Interface that represents an entry in a P2 index
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
+public interface P2RepositoryFile {
 
-    String getId();
+    P2Index getIndex();
 
-    Version getVersion();
+    boolean isComposite();
+
+    boolean isRepository();
+
+    boolean isArtifactRepository();
+
+    boolean isMetadataRepository();
+
+    String getType();
+
+    List<P2RepositoryFile> getChilds() throws IOException;
+
+    Element getRespository();
+
+    URL getURL();
 
 }

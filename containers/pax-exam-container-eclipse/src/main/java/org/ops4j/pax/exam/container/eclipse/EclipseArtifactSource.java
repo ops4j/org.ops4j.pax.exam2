@@ -30,9 +30,6 @@ import org.osgi.framework.VersionRange;
  */
 public interface EclipseArtifactSource {
 
-    public static final VersionRange HIGHEST_VERSION = new VersionRange(VersionRange.LEFT_CLOSED,
-        Version.emptyVersion, null, VersionRange.RIGHT_CLOSED);
-
     public static interface EclipseBundleSource extends EclipseArtifactSource {
 
         /**
@@ -65,9 +62,25 @@ public interface EclipseArtifactSource {
          */
         EclipseBundleOption bundle(String bundleSymbolicName, VersionRange bundleVersionRange)
             throws IOException, ArtifactNotFoundException;
+
+        /**
+         * Resolves a bundle by the given name matching the given version range
+         * 
+         * @param bundleSymbolicName
+         *            the bundle symbolic name
+         * @param bundleVersionRange
+         *            the version range to match
+         * @return the resolved bundle
+         * @throws IOException
+         *             on I/O error
+         * @throws ArtifactNotFoundException
+         *             if no bundle with the name could be found
+         */
+        EclipseBundleOption bundle(String bundleSymbolicName, Version bundleVersion)
+            throws IOException, ArtifactNotFoundException;
     }
 
-    public static interface EclipseFeatureSource extends EclipseBundleSource {
+    public static interface EclipseFeatureSource extends EclipseArtifactSource {
 
         /**
          * Resolves a feature by the given name with the highest version
@@ -99,12 +112,28 @@ public interface EclipseArtifactSource {
          */
         EclipseFeatureOption feature(String featureId, VersionRange featureVersionRange)
             throws IOException, ArtifactNotFoundException;
+
+        /**
+         * Resolves a feature by the given name matching the given version *
+         * 
+         * @param featureId
+         *            the feature ID
+         * @param featureVersionRange
+         *            the version range to match
+         * @return the resolved feature
+         * @throws IOException
+         *             on I/O error
+         * @throws ArtifactNotFoundException
+         *             if no feature with the name could be found
+         */
+        EclipseFeatureOption feature(String featureId, Version featureVersion)
+            throws IOException, ArtifactNotFoundException;
     }
 
     /**
      * a source that can supply raw eclipse projects also
      */
-    public static interface EclipseProjectSource extends EclipseFeatureSource {
+    public static interface EclipseProjectSource extends EclipseArtifactSource {
 
         EclipseProject project(String projectName) throws ArtifactNotFoundException;
     }
@@ -113,7 +142,7 @@ public interface EclipseArtifactSource {
      * 
      * a source that can supply IUs (installable units)
      */
-    public static interface EclipseUnitSource extends EclipseFeatureSource {
+    public static interface EclipseUnitSource extends EclipseArtifactSource {
 
         /**
          * 
@@ -124,6 +153,18 @@ public interface EclipseArtifactSource {
          *             if this unit was not found in this source
          */
         EclipseInstallableUnit unit(String id) throws IOException, ArtifactNotFoundException;
+
+        /**
+         * 
+         * @param id
+         *            the id of the IU to return
+         * @param version
+         *            the version
+         * @throws ArtifactNotFoundException
+         *             if this unit was not found in this source
+         */
+        EclipseInstallableUnit unit(String id, Version version)
+            throws IOException, ArtifactNotFoundException;
 
         /**
          * 

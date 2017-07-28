@@ -15,18 +15,18 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import org.osgi.framework.Version;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 
 /**
- * A versioned artefact that might be provisioned
+ * A Eclipse repository consists of units, bundles and features
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
+public interface EclipseRepository
+    extends EclipseBundleSource, EclipseFeatureSource, EclipseUnitSource {
 
-    String getId();
-
-    Version getVersion();
-
+    public String getName();
 }

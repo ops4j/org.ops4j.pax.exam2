@@ -15,7 +15,6 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
-import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact.EclipseClassifiedVersionedArtifact;
 import org.osgi.framework.Version;
 
 /**

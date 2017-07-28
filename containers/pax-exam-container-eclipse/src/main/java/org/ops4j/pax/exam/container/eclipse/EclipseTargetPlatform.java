@@ -15,18 +15,17 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import org.osgi.framework.Version;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 
 /**
- * A versioned artefact that might be provisioned
+ * A target Platform can consists of Units, bundles and features
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
-
-    String getId();
-
-    Version getVersion();
+public interface EclipseTargetPlatform
+    extends EclipseBundleSource, EclipseFeatureSource, EclipseUnitSource {
 
 }

@@ -17,8 +17,6 @@ package org.ops4j.pax.exam.container.eclipse;
 
 import java.util.List;
 
-import org.ops4j.pax.exam.Option;
-
 /**
  * Option that adds a feature to pax exam, take care that in general a feature can't be installed
  * directly inside an Eclipse Framework, use
@@ -28,7 +26,7 @@ import org.ops4j.pax.exam.Option;
  * @author Christoph Läubrich
  *
  */
-public interface EclipseFeatureOption extends EclipseFeature, Option {
+public interface EclipseFeatureOption extends EclipseFeature, EclipseVersionedArtifactOption {
 
     public List<EclipseBundle> getBundles();
 

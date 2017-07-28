@@ -15,18 +15,15 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import org.osgi.framework.Version;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 
 /**
- * A versioned artefact that might be provisioned
+ * An Eclipse-Installation (e.g. SDK or exported product)
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseVersionedArtifact {
-
-    String getId();
-
-    Version getVersion();
+public interface EclipseInstallation extends EclipseBundleSource, EclipseFeatureSource {
 
 }

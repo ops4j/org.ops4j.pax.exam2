@@ -28,8 +28,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
@@ -39,7 +40,8 @@ import org.ops4j.pax.exam.container.eclipse.EclipseProvision;
 import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser.PluginConfiguration;
-import org.ops4j.pax.exam.container.eclipse.impl.repository.RepositoryResolverEclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.feature.FeatureResolver;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.unit.UnitResolver;
 import org.ops4j.pax.exam.options.ProvisionControl;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
@@ -50,7 +52,7 @@ import org.osgi.framework.VersionRange;
  * @author Christoph Läubrich
  *
  */
-public class DefaultEclipseProvision implements EclipseProvision, EclipseUnitSource {
+public class DefaultEclipseProvision implements EclipseProvision {
 
     private final Set<String> ignoredBundles;
     private final List<Option> bundles = new ArrayList<>();
@@ -164,9 +166,9 @@ public class DefaultEclipseProvision implements EclipseProvision, EclipseUnitSou
                 new VersionRange(VersionRange.LEFT_CLOSED, feature.getVersion(),
                     feature.getVersion(), VersionRange.RIGHT_CLOSED));
         }
-        FeatureEclipseBundleSource featureSource = new FeatureEclipseBundleSource(getBundleSource(),
+        FeatureResolver featureSource = new FeatureResolver(getBundleSource(), getFeatureSource(),
             Collections.singleton(eclipseFeatureOption));
-        addAll(featureSource.getIncludedBundles());
+        addAll(featureSource.getBundleSource().getIncludedArtifacts());
         return this;
     }
 
@@ -227,77 +229,18 @@ public class DefaultEclipseProvision implements EclipseProvision, EclipseUnitSou
         for (EclipseInstallableUnit unit : units) {
             repositories.add(unit.getSource());
         }
-        repositories.add(this);
-        RepositoryResolverEclipseBundleSource resolver = new RepositoryResolverEclipseBundleSource(
+        if (source instanceof EclipseBundleSource) {
+            repositories.add(getUnitSource());
+        }
+        UnitResolver resolver = new UnitResolver(
             repositories, mode, Arrays.asList(units));
-        addAll(resolver.getIncludedBundles());
+        addAll(resolver.getBundleSource().getIncludedArtifacts());
         return this;
-    }
-
-    @Override
-    public EclipseFeatureOption feature(String featureId, VersionRange featureVersionRange)
-        throws IOException, ArtifactNotFoundException {
-        if (source instanceof EclipseFeatureSource) {
-            return getFeatureSource().feature(featureId, featureVersionRange);
-        }
-        throw new ArtifactNotFoundException("feature", featureId, featureVersionRange);
-    }
-
-    @Override
-    public EclipseFeatureOption feature(String featureId)
-        throws IOException, ArtifactNotFoundException {
-        if (source instanceof EclipseFeatureSource) {
-            return getFeatureSource().feature(featureId);
-        }
-        throw new ArtifactNotFoundException("feature", featureId, HIGHEST_VERSION);
-    }
-
-    @Override
-    public EclipseBundleOption bundle(String bundleSymbolicName, VersionRange bundleVersionRange)
-        throws IOException, ArtifactNotFoundException {
-        if (source instanceof EclipseBundleSource) {
-            return getBundleSource().bundle(bundleSymbolicName, bundleVersionRange);
-        }
-        throw new ArtifactNotFoundException("bunde", bundleSymbolicName, bundleVersionRange);
-    }
-
-    @Override
-    public EclipseBundleOption bundle(String bundleSymbolicName)
-        throws IOException, ArtifactNotFoundException {
-        if (source instanceof EclipseBundleSource) {
-            return getBundleSource().bundle(bundleSymbolicName);
-        }
-        throw new ArtifactNotFoundException("bunde", bundleSymbolicName, HIGHEST_VERSION);
-    }
-
-    @Override
-    public EclipseInstallableUnit unit(String id, VersionRange versionRange)
-        throws IOException, ArtifactNotFoundException {
-        if (source instanceof EclipseUnitSource) {
-            return getUnitSource().unit(id, versionRange);
-        }
-        throw new ArtifactNotFoundException("unit", id, versionRange);
-    }
-
-    @Override
-    public EclipseInstallableUnit unit(String id) throws IOException, ArtifactNotFoundException {
-        if (source instanceof EclipseUnitSource) {
-            return ((EclipseUnitSource) source).unit(id);
-        }
-        return unit(id, HIGHEST_VERSION);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName();
-    }
-
-    @Override
-    public Collection<EclipseInstallableUnit> getAllUnits() throws IOException {
-        if (source instanceof EclipseUnitSource) {
-            return ((EclipseUnitSource) source).getAllUnits();
-        }
-        return Collections.emptyList();
     }
 
 }
