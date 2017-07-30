@@ -80,10 +80,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
                 String[] bundleInfo = line.split(",");
                 String bsn = bundleInfo[0];
                 Version version = version(bundleInfo[1]);
-                if (isIgnored(bsn, version)) {
-                    continue;
-                }
-                EclipseBundleOption bundle = bundleSource.bundle(bsn);
+                EclipseBundleOption bundle = bundleSource.bundle(bsn, version);
                 if (bundle instanceof ProvisionControl<?>) {
                     ProvisionControl<?> control = (ProvisionControl<?>) bundle;
                     String sl = bundleInfo[3];
@@ -201,6 +198,9 @@ public class DefaultEclipseProvision implements EclipseProvision {
 
     private void addAll(Collection<EclipseBundleOption> list) {
         for (EclipseBundleOption bundle : list) {
+            if (isIgnored(bundle.getId(), bundle.getVersion())) {
+                continue;
+            }
             String key = getKey(bundle);
             if (ignoredBundles.add(key)) {
                 bundles.add(bundle);
