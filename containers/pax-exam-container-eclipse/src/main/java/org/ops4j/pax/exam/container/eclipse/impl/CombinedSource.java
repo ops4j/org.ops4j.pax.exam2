@@ -50,19 +50,7 @@ public final class CombinedSource implements CombinedEclipseArtifactSource {
 
     @Override
     public EclipseBundleOption bundle(String bundleName) throws IOException, FileNotFoundException {
-        ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
-            "bundle " + bundleName + " not found in any sources");
-        for (EclipseArtifactSource source : sources) {
-            try {
-                if (source instanceof EclipseBundleSource) {
-                    return ((EclipseBundleSource) source).bundle(bundleName);
-                }
-            }
-            catch (ArtifactNotFoundException ef) {
-                fnfe.addSuppressed(ef);
-            }
-        }
-        throw fnfe;
+        return bundle(bundleName, Version.emptyVersion);
     }
 
     @Override
@@ -70,50 +58,85 @@ public final class CombinedSource implements CombinedEclipseArtifactSource {
         throws IOException, ArtifactNotFoundException {
         ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
             "bundle " + bundleSymbolicName + ":" + bundleVersion + " not found in any sources");
+        EclipseBundleOption bundle = null;
         for (EclipseArtifactSource source : sources) {
+            // find the highest version
             try {
                 if (source instanceof EclipseBundleSource) {
-                    return ((EclipseBundleSource) source).bundle(bundleSymbolicName, bundleVersion);
+                    EclipseBundleOption sourcebundle = ((EclipseBundleSource) source)
+                        .bundle(bundleSymbolicName, bundleVersion);
+                    if (bundle == null
+                        || sourcebundle.getVersion().compareTo(bundle.getVersion()) > 0) {
+                        bundle = sourcebundle;
+                    }
                 }
             }
             catch (ArtifactNotFoundException ef) {
                 fnfe.addSuppressed(ef);
             }
         }
+        if (bundle != null) {
+            return bundle;
+        }
         throw fnfe;
     }
 
     @Override
-    public EclipseBundleOption bundle(String bundleName, VersionRange bundleVersionRange)
+    public EclipseBundleOption bundle(String bundleSymbolicName, VersionRange bundleVersionRange)
         throws IOException, ArtifactNotFoundException {
-        ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
-            "bundle " + bundleName + ":" + bundleVersionRange + " not found in any sources");
+        ArtifactNotFoundException fnfe = new ArtifactNotFoundException("bundle "
+            + bundleSymbolicName + ":" + bundleVersionRange + " not found in any sources");
+        EclipseBundleOption bundle = null;
         for (EclipseArtifactSource source : sources) {
+            // find the highest version
             try {
                 if (source instanceof EclipseBundleSource) {
-                    return ((EclipseBundleSource) source).bundle(bundleName, bundleVersionRange);
+                    EclipseBundleOption sourcebundle = ((EclipseBundleSource) source)
+                        .bundle(bundleSymbolicName, bundleVersionRange);
+                    if (bundle == null
+                        || sourcebundle.getVersion().compareTo(bundle.getVersion()) > 0) {
+                        bundle = sourcebundle;
+                    }
                 }
             }
             catch (ArtifactNotFoundException ef) {
                 fnfe.addSuppressed(ef);
             }
+        }
+        if (bundle != null) {
+            return bundle;
         }
         throw fnfe;
     }
 
     @Override
     public EclipseFeatureOption feature(String featureName) throws IOException {
+        return feature(featureName, Version.emptyVersion);
+    }
+
+    @Override
+    public EclipseFeatureOption feature(String featureName, Version featureVersion)
+        throws IOException, ArtifactNotFoundException {
         ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
-            "feature " + featureName + " not found in any sources");
+            "feature " + featureName + ":" + featureVersion + " not found in any sources");
+        EclipseFeatureOption feature = null;
         for (EclipseArtifactSource source : sources) {
             try {
                 if (source instanceof EclipseFeatureSource) {
-                    return ((EclipseFeatureSource) source).feature(featureName);
+                    EclipseFeatureOption sourcefeature = ((EclipseFeatureSource) source)
+                        .feature(featureName, featureVersion);
+                    if (feature == null
+                        || sourcefeature.getVersion().compareTo(feature.getVersion()) > 0) {
+                        feature = sourcefeature;
+                    }
                 }
             }
             catch (ArtifactNotFoundException ef) {
                 fnfe.addSuppressed(ef);
             }
+        }
+        if (feature != null) {
+            return feature;
         }
         throw fnfe;
     }
@@ -123,29 +146,16 @@ public final class CombinedSource implements CombinedEclipseArtifactSource {
         throws IOException, ArtifactNotFoundException {
         ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
             "feature " + featureName + ":" + featureVersionRange + " not found in any sources");
+        EclipseFeatureOption feature = null;
         for (EclipseArtifactSource source : sources) {
             try {
                 if (source instanceof EclipseFeatureSource) {
-                    return ((EclipseFeatureSource) source).feature(featureName,
-                        featureVersionRange);
-                }
-            }
-            catch (ArtifactNotFoundException ef) {
-                fnfe.addSuppressed(ef);
-            }
-        }
-        throw fnfe;
-    }
-
-    @Override
-    public EclipseFeatureOption feature(String featureName, Version featureVersion)
-        throws IOException, ArtifactNotFoundException {
-        ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
-            "feature " + featureName + ":" + featureVersion + " not found in any sources");
-        for (EclipseArtifactSource source : sources) {
-            try {
-                if (source instanceof EclipseFeatureSource) {
-                    return ((EclipseFeatureSource) source).feature(featureName, featureVersion);
+                    EclipseFeatureOption sourcefeature = ((EclipseFeatureSource) source)
+                        .feature(featureName, featureVersionRange);
+                    if (feature == null
+                        || sourcefeature.getVersion().compareTo(feature.getVersion()) > 0) {
+                        feature = sourcefeature;
+                    }
                 }
             }
             catch (ArtifactNotFoundException ef) {
@@ -174,17 +184,31 @@ public final class CombinedSource implements CombinedEclipseArtifactSource {
 
     @Override
     public EclipseInstallableUnit unit(String id) throws IOException, ArtifactNotFoundException {
+        return unit(id, Version.emptyVersion);
+    }
+
+    @Override
+    public EclipseInstallableUnit unit(String id, Version version)
+        throws IOException, ArtifactNotFoundException {
         ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
-            "unit " + id + " not found in any sources");
+            "unit " + id + ":" + version + " not found in any sources");
+        EclipseInstallableUnit unit = null;
         for (EclipseArtifactSource source : sources) {
             try {
                 if (source instanceof EclipseUnitSource) {
-                    return ((EclipseUnitSource) source).unit(id);
+                    EclipseInstallableUnit sourceunit = ((EclipseUnitSource) source).unit(id,
+                        version);
+                    if (unit == null || sourceunit.getVersion().compareTo(unit.getVersion()) > 0) {
+                        unit = sourceunit;
+                    }
                 }
             }
             catch (ArtifactNotFoundException ef) {
                 fnfe.addSuppressed(ef);
             }
+        }
+        if (unit != null) {
+            return unit;
         }
         throw fnfe;
     }
@@ -194,33 +218,23 @@ public final class CombinedSource implements CombinedEclipseArtifactSource {
         throws IOException, ArtifactNotFoundException {
         ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
             "unit " + id + ":" + versionRange + " not found in any sources");
+        EclipseInstallableUnit unit = null;
         for (EclipseArtifactSource source : sources) {
             try {
                 if (source instanceof EclipseUnitSource) {
-                    return ((EclipseUnitSource) source).unit(id, versionRange);
+                    EclipseInstallableUnit sourceunit = ((EclipseUnitSource) source).unit(id,
+                        versionRange);
+                    if (unit == null || sourceunit.getVersion().compareTo(unit.getVersion()) > 0) {
+                        unit = sourceunit;
+                    }
                 }
             }
             catch (ArtifactNotFoundException ef) {
                 fnfe.addSuppressed(ef);
             }
         }
-        throw fnfe;
-    }
-
-    @Override
-    public EclipseInstallableUnit unit(String id, Version version)
-        throws IOException, ArtifactNotFoundException {
-        ArtifactNotFoundException fnfe = new ArtifactNotFoundException(
-            "unit " + id + ":" + version + " not found in any sources");
-        for (EclipseArtifactSource source : sources) {
-            try {
-                if (source instanceof EclipseUnitSource) {
-                    return ((EclipseUnitSource) source).unit(id, version);
-                }
-            }
-            catch (ArtifactNotFoundException ef) {
-                fnfe.addSuppressed(ef);
-            }
+        if (unit != null) {
+            return unit;
         }
         throw fnfe;
     }
