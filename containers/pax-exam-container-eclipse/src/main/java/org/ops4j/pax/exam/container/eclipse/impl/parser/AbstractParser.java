@@ -25,10 +25,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -42,6 +44,12 @@ import org.xml.sax.SAXException;
  *
  */
 public abstract class AbstractParser {
+
+    private static final VersionRange EMPTY_RANGE = new VersionRange(VersionRange.LEFT_CLOSED,
+        Version.emptyVersion, null, VersionRange.RIGHT_CLOSED);
+
+    private static final Map<String, Version> versionCache = new HashMap<>();
+    private static final Map<String, VersionRange> versionRangeCache = new HashMap<>();
 
     private static final ThreadLocal<DocumentBuilderFactory> DBF = new ThreadLocal<DocumentBuilderFactory>() {
 
@@ -120,6 +128,10 @@ public abstract class AbstractParser {
 
     protected static String toPath(Node node) {
         String name = node.getNodeName();
+        Node id = node.getAttributes().getNamedItem("id");
+        if (id != null) {
+            name = name + "[" + id.getNodeValue() + "]";
+        }
         Node parentNode = node.getParentNode();
         if (parentNode == null) {
             return name;
@@ -141,22 +153,67 @@ public abstract class AbstractParser {
     }
 
     protected static Version stringToVersion(String version) {
-        return version == null || version.isEmpty() ? Version.emptyVersion
-            : Version.parseVersion(version);
+        if (version == null || version.isEmpty()) {
+            return Version.emptyVersion;
+        }
+        Version v = versionCache.get(version);
+        if (v == null) {
+            v = Version.parseVersion(version);
+            versionCache.put(version, v);
+        }
+        return v;
+    }
+
+    protected static VersionRange stringToVersionRange(String versionRange) {
+        if (versionRange == null || versionRange.trim().isEmpty()) {
+            return EMPTY_RANGE;
+        }
+        VersionRange range = versionRangeCache.get(versionRange);
+        if (range == null) {
+            range = VersionRange.valueOf(versionRange);
+            versionRangeCache.put(versionRange, range);
+        }
+        return range;
+    }
+
+    protected static Iterable<Node> evaluate(Node element, String xpath)
+        throws XPathExpressionException {
+        return evaluate(element, getXPath().compile(xpath), false);
+    }
+
+    protected static Iterable<Node> evaluate(Node element, XPathExpression expression)
+        throws XPathExpressionException {
+        return evaluate(element, expression, false);
+    }
+
+    protected static Node getNode(Node element, String xpath) throws XPathExpressionException {
+        return (Node) getXPath().evaluate(xpath, element, XPathConstants.NODE);
+    }
+
+    protected static int getSize(Node node, int defaultSize) {
+        String attribute = getAttribute(node, "size", false);
+        if (attribute != null && !attribute.isEmpty()) {
+            try {
+                return Integer.parseInt(attribute);
+            }
+            catch (NumberFormatException e) {
+                // ignore then
+            }
+        }
+        return defaultSize;
     }
 
     /**
-     * evaluates a XPath expresion and loops over the nodeset result
+     * evaluates a XPath expression and loops over the nodeset result
      * 
      * @param element
      * @param xpath
      * @return
      * @throws XPathExpressionException
      */
-    protected static Iterable<Node> evaluate(Node element, String xpath)
-        throws XPathExpressionException {
-        final NodeList nodeList = (NodeList) getXPath().evaluate(xpath, element,
-            XPathConstants.NODESET);
+    protected static Iterable<Node> evaluate(Node element, XPathExpression expression,
+        boolean detatch) throws XPathExpressionException {
+        final NodeList nodeList = (NodeList) expression.evaluate(element, XPathConstants.NODESET);
         return new Iterable<Node>() {
 
             @Override
@@ -173,6 +230,11 @@ public abstract class AbstractParser {
                     @Override
                     public Node next() {
                         Node item = nodeList.item(index);
+                        if (detatch) {
+                            // detaching the node from its parent dramatically improves performance
+                            // for xpath!
+                            item.getParentNode().removeChild(item);
+                        }
                         index++;
                         return item;
                     }

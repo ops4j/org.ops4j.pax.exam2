@@ -67,7 +67,8 @@ public class P2MetadataRepository extends AbstractEclipseUnitSource<P2Unit> {
         else if (file.isMetadataRepository()) {
             LOG.info("Parse {}@{}...", file.getType(), file.getURL());
             P2MetadataRepositoryParser parser = new P2MetadataRepositoryParser(
-                file.getRespository());
+                file.getRespository(), LOG);
+            LOG.info("... {} units parsed.", parser.getCount());
             String reproName = name + file.getURL();
             Collection<Unit> units = parser.getUnits();
             for (Unit unit : units) {

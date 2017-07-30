@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitRequirement;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
@@ -38,6 +40,7 @@ public final class ResolvedRequirements {
     private final Map<String, ArtifactInfoMap<UnitProviding>> resolvedMap = new HashMap<>();
 
     private final Set<String> failed = new HashSet<>();
+    private final Set<String> units = new HashSet<>();
 
     public boolean isFailed(UnitRequirement requires) {
         return failed.contains(getID(requires));
@@ -70,6 +73,19 @@ public final class ResolvedRequirements {
                     provided.getVersion(), provided));
             }
         }
+    }
+
+    public void addUnit(EclipseInstallableUnit unit) {
+        units.add(getUnitId(unit));
+    }
+
+    public boolean containsUnit(EclipseInstallableUnit unit) {
+        return units.contains(getUnitId(unit));
+    }
+
+    private String getUnitId(EclipseInstallableUnit unit) {
+        EclipseUnitSource source = unit.getSource();
+        return unit.getId() + ":" + unit.getVersion() + ":" + source.hashCode();
     }
 
 }

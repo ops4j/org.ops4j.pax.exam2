@@ -37,7 +37,7 @@ public class ClasspathParser extends AbstractParser {
 
     private boolean valid;
 
-    private List<String[]> entries = new ArrayList<>();
+    private final List<String[]> entries = new ArrayList<>();
 
     public ClasspathParser(File projectFolder) {
         File file = new File(projectFolder, ".classpath");

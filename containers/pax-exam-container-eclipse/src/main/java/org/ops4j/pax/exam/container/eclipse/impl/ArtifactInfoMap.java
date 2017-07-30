@@ -37,7 +37,15 @@ public class ArtifactInfoMap<BundleInfoContext> {
     public static final VersionRange HIGHEST_VERSION = new VersionRange(VersionRange.LEFT_CLOSED,
         Version.emptyVersion, null, VersionRange.RIGHT_CLOSED);
 
-    private final Map<String, List<ArtifactInfo<BundleInfoContext>>> artifacts = new HashMap<>();
+    private final Map<String, List<ArtifactInfo<BundleInfoContext>>> artifacts;
+
+    public ArtifactInfoMap() {
+        this(32);
+    }
+
+    public ArtifactInfoMap(int cap) {
+        artifacts = new HashMap<>(cap);
+    }
 
     /**
      * Add a {@link ArtifactInfo} to the Map

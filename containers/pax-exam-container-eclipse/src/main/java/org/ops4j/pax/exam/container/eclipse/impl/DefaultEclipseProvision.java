@@ -25,9 +25,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
@@ -128,30 +130,46 @@ public class DefaultEclipseProvision implements EclipseProvision {
 
     @Override
     public EclipseProvision product(InputStream productDefinition) throws IOException {
-        EclipseBundleSource bundleSource = getBundleSource();
-        List<EclipseBundleOption> local = new ArrayList<>();
         ProductParser parser = new ProductParser(productDefinition);
-        for (ArtifactInfo<PluginConfiguration> bundleInfo : parser.getPlugins()) {
-            if (isIgnored(bundleInfo.getId(), bundleInfo.getVersion())) {
-                continue;
+        return product(parser);
+    }
+
+    public EclipseProvision product(ProductParser parser)
+        throws IOException, ArtifactNotFoundException {
+        List<EclipseBundleOption> bundles;
+        if (parser.useFeatures()) {
+            List<EclipseFeatureOption> features = new ArrayList<>();
+            EclipseFeatureSource fs = getFeatureSource();
+            for (EclipseVersionedArtifact artifact : parser.getFeatures()) {
+                features.add(fs.feature(artifact.getId(), artifact.getVersion()));
             }
-            EclipseBundleOption bundle = bundleSource.bundle(bundleInfo.getId());
+            FeatureResolver featureSource = new FeatureResolver(getBundleSource(), fs, features);
+            bundles = featureSource.getBundleSource().getIncludedArtifacts();
+        }
+        else {
+            bundles = new ArrayList<>();
+            EclipseBundleSource bs = getBundleSource();
+            for (EclipseVersionedArtifact artifact : parser.getPlugins()) {
+                bundles.add(bs.bundle(artifact.getId(), artifact.getVersion()));
+            }
+        }
+        Map<String, PluginConfiguration> configuration = parser.getConfiguration();
+        for (EclipseBundleOption bundle : bundles) {
             if (bundle instanceof ProvisionControl<?>) {
                 ProvisionControl<?> control = (ProvisionControl<?>) bundle;
-                PluginConfiguration context = bundleInfo.getContext();
-                if (context == null) {
+                PluginConfiguration cfg = configuration.get(bundle.getId());
+                if (cfg == null) {
                     control.start(false);
                 }
                 else {
-                    control.start(context.autoStart);
-                    if (context.startLevel > 0) {
-                        control.startLevel(context.startLevel);
+                    control.start(cfg.autoStart);
+                    if (cfg.startLevel > 0) {
+                        control.startLevel(cfg.startLevel);
                     }
                 }
             }
-            local.add(bundle);
         }
-        addAll(local);
+        addAll(bundles);
         return this;
     }
 
@@ -232,8 +250,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
         if (source instanceof EclipseBundleSource) {
             repositories.add(getUnitSource());
         }
-        UnitResolver resolver = new UnitResolver(
-            repositories, mode, Arrays.asList(units));
+        UnitResolver resolver = new UnitResolver(repositories, mode, Arrays.asList(units));
         addAll(resolver.getBundleSource().getIncludedArtifacts());
         return this;
     }

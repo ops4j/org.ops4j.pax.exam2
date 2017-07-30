@@ -59,17 +59,18 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
         this.repositories = repositories.toArray(new EclipseUnitSource[0]);
         for (EclipseInstallableUnit unit : units) {
             // TODO provide a "path" so error can give exact information from where an requirement
-            // can't be reolved
+            // can't be resolved
             resolveUnit(unit);
         }
     }
 
     private void resolveUnit(EclipseInstallableUnit unit)
         throws ArtifactNotFoundException, IOException {
-        if (unitSource.containsUnit(unit)) {
+        if (unitSource.containsUnit(unit) || resolvedRequirements.containsUnit(unit)) {
             LOG.debug("Skip resolving of {}, already resolved or resolving in progress...", unit);
             return;
         }
+        resolvedRequirements.addUnit(unit);
         unitSource.addUnit(unit);
         LOG.info("Resolve {}...", unit);
         addArtifacts(unit);

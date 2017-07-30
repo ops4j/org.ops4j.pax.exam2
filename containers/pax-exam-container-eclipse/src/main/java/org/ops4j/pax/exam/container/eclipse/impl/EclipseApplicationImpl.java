@@ -26,10 +26,12 @@ import java.util.concurrent.TimeoutException;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.eclipse.EclipseApplication;
+import org.ops4j.pax.exam.container.eclipse.EclipseApplication.EclipseApplicationProvision;
 import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseLauncher;
 import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
 import org.ops4j.pax.exam.container.eclipse.EclipsePlatformOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseProvision;
 
 /**
  * Implementation of the {@link EclipseApplication} interface, use {@link EclipseOptions} to
@@ -38,9 +40,10 @@ import org.ops4j.pax.exam.container.eclipse.EclipsePlatformOption;
  * @author Christoph Läubrich
  *
  */
-public final class EclipseApplicationImpl implements EclipseApplication {
+public final class EclipseApplicationImpl
+    implements EclipseApplicationProvision, EclipseApplication {
 
-    private Collection<Option> options = new ArrayList<>();
+    private final Collection<Option> options = new ArrayList<>();
     private Object returnValue;
     private boolean mustReturnValue;
     private boolean mustReturn;
@@ -48,11 +51,16 @@ public final class EclipseApplicationImpl implements EclipseApplication {
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private boolean mustNotFail;
     private Class<Throwable> expectedThrowable;
+    private final EclipseProvision provision;
 
     public EclipseApplicationImpl(final EclipseLauncher launcher, boolean ignore,
-        Option... options) {
+        EclipseProvision provision, Option... options) {
+        this.provision = provision;
         if (options != null) {
             this.options.addAll(Arrays.asList(options));
+        }
+        if (provision != null) {
+            this.options.add(provision);
         }
         this.options.add(new EclipsePlatformOption() {
 
@@ -161,6 +169,14 @@ public final class EclipseApplicationImpl implements EclipseApplication {
         mustReturnValue = false;
         mustReturn();
         return this;
+    }
+
+    @Override
+    public EclipseProvision getProvision() {
+        if (provision == null) {
+            throw new UnsupportedOperationException("not constructed with a provision");
+        }
+        return provision;
     }
 
 }

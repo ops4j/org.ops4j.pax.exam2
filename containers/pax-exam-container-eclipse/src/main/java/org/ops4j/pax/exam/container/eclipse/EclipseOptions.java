@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.container.eclipse.EclipseApplication.EclipseApplicationProvision;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseProjectSource;
@@ -33,6 +34,7 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSou
 import org.ops4j.pax.exam.container.eclipse.impl.CombinedSource;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseProvision;
 import org.ops4j.pax.exam.container.eclipse.impl.EclipseApplicationImpl;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.directory.DirectoryResolver;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.feature.FeatureResolver;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository.P2Resolver;
@@ -49,6 +51,27 @@ public class EclipseOptions {
 
     private static final class EclipseLauncherImpl implements EclipseLauncher {
 
+        private final class EclipseProductImplementation implements EclipseProduct {
+
+            private final String productID;
+
+            private EclipseProductImplementation(String productID) {
+                this.productID = productID;
+            }
+
+            @Override
+            public EclipseApplication application(String applicationID) {
+                return applicationInternal(applicationID, null);
+            }
+
+            private EclipseApplicationImpl applicationInternal(String applicationID,
+                EclipseProvision provision) {
+                return new EclipseApplicationImpl(EclipseLauncherImpl.this, false, provision,
+                    CoreOptions.frameworkProperty("eclipse.application").value(applicationID),
+                    CoreOptions.frameworkProperty("eclipse.product").value(productID));
+            }
+        }
+
         private final boolean forked;
 
         private EclipseLauncherImpl(boolean forked) {
@@ -61,33 +84,49 @@ public class EclipseOptions {
         }
 
         @Override
-        public EclipseApplication ignoreApp() {
-            return new EclipseApplicationImpl(this, true,
+        public EclipseApplicationImpl ignoreApp() {
+            return ignoreAppInternal(null);
+        }
+
+        private EclipseApplicationImpl ignoreAppInternal(EclipseProvision provision) {
+            return new EclipseApplicationImpl(this, true, provision,
                 CoreOptions.frameworkProperty("eclipse.ignoreApp").value(true));
         }
 
         @Override
         public EclipseApplication application(String applicationID) {
-            return new EclipseApplicationImpl(this, false,
+            return applicationInternal(applicationID, null);
+        }
+
+        private EclipseApplicationImpl applicationInternal(String applicationID,
+            EclipseProvision provision) {
+            return new EclipseApplicationImpl(this, false, provision,
                 CoreOptions.frameworkProperty("eclipse.application").value(applicationID));
         }
 
         @Override
-        public EclipseProduct product(InputStream productFile) {
-            throw new UnsupportedOperationException("not implmented yet, sorry :-(");
+        public EclipseApplicationProvision productDefinition(InputStream productFile,
+            final EclipseArtifactSource source, String... ignoreItems) throws IOException {
+            DefaultEclipseProvision provision = createDefaultProvision(source, ignoreItems);
+            ProductParser parser = new ProductParser(productFile);
+            provision.product(parser);
+            String productID = parser.getProductID();
+            String application = parser.getApplication();
+            if (productID != null) {
+                EclipseProductImplementation product = product(productID);
+                if (application != null) {
+                    return product.applicationInternal(application, provision);
+                }
+            }
+            else if (application != null) {
+                return applicationInternal(application, provision);
+            }
+            return ignoreAppInternal(provision);
         }
 
         @Override
-        public EclipseProduct product(final String productID) {
-            return new EclipseProduct() {
-
-                @Override
-                public EclipseApplication application(String applicationID) {
-                    return new EclipseApplicationImpl(EclipseLauncherImpl.this, false,
-                        CoreOptions.frameworkProperty("eclipse.application").value(applicationID),
-                        CoreOptions.frameworkProperty("eclipse.product").value(productID));
-                }
-            };
+        public EclipseProductImplementation product(final String productID) {
+            return new EclipseProductImplementation(productID);
         }
 
     }
@@ -154,6 +193,11 @@ public class EclipseOptions {
 
     public static EclipseProvision provision(final EclipseArtifactSource source,
         String... ignoreItems) {
+        return createDefaultProvision(source, ignoreItems);
+    }
+
+    private static DefaultEclipseProvision createDefaultProvision(
+        final EclipseArtifactSource source, String... ignoreItems) {
         final Set<String> ignored = new HashSet<>();
         if (ignoreItems != null) {
             ignored.addAll(Arrays.asList(ignoreItems));

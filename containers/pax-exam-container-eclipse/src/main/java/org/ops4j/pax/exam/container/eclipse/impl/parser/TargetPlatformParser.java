@@ -61,7 +61,7 @@ public class TargetPlatformParser extends AbstractParser {
                         .add(new ProfileTargetPlatformLocation(getAttribute(node, "path", true)));
                 }
                 else if (type == LocationType.InstallableUnit) {
-                    String repository = (String) getXPath().evaluate("./repository[location]", node,
+                    String repository = (String) getXPath().evaluate("./repository/@location", node,
                         XPathConstants.STRING);
                     List<ArtifactInfo<?>> units = new ArrayList<>();
                     for (Node unit : evaluate(node, "./unit")) {
@@ -181,6 +181,11 @@ public class TargetPlatformParser extends AbstractParser {
             this.mode = mode;
             this.flags = Collections.unmodifiableMap(flags);
             this.units = Collections.unmodifiableList(units);
+        }
+
+        @Override
+        public String toString() {
+            return "InstallableUnitTargetPlatformLocation:" + repository + ":" + mode + ":" + units;
         }
 
     }

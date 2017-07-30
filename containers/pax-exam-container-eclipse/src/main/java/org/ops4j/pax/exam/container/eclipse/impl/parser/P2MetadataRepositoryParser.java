@@ -19,12 +19,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathExpression;
 
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
@@ -35,6 +34,7 @@ import org.ops4j.pax.exam.container.eclipse.impl.repository.Unit;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
+import org.slf4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -46,16 +46,31 @@ import org.w3c.dom.Node;
  */
 public class P2MetadataRepositoryParser extends AbstractParser {
 
-    private final ArtifactInfoMap<Unit> unitMap = new ArtifactInfoMap<>();
-    private final List<Unit> units = new ArrayList<>();
+    private final ArtifactInfoMap<Unit> unitMap;
+    private final List<Unit> units;
+    private final Logger logger;
 
-    public P2MetadataRepositoryParser(Element content)
+    public P2MetadataRepositoryParser(Element content, Logger logger)
         throws IOException, XPathException, InvalidSyntaxException {
-        for (Node node : evaluate(content, "/repository/units/unit")) {
+        this.logger = logger;
+        Node unitsNode = getNode(content, "/repository/units");
+        int cap = getSize(unitsNode, 10);
+        unitMap = new ArtifactInfoMap<>(Math.max(10, cap / 3));
+        units = new ArrayList<>(cap);
+        XPath x = getXPath();
+        XPathExpression provideExpression = x.compile("./provides/provided");
+        XPathExpression requireExpression = x.compile("./requires/required");
+        XPathExpression artifactExpression = x.compile("./artifacts/artifact");
+        XPathExpression unitExpression = x.compile("./unit");
+        for (Node node : evaluate(unitsNode, unitExpression, true)) {
             String unitID = getAttribute(node, "id", true);
-            Version version = stringToVersion(getAttribute(node, "version", false));
-            Unit unit = createUnit(node, unitID, version);
-            unitMap.add(new ArtifactInfo<Unit>(unitID, version, unit));
+            Version unitVersion = stringToVersion(getAttribute(node, "version", false));
+            List<Provides> provides = readProvides(evaluate(node, provideExpression));
+            List<Requires> requires = readRequires(evaluate(node, requireExpression));
+            List<Artifact> artifacts = readArtifacts(evaluate(node, artifactExpression));
+            Unit unit = new Unit(unitID, unitVersion, Collections.emptyMap(), provides, requires,
+                artifacts);
+            unitMap.add(new ArtifactInfo<Unit>(unitID, unitVersion, unit));
             units.add(unit);
         }
     }
@@ -76,16 +91,7 @@ public class P2MetadataRepositoryParser extends AbstractParser {
         return units.size();
     }
 
-    private static Unit createUnit(Node node, String unitID, Version unitVersion)
-        throws XPathExpressionException {
-        Map<String, String> properties = readProperties(evaluate(node, "./properties/property"));
-        List<Provides> provides = readProvides(evaluate(node, "./provides/provided"));
-        List<Requires> requires = readRequires(evaluate(node, "./requires/required"));
-        List<Artifact> artifacts = readArtifacts(evaluate(node, "./artifacts/artifact"));
-        return new Unit(unitID, unitVersion, properties, provides, requires, artifacts);
-    }
-
-    private static List<Artifact> readArtifacts(Iterable<Node> evaluate) {
+    private List<Artifact> readArtifacts(Iterable<Node> evaluate) {
         List<Artifact> map = new ArrayList<>();
         for (Node node : evaluate) {
             map.add(new Artifact(getAttribute(node, "id", true),
@@ -95,24 +101,27 @@ public class P2MetadataRepositoryParser extends AbstractParser {
         return map;
     }
 
-    private static List<Requires> readRequires(Iterable<Node> evaluate) {
+    private List<Requires> readRequires(Iterable<Node> evaluate) {
+        // @formatter:off
+        //<required match='providedCapabilities.exists(x | x.name == $0 &amp;&amp; x.namespace == $1)' matchParameters='[&apos;org.eclipse.ui.forms&apos;, &apos;org.eclipse.equinox.p2.iu&apos;]' min='0' max='0'/>
+        //<required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.rap.nebula.jface.gridviewer' range='[3.1.2.20161108-1505,3.1.2.20161108-1505]'/>
+        // @formatter:on       
         ArrayList<Requires> list = new ArrayList<>();
         for (Node node : evaluate) {
-            VersionRange range;
-            String rangeAttr = getAttribute(node, "range", false);
-            if (rangeAttr != null & !rangeAttr.isEmpty()) {
-                range = VersionRange.valueOf(rangeAttr);
+            VersionRange range = stringToVersionRange(getAttribute(node, "range", false));
+            String namespace = getAttribute(node, "namespace", false);
+            if (namespace == null || namespace.isEmpty()) {
+                logger
+                    .warn("Ignore <required> without namespace, match is currently not supported!");
+                continue;
             }
-            else {
-                range = null;
-            }
-            list.add(new Requires(getAttribute(node, "namespace", true),
-                getAttribute(node, "name", true), range));
+
+            list.add(new Requires(namespace, getAttribute(node, "name", true), range));
         }
         return list;
     }
 
-    private static List<Provides> readProvides(Iterable<Node> evaluate) {
+    private List<Provides> readProvides(Iterable<Node> evaluate) {
         ArrayList<Provides> list = new ArrayList<>();
         for (Node node : evaluate) {
             list.add(new Provides(getAttribute(node, "namespace", true),
@@ -120,14 +129,6 @@ public class P2MetadataRepositoryParser extends AbstractParser {
                 stringToVersion(getAttribute(node, "version", false))));
         }
         return list;
-    }
-
-    private static Map<String, String> readProperties(Iterable<Node> evaluate) {
-        HashMap<String, String> map = new HashMap<>();
-        for (Node node : evaluate) {
-            map.put(getAttribute(node, "name", true), getAttribute(node, "value", true));
-        }
-        return map;
     }
 
 }

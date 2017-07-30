@@ -15,7 +15,10 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import org.ops4j.pax.exam.container.eclipse.EclipseApplication.EclipseApplicationProvision;
 
 /**
  * The main entry point for an EclipsePlatform is the launcher
@@ -53,8 +56,10 @@ public interface EclipseLauncher {
      * @param productFile
      *            InputStream to a product definition to parse
      * @return
+     * @throws IOException
      */
-    EclipseProduct product(InputStream productFile);
+    EclipseApplicationProvision productDefinition(InputStream productFile,
+        final EclipseArtifactSource source, String... ignoreItems) throws IOException;
 
     /**
      * 

@@ -18,10 +18,12 @@ package org.ops4j.pax.exam.container.eclipse.impl.sources.target;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +67,7 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
         List<EclipseArtifactSource> bundleSources = new ArrayList<>();
         TargetPlatformParser target = new TargetPlatformParser(targetDefinition);
         List<TargetPlatformLocation> locations = target.getLocations();
-        List<P2Resolver> repositories = new ArrayList<>();
+        Map<String, P2Resolver> repositories = new LinkedHashMap<>();
         List<EclipseInstallableUnit> installunits = new ArrayList<>();
         Map<String, DirectoryResolver> directoryResolverCache = new HashMap<>();
         int cnt = 0;
@@ -91,9 +93,18 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
             }
             else if (location instanceof InstallableUnitTargetPlatformLocation) {
                 InstallableUnitTargetPlatformLocation iuLocation = (InstallableUnitTargetPlatformLocation) location;
-                P2Resolver repository = new P2Resolver("target-platform-" + cnt,
-                    new URL(iuLocation.repository));
-                repositories.add(repository);
+                P2Resolver repository;
+                try {
+                    URL url = new URL(iuLocation.repository);
+                    repository = repositories.get(url.toExternalForm());
+                    if (repository == null) {
+                        repository = new P2Resolver("target-platform-" + cnt, url);
+                        repositories.put(url.toExternalForm(), repository);
+                    }
+                }
+                catch (MalformedURLException e) {
+                    throw new IOException("can't create location " + iuLocation.repository, e);
+                }
                 List<EclipseInstallableUnit> local = new ArrayList<>();
                 for (ArtifactInfo<?> unit : iuLocation.units) {
                     Version version = unit.getVersion();
@@ -101,8 +112,9 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
                     local.add(iu);
                 }
                 if (iuLocation.mode == IncludeMode.SLICER) {
-                    UnitResolver source = new UnitResolver(
-                        Collections.singleton(repository), IncludeMode.SLICER, local);
+                    LOG.info("Resolve {} units with slicer mode...", local.size());
+                    UnitResolver source = new UnitResolver(Collections.singleton(repository),
+                        IncludeMode.SLICER, local);
                     bundleSources.add(source);
                 }
                 else {
@@ -114,9 +126,10 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
             }
         }
         if (!installunits.isEmpty()) {
+            LOG.info("Resolve {} units with planner mode...", installunits.size());
             // now resolve the big thing then...
-            UnitResolver source = new UnitResolver(
-                repositories, IncludeMode.PLANNER, installunits);
+            UnitResolver source = new UnitResolver(repositories.values(), IncludeMode.PLANNER,
+                installunits);
             bundleSources.add(source);
         }
         combinedSource = new CombinedSource(bundleSources);

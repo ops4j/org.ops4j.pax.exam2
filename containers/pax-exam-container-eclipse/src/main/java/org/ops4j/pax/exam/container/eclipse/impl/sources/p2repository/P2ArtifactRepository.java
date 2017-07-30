@@ -64,6 +64,7 @@ public class P2ArtifactRepository extends BundleAndFeatureSource {
             LOG.info("Parse {}@{}...", file.getType(), file.getURL());
             P2ArtifactRepositoryParser parser = new P2ArtifactRepositoryParser(
                 file.getIndex().getURL(), file.getRespository());
+            LOG.info("... {} artifacts parsed.", parser.getCount());
             String reproName = name + file.getURL();
             bundleSource.addBundles(reproName,
                 parser.getArtifacts(EclipseClassifiedVersionedArtifact.CLASSIFIER_BUNDLE));

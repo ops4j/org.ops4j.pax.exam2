@@ -72,4 +72,9 @@ public interface EclipseApplication extends CompositeOption {
      */
     EclipseApplication mustFailWith(Class<Throwable> t);
 
+    public static interface EclipseApplicationProvision extends EclipseApplication {
+
+        public EclipseProvision getProvision();
+    }
+
 }

@@ -58,8 +58,7 @@ public class P2ArtifactRepositoryParser extends AbstractParser {
             LOG.debug("put filter {} for output mapping {}...", filter, output);
             outputMap.put(filter, output);
         }
-        Iterable<Node> evaluate = evaluate(artifacts, "/repository/artifacts/artifact");
-        for (Node node : evaluate) {
+        for (Node node : evaluate(artifacts, "/repository/artifacts/artifact")) {
             String classifier = getAttribute(node, "classifier", true);
             ArtifactInfoMap<URL> map = getArtifacts(classifier);
             Map<String, String> attributes = attributesToMap(node);
