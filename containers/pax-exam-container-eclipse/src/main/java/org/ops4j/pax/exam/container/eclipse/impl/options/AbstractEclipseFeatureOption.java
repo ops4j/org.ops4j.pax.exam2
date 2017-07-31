@@ -18,12 +18,14 @@ package org.ops4j.pax.exam.container.eclipse.impl.options;
 import java.util.Collections;
 import java.util.List;
 
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.options.CompositeOption;
+import org.osgi.framework.Version;
 
 /**
  * Abstract helper class to reduce the work to be done when implementing a
@@ -33,13 +35,12 @@ import org.ops4j.pax.exam.options.CompositeOption;
  *
  * @param <T>
  */
-public abstract class AbstractEclipseFeatureOption<T> extends AbstractEclipseBundleOption<T>
+public abstract class AbstractEclipseFeatureOption<T>
     implements EclipseFeatureOption, CompositeOption {
 
-    private ArtifactInfo<T> bundleInfo;
+    private final ArtifactInfo<T> bundleInfo;
 
     public AbstractEclipseFeatureOption(ArtifactInfo<T> bundleInfo) {
-        super(bundleInfo);
         this.bundleInfo = bundleInfo;
     }
 
@@ -61,6 +62,21 @@ public abstract class AbstractEclipseFeatureOption<T> extends AbstractEclipseBun
     @Override
     public String toString() {
         return getClass().getSimpleName() + ":" + bundleInfo;
+    }
+
+    @Override
+    public Version getVersion() {
+        return bundleInfo.getVersion();
+    }
+
+    @Override
+    public String getId() {
+        return bundleInfo.getId();
+    }
+
+    @Override
+    public Option[] getOptions() {
+        return CoreOptions.options(toOption(bundleInfo));
     }
 
     protected abstract List<? extends EclipseFeature> getIncluded(ArtifactInfo<T> bundleInfo);

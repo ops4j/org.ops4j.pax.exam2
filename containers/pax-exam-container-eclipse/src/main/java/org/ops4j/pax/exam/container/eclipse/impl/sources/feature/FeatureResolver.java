@@ -69,7 +69,7 @@ public class FeatureResolver extends BundleAndFeatureSource {
             }
             EclipseBundleOption resolvedBundle = bundleSource.bundle(bundle.getId());
             if (bundles.addBundle(resolvedBundle)) {
-                LOG.info("Add bundle {}:{}...", bundle.getId(), bundle.getVersion());
+                LOG.debug("Add bundle {}:{}...", bundle.getId(), bundle.getVersion());
             }
         }
         List<EclipseFeature> included = feature.getIncluded();

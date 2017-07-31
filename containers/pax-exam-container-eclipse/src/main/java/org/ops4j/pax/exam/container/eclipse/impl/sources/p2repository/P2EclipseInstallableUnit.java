@@ -87,7 +87,7 @@ public class P2EclipseInstallableUnit implements EclipseInstallableUnit {
                 EclipseBundleOption bundle = artifactRepository.bundle(artifact.getId(),
                     artifact.getVersion());
                 if (artifacts.getBundleSource().addBundle(bundle)) {
-                    LOG.info("resolve artifact-bundle {}:{}", bundle.getId(), bundle.getVersion());
+                    LOG.debug("resolve artifact-bundle {}:{}", bundle.getId(), bundle.getVersion());
                 }
             }
             else if (EclipseClassifiedVersionedArtifact.CLASSIFIER_FEATURE
@@ -95,7 +95,7 @@ public class P2EclipseInstallableUnit implements EclipseInstallableUnit {
                 EclipseFeatureOption feature = artifactRepository.feature(artifact.getId(),
                     artifact.getVersion());
                 if (artifacts.getFeatureSource().addFeature(feature)) {
-                    LOG.info("resolve artifact-feature {}:{}", feature.getId(),
+                    LOG.debug("resolve artifact-feature {}:{}", feature.getId(),
                         feature.getVersion());
                 }
             }
@@ -106,12 +106,12 @@ public class P2EclipseInstallableUnit implements EclipseInstallableUnit {
             for (EclipseBundleOption bundle : featureResolver.getBundleSource()
                 .getIncludedArtifacts()) {
                 if (artifacts.getBundleSource().addBundle(bundle)) {
-                    LOG.info("resolve artifact-bundle {}:{}", bundle.getId(), bundle.getVersion());
+                    LOG.debug("resolve artifact-bundle {}:{}", bundle.getId(), bundle.getVersion());
                 }
             }
             for (EclipseFeatureOption feature : featureResolver.getFeatureSource()
                 .getIncludedArtifacts()) {
-                LOG.info("resolve artifact-feature {}:{}", feature.getId(), feature.getVersion());
+                LOG.debug("resolve artifact-feature {}:{}", feature.getId(), feature.getVersion());
             }
         }
 

@@ -20,6 +20,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.options.CompositeOption;
+import org.ops4j.pax.exam.options.ProvisionControl;
 import org.osgi.framework.Version;
 
 /**
@@ -30,9 +31,12 @@ import org.osgi.framework.Version;
  * @param <T>
  */
 public abstract class AbstractEclipseBundleOption<T>
-    implements EclipseBundleOption, CompositeOption {
+    implements EclipseBundleOption, CompositeOption, ProvisionControl<ProvisionControl<?>> {
 
     private final ArtifactInfo<T> bundleInfo;
+    private Integer startlevel;
+    private boolean shouldStart;
+    private boolean shouldUpdate;
 
     public AbstractEclipseBundleOption(ArtifactInfo<T> bundleInfo) {
         this.bundleInfo = bundleInfo;
@@ -56,6 +60,59 @@ public abstract class AbstractEclipseBundleOption<T>
     @Override
     public String toString() {
         return getClass().getSimpleName() + ":" + bundleInfo.toString();
+    }
+
+    @Override
+    public Integer getStartLevel() {
+        return startlevel;
+    }
+
+    @Override
+    public ProvisionControl<?> start(Boolean shouldStart) {
+        this.shouldStart = shouldStart;
+        return this;
+    }
+
+    @Override
+    public ProvisionControl<?> startLevel(Integer startLevel) {
+        startlevel = startLevel;
+        return this;
+    }
+
+    @Override
+    public ProvisionControl<?> update(Boolean shouldUpdate) {
+        this.shouldUpdate = shouldUpdate;
+        return this;
+    }
+
+    @Override
+    public ProvisionControl<?> noStart() {
+        return start(false);
+    }
+
+    @Override
+    public ProvisionControl<?> noUpdate() {
+        return update(false);
+    }
+
+    @Override
+    public boolean shouldStart() {
+        return shouldStart;
+    }
+
+    @Override
+    public boolean shouldUpdate() {
+        return shouldUpdate;
+    }
+
+    @Override
+    public ProvisionControl<?> start() {
+        return start(true);
+    }
+
+    @Override
+    public ProvisionControl<?> update() {
+        return update(true);
     }
 
     protected abstract Option toOption(ArtifactInfo<T> bundleInfo);

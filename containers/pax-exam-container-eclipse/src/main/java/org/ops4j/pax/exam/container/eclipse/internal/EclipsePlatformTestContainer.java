@@ -186,15 +186,17 @@ public class EclipsePlatformTestContainer implements TestContainer {
     }
 
     private void logProperties(String type, Map<?, ?> properties) {
-        StringBuilder sb = new StringBuilder();
-        SortedMap<Object, Object> map = new TreeMap<Object, Object>(properties);
-        for (Map.Entry<Object, Object> entry : map.entrySet()) {
-            sb.append("\r\n\t");
-            sb.append(entry.getKey());
-            sb.append(" = ");
-            sb.append(entry.getValue());
+        if (LOG.isDebugEnabled()) {
+            StringBuilder sb = new StringBuilder();
+            SortedMap<Object, Object> map = new TreeMap<Object, Object>(properties);
+            for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                sb.append("\r\n\t");
+                sb.append(entry.getKey());
+                sb.append(" = ");
+                sb.append(entry.getValue());
+            }
+            LOG.debug("=== {} ==={}", type, sb);
         }
-        LOG.info("=== {} ==={}", type, sb);
     }
 
     @Override
@@ -338,7 +340,6 @@ public class EclipsePlatformTestContainer implements TestContainer {
             if (application != null) {
                 Future<Object> result = applicationResult.getAndSet(null);
                 if (result != null) {
-                    LOG.info("Checking Application result...");
                     application.checkResult(result);
                 }
             }

@@ -78,7 +78,7 @@ public class P2FeatureSource extends AbstractEclipseFeatureSource<P2Feature> {
         for (ArtifactInfo<URL> info : artifacts.getArtifacts()) {
             if (add(
                 new ArtifactInfo<P2Feature>(info, new P2Feature(info.getContext(), reproName)))) {
-                LOG.info("Add feature {}:{}:{}",
+                LOG.debug("Add feature {}:{}:{}",
                     new Object[] { info.getId(), info.getVersion(), reproName });
             }
         }

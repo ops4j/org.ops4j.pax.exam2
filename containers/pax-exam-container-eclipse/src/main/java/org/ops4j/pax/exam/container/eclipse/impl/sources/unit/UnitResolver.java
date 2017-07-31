@@ -77,7 +77,7 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
         resolvedRequirements.addResolved(unit.getProvided());
         for (UnitRequirement requires : unit.getRequirements()) {
             if (resolvedRequirements.isResolved(requires)) {
-                LOG.info("Skip requirement {} because it is already resolved...", requires);
+                LOG.debug("Skip requirement {} because it is already resolved...", requires);
                 continue;
             }
             if (resolvedRequirements.isFailed(requires)) {
@@ -107,7 +107,7 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
         }
         catch (ArtifactNotFoundException anfe) {
             if (mode == IncludeMode.SLICER) {
-                LOG.info("Failed to resolve {} ({}), ignore because of slicer mode...", requires,
+                LOG.debug("Failed to resolve {} ({}), ignore because of slicer mode...", requires,
                     anfe.getMessage());
                 resolvedRequirements.addFailed(requires);
                 return;
@@ -146,12 +146,12 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
         ResolvedArtifacts artifacts = unit.resolveArtifacts();
         for (EclipseBundleOption bundle : artifacts.getBundles()) {
             if (bundleSource.addBundle(bundle)) {
-                LOG.info("Resolve bundle {}:{}...", bundle.getId(), bundle.getVersion());
+                LOG.debug("Resolve bundle {}:{}...", bundle.getId(), bundle.getVersion());
             }
         }
         for (EclipseFeatureOption feature : artifacts.getFeatures()) {
             if (featureSource.addFeature(feature)) {
-                LOG.info("Resolve feature {}:{}...", feature.getId(), feature.getVersion());
+                LOG.debug("Resolve feature {}:{}...", feature.getId(), feature.getVersion());
             }
         }
     }

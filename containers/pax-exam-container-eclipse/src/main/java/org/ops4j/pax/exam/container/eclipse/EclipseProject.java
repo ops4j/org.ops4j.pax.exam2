@@ -18,6 +18,7 @@ package org.ops4j.pax.exam.container.eclipse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.ops4j.pax.exam.Option;
 
@@ -43,5 +44,13 @@ public interface EclipseProject {
      * @return the given resource as an {@link InputStream} that can be used for other purpose.
      * @throws FileNotFoundException
      */
-    public InputStream getResource(String name) throws FileNotFoundException;
+    public InputStream getResourceAsStream(String name) throws FileNotFoundException;
+
+    /**
+     * 
+     * @param name
+     * @return the given resource as an {@link URL} that can be used for other purpose.
+     * @throws FileNotFoundException
+     */
+    public URL getResource(String name) throws FileNotFoundException;
 }

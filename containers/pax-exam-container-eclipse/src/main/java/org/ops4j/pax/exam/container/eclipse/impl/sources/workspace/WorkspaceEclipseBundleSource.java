@@ -48,7 +48,7 @@ public class WorkspaceEclipseBundleSource extends AbstractEclipseBundleSource<Pr
                 ArtifactInfo<ProjectParser> bundle = ArtifactInfo
                     .readExplodedBundle(project.getProjectFolder(), project);
                 if (add(bundle)) {
-                    LOG.info("Add bundle {} ...", bundle);
+                    LOG.debug("Add bundle {} ...", bundle);
                 }
             }
             catch (Exception e) {

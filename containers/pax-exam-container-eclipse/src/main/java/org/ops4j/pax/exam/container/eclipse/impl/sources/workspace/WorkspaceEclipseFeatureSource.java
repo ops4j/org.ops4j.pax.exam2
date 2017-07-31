@@ -49,7 +49,7 @@ public class WorkspaceEclipseFeatureSource
             ArtifactInfo<WorkspaceFeatureProject> featureInfo = new ArtifactInfo<>(feature.getId(),
                 feature.getVersion(), featureProject);
             if (add(featureInfo)) {
-                LOG.info("Add feature {} ...", featureInfo);
+                LOG.debug("Add feature {} ...", featureInfo);
             }
         }
         catch (Exception e) {

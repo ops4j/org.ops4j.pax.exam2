@@ -60,7 +60,7 @@ public class DirectoryEclipseBundleSource extends AbstractEclipseBundleSource<Fi
         if (file.isDirectory() && ArtifactInfo.isBundle(file)) {
             ArtifactInfo<File> explodedBundle = ArtifactInfo.readExplodedBundle(file, file);
             if (add(explodedBundle)) {
-                LOG.info("Add exploded bundle {}...", explodedBundle);
+                LOG.debug("Add exploded bundle {}...", explodedBundle);
             }
             return true;
         }
@@ -70,7 +70,7 @@ public class DirectoryEclipseBundleSource extends AbstractEclipseBundleSource<Fi
                 if (ArtifactInfo.isBundle(mf)) {
                     ArtifactInfo<File> bundleInfo = new ArtifactInfo<File>(mf, file);
                     if (add(bundleInfo)) {
-                        LOG.info("Add bundle {}...", bundleInfo);
+                        LOG.debug("Add bundle {}...", bundleInfo);
                     }
                     return true;
                 }

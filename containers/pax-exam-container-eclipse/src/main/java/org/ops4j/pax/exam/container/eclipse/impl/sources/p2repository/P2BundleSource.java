@@ -43,7 +43,7 @@ public class P2BundleSource extends AbstractEclipseBundleSource<P2Bundle> {
     public void addBundles(String reproName, ArtifactInfoMap<URL> artifacts) {
         for (ArtifactInfo<URL> info : artifacts.getArtifacts()) {
             if (add(new ArtifactInfo<P2Bundle>(info, new P2Bundle(info.getContext(), reproName)))) {
-                LOG.info("Add bundle {}:{}:{}",
+                LOG.debug("Add bundle {}:{}:{}",
                     new Object[] { info.getId(), info.getVersion(), reproName });
             }
         }

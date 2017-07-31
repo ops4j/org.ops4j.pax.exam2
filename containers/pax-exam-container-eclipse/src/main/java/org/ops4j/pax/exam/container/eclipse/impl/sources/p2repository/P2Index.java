@@ -286,7 +286,7 @@ public final class P2Index {
     }
 
     private static InputStream tryOpen(URL url) throws IOException {
-        LOG.info("try open {}...", url);
+        LOG.debug("try open {}...", url);
         URLConnection connection;
         try {
             connection = url.openConnection();
@@ -311,7 +311,7 @@ public final class P2Index {
             int code = http.getResponseCode();
             if (code == HttpURLConnection.HTTP_OK || code == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 long length = http.getContentLengthLong();
-                LOG.info("...success. Size: {}", length > 0 ? (length / 1024.0) + "kb" : "unkown");
+                LOG.debug("...success. Size: {}", length > 0 ? (length / 1024.0) + "kb" : "unkown");
                 return getCachedStream(url, http, cachefile);
             }
             else {
@@ -321,18 +321,18 @@ public final class P2Index {
                         return new FileInputStream(cacheFile);
                     }
                 }
-                LOG.info("...failed with http-code {}!", code);
+                LOG.debug("...failed with http-code {}!", code);
                 http.getErrorStream().close();
                 return null;
             }
         }
         try {
             InputStream stream = connection.getInputStream();
-            LOG.info("...success!");
+            LOG.debug("...success!");
             return stream;
         }
         catch (FileNotFoundException e) {
-            LOG.info("...failed with error {}!", e.getMessage());
+            LOG.debug("...failed with error {}!", e.getMessage());
             return null;
         }
     }
@@ -353,14 +353,14 @@ public final class P2Index {
                             && lastModified <= (cachefile.lastModified() / 1000);
                     }
                     if (notmodified) {
-                        LOG.info("return cached file {}...", cachefile);
+                        LOG.debug("return cached file {}...", cachefile);
                         return new FileInputStream(cachefile);
                     }
                 }
                 outStream = new FileOutputStream(cachefile);
             }
             catch (IOException e) {
-                LOG.info("loading cache file failed!", e);
+                LOG.debug("loading cache file failed!", e);
             }
             try {
                 InputStream stream = connection.getInputStream();

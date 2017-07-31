@@ -67,7 +67,7 @@ public class DirectoryEclipseFeatureSource
                     featureParser.getId(), featureParser.getVersion(),
                     new DirectoryFeatureFile(file, featureParser));
                 if (add(explodedFeature)) {
-                    LOG.info("Add exploded feature {}...", explodedFeature);
+                    LOG.debug("Add exploded feature {}...", explodedFeature);
                 }
                 return true;
             }
@@ -81,7 +81,7 @@ public class DirectoryEclipseFeatureSource
                         featureParser.getId(), featureParser.getVersion(),
                         new DirectoryFeatureFile(file, featureParser));
                     if (add(feature)) {
-                        LOG.info("Add feature {}...", feature);
+                        LOG.debug("Add feature {}...", feature);
                     }
                     return true;
                 }

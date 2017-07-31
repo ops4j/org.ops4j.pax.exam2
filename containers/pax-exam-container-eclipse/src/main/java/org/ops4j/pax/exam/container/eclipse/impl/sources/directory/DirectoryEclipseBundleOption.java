@@ -22,6 +22,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
+import org.ops4j.pax.exam.options.UrlProvisionOption;
 
 /**
  * Bundle Option for {@link DirectoryResolver}
@@ -43,6 +44,10 @@ public final class DirectoryEclipseBundleOption extends AbstractEclipseBundleOpt
 
     @Override
     protected Option toOption(ArtifactInfo<File> bundleInfo) {
-        return CoreOptions.bundle(bundleInfo.getContext().getAbsolutePath());
+        UrlProvisionOption bundle = CoreOptions.bundle(bundleInfo.getContext().getAbsolutePath());
+        bundle.startLevel(getStartLevel());
+        bundle.start(shouldStart());
+        bundle.update(shouldUpdate());
+        return bundle;
     }
 }

@@ -38,7 +38,7 @@ public final class WorkspaceEclipseBundleOption extends AbstractEclipseBundleOpt
     @Override
     protected Option toOption(ArtifactInfo<ProjectParser> bundleInfo) {
         try {
-            return WorkspaceResolver.projectToOption(bundleInfo.getContext());
+            return WorkspaceResolver.projectToOption(bundleInfo.getContext(), this);
         }
         catch (IOException e) {
             throw new TestContainerException("option creation failed", e);

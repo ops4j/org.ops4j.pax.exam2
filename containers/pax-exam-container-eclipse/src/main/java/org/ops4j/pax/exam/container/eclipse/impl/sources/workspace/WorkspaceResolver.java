@@ -22,8 +22,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +48,7 @@ import org.ops4j.pax.exam.container.eclipse.EclipseWorkspace;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
+import org.ops4j.pax.exam.options.ProvisionControl;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,12 +165,22 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
 
             @Override
             public Option toOption() throws IOException {
-                return projectToOption(context);
+                return projectToOption(context, null);
             }
 
             @Override
-            public InputStream getResource(String name) throws FileNotFoundException {
+            public InputStream getResourceAsStream(String name) throws FileNotFoundException {
                 return new ProjectFileInputStream(name, context, workspaceFolder);
+            }
+
+            @Override
+            public URL getResource(String name) throws FileNotFoundException {
+                try {
+                    return new File(context.getProjectFolder(), name).toURI().toURL();
+                }
+                catch (MalformedURLException e) {
+                    throw new FileNotFoundException(e.toString());
+                }
             }
         };
     }
@@ -182,7 +195,8 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
         return featureSource;
     }
 
-    public static Option projectToOption(ProjectParser context) throws IOException {
+    public static Option projectToOption(ProjectParser context, ProvisionControl<?> control)
+        throws IOException {
         ByteArrayOutputStream projectStream = new ByteArrayOutputStream();
         Manifest manifest = null;
         if (context.hasNature(ProjectParser.JAVA_NATURE)
@@ -199,6 +213,11 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
         }
         UrlProvisionOption bundle = CoreOptions
             .streamBundle(new ByteArrayInputStream(projectStream.toByteArray()));
+        if (control != null) {
+            bundle.startLevel(control.getStartLevel());
+            bundle.start(control.shouldStart());
+            bundle.update(control.shouldUpdate());
+        }
         if (ArtifactInfo.isBundle(manifest) || context.hasNature(ProjectParser.FEATURE_NATURE)) {
             return bundle;
         }

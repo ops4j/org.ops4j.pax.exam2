@@ -58,7 +58,7 @@ public final class WorkspaceEclipseFeatureOption
     @Override
     protected Option toOption(ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
         try {
-            return WorkspaceResolver.projectToOption(bundleInfo.getContext().getProject());
+            return WorkspaceResolver.projectToOption(bundleInfo.getContext().getProject(), null);
         }
         catch (IOException e) {
             throw new TestContainerException("creation of option failed", e);

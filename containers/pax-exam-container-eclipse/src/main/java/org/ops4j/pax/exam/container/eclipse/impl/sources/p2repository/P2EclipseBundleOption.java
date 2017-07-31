@@ -19,6 +19,7 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
+import org.ops4j.pax.exam.options.UrlProvisionOption;
 
 /**
  * 
@@ -36,7 +37,12 @@ public final class P2EclipseBundleOption extends AbstractEclipseBundleOption<P2B
 
     @Override
     protected Option toOption(ArtifactInfo<P2Bundle> bundleInfo) {
-        return CoreOptions.bundle(bundleInfo.getContext().getUrl().toExternalForm());
+        UrlProvisionOption bundle = CoreOptions
+            .bundle(bundleInfo.getContext().getUrl().toExternalForm());
+        bundle.startLevel(getStartLevel());
+        bundle.start(shouldStart());
+        bundle.update(shouldUpdate());
+        return bundle;
     }
 
     @Override
