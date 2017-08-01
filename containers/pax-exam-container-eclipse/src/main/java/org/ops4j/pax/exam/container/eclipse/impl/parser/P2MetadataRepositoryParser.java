@@ -34,7 +34,6 @@ import org.ops4j.pax.exam.container.eclipse.impl.repository.Unit;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
-import org.slf4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -48,11 +47,9 @@ public class P2MetadataRepositoryParser extends AbstractParser {
 
     private final ArtifactInfoMap<Unit> unitMap;
     private final List<Unit> units;
-    private final Logger logger;
 
-    public P2MetadataRepositoryParser(Element content, Logger logger)
+    public P2MetadataRepositoryParser(Element content)
         throws IOException, XPathException, InvalidSyntaxException {
-        this.logger = logger;
         Node unitsNode = getNode(content, "/repository/units");
         int cap = getSize(unitsNode, 10);
         unitMap = new ArtifactInfoMap<>(Math.max(10, cap / 3));
@@ -102,21 +99,17 @@ public class P2MetadataRepositoryParser extends AbstractParser {
     }
 
     private List<Requires> readRequires(Iterable<Node> evaluate) {
-        // @formatter:off
-        //<required match='providedCapabilities.exists(x | x.name == $0 &amp;&amp; x.namespace == $1)' matchParameters='[&apos;org.eclipse.ui.forms&apos;, &apos;org.eclipse.equinox.p2.iu&apos;]' min='0' max='0'/>
-        //<required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.rap.nebula.jface.gridviewer' range='[3.1.2.20161108-1505,3.1.2.20161108-1505]'/>
-        // @formatter:on       
         ArrayList<Requires> list = new ArrayList<>();
         for (Node node : evaluate) {
             VersionRange range = stringToVersionRange(getAttribute(node, "range", false));
             String namespace = getAttribute(node, "namespace", false);
-            if (namespace == null || namespace.isEmpty()) {
-                logger
-                    .warn("Ignore <required> without namespace, match is currently not supported!");
-                continue;
-            }
-
-            list.add(new Requires(namespace, getAttribute(node, "name", true), range));
+            String match = getAttribute(node, "match", false);
+            String name = getAttribute(node, "name", false);
+            String matchParameters = getAttribute(node, "matchParameters", false);
+            Boolean optional = Boolean.parseBoolean(getAttribute(node, "optional", false));
+            Boolean greedy = Boolean.parseBoolean(getAttribute(node, "greedy", false));
+            list.add(
+                new Requires(namespace, name, range, match, matchParameters, optional, greedy));
         }
         return list;
     }

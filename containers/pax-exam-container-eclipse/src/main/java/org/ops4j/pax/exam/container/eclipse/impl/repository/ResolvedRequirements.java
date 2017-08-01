@@ -15,18 +15,15 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitRequirement;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
 
 /**
  * Class that keeps track of resolved and failed requirements in a resolving process. This is needed
@@ -37,46 +34,36 @@ import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
  */
 public final class ResolvedRequirements {
 
-    private final Map<String, ArtifactInfoMap<UnitProviding>> resolvedMap = new HashMap<>();
+    private final Set<String> resolved = new HashSet<>();
 
     private final Set<String> failed = new HashSet<>();
     private final Set<String> units = new HashSet<>();
+    private final List<UnitProviding> provided = new ArrayList<>();
 
     public boolean isFailed(UnitRequirement requires) {
-        return failed.contains(getID(requires));
+        return failed.contains(requires.getID());
     }
 
     public void addFailed(UnitRequirement requirement) {
-        failed.add(getID(requirement));
-    }
-
-    private String getID(UnitRequirement requires) {
-        return requires.getNamespace() + ":" + requires.getName() + ":"
-            + requires.getVersionRange();
+        failed.add(requirement.getID());
     }
 
     public boolean isResolved(UnitRequirement requires) {
-        ArtifactInfoMap<?> resolved = resolvedMap.get(requires.getNamespace());
-        return resolved != null
-            && resolved.get(requires.getName(), requires.getVersionRange()) != null;
-    }
-
-    public void addResolved(Collection<? extends UnitProviding> providedRequirements) {
-        for (UnitProviding provided : providedRequirements) {
-            ArtifactInfoMap<UnitProviding> resolved = resolvedMap.get(provided.getNamespace());
-            if (resolved == null) {
-                resolved = new ArtifactInfoMap<>();
-                resolvedMap.put(provided.getNamespace(), resolved);
-            }
-            if (resolved.get(provided.getName(), provided.getVersion()) == null) {
-                resolved.add(new ArtifactInfo<UnitProviding>(provided.getName(),
-                    provided.getVersion(), provided));
+        if (resolved.contains(requires.getID())) {
+            return true;
+        }
+        for (UnitProviding p : provided) {
+            if (requires.matches(p)) {
+                resolved.add(requires.getID());
+                return true;
             }
         }
+        return false;
     }
 
     public void addUnit(EclipseInstallableUnit unit) {
         units.add(getUnitId(unit));
+        provided.addAll(unit.getProvided());
     }
 
     public boolean containsUnit(EclipseInstallableUnit unit) {

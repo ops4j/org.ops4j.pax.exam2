@@ -22,7 +22,6 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleS
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
 
 /**
  * represents an "Installable Unit" that can be resolved to bundles and features (and other
@@ -56,11 +55,13 @@ public interface EclipseInstallableUnit extends EclipseVersionedArtifact {
 
     public static interface UnitRequirement {
 
-        String getName();
+        boolean matches(UnitProviding providing);
 
-        String getNamespace();
+        String getID();
 
-        VersionRange getVersionRange();
+        boolean isOptional();
+
+        boolean isGreedy();
 
     }
 

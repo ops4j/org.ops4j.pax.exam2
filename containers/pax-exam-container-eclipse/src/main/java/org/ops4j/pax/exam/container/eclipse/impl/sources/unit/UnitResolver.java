@@ -26,11 +26,13 @@ import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.ResolvedArtif
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitRequirement;
 import org.ops4j.pax.exam.container.eclipse.EclipseProvision.IncludeMode;
+import org.ops4j.pax.exam.container.eclipse.EclipseRepository;
 import org.ops4j.pax.exam.container.eclipse.impl.repository.ResolvedRequirements;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureAndUnitSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.ContextEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.ContextEclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.ContextEclipseUnitSource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository.P2Resolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,13 +60,23 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
         this.mode = mode;
         this.repositories = repositories.toArray(new EclipseUnitSource[0]);
         for (EclipseInstallableUnit unit : units) {
-            // TODO provide a "path" so error can give exact information from where an requirement
-            // can't be resolved
-            resolveUnit(unit);
+            resolveUnit(unit, unitToPath(unit));
         }
     }
 
-    private void resolveUnit(EclipseInstallableUnit unit)
+    private static String unitToPath(EclipseInstallableUnit unit) {
+        EclipseUnitSource source = unit.getSource();
+        if (source instanceof P2Resolver) {
+            P2Resolver p2Resolver = (P2Resolver) source;
+            return unit.getId() + "[" + p2Resolver.getName() + "@" + p2Resolver.getUrl() + "]";
+        }
+        else if (source instanceof EclipseRepository) {
+            return unit.getId() + "[" + ((EclipseRepository) source).getName() + "]";
+        }
+        return unit.getId();
+    }
+
+    private void resolveUnit(EclipseInstallableUnit unit, String sourcePath)
         throws ArtifactNotFoundException, IOException {
         if (unitSource.containsUnit(unit) || resolvedRequirements.containsUnit(unit)) {
             LOG.debug("Skip resolving of {}, already resolved or resolving in progress...", unit);
@@ -74,43 +86,49 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
         unitSource.addUnit(unit);
         LOG.info("Resolve {}...", unit);
         addArtifacts(unit);
-        resolvedRequirements.addResolved(unit.getProvided());
         for (UnitRequirement requires : unit.getRequirements()) {
             if (resolvedRequirements.isResolved(requires)) {
-                LOG.debug("Skip requirement {} because it is already resolved...", requires);
+                LOG.debug("Skip {} because it is already resolved...", requires);
                 continue;
             }
             if (resolvedRequirements.isFailed(requires)) {
-                LOG.debug("Skip requirement {} because it has already failed...", requires);
+                LOG.debug("Skip {} because it has already failed...", requires);
                 continue;
             }
             LOG.debug("Try to resolve {}...", requires);
-            resolveRequirement(requires, unit);
+            EclipseInstallableUnit resolvedUnit = resolveRequirement(requires, unit, sourcePath);
+            if (resolvedUnit != null) {
+                resolveUnit(resolvedUnit,
+                    sourcePath + " -> " + requires.getID() + " -> " + unitToPath(resolvedUnit));
+            }
         }
     }
 
-    private void resolveRequirement(UnitRequirement requires, EclipseInstallableUnit unit)
-        throws IOException {
+    private EclipseInstallableUnit resolveRequirement(UnitRequirement requires,
+        EclipseInstallableUnit unit, String sourcePath) throws IOException {
         EclipseUnitSource primarySource = unit.getSource();
         try {
             Collection<EclipseInstallableUnit> allUnits = primarySource.getAllUnits();
             for (EclipseInstallableUnit reproUnit : allUnits) {
-                Collection<UnitProviding> provided = reproUnit.getProvided();
-                for (UnitProviding providing : provided) {
-                    if (fullfills(providing, requires)) {
-                        resolveUnit(reproUnit);
-                        return;
+                for (UnitProviding providing : reproUnit.getProvided()) {
+                    if (requires.matches(providing)) {
+                        return reproUnit;
                     }
                 }
             }
-            throw new ArtifactNotFoundException("no unit fullfills the requirement " + requires);
+            throw failedRequirement(requires, sourcePath);
         }
         catch (ArtifactNotFoundException anfe) {
             if (mode == IncludeMode.SLICER) {
                 LOG.debug("Failed to resolve {} ({}), ignore because of slicer mode...", requires,
                     anfe.getMessage());
                 resolvedRequirements.addFailed(requires);
-                return;
+                return null;
+            }
+            else if (requires.isOptional() && !requires.isGreedy()) {
+                LOG.debug("Failed to resolve optional {} ({}) ignore because of non greedy...",
+                    requires, anfe.toString());
+                return null;
             }
         }
         for (EclipseUnitSource unitSource : repositories) {
@@ -122,9 +140,8 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
                 for (EclipseInstallableUnit reproUnit : allUnits) {
                     Collection<UnitProviding> provided = reproUnit.getProvided();
                     for (UnitProviding providing : provided) {
-                        if (fullfills(providing, requires)) {
-                            resolveUnit(reproUnit);
-                            return;
+                        if (requires.matches(providing)) {
+                            return reproUnit;
                         }
                     }
                 }
@@ -132,13 +149,18 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
             catch (ArtifactNotFoundException anfe) {
             }
         }
-        throw failedRequirement(requires);
+        if (requires.isOptional()) {
+            LOG.debug("Ignore {} because it is optional and can't be resolved...", requires);
+            return null;
+        }
+        throw failedRequirement(requires, sourcePath);
 
     }
 
-    private ArtifactNotFoundException failedRequirement(UnitRequirement requires) {
-        return new ArtifactNotFoundException("can't resolve " + requires.getNamespace()
-            + "-requirement " + requires.getName() + ":" + requires.getVersionRange());
+    private ArtifactNotFoundException failedRequirement(UnitRequirement requires,
+        String sourcePath) {
+        return new ArtifactNotFoundException(
+            "can't resolve " + sourcePath + " -> " + requires.getID() + " -> ???");
     }
 
     private void addArtifacts(EclipseInstallableUnit unit)
@@ -154,15 +176,6 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
                 LOG.debug("Resolve feature {}:{}...", feature.getId(), feature.getVersion());
             }
         }
-    }
-
-    private static boolean fullfills(UnitProviding providing, UnitRequirement requires) {
-        if (providing.getNamespace().equals(requires.getNamespace())) {
-            if (providing.getName().equals(requires.getName())) {
-                return requires.getVersionRange().includes(providing.getVersion());
-            }
-        }
-        return false;
     }
 
     @Override

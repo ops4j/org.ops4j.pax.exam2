@@ -24,8 +24,7 @@ import org.ops4j.pax.exam.container.eclipse.impl.sources.unit.UnitResolver;
 
 /**
  * Reads the information of a single repository and provides this as a source, see
- * {@link UnitResolver} for a way of using this to resolve dependent
- * information
+ * {@link UnitResolver} for a way of using this to resolve dependent information
  * 
  * @author Christoph Läubrich
  *
@@ -35,13 +34,19 @@ public class P2Resolver extends BundleAndFeatureAndUnitSource implements Eclipse
     private final P2ArtifactRepository artifactRepository;
     private final P2MetadataRepository metadataRepository;
     private final String name;
+    private final URL url;
 
     public P2Resolver(String name, URL url) throws IOException {
         this.name = name;
+        this.url = url;
         P2Index p2Index = new P2Index(url);
         artifactRepository = new P2ArtifactRepository(name, p2Index.getArtifactRepository());
         metadataRepository = new P2MetadataRepository(name, p2Index.getMetadataRepository(),
             artifactRepository);
+    }
+
+    public URL getUrl() {
+        return url;
     }
 
     @Override

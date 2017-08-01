@@ -16,6 +16,7 @@
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
+import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.osgi.framework.VersionRange;
 
 /**
@@ -29,31 +30,75 @@ public final class Requires implements EclipseInstallableUnit.UnitRequirement {
     private final String namespace;
     private final String name;
     private final VersionRange versionRange;
+    private final String match;
+    private final String matchParameters;
+    private final boolean optional;
+    private final boolean greedy;
 
-    public Requires(String namespace, String name, VersionRange versionRange) {
+    public Requires(String namespace, String name, VersionRange versionRange, String match,
+        String matchParameters, boolean optional, boolean greedy) {
         this.namespace = namespace;
         this.name = name;
         this.versionRange = versionRange;
+        this.match = match;
+        this.matchParameters = matchParameters;
+        this.optional = optional;
+        this.greedy = greedy;
     }
 
     @Override
     public String toString() {
-        return "Requires:" + namespace + ":" + name + ":" + versionRange;
+        return "Requires:" + getID();
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getID() {
+        return namespace + ":" + name + ":" + versionRange;
     }
 
     @Override
-    public String getNamespace() {
-        return namespace;
+    public boolean isGreedy() {
+        return greedy;
     }
 
     @Override
-    public VersionRange getVersionRange() {
-        return versionRange;
+    public boolean isOptional() {
+        return optional;
+    }
+
+    @Override
+    public boolean matches(UnitProviding providing) {
+        // @formatter:off
+        //<required match='providedCapabilities.exists(x | x.name == $0 &amp;&amp; x.namespace == $1)' matchParameters='[&apos;org.eclipse.ui.forms&apos;, &apos;org.eclipse.equinox.p2.iu&apos;]' min='0' max='0'/>
+        //<required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.rap.nebula.jface.gridviewer' range='[3.1.2.20161108-1505,3.1.2.20161108-1505]'/>
+       
+//        <provides size='12'>
+//        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' version='3.7.1.v20161220-1635'/>
+//        <provided namespace='osgi.bundle' name='org.eclipse.ui.forms' version='3.7.1.v20161220-1635'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.forms' version='0.0.0'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.forms.editor' version='0.0.0'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.forms.events' version='0.0.0'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.forms.widgets' version='0.0.0'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.internal.forms' version='0.0.0'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.internal.forms.css.dom' version='0.0.0'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.internal.forms.css.properties.css2' version='0.0.0'/>
+//        <provided namespace='java.package' name='org.eclipse.ui.internal.forms.widgets' version='0.0.0'/>
+//        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+//        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+//      </provides>
+//        
+        // @formatter:on       
+
+        if (namespace == null || namespace.isEmpty()) {
+            // TODO match required option, not supported yet!
+        }
+        else if (providing.getNamespace().equals(namespace)) {
+            // normal namespace matching...
+            if (providing.getName().equals(name)) {
+                return versionRange.includes(providing.getVersion());
+            }
+        }
+        return false;
     }
 
 }
