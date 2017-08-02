@@ -15,6 +15,8 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
+import java.io.Serializable;
+
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.osgi.framework.Version;
 
@@ -24,26 +26,21 @@ import org.osgi.framework.Version;
  * @author Christoph Läubrich
  *
  */
-public final class Provides implements UnitProviding {
+public final class Provides extends VersionSerializable implements UnitProviding, Serializable {
 
+    private static final long serialVersionUID = -8351409510800545558L;
     private final String namespace;
     private final String name;
-    private final Version version;
 
     public Provides(String namespace, String name, Version version) {
+        super(version);
         this.namespace = namespace;
         this.name = name;
-        this.version = version;
     }
 
     @Override
     public String toString() {
-        return "Provides:" + namespace + ":" + name + ":" + version;
-    }
-
-    @Override
-    public Version getVersion() {
-        return version;
+        return "Provides:" + namespace + ":" + name + ":" + getVersion();
     }
 
     @Override

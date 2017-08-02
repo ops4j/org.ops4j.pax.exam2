@@ -152,7 +152,7 @@ public abstract class AbstractParser {
         return flags;
     }
 
-    protected static Version stringToVersion(String version) {
+    public static Version stringToVersion(String version) {
         if (version == null || version.isEmpty()) {
             return Version.emptyVersion;
         }
@@ -164,7 +164,7 @@ public abstract class AbstractParser {
         return v;
     }
 
-    protected static VersionRange stringToVersionRange(String versionRange) {
+    public static VersionRange stringToVersionRange(String versionRange) {
         if (versionRange == null || versionRange.trim().isEmpty()) {
             return EMPTY_RANGE;
         }

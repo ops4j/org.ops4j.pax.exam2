@@ -65,8 +65,7 @@ public class P2MetadataRepositoryParser extends AbstractParser {
             List<Provides> provides = readProvides(evaluate(node, provideExpression));
             List<Requires> requires = readRequires(evaluate(node, requireExpression));
             List<Artifact> artifacts = readArtifacts(evaluate(node, artifactExpression));
-            Unit unit = new Unit(unitID, unitVersion, Collections.emptyMap(), provides, requires,
-                artifacts);
+            Unit unit = new Unit(unitID, unitVersion, provides, requires, artifacts);
             unitMap.add(new ArtifactInfo<Unit>(unitID, unitVersion, unit));
             units.add(unit);
         }

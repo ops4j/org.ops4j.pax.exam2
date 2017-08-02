@@ -24,7 +24,6 @@ import java.util.jar.JarInputStream;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.AbstractEclipseFeatureSource;
 import org.slf4j.Logger;
@@ -74,8 +73,8 @@ public class P2FeatureSource extends AbstractEclipseFeatureSource<P2Feature> {
             "file " + ArtifactInfo.FEATURE_XML_LOCATION + " not found at URL " + url);
     }
 
-    public void addFeatures(String reproName, ArtifactInfoMap<URL> artifacts) {
-        for (ArtifactInfo<URL> info : artifacts.getArtifacts()) {
+    public void addFeatures(String reproName, Iterable<ArtifactInfo<URL>> artifacts) {
+        for (ArtifactInfo<URL> info : artifacts) {
             if (add(
                 new ArtifactInfo<P2Feature>(info, new P2Feature(info.getContext(), reproName)))) {
                 LOG.debug("Add feature {}:{}:{}",

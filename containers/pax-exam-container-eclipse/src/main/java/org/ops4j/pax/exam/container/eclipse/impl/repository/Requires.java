@@ -15,6 +15,8 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
+import java.io.Serializable;
+
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.osgi.framework.VersionRange;
@@ -25,11 +27,12 @@ import org.osgi.framework.VersionRange;
  * @author Christoph Läubrich
  *
  */
-public final class Requires implements EclipseInstallableUnit.UnitRequirement {
+public final class Requires extends VersionRangeSerializable
+    implements EclipseInstallableUnit.UnitRequirement, Serializable {
 
+    private static final long serialVersionUID = 120291514995052340L;
     private final String namespace;
     private final String name;
-    private final VersionRange versionRange;
     private final String match;
     private final String matchParameters;
     private final boolean optional;
@@ -37,9 +40,9 @@ public final class Requires implements EclipseInstallableUnit.UnitRequirement {
 
     public Requires(String namespace, String name, VersionRange versionRange, String match,
         String matchParameters, boolean optional, boolean greedy) {
+        super(versionRange);
         this.namespace = namespace;
         this.name = name;
-        this.versionRange = versionRange;
         this.match = match;
         this.matchParameters = matchParameters;
         this.optional = optional;
@@ -53,7 +56,7 @@ public final class Requires implements EclipseInstallableUnit.UnitRequirement {
 
     @Override
     public String getID() {
-        return namespace + ":" + name + ":" + versionRange;
+        return namespace + ":" + name + ":" + getVersionRange();
     }
 
     @Override
@@ -95,7 +98,7 @@ public final class Requires implements EclipseInstallableUnit.UnitRequirement {
         else if (providing.getNamespace().equals(namespace)) {
             // normal namespace matching...
             if (providing.getName().equals(name)) {
-                return versionRange.includes(providing.getVersion());
+                return getVersionRange().includes(providing.getVersion());
             }
         }
         return false;

@@ -15,6 +15,8 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
+import java.io.Serializable;
+
 import org.osgi.framework.Version;
 
 /**
@@ -23,31 +25,27 @@ import org.osgi.framework.Version;
  * @author Christoph Läubrich
  *
  */
-public final class Artifact implements EclipseClassifiedVersionedArtifact {
+public final class Artifact extends VersionSerializable
+    implements EclipseClassifiedVersionedArtifact, Serializable {
 
+    private static final long serialVersionUID = -7368156518818852071L;
     private final String id;
-    private final Version version;
     private final String classifier;
 
     public Artifact(String id, Version version, String classifier) {
+        super(version);
         this.id = id;
-        this.version = version;
         this.classifier = classifier;
     }
 
     @Override
     public String toString() {
-        return "Artifact:" + id + ":" + version + ":" + classifier;
+        return "Artifact:" + id + ":" + getVersion() + ":" + classifier;
     }
 
     @Override
     public String getId() {
         return id;
-    }
-
-    @Override
-    public Version getVersion() {
-        return version;
     }
 
     @Override

@@ -43,8 +43,10 @@ public interface P2RepositoryFile {
 
     List<P2RepositoryFile> getChilds() throws IOException;
 
-    Element getRespository();
+    Element getRespository() throws IOException;
 
     URL getURL();
+
+    long getLastModified();
 
 }

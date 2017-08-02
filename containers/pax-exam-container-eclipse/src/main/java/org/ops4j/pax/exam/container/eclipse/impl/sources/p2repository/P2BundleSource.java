@@ -20,7 +20,6 @@ import java.net.URL;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.AbstractEclipseBundleSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +39,8 @@ public class P2BundleSource extends AbstractEclipseBundleSource<P2Bundle> {
         return new P2EclipseBundleOption(info);
     }
 
-    public void addBundles(String reproName, ArtifactInfoMap<URL> artifacts) {
-        for (ArtifactInfo<URL> info : artifacts.getArtifacts()) {
+    public void addBundles(String reproName, Iterable<ArtifactInfo<URL>> artifacts) {
+        for (ArtifactInfo<URL> info : artifacts) {
             if (add(new ArtifactInfo<P2Bundle>(info, new P2Bundle(info.getContext(), reproName)))) {
                 LOG.debug("Add bundle {}:{}:{}",
                     new Object[] { info.getId(), info.getVersion(), reproName });

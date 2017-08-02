@@ -17,7 +17,6 @@ package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitRequirement;
@@ -30,20 +29,18 @@ import org.osgi.framework.Version;
  * @author Christoph Läubrich
  *
  */
-public final class Unit implements EclipseVersionedArtifact {
+public final class Unit extends VersionSerializable implements EclipseVersionedArtifact {
 
+    private static final long serialVersionUID = 4993725222726971756L;
     private final String id;
-    private final Version version;
-    private final Map<String, String> properties;
     private final List<UnitProviding> provides;
     private final List<UnitRequirement> requires;
     private final List<EclipseClassifiedVersionedArtifact> artifacts;
 
-    public Unit(String id, Version version, Map<String, String> properties, List<Provides> provides,
-        List<Requires> requires, List<Artifact> artifacts) {
+    public Unit(String id, Version version, List<Provides> provides, List<Requires> requires,
+        List<Artifact> artifacts) {
+        super(version);
         this.id = id;
-        this.version = version;
-        this.properties = Collections.unmodifiableMap(properties);
         this.provides = Collections.unmodifiableList(provides);
         this.requires = Collections.unmodifiableList(requires);
         this.artifacts = Collections.unmodifiableList(artifacts);
@@ -51,7 +48,7 @@ public final class Unit implements EclipseVersionedArtifact {
 
     @Override
     public String toString() {
-        return "Unit:" + id + ":" + version;
+        return "Unit:" + id + ":" + getVersion();
     }
 
     @Override
@@ -59,17 +56,8 @@ public final class Unit implements EclipseVersionedArtifact {
         return id;
     }
 
-    @Override
-    public Version getVersion() {
-        return version;
-    }
-
     public List<EclipseClassifiedVersionedArtifact> getArtifacts() {
         return artifacts;
-    }
-
-    public Map<String, String> getProperties() {
-        return properties;
     }
 
     public List<UnitProviding> getProvides() {

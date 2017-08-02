@@ -16,14 +16,22 @@
 package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.AbstractParser;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.P2ArtifactRepositoryParser;
 import org.ops4j.pax.exam.container.eclipse.impl.repository.EclipseClassifiedVersionedArtifact;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository.P2Cache.MetaDataProperties;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +42,11 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class P2ArtifactRepository extends BundleAndFeatureSource {
+
+    private static final String CACHE_KEY_BUNDLE = "bundle:";
+    private static final String CACHE_KEY_FEATURE = "feature:";
+
+    private static final String CACHE_KEY_LASTMODIFIED = "P2ArtifactRepository.lastmodified";
 
     private static final Logger LOG = LoggerFactory.getLogger(P2ArtifactRepository.class);
 
@@ -61,20 +74,65 @@ public class P2ArtifactRepository extends BundleAndFeatureSource {
             }
         }
         else if (file.isArtifactRepository()) {
-            LOG.info("Parse {}@{}...", file.getType(), file.getURL());
-            P2ArtifactRepositoryParser parser = new P2ArtifactRepositoryParser(
-                file.getIndex().getURL(), file.getRespository());
-            LOG.info("... {} artifacts parsed.", parser.getCount());
+            List<ArtifactInfo<URL>> bundles;
+            List<ArtifactInfo<URL>> features;
             String reproName = name + file.getURL();
-            bundleSource.addBundles(reproName,
-                parser.getArtifacts(EclipseClassifiedVersionedArtifact.CLASSIFIER_BUNDLE));
-            featureSource.addFeatures(reproName,
-                parser.getArtifacts(EclipseClassifiedVersionedArtifact.CLASSIFIER_FEATURE));
+            MetaDataProperties cache = P2Cache.getMetaDataProperties(file.getURL());
+            if (cache.getProperty(CACHE_KEY_LASTMODIFIED, "")
+                .equals(String.valueOf(file.getLastModified()))) {
+                LOG.info("Use cached data for {}@{}...", file.getType(), file.getURL());
+                bundles = new ArrayList<>();
+                features = new ArrayList<>();
+                Set<String> names = cache.stringPropertyNames();
+                for (String name : names) {
+                    if (name.startsWith(CACHE_KEY_BUNDLE)) {
+                        bundles.add(decode(name.substring(CACHE_KEY_BUNDLE.length()),
+                            cache.getProperty(name)));
+                    }
+                    else if (name.startsWith(CACHE_KEY_FEATURE)) {
+                        features.add(decode(name.substring(CACHE_KEY_FEATURE.length()),
+                            cache.getProperty(name)));
+                    }
+                }
+            }
+            else {
+                cache.clear();
+                LOG.info("Parse {}@{}...", file.getType(), file.getURL());
+                P2ArtifactRepositoryParser parser = new P2ArtifactRepositoryParser(
+                    file.getIndex().getURL(), file.getRespository());
+                LOG.info("... {} artifacts parsed.", parser.getCount());
+                bundles = parser.getArtifacts(EclipseClassifiedVersionedArtifact.CLASSIFIER_BUNDLE)
+                    .getArtifacts();
+                features = parser
+                    .getArtifacts(EclipseClassifiedVersionedArtifact.CLASSIFIER_FEATURE)
+                    .getArtifacts();
+                for (ArtifactInfo<URL> bundle : bundles) {
+                    cache.setProperty(CACHE_KEY_BUNDLE + bundle.getId() + ":" + bundle.getVersion(),
+                        bundle.getContext().toExternalForm());
+                }
+                for (ArtifactInfo<URL> feature : features) {
+                    cache.setProperty(
+                        CACHE_KEY_FEATURE + feature.getId() + ":" + feature.getVersion(),
+                        feature.getContext().toExternalForm());
+                }
+                cache.setProperty(CACHE_KEY_LASTMODIFIED, String.valueOf(file.getLastModified()));
+                cache.store();
+            }
+            bundleSource.addBundles(reproName, bundles);
+            featureSource.addFeatures(reproName, features);
         }
         else {
             LOG.info("Ignore P2RepositoryFile of type {}@{}...", file.getType(), file.getURL());
         }
 
+    }
+
+    private ArtifactInfo<URL> decode(String key, String value) throws MalformedURLException {
+        URL url = new URL(value);
+        int index = key.lastIndexOf(':');
+        String symbolicName = key.substring(0, index);
+        Version version = AbstractParser.stringToVersion(key.substring(index + 1));
+        return new ArtifactInfo<URL>(symbolicName, version, url);
     }
 
     @Override
