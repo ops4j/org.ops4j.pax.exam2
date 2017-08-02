@@ -2,9 +2,12 @@ package org.ops4j.pax.exam.acceptance.rest.restassured;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import org.ops4j.pax.exam.acceptance.ClientConfiguration;
 import org.ops4j.pax.exam.acceptance.SessionSpec;
 import org.ops4j.pax.exam.acceptance.rest.api.RestClient;
+import org.ops4j.pax.exam.acceptance.rest.api.RestRequest;
 import org.ops4j.pax.exam.acceptance.rest.api.RestResult;
 
 import static io.restassured.RestAssured.given;
@@ -37,14 +40,15 @@ public class RestClientImpl implements RestClient {
 
     }
 
+
     @Override
-    public RestResult get(String s) {
+    public RestResult getWithRetry(RestRequest r) {
         Response res = null;
         int retries = this.env.getRetries() * 3;
         Exception retryException = null;
         for (int i = 0;i<retries;i++) {
             try {
-                res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).when().get(s);
+                res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).headers(r.getHeaders()).body(r.getBody()).when().get(r.getPath());
                 if (res.statusCode() != 404) {
                     return new RestResultImpl(res, null, retries);
                 }
@@ -60,6 +64,36 @@ public class RestClientImpl implements RestClient {
             }
         }
         return new RestResultImpl(res, retryException, this.env.getRetries());
+    }
+
+    @Override
+    public RestResult get(RestRequest r) {
+        try {
+            Response res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).headers(r.getHeaders()).body(r.getBody()).when().get(r.getPath());
+            return new RestResultImpl(res, null, 0);
+        } catch (Exception e ) {
+            return new RestResultImpl(null, e, 0);
+        }
+    }
+
+    @Override
+    public RestResult post(RestRequest r) {
+            try {
+                Response res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).headers(r.getHeaders()).body(r.getBody()).when().post(r.getPath());
+                return new RestResultImpl(res, null, 0);
+            } catch (Exception e ) {
+                return new RestResultImpl(null, e, 0);
+            }
+    }
+
+    @Override
+    public RestResult put(RestRequest r) {
+        try {
+            Response res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).headers(r.getHeaders()).body(r.getBody()).when().put(r.getPath());
+            return new RestResultImpl(res, null, 0);
+        } catch (Exception e ) {
+            return new RestResultImpl(null, e, 0);
+        }
     }
 
     private class RestResultImpl implements RestResult {

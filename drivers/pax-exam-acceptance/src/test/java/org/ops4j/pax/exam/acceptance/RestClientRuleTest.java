@@ -9,6 +9,7 @@ import org.ops4j.pax.exam.acceptance.rest.api.RestClient;
 
 import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.composite;
+import static org.ops4j.pax.exam.acceptance.rest.api.RestRequest.request;
 
 public class RestClientRuleTest {
 
@@ -31,7 +32,7 @@ public class RestClientRuleTest {
 
     @Test
     public void workflowTest() {
-        subject.client().get("/foo").then().statusCode(404);
-        subject.client().get("/system/console").then().statusCode(200);
+        subject.client().getWithRetry(request("/foo")).then().statusCode(404);
+        subject.client().getWithRetry(request("/system/console")).then().statusCode(200);
     }
 }
