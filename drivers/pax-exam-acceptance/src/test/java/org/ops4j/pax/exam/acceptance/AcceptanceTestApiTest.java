@@ -36,7 +36,7 @@ public class AcceptanceTestApiTest {
     public void workflowTest() {
         ClientConfiguration correct = new ClientConfiguration("admin","admin");
         RestClient rest = subject.createClient(RestClient.class,correct);
-        rest.get("/foo").then().statusCode(404);
-        rest.get("/system/console").then().statusCode(200);
+        rest.getWithRetry("/foo").then().statusCode(404);
+        rest.getWithRetry("/system/console").then().statusCode(200);
     }
 }

@@ -31,7 +31,7 @@ public class RestClientRuleTest {
 
     @Test
     public void workflowTest() {
-        subject.client().get("/foo").then().statusCode(404);
-        subject.client().get("/system/console").then().statusCode(200);
+        subject.client().getWithRetry("/foo").then().statusCode(404);
+        subject.client().getWithRetry("/system/console").then().statusCode(200);
     }
 }

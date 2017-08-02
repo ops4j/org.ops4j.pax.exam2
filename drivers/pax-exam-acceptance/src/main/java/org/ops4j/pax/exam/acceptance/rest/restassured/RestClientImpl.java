@@ -2,6 +2,8 @@ package org.ops4j.pax.exam.acceptance.rest.restassured;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import org.ops4j.pax.exam.acceptance.ClientConfiguration;
 import org.ops4j.pax.exam.acceptance.SessionSpec;
 import org.ops4j.pax.exam.acceptance.rest.api.RestClient;
@@ -37,8 +39,9 @@ public class RestClientImpl implements RestClient {
 
     }
 
+
     @Override
-    public RestResult get(String s) {
+    public RestResult getWithRetry(String s, Object... payload) {
         Response res = null;
         int retries = this.env.getRetries() * 3;
         Exception retryException = null;
@@ -60,6 +63,36 @@ public class RestClientImpl implements RestClient {
             }
         }
         return new RestResultImpl(res, retryException, this.env.getRetries());
+    }
+
+    @Override
+    public RestResult get(String s, Object... payload) {
+        try {
+            Response res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).when().get(s, payload);
+            return new RestResultImpl(res, null, 0);
+        } catch (Exception e ) {
+            return new RestResultImpl(null, e, 0);
+        }
+    }
+
+    @Override
+    public RestResult post(String s, Object... payload) {
+            try {
+                Response res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).when().post(s, payload);
+                return new RestResultImpl(res, null, 0);
+            } catch (Exception e ) {
+                return new RestResultImpl(null, e, 0);
+            }
+    }
+
+    @Override
+    public RestResult put(String s, Object... payload) {
+        try {
+            Response res = given().auth().basic(clientConfig.getUser(), clientConfig.getPassword()).when().put(s, payload);
+            return new RestResultImpl(res, null, 0);
+        } catch (Exception e ) {
+            return new RestResultImpl(null, e, 0);
+        }
     }
 
     private class RestResultImpl implements RestResult {
