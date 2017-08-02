@@ -9,6 +9,7 @@ import org.ops4j.pax.exam.acceptance.rest.api.RestClient;
 
 import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.composite;
+import static org.ops4j.pax.exam.acceptance.rest.api.RestRequest.request;
 
 public class AcceptanceTestApiTest {
 
@@ -36,7 +37,7 @@ public class AcceptanceTestApiTest {
     public void workflowTest() {
         ClientConfiguration correct = new ClientConfiguration("admin","admin");
         RestClient rest = subject.createClient(RestClient.class,correct);
-        rest.getWithRetry("/foo").then().statusCode(404);
-        rest.getWithRetry("/system/console").then().statusCode(200);
+        rest.getWithRetry(request("/foo")).then().statusCode(404);
+        rest.getWithRetry(request("/system/console")).then().statusCode(200);
     }
 }
