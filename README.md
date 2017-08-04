@@ -24,7 +24,7 @@ formatter in `assets/EclipseJavaFormatter.xml`.
  
 ## Build
 
-You'll need a machine with Java 7+ and Apache Maven 3 installed.
+You'll need a machine with Java 8+ and Apache Maven 3 installed.
 
 Checkout:
 
