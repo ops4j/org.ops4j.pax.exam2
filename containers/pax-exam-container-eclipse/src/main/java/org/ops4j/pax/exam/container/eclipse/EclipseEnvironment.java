@@ -15,29 +15,25 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import java.util.List;
+import org.osgi.framework.Filter;
 
 /**
- * Option that adds a feature to pax exam, take care that in general a feature can't be installed
- * directly inside an Eclipse Framework, use
- * {@link EclipseProvision#feature(String, org.osgi.framework.Version)} if you want to add the
- * bundles(!) of a feature to your run
+ * Defines the system a particular software product runs on
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseFeatureOption extends EclipseFeature, EclipseVersionedArtifactOption {
+public interface EclipseEnvironment {
 
-    public List<EclipseFeatureBundle> getBundles();
+    boolean matches(String value, String... keys);
 
-    public List<EclipseFeature> getIncluded();
+    boolean matches(Filter filter);
 
-    public static interface EclipseFeatureBundle extends EclipseBundle {
+    ModifiableEclipseEnvironment copy();
 
-        boolean isFragment();
+    public static interface ModifiableEclipseEnvironment extends EclipseEnvironment {
 
-        boolean isUnpack();
-
-        boolean matches(EclipseEnvironment environment);
+        void set(String key, String value);
     }
+
 }

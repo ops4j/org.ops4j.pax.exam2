@@ -22,6 +22,7 @@ import java.util.List;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.impl.repository.EclipseClassifiedVersionedArtifact;
@@ -78,7 +79,8 @@ public class P2EclipseInstallableUnit implements EclipseInstallableUnit {
     }
 
     @Override
-    public P2ResolvedArtifacts resolveArtifacts() throws ArtifactNotFoundException, IOException {
+    public P2ResolvedArtifacts resolveArtifacts(EclipseEnvironment environment)
+        throws ArtifactNotFoundException, IOException {
         P2ResolvedArtifacts artifacts = new P2ResolvedArtifacts();
         List<EclipseFeatureOption> unitFeatures = new ArrayList<>();
         for (EclipseClassifiedVersionedArtifact artifact : unit.getArtifacts()) {
@@ -102,7 +104,7 @@ public class P2EclipseInstallableUnit implements EclipseInstallableUnit {
         }
         if (!unitFeatures.isEmpty()) {
             FeatureResolver featureResolver = new FeatureResolver(artifactRepository,
-                artifactRepository, unitFeatures);
+                artifactRepository, unitFeatures, environment);
             for (EclipseBundleOption bundle : featureResolver.getBundleSource()
                 .getIncludedArtifacts()) {
                 if (artifacts.getBundleSource().addBundle(bundle)) {

@@ -20,14 +20,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.ResolvedArtifacts;
@@ -36,6 +34,7 @@ import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitRequireme
 import org.ops4j.pax.exam.container.eclipse.EclipseProvision.IncludeMode;
 import org.ops4j.pax.exam.container.eclipse.EclipseRepository;
 import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment.ModifiableEclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.AbstractParser;
 import org.ops4j.pax.exam.container.eclipse.impl.repository.ResolvedRequirements;
@@ -75,15 +74,16 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
     private final ContextEclipseBundleSource bundleSource = new ContextEclipseBundleSource();
     private final ContextEclipseFeatureSource featureSource = new ContextEclipseFeatureSource();
     private final ContextEclipseUnitSource unitSource = new ContextEclipseUnitSource();
-    private final Map<String, String> enviroument = new HashMap<String, String>();
+    private final ModifiableEclipseEnvironment enviroument;
 
     public UnitResolver(Collection<? extends EclipseUnitSource> repositories, IncludeMode mode,
-        Collection<EclipseInstallableUnit> units) throws ArtifactNotFoundException, IOException {
+        Collection<EclipseInstallableUnit> units, boolean includeFeatures,
+        EclipseEnvironment enviroument) throws ArtifactNotFoundException, IOException {
         this.mode = mode;
         this.repositories = repositories.toArray(new EclipseUnitSource[0]);
-        Properties properties = System.getProperties();
-        for (String key : properties.stringPropertyNames()) {
-            enviroument.put(key, properties.getProperty(key));
+        this.enviroument = enviroument.copy();
+        if (includeFeatures) {
+            this.enviroument.set("org.eclipse.update.install.features", "true");
         }
         MetaDataProperties cache = null;
         P2Resolver p2Resolver = null;
@@ -254,7 +254,7 @@ public class UnitResolver extends BundleAndFeatureAndUnitSource {
 
     private void addArtifacts(EclipseInstallableUnit unit, Set<String> resolved)
         throws IOException, ArtifactNotFoundException {
-        ResolvedArtifacts artifacts = unit.resolveArtifacts();
+        ResolvedArtifacts artifacts = unit.resolveArtifacts(enviroument);
         for (EclipseBundleOption bundle : artifacts.getBundles()) {
             if (bundleSource.addBundle(bundle)) {
                 resolved.add(encode(KEY_BUNDLE, bundle));

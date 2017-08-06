@@ -19,11 +19,11 @@ import java.util.List;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser.PluginInfo;
 
 /**
  * 
@@ -47,7 +47,7 @@ public final class P2EclipseFeatureOption extends AbstractEclipseFeatureOption<P
     }
 
     @Override
-    protected List<? extends EclipseBundle> getBundles(ArtifactInfo<P2Feature> bundleInfo) {
+    protected List<PluginInfo> getBundles(ArtifactInfo<P2Feature> bundleInfo) {
         return featureParser.getPlugins();
     }
 

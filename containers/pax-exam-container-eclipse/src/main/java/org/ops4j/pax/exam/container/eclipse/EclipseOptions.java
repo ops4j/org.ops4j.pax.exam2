@@ -32,6 +32,7 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeature
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseProjectSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.ops4j.pax.exam.container.eclipse.impl.CombinedSource;
+import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseProvision;
 import org.ops4j.pax.exam.container.eclipse.impl.EclipseApplicationImpl;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
@@ -48,6 +49,8 @@ import org.ops4j.pax.exam.container.eclipse.impl.sources.workspace.WorkspaceReso
  *
  */
 public class EclipseOptions {
+
+    private static final EclipseEnvironment SYSTEM_ENVIRONMENT = new DefaultEclipseEnvironment();
 
     private static final class EclipseLauncherImpl implements EclipseLauncher {
 
@@ -107,7 +110,14 @@ public class EclipseOptions {
         @Override
         public EclipseApplicationProvision productDefinition(InputStream productFile,
             final EclipseArtifactSource source, String... ignoreItems) throws IOException {
-            DefaultEclipseProvision provision = createDefaultProvision(source, ignoreItems);
+            EclipseEnvironment env;
+            if (source instanceof EclipseTargetPlatform) {
+                env = ((EclipseTargetPlatform) source).getEclipseEnvironment();
+            }
+            else {
+                env = SYSTEM_ENVIRONMENT;
+            }
+            DefaultEclipseProvision provision = createDefaultProvision(source, env, ignoreItems);
             ProductParser parser = new ProductParser(productFile);
             provision.product(parser);
             String productID = parser.getProductID();
@@ -129,6 +139,10 @@ public class EclipseOptions {
             return new EclipseProductImplementation(productID);
         }
 
+    }
+
+    public static EclipseEnvironment getSystemEnvironment() {
+        return SYSTEM_ENVIRONMENT;
     }
 
     public static EclipseLauncher launcher(final boolean forked) {
@@ -167,13 +181,14 @@ public class EclipseOptions {
     }
 
     public static <Source extends EclipseBundleSource & EclipseFeatureSource> EclipseBundleSource fromFeatures(
-        Source source, EclipseFeature... features) throws ArtifactNotFoundException, IOException {
-        return fromFeatures(source, source, features);
+        Source source, EclipseEnvironment environment, EclipseFeature... features)
+        throws ArtifactNotFoundException, IOException {
+        return fromFeatures(source, source, environment, features);
     }
 
     public static EclipseBundleSource fromFeatures(EclipseBundleSource bundleSource,
-        EclipseFeatureSource featureSource, EclipseFeature... features)
-        throws ArtifactNotFoundException, IOException {
+        EclipseFeatureSource featureSource, EclipseEnvironment environment,
+        EclipseFeature... features) throws ArtifactNotFoundException, IOException {
         List<EclipseFeatureOption> bootFeatures = new ArrayList<>();
         for (EclipseFeature feature : features) {
             if (feature instanceof EclipseFeatureOption) {
@@ -183,7 +198,7 @@ public class EclipseOptions {
                 bootFeatures.add(featureSource.feature(feature.getId()));
             }
         }
-        return new FeatureResolver(bundleSource, featureSource, bootFeatures);
+        return new FeatureResolver(bundleSource, featureSource, bootFeatures, environment);
     }
 
     public static CombinedEclipseArtifactSource combine(final EclipseArtifactSource... sources) {
@@ -193,11 +208,23 @@ public class EclipseOptions {
 
     public static EclipseProvision provision(final EclipseArtifactSource source,
         String... ignoreItems) {
-        return createDefaultProvision(source, ignoreItems);
+        EclipseEnvironment env;
+        if (source instanceof EclipseTargetPlatform) {
+            env = ((EclipseTargetPlatform) source).getEclipseEnvironment();
+        }
+        else {
+            env = SYSTEM_ENVIRONMENT;
+        }
+        return createDefaultProvision(source, env, ignoreItems);
+    }
+
+    public static EclipseProvision provision(final EclipseArtifactSource source,
+        EclipseEnvironment environment, String... ignoreItems) {
+        return createDefaultProvision(source, environment, ignoreItems);
     }
 
     private static DefaultEclipseProvision createDefaultProvision(
-        final EclipseArtifactSource source, String... ignoreItems) {
+        final EclipseArtifactSource source, EclipseEnvironment environment, String... ignoreItems) {
         final Set<String> ignored = new HashSet<>();
         if (ignoreItems != null) {
             ignored.addAll(Arrays.asList(ignoreItems));
@@ -206,7 +233,7 @@ public class EclipseOptions {
         ignored.add("org.eclipse.osgi");
         // We do the job of the configurator
         ignored.add("org.eclipse.equinox.simpleconfigurator");
-        return new DefaultEclipseProvision(source, ignored);
+        return new DefaultEclipseProvision(source, environment, ignored);
     }
 
     public static interface CombinedEclipseArtifactSource

@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseFeatureOption;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser.PluginInfo;
 
 /**
  * Option for workspace features
@@ -45,8 +45,7 @@ public final class WorkspaceEclipseFeatureOption
     }
 
     @Override
-    protected List<? extends EclipseBundle> getBundles(
-        ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
+    protected List<PluginInfo> getBundles(ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
         return bundleInfo.getContext().getFeature().getPlugins();
     }
 

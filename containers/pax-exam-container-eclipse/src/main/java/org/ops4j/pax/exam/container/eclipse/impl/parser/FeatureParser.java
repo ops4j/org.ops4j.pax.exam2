@@ -25,8 +25,9 @@ import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
+import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption.EclipseFeatureBundle;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.osgi.framework.Version;
 import org.w3c.dom.Element;
@@ -58,11 +59,7 @@ public class FeatureParser extends AbstractParser {
             label = getAttribute(element, "label", false);
             version = stringToVersion(getAttribute(element, "version", false));
             for (Node node : evaluate(element, "/feature/plugin")) {
-                String pluginId = getAttribute(node, "id", true);
-                String pluginVersion = getAttribute(node, "version", false);
-                String pluginUnpack = getAttribute(node, "unpack", false);
-                plugins.add(new PluginInfo(pluginId, stringToVersion(pluginVersion),
-                    Boolean.parseBoolean(pluginUnpack)));
+                plugins.add(new PluginInfo(node));
             }
             for (Node node : evaluate(element, "/feature/includes")) {
                 String pluginId = getAttribute(node, "id", true);
@@ -101,10 +98,46 @@ public class FeatureParser extends AbstractParser {
         return Collections.unmodifiableList(included);
     }
 
-    public class PluginInfo extends ArtifactInfo<Boolean> implements EclipseBundle {
+    public class PluginInfo extends ArtifactInfo<Void> implements EclipseFeatureBundle {
 
-        public PluginInfo(String symbolicName, Version version, Boolean context) {
-            super(symbolicName, version, context);
+        private final boolean unpack;
+        private final boolean fragment;
+        private final String os;
+        private final String ws;
+        private final String arch;
+
+        public PluginInfo(Node node) {
+            super(getAttribute(node, "id", true),
+                stringToVersion(getAttribute(node, "version", false)), null);
+            unpack = Boolean.parseBoolean(getAttribute(node, "unpack", false));
+            fragment = Boolean.parseBoolean(getAttribute(node, "fragment", false));
+            os = getAttribute(node, "os", false);
+            ws = getAttribute(node, "ws", false);
+            arch = getAttribute(node, "arch", false);
+        }
+
+        @Override
+        public boolean isFragment() {
+            return fragment;
+        }
+
+        @Override
+        public boolean isUnpack() {
+            return unpack;
+        }
+
+        @Override
+        public boolean matches(EclipseEnvironment environment) {
+            if (!environment.matches(os, "osgi.os", "os.name")) {
+                return false;
+            }
+            if (!environment.matches(ws, "osgi.ws")) {
+                return false;
+            }
+            if (!environment.matches(arch, "osgi.arch", "os.arch")) {
+                return false;
+            }
+            return true;
         }
 
     }

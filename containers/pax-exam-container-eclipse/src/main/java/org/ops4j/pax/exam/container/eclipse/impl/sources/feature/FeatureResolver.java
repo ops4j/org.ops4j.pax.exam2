@@ -20,10 +20,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption.EclipseFeatureBundle;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.ContextEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.ContextEclipseFeatureSource;
@@ -44,9 +45,12 @@ public class FeatureResolver extends BundleAndFeatureSource {
     private final ContextEclipseBundleSource bundles = new ContextEclipseBundleSource();
     private final ContextEclipseFeatureSource features = new ContextEclipseFeatureSource();
 
+    private final EclipseEnvironment environment;
+
     public FeatureResolver(EclipseBundleSource bundleSource, EclipseFeatureSource featureSource,
-        Collection<EclipseFeatureOption> includedFeatures)
+        Collection<EclipseFeatureOption> includedFeatures, EclipseEnvironment environment)
         throws ArtifactNotFoundException, IOException {
+        this.environment = environment;
         for (EclipseFeatureOption feature : includedFeatures) {
             addFeature(feature, bundleSource, featureSource);
         }
@@ -62,9 +66,13 @@ public class FeatureResolver extends BundleAndFeatureSource {
             return;
 
         }
-        for (EclipseBundle bundle : feature.getBundles()) {
+        for (EclipseFeatureBundle bundle : feature.getBundles()) {
             if (bundles.containsBundle(bundle)) {
                 // we already have included this bundle
+                continue;
+            }
+            if (!bundle.matches(environment)) {
+                // not valid for our env...
                 continue;
             }
             EclipseBundleOption resolvedBundle = bundleSource.bundle(bundle.getId());

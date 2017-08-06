@@ -28,4 +28,5 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSou
 public interface EclipseTargetPlatform
     extends EclipseBundleSource, EclipseFeatureSource, EclipseUnitSource {
 
+    EclipseEnvironment getEclipseEnvironment();
 }

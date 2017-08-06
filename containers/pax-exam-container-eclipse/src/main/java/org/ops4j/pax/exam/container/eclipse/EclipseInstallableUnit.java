@@ -17,7 +17,6 @@ package org.ops4j.pax.exam.container.eclipse;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
@@ -41,7 +40,8 @@ public interface EclipseInstallableUnit extends EclipseVersionedArtifact {
 
     Collection<UnitRequirement> getRequirements();
 
-    ResolvedArtifacts resolveArtifacts() throws ArtifactNotFoundException, IOException;
+    ResolvedArtifacts resolveArtifacts(EclipseEnvironment environment)
+        throws ArtifactNotFoundException, IOException;
 
     Collection<UnitProviding> getProvided();
 
@@ -58,7 +58,7 @@ public interface EclipseInstallableUnit extends EclipseVersionedArtifact {
 
         boolean matches(UnitProviding providing);
 
-        boolean matches(Map<String, ?> map);
+        boolean matches(EclipseEnvironment environment);
 
         String getID();
 

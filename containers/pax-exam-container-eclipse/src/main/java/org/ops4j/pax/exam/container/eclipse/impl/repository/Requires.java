@@ -16,9 +16,9 @@
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.eclipse.osgi.internal.framework.FilterImpl;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
 import org.osgi.framework.Filter;
@@ -57,7 +57,7 @@ public final class Requires extends VersionRangeSerializable
     }
 
     @Override
-    public boolean matches(Map<String, ?> map) {
+    public boolean matches(EclipseEnvironment environment) {
         if (filterString != null) {
             if (filter == null) {
                 try {
@@ -67,7 +67,7 @@ public final class Requires extends VersionRangeSerializable
                     throw new IllegalArgumentException(e);
                 }
             }
-            return filter.matches(map);
+            return environment.matches(filter);
         }
         return true;
     }

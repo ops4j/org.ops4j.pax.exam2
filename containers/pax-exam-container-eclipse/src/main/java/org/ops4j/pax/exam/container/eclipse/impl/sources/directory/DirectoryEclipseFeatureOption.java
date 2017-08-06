@@ -21,10 +21,10 @@ import java.util.List;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseFeatureOption;
+import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser.PluginInfo;
 
 /**
  * FeatureOption Option for {@link DirectoryResolver}
@@ -52,8 +52,7 @@ public final class DirectoryEclipseFeatureOption
     }
 
     @Override
-    protected List<? extends EclipseBundle> getBundles(
-        ArtifactInfo<DirectoryFeatureFile> bundleInfo) {
+    protected List<PluginInfo> getBundles(ArtifactInfo<DirectoryFeatureFile> bundleInfo) {
         return bundleInfo.getContext().getFeature().getPlugins();
     }
 

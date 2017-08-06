@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
@@ -45,7 +44,7 @@ public abstract class AbstractEclipseFeatureOption<T>
     }
 
     @Override
-    public final List<EclipseBundle> getBundles() {
+    public final List<EclipseFeatureBundle> getBundles() {
         return Collections.unmodifiableList(getBundles(bundleInfo));
     }
 
@@ -81,7 +80,7 @@ public abstract class AbstractEclipseFeatureOption<T>
 
     protected abstract List<? extends EclipseFeature> getIncluded(ArtifactInfo<T> bundleInfo);
 
-    protected abstract List<? extends EclipseBundle> getBundles(ArtifactInfo<T> bundleInfo);
+    protected abstract List<? extends EclipseFeatureBundle> getBundles(ArtifactInfo<T> bundleInfo);
 
     protected abstract boolean isOptional(ArtifactInfo<T> bundleInfo);
 

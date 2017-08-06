@@ -28,8 +28,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
+import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
 import org.ops4j.pax.exam.container.eclipse.EclipseProvision.IncludeMode;
 import org.ops4j.pax.exam.container.eclipse.EclipseTargetPlatform;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
@@ -62,8 +64,11 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
 
     public static final Logger LOG = LoggerFactory.getLogger(TargetResolver.class);
     private final CombinedSource combinedSource;
+    private final EclipseEnvironment eclipseEnvironment;
 
     public TargetResolver(InputStream targetDefinition) throws IOException {
+        // FIXME read from target!
+        eclipseEnvironment = EclipseOptions.getSystemEnvironment();
         List<EclipseArtifactSource> bundleSources = new ArrayList<>();
         TargetPlatformParser target = new TargetPlatformParser(targetDefinition);
         List<TargetPlatformLocation> locations = target.getLocations();
@@ -88,7 +93,7 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
                 EclipseFeatureOption feature = source.feature(featureLocation.id,
                     featureLocation.version);
                 FeatureResolver featureResolver = new FeatureResolver(source, source,
-                    Collections.singleton(feature));
+                    Collections.singleton(feature), eclipseEnvironment);
                 bundleSources.add(featureResolver);
             }
             else if (location instanceof InstallableUnitTargetPlatformLocation) {
@@ -114,7 +119,7 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
                 if (iuLocation.mode == IncludeMode.SLICER) {
                     LOG.info("Resolve {} units with slicer mode...", local.size());
                     UnitResolver source = new UnitResolver(Collections.singleton(repository),
-                        IncludeMode.SLICER, local);
+                        IncludeMode.SLICER, local, true, eclipseEnvironment);
                     bundleSources.add(source);
                 }
                 else {
@@ -129,7 +134,7 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
             LOG.info("Resolve {} units with planner mode...", installunits.size());
             // now resolve the big thing then...
             UnitResolver source = new UnitResolver(repositories.values(), IncludeMode.PLANNER,
-                installunits);
+                installunits, true, eclipseEnvironment);
             bundleSources.add(source);
         }
         combinedSource = new CombinedSource(bundleSources);
@@ -175,6 +180,11 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
     @Override
     protected EclipseUnitSource getUnitSource() {
         return combinedSource;
+    }
+
+    @Override
+    public EclipseEnvironment getEclipseEnvironment() {
+        return eclipseEnvironment;
     }
 
 }

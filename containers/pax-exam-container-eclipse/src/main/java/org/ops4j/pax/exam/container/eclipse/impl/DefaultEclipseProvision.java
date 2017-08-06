@@ -35,6 +35,7 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleS
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
@@ -59,8 +60,11 @@ public class DefaultEclipseProvision implements EclipseProvision {
     private final Set<String> ignoredBundles;
     private final List<Option> bundles = new ArrayList<>();
     private final EclipseArtifactSource source;
+    private final EclipseEnvironment environment;
 
-    public DefaultEclipseProvision(EclipseArtifactSource source, final Set<String> ignoredBundles) {
+    public DefaultEclipseProvision(EclipseArtifactSource source, EclipseEnvironment environment,
+        final Set<String> ignoredBundles) {
+        this.environment = environment;
         this.source = source == null ? new CombinedSource(Collections.emptyList()) : source;
         this.ignoredBundles = ignoredBundles;
     }
@@ -140,7 +144,8 @@ public class DefaultEclipseProvision implements EclipseProvision {
             for (EclipseVersionedArtifact artifact : parser.getFeatures()) {
                 features.add(fs.feature(artifact.getId(), artifact.getVersion()));
             }
-            FeatureResolver featureSource = new FeatureResolver(getBundleSource(), fs, features);
+            FeatureResolver featureSource = new FeatureResolver(getBundleSource(), fs, features,
+                environment);
             bundles = featureSource.getBundleSource().getIncludedArtifacts();
         }
         else {
@@ -182,7 +187,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
                     feature.getVersion(), VersionRange.RIGHT_CLOSED));
         }
         FeatureResolver featureSource = new FeatureResolver(getBundleSource(), getFeatureSource(),
-            Collections.singleton(eclipseFeatureOption));
+            Collections.singleton(eclipseFeatureOption), environment);
         addAll(featureSource.getBundleSource().getIncludedArtifacts());
         return this;
     }
@@ -250,7 +255,8 @@ public class DefaultEclipseProvision implements EclipseProvision {
         if (source instanceof EclipseBundleSource) {
             repositories.add(getUnitSource());
         }
-        UnitResolver resolver = new UnitResolver(repositories, mode, Arrays.asList(units));
+        UnitResolver resolver = new UnitResolver(repositories, mode, Arrays.asList(units), false,
+            environment);
         addAll(resolver.getBundleSource().getIncludedArtifacts());
         return this;
     }
