@@ -24,6 +24,7 @@ import java.util.List;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
@@ -97,7 +98,8 @@ public class P2MetadataRepositoryParser extends AbstractParser {
         return map;
     }
 
-    private List<Requires> readRequires(Iterable<Node> evaluate) {
+    private List<Requires> readRequires(Iterable<Node> evaluate)
+        throws IOException, XPathExpressionException {
         ArrayList<Requires> list = new ArrayList<>();
         for (Node node : evaluate) {
             VersionRange range = stringToVersionRange(getAttribute(node, "range", false));
@@ -107,10 +109,21 @@ public class P2MetadataRepositoryParser extends AbstractParser {
             String matchParameters = getAttribute(node, "matchParameters", false);
             Boolean optional = Boolean.parseBoolean(getAttribute(node, "optional", false));
             Boolean greedy = Boolean.parseBoolean(getAttribute(node, "greedy", false));
-            list.add(
-                new Requires(namespace, name, range, match, matchParameters, optional, greedy));
+            list.add(new Requires(namespace, name, range, match, matchParameters, optional, greedy,
+                getFilter(node)));
         }
         return list;
+    }
+
+    private String getFilter(Node node) throws XPathExpressionException {
+        Node filternode = getNode(node, "./filter");
+        if (filternode != null) {
+            String textContent = filternode.getTextContent();
+            if (textContent != null) {
+                return textContent.trim();
+            }
+        }
+        return null;
     }
 
     private List<Provides> readProvides(Iterable<Node> evaluate) {

@@ -36,6 +36,7 @@ import org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository.P2Cache.Me
 import org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository.P2Cache.P2CacheStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tukaani.xz.XZInputStream;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -106,7 +107,7 @@ public final class P2Index {
         if (metadataRepository == null) {
             metadataRepository = fromMetaCache("meta");
             if (metadataRepository == null) {
-                ReproOpenResult file = Parser.readReproFile(url, metadataNames);
+                ReproOpenResult file = Parser.tryReproFiles(url, metadataNames);
                 if (isdefault) {
                     indexProperties.put(PROPERTY_METADATA_FACTORY,
                         file.name + "," + METADATA_FACTORY_DEFAULT);
@@ -163,7 +164,11 @@ public final class P2Index {
         if (artifactRepository == null) {
             artifactRepository = fromMetaCache("artifact");
             if (artifactRepository == null) {
-                ReproOpenResult file = Parser.readReproFile(url, artifactNames);
+                ReproOpenResult file = Parser.tryReproFiles(url, artifactNames);
+                if (file == null) {
+                    throw new IOException("none of the required names " + artifactNames
+                        + " found at " + url + ", is this a valid repository?");
+                }
                 artifactRepository = new P2RepositoryFileImpl(this, file.root, file.url,
                     file.lastModified);
                 if (isdefault) {
@@ -250,10 +255,10 @@ public final class P2Index {
 
         private synchronized Element getRoot() throws IOException {
             if (root == null) {
-                ReproOpenResult file = Parser.readReproFile(reproURL,
-                    Collections.singletonList(name));
+                ReproOpenResult file = Parser.readReproFile(name, reproURL);
                 if (file == null) {
-                    throw new IllegalStateException("invalid root, try to clear cache!");
+                    throw new IllegalStateException(
+                        "invalid root for url " + reproURL + ", try to clear cache!");
                 }
                 root = file.root;
                 lastModified = file.lastModified;
@@ -284,7 +289,14 @@ public final class P2Index {
                 List<String> childs = Parser.parseChilds(getRoot());
                 List<P2RepositoryFile> result = new ArrayList<>();
                 for (String child : childs) {
-                    URL childUrl = appendSegment(index.url, child);
+                    URL childUrl;
+                    try {
+                        // first check if this already is a valid url...
+                        childUrl = new URL(child);
+                    }
+                    catch (MalformedURLException e) {
+                        childUrl = appendSegment(index.url, child);
+                    }
                     String key = childUrl.toExternalForm();
                     P2Index childIndex = index.cache.get(key);
                     if (childIndex == null) {
@@ -351,41 +363,56 @@ public final class P2Index {
             return getAttribute(element, "type", true);
         }
 
-        private static ReproOpenResult readReproFile(URL url, List<String> names)
+        private static ReproOpenResult tryReproFiles(URL url, List<String> names)
             throws MalformedURLException, IOException {
             for (String name : names) {
                 URL openUrl = appendSegment(url, name);
-                P2CacheStream open = P2Cache.tryOpen(openUrl);
-                if (open != null) {
-                    if (name.endsWith(".xml")) {
-                        return new ReproOpenResult(parse(open), openUrl, name,
-                            open.getLastModified());
-                    }
-                    else if (name.endsWith(".jar")) {
-                        try {
-                            try (JarInputStream stream = new JarInputStream(open)) {
-                                JarEntry entry;
-                                while ((entry = stream.getNextJarEntry()) != null) {
-                                    if (entry.getName()
-                                        .equals(name.substring(0, name.length() - 3) + "xml")) {
-                                        return new ReproOpenResult(parse(stream), openUrl, name,
-                                            open.getLastModified());
-                                    }
-                                }
-                            }
-                        }
-                        finally {
-                            open.close();
-                        }
-                    }
-                    else {
-                        // TODO XZ-Format maybe content type guessing by reading first bytes??
-                    }
+                ReproOpenResult result = readReproFile(name, openUrl);
+                if (result != null) {
+                    return result;
                 }
             }
             return null;
         }
 
+        private static ReproOpenResult readReproFile(String name, URL openUrl) throws IOException {
+            P2CacheStream open = P2Cache.tryOpen(openUrl);
+            if (open != null) {
+                if (name.endsWith(".xml")) {
+                    return new ReproOpenResult(parse(open), openUrl, name, open.getLastModified());
+                }
+                else if (name.endsWith(".jar")) {
+                    try {
+                        try (JarInputStream stream = new JarInputStream(open)) {
+                            JarEntry entry;
+                            while ((entry = stream.getNextJarEntry()) != null) {
+                                if (entry.getName()
+                                    .equals(name.substring(0, name.length() - 3) + "xml")) {
+                                    return new ReproOpenResult(parse(stream), openUrl, name,
+                                        open.getLastModified());
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        open.close();
+                    }
+                }
+                else if (name.endsWith(".xz")) {
+                    try {
+                        return new ReproOpenResult(parse(new XZInputStream(open)), openUrl, name,
+                            open.getLastModified());
+                    }
+                    finally {
+                        open.close();
+                    }
+                }
+                else {
+                    // TODO content type guessing by reading first bytes??
+                }
+            }
+            return null;
+        }
     }
 
     private static final class ReproOpenResult {

@@ -49,31 +49,34 @@ public class P2MetadataRepository extends AbstractEclipseUnitSource<P2Unit> {
 
     private final String name;
 
+    private final long lastModified;
+
     public P2MetadataRepository(String name, P2RepositoryFile root,
         P2ArtifactRepository artifactRepository) throws IOException {
         this.name = name;
         this.artifactRepository = artifactRepository;
         try {
-            addFile(root);
+            lastModified = addFile(root);
         }
         catch (XPathException | InvalidSyntaxException e) {
             throw new IOException(e);
         }
     }
 
-    private void addFile(P2RepositoryFile file)
+    private long addFile(P2RepositoryFile file)
         throws IOException, InvalidSyntaxException, XPathException {
         if (file.isComposite()) {
+            long lastm = -1;
             List<P2RepositoryFile> childs = file.getChilds();
             for (P2RepositoryFile child : childs) {
-                addFile(child);
+                lastm = Math.max(lastm, addFile(child));
             }
+            return lastm;
         }
         else if (file.isMetadataRepository()) {
             String reproName = name + file.getURL();
             MetaDataProperties cache = P2Cache.getMetaDataProperties(file.getURL());
-            if (cache.getProperty(CACHE_KEY_LASTMODIFIED, "")
-                .equals(String.valueOf(file.getLastModified()))) {
+            if (!cache.isModified(CACHE_KEY_LASTMODIFIED, file.getLastModified())) {
                 LOG.info("Use cached data for {}@{}...", file.getType(), file.getURL());
                 for (String key : cache.objectNames()) {
                     if (key.startsWith(CACHE_KEY_UNIT)) {
@@ -83,7 +86,7 @@ public class P2MetadataRepository extends AbstractEclipseUnitSource<P2Unit> {
                 }
             }
             else {
-                cache.clear();
+                cache.clearObjects(CACHE_KEY_UNIT);
                 LOG.info("Parse {}@{}...", file.getType(), file.getURL());
                 P2MetadataRepositoryParser parser = new P2MetadataRepositoryParser(
                     file.getRespository());
@@ -94,12 +97,14 @@ public class P2MetadataRepository extends AbstractEclipseUnitSource<P2Unit> {
                     String key = CACHE_KEY_UNIT + unit.getId() + ":" + unit.getVersion();
                     cache.setObjectProperty(key, unit);
                 }
-                cache.setProperty(CACHE_KEY_LASTMODIFIED, String.valueOf(file.getLastModified()));
+                cache.setProperty(CACHE_KEY_LASTMODIFIED, file.getLastModified());
                 cache.store();
             }
+            return file.getLastModified();
         }
         else {
             LOG.info("Ignore P2RepositoryFile of type {}@{}...", file.getType(), file.getURL());
+            return -1;
         }
 
     }
@@ -107,6 +112,10 @@ public class P2MetadataRepository extends AbstractEclipseUnitSource<P2Unit> {
     @Override
     protected EclipseInstallableUnit getArtifact(ArtifactInfo<P2Unit> info) throws IOException {
         return new P2EclipseInstallableUnit(info.getContext(), artifactRepository, this);
+    }
+
+    public long getLastModified() {
+        return lastModified;
     }
 
 }

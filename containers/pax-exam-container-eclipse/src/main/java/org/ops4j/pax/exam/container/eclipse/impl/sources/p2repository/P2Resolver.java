@@ -49,6 +49,10 @@ public class P2Resolver extends BundleAndFeatureAndUnitSource implements Eclipse
         return url;
     }
 
+    public long getLastModified() {
+        return Math.max(artifactRepository.getLastModified(), metadataRepository.getLastModified());
+    }
+
     @Override
     protected EclipseUnitSource getUnitSource() {
         return metadataRepository;

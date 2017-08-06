@@ -32,6 +32,7 @@ import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -184,7 +185,6 @@ public class P2Cache {
 
     public static class MetaDataProperties extends Properties {
 
-        private static final String FILE_PREFIX = "objfile:";
         private static final long serialVersionUID = 8907898492960803462L;
         private final File metaFile;
         private final File metaObjectFile;
@@ -262,6 +262,36 @@ public class P2Cache {
 
         public Set<String> objectNames() {
             return Collections.unmodifiableSet(objectBuffer.keySet());
+        }
+
+        public void clearObjects(String cacheKey) {
+            for (Iterator<java.util.Map.Entry<String, Object>> iterator = objectBuffer.entrySet()
+                .iterator(); iterator.hasNext();) {
+                String key = iterator.next().getKey();
+                if (key.startsWith(cacheKey)) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        public void clear(String cacheKey) {
+            Set<String> names = stringPropertyNames();
+            for (String key : names) {
+                if (key.startsWith(cacheKey)) {
+                    remove(key);
+                }
+            }
+        }
+
+        public boolean isModified(String cacheKey, long lastModified) {
+            return lastModified < 0 || Long.parseLong(getProperty(cacheKey, "-1")) != lastModified;
+        }
+
+        public void setProperty(String key, Object value) {
+            if (value == null) {
+                setProperty(key, (String) null);
+            }
+            setProperty(key, value.toString());
         }
     }
 

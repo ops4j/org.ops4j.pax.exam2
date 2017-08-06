@@ -55,31 +55,34 @@ public class P2ArtifactRepository extends BundleAndFeatureSource {
 
     private final String name;
 
+    private final long lastModified;
+
     public P2ArtifactRepository(String name, P2RepositoryFile root) throws IOException {
         this.name = name;
         try {
-            addFile(root);
+            lastModified = addFile(root);
         }
         catch (XPathExpressionException | InvalidSyntaxException e) {
             throw new IOException(e);
         }
     }
 
-    private void addFile(P2RepositoryFile file)
+    private long addFile(P2RepositoryFile file)
         throws XPathExpressionException, IOException, InvalidSyntaxException {
         if (file.isComposite()) {
+            long lastmod = -1;
             List<P2RepositoryFile> childs = file.getChilds();
             for (P2RepositoryFile child : childs) {
-                addFile(child);
+                lastmod = Math.max(lastmod, addFile(child));
             }
+            return lastmod;
         }
         else if (file.isArtifactRepository()) {
             List<ArtifactInfo<URL>> bundles;
             List<ArtifactInfo<URL>> features;
             String reproName = name + file.getURL();
             MetaDataProperties cache = P2Cache.getMetaDataProperties(file.getURL());
-            if (cache.getProperty(CACHE_KEY_LASTMODIFIED, "")
-                .equals(String.valueOf(file.getLastModified()))) {
+            if (!cache.isModified(CACHE_KEY_LASTMODIFIED, file.getLastModified())) {
                 LOG.info("Use cached data for {}@{}...", file.getType(), file.getURL());
                 bundles = new ArrayList<>();
                 features = new ArrayList<>();
@@ -96,7 +99,8 @@ public class P2ArtifactRepository extends BundleAndFeatureSource {
                 }
             }
             else {
-                cache.clear();
+                cache.clear(CACHE_KEY_FEATURE);
+                cache.clear(CACHE_KEY_BUNDLE);
                 LOG.info("Parse {}@{}...", file.getType(), file.getURL());
                 P2ArtifactRepositoryParser parser = new P2ArtifactRepositoryParser(
                     file.getIndex().getURL(), file.getRespository());
@@ -115,14 +119,16 @@ public class P2ArtifactRepository extends BundleAndFeatureSource {
                         CACHE_KEY_FEATURE + feature.getId() + ":" + feature.getVersion(),
                         feature.getContext().toExternalForm());
                 }
-                cache.setProperty(CACHE_KEY_LASTMODIFIED, String.valueOf(file.getLastModified()));
+                cache.setProperty(CACHE_KEY_LASTMODIFIED, file.getLastModified());
                 cache.store();
             }
             bundleSource.addBundles(reproName, bundles);
             featureSource.addFeatures(reproName, features);
+            return file.getLastModified();
         }
         else {
             LOG.info("Ignore P2RepositoryFile of type {}@{}...", file.getType(), file.getURL());
+            return -1;
         }
 
     }
@@ -143,6 +149,10 @@ public class P2ArtifactRepository extends BundleAndFeatureSource {
     @Override
     protected EclipseFeatureSource getFeatureSource() {
         return featureSource;
+    }
+
+    public long getLastModified() {
+        return lastModified;
     }
 
 }

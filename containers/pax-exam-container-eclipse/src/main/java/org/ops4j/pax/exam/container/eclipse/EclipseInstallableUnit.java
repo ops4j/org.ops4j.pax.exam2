@@ -17,6 +17,7 @@ package org.ops4j.pax.exam.container.eclipse;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
@@ -56,6 +57,8 @@ public interface EclipseInstallableUnit extends EclipseVersionedArtifact {
     public static interface UnitRequirement {
 
         boolean matches(UnitProviding providing);
+
+        boolean matches(Map<String, ?> map);
 
         String getID();
 

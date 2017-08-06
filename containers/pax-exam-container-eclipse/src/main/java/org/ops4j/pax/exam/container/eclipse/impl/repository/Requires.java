@@ -16,9 +16,13 @@
 package org.ops4j.pax.exam.container.eclipse.impl.repository;
 
 import java.io.Serializable;
+import java.util.Map;
 
+import org.eclipse.osgi.internal.framework.FilterImpl;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit.UnitProviding;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.VersionRange;
 
 /**
@@ -37,9 +41,11 @@ public final class Requires extends VersionRangeSerializable
     private final String matchParameters;
     private final boolean optional;
     private final boolean greedy;
+    private final String filterString;
+    private transient Filter filter;
 
     public Requires(String namespace, String name, VersionRange versionRange, String match,
-        String matchParameters, boolean optional, boolean greedy) {
+        String matchParameters, boolean optional, boolean greedy, String filter) {
         super(versionRange);
         this.namespace = namespace;
         this.name = name;
@@ -47,6 +53,23 @@ public final class Requires extends VersionRangeSerializable
         this.matchParameters = matchParameters;
         this.optional = optional;
         this.greedy = greedy;
+        this.filterString = filter;
+    }
+
+    @Override
+    public boolean matches(Map<String, ?> map) {
+        if (filterString != null) {
+            if (filter == null) {
+                try {
+                    filter = FilterImpl.newInstance(filterString);
+                }
+                catch (InvalidSyntaxException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+            return filter.matches(map);
+        }
+        return true;
     }
 
     @Override
