@@ -46,7 +46,7 @@ public interface TestContainer {
      * @throws IOException
      *             - in case of I/O problem
      */
-    void start() throws TimeoutException, TestContainerException, IOException;
+    void start() throws TestContainerException, IOException;
 
     /**
      * Installs a probe from the given stream. A test container supports at most one probe at a
@@ -83,4 +83,9 @@ public interface TestContainer {
      */
     void runTest(TestDescription description, TestListener listener)
         throws IOException, TestContainerException, InterruptedException;
+
+    default Object remoteCall(Class<?> serviceType, String methodName, Class<?>[] methodParamTypes,
+                      String filter, RelativeTimeout timeout, Object... actualParams)  {
+        throw new UnsupportedOperationException("Not available.");
+    }
 }

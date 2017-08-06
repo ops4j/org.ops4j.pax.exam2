@@ -47,6 +47,7 @@ import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.RelativeTimeout;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -392,6 +393,19 @@ public class ForkedTestContainer implements TestContainer {
         // CHECKSTYLE:SKIP
         catch (Exception exc) {
             throw new TestContainerException(exc);
+        }
+    }
+
+    @Override
+    public Object remoteCall(Class<?> serviceType, String methodName, Class<?>[] methodParamTypes,
+                     String filter, RelativeTimeout timeout, Object... actualParams) {
+        try {
+            filter = "(&(objectClass="+serviceType.getName()+"))";
+            RemoteServiceReference[] references = remoteFramework.getServiceReferences(
+                    filter, timeout.getValue(), TimeUnit.MILLISECONDS);
+            return remoteFramework.invokeMethodOnService(references[0], methodName, actualParams);
+        }catch(Exception ise) {
+            throw new RuntimeException(ise);
         }
     }
 }
