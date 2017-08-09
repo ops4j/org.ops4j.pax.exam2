@@ -13,7 +13,6 @@ public class SessionSpec {
     @NonNull
     private String host;
 
-    @NonNull
     private int port;
 
     private int retries = 5;
