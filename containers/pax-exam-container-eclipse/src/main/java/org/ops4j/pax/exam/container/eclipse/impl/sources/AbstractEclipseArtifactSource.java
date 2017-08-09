@@ -24,6 +24,8 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * Abstract class for implementations based on an {@link ArtifactInfoMap}
@@ -32,7 +34,7 @@ import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
  *
  * @param <ArtifactInfoContext>
  */
-public abstract class AbstractEclipseArtifactSource<ArtifactInfoContext, ArtifactOption extends EclipseVersionedArtifact>
+public abstract class AbstractEclipseArtifactSource<ArtifactInfoType extends ArtifactInfo<ArtifactInfoContext>, ArtifactInfoContext, ArtifactOption extends EclipseVersionedArtifact>
     implements EclipseArtifactSource {
 
     private ArtifactInfoMap<ArtifactInfoContext> artifactsMap;
@@ -42,11 +44,12 @@ public abstract class AbstractEclipseArtifactSource<ArtifactInfoContext, Artifac
      * @return all artifacts this source contains
      * @throws IOException
      */
+    @SuppressWarnings("unchecked")
     public final List<ArtifactOption> getIncludedArtifacts() throws IOException {
         List<ArtifactOption> list = new ArrayList<>();
         for (ArtifactInfo<ArtifactInfoContext> artifactInfo : getArtifactsMap().getArtifacts()) {
             try {
-                list.add(getArtifact(artifactInfo));
+                list.add(getArtifact((ArtifactInfoType) artifactInfo));
             }
             catch (ArtifactNotFoundException e) {
                 // just in case ... ignore it
@@ -55,10 +58,19 @@ public abstract class AbstractEclipseArtifactSource<ArtifactInfoContext, Artifac
         return list;
     }
 
-    protected abstract ArtifactOption getArtifact(ArtifactInfo<ArtifactInfoContext> info)
-        throws IOException;
+    @SuppressWarnings("unchecked")
+    protected ArtifactInfoType get(String id, Version version) {
+        return (ArtifactInfoType) getArtifactsMap().get(id, version);
+    }
 
-    protected ArtifactInfoMap<ArtifactInfoContext> getArtifactsMap() {
+    @SuppressWarnings("unchecked")
+    protected ArtifactInfoType get(String id, VersionRange versionRange) {
+        return (ArtifactInfoType) getArtifactsMap().get(id, versionRange);
+    }
+
+    protected abstract ArtifactOption getArtifact(ArtifactInfoType info) throws IOException;
+
+    private ArtifactInfoMap<ArtifactInfoContext> getArtifactsMap() {
         if (artifactsMap == null) {
             artifactsMap = new ArtifactInfoMap<>();
         }
@@ -69,7 +81,7 @@ public abstract class AbstractEclipseArtifactSource<ArtifactInfoContext, Artifac
         return getArtifactsMap().get(artifact) != null;
     }
 
-    protected final boolean add(ArtifactInfo<ArtifactInfoContext> artifactInfo) {
+    protected final boolean add(ArtifactInfoType artifactInfo) {
         ArtifactInfoMap<ArtifactInfoContext> map = getArtifactsMap();
         if (map.get(artifactInfo) == null) {
             map.add(artifactInfo);

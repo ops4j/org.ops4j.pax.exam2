@@ -20,7 +20,7 @@ import java.io.File;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 
@@ -32,7 +32,7 @@ import org.ops4j.pax.exam.options.UrlProvisionOption;
  */
 public final class DirectoryEclipseBundleOption extends AbstractEclipseBundleOption<File> {
 
-    public DirectoryEclipseBundleOption(ArtifactInfo<File> bundleInfo)
+    public DirectoryEclipseBundleOption(BundleArtifactInfo<File> bundleInfo)
         throws ArtifactNotFoundException {
         super(bundleInfo);
         final File file = bundleInfo.getContext();
@@ -43,7 +43,7 @@ public final class DirectoryEclipseBundleOption extends AbstractEclipseBundleOpt
     }
 
     @Override
-    protected Option toOption(ArtifactInfo<File> bundleInfo) {
+    protected Option toOption(BundleArtifactInfo<File> bundleInfo) {
         UrlProvisionOption bundle = CoreOptions.bundle(bundleInfo.getContext().getAbsolutePath());
         bundle.startLevel(getStartLevel());
         bundle.start(shouldStart());

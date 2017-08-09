@@ -15,11 +15,12 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
+import java.io.File;
 import java.net.URL;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 
@@ -32,29 +33,22 @@ public final class P2EclipseBundleOption extends AbstractEclipseBundleOption<P2B
 
     private final String reproName;
 
-    public P2EclipseBundleOption(ArtifactInfo<P2Bundle> bundleInfo) {
+    public P2EclipseBundleOption(BundleArtifactInfo<P2Bundle> bundleInfo) {
         super(bundleInfo);
         this.reproName = bundleInfo.getContext().getReproName();
     }
 
     @Override
-    protected Option toOption(ArtifactInfo<P2Bundle> bundleInfo) {
+    protected Option toOption(BundleArtifactInfo<P2Bundle> bundleInfo) {
         URL url = bundleInfo.getContext().getUrl();
-        // File cacheFile = P2Cache.getCacheFile(url);
+        File cacheFile = P2Cache.getCacheFile(url);
         UrlProvisionOption bundle;
-        // if (cacheFile.exists()) {
-        // bundle = CoreOptions.bundle(url.toExternalForm());
-        // }
-        // else {
-        // try {
-        // FileUtils.copyURLToFile(url, cacheFile);
-        // bundle = CoreOptions.bundle(cacheFile.toURI().toURL().toExternalForm());
-        // }
-        // catch (IOException e) {
-        // cacheFile.delete();
-        bundle = CoreOptions.bundle(url.toExternalForm());
-        // }
-        // }
+        if (cacheFile.exists()) {
+            bundle = CoreOptions.bundle(cacheFile.toURI().toASCIIString());
+        }
+        else {
+            bundle = CoreOptions.bundle(url.toExternalForm());
+        }
         bundle.startLevel(getStartLevel());
         bundle.start(shouldStart());
         bundle.update(shouldUpdate());

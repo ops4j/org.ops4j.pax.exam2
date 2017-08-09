@@ -23,4 +23,5 @@ package org.ops4j.pax.exam.container.eclipse;
  */
 public interface EclipseBundleOption extends EclipseBundle, EclipseVersionedArtifactOption {
 
+    boolean isSingleton();
 }

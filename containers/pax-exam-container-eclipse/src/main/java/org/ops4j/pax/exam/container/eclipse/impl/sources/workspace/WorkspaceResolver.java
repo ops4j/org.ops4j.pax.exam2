@@ -46,6 +46,7 @@ import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseProject;
 import org.ops4j.pax.exam.container.eclipse.EclipseWorkspace;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
 import org.ops4j.pax.exam.options.ProvisionControl;
@@ -200,7 +201,7 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
         ByteArrayOutputStream projectStream = new ByteArrayOutputStream();
         Manifest manifest = null;
         if (context.hasNature(ProjectParser.JAVA_NATURE)
-            && ArtifactInfo.isBundle(context.getProjectFolder())) {
+            && BundleArtifactInfo.isBundle(context.getProjectFolder())) {
             manifest = ArtifactInfo.readManifest(context.getProjectFolder());
             try (JarOutputStream jar = new JarOutputStream(projectStream, manifest)) {
                 writeProjectTo(context, jar);
@@ -218,7 +219,8 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
             bundle.start(control.shouldStart());
             bundle.update(control.shouldUpdate());
         }
-        if (ArtifactInfo.isBundle(manifest) || context.hasNature(ProjectParser.FEATURE_NATURE)) {
+        if (BundleArtifactInfo.isBundle(manifest)
+            || context.hasNature(ProjectParser.FEATURE_NATURE)) {
             return bundle;
         }
         else {

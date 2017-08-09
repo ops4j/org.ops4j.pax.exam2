@@ -23,4 +23,5 @@ package org.ops4j.pax.exam.container.eclipse;
  */
 public interface EclipseBundle extends EclipseVersionedArtifact {
 
+    boolean isFragment();
 }

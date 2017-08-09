@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 
 /**
  * A {@link EclipseBundleSource} that simply use the context itself as the option
@@ -30,13 +30,13 @@ import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 public class ContextEclipseBundleSource extends AbstractEclipseBundleSource<EclipseBundleOption> {
 
     @Override
-    protected EclipseBundleOption getArtifact(ArtifactInfo<EclipseBundleOption> info)
+    protected EclipseBundleOption getArtifact(BundleArtifactInfo<EclipseBundleOption> info)
         throws IOException {
         return info.getContext();
     }
 
     public boolean addBundle(EclipseBundleOption bundle) {
-        return add(new ArtifactInfo<EclipseBundleOption>(bundle, bundle));
+        return add(new BundleArtifactInfo<EclipseBundleOption>(bundle, bundle));
     }
 
     public boolean containsBundle(EclipseBundle bundle) {

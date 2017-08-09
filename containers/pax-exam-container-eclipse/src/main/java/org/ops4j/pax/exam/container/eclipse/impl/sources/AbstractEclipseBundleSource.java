@@ -20,8 +20,8 @@ import java.io.IOException;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfoMap;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
@@ -33,8 +33,8 @@ import org.osgi.framework.VersionRange;
  *
  * @param <BundleInfoContext>
  */
-public abstract class AbstractEclipseBundleSource<BundleInfoContext>
-    extends AbstractEclipseArtifactSource<BundleInfoContext, EclipseBundleOption>
+public abstract class AbstractEclipseBundleSource<BundleInfoContext> extends
+    AbstractEclipseArtifactSource<BundleArtifactInfo<BundleInfoContext>, BundleInfoContext, EclipseBundleOption>
     implements EclipseBundleSource {
 
     @Override
@@ -46,8 +46,7 @@ public abstract class AbstractEclipseBundleSource<BundleInfoContext>
     @Override
     public final EclipseBundleOption bundle(String bundleSymbolicName, Version bundleVersion)
         throws IOException, ArtifactNotFoundException {
-        ArtifactInfo<BundleInfoContext> info = getArtifactsMap().get(bundleSymbolicName,
-            bundleVersion);
+        BundleArtifactInfo<BundleInfoContext> info = get(bundleSymbolicName, bundleVersion);
         if (info == null) {
             throw new ArtifactNotFoundException("bundle", bundleSymbolicName, bundleVersion);
         }
@@ -57,8 +56,7 @@ public abstract class AbstractEclipseBundleSource<BundleInfoContext>
     @Override
     public final EclipseBundleOption bundle(String bundleSymbolicName,
         VersionRange bundleVersionRange) throws IOException, ArtifactNotFoundException {
-        ArtifactInfo<BundleInfoContext> info = getArtifactsMap().get(bundleSymbolicName,
-            bundleVersionRange);
+        BundleArtifactInfo<BundleInfoContext> info = get(bundleSymbolicName, bundleVersionRange);
         if (info == null) {
             throw new ArtifactNotFoundException("bundle", bundleSymbolicName, bundleVersionRange);
         }

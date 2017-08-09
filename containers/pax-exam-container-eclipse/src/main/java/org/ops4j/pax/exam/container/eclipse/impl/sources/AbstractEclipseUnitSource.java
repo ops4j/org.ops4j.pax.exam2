@@ -36,8 +36,8 @@ import org.osgi.framework.VersionRange;
  * @param <FeatureInfoContext>
  * @param <UnitInfoContext>
  */
-public abstract class AbstractEclipseUnitSource<UnitInfoContext>
-    extends AbstractEclipseArtifactSource<UnitInfoContext, EclipseInstallableUnit>
+public abstract class AbstractEclipseUnitSource<UnitInfoContext> extends
+    AbstractEclipseArtifactSource<ArtifactInfo<UnitInfoContext>, UnitInfoContext, EclipseInstallableUnit>
     implements EclipseUnitSource {
 
     @Override
@@ -49,7 +49,7 @@ public abstract class AbstractEclipseUnitSource<UnitInfoContext>
     @Override
     public EclipseInstallableUnit unit(String id, VersionRange versionRange)
         throws IOException, ArtifactNotFoundException {
-        ArtifactInfo<UnitInfoContext> info = getArtifactsMap().get(id, versionRange);
+        ArtifactInfo<UnitInfoContext> info = get(id, versionRange);
         if (info == null) {
             throw new ArtifactNotFoundException("unit", id, versionRange);
         }
@@ -59,7 +59,7 @@ public abstract class AbstractEclipseUnitSource<UnitInfoContext>
     @Override
     public EclipseInstallableUnit unit(String id, Version version)
         throws IOException, ArtifactNotFoundException {
-        ArtifactInfo<UnitInfoContext> info = getArtifactsMap().get(id, version);
+        ArtifactInfo<UnitInfoContext> info = get(id, version);
         if (info == null) {
             throw new ArtifactNotFoundException("unit", id, version);
         }

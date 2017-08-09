@@ -88,11 +88,19 @@ public class ArtifactInfo<Context>
         return cmp;
     }
 
-    private static String notNull(Attributes attributes, String attrName) {
+    protected static String notNull(Attributes attributes, String attrName) {
         String value = attributes.getValue(attrName);
         if (value == null) {
             throw new IllegalArgumentException(
                 "Header-Name " + attrName + " not found in Manifest!");
+        }
+        return value;
+    }
+
+    protected static String string(Attributes attributes, String attrName) {
+        String value = attributes.getValue(attrName);
+        if (value == null) {
+            return "";
         }
         return value;
     }
@@ -107,27 +115,6 @@ public class ArtifactInfo<Context>
         }
     }
 
-    public static boolean isBundle(Manifest manifest) {
-        if (manifest != null) {
-            Attributes attributes = manifest.getMainAttributes();
-            return attributes.containsKey(new Attributes.Name(Constants.BUNDLE_SYMBOLICNAME))
-                && attributes.containsKey(new Attributes.Name(Constants.BUNDLE_VERSION));
-        }
-        return false;
-    }
-
-    public static boolean isBundle(File folder) {
-        if (new File(folder, ArtifactInfo.MANIFEST_LOCATION).exists()) {
-            try {
-                return isBundle(readManifest(folder));
-            }
-            catch (IOException e) {
-                // not a valid bundle then...
-            }
-        }
-        return false;
-    }
-
     public static Manifest readManifest(File folder) throws IOException {
         File metaInf = new File(folder, "META-INF");
         if (metaInf.exists()) {
@@ -140,11 +127,6 @@ public class ArtifactInfo<Context>
             throw new FileNotFoundException(
                 "can't find folder META-INF in folder " + folder.getAbsolutePath());
         }
-    }
-
-    public static <T> ArtifactInfo<T> readExplodedBundle(File folder, T context)
-        throws IOException {
-        return new ArtifactInfo<T>(readManifest(folder), context);
     }
 
 }

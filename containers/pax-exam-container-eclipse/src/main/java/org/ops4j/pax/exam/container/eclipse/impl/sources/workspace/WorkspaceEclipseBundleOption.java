@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 
@@ -31,12 +31,12 @@ import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
  */
 public final class WorkspaceEclipseBundleOption extends AbstractEclipseBundleOption<ProjectParser> {
 
-    public WorkspaceEclipseBundleOption(ArtifactInfo<ProjectParser> bundleInfo) {
+    public WorkspaceEclipseBundleOption(BundleArtifactInfo<ProjectParser> bundleInfo) {
         super(bundleInfo);
     }
 
     @Override
-    protected Option toOption(ArtifactInfo<ProjectParser> bundleInfo) {
+    protected Option toOption(BundleArtifactInfo<ProjectParser> bundleInfo) {
         try {
             return WorkspaceResolver.projectToOption(bundleInfo.getContext(), this);
         }

@@ -74,38 +74,8 @@ public class P2Cache {
     }
 
     public static P2CacheStream tryOpen(URL url) throws IOException {
-        LOG.debug("try open {}...", url);
-        URLConnection connection;
         try {
-            connection = url.openConnection();
-            connection.setUseCaches(true);
-            if (connection instanceof HttpURLConnection) {
-                HttpURLConnection http = (HttpURLConnection) connection;
-                http.setInstanceFollowRedirects(true);
-                File cachefile = getCacheFile(url);
-                if (cachefile.exists()) {
-                    connection.setIfModifiedSince(cachefile.lastModified());
-                }
-                int code = http.getResponseCode();
-                if (code == HttpURLConnection.HTTP_OK
-                    || code == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                    long length = http.getContentLengthLong();
-                    LOG.debug("...success. Size: {}",
-                        length > 0 ? (length / 1024.0) + "kb" : "unkown");
-                    return getCachedStream(url, http, cachefile);
-                }
-                else {
-                    if (useCacheOnServerError) {
-                        File cacheFile = getCacheFile(url);
-                        if (cacheFile.exists()) {
-                            return new P2CacheStream(cacheFile);
-                        }
-                    }
-                    LOG.debug("...failed with http-code {}!", code);
-                    http.getErrorStream().close();
-                    return null;
-                }
-            }
+            return open(url);
         }
         catch (IOException e) {
             if (useCacheOnServerError) {
@@ -114,7 +84,34 @@ public class P2Cache {
                     return new P2CacheStream(cacheFile);
                 }
             }
-            throw e;
+        }
+        return null;
+    }
+
+    public static P2CacheStream open(URL url) throws IOException {
+        LOG.debug("try open {}...", url);
+        URLConnection connection;
+        connection = url.openConnection();
+        connection.setUseCaches(true);
+        if (connection instanceof HttpURLConnection) {
+            HttpURLConnection http = (HttpURLConnection) connection;
+            http.setInstanceFollowRedirects(true);
+            File cachefile = getCacheFile(url);
+            if (cachefile.exists()) {
+                connection.setIfModifiedSince(cachefile.lastModified());
+            }
+            int code = http.getResponseCode();
+            if (code == HttpURLConnection.HTTP_OK || code == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                long length = http.getContentLengthLong();
+                LOG.debug("...success. Size: {}", length > 0 ? (length / 1024.0) + "kb" : "unkown");
+                return getCachedStream(url, http, cachefile);
+            }
+            else {
+                LOG.debug("...failed with http-code {}!", code);
+                http.getErrorStream().close();
+                throw new IOException(
+                    "Server returned " + code + " - " + http.getResponseMessage());
+            }
         }
         try {
             InputStream stream = connection.getInputStream();
@@ -123,7 +120,7 @@ public class P2Cache {
         }
         catch (FileNotFoundException e) {
             LOG.debug("...failed with error {}!", e.getMessage());
-            return null;
+            throw e;
         }
     }
 

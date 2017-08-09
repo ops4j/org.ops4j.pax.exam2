@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.AbstractEclipseBundleSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +57,9 @@ public class DirectoryEclipseBundleSource extends AbstractEclipseBundleSource<Fi
     }
 
     public boolean readPlugin(File file) throws IOException {
-        if (file.isDirectory() && ArtifactInfo.isBundle(file)) {
-            ArtifactInfo<File> explodedBundle = ArtifactInfo.readExplodedBundle(file, file);
+        if (file.isDirectory() && BundleArtifactInfo.isBundle(file)) {
+            BundleArtifactInfo<File> explodedBundle = BundleArtifactInfo.readExplodedBundle(file,
+                file);
             if (add(explodedBundle)) {
                 LOG.debug("Add exploded bundle {}...", explodedBundle);
             }
@@ -67,8 +68,8 @@ public class DirectoryEclipseBundleSource extends AbstractEclipseBundleSource<Fi
         else if (file.getName().toLowerCase().endsWith(".jar")) {
             try (JarFile jarFile = new JarFile(file)) {
                 Manifest mf = jarFile.getManifest();
-                if (ArtifactInfo.isBundle(mf)) {
-                    ArtifactInfo<File> bundleInfo = new ArtifactInfo<File>(mf, file);
+                if (BundleArtifactInfo.isBundle(mf)) {
+                    BundleArtifactInfo<File> bundleInfo = new BundleArtifactInfo<File>(mf, file);
                     if (add(bundleInfo)) {
                         LOG.debug("Add bundle {}...", bundleInfo);
                     }
@@ -80,7 +81,8 @@ public class DirectoryEclipseBundleSource extends AbstractEclipseBundleSource<Fi
     }
 
     @Override
-    protected EclipseBundleOption getArtifact(ArtifactInfo<File> bundleInfo) throws IOException {
+    protected EclipseBundleOption getArtifact(BundleArtifactInfo<File> bundleInfo)
+        throws IOException {
         return new DirectoryEclipseBundleOption(bundleInfo);
     }
 

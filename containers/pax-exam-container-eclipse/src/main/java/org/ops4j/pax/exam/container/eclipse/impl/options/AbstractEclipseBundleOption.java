@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.container.eclipse.impl.options;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.ProvisionControl;
 import org.osgi.framework.Version;
@@ -33,12 +33,12 @@ import org.osgi.framework.Version;
 public abstract class AbstractEclipseBundleOption<T>
     implements EclipseBundleOption, CompositeOption, ProvisionControl<ProvisionControl<?>> {
 
-    private final ArtifactInfo<T> bundleInfo;
+    private final BundleArtifactInfo<T> bundleInfo;
     private Integer startlevel;
     private boolean shouldStart;
     private boolean shouldUpdate;
 
-    public AbstractEclipseBundleOption(ArtifactInfo<T> bundleInfo) {
+    public AbstractEclipseBundleOption(BundleArtifactInfo<T> bundleInfo) {
         this.bundleInfo = bundleInfo;
     }
 
@@ -97,6 +97,9 @@ public abstract class AbstractEclipseBundleOption<T>
 
     @Override
     public boolean shouldStart() {
+        if (isFragment()) {
+            return false;
+        }
         return shouldStart;
     }
 
@@ -115,5 +118,15 @@ public abstract class AbstractEclipseBundleOption<T>
         return update(true);
     }
 
-    protected abstract Option toOption(ArtifactInfo<T> bundleInfo);
+    @Override
+    public boolean isFragment() {
+        return bundleInfo.isFragment();
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return bundleInfo.isSingleton();
+    }
+
+    protected abstract Option toOption(BundleArtifactInfo<T> bundleInfo);
 }

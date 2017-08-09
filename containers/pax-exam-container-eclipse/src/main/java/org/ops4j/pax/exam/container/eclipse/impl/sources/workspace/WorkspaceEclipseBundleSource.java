@@ -18,7 +18,7 @@ package org.ops4j.pax.exam.container.eclipse.impl.sources.workspace;
 import java.io.IOException;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
-import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.AbstractEclipseBundleSource;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class WorkspaceEclipseBundleSource extends AbstractEclipseBundleSource<Pr
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceEclipseBundleSource.class);
 
     @Override
-    protected EclipseBundleOption getArtifact(ArtifactInfo<ProjectParser> bundleInfo)
+    protected EclipseBundleOption getArtifact(BundleArtifactInfo<ProjectParser> bundleInfo)
         throws IOException {
         return new WorkspaceEclipseBundleOption(bundleInfo);
     }
@@ -45,7 +45,7 @@ public class WorkspaceEclipseBundleSource extends AbstractEclipseBundleSource<Pr
             // the project must have a META-INF at the root folder like an exploded
             // bundle...
             try {
-                ArtifactInfo<ProjectParser> bundle = ArtifactInfo
+                BundleArtifactInfo<ProjectParser> bundle = BundleArtifactInfo
                     .readExplodedBundle(project.getProjectFolder(), project);
                 if (add(bundle)) {
                     LOG.debug("Add bundle {} ...", bundle);

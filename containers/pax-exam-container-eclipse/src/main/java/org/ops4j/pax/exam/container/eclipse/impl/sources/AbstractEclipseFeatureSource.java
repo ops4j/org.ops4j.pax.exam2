@@ -34,8 +34,8 @@ import org.osgi.framework.VersionRange;
  * @param <BundleInfoContext>
  * @param <FeatureInfoContext>
  */
-public abstract class AbstractEclipseFeatureSource<FeatureInfoContext>
-    extends AbstractEclipseArtifactSource<FeatureInfoContext, EclipseFeatureOption>
+public abstract class AbstractEclipseFeatureSource<FeatureInfoContext> extends
+    AbstractEclipseArtifactSource<ArtifactInfo<FeatureInfoContext>, FeatureInfoContext, EclipseFeatureOption>
     implements EclipseFeatureSource {
 
     @Override
@@ -47,8 +47,7 @@ public abstract class AbstractEclipseFeatureSource<FeatureInfoContext>
     @Override
     public final EclipseFeatureOption feature(String featureId, VersionRange featureVersionRange)
         throws IOException, ArtifactNotFoundException {
-        ArtifactInfo<FeatureInfoContext> info = getArtifactsMap().get(featureId,
-            featureVersionRange);
+        ArtifactInfo<FeatureInfoContext> info = get(featureId, featureVersionRange);
         if (info == null) {
             throw new ArtifactNotFoundException("feature", featureId, featureVersionRange);
         }
@@ -58,7 +57,7 @@ public abstract class AbstractEclipseFeatureSource<FeatureInfoContext>
     @Override
     public EclipseFeatureOption feature(String featureId, Version featureVersion)
         throws IOException, ArtifactNotFoundException {
-        ArtifactInfo<FeatureInfoContext> info = getArtifactsMap().get(featureId, featureVersion);
+        ArtifactInfo<FeatureInfoContext> info = get(featureId, featureVersion);
         if (info == null) {
             throw new ArtifactNotFoundException("feature", featureId, featureVersion);
         }
