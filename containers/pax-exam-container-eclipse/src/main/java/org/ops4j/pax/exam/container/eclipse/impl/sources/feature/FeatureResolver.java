@@ -72,6 +72,8 @@ public class FeatureResolver extends BundleAndFeatureSource {
                 continue;
             }
             if (!bundle.matches(environment)) {
+                LOG.debug("Skip bundle {}:{} it does not match environment...", bundle.getId(),
+                    bundle.getId());
                 // not valid for our env...
                 continue;
             }

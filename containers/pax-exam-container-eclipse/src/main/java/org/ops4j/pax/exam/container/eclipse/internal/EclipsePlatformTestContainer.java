@@ -20,12 +20,10 @@ import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_KEY;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
-import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE_CLEAN;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT;
 import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -51,6 +49,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
+import org.ops4j.pax.exam.container.eclipse.IgnoreItems;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
@@ -63,6 +62,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.launch.Framework;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
@@ -109,18 +109,28 @@ public class EclipsePlatformTestContainer implements TestContainer {
                 "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag(Info.getPaxExamVersion())),
             systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url") });
         EclipseApplicationOption application = fork.getSingleOption(EclipseApplicationOption.class);
-        File tempFolder = fork.getTempFolder();
+        EclipseDirectoryLayout layout = new EclipseDirectoryLayout(fork.getTempFolder());
         Map<String, String> initialProperties = createFrameworkProperties(fork,
-            createEclipseDefaults(tempFolder));
+            layout.setProperties(createEclipseDefaults()));
         try {
+            layout.create();
             String bundles = createBundleString(fork);
             initialProperties.put(EclipseStarter.PROP_BUNDLES, bundles);
             initialProperties.put("eclipse.startTime", String.valueOf(System.currentTimeMillis()));
             EclipseStarter.setInitialProperties(initialProperties);
             LOG.info("[ Starting Eclipse Framework ]");
+            LOG.info("Storage area is {}", layout.getBaseFolder().getAbsolutePath());
             logProperties("System-Properties", System.getProperties());
             logProperties("Framework-Properties", initialProperties);
             frameworkContext = EclipseStarter.startup(new String[] {}, null);
+            frameworkContext.addFrameworkListener(new FrameworkListener() {
+
+                @Override
+                public void frameworkEvent(FrameworkEvent event) {
+                    System.out.println(event);
+
+                }
+            });
             LOG.info("Framework is up and running!");
             probeInvoker = new ServiceTracker<>(frameworkContext, ProbeInvoker.class, null);
             probeInvoker.open();
@@ -224,14 +234,14 @@ public class EclipsePlatformTestContainer implements TestContainer {
     }
 
     private static String createBundleString(ExamSystem system) throws IOException {
+        IgnoreItems ignoreItems = system.getSingleOption(IgnoreItems.class);
         StringBuilder bundles = new StringBuilder();
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
             if (bundles.length() > 0) {
                 bundles.append(',');
             }
-            if (bundle.getURL().contains("atinject")) {
-                // FIXME ugly hack, we must ignore atinject since it interferes with default
-                // javax.inject, see PAXEXAM-839
+            if (ignoreItems != null && ignoreItems.isIgnored(bundle.getURL())) {
+                LOG.info("- Ignore ({}) since it is on the ignore list...", bundle.getURL());
                 continue;
             }
             bundles.append(bundle.getURL());
@@ -243,10 +253,10 @@ public class EclipsePlatformTestContainer implements TestContainer {
                 bundles.append('@');
                 bundles.append(startLevel);
                 bundles.append(":start");
-                LOG.debug("+ Install (start@{}) {}", startLevel, bundle);
+                LOG.info("+ Install (start@{}) {}", startLevel, bundle);
             }
             else {
-                LOG.debug("+ Install (no start) {}", bundle);
+                LOG.info("+ Install (no start) {}", bundle);
             }
 
         }
@@ -257,36 +267,34 @@ public class EclipsePlatformTestContainer implements TestContainer {
      * here we setup some defaults required by the eclipse starter, this can be overriden by
      * frameworkProperties or systemProperties
      * 
-     * @param installArea
+     * @param layout
      * @return
      */
-    private static Map<String, String> createEclipseDefaults(File installArea) {
+    private static Map<String, String> createEclipseDefaults() {
         HashMap<String, String> initialProperties = new HashMap<String, String>();
         initialProperties.put(EquinoxConfiguration.PROP_COMPATIBILITY_BOOTDELEGATION, "true");
         initialProperties.put(EquinoxConfiguration.PROP_COMPATIBILITY_BOOTDELEGATION
             + EquinoxConfiguration.PROP_DEFAULT_SUFFIX, "true");
-        initialProperties.put(EclipseStarter.PROP_INSTALL_AREA,
-            installArea.toURI().toASCIIString());
         initialProperties.put(EclipseStarter.PROP_CONSOLE_LOG, "true");
         initialProperties.put("osgi.bundles.defaultStartLevel", String.valueOf(DEFAULTSTARTLEVEL));
         return initialProperties;
     }
 
     private static Map<String, String> createFrameworkProperties(ExamSystem system,
-        final Map<String, String> p) {
+        final Map<String, String> defaultProperties) {
         CleanCachesOption cleanCaches = system.getSingleOption(CleanCachesOption.class);
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
-            p.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
+            defaultProperties.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
-        p.put(FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath());
-        p.put(FRAMEWORK_SYSTEMPACKAGES_EXTRA,
+        defaultProperties.put(FRAMEWORK_SYSTEMPACKAGES_EXTRA,
             buildString(system.getOptions(SystemPackageOption.class)));
-        p.put(FRAMEWORK_BOOTDELEGATION, buildString(system.getOptions(BootDelegationOption.class)));
+        defaultProperties.put(FRAMEWORK_BOOTDELEGATION,
+            buildString(system.getOptions(BootDelegationOption.class)));
 
         for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
             Object value = option.getValue();
             if (value != null) {
-                p.put(option.getKey(), value.toString());
+                defaultProperties.put(option.getKey(), value.toString());
             }
         }
 
@@ -298,7 +306,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
         if (!repositories.isEmpty()) {
             System.setProperty("org.ops4j.pax.url.mvn.repositories", repositories);
         }
-        return p;
+        return defaultProperties;
     }
 
     private static String buildString(ValueOption<?>[] options) {

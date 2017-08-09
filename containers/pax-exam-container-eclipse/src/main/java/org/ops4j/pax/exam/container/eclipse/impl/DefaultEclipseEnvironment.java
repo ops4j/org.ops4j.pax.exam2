@@ -20,8 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment.ModifiableEclipseEnvironment;
 import org.osgi.framework.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation that used a map as backing source and inits with systemproperties
@@ -31,6 +34,7 @@ import org.osgi.framework.Filter;
  */
 public class DefaultEclipseEnvironment implements ModifiableEclipseEnvironment {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultEclipseEnvironment.class);
     private final Map<String, String> properties;
 
     public DefaultEclipseEnvironment() {
@@ -41,9 +45,58 @@ public class DefaultEclipseEnvironment implements ModifiableEclipseEnvironment {
         this(new HashMap<>(initialProperties), true);
     }
 
-    public DefaultEclipseEnvironment(Map<String, String> initialProperties, boolean readOnly) {
-        properties = readOnly ? Collections.unmodifiableMap(initialProperties)
-            : new HashMap<>(initialProperties);
+    private DefaultEclipseEnvironment(Map<String, String> properties, boolean readOnly) {
+        if (!properties.containsKey(EclipseStarter.PROP_OS)) {
+            properties.put(EclipseStarter.PROP_OS, getOS());
+        }
+        if (!properties.containsKey(EclipseStarter.PROP_ARCH)) {
+            properties.put(EclipseStarter.PROP_ARCH, getArch());
+        }
+        if (!properties.containsKey(EclipseStarter.PROP_WS)) {
+            properties.put(EclipseStarter.PROP_WS, getWS(properties.get(EclipseStarter.PROP_OS)));
+        }
+        this.properties = readOnly ? Collections.unmodifiableMap(properties) : properties;
+    }
+
+    private static String getArch() {
+        String osArch = System.getProperties().getProperty("os.arch", "unknown").toLowerCase();
+        if (osArch.contains("amd64")) {
+            return "x86_64";
+        }
+        else if (osArch.contains("ia64")) {
+            return "ia64";
+        }
+        else if (osArch.contains("x86")) {
+            return "x86";
+        }
+        // TODO maybe we should use CommonsLang SystemUtils??
+        // TODO other values are x86, ia64, ia64_32, ppc, PA_RISC, sparc
+        LOG.warn("not recognized os.arch: {}!", osArch);
+        return osArch;
+    }
+
+    private static String getOS() {
+        String osName = System.getProperties().getProperty("os.name", "unknown").toLowerCase();
+        if (osName.contains("windows")) {
+            return "win32";
+        }
+        else if (osName.contains("linux")) {
+            return "linux";
+        }
+        // TODO other values are macosx, aix, solaris, hpux, qnx
+        LOG.warn("not recognized os.name: {}!", osName);
+        return osName;
+    }
+
+    private static String getWS(String os) {
+        if (os.equals("win32")) {
+            return "win32";
+        }
+        else if (os.equals("linux")) {
+            return "gtk";
+        }
+        // TODO values are windowing system motif, photon, carbon
+        return "unknown";
     }
 
     @Override
@@ -71,7 +124,7 @@ public class DefaultEclipseEnvironment implements ModifiableEclipseEnvironment {
 
     @Override
     public ModifiableEclipseEnvironment copy() {
-        return new DefaultEclipseEnvironment(properties, false);
+        return new DefaultEclipseEnvironment(new HashMap<>(properties), false);
     }
 
     private static Map<String, String> initWithSystemProperties() {

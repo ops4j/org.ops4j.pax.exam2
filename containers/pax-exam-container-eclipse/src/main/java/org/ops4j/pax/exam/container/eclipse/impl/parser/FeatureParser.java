@@ -128,16 +128,20 @@ public class FeatureParser extends AbstractParser {
 
         @Override
         public boolean matches(EclipseEnvironment environment) {
-            if (!environment.matches(os, "osgi.os", "os.name")) {
+            if (isSet(os) && !environment.matches(os, "osgi.os", "os.name")) {
                 return false;
             }
-            if (!environment.matches(ws, "osgi.ws")) {
+            if (isSet(ws) && !environment.matches(ws, "osgi.ws")) {
                 return false;
             }
-            if (!environment.matches(arch, "osgi.arch", "os.arch")) {
+            if (isSet(arch) && !environment.matches(arch, "osgi.arch", "os.arch")) {
                 return false;
             }
             return true;
+        }
+
+        private boolean isSet(String value) {
+            return value != null && !value.isEmpty();
         }
 
     }

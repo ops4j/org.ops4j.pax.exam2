@@ -115,7 +115,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
         }
         else {
             throw new IllegalArgumentException(
-                "An EclipseBundleSource is required to use this provision option");
+                "An EclipseUnitSource is required to use this provision option");
         }
     }
 

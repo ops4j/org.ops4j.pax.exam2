@@ -15,6 +15,8 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
+import java.net.URL;
+
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
@@ -37,8 +39,22 @@ public final class P2EclipseBundleOption extends AbstractEclipseBundleOption<P2B
 
     @Override
     protected Option toOption(ArtifactInfo<P2Bundle> bundleInfo) {
-        UrlProvisionOption bundle = CoreOptions
-            .bundle(bundleInfo.getContext().getUrl().toExternalForm());
+        URL url = bundleInfo.getContext().getUrl();
+        // File cacheFile = P2Cache.getCacheFile(url);
+        UrlProvisionOption bundle;
+        // if (cacheFile.exists()) {
+        // bundle = CoreOptions.bundle(url.toExternalForm());
+        // }
+        // else {
+        // try {
+        // FileUtils.copyURLToFile(url, cacheFile);
+        // bundle = CoreOptions.bundle(cacheFile.toURI().toURL().toExternalForm());
+        // }
+        // catch (IOException e) {
+        // cacheFile.delete();
+        bundle = CoreOptions.bundle(url.toExternalForm());
+        // }
+        // }
         bundle.startLevel(getStartLevel());
         bundle.start(shouldStart());
         bundle.update(shouldUpdate());
