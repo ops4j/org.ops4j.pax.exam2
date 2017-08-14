@@ -80,7 +80,7 @@ public class ServiceInjector implements Injector {
         Filter filter = field.getAnnotation(Filter.class);
         if (filter != null) {
             filterString = filter.value();
-            timeout = filter.timeout();
+            timeout = filter.unit().toMillis(filter.timeout());
         }
 
         // Retrieve bundle Context just before calling getService to avoid that the bundle restarts
