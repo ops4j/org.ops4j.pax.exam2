@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ops4j.pax.exam.options.BootClasspathLibraryOption;
@@ -91,6 +92,20 @@ public class CoreOptions {
     public static Option[] options(final Option... options) {
         return expand(options);
     }
+    
+    /**
+     * Convenience method (more to be used for a nice fluent api) for creating an array of options.
+     * It also expands the composite options.
+     * 
+     * @param options
+     *            to be used.
+     * @return provided options, expanded
+     * 
+     * @see OptionUtils#expand(Option...)
+     */
+    public static Option[] options(final Collection<Option> options) {
+        return expand(options.toArray(new Option[0]));
+    }
 
     /**
      * Convenience method (more to be used for a nice fluent api) for creating a composite option.
@@ -102,6 +117,18 @@ public class CoreOptions {
      */
     public static Option composite(final Option... options) {
         return new DefaultCompositeOption(options);
+    }
+    
+    /**
+     * Convenience method (more to be used for a nice fluent api) for creating a composite option.
+     * 
+     * @param options
+     *            options
+     * 
+     * @return provided options
+     */
+    public static Option composite(final Collection<Option> options) {
+        return new DefaultCompositeOption(options.toArray(new Option[0]));
     }
 
     /**
