@@ -1,5 +1,4 @@
 /*
- * Copyright 2009 Alin Dreghiciu.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,26 +18,19 @@ package org.ops4j.pax.exam.options;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 /**
- * An URL Reference.
+ * A Reference that provides a Stream of data to be used
  * 
- * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since 0.5.0, April 26, 2009
+ * @author Christoph Läubrich
+ *
  */
-public interface UrlReference extends StreamReference {
+public interface StreamReference  {
 
     /**
-     * Getter.
-     * 
-     * @return url (cannot be null)
+     * Creates a new {@link InputStream} to read from, each call to this method creates a fresh stream
+     * @return a stream from which data can be read, the caller is responsible of closing the stream after use
+     * @throws IOException
      */
-    String getURL();
-    
-    @Override
-    default InputStream createStream() throws IOException {
-        return new URL(getURL()).openStream();
-    }
-
+    public InputStream createStream() throws IOException;
 }
