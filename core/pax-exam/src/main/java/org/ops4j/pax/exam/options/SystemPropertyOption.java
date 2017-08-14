@@ -61,9 +61,9 @@ public class SystemPropertyOption implements ValueOption<String> {
      * @throws IllegalArgumentException
      *             - If value is null
      */
-    public SystemPropertyOption value(final String _value) {
+    public SystemPropertyOption value(final Object _value) {
         validateNotNull(_value, "Value");
-        this.value = _value;
+        this.value = _value.toString();
         return this;
     }
 
