@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
@@ -58,9 +58,11 @@ import org.osgi.framework.VersionRange;
 public class DefaultEclipseProvision implements EclipseProvision {
 
     private final Set<String> ignoredBundles;
-    private final List<Option> bundles = new ArrayList<>();
+    private final List<EclipseBundleOption> bundles = new ArrayList<>();
+    private final Map<String, EclipseBundleOption> singletonBundles = new HashMap<>();
     private final EclipseArtifactSource source;
     private final EclipseEnvironment environment;
+    private SingletonConflictResolution conflictResolution = SingletonConflictResolution.FAIL;
 
     public DefaultEclipseProvision(EclipseArtifactSource source, EclipseEnvironment environment,
         final Set<String> ignoredBundles) {
@@ -193,8 +195,11 @@ public class DefaultEclipseProvision implements EclipseProvision {
     }
 
     @Override
-    public Option[] getOptions() {
-        return bundles.toArray(new Option[0]);
+    public EclipseBundleOption[] getOptions() {
+        ArrayList<EclipseBundleOption> list = new ArrayList<>();
+        list.addAll(bundles);
+        list.addAll(singletonBundles.values());
+        return list.toArray(new EclipseBundleOption[0]);
     }
 
     private String getKey(EclipseVersionedArtifact bundle) {
@@ -207,9 +212,34 @@ public class DefaultEclipseProvision implements EclipseProvision {
                 continue;
             }
             String key = getKey(bundle);
-            if (ignoredBundles.add(key)) {
+            if (bundle.isSingleton()) {
+                String stkey = bundle.getId();
+                if (singletonBundles.containsKey(stkey)) {
+                    switch (conflictResolution) {
+                        case FAIL:
+                            throw new IllegalStateException(
+                                "conflicting singleton bundle for " + stkey + " found");
+                        case KEEP_CURRENT:
+                            continue;
+                        case REPLACE_CURRENT:
+                            break;
+                        case USE_HIGHEST_VERSION: {
+                            EclipseBundleOption existing = singletonBundles.get(stkey);
+                            if (existing.getVersion().compareTo(bundle.getVersion()) > 0) {
+                                continue;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                    }
+                }
+                singletonBundles.put(key, bundle);
+            }
+            else {
                 bundles.add(bundle);
             }
+            ignoredBundles.add(key);
         }
     }
 
@@ -264,6 +294,13 @@ public class DefaultEclipseProvision implements EclipseProvision {
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public EclipseProvision singletonConflictResolution(
+        SingletonConflictResolution singletonConflictResolution) {
+        conflictResolution = singletonConflictResolution;
+        return this;
     }
 
 }

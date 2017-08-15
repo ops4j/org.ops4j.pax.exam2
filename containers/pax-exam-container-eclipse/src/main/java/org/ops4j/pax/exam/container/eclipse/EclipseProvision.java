@@ -40,6 +40,25 @@ public interface EclipseProvision extends CompositeOption {
         PLANNER;
     }
 
+    public enum SingletonConflictResolution {
+        /**
+         * Fails the provisioning process
+         */
+        FAIL,
+        /**
+         * on conflict, use the highest version
+         */
+        USE_HIGHEST_VERSION,
+        /**
+         * keep the current one regardless of version
+         */
+        KEEP_CURRENT,
+        /**
+         * replace the current one with the conflicting one regardless of version
+         */
+        REPLACE_CURRENT;
+    }
+
     /**
      * Provisions bundles from a bundle file as defined by the
      * https://wiki.eclipse.org/Configurator#SimpleConfigurator
@@ -58,5 +77,8 @@ public interface EclipseProvision extends CompositeOption {
     EclipseProvision feature(EclipseFeature feature) throws IOException;
 
     EclipseProvision units(IncludeMode mode, EclipseInstallableUnit... units) throws IOException;
+
+    EclipseProvision singletonConflictResolution(
+        SingletonConflictResolution singletonConflictResolution);
 
 }
