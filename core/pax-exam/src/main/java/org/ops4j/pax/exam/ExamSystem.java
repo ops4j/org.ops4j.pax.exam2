@@ -26,6 +26,7 @@ import java.io.IOException;
  * TestContainerFactory etc.)
  * 
  * @author Toni Menzel ( toni@okidokiteam.com )
+ * @author Christoph Läubrich
  */
 public interface ExamSystem {
 
@@ -39,8 +40,71 @@ public interface ExamSystem {
      * @return option matching the parameter type T or null if no option was found. Implementations
      *         may rule of their own how to react when multiple values are found (check their
      *         javadoc).
+     *         @deprecated use the more well-defined methods {@link #getRequiredOption(Class)} and {@link #getOption(Class)}
      */
+    @Deprecated
     <T extends Option> T getSingleOption(final Class<T> optionType);
+    
+    /**
+     * Getter for expecting a single or no value to be present in the {@link ExamSystem}.
+     * 
+     * @param optionType
+     *            type of option to be retrieved.
+     * @param <T>
+     *            option type
+     * @return option matching the parameter type T or null if not found
+     * @throws ExamConfigurationException thrown if more than one Option of this type are specified
+     */
+    default <T extends Option> T getOption(final Class<T> optionType) throws ExamConfigurationException {
+        T[] options = getOptions(optionType);
+        if (options.length == 0) {
+            return null;
+        } else if(options.length == 1) {
+            return options[0];
+        } else {
+            throw new ExamConfigurationException("Option of type "+optionType.getClass()+" can only be specifed once!");
+        }
+    }
+    
+    /**
+     * Getter for expecting a single value to be present in the {@link ExamSystem}.
+     * 
+     * @param optionType
+     *            type of option to be retrieved.
+     * @param <T>
+     *            option type
+     * @return option matching the parameter type T
+     * @throws ExamConfigurationException thrown if the Option can't be found, or more than one Option of this type are specified
+     */
+    default <T extends Option> T getRequiredOption(final Class<T> optionType) throws ExamConfigurationException {
+        T[] options = getOptions(optionType);
+        if (options.length == 0) {
+            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getClass());
+        } else if(options.length == 1) {
+            return options[0];
+        } else {
+            throw new ExamConfigurationException("Option of type "+optionType.getClass()+" can only be specifed once!");
+        }
+    }
+    
+    /**
+     * Getting at least one option of the desired type
+     * 
+     * @param optionType
+     *            type of option to be retrieved.
+     * @param <T>
+     *            option type
+     * @return options matching the parameter type T. 
+     * @throws ExamConfigurationException thrown if the Option can't be found
+     */
+    default <T extends Option> T[] getRequiredOptions(final Class<T> optionType) throws ExamConfigurationException {
+        T[] options = getOptions(optionType);
+        if (options.length == 0) {
+            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getClass());
+        } else {
+            return options;
+        }
+    }
 
     /**
      * Getting options of this "system". This is the prime method on accessing options of a giving
