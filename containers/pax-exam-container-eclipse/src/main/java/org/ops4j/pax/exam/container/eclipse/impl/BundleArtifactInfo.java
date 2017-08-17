@@ -17,6 +17,7 @@ package org.ops4j.pax.exam.container.eclipse.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -34,22 +35,46 @@ import org.osgi.framework.Version;
  */
 public class BundleArtifactInfo<Context> extends ArtifactInfo<Context> implements EclipseBundle {
 
-    private final boolean fragment;
-    private final boolean singleton;
+    private final LazyBoolean fragment;
+    private final LazyBoolean singleton;
 
     public BundleArtifactInfo(Attributes attributes, Context context) {
         super(attributes, context);
-        singleton = isSingleton(attributes);
-        fragment = isFragment(attributes);
+        singleton = LazyBoolean.of(isSingleton(attributes));
+        fragment = LazyBoolean.of(isFragment(attributes));
     }
 
     public BundleArtifactInfo(BundleArtifactInfo<?> info, Context context) {
-        this(info.getId(), info.getVersion(), info.isFragment(), info.isFragment(), context);
+        this(info.getId(), info.getVersion(), new CachedLazyBoolean() {
+
+            @Override
+            protected boolean compute() {
+                return info.isFragment();
+            }
+        }, new CachedLazyBoolean() {
+
+            @Override
+            protected boolean compute() {
+                return info.isSingleton();
+            }
+        }, context);
     }
 
     public BundleArtifactInfo(EclipseBundleOption bundle, Context context) {
-        this(bundle.getId(), bundle.getVersion(), bundle.isFragment(), bundle.isSingleton(),
-            context);
+        this(bundle.getId(), bundle.getVersion(), new CachedLazyBoolean() {
+
+            @Override
+            protected boolean compute() {
+                return bundle.isFragment();
+            }
+
+        }, new CachedLazyBoolean() {
+
+            @Override
+            protected boolean compute() {
+                return bundle.isSingleton();
+            }
+        }, context);
     }
 
     public BundleArtifactInfo(Manifest manifest, Context context) {
@@ -58,6 +83,11 @@ public class BundleArtifactInfo<Context> extends ArtifactInfo<Context> implement
 
     public BundleArtifactInfo(String symbolicName, Version version, boolean fragment,
         boolean singleton, Context context) {
+        this(symbolicName, version, LazyBoolean.of(fragment), LazyBoolean.of(singleton), context);
+    }
+
+    public BundleArtifactInfo(String symbolicName, Version version, LazyBoolean fragment,
+        LazyBoolean singleton, Context context) {
         super(symbolicName, version, context);
         this.fragment = fragment;
         this.singleton = singleton;
@@ -65,11 +95,11 @@ public class BundleArtifactInfo<Context> extends ArtifactInfo<Context> implement
 
     @Override
     public boolean isFragment() {
-        return fragment;
+        return fragment.call();
     }
 
     public boolean isSingleton() {
-        return singleton;
+        return singleton.call();
     }
 
     public static boolean isBundle(File folder) {
@@ -93,11 +123,11 @@ public class BundleArtifactInfo<Context> extends ArtifactInfo<Context> implement
         return false;
     }
 
-    protected static boolean isFragment(Attributes attributes) {
+    public static boolean isFragment(Attributes attributes) {
         return !string(attributes, Constants.FRAGMENT_HOST).isEmpty();
     }
 
-    protected static boolean isSingleton(Attributes attributes) {
+    public static boolean isSingleton(Attributes attributes) {
         String[] split = notNull(attributes, Constants.BUNDLE_SYMBOLICNAME).split(";", 2);
         return split.length == 2 && split[1].replace("\r", "").replace("\n", "").replace("\t", "")
             .replace(" ", "").contains("singleton:=true");
@@ -106,6 +136,52 @@ public class BundleArtifactInfo<Context> extends ArtifactInfo<Context> implement
     public static <T> BundleArtifactInfo<T> readExplodedBundle(File folder, T context)
         throws IOException {
         return new BundleArtifactInfo<T>(readManifest(folder), context);
+    }
+
+    public static abstract class LazyBoolean implements Callable<Boolean> {
+
+        private static final LazyBoolean TRUE = new LazyBoolean() {
+
+            @Override
+            public Boolean call() {
+                return Boolean.TRUE;
+            }
+        };
+        private static final LazyBoolean FALSE = new LazyBoolean() {
+
+            @Override
+            public Boolean call() {
+                return Boolean.FALSE;
+            }
+        };
+
+        @Override
+        public abstract Boolean call();
+
+        public static LazyBoolean of(boolean bool) {
+            return bool ? TRUE : FALSE;
+        }
+
+        public static LazyBoolean of(Boolean bool) {
+            return bool != null && bool.booleanValue() ? TRUE : FALSE;
+        }
+
+    }
+
+    private static abstract class CachedLazyBoolean extends LazyBoolean {
+
+        private Boolean value;
+
+        @Override
+        public Boolean call() {
+            if (value == null) {
+                value = compute();
+            }
+            return value;
+        }
+
+        protected abstract boolean compute();
+
     }
 
 }

@@ -234,7 +234,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
                         }
                     }
                 }
-                singletonBundles.put(key, bundle);
+                singletonBundles.put(stkey, bundle);
             }
             else {
                 bundles.add(bundle);
