@@ -282,7 +282,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
         for (EclipseInstallableUnit unit : units) {
             repositories.add(unit.getSource());
         }
-        if (source instanceof EclipseBundleSource) {
+        if (source instanceof EclipseUnitSource) {
             repositories.add(getUnitSource());
         }
         UnitResolver resolver = new UnitResolver(repositories, mode, Arrays.asList(units), false,
