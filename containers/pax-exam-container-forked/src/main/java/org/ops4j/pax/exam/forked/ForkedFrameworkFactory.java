@@ -26,6 +26,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,32 +186,25 @@ public class ForkedFrameworkFactory {
         String launcherPath = toPath(RemoteFrameworkImpl.class);
         String serviceLookupPath = toPath(ServiceLookup.class);
 
-        int entries = (beforeFrameworkClasspath != null ? beforeFrameworkClasspath.size() : 0)
-            + 3 + (afterFrameworkClasspath != null ? afterFrameworkClasspath.size() : 0);
-        String[] classpath = new String[entries];
-        int i = 0;
-        if (beforeFrameworkClasspath != null) {
-            for (String beforeFrameworkLibrary : beforeFrameworkClasspath) {
-                if (!new File(beforeFrameworkLibrary).exists()) {
-                    throw new TestContainerException(
-                            "Invalid boot classpath library: " + beforeFrameworkLibrary);
-                }
-                classpath[i++] = beforeFrameworkLibrary;
-            }
+        List<String> classpath = new ArrayList<String>();
+        addToClasspath(beforeFrameworkClasspath, classpath);
+        classpath.add(frameworkPath);
+        classpath.add(launcherPath);
+        classpath.add(serviceLookupPath);
+        addToClasspath(afterFrameworkClasspath, classpath);
+        return classpath.toArray(new String[classpath.size()]);
+    }
+
+    private void addToClasspath(List<String> toAdd, List<String> classpath) {
+        if (toAdd == null) {
+            return;
         }
-        classpath[i++] = frameworkPath;
-        classpath[i++] = launcherPath;
-        classpath[i++] = serviceLookupPath;
-        if (afterFrameworkClasspath != null) {
-            for (String afterFrameworkLibrary : afterFrameworkClasspath) {
-                if (!new File(afterFrameworkLibrary).exists()) {
-                    throw new TestContainerException(
-                            "Invalid boot classpath library: " + afterFrameworkLibrary);
-                }
-                classpath[i++] = afterFrameworkLibrary;
+        for (String path : toAdd) {
+            if (!new File(path).exists()) {
+                throw new TestContainerException("Invalid boot classpath library: " + path);
             }
+            classpath.add(path);
         }
-        return classpath;
     }
 
     static String toPath(Class<?> klass) throws URISyntaxException {
