@@ -161,13 +161,11 @@ public class NativeTestContainer implements TestContainer {
     @Override
     public void start() throws IOException {
         try {
+            String examVersion = skipSnapshotFlag(Info.getPaxExamVersion());
             system = system.fork(new Option[] {
-                systemPackage("org.ops4j.pax.exam;version="
-                    + skipSnapshotFlag(Info.getPaxExamVersion())),
-                systemPackage("org.ops4j.pax.exam.options;version="
-                    + skipSnapshotFlag(Info.getPaxExamVersion())),
-                systemPackage("org.ops4j.pax.exam.util;version="
-                    + skipSnapshotFlag(Info.getPaxExamVersion())),
+                systemPackage("org.ops4j.pax.exam;version=" + examVersion),
+                systemPackage("org.ops4j.pax.exam.options;version=" + examVersion),
+                systemPackage("org.ops4j.pax.exam.util;version=" + examVersion),
                 systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url") });
             setSystemProperties();
             createFramework(createFrameworkProperties());
@@ -262,8 +260,8 @@ public class NativeTestContainer implements TestContainer {
 
         p.put(FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath());
         p.put(FRAMEWORK_SYSTEMPACKAGES_EXTRA,
-            buildString(system.getOptions(SystemPackageOption.class)));
-        p.put(FRAMEWORK_BOOTDELEGATION, buildString(system.getOptions(BootDelegationOption.class)));
+            join(system.getOptions(SystemPackageOption.class)));
+        p.put(FRAMEWORK_BOOTDELEGATION, join(system.getOptions(BootDelegationOption.class)));
 
         for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
             p.put(option.getKey(), (String) option.getValue());
@@ -280,7 +278,7 @@ public class NativeTestContainer implements TestContainer {
             System.setProperty(option.getKey(), option.getValue());
         }
 
-        String repositories = buildString(system.getOptions(RepositoryOption.class));
+        String repositories = join(system.getOptions(RepositoryOption.class));
         if (!repositories.isEmpty()) {
             System.setProperty("org.ops4j.pax.url.mvn.repositories", repositories);
         }
@@ -289,7 +287,7 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    private String buildString(ValueOption<?>[] options) {
+    private String join(ValueOption<?>[] options) {
         return Arrays.stream(options).map(o -> o.getValue().toString()).collect(joining(","));
     }
 
@@ -330,7 +328,8 @@ public class NativeTestContainer implements TestContainer {
                 if (sl.getStartLevel() == startLevel) {
                     latch.countDown();
                 }
-            }});
+            }
+        });
         sl.setStartLevel(startLevel);
 
         // Check the current start level before starting to wait.
