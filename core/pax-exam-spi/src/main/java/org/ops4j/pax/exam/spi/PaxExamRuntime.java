@@ -198,8 +198,6 @@ public class PaxExamRuntime {
                 START_LEVEL_SYSTEM_BUNDLES),
             url("link:classpath:META-INF/links/org.ops4j.pax.extender.service.link").startLevel(
                 START_LEVEL_SYSTEM_BUNDLES),
-            url("link:classpath:META-INF/links/org.osgi.compendium.link").startLevel(
-                START_LEVEL_SYSTEM_BUNDLES),
 
             when(logging.equals(Constants.EXAM_LOGGING_PAX_LOGGING)).useOptions(
                 url("link:classpath:META-INF/links/org.ops4j.pax.logging.api.link").startLevel(
