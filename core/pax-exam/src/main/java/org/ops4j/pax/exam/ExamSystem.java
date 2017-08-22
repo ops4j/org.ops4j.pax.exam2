@@ -62,7 +62,7 @@ public interface ExamSystem {
         } else if(options.length == 1) {
             return options[0];
         } else {
-            throw new ExamConfigurationException("Option of type "+optionType.getClass()+" can only be specifed once!");
+            throw new ExamConfigurationException("Option of type "+optionType.getName()+" can only be specifed once!");
         }
     }
     
@@ -79,11 +79,11 @@ public interface ExamSystem {
     default <T extends Option> T getRequiredOption(final Class<T> optionType) throws ExamConfigurationException {
         T[] options = getOptions(optionType);
         if (options.length == 0) {
-            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getClass());
+            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getName());
         } else if(options.length == 1) {
             return options[0];
         } else {
-            throw new ExamConfigurationException("Option of type "+optionType.getClass()+" can only be specifed once!");
+            throw new ExamConfigurationException("Option of type "+optionType.getName()+" can only be specifed once!");
         }
     }
     
@@ -100,7 +100,7 @@ public interface ExamSystem {
     default <T extends Option> T[] getRequiredOptions(final Class<T> optionType) throws ExamConfigurationException {
         T[] options = getOptions(optionType);
         if (options.length == 0) {
-            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getClass());
+            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getName());
         } else {
             return options;
         }
