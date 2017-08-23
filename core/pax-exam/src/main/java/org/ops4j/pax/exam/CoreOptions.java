@@ -21,7 +21,6 @@ import static org.ops4j.lang.NullArgumentException.validateNotEmptyContent;
 import static org.ops4j.lang.NullArgumentException.validateNotNull;
 import static org.ops4j.pax.exam.OptionUtils.expand;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -58,9 +57,6 @@ import org.ops4j.pax.exam.options.extra.RepositoryOptionImpl;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.exam.options.extra.WorkingDirectoryOption;
 import org.ops4j.pax.exam.options.libraries.JUnitBundlesOption;
-import org.ops4j.store.Handle;
-import org.ops4j.store.Store;
-import org.ops4j.store.StoreFactory;
 
 /**
  * Factory methods for core options.
@@ -188,20 +184,8 @@ public class CoreOptions {
 
     public static UrlProvisionOption streamBundle(final InputStream stream) {
         validateNotNull(stream, "stream");
-        // TODO make the store more global to the exam session to control
-        // caching load + shutdown.
-        // For now we do it fully3 locally:
-
-        try {
-            Store<InputStream> store = StoreFactory.anonymousStore();
-            Handle handle = store.store(stream);
-            URL url = store.getLocation(handle).toURL();
-            UrlProvisionOption option = new UrlProvisionOption(url.toExternalForm());
-            return option;
-        }
-        catch (IOException e) {
-            throw new IllegalArgumentException("A supplied stream blew up", e);
-        }
+        URL url = new StreamBundle(stream).toTemp();
+        return new UrlProvisionOption(url.toExternalForm());
     }
 
     /**
@@ -957,4 +941,5 @@ public class CoreOptions {
     public static EnvironmentOption environment(final String environmentVariable) {
         return new EnvironmentOption(environmentVariable);
     }
+    
 }

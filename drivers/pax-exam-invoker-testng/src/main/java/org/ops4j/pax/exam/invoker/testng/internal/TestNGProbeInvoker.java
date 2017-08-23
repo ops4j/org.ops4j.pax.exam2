@@ -18,14 +18,12 @@
 package org.ops4j.pax.exam.invoker.testng.internal;
 
 import java.util.Collections;
-import java.util.concurrent.Callable;
 
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.util.Exceptions;
 import org.ops4j.pax.exam.util.Injector;
-import org.ops4j.pax.swissbox.core.ContextClassLoaderUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.wiring.BundleWiring;
 import org.testng.TestNG;
@@ -45,20 +43,19 @@ public class TestNGProbeInvoker implements ProbeInvoker {
     @Override
     public void runTest(final TestDescription description, final TestListener listener) {
         ClassLoader classLoader = ctx.getBundle().adapt(BundleWiring.class).getClassLoader();
+        ClassLoader oldClassloader = Thread.currentThread().getContextClassLoader();
         try {
-            ContextClassLoaderUtils.doWithClassLoader(classLoader, new Callable<Void>() {
-
-                @Override
-                public Void call() {
-                    runTestWithTestNG(description, listener);
-                    return null;
-                }
-            });
+            Thread.currentThread().setContextClassLoader(classLoader);
+            runTestWithTestNG(description, listener);
         }
         // CHECKSTYLE:SKIP - doWithClassLoader API
         catch (Exception exc) {
             throw Exceptions.unchecked(exc);
         }
+        finally {
+            Thread.currentThread().setContextClassLoader(oldClassloader);
+        }
+
     }
 
     private void runTestWithTestNG(TestDescription description, TestListener listener) {

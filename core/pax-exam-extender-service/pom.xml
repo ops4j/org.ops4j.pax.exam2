@@ -45,22 +45,15 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-lang</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-core</artifactId>
+            <artifactId>pax-swissbox-tracker</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-extender</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-framework</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
