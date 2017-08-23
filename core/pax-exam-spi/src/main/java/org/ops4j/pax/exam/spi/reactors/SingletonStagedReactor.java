@@ -25,7 +25,6 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.TimeoutException;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,10 +79,11 @@ public class SingletonStagedReactor implements StagedExamReactor {
     public void beforeSuite() {
         for (TestContainer container : testContainers) {
             try {
-				container.start();
-			} catch (IOException e1) {
-				new TestContainerException("start of container failed", e1);
-			}
+                container.start();
+            }
+            catch (IOException e1) {
+                new TestContainerException("start of container failed", e1);
+            }
 
             for (TestProbeBuilder builder : probes) {
                 LOG.debug("installing probe " + builder);
@@ -102,10 +102,11 @@ public class SingletonStagedReactor implements StagedExamReactor {
     public void afterSuite() {
         for (TestContainer container : testContainers) {
             try {
-				container.stop();
-			} catch (IOException e) {
-				throw new TestContainerException(e);
-			}
+                container.stop();
+            }
+            catch (IOException e) {
+                throw new TestContainerException(e);
+            }
         }
     }
 

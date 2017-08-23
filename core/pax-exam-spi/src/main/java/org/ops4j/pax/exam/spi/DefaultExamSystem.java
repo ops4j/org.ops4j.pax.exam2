@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.ConfigurationFactory;
+import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -344,7 +345,12 @@ public class DefaultExamSystem implements ExamSystem {
     }
 
     public WarProbeOption getLatestWarProbeOption() {
-        return subsystems.peek().getSingleOption(WarProbeOption.class);
+        try {
+            return subsystems.peek().getOption(WarProbeOption.class);
+        }
+        catch (ExamConfigurationException e) {
+            throw new TestContainerException(e.getMessage(), e);
+        }
 
     }
 }
