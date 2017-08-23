@@ -383,11 +383,12 @@ public class ForkedTestContainer implements TestContainer {
     public Object remoteCall(Class<?> serviceType, String methodName, Class<?>[] methodParamTypes,
                      String filter, RelativeTimeout timeout, Object... actualParams) {
         try {
-            filter = "(&(objectClass="+serviceType.getName()+"))";
+            String realFilter = "(&(objectClass=" + serviceType.getName() + "))";
             RemoteServiceReference[] references = remoteFramework.getServiceReferences(
-                    filter, timeout.getValue(), TimeUnit.MILLISECONDS);
+                    realFilter, timeout.getValue(), TimeUnit.MILLISECONDS);
             return remoteFramework.invokeMethodOnService(references[0], methodName, actualParams);
-        }catch(Exception ise) {
+        }
+        catch (Exception ise) {
             throw new RuntimeException(ise);
         }
     }
