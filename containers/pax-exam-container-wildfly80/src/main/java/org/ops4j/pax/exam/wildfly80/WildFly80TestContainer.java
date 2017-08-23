@@ -61,7 +61,6 @@ import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.options.UrlDeploymentOption;
 import org.ops4j.pax.exam.options.WarProbeOption;
 import org.ops4j.pax.exam.spi.security.CredentialsCallbackHandler;
-import org.ops4j.pax.exam.zip.ZipInstaller;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

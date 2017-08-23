@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.zip;
+package org.ops4j.pax.exam.wildfly80;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,19 +49,6 @@ public class ZipInstaller {
     public ZipInstaller(URL zipUrl, String installRoot) {
         this.zipUrl = zipUrl;
         this.installDir = new File(installRoot);
-    }
-
-    /**
-     * Constructs installer with archive URL and install directory.
-     * 
-     * @param zipUrl
-     *            archive URL
-     * @param installDir
-     *            install directory
-     */
-    public ZipInstaller(URL zipUrl, File installDir) {
-        this.zipUrl = zipUrl;
-        this.installDir = installDir;
     }
 
     /**
