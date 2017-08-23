@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.forked;
 
+import static java.util.stream.Collectors.joining;
 import static org.ops4j.pax.exam.Constants.EXAM_FAIL_ON_UNRESOLVED_KEY;
 import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
@@ -35,6 +36,7 @@ import java.net.ServerSocket;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,9 +187,9 @@ public class ForkedTestContainer implements TestContainer {
         p.put(FRAMEWORK_STORAGE, system.getTempFolder().getAbsolutePath());
         SystemPackageOption[] systemPackageOptions = system.getOptions(SystemPackageOption.class);
         if (systemPackageOptions.length > 0) {
-            p.put(FRAMEWORK_SYSTEMPACKAGES_EXTRA, buildString(systemPackageOptions));
+            p.put(FRAMEWORK_SYSTEMPACKAGES_EXTRA, join(systemPackageOptions));
         }
-        p.put(FRAMEWORK_BOOTDELEGATION, buildString(system.getOptions(BootDelegationOption.class)));
+        p.put(FRAMEWORK_BOOTDELEGATION, join(system.getOptions(BootDelegationOption.class)));
 
         for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
             p.put(option.getKey(), option.getValue());
@@ -226,36 +228,14 @@ public class ForkedTestContainer implements TestContainer {
 
         RepositoryOption[] repositories = system.getOptions(RepositoryOption.class);
         if (repositories.length != 0) {
-            System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString(repositories));
+            System.setProperty("org.ops4j.pax.url.mvn.repositories", join(repositories));
         }
 
         return p;
     }
-
-    private String buildString(ValueOption<?>[] options) {
-        return buildString(new String[0], options, new String[0]);
-    }
-
-    private String buildString(String[] prepend, ValueOption<?>[] options, String[] append) {
-        StringBuilder builder = new StringBuilder();
-        for (String a : prepend) {
-            builder.append(a);
-            builder.append(",");
-        }
-        for (ValueOption<?> option : options) {
-            builder.append(option.getValue());
-            builder.append(",");
-        }
-        for (String a : append) {
-            builder.append(a);
-            builder.append(",");
-        }
-        if (builder.length() > 0) {
-            return builder.substring(0, builder.length() - 1);
-        }
-        else {
-            return "";
-        }
+    
+    private String join(ValueOption<?>[] options) {
+        return Arrays.stream(options).map(o -> o.getValue().toString()).collect(joining(","));
     }
 
     private void installAndStartBundles() throws BundleException, RemoteException {
