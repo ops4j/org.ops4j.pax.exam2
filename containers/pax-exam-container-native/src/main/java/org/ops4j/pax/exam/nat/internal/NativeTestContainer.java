@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
+import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.FrameworkEventUtils;
 import org.ops4j.pax.exam.Info;
@@ -174,6 +175,9 @@ public class NativeTestContainer implements TestContainer {
         }
         catch (BundleException exc) {
             throw new TestContainerException("Problem starting test container.", exc);
+        } 
+        catch (ExamConfigurationException e) {
+            throw new TestContainerException("Problem in test container configuration", e);
         }
     }
 
@@ -183,7 +187,7 @@ public class NativeTestContainer implements TestContainer {
         framework.getBundleContext().addFrameworkListener(this::logFrameworkEvent);
     }
 
-    private void startFramework() throws BundleException {
+    private void startFramework() throws BundleException, ExamConfigurationException {
         framework.start();
         setFrameworkStartLevel();
         verifyThatBundlesAreResolved();
@@ -251,9 +255,9 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    private Map<String, String> createFrameworkProperties() {
+    private Map<String, String> createFrameworkProperties() throws ExamConfigurationException {
         final Map<String, String> p = new HashMap<>();
-        CleanCachesOption cleanCaches = system.getSingleOption(CleanCachesOption.class);
+        CleanCachesOption cleanCaches = system.getOption(CleanCachesOption.class);
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
             p.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
@@ -315,7 +319,7 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    private void setFrameworkStartLevel() {
+    private void setFrameworkStartLevel() throws ExamConfigurationException {
         FrameworkStartLevel sl = framework.adapt(FrameworkStartLevel.class);
         final int startLevel = getStartLevel();
         LOG.debug("Jump to startlevel: " + startLevel);
@@ -346,9 +350,8 @@ public class NativeTestContainer implements TestContainer {
         }
     }
 
-    private int getStartLevel() {
-        FrameworkStartLevelOption startLevelOption = system
-            .getSingleOption(FrameworkStartLevelOption.class);
+    private int getStartLevel() throws ExamConfigurationException {
+        FrameworkStartLevelOption startLevelOption = system.getOption(FrameworkStartLevelOption.class);
         return startLevelOption == null ? START_LEVEL_TEST_BUNDLE
             : startLevelOption.getStartLevel();
     }

@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 import org.ops4j.io.StreamUtils;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.ConfigurationManager;
+import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.RelativeTimeout;
@@ -156,6 +157,9 @@ public class ForkedTestContainer implements TestContainer {
         catch (BundleException exc) {
             throw new TestContainerException(exc);
         }
+        catch (ExamConfigurationException e) {
+            throw new TestContainerException("Problem in test container configuration", e);
+        }
     }
 
     @Override
@@ -238,7 +242,7 @@ public class ForkedTestContainer implements TestContainer {
         return Arrays.stream(options).map(o -> o.getValue().toString()).collect(joining(","));
     }
 
-    private void installAndStartBundles() throws BundleException, RemoteException {
+    private void installAndStartBundles() throws BundleException, RemoteException, ExamConfigurationException {
         File workDir = new File(system.getTempFolder(), "pax-exam-downloads");
         workDir.mkdirs();
         List<Long> bundleIds = new ArrayList<Long>();
@@ -257,9 +261,8 @@ public class ForkedTestContainer implements TestContainer {
         verifyThatBundlesAreResolved(bundleIds, bundlesById);
     }
 
-    private void setFrameworkStartLevel() throws RemoteException {
-        FrameworkStartLevelOption startLevelOption = system
-            .getSingleOption(FrameworkStartLevelOption.class);
+    private void setFrameworkStartLevel() throws RemoteException, ExamConfigurationException {
+        FrameworkStartLevelOption startLevelOption = system.getOption(FrameworkStartLevelOption.class);
         int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE : startLevelOption
             .getStartLevel();
         LOG.debug("Jump to startlevel [{}]", startLevel);
