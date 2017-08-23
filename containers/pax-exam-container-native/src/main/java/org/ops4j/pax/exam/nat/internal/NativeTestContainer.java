@@ -317,49 +317,40 @@ public class NativeTestContainer implements TestContainer {
 
     private void setFrameworkStartLevel() {
         FrameworkStartLevel sl = framework.adapt(FrameworkStartLevel.class);
-        FrameworkStartLevelOption startLevelOption = system
-            .getSingleOption(FrameworkStartLevelOption.class);
-        final int startLevel = startLevelOption == null ? START_LEVEL_TEST_BUNDLE
-            : startLevelOption.getStartLevel();
+        final int startLevel = getStartLevel();
         LOG.debug("Jump to startlevel: " + startLevel);
         final CountDownLatch latch = new CountDownLatch(1);
         framework.getBundleContext().addFrameworkListener(frameworkEvent -> {
             if (frameworkEvent.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
                 if (sl.getStartLevel() == startLevel) {
+                    LOG.debug("requested start level reached");
                     latch.countDown();
+                } 
+                else {
+                    LOG.debug("start level {} requested, current start level is {}", startLevel,
+                              sl.getStartLevel());
                 }
             }
         });
         sl.setStartLevel(startLevel);
 
-        // Check the current start level before starting to wait.
-        if (sl.getStartLevel() == startLevel) {
-            LOG.debug("requested start level reached");
-            return;
-        }
-        else {
-            LOG.debug("start level {} requested, current start level is {}", startLevel,
-                sl.getStartLevel());
-        }
-
         try {
             long timeout = system.getTimeout().getValue();
             if (!latch.await(timeout, TimeUnit.MILLISECONDS)) {
-                // Before throwing an exception, do a last check
-                if (startLevel != sl.getStartLevel()) {
-                    String msg = String.format("start level %d has not been reached within %d ms",
-                        startLevel, timeout);
-                    throw new TestContainerException(msg);
-                }
-                else {
-                    LOG.debug("requested start level reached");
-                }
-
+                String msg = String.format("start level %d has not been reached within %d ms", startLevel, timeout);
+                throw new TestContainerException(msg);
             }
         }
         catch (InterruptedException exc) {
             throw new TestContainerException(exc);
         }
+    }
+
+    private int getStartLevel() {
+        FrameworkStartLevelOption startLevelOption = system
+            .getSingleOption(FrameworkStartLevelOption.class);
+        return startLevelOption == null ? START_LEVEL_TEST_BUNDLE
+            : startLevelOption.getStartLevel();
     }
 
     private void verifyThatBundlesAreResolved() {
