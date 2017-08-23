@@ -53,7 +53,7 @@ class ContainerListener implements CombinedListener {
     /**
      *
      */
-    public ContainerListener() {
+    ContainerListener() {
         ConfigurationManager cm = new ConfigurationManager();
         systemType = cm.getProperty(EXAM_SYSTEM_KEY, EXAM_SYSTEM_TEST);
     }

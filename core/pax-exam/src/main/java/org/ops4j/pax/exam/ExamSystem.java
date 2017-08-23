@@ -60,11 +60,11 @@ public interface ExamSystem {
         if (options.length == 0) {
             return null;
         }
-        else if(options.length == 1) {
+        else if (options.length == 1) {
             return options[0];
         }
         else {
-            throw new ExamConfigurationException("Option of type "+ optionType.getName()+" can only be specifed once!");
+            throw new ExamConfigurationException("Option of type " + optionType.getName() + " can only be specifed once!");
         }
     }
     

@@ -32,5 +32,5 @@ public interface StreamReference  {
      * @return a stream from which data can be read, the caller is responsible of closing the stream after use
      * @throws IOException
      */
-    public InputStream createStream() throws IOException;
+    InputStream createStream() throws IOException;
 }

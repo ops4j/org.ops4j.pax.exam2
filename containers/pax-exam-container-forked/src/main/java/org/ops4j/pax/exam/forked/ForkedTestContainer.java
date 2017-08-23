@@ -258,7 +258,7 @@ public class ForkedTestContainer implements TestContainer {
         }
         remoteFramework.start();
         setFrameworkStartLevel();
-        verifyThatBundlesAreResolved(bundleIds, bundlesById);
+        verifyThatBundlesAreResolved(bundleIds);
     }
 
     private void setFrameworkStartLevel() throws RemoteException, ExamConfigurationException {
@@ -276,7 +276,7 @@ public class ForkedTestContainer implements TestContainer {
         }
     }
 
-    private void verifyThatBundlesAreResolved(List<Long> bundleIds, Map<Long, String> bundlesById) throws RemoteException {
+    private void verifyThatBundlesAreResolved(List<Long> bundleIds) throws RemoteException {
         boolean hasUnresolvedBundles = false;
         for (long bundleId : bundleIds) {
             try {

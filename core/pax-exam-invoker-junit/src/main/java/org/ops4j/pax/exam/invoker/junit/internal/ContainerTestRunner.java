@@ -80,7 +80,8 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
         Description description = describeChild(method);
         if (method.getAnnotation(Ignore.class) != null) {
             notifier.fireTestIgnored(description);
-        } else {
+        }
+        else {
             runLeafWithRetry(methodBlock(method), description, notifier);
         }
     }
@@ -95,14 +96,18 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
         boolean retry = false;
         try {
             statement.evaluate();
-        } catch (AssumptionViolatedException e) {
+        }
+        catch (AssumptionViolatedException e) {
             eachNotifier.addFailedAssumption(e);
-        } catch (RerunTestException e) {
+        }
+        catch (RerunTestException e) {
             retry = true;
             throw e;
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             eachNotifier.addFailure(t);
-        } finally {
+        }
+        finally {
             if (!retry) {
                 eachNotifier.fireTestFinished();
             }

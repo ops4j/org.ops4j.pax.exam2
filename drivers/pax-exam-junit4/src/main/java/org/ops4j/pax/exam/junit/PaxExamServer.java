@@ -92,10 +92,11 @@ public class PaxExamServer extends ExternalResource {
     @Override
     protected void after() {
         try {
-			testContainer.stop();
-		} catch (IOException e) {
-			throw new TestContainerException(e);
-		}
+            testContainer.stop();
+        }
+        catch (IOException e) {
+            throw new TestContainerException(e);
+        }
     }
 
     private Option[] getConfigurationOptions() throws Exception {
