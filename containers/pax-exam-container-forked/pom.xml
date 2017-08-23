@@ -43,24 +43,8 @@
             <artifactId>ops4j-base-exec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-net</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-spi</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-framework</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-tracker</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
