@@ -29,7 +29,8 @@ public abstract class KarafConfigurationFile {
     public KarafConfigurationFile(final File karafHome, final String location) {
         if (location.startsWith("/")) {
             file = new File(karafHome + location);
-        } else {
+        }
+        else {
             file = new File(karafHome + "/" + location);
         }
     }
@@ -41,7 +42,8 @@ public abstract class KarafConfigurationFile {
     public void replace(final File source) {
         try {
             FileUtils.copyFile(source, file);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IllegalStateException("Error occured while replacing file " + file, e);
         }
     }

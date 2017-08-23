@@ -59,10 +59,12 @@ public interface ExamSystem {
         T[] options = getOptions(optionType);
         if (options.length == 0) {
             return null;
-        } else if(options.length == 1) {
+        }
+        else if(options.length == 1) {
             return options[0];
-        } else {
-            throw new ExamConfigurationException("Option of type "+optionType.getName()+" can only be specifed once!");
+        }
+        else {
+            throw new ExamConfigurationException("Option of type "+ optionType.getName()+" can only be specifed once!");
         }
     }
     
@@ -79,11 +81,13 @@ public interface ExamSystem {
     default <T extends Option> T getRequiredOption(final Class<T> optionType) throws ExamConfigurationException {
         T[] options = getOptions(optionType);
         if (options.length == 0) {
-            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getName());
-        } else if(options.length == 1) {
+            throw new ExamConfigurationException("Can't find required Option of type " + optionType.getName());
+        }
+        else if (options.length == 1) {
             return options[0];
-        } else {
-            throw new ExamConfigurationException("Option of type "+optionType.getName()+" can only be specifed once!");
+        }
+        else {
+            throw new ExamConfigurationException("Option of type " + optionType.getName() + " can only be specifed once!");
         }
     }
     
@@ -100,8 +104,9 @@ public interface ExamSystem {
     default <T extends Option> T[] getRequiredOptions(final Class<T> optionType) throws ExamConfigurationException {
         T[] options = getOptions(optionType);
         if (options.length == 0) {
-            throw new ExamConfigurationException("Can't find required Option of type "+optionType.getName());
-        } else {
+            throw new ExamConfigurationException("Can't find required Option of type " + optionType.getName());
+        }
+        else {
             return options;
         }
     }

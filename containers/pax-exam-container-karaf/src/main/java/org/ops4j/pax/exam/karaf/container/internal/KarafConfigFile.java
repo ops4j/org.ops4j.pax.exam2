@@ -30,7 +30,7 @@ import org.apache.felix.cm.file.ConfigurationHandler;
 
 public class KarafConfigFile extends KarafConfigurationFile {
 
-    private Dictionary configuration = new Hashtable();
+    private Dictionary<String, Object> configuration = new Hashtable<>();
 
     public KarafConfigFile(File karafHome, String location) {
         super(karafHome, location);
@@ -43,6 +43,7 @@ public class KarafConfigFile extends KarafConfigurationFile {
         fos.close();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void load() throws IOException {
         if (!file.exists()) {
@@ -59,6 +60,9 @@ public class KarafConfigFile extends KarafConfigurationFile {
     }
 
     // TODO support primitives
+    @SuppressWarnings({
+     "unchecked", "rawtypes"
+    })
     @Override
     public void extend(final String key, final Object value) {
         final Object v = configuration.get(key);
@@ -66,17 +70,20 @@ public class KarafConfigFile extends KarafConfigurationFile {
             final Object array = Array.newInstance(value.getClass(), 1);
             Array.set(array, 0, value);
             configuration.put(key, array);
-        } else {
-            final Class clazz = v.getClass();
+        }
+        else {
+            final Class<?> clazz = v.getClass();
             if (clazz.isArray()) {
                 final int length = Array.getLength(v);
                 final Object array = Array.newInstance(clazz.getComponentType(), length + 1);
                 System.arraycopy(v, 0, array, 0, length);
                 Array.set(array, length, value);
                 configuration.put(key, array);
-            } else if (v instanceof Collection) {
+            }
+            else if (v instanceof Collection) {
                 ((Collection) v).add(value);
-            } else {
+            }
+            else {
                 final String message = String.format("Cannot extend %s by %s.", key, value);
                 throw new IllegalArgumentException(message);
             }

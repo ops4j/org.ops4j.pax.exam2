@@ -68,7 +68,8 @@ public class KarafJavaRunner implements Runner {
                             .append("-Dkaraf.data=" + karafData)
                             .append("-Dkaraf.etc=" + karafEtc)
                             .append("-Djava.util.logging.config.file=" + karafEtc + "/java.util.logging.properties");
-                    } else {
+                    }
+                    else {
                         commandLine = new CommandLineBuilder()
                             .append(getJavaExecutable(javaHome))
                             .append(javaOpts)

@@ -225,7 +225,8 @@ public class KarafTestContainer implements TestContainer {
         String[] javaEndorsedDirs = null;
         if (System.getProperty("java.version").startsWith("9")) {
             javaEndorsedDirs = new String[] {};
-        } else {
+        }
+        else {
             javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
                                                        javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
         }
@@ -515,7 +516,8 @@ public class KarafTestContainer implements TestContainer {
 
             return LoggingBackend.LOG4J;
 
-        } finally {
+        }
+        finally {
             if (customisedSystemPropertiesInputStream != null) {
                 customisedSystemPropertiesInputStream.close();
             }
@@ -655,8 +657,7 @@ public class KarafTestContainer implements TestContainer {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) throws IOException {
-    	 target.runTest(description, listener);
-
+        target.runTest(description, listener);
     }
 
 }

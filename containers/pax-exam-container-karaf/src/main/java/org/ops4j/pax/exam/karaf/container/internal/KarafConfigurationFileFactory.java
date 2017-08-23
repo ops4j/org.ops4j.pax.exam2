@@ -21,10 +21,14 @@ import java.io.File;
 
 public class KarafConfigurationFileFactory {
 
+    private KarafConfigurationFileFactory() {
+    }
+
     public static KarafConfigurationFile create(final File karafHome, final String location) {
         if (location != null && location.endsWith(".config")) {
             return new KarafConfigFile(karafHome, location);
-        } else {
+        }
+        else {
             return new KarafCfgFile(karafHome, location);
         }
     }

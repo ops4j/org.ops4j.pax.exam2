@@ -24,7 +24,7 @@ import org.ops4j.pax.exam.Option;
  */
 public class LogLevelOption implements Option {
 
-    public static enum LogLevel {
+    public enum LogLevel {
         TRACE, DEBUG, INFO, WARN, ERROR
     }
 

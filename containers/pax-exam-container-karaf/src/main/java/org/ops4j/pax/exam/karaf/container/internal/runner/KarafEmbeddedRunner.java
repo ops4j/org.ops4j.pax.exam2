@@ -17,6 +17,7 @@
 package org.ops4j.pax.exam.karaf.container.internal.runner;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,6 +26,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ops4j.pax.exam.TestContainerException;
 
 /**
  * Very simple asynchronous implementation of Java Runner. Exec is being invoked
@@ -73,8 +76,7 @@ public class KarafEmbeddedRunner implements Runner {
                             bundleUrls[i] = mainBundles.get(i).toURL();
                         }
 
-                        URLClassLoader urlCl = new URLClassLoader(bundleUrls, this.getContextClassLoader());
-                        Class<?> mainClass = urlCl.loadClass(main);
+                        Class<?> mainClass = loadClass(bundleUrls, main);
                         Constructor<?> constructor = mainClass.getConstructor(String[].class);
                         constructor.setAccessible(true);
                         Object karafInstance = constructor.newInstance(new Object[] { arguments });
@@ -92,6 +94,15 @@ public class KarafEmbeddedRunner implements Runner {
                     throw new RuntimeException(e);
                 }
 
+            }
+
+            private Class<?> loadClass(URL[] bundleUrls, final String main) throws ClassNotFoundException {
+                try (URLClassLoader urlCl = new URLClassLoader(bundleUrls, this.getContextClassLoader())) {
+                    return urlCl.loadClass(main);
+                }
+                catch (IOException e) {
+                    throw new TestContainerException(e.getMessage(), e);
+                }
             }
 
             private String buildCmdSeparatedString(final String[] splitted) {
@@ -115,7 +126,7 @@ public class KarafEmbeddedRunner implements Runner {
                         mainBundles.addAll(searchMainBundle(file.listFiles()));
                     } 
                     else {
-                        if (file.getPath().contains(File.separator+ "boot")) {
+                        if (file.getPath().contains(File.separator + "boot")) {
                             // karaf 4.x
                             mainBundles.add(file);
                         } 
