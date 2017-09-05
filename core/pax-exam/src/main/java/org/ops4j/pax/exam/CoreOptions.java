@@ -99,7 +99,7 @@ public class CoreOptions {
      * 
      * @see OptionUtils#expand(Option...)
      */
-    public static Option[] options(final Collection<Option> options) {
+    public static Option[] options(final Collection<? extends Option> options) {
         return expand(options.toArray(new Option[0]));
     }
 
@@ -123,7 +123,7 @@ public class CoreOptions {
      * 
      * @return provided options
      */
-    public static Option composite(final Collection<Option> options) {
+    public static Option composite(final Collection<? extends Option> options) {
         return new DefaultCompositeOption(options.toArray(new Option[0]));
     }
 
