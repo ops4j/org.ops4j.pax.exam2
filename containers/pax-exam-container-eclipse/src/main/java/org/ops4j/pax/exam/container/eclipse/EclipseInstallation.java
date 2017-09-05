@@ -15,6 +15,8 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
+import java.io.File;
+
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 
@@ -26,4 +28,9 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeature
  */
 public interface EclipseInstallation extends EclipseBundleSource, EclipseFeatureSource {
 
+    /**
+     * 
+     * @return the directory where this installation resides
+     */
+    public File getDirectory();
 }

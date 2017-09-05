@@ -41,6 +41,8 @@ public final class DirectoryResolver extends BundleAndFeatureSource implements E
 
     private final DirectoryEclipseFeatureSource featureSource;
 
+    private final File location;
+
     public DirectoryResolver(File folder) throws IOException {
         if (FEATURES_FOLDER.equalsIgnoreCase(folder.getName())
             || PLUGINS_FOLDER.equalsIgnoreCase(folder.getName())) {
@@ -73,7 +75,12 @@ public final class DirectoryResolver extends BundleAndFeatureSource implements E
                 }
             }
         }
+        this.location = folder;
+    }
 
+    @Override
+    public File getDirectory() {
+        return location;
     }
 
     @Override
