@@ -25,8 +25,10 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
+import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -38,8 +40,8 @@ import org.w3c.dom.Node;
  */
 public class ProductParser extends AbstractParser {
 
-    private final List<EclipseVersionedArtifact> plugins = new ArrayList<>();
-    private final List<EclipseVersionedArtifact> features = new ArrayList<>();
+    private final List<ProductEclipseBundle> plugins = new ArrayList<>();
+    private final List<ProductEclipseFeature> features = new ArrayList<>();
     private final Map<String, PluginConfiguration> configuration = new LinkedHashMap<>();
     private String application;
     private String productID;
@@ -62,13 +64,14 @@ public class ProductParser extends AbstractParser {
             for (Node node : evaluate(document, "/product/plugins/plugin")) {
                 String id = getAttribute(node, "id", true);
                 String version = getAttribute(node, "version", false);
-                plugins.add(new ArtifactInfo<Void>(id, stringToVersion(version), null));
+                boolean fragment = Boolean.parseBoolean(getAttribute(node, "fragment", false));
+                plugins.add(new ProductEclipseBundle(id, stringToVersion(version), fragment));
             }
             // fetch features
             for (Node node : evaluate(document, "/product/features/feature")) {
                 String id = getAttribute(node, "id", true);
                 String version = getAttribute(node, "version", false);
-                features.add(new ArtifactInfo<Void>(id, stringToVersion(version), null));
+                features.add(new ProductEclipseFeature(id, stringToVersion(version)));
             }
         }
         catch (XPathExpressionException e) {
@@ -88,7 +91,7 @@ public class ProductParser extends AbstractParser {
         return useFeatures;
     }
 
-    public List<EclipseVersionedArtifact> getPlugins() {
+    public List<ProductEclipseBundle> getPlugins() {
         return Collections.unmodifiableList(plugins);
     }
 
@@ -96,7 +99,7 @@ public class ProductParser extends AbstractParser {
         return Collections.unmodifiableMap(configuration);
     }
 
-    public List<EclipseVersionedArtifact> getFeatures() {
+    public List<ProductEclipseFeature> getFeatures() {
         return Collections.unmodifiableList(features);
     }
 
@@ -114,6 +117,34 @@ public class ProductParser extends AbstractParser {
         public String toString() {
             return "startlevel=" + startLevel + ":autostart=" + autoStart;
         }
+    }
+
+    public static final class ProductEclipseFeature extends ArtifactInfo<Boolean>
+        implements EclipseFeature {
+
+        public ProductEclipseFeature(String symbolicName, Version version) {
+            super(symbolicName, version, false);
+        }
+
+        @Override
+        public boolean isOptional() {
+            return getContext();
+        }
+
+    }
+
+    public static final class ProductEclipseBundle extends ArtifactInfo<Boolean>
+        implements EclipseBundle {
+
+        public ProductEclipseBundle(String symbolicName, Version version, boolean isFragment) {
+            super(symbolicName, version, isFragment);
+        }
+
+        @Override
+        public boolean isFragment() {
+            return getContext();
+        }
+
     }
 
 }

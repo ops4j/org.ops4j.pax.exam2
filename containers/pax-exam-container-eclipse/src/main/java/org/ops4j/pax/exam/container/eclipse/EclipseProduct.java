@@ -30,5 +30,17 @@ public interface EclipseProduct {
      *            the identifier of the application to run
      * @return
      */
-    EclipseApplication application(String applicationID);
+    EclipseApplicationOption application(String applicationID);
+
+    /**
+     * 
+     * @return the launcher for this product
+     */
+    EclipseLauncher getLauncher();
+
+    /**
+     * 
+     * @return the productID for this product or <code>null</code> if none is defined
+     */
+    String productID();
 }

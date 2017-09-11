@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.container.eclipse;
-
-import org.ops4j.pax.exam.Option;
+package org.ops4j.pax.exam.container.eclipse.builder;
 
 /**
- * 
- * An Option that can be added to a test representing an Eclipse Launcher, there can be only one
- * launcher within a given test-container
+ * Builder for creating launchers
  * 
  * @author Christoph Läubrich
  *
+ * @param <O>
+ * @param <T>
  */
-public interface EclipsePlatformOption extends Option {
+public abstract class EclipseLauncherBuilder<O, T extends EclipseLauncherBuilder<O, T>>
+    extends EclipseProvisionBuilder<O, T> {
 
-    EclipseLauncher getLauncher();
+    private boolean forked;
+
+    @SuppressWarnings("unchecked")
+    public T fork() {
+        forked = true;
+        return (T) this;
+    }
+
+    protected boolean isForked() {
+        return forked;
+    }
 }

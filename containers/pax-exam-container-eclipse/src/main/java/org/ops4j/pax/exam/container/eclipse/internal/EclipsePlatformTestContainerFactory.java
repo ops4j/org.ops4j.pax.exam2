@@ -17,11 +17,12 @@
 package org.ops4j.pax.exam.container.eclipse.internal;
 
 import org.kohsuke.MetaInfServices;
+import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestContainerFactory;
-import org.ops4j.pax.exam.container.eclipse.EclipsePlatformOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 
 /**
  * Creates the {@link EclipsePlatformTestContainer}
@@ -33,22 +34,22 @@ import org.ops4j.pax.exam.container.eclipse.EclipsePlatformOption;
 @MetaInfServices
 public class EclipsePlatformTestContainerFactory implements TestContainerFactory {
 
+    @Override
     public TestContainer create(final ExamSystem system) {
-        EclipsePlatformOption[] options = system.getOptions(EclipsePlatformOption.class);
-        if (options.length == 0) {
-            throw new TestContainerException(
-                "You must specify a EclipsePlatformOption to run this Container!");
+        try {
+            EclipseApplicationOption option = system
+                .getRequiredOption(EclipseApplicationOption.class);
+            if (option.getProduct().getLauncher().isForked()) {
+                throw new UnsupportedOperationException("Sorry not supported yet :-(");
+                // return new RemoteEclipsePlatformTestContainer(system);
+            }
+            else {
+                return new EclipsePlatformTestContainer(system);
+            }
         }
-        else if (options.length > 1) {
-            throw new TestContainerException("Only one EclipsePlatformOption is allowed");
+        catch (ExamConfigurationException e) {
+            throw new TestContainerException(e);
         }
-        EclipsePlatformOption option = options[0];
-        if (option.getLauncher().isForked()) {
-            throw new UnsupportedOperationException("Sorry not supported yet :-(");
-            // return new RemoteEclipsePlatformTestContainer(system);
-        }
-        else {
-            return new EclipsePlatformTestContainer(system);
-        }
+
     }
 }

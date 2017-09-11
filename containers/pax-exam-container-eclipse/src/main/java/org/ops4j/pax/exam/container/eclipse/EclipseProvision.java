@@ -16,9 +16,10 @@
 package org.ops4j.pax.exam.container.eclipse;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 
-import org.ops4j.pax.exam.options.CompositeOption;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
 
 /**
  *
@@ -27,7 +28,7 @@ import org.ops4j.pax.exam.options.CompositeOption;
  * @author Christoph Läubrich
  *
  */
-public interface EclipseProvision extends CompositeOption {
+public interface EclipseProvision {
 
     public enum IncludeMode {
         /**
@@ -60,25 +61,44 @@ public interface EclipseProvision extends CompositeOption {
     }
 
     /**
-     * Provisions bundles from a bundle file as defined by the
-     * https://wiki.eclipse.org/Configurator#SimpleConfigurator
+     * Provisions a bundle
      * 
-     * @param bundleFile
-     *            the bundle file to read, normally located at
-     *            configuration\org.eclipse.equinox.simpleconfigurator\bundles.info
-     * @return
+     * @param bundle
+     *            the bundle to provision
+     * @return a list containing the bundle added or an empty list if it was ignored
      * @throws IOException
-     *             if reading failed
      */
-    EclipseProvision simpleconfigurator(InputStream bundleFile) throws IOException;
+    List<EclipseBundleOption> bundle(EclipseBundle bundle) throws IOException;
 
-    EclipseProvision product(InputStream productDefinition) throws IOException;
+    /**
+     * Provision a features
+     * 
+     * @param feature
+     *            the feature to provision
+     * @return a list of bundles that where provisioned as a result of this feature
+     * @throws IOException
+     */
+    List<EclipseBundleOption> feature(EclipseFeature feature) throws IOException;
 
-    EclipseProvision feature(EclipseFeature feature) throws IOException;
+    /**
+     * Provision the given units with the given mode
+     * 
+     * @param mode
+     *            the mode to use
+     * @param units
+     *            the units to provision
+     * @return a list of bundles that where provisioned as a result of this
+     * @throws IOException
+     */
+    List<EclipseBundleOption> units(IncludeMode mode, EclipseInstallableUnit... units)
+        throws IOException;
 
-    EclipseProvision units(IncludeMode mode, EclipseInstallableUnit... units) throws IOException;
+    List<EclipseBundleOption> units(IncludeMode mode, EclipseUnitSource unitSource,
+        EclipseInstallableUnit... units) throws IOException;
 
     EclipseProvision singletonConflictResolution(
         SingletonConflictResolution singletonConflictResolution);
+
+    Option asOption();
 
 }

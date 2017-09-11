@@ -27,7 +27,7 @@ import org.ops4j.pax.exam.Option;
  * @author Christoph Läubrich
  *
  */
-public interface EclipseApplicationOption extends Option {
+public interface EclipseApplicationOption extends EclipseApplication, Option {
 
     /**
      * Check the result of the application, only used internally
@@ -36,5 +36,4 @@ public interface EclipseApplicationOption extends Option {
      */
     void checkResult(Future<Object> resultFuture);
 
-    boolean isIgnore();
 }

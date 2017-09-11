@@ -26,7 +26,9 @@ import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -40,6 +42,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.osgi.internal.framework.EquinoxConfiguration;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
+import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -92,8 +96,26 @@ public class EclipsePlatformTestContainer implements TestContainer {
 
     private ServiceTracker<ProbeInvoker, ProbeInvoker> probeInvoker;
 
-    public EclipsePlatformTestContainer(ExamSystem system) {
+    private final EclipseApplicationOption application;
+
+    private final List<Option> additional;
+
+    public EclipsePlatformTestContainer(ExamSystem system) throws ExamConfigurationException {
         this.system = system;
+        application = system.getRequiredOption(EclipseApplicationOption.class);
+        String applicationID = application.applicationID();
+        String productID = application.getProduct().productID();
+        additional = new ArrayList<>();
+        if (applicationID == null) {
+            additional.add(CoreOptions.frameworkProperty("eclipse.ignoreApp").value(true));
+        }
+        else {
+            additional
+                .add(CoreOptions.frameworkProperty("eclipse.application").value(applicationID));
+        }
+        if (productID != null) {
+            additional.add(CoreOptions.frameworkProperty("eclipse.product").value(productID));
+        }
     }
 
     @Override
@@ -107,8 +129,12 @@ public class EclipsePlatformTestContainer implements TestContainer {
                 "org.ops4j.pax.exam.options;version=" + skipSnapshotFlag(Info.getPaxExamVersion())),
             systemPackage(
                 "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag(Info.getPaxExamVersion())),
-            systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url") });
-        EclipseApplicationOption application = fork.getSingleOption(EclipseApplicationOption.class);
+            systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url"),
+            CoreOptions.composite(additional),
+            application.getProduct().getLauncher().getProvision().asOption()
+
+        });
+
         EclipseDirectoryLayout layout = new EclipseDirectoryLayout(fork.getTempFolder());
         Map<String, String> initialProperties = createFrameworkProperties(fork,
             layout.setProperties(createEclipseDefaults()));
@@ -150,7 +176,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
                         ignoreApp = Boolean.valueOf(property);
                     }
                     else {
-                        ignoreApp = application.isIgnore();
+                        ignoreApp = application.isIgnoreApplication();
                     }
                 }
                 finally {

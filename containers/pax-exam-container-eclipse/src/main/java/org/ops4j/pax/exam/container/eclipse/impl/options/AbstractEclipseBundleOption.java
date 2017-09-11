@@ -31,7 +31,7 @@ import org.osgi.framework.Version;
  * @param <T>
  */
 public abstract class AbstractEclipseBundleOption<T>
-    implements EclipseBundleOption, CompositeOption, ProvisionControl<ProvisionControl<?>> {
+    implements EclipseBundleOption, CompositeOption, ProvisionControl<EclipseBundleOption> {
 
     private final BundleArtifactInfo<T> bundleInfo;
     private Integer startlevel;
@@ -68,30 +68,30 @@ public abstract class AbstractEclipseBundleOption<T>
     }
 
     @Override
-    public ProvisionControl<?> start(Boolean shouldStart) {
+    public EclipseBundleOption start(Boolean shouldStart) {
         this.shouldStart = shouldStart;
         return this;
     }
 
     @Override
-    public ProvisionControl<?> startLevel(Integer startLevel) {
+    public EclipseBundleOption startLevel(Integer startLevel) {
         startlevel = startLevel;
         return this;
     }
 
     @Override
-    public ProvisionControl<?> update(Boolean shouldUpdate) {
+    public EclipseBundleOption update(Boolean shouldUpdate) {
         this.shouldUpdate = shouldUpdate;
         return this;
     }
 
     @Override
-    public ProvisionControl<?> noStart() {
+    public EclipseBundleOption noStart() {
         return start(false);
     }
 
     @Override
-    public ProvisionControl<?> noUpdate() {
+    public EclipseBundleOption noUpdate() {
         return update(false);
     }
 
@@ -109,12 +109,12 @@ public abstract class AbstractEclipseBundleOption<T>
     }
 
     @Override
-    public ProvisionControl<?> start() {
+    public EclipseBundleOption start() {
         return start(true);
     }
 
     @Override
-    public ProvisionControl<?> update() {
+    public EclipseBundleOption update() {
         return update(true);
     }
 

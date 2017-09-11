@@ -15,13 +15,16 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
+import org.ops4j.pax.exam.options.ProvisionControl;
+
 /**
  * A bundle that can be added to PaxExam
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseBundleOption extends EclipseBundle, EclipseVersionedArtifactOption {
+public interface EclipseBundleOption
+    extends EclipseBundle, EclipseVersionedArtifactOption, ProvisionControl<EclipseBundleOption> {
 
     boolean isSingleton();
 }

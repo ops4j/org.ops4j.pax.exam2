@@ -15,10 +15,7 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,11 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
+import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
@@ -41,11 +40,8 @@ import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseProvision;
 import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
-import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
-import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser.PluginConfiguration;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.feature.FeatureResolver;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.unit.UnitResolver;
-import org.ops4j.pax.exam.options.ProvisionControl;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
@@ -69,36 +65,6 @@ public class DefaultEclipseProvision implements EclipseProvision {
         this.environment = environment;
         this.source = source == null ? new CombinedSource(Collections.emptyList()) : source;
         this.ignoredBundles = ignoredBundles;
-    }
-
-    @Override
-    public EclipseProvision simpleconfigurator(InputStream bundleFile) throws IOException {
-        EclipseBundleSource bundleSource = getBundleSource();
-        // We parse the file and add bundle(...) Options, later we might just provision the
-        // simple configurator, but then we must find a way to fetch/install it ...
-        List<EclipseBundleOption> local = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(bundleFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("#") || line.trim().isEmpty()) {
-                    continue;
-                }
-                String[] bundleInfo = line.split(",");
-                String bsn = bundleInfo[0];
-                Version version = version(bundleInfo[1]);
-                EclipseBundleOption bundle = bundleSource.bundle(bsn, version);
-                if (bundle instanceof ProvisionControl<?>) {
-                    ProvisionControl<?> control = (ProvisionControl<?>) bundle;
-                    String sl = bundleInfo[3];
-                    String start = bundleInfo[4];
-                    control.startLevel(Integer.parseInt(sl));
-                    control.start(Boolean.valueOf(start));
-                }
-                local.add(bundle);
-            }
-        }
-        addAll(local);
-        return this;
     }
 
     private EclipseBundleSource getBundleSource() {
@@ -132,53 +98,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
     }
 
     @Override
-    public EclipseProvision product(InputStream productDefinition) throws IOException {
-        ProductParser parser = new ProductParser(productDefinition);
-        return product(parser);
-    }
-
-    public EclipseProvision product(ProductParser parser)
-        throws IOException, ArtifactNotFoundException {
-        List<EclipseBundleOption> bundles;
-        if (parser.useFeatures()) {
-            List<EclipseFeatureOption> features = new ArrayList<>();
-            EclipseFeatureSource fs = getFeatureSource();
-            for (EclipseVersionedArtifact artifact : parser.getFeatures()) {
-                features.add(fs.feature(artifact.getId(), artifact.getVersion()));
-            }
-            FeatureResolver featureSource = new FeatureResolver(getBundleSource(), fs, features,
-                environment);
-            bundles = featureSource.getBundleSource().getIncludedArtifacts();
-        }
-        else {
-            bundles = new ArrayList<>();
-            EclipseBundleSource bs = getBundleSource();
-            for (EclipseVersionedArtifact artifact : parser.getPlugins()) {
-                bundles.add(bs.bundle(artifact.getId(), artifact.getVersion()));
-            }
-        }
-        Map<String, PluginConfiguration> configuration = parser.getConfiguration();
-        for (EclipseBundleOption bundle : bundles) {
-            if (bundle instanceof ProvisionControl<?>) {
-                ProvisionControl<?> control = (ProvisionControl<?>) bundle;
-                PluginConfiguration cfg = configuration.get(bundle.getId());
-                if (cfg == null) {
-                    control.start(false);
-                }
-                else {
-                    control.start(cfg.autoStart);
-                    if (cfg.startLevel > 0) {
-                        control.startLevel(cfg.startLevel);
-                    }
-                }
-            }
-        }
-        addAll(bundles);
-        return this;
-    }
-
-    @Override
-    public EclipseProvision feature(EclipseFeature feature) throws IOException {
+    public List<EclipseBundleOption> feature(EclipseFeature feature) throws IOException {
         EclipseFeatureOption eclipseFeatureOption;
         if (feature instanceof EclipseFeatureOption) {
             eclipseFeatureOption = (EclipseFeatureOption) feature;
@@ -190,23 +110,34 @@ public class DefaultEclipseProvision implements EclipseProvision {
         }
         FeatureResolver featureSource = new FeatureResolver(getBundleSource(), getFeatureSource(),
             Collections.singleton(eclipseFeatureOption), environment);
-        addAll(featureSource.getBundleSource().getIncludedArtifacts());
-        return this;
+        return addAll(featureSource.getBundleSource().getIncludedArtifacts());
     }
 
     @Override
-    public EclipseBundleOption[] getOptions() {
-        ArrayList<EclipseBundleOption> list = new ArrayList<>();
+    public Option asOption() {
+        ArrayList<Option> list = new ArrayList<>();
         list.addAll(bundles);
         list.addAll(singletonBundles.values());
-        return list.toArray(new EclipseBundleOption[0]);
+        return CoreOptions.composite(list);
     }
 
     private String getKey(EclipseVersionedArtifact bundle) {
         return bundle.getId() + ":" + bundle.getVersion();
     }
 
-    private void addAll(Collection<EclipseBundleOption> list) {
+    @Override
+    public List<EclipseBundleOption> bundle(EclipseBundle bundle) throws IOException {
+        if (bundle instanceof EclipseBundleOption) {
+            return addAll(Collections.singleton((EclipseBundleOption) bundle));
+        }
+        else {
+            return addAll(Collections
+                .singleton(getBundleSource().bundle(bundle.getId(), bundle.getVersion())));
+        }
+    }
+
+    private List<EclipseBundleOption> addAll(Collection<EclipseBundleOption> list) {
+        ArrayList<EclipseBundleOption> added = new ArrayList<>();
         for (EclipseBundleOption bundle : list) {
             if (isIgnored(bundle.getId(), bundle.getVersion())) {
                 continue;
@@ -235,17 +166,15 @@ public class DefaultEclipseProvision implements EclipseProvision {
                     }
                 }
                 singletonBundles.put(stkey, bundle);
+                added.add(bundle);
             }
             else {
                 bundles.add(bundle);
+                added.add(bundle);
             }
             ignoredBundles.add(key);
         }
-    }
-
-    private Version version(String version) {
-        return (version == null || version.isEmpty()) ? Version.emptyVersion
-            : Version.parseVersion(version);
+        return added;
     }
 
     private boolean isIgnored(String bsn, Version version) {
@@ -276,19 +205,27 @@ public class DefaultEclipseProvision implements EclipseProvision {
     }
 
     @Override
-    public EclipseProvision units(IncludeMode mode, EclipseInstallableUnit... units)
-        throws IOException {
+    public List<EclipseBundleOption> units(IncludeMode mode, EclipseUnitSource unitSource,
+        EclipseInstallableUnit... units) throws IOException {
         Set<EclipseUnitSource> repositories = new LinkedHashSet<>();
         for (EclipseInstallableUnit unit : units) {
             repositories.add(unit.getSource());
         }
-        if (source instanceof EclipseUnitSource) {
-            repositories.add(getUnitSource());
+        if (unitSource != null) {
+            repositories.add(unitSource);
         }
         UnitResolver resolver = new UnitResolver(repositories, mode, Arrays.asList(units), false,
             environment);
-        addAll(resolver.getBundleSource().getIncludedArtifacts());
-        return this;
+        return addAll(resolver.getBundleSource().getIncludedArtifacts());
+    }
+
+    @Override
+    public List<EclipseBundleOption> units(IncludeMode mode, EclipseInstallableUnit... units)
+        throws IOException {
+        if (source instanceof EclipseUnitSource) {
+            return units(mode, getUnitSource(), units);
+        }
+        return units(mode, null, units);
     }
 
     @Override

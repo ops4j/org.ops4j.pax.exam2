@@ -16,6 +16,7 @@
 package org.ops4j.pax.exam.container.eclipse;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -25,16 +26,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.container.eclipse.EclipseApplication.EclipseApplicationProvision;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseProjectSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
+import org.ops4j.pax.exam.container.eclipse.builder.EclipseProductBuilder;
+import org.ops4j.pax.exam.container.eclipse.builder.SimpleConfiguratorBuilder;
 import org.ops4j.pax.exam.container.eclipse.impl.CombinedSource;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseEnvironment;
+import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseLauncher;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseProvision;
-import org.ops4j.pax.exam.container.eclipse.impl.EclipseApplicationImpl;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.directory.DirectoryResolver;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.feature.FeatureResolver;
@@ -52,101 +53,45 @@ public class EclipseOptions {
 
     private static final EclipseEnvironment SYSTEM_ENVIRONMENT = new DefaultEclipseEnvironment();
 
-    private static final class EclipseLauncherImpl implements EclipseLauncher {
-
-        private final class EclipseProductImplementation implements EclipseProduct {
-
-            private final String productID;
-
-            private EclipseProductImplementation(String productID) {
-                this.productID = productID;
-            }
-
-            @Override
-            public EclipseApplication application(String applicationID) {
-                return applicationInternal(applicationID, null);
-            }
-
-            private EclipseApplicationImpl applicationInternal(String applicationID,
-                EclipseProvision provision) {
-                return new EclipseApplicationImpl(EclipseLauncherImpl.this, false, provision,
-                    CoreOptions.frameworkProperty("eclipse.application").value(applicationID),
-                    CoreOptions.frameworkProperty("eclipse.product").value(productID));
-            }
-        }
-
-        private final boolean forked;
-
-        private EclipseLauncherImpl(boolean forked) {
-            this.forked = forked;
-        }
-
-        @Override
-        public boolean isForked() {
-            return forked;
-        }
-
-        @Override
-        public EclipseApplicationImpl ignoreApp() {
-            return ignoreAppInternal(null);
-        }
-
-        private EclipseApplicationImpl ignoreAppInternal(EclipseProvision provision) {
-            return new EclipseApplicationImpl(this, true, provision,
-                CoreOptions.frameworkProperty("eclipse.ignoreApp").value(true));
-        }
-
-        @Override
-        public EclipseApplication application(String applicationID) {
-            return applicationInternal(applicationID, null);
-        }
-
-        private EclipseApplicationImpl applicationInternal(String applicationID,
-            EclipseProvision provision) {
-            return new EclipseApplicationImpl(this, false, provision,
-                CoreOptions.frameworkProperty("eclipse.application").value(applicationID));
-        }
-
-        @Override
-        public EclipseApplicationProvision productDefinition(InputStream productFile,
-            final EclipseArtifactSource source, String... ignoreItems) throws IOException {
-            EclipseEnvironment env;
-            if (source instanceof EclipseTargetPlatform) {
-                env = ((EclipseTargetPlatform) source).getEclipseEnvironment();
-            }
-            else {
-                env = SYSTEM_ENVIRONMENT;
-            }
-            DefaultEclipseProvision provision = createDefaultProvision(source, env, ignoreItems);
-            ProductParser parser = new ProductParser(productFile);
-            provision.product(parser);
-            String productID = parser.getProductID();
-            String application = parser.getApplication();
-            if (productID != null) {
-                EclipseProductImplementation product = product(productID);
-                if (application != null) {
-                    return product.applicationInternal(application, provision);
-                }
-            }
-            else if (application != null) {
-                return applicationInternal(application, provision);
-            }
-            return ignoreAppInternal(provision);
-        }
-
-        @Override
-        public EclipseProductImplementation product(final String productID) {
-            return new EclipseProductImplementation(productID);
-        }
-
-    }
-
     public static EclipseEnvironment getSystemEnvironment() {
         return SYSTEM_ENVIRONMENT;
     }
 
-    public static EclipseLauncher launcher(final boolean forked) {
-        return new EclipseLauncherImpl(forked);
+    public static EclipseLauncher launcher(EclipseProvision provision) {
+        return launcher(provision, false);
+    }
+
+    public static EclipseLauncher launcher(EclipseProvision provision, final boolean forked) {
+        return new DefaultEclipseLauncher(forked, provision);
+    }
+
+    public static EclipseProductBuilder buildFromProduct(InputStream productFile)
+        throws IOException {
+        try {
+            return new EclipseProductBuilder(new ProductParser(productFile));
+        }
+        finally {
+            productFile.close();
+        }
+    }
+
+    public static SimpleConfiguratorBuilder buildFromSimple(InputStream bundleFile)
+        throws IOException {
+        try {
+            return new SimpleConfiguratorBuilder(bundleFile);
+        }
+        finally {
+            bundleFile.close();
+        }
+    }
+
+    public static SimpleConfiguratorBuilder buildFromSimple(EclipseInstallation installation)
+        throws IOException {
+        // TODO we might read much more from the installation e.g. env, product and app id and
+        // such...
+        return buildFromSimple(new FileInputStream(new File(installation.getDirectory(),
+            "configuration/org.eclipse.equinox.simpleconfigurator/bundles.info")))
+                .source(installation);
     }
 
     /**
@@ -231,8 +176,6 @@ public class EclipseOptions {
         }
         // We provide this by default
         ignored.add("org.eclipse.osgi");
-        // We do the job of the configurator
-        ignored.add("org.eclipse.equinox.simpleconfigurator");
         return new DefaultEclipseProvision(source, environment, ignored);
     }
 

@@ -17,8 +17,6 @@ package org.ops4j.pax.exam.container.eclipse;
 
 import java.util.concurrent.TimeUnit;
 
-import org.ops4j.pax.exam.options.CompositeOption;
-
 /**
  * 
  * Represents an Application running at the eclipse platform
@@ -26,12 +24,28 @@ import org.ops4j.pax.exam.options.CompositeOption;
  * @author Christoph Läubrich
  *
  */
-public interface EclipseApplication extends CompositeOption {
+public interface EclipseApplication {
 
     /**
      * ID for E4 Applications
      */
     public static final String E4 = "org.eclipse.e4.ui.workbench.swt.E4Application";
+
+    /**
+     * 
+     * @return the product associated with this application
+     */
+    public EclipseProduct getProduct();
+
+    /**
+     * 
+     * @return the application associated with this application, might be <code>null</code> is this
+     *         application is the special "ignore" Application use {@link #isIgnoreApplication()} to
+     *         check this
+     */
+    public String applicationID();
+
+    boolean isIgnoreApplication();
 
     /**
      * Tells the test-container that the Application has to return the specified value at the end
@@ -71,10 +85,5 @@ public interface EclipseApplication extends CompositeOption {
      * @return this for chaining
      */
     EclipseApplication mustFailWith(Class<Throwable> t);
-
-    public static interface EclipseApplicationProvision extends EclipseApplication {
-
-        public EclipseProvision getProvision();
-    }
 
 }
