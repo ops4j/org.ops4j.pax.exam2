@@ -43,6 +43,8 @@ import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
+import org.ops4j.pax.exam.container.eclipse.EclipseInstallation;
+import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
 import org.ops4j.pax.exam.container.eclipse.EclipseProject;
 import org.ops4j.pax.exam.container.eclipse.EclipseWorkspace;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
@@ -66,21 +68,36 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
 
     private static final String PREFIX_URI = "URI//";
 
-    private final Map<String, ProjectParser> projectMap = new HashMap<>();
+    private final Map<String, ProjectParser> projectMap;
 
     private final File workspaceFolder;
 
-    private final WorkspaceEclipseBundleSource bundleSource = new WorkspaceEclipseBundleSource();
+    private EclipseFeatureSource featureSource;
 
-    private final WorkspaceEclipseFeatureSource featureSource = new WorkspaceEclipseFeatureSource();
+    private EclipseBundleSource bundleSource;
 
     public WorkspaceResolver(File workspaceFolder) throws IOException {
         this.workspaceFolder = workspaceFolder;
-        // TODO are there any other usefull information we might want to read e.g. target platform?
-        readProjects();
+        WorkspaceEclipseBundleSource bundleSource = new WorkspaceEclipseBundleSource();
+        WorkspaceEclipseFeatureSource featureSource = new WorkspaceEclipseFeatureSource();
+        projectMap = readProjects(workspaceFolder, bundleSource, featureSource);
+        File bundlePoolFolder = new File(workspaceFolder,
+            ".metadata/.plugins/org.eclipse.pde.core/.bundle_pool");
+        if (bundlePoolFolder.exists()) {
+            EclipseInstallation bundlePool = EclipseOptions.fromInstallation(bundlePoolFolder);
+            this.bundleSource = EclipseOptions.combine(bundleSource, bundlePool);
+            this.featureSource = EclipseOptions.combine(featureSource, bundlePool);
+        }
+        else {
+            this.bundleSource = bundleSource;
+            this.featureSource = featureSource;
+        }
     }
 
-    private void readProjects() throws IOException, FileNotFoundException {
+    private static Map<String, ProjectParser> readProjects(File workspaceFolder,
+        WorkspaceEclipseBundleSource bundleSource, WorkspaceEclipseFeatureSource featureSource)
+        throws IOException, FileNotFoundException {
+        Map<String, ProjectParser> projectMap = new HashMap<>();
         List<File> projectLocations = new ArrayList<>();
         File projectsFolder = new File(workspaceFolder,
             ".metadata/.plugins/org.eclipse.core.resources/.projects");
@@ -113,9 +130,10 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
                 LOG.info("Skipping location {} without valid project...", projectFolder);
             }
         }
+        return projectMap;
     }
 
-    private void readProjectsFromFolder(File folder, List<File> projectLocations) {
+    private static void readProjectsFromFolder(File folder, List<File> projectLocations) {
         if (ProjectParser.isProjectFolder(folder)) {
             projectLocations.add(folder);
         }
@@ -129,8 +147,8 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
         }
     }
 
-    private void readProjectsFromEclipseWorkspace(File workspaceFolder, List<File> projectLocations,
-        File projectsFolder) throws IOException {
+    private static void readProjectsFromEclipseWorkspace(File workspaceFolder,
+        List<File> projectLocations, File projectsFolder) throws IOException {
         for (File projectFolder : projectsFolder.listFiles()) {
             File location = new File(projectFolder, ".location");
             if (location.exists()) {
