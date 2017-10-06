@@ -162,6 +162,9 @@ public final class CombinedSource implements CombinedEclipseArtifactSource {
                 fnfe.addSuppressed(ef);
             }
         }
+        if (feature != null) {
+            return feature;
+        }
         throw fnfe;
     }
 

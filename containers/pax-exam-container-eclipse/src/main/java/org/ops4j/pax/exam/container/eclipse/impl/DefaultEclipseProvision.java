@@ -104,9 +104,8 @@ public class DefaultEclipseProvision implements EclipseProvision {
             eclipseFeatureOption = (EclipseFeatureOption) feature;
         }
         else {
-            eclipseFeatureOption = getFeatureSource().feature(feature.getId(),
-                new VersionRange(VersionRange.LEFT_CLOSED, feature.getVersion(),
-                    feature.getVersion(), VersionRange.RIGHT_CLOSED));
+            eclipseFeatureOption = getFeatureSource().feature(feature.getId(), new VersionRange(
+                VersionRange.LEFT_CLOSED, feature.getVersion(), null, VersionRange.RIGHT_CLOSED));
         }
         FeatureResolver featureSource = new FeatureResolver(getBundleSource(), getFeatureSource(),
             Collections.singleton(eclipseFeatureOption), environment);
