@@ -17,6 +17,7 @@ package org.ops4j.pax.exam.container.eclipse.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -55,7 +56,14 @@ public class DefaultEclipseEnvironment implements ModifiableEclipseEnvironment {
         if (!properties.containsKey(EclipseStarter.PROP_WS)) {
             properties.put(EclipseStarter.PROP_WS, getWS(properties.get(EclipseStarter.PROP_OS)));
         }
+        if (!properties.containsKey(EclipseStarter.PROP_NL)) {
+            properties.put(EclipseStarter.PROP_NL, getNL());
+        }
         this.properties = readOnly ? Collections.unmodifiableMap(properties) : properties;
+    }
+
+    private static String getNL() {
+        return Locale.getDefault().getLanguage();
     }
 
     private static String getArch() {

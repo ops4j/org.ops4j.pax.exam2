@@ -40,10 +40,20 @@ import org.w3c.dom.Node;
 public class TargetPlatformParser extends AbstractParser {
 
     private final List<TargetPlatformLocation> locations = new ArrayList<>();
+    private String os;
+    private String ws;
+    private String arch;
+    private String nl;
 
     public TargetPlatformParser(InputStream stream) throws IOException {
         Element document = parse(stream);
         try {
+            for (Node node : evaluate(document, "/target/environment")) {
+                os = (String) getXPath().evaluate("./os/text()", node, XPathConstants.STRING);
+                ws = (String) getXPath().evaluate("./ws/text()", node, XPathConstants.STRING);
+                arch = (String) getXPath().evaluate("./arch/text()", node, XPathConstants.STRING);
+                nl = (String) getXPath().evaluate("./nl/text()", node, XPathConstants.STRING);
+            }
             for (Node node : evaluate(document, "/target/locations/location")) {
                 LocationType type = LocationType.valueOf(getAttribute(node, "type", true));
                 if (type == LocationType.Directory) {
@@ -85,6 +95,22 @@ public class TargetPlatformParser extends AbstractParser {
         catch (XPathExpressionException e) {
             throw new IOException(e);
         }
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public String getArch() {
+        return arch;
+    }
+
+    public String getNl() {
+        return nl;
+    }
+
+    public String getWs() {
+        return ws;
     }
 
     public List<TargetPlatformLocation> getLocations() {

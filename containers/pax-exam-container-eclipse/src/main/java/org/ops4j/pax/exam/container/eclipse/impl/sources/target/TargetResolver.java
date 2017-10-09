@@ -26,9 +26,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
+import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment.ModifiableEclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
@@ -64,13 +68,26 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
 
     public static final Logger LOG = LoggerFactory.getLogger(TargetResolver.class);
     private final CombinedSource combinedSource;
-    private final EclipseEnvironment eclipseEnvironment;
+    private final ModifiableEclipseEnvironment eclipseEnvironment;
+    private static final Pattern SYSTEM_PROPERTY_PATTERN = Pattern
+        .compile("\\$\\{system_property:([^}]+)\\}", Pattern.CASE_INSENSITIVE);
 
     public TargetResolver(InputStream targetDefinition) throws IOException {
-        // FIXME read from target!
-        eclipseEnvironment = EclipseOptions.getSystemEnvironment();
+        eclipseEnvironment = EclipseOptions.getSystemEnvironment().copy();
         List<EclipseArtifactSource> bundleSources = new ArrayList<>();
         TargetPlatformParser target = new TargetPlatformParser(targetDefinition);
+        if (isSet(target.getArch())) {
+            eclipseEnvironment.set(EclipseStarter.PROP_ARCH, target.getArch());
+        }
+        if (isSet(target.getNl())) {
+            eclipseEnvironment.set(EclipseStarter.PROP_NL, target.getNl());
+        }
+        if (isSet(target.getOs())) {
+            eclipseEnvironment.set(EclipseStarter.PROP_OS, target.getOs());
+        }
+        if (isSet(target.getWs())) {
+            eclipseEnvironment.set(EclipseStarter.PROP_WS, target.getWs());
+        }
         List<TargetPlatformLocation> locations = target.getLocations();
         Map<String, P2Resolver> repositories = new LinkedHashMap<>();
         List<EclipseInstallableUnit> installunits = new ArrayList<>();
@@ -151,7 +168,7 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
         return resolver;
     }
 
-    private File resolveFolder(PathTargetPlatformLocation locations, InputStream stream)
+    private static File resolveFolder(PathTargetPlatformLocation locations, InputStream stream)
         throws IOException {
         String path = locations.path;
         if (stream instanceof ProjectFileInputStream) {
@@ -160,10 +177,17 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
             String projectFolder = project.getProjectFolder().getCanonicalPath();
             path = path.replace("${project_loc}", projectFolder);
             path = path.replace("${project_name}", project.getName());
-            path = path.replace(" ${project_path}", projectFolder
+            path = path.replace("${project_path}", projectFolder
                 .substring(prjStream.getWorkspaceFolder().getCanonicalPath().length()));
-            // TODO ${system_property:xxx}
         }
+        Matcher matcher = SYSTEM_PROPERTY_PATTERN.matcher(path);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            matcher.appendReplacement(sb, System.getProperty(group, ""));
+        }
+        matcher.appendTail(sb);
+        path = sb.toString();
         return new File(path);
     }
 
@@ -185,6 +209,10 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
     @Override
     public EclipseEnvironment getEclipseEnvironment() {
         return eclipseEnvironment;
+    }
+
+    private static boolean isSet(String attr) {
+        return attr != null && !attr.trim().isEmpty();
     }
 
 }
