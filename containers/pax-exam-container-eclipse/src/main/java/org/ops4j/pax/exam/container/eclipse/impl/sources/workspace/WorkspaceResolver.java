@@ -216,6 +216,17 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
 
     public static Option projectToOption(ProjectParser context, ProvisionControl<?> control)
         throws IOException {
+        byte[] byteArray = projectToByteArray(context);
+        UrlProvisionOption bundle = CoreOptions.streamBundle(new ByteArrayInputStream(byteArray));
+        if (control != null) {
+            bundle.startLevel(control.getStartLevel());
+            bundle.start(control.shouldStart());
+            bundle.update(control.shouldUpdate());
+        }
+        return bundle;
+    }
+
+    public static byte[] projectToByteArray(ProjectParser context) throws IOException {
         ByteArrayOutputStream projectStream = new ByteArrayOutputStream();
         Manifest manifest = null;
         if (context.hasNature(ProjectParser.JAVA_NATURE)
@@ -230,20 +241,8 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
                 writeProjectTo(context, jar);
             }
         }
-        UrlProvisionOption bundle = CoreOptions
-            .streamBundle(new ByteArrayInputStream(projectStream.toByteArray()));
-        if (control != null) {
-            bundle.startLevel(control.getStartLevel());
-            bundle.start(control.shouldStart());
-            bundle.update(control.shouldUpdate());
-        }
-        if (BundleArtifactInfo.isBundle(manifest)
-            || context.hasNature(ProjectParser.FEATURE_NATURE)) {
-            return bundle;
-        }
-        else {
-            return CoreOptions.wrappedBundle(bundle);
-        }
+        byte[] byteArray = projectStream.toByteArray();
+        return byteArray;
     }
 
     private static void writeProjectTo(ProjectParser project, JarOutputStream jar)

@@ -15,6 +15,9 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 import org.ops4j.pax.exam.CoreOptions;
@@ -23,14 +26,15 @@ import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
-import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser.PluginInfo;
+import org.ops4j.pax.exam.options.StreamReference;
 
 /**
  * 
  * @author Christoph Läubrich
  *
  */
-public final class P2EclipseFeatureOption extends AbstractEclipseFeatureOption<P2Feature> {
+public final class P2EclipseFeatureOption extends AbstractEclipseFeatureOption<P2Feature>
+    implements StreamReference {
 
     private final FeatureParser featureParser;
     private final String location;
@@ -42,23 +46,23 @@ public final class P2EclipseFeatureOption extends AbstractEclipseFeatureOption<P
     }
 
     @Override
-    protected List<? extends EclipseFeature> getIncluded(ArtifactInfo<P2Feature> bundleInfo) {
-        return featureParser.getIncluded();
+    public List<EclipseFeature> getIncluded() {
+        return Collections.unmodifiableList(featureParser.getIncluded());
     }
 
     @Override
-    protected List<PluginInfo> getBundles(ArtifactInfo<P2Feature> bundleInfo) {
-        return featureParser.getPlugins();
+    public List<EclipseFeatureBundle> getBundles() {
+        return Collections.unmodifiableList(featureParser.getPlugins());
     }
 
     @Override
-    protected boolean isOptional(ArtifactInfo<P2Feature> bundleInfo) {
+    public boolean isOptional() {
         return false;
     }
 
     @Override
-    protected Option toOption(ArtifactInfo<P2Feature> bundleInfo) {
-        return CoreOptions.bundle(bundleInfo.getContext().getUrl().toExternalForm());
+    protected Option toOption() {
+        return CoreOptions.bundle(getArtifactInfo().getContext().getUrl().toExternalForm());
     }
 
     @Override
@@ -69,5 +73,10 @@ public final class P2EclipseFeatureOption extends AbstractEclipseFeatureOption<P
         else {
             return super.toString();
         }
+    }
+
+    @Override
+    public InputStream createStream() throws IOException {
+        return getArtifactInfo().getContext().getUrl().openStream();
     }
 }

@@ -15,9 +15,11 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.sources.feature;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
@@ -25,9 +27,13 @@ import org.ops4j.pax.exam.container.eclipse.EclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption.EclipseFeatureBundle;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.AbstractEclipseBundleSource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.AbstractEclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.CacheableSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.ContextEclipseBundleSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.ContextEclipseFeatureSource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.directory.DirectoryResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,26 +44,34 @@ import org.slf4j.LoggerFactory;
  * @author Christoph Läubrich
  *
  */
-public class FeatureResolver extends BundleAndFeatureSource {
+public class FeatureResolver extends BundleAndFeatureSource implements CacheableSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeatureResolver.class);
 
-    private final ContextEclipseBundleSource bundles = new ContextEclipseBundleSource();
-    private final ContextEclipseFeatureSource features = new ContextEclipseFeatureSource();
+    private final AbstractEclipseBundleSource<?> bundles;
+    private final AbstractEclipseFeatureSource<?> features;
 
-    private final EclipseEnvironment environment;
+    private FeatureResolver(DirectoryResolver directoryResolver) {
+        bundles = directoryResolver.getBundleSource();
+        features = directoryResolver.getFeatureSource();
+    }
 
     public FeatureResolver(EclipseBundleSource bundleSource, EclipseFeatureSource featureSource,
         Collection<EclipseFeatureOption> includedFeatures, EclipseEnvironment environment)
         throws ArtifactNotFoundException, IOException {
-        this.environment = environment;
+        ContextEclipseBundleSource bundles = new ContextEclipseBundleSource();
+        ContextEclipseFeatureSource features = new ContextEclipseFeatureSource();
         for (EclipseFeatureOption feature : includedFeatures) {
-            addFeature(feature, bundleSource, featureSource);
+            addFeature(feature, bundleSource, featureSource, bundles, features, environment);
         }
+        this.bundles = bundles;
+        this.features = features;
     }
 
-    private void addFeature(EclipseFeatureOption feature, EclipseBundleSource bundleSource,
-        EclipseFeatureSource featureSource) throws ArtifactNotFoundException, IOException {
+    private static void addFeature(EclipseFeatureOption feature, EclipseBundleSource bundleSource,
+        EclipseFeatureSource featureSource, ContextEclipseBundleSource bundles,
+        ContextEclipseFeatureSource features, EclipseEnvironment environment)
+        throws ArtifactNotFoundException, IOException {
         if (features.addFeature(feature)) {
             LOG.info("Resolve feature {}:{}...", feature.getId(), feature.getVersion());
         }
@@ -86,7 +100,7 @@ public class FeatureResolver extends BundleAndFeatureSource {
         for (EclipseFeature includedFeature : included) {
             try {
                 addFeature(featureSource.feature(includedFeature.getId()), bundleSource,
-                    featureSource);
+                    featureSource, bundles, features, environment);
             }
             catch (ArtifactNotFoundException e) {
                 if (!includedFeature.isOptional()) {
@@ -102,13 +116,31 @@ public class FeatureResolver extends BundleAndFeatureSource {
     }
 
     @Override
-    public ContextEclipseBundleSource getBundleSource() {
+    public AbstractEclipseBundleSource<?> getBundleSource() {
         return bundles;
     }
 
     @Override
-    public ContextEclipseFeatureSource getFeatureSource() {
+    public AbstractEclipseFeatureSource<?> getFeatureSource() {
         return features;
+    }
+
+    public List<EclipseBundleOption> getResolvedBundles() throws IOException {
+        return bundles.getIncludedArtifacts();
+    }
+
+    public List<EclipseFeatureOption> getResolvedFeatures() throws IOException {
+        return features.getIncludedArtifacts();
+    }
+
+    @Override
+    public void writeToFolder(Properties metadata, File cacheFolder) throws IOException {
+        DirectoryResolver.storeToFolder(cacheFolder, getResolvedBundles(), getResolvedFeatures());
+    }
+
+    public static FeatureResolver restoreFromCache(Properties metadata, File cacheFolder)
+        throws IOException {
+        return new FeatureResolver(new DirectoryResolver(cacheFolder));
     }
 
 }

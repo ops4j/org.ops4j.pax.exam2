@@ -15,12 +15,8 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.options;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.options.CompositeOption;
@@ -44,45 +40,28 @@ public abstract class AbstractEclipseFeatureOption<T>
     }
 
     @Override
-    public final List<EclipseFeatureBundle> getBundles() {
-        return Collections.unmodifiableList(getBundles(bundleInfo));
-    }
-
-    @Override
-    public final List<EclipseFeature> getIncluded() {
-        return Collections.unmodifiableList(getIncluded(bundleInfo));
-    }
-
-    @Override
-    public final boolean isOptional() {
-        return isOptional(bundleInfo);
-    }
-
-    @Override
     public String toString() {
-        return getClass().getSimpleName() + ":" + bundleInfo;
+        return getClass().getSimpleName() + ":" + getArtifactInfo();
     }
 
     @Override
     public Version getVersion() {
-        return bundleInfo.getVersion();
+        return getArtifactInfo().getVersion();
     }
 
     @Override
     public String getId() {
-        return bundleInfo.getId();
+        return getArtifactInfo().getId();
     }
 
     @Override
     public Option[] getOptions() {
-        return CoreOptions.options(toOption(bundleInfo));
+        return CoreOptions.options(toOption());
     }
 
-    protected abstract List<? extends EclipseFeature> getIncluded(ArtifactInfo<T> bundleInfo);
+    public ArtifactInfo<T> getArtifactInfo() {
+        return bundleInfo;
+    }
 
-    protected abstract List<? extends EclipseFeatureBundle> getBundles(ArtifactInfo<T> bundleInfo);
-
-    protected abstract boolean isOptional(ArtifactInfo<T> bundleInfo);
-
-    protected abstract Option toOption(ArtifactInfo<T> bundleInfo);
+    protected abstract Option toOption();
 }

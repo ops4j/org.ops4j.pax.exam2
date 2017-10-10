@@ -16,12 +16,16 @@
 package org.ops4j.pax.exam.container.eclipse.impl.sources.directory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
+import org.ops4j.pax.exam.options.StreamReference;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 
 /**
@@ -30,7 +34,8 @@ import org.ops4j.pax.exam.options.UrlProvisionOption;
  * @author Christoph Läubrich
  *
  */
-public final class DirectoryEclipseBundleOption extends AbstractEclipseBundleOption<File> {
+public final class DirectoryEclipseBundleOption extends AbstractEclipseBundleOption<File>
+    implements StreamReference {
 
     public DirectoryEclipseBundleOption(BundleArtifactInfo<File> bundleInfo)
         throws ArtifactNotFoundException {
@@ -43,11 +48,17 @@ public final class DirectoryEclipseBundleOption extends AbstractEclipseBundleOpt
     }
 
     @Override
-    protected Option toOption(BundleArtifactInfo<File> bundleInfo) {
-        UrlProvisionOption bundle = CoreOptions.bundle(bundleInfo.getContext().getAbsolutePath());
+    protected Option toOption() {
+        UrlProvisionOption bundle = CoreOptions
+            .bundle(getBundleInfo().getContext().getAbsolutePath());
         bundle.startLevel(getStartLevel());
         bundle.start(shouldStart());
         bundle.update(shouldUpdate());
         return bundle;
+    }
+
+    @Override
+    public InputStream createStream() throws IOException {
+        return new FileInputStream(getBundleInfo().getContext());
     }
 }

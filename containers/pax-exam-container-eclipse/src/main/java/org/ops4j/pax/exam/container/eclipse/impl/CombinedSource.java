@@ -15,11 +15,17 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
@@ -27,25 +33,31 @@ import org.ops4j.pax.exam.container.eclipse.EclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallableUnit;
 import org.ops4j.pax.exam.container.eclipse.EclipseOptions.CombinedEclipseArtifactSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseProject;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.CacheableSource;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 /**
- * Combines basic {@link EclipseArtifactSource}s base don the givne types
+ * Combines basic {@link EclipseArtifactSource}s base don the given types
  * 
  * @author Christoph Läubrich
  *
  */
-public final class CombinedSource implements CombinedEclipseArtifactSource {
+public final class CombinedSource implements CombinedEclipseArtifactSource, CacheableSource {
 
     // TODO make this more useful and compact, e.g. using reflection, so we can choose what
     // interfaces are implemented, and only throw the exception with suppressed exception if we have
     // more than one source
 
+    private static final String SUBFOLDER_PREFIX = "source.";
     private final EclipseArtifactSource[] sources;
 
     public CombinedSource(Collection<EclipseArtifactSource> sources) {
-        this.sources = sources.toArray(new EclipseArtifactSource[0]);
+        this(sources.toArray(new EclipseArtifactSource[0]));
+    }
+
+    private CombinedSource(EclipseArtifactSource[] sources) {
+        this.sources = sources;
     }
 
     @Override
@@ -251,5 +263,48 @@ public final class CombinedSource implements CombinedEclipseArtifactSource {
             }
         }
         return result;
+    }
+
+    @Override
+    public void writeToFolder(Properties metadata, File cacheFolder) throws IOException {
+        for (int i = 0; i < sources.length; i++) {
+            EclipseArtifactSource source = sources[i];
+            if (!(source instanceof CacheableSource)) {
+                throw new IllegalStateException("source at index " + i + " of type "
+                    + source.getClass().getName() + " is not cacheable!");
+            }
+            File subfolder = new File(cacheFolder, SUBFOLDER_PREFIX + i);
+            FileUtils.forceMkdir(subfolder);
+            CacheableSource.store((CacheableSource) source, subfolder);
+        }
+    }
+
+    public static CombinedSource restoreFromCache(Properties metadata, File cacheFolder)
+        throws IOException {
+        File[] files = cacheFolder.listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory() && pathname.getName().startsWith(SUBFOLDER_PREFIX);
+            }
+        });
+        Arrays.sort(files, new Comparator<File>() {
+
+            @Override
+            public int compare(File o1, File o2) {
+                int a = getIndex(o1);
+                int b = getIndex(o2);
+                return a - b;
+            }
+
+            private int getIndex(File file) {
+                return Integer.parseInt(file.getName().substring(SUBFOLDER_PREFIX.length()));
+            }
+        });
+        EclipseArtifactSource[] sources = new EclipseArtifactSource[files.length];
+        for (int i = 0; i < sources.length; i++) {
+            sources[i] = CacheableSource.load(files[i]);
+        }
+        return new CombinedSource(sources);
     }
 }

@@ -44,17 +44,17 @@ public abstract class AbstractEclipseBundleOption<T>
 
     @Override
     public Version getVersion() {
-        return bundleInfo.getVersion();
+        return getBundleInfo().getVersion();
     }
 
     @Override
     public String getId() {
-        return bundleInfo.getId();
+        return getBundleInfo().getId();
     }
 
     @Override
     public Option[] getOptions() {
-        return CoreOptions.options(toOption(bundleInfo));
+        return CoreOptions.options(toOption());
     }
 
     @Override
@@ -120,13 +120,18 @@ public abstract class AbstractEclipseBundleOption<T>
 
     @Override
     public boolean isFragment() {
-        return bundleInfo.isFragment();
+        return getBundleInfo().isFragment();
     }
 
     @Override
     public boolean isSingleton() {
-        return bundleInfo.isSingleton();
+        return getBundleInfo().isSingleton();
     }
 
-    protected abstract Option toOption(BundleArtifactInfo<T> bundleInfo);
+    protected BundleArtifactInfo<T> getBundleInfo() {
+        return bundleInfo;
+    }
+
+    protected abstract Option toOption();
+
 }

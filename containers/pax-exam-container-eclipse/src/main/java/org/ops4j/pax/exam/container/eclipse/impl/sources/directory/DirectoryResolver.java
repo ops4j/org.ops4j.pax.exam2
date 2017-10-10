@@ -17,9 +17,18 @@ package org.ops4j.pax.exam.container.eclipse.impl.sources.directory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
+import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallation;
+import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
+import org.ops4j.pax.exam.container.eclipse.impl.sources.CacheableSource;
+import org.ops4j.pax.exam.options.StreamReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +38,10 @@ import org.slf4j.LoggerFactory;
  * @author Christoph Läubrich
  *
  */
-public final class DirectoryResolver extends BundleAndFeatureSource implements EclipseInstallation {
+public final class DirectoryResolver extends BundleAndFeatureSource
+    implements EclipseInstallation, CacheableSource {
+
+    private static final String DIRECTORY_KEY = DirectoryResolver.class.getName() + ".directory";
 
     private static final String FEATURES_FOLDER = "features";
 
@@ -84,13 +96,82 @@ public final class DirectoryResolver extends BundleAndFeatureSource implements E
     }
 
     @Override
-    protected EclipseBundleSource getBundleSource() {
+    public DirectoryEclipseBundleSource getBundleSource() {
         return bundleSource;
     }
 
     @Override
-    protected EclipseFeatureSource getFeatureSource() {
+    public DirectoryEclipseFeatureSource getFeatureSource() {
         return featureSource;
+    }
+
+    @Override
+    public void writeToFolder(Properties metadata, File cacheFolder) throws IOException {
+        metadata.setProperty(DIRECTORY_KEY, getDirectory().getAbsolutePath());
+    }
+
+    public static DirectoryResolver restoreFromCache(Properties metadata, File cacheFolder)
+        throws IOException {
+        String property = metadata.getProperty(DIRECTORY_KEY);
+        if (property == null) {
+            throw new IllegalStateException("property " + DIRECTORY_KEY + " is missing!");
+        }
+        return new DirectoryResolver(new File(property));
+    }
+
+    /**
+     * Stores the given collection of bundles and features to the given folder in a way so it can be
+     * read back by the directory resolver. All bundles and features must be able to be transformed
+     * to an input stream via the {@link StreamReference} interface or an exception is raised!
+     * 
+     * @param folder
+     *            the folder to store the artifacts to
+     * @param bundles
+     *            the bundles to store
+     * @param features
+     *            the features to store
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public static void storeToFolder(File folder, Collection<? extends EclipseBundle> bundles,
+        Collection<? extends EclipseFeature> features) throws IOException {
+        File pluginsFolder = new File(folder, PLUGINS_FOLDER);
+        File featuresFolder = new File(folder, FEATURES_FOLDER);
+        FileUtils.forceMkdir(pluginsFolder);
+        FileUtils.forceMkdir(featuresFolder);
+        for (EclipseFeature feature : features) {
+            if (feature instanceof StreamReference) {
+                try (InputStream stream = ((StreamReference) feature).createStream()) {
+                    FileUtils.copyInputStreamToFile(stream,
+                        new File(featuresFolder, getFileName(feature)));
+                }
+            }
+            else {
+                throw new IllegalArgumentException("feature " + createWrongTypeMsg(feature));
+            }
+        }
+
+        for (EclipseBundle bundle : bundles) {
+            if (bundle instanceof StreamReference) {
+                try (InputStream stream = ((StreamReference) bundle).createStream()) {
+                    FileUtils.copyInputStreamToFile(stream,
+                        new File(pluginsFolder, getFileName(bundle)));
+                }
+            }
+            else {
+                throw new IllegalArgumentException("bundle " + createWrongTypeMsg(bundle));
+            }
+        }
+    }
+
+    private static String createWrongTypeMsg(EclipseVersionedArtifact artifact) {
+        return artifact.getId() + ":" + artifact.getVersion() + " of type "
+            + artifact.getClass().getName() + " does not implement required interface "
+            + StreamReference.class.getName();
+    }
+
+    private static String getFileName(EclipseVersionedArtifact artifact) {
+        return artifact.getId() + "_" + artifact.getVersion() + ".jar";
     }
 
 }

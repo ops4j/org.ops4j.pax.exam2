@@ -105,14 +105,12 @@ public class P2EclipseInstallableUnit implements EclipseInstallableUnit {
         if (!unitFeatures.isEmpty()) {
             FeatureResolver featureResolver = new FeatureResolver(artifactRepository,
                 artifactRepository, unitFeatures, environment);
-            for (EclipseBundleOption bundle : featureResolver.getBundleSource()
-                .getIncludedArtifacts()) {
+            for (EclipseBundleOption bundle : featureResolver.getResolvedBundles()) {
                 if (artifacts.getBundleSource().addBundle(bundle)) {
                     LOG.debug("resolve artifact-bundle {}:{}", bundle.getId(), bundle.getVersion());
                 }
             }
-            for (EclipseFeatureOption feature : featureResolver.getFeatureSource()
-                .getIncludedArtifacts()) {
+            for (EclipseFeatureOption feature : featureResolver.getResolvedFeatures()) {
                 LOG.debug("resolve artifact-feature {}:{}", feature.getId(), feature.getVersion());
             }
         }

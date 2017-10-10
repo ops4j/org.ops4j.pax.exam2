@@ -106,7 +106,7 @@ public class EclipseOptions {
     }
 
     /**
-     * Use an Eclipse-WOrkspace to provision bundles from
+     * Use an Eclipse-Workspace to provision bundles from
      * 
      * @param workspaceFolder
      * @return
@@ -118,7 +118,24 @@ public class EclipseOptions {
 
     public static EclipseTargetPlatform fromTarget(InputStream targetDefinition)
         throws IOException {
-        return new TargetResolver(targetDefinition);
+        return fromTarget(targetDefinition, null);
+    }
+
+    /**
+     * Use an Eclipse Target file to provision bundles from, the cache folder can be used to specify
+     * a location where the resolve result of the target is stored (e.g. if the target is based on
+     * software-sites) the cache will be refreshed if the sequenceNumber changes but in no other
+     * circumstances so it might be needed to clear the cache if something changes on the remote
+     * server but the target stays unmodified.
+     * 
+     * @param targetDefinition
+     * @param cacheFolder
+     * @return
+     * @throws IOException
+     */
+    public static EclipseTargetPlatform fromTarget(InputStream targetDefinition, File cacheFolder)
+        throws IOException {
+        return new TargetResolver(targetDefinition, cacheFolder);
     }
 
     public static EclipseRepository createRepository(URL url, String name) throws IOException {

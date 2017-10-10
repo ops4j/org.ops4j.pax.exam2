@@ -16,12 +16,15 @@
 package org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
+import org.ops4j.pax.exam.options.StreamReference;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 
 /**
@@ -29,7 +32,8 @@ import org.ops4j.pax.exam.options.UrlProvisionOption;
  * @author Christoph Läubrich
  *
  */
-public final class P2EclipseBundleOption extends AbstractEclipseBundleOption<P2Bundle> {
+public final class P2EclipseBundleOption extends AbstractEclipseBundleOption<P2Bundle>
+    implements StreamReference {
 
     private final String reproName;
 
@@ -39,8 +43,8 @@ public final class P2EclipseBundleOption extends AbstractEclipseBundleOption<P2B
     }
 
     @Override
-    protected Option toOption(BundleArtifactInfo<P2Bundle> bundleInfo) {
-        URL url = bundleInfo.getContext().getUrl();
+    protected Option toOption() {
+        URL url = getBundleInfo().getContext().getUrl();
         File cacheFile = P2Cache.getCacheFile(url);
         UrlProvisionOption bundle;
         if (cacheFile.exists()) {
@@ -61,5 +65,10 @@ public final class P2EclipseBundleOption extends AbstractEclipseBundleOption<P2B
             return super.toString() + ":" + reproName;
         }
         return super.toString();
+    }
+
+    @Override
+    public InputStream createStream() throws IOException {
+        return getBundleInfo().getContext().getUrl().openStream();
     }
 }

@@ -109,7 +109,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
         }
         FeatureResolver featureSource = new FeatureResolver(getBundleSource(), getFeatureSource(),
             Collections.singleton(eclipseFeatureOption), environment);
-        return addAll(featureSource.getBundleSource().getIncludedArtifacts());
+        return addAll(featureSource.getResolvedBundles());
     }
 
     @Override

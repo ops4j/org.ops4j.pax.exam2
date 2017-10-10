@@ -15,13 +15,16 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.sources.workspace;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
+import org.ops4j.pax.exam.options.StreamReference;
 
 /**
  * Option for Workspace Bundles
@@ -29,19 +32,26 @@ import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
  * @author Christoph Läubrich
  *
  */
-public final class WorkspaceEclipseBundleOption extends AbstractEclipseBundleOption<ProjectParser> {
+public final class WorkspaceEclipseBundleOption extends AbstractEclipseBundleOption<ProjectParser>
+    implements StreamReference {
 
     public WorkspaceEclipseBundleOption(BundleArtifactInfo<ProjectParser> bundleInfo) {
         super(bundleInfo);
     }
 
     @Override
-    protected Option toOption(BundleArtifactInfo<ProjectParser> bundleInfo) {
+    protected Option toOption() {
         try {
-            return WorkspaceResolver.projectToOption(bundleInfo.getContext(), this);
+            return WorkspaceResolver.projectToOption(getBundleInfo().getContext(), this);
         }
         catch (IOException e) {
             throw new TestContainerException("option creation failed", e);
         }
+    }
+
+    @Override
+    public InputStream createStream() throws IOException {
+        return new ByteArrayInputStream(
+            WorkspaceResolver.projectToByteArray(getBundleInfo().getContext()));
     }
 }

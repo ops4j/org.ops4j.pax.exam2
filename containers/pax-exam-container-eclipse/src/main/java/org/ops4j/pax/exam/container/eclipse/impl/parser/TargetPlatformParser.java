@@ -44,10 +44,12 @@ public class TargetPlatformParser extends AbstractParser {
     private String ws;
     private String arch;
     private String nl;
+    private String sequenceNumber;
 
     public TargetPlatformParser(InputStream stream) throws IOException {
         Element document = parse(stream);
         try {
+            sequenceNumber = getAttribute(document, "sequenceNumber", false);
             for (Node node : evaluate(document, "/target/environment")) {
                 os = (String) getXPath().evaluate("./os/text()", node, XPathConstants.STRING);
                 ws = (String) getXPath().evaluate("./ws/text()", node, XPathConstants.STRING);
@@ -95,6 +97,10 @@ public class TargetPlatformParser extends AbstractParser {
         catch (XPathExpressionException e) {
             throw new IOException(e);
         }
+    }
+
+    public String getSequenceNumber() {
+        return sequenceNumber;
     }
 
     public String getOs() {

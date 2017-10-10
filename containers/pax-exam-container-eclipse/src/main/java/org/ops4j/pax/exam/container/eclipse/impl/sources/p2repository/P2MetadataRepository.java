@@ -26,7 +26,6 @@ import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.P2MetadataRepositoryParser;
 import org.ops4j.pax.exam.container.eclipse.impl.repository.Unit;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.AbstractEclipseUnitSource;
-import org.ops4j.pax.exam.container.eclipse.impl.sources.p2repository.P2Cache.MetaDataProperties;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +37,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class P2MetadataRepository extends AbstractEclipseUnitSource<P2Unit> {
-
-    private static final String CACHE_KEY_UNIT = "unit.";
-
-    private static final String CACHE_KEY_LASTMODIFIED = "P2MetadataRepository.lastmodified";
 
     private static final Logger LOG = LoggerFactory.getLogger(P2ArtifactRepository.class);
 
@@ -75,30 +70,13 @@ public class P2MetadataRepository extends AbstractEclipseUnitSource<P2Unit> {
         }
         else if (file.isMetadataRepository()) {
             String reproName = name + file.getURL();
-            MetaDataProperties cache = P2Cache.getMetaDataProperties(file.getURL());
-            if (!cache.isModified(CACHE_KEY_LASTMODIFIED, file.getLastModified())) {
-                LOG.info("Use cached data for {}@{}...", file.getType(), file.getURL());
-                for (String key : cache.objectNames()) {
-                    if (key.startsWith(CACHE_KEY_UNIT)) {
-                        Unit unit = cache.getObjectProperty(key, Unit.class);
-                        add(new ArtifactInfo<P2Unit>(unit, new P2Unit(unit, reproName)));
-                    }
-                }
-            }
-            else {
-                cache.clearObjects(CACHE_KEY_UNIT);
-                LOG.info("Parse {}@{}...", file.getType(), file.getURL());
-                P2MetadataRepositoryParser parser = new P2MetadataRepositoryParser(
-                    file.getRespository());
-                LOG.info("... {} units parsed.", parser.getCount());
-                Collection<Unit> units = parser.getUnits();
-                for (Unit unit : units) {
-                    add(new ArtifactInfo<P2Unit>(unit, new P2Unit(unit, reproName)));
-                    String key = CACHE_KEY_UNIT + unit.getId() + ":" + unit.getVersion();
-                    cache.setObjectProperty(key, unit);
-                }
-                cache.setProperty(CACHE_KEY_LASTMODIFIED, file.getLastModified());
-                cache.store();
+            LOG.info("Parse {}@{}...", file.getType(), file.getURL());
+            P2MetadataRepositoryParser parser = new P2MetadataRepositoryParser(
+                file.getRespository());
+            LOG.info("... {} units parsed.", parser.getCount());
+            Collection<Unit> units = parser.getUnits();
+            for (Unit unit : units) {
+                add(new ArtifactInfo<P2Unit>(unit, new P2Unit(unit, reproName)));
             }
             return file.getLastModified();
         }

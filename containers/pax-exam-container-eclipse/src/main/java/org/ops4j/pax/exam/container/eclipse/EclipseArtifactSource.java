@@ -64,12 +64,12 @@ public interface EclipseArtifactSource {
             throws IOException, ArtifactNotFoundException;
 
         /**
-         * Resolves a bundle by the given name matching the given version range
+         * Resolves a bundle by the given name matching the given version
          * 
          * @param bundleSymbolicName
          *            the bundle symbolic name
-         * @param bundleVersionRange
-         *            the version range to match
+         * @param bundleVersion
+         *            the version that should match at least
          * @return the resolved bundle
          * @throws IOException
          *             on I/O error

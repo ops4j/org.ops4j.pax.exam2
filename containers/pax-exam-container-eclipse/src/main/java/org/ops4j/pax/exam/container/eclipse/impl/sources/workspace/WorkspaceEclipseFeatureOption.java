@@ -15,7 +15,10 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl.sources.workspace;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 import org.ops4j.pax.exam.Option;
@@ -23,7 +26,7 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseFeatureOption;
-import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser.PluginInfo;
+import org.ops4j.pax.exam.options.StreamReference;
 
 /**
  * Option for workspace features
@@ -32,35 +35,43 @@ import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser.PluginInfo
  *
  */
 public final class WorkspaceEclipseFeatureOption
-    extends AbstractEclipseFeatureOption<WorkspaceFeatureProject> {
+    extends AbstractEclipseFeatureOption<WorkspaceFeatureProject> implements StreamReference {
 
     public WorkspaceEclipseFeatureOption(ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
         super(bundleInfo);
     }
 
     @Override
-    protected List<? extends EclipseFeature> getIncluded(
-        ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
-        return bundleInfo.getContext().getFeature().getIncluded();
+    public List<EclipseFeature> getIncluded() {
+        return Collections
+            .unmodifiableList(getArtifactInfo().getContext().getFeature().getIncluded());
     }
 
     @Override
-    protected List<PluginInfo> getBundles(ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
-        return bundleInfo.getContext().getFeature().getPlugins();
+    public List<EclipseFeatureBundle> getBundles() {
+        return Collections
+            .unmodifiableList(getArtifactInfo().getContext().getFeature().getPlugins());
     }
 
     @Override
-    protected boolean isOptional(ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
+    public boolean isOptional() {
         return false;
     }
 
     @Override
-    protected Option toOption(ArtifactInfo<WorkspaceFeatureProject> bundleInfo) {
+    protected Option toOption() {
         try {
-            return WorkspaceResolver.projectToOption(bundleInfo.getContext().getProject(), null);
+            return WorkspaceResolver.projectToOption(getArtifactInfo().getContext().getProject(),
+                null);
         }
         catch (IOException e) {
             throw new TestContainerException("creation of option failed", e);
         }
+    }
+
+    @Override
+    public InputStream createStream() throws IOException {
+        return new ByteArrayInputStream(
+            WorkspaceResolver.projectToByteArray(getArtifactInfo().getContext().getProject()));
     }
 }

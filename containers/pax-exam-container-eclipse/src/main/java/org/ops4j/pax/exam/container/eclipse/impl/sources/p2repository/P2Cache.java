@@ -22,22 +22,16 @@ import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -184,30 +178,13 @@ public class P2Cache {
 
         private static final long serialVersionUID = 8907898492960803462L;
         private final File metaFile;
-        private final File metaObjectFile;
-        private final Map<String, Object> objectBuffer;
 
-        @SuppressWarnings("unchecked")
         private MetaDataProperties(File metaFile) throws IOException {
             this.metaFile = metaFile;
-            this.metaObjectFile = new File(metaFile.getParentFile(),
-                metaFile.getName() + ".obj.gz");
             if (metaFile.exists()) {
                 try (FileInputStream stream = new FileInputStream(metaFile)) {
                     super.load(stream);
                 }
-            }
-            if (metaObjectFile.exists()) {
-                try (ObjectInputStream stream = new ObjectInputStream(
-                    new GZIPInputStream(new FileInputStream(metaObjectFile)))) {
-                    objectBuffer = (Map<String, Object>) stream.readObject();
-                }
-                catch (ClassNotFoundException e) {
-                    throw new IOException("reading cached objects failed!", e);
-                }
-            }
-            else {
-                objectBuffer = new HashMap<>();
             }
         }
 
@@ -215,11 +192,6 @@ public class P2Cache {
             try {
                 try (FileOutputStream stream = new FileOutputStream(metaFile)) {
                     super.store(stream, null);
-                }
-                try (ObjectOutputStream stream = new ObjectOutputStream(
-                    new GZIPOutputStream(new FileOutputStream(metaObjectFile)))) {
-                    stream.writeObject(objectBuffer);
-                    stream.flush();
                 }
             }
             catch (Exception e) {
@@ -241,34 +213,6 @@ public class P2Cache {
         public synchronized void loadFromXML(InputStream in)
             throws IOException, InvalidPropertiesFormatException {
             throw new UnsupportedOperationException();
-        }
-
-        public void setObjectProperty(String key, Object value) {
-            objectBuffer.put(key, value);
-        }
-
-        public <T> T getObjectProperty(String key, Class<T> type) {
-            return type.cast(objectBuffer.get(key));
-        }
-
-        @Override
-        public synchronized void clear() {
-            objectBuffer.clear();
-            super.clear();
-        }
-
-        public Set<String> objectNames() {
-            return Collections.unmodifiableSet(objectBuffer.keySet());
-        }
-
-        public void clearObjects(String cacheKey) {
-            for (Iterator<java.util.Map.Entry<String, Object>> iterator = objectBuffer.entrySet()
-                .iterator(); iterator.hasNext();) {
-                String key = iterator.next().getKey();
-                if (key.startsWith(cacheKey)) {
-                    iterator.remove();
-                }
-            }
         }
 
         public void clear(String cacheKey) {
