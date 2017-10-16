@@ -36,7 +36,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
@@ -65,9 +64,7 @@ import org.ops4j.pax.exam.options.extra.RepositoryOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.FrameworkEvent;
-import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.launch.Framework;
+import org.osgi.framework.Version;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +97,10 @@ public class EclipsePlatformTestContainer implements TestContainer {
 
     private final List<Option> additional;
 
+    private final CleanCachesOption cleanCaches;
+
+    private final IgnoreItems ignoreItems;
+
     public EclipsePlatformTestContainer(ExamSystem system) throws ExamConfigurationException {
         this.system = system;
         application = system.getRequiredOption(EclipseApplicationOption.class);
@@ -116,6 +117,8 @@ public class EclipsePlatformTestContainer implements TestContainer {
         if (productID != null) {
             additional.add(CoreOptions.frameworkProperty("eclipse.product").value(productID));
         }
+        cleanCaches = system.getOption(CleanCachesOption.class);
+        ignoreItems = system.getOption(IgnoreItems.class);
     }
 
     @Override
@@ -149,14 +152,6 @@ public class EclipsePlatformTestContainer implements TestContainer {
             logProperties("System-Properties", System.getProperties());
             logProperties("Framework-Properties", initialProperties);
             frameworkContext = EclipseStarter.startup(new String[] {}, null);
-            frameworkContext.addFrameworkListener(new FrameworkListener() {
-
-                @Override
-                public void frameworkEvent(FrameworkEvent event) {
-                    System.out.println(event);
-
-                }
-            });
             LOG.info("Framework is up and running!");
             probeInvoker = new ServiceTracker<>(frameworkContext, ProbeInvoker.class, null);
             probeInvoker.open();
@@ -259,8 +254,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
         }
     }
 
-    private static String createBundleString(ExamSystem system) throws IOException {
-        IgnoreItems ignoreItems = system.getSingleOption(IgnoreItems.class);
+    private String createBundleString(ExamSystem system) throws IOException {
         StringBuilder bundles = new StringBuilder();
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
             if (bundles.length() > 0) {
@@ -306,9 +300,9 @@ public class EclipsePlatformTestContainer implements TestContainer {
         return initialProperties;
     }
 
-    private static Map<String, String> createFrameworkProperties(ExamSystem system,
+    private Map<String, String> createFrameworkProperties(ExamSystem system,
         final Map<String, String> defaultProperties) {
-        CleanCachesOption cleanCaches = system.getSingleOption(CleanCachesOption.class);
+
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
             defaultProperties.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
@@ -369,8 +363,6 @@ public class EclipsePlatformTestContainer implements TestContainer {
         LOG.info("Stopping EclipsePlatform...");
         try {
             shutdownEclipse();
-            EclipseApplicationOption application = system
-                .getSingleOption(EclipseApplicationOption.class);
             if (application != null) {
                 Future<Object> result = applicationResult.getAndSet(null);
                 if (result != null) {
@@ -380,31 +372,31 @@ public class EclipsePlatformTestContainer implements TestContainer {
         }
         finally {
             appExecutor.shutdownNow();
+            LOG.info("Stopped.");
         }
-        LOG.info("Stopped.");
     }
 
     private void shutdownEclipse() {
         try {
+            Bundle[] bundles = EclipseStarter.getSystemBundleContext().getBundles();
+            for (Bundle bundle : bundles) {
+                if (bundle.getBundleId() > 0) {
+                    String symbolicName = bundle.getSymbolicName();
+                    Version version = bundle.getVersion();
+                    try {
+                        bundle.uninstall();
+                    }
+                    catch (BundleException e) {
+                        LOG.warn("Uninstall bundle {}:{} failed: {}",
+                            new Object[] { symbolicName, version, e.toString() });
+                    }
+                }
+            }
             EclipseStarter.shutdown();
         }
         catch (Exception e) {
             LOG.warn("shutting down EclipsePlatform failed, will try to shutdown the OSGi way...",
                 e);
-            Framework framework = frameworkContext.getBundle().adapt(Framework.class);
-            try {
-                framework.stop();
-            }
-            catch (BundleException be) {
-                LOG.warn("Can't stop framework!", be);
-            }
-            try {
-                FrameworkEvent stop = framework.waitForStop(TimeUnit.SECONDS.toMillis(30));
-                LOG.info("Framework stopped with code {}...", stop.getType());
-            }
-            catch (InterruptedException e1) {
-                // ignore then...
-            }
         }
     }
 
