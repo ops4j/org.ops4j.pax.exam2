@@ -30,12 +30,12 @@
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>biz.aQute.bndlib</artifactId>
-            <version>${bnd.version>}</version>
+            <version>${bnd.version}</version>
         </dependency>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>biz.aQute.repository</artifactId>
-            <version>${bnd.version>}</version>
+            <version>${bnd.version}</version>
         </dependency>
 
     </dependencies>
