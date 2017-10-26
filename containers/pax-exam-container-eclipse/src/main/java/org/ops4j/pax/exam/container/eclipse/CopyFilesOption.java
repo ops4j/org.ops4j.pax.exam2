@@ -15,28 +15,17 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import java.util.concurrent.Future;
+import java.io.IOException;
 
 import org.ops4j.pax.exam.Option;
 
 /**
- * 
- * The sole purpose of this is that we can validate the result of an application run and look-up
- * this in the paxExam Options
+ * An Option that allows to copy a file to the eclipse installation under test
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseApplicationOption extends EclipseApplication, Option {
+public interface CopyFilesOption extends Option {
 
-    public static final String PROPERTY_APPLICATION_ID = "eclipse.application";
-    public static final String PROPERTY_PRODUCT_ID = "eclipse.product";
-
-    /**
-     * Check the result of the application, only used internally
-     * 
-     * @param resultFuture
-     */
-    void checkResult(Future<Object> resultFuture);
-
+    void copyTo(EclipseDirectoryLayout folder) throws IOException;
 }

@@ -20,15 +20,15 @@ import static org.ops4j.pax.exam.Constants.EXAM_SERVICE_TIMEOUT_KEY;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
+import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE_CLEAN;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT;
 import static org.osgi.framework.Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -40,8 +40,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.osgi.internal.framework.EquinoxConfiguration;
+import org.eclipse.osgi.internal.location.EquinoxLocations;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
-import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
@@ -51,8 +51,11 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
+import org.ops4j.pax.exam.container.eclipse.CopyFilesOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseDirectoryLayout;
 import org.ops4j.pax.exam.container.eclipse.IgnoreItems;
+import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseDirectoryLayout;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.FrameworkPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
@@ -78,7 +81,7 @@ import org.slf4j.LoggerFactory;
  */
 public class EclipsePlatformTestContainer implements TestContainer {
 
-    private static final int DEFAULTSTARTLEVEL = 4;
+    private static final String DEFAULTSTARTLEVEL = "4";
 
     private static final Logger LOG = LoggerFactory.getLogger(EclipsePlatformTestContainer.class);
 
@@ -95,8 +98,6 @@ public class EclipsePlatformTestContainer implements TestContainer {
 
     private final EclipseApplicationOption application;
 
-    private final List<Option> additional;
-
     private final CleanCachesOption cleanCaches;
 
     private final IgnoreItems ignoreItems;
@@ -104,19 +105,6 @@ public class EclipsePlatformTestContainer implements TestContainer {
     public EclipsePlatformTestContainer(ExamSystem system) throws ExamConfigurationException {
         this.system = system;
         application = system.getRequiredOption(EclipseApplicationOption.class);
-        String applicationID = application.applicationID();
-        String productID = application.getProduct().productID();
-        additional = new ArrayList<>();
-        if (applicationID == null) {
-            additional.add(CoreOptions.frameworkProperty("eclipse.ignoreApp").value(true));
-        }
-        else {
-            additional
-                .add(CoreOptions.frameworkProperty("eclipse.application").value(applicationID));
-        }
-        if (productID != null) {
-            additional.add(CoreOptions.frameworkProperty("eclipse.product").value(productID));
-        }
         cleanCaches = system.getOption(CleanCachesOption.class);
         ignoreItems = system.getOption(IgnoreItems.class);
     }
@@ -133,16 +121,18 @@ public class EclipsePlatformTestContainer implements TestContainer {
             systemPackage(
                 "org.ops4j.pax.exam.util;version=" + skipSnapshotFlag(Info.getPaxExamVersion())),
             systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url"),
-            CoreOptions.composite(additional),
             application.getProduct().getLauncher().getProvision().asOption()
 
         });
-
-        EclipseDirectoryLayout layout = new EclipseDirectoryLayout(fork.getTempFolder());
+        DefaultEclipseDirectoryLayout layout = new DefaultEclipseDirectoryLayout(
+            fork.getTempFolder());
         Map<String, String> initialProperties = createFrameworkProperties(fork,
-            layout.setProperties(createEclipseDefaults()));
+            setLocationProperties(createEclipseDefaults(), layout));
         try {
             layout.create();
+            for (CopyFilesOption option : fork.getOptions(CopyFilesOption.class)) {
+                option.copyTo(layout);
+            }
             String bundles = createBundleString(fork);
             initialProperties.put(EclipseStarter.PROP_BUNDLES, bundles);
             initialProperties.put("eclipse.startTime", String.valueOf(System.currentTimeMillis()));
@@ -171,7 +161,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
                         ignoreApp = Boolean.valueOf(property);
                     }
                     else {
-                        ignoreApp = application.isIgnoreApplication();
+                        ignoreApp = false;
                     }
                 }
                 finally {
@@ -255,7 +245,23 @@ public class EclipsePlatformTestContainer implements TestContainer {
     }
 
     private String createBundleString(ExamSystem system) throws IOException {
+        int defaultStartLevel = Integer.parseInt(getFrameworkOrSystemProperty(system,
+            "osgi.bundles.defaultStartLevel", DEFAULTSTARTLEVEL));
         StringBuilder bundles = new StringBuilder();
+        // first check if there is a frameworkproperty set already
+        for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
+            if ("osgi.bundles".equalsIgnoreCase(option.getKey())) {
+                bundles.append(option.getValue());
+            }
+        }
+        if (bundles.length() == 0) {
+            // also check systemproperties then...
+            for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {
+                if ("osgi.bundles".equalsIgnoreCase(option.getKey())) {
+                    bundles.append(option.getValue());
+                }
+            }
+        }
         for (ProvisionOption<?> bundle : system.getOptions(ProvisionOption.class)) {
             if (bundles.length() > 0) {
                 bundles.append(',');
@@ -267,7 +273,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
             bundles.append(bundle.getURL());
             Integer startLevel = bundle.getStartLevel();
             if (startLevel == null) {
-                startLevel = DEFAULTSTARTLEVEL;
+                startLevel = defaultStartLevel;
             }
             if (bundle.shouldStart()) {
                 bundles.append('@');
@@ -283,6 +289,12 @@ public class EclipsePlatformTestContainer implements TestContainer {
         return bundles.toString();
     }
 
+    private static String getFrameworkOrSystemProperty(ExamSystem system, String key,
+        String defaultValue) {
+
+        return defaultValue;
+    }
+
     /**
      * here we setup some defaults required by the eclipse starter, this can be overriden by
      * frameworkProperties or systemProperties
@@ -296,13 +308,12 @@ public class EclipsePlatformTestContainer implements TestContainer {
         initialProperties.put(EquinoxConfiguration.PROP_COMPATIBILITY_BOOTDELEGATION
             + EquinoxConfiguration.PROP_DEFAULT_SUFFIX, "true");
         initialProperties.put(EclipseStarter.PROP_CONSOLE_LOG, "true");
-        initialProperties.put("osgi.bundles.defaultStartLevel", String.valueOf(DEFAULTSTARTLEVEL));
+        initialProperties.put("osgi.bundles.defaultStartLevel", DEFAULTSTARTLEVEL);
         return initialProperties;
     }
 
     private Map<String, String> createFrameworkProperties(ExamSystem system,
         final Map<String, String> defaultProperties) {
-
         if (cleanCaches != null && cleanCaches.getValue() != null && cleanCaches.getValue()) {
             defaultProperties.put(FRAMEWORK_STORAGE_CLEAN, FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
@@ -311,13 +322,23 @@ public class EclipsePlatformTestContainer implements TestContainer {
         defaultProperties.put(FRAMEWORK_BOOTDELEGATION,
             buildString(system.getOptions(BootDelegationOption.class)));
 
+        String applicationID = application.applicationID();
+        String productID = application.getProduct().productID();
+        if (productID != null) {
+            defaultProperties.put(EclipseApplicationOption.PROPERTY_PRODUCT_ID, productID);
+        }
+        if (applicationID != null) {
+            defaultProperties.put(EclipseApplicationOption.PROPERTY_APPLICATION_ID, applicationID);
+        }
         for (FrameworkPropertyOption option : system.getOptions(FrameworkPropertyOption.class)) {
             Object value = option.getValue();
             if (value != null) {
                 defaultProperties.put(option.getKey(), value.toString());
             }
+            else {
+                defaultProperties.remove(option.getKey());
+            }
         }
-
         for (SystemPropertyOption option : system.getOptions(SystemPropertyOption.class)) {
             System.setProperty(option.getKey(), option.getValue());
         }
@@ -410,6 +431,34 @@ public class EclipsePlatformTestContainer implements TestContainer {
                 "can't fetch ProbeInvoker within " + serviceTimeout + "ms");
         }
         probeInvokerService.runTest(description, listener);
+    }
+
+    /**
+     * Set the different locations into the properties required by equinox
+     * 
+     * @param properties
+     */
+    private static Map<String, String> setLocationProperties(Map<String, String> properties,
+        EclipseDirectoryLayout layout) {
+        // # configure the different locations
+        // These are all given as URIs
+        properties.put(EquinoxLocations.PROP_INSTALL_AREA,
+            layout.getBaseFolder().toURI().toASCIIString());
+        properties.put(EquinoxLocations.PROP_CONFIG_AREA,
+            layout.getConfigurationFolder().toURI().toASCIIString());
+        properties.put(EquinoxLocations.PROP_INSTANCE_AREA,
+            layout.getBaseFolder().toURI().toASCIIString());
+        properties.put(EquinoxLocations.PROP_HOME_LOCATION_AREA,
+            layout.getPluginFolder().toURI().toASCIIString());
+        // These are all given as file names
+        properties.put("osgi.syspath", layout.getPluginFolder().getAbsolutePath());
+        properties.put("osgi.logfile",
+            new File(layout.getBaseFolder(), "logfile.log").getAbsolutePath());
+        properties.put("osgi.tracefile",
+            new File(layout.getBaseFolder(), "tracefile.log").getAbsolutePath());
+        // properties.put(EquinoxLocations.PROP_USER_DIR, getEclipseFolder().getAbsolutePath());
+        properties.put(FRAMEWORK_STORAGE, layout.getConfigurationFolder().toURI().toASCIIString());
+        return properties;
     }
 
 }

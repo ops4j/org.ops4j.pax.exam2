@@ -15,28 +15,44 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import java.util.concurrent.Future;
-
-import org.ops4j.pax.exam.Option;
+import java.io.File;
 
 /**
- * 
- * The sole purpose of this is that we can validate the result of an application run and look-up
- * this in the paxExam Options
+ * Represents the layout of a directory
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseApplicationOption extends EclipseApplication, Option {
-
-    public static final String PROPERTY_APPLICATION_ID = "eclipse.application";
-    public static final String PROPERTY_PRODUCT_ID = "eclipse.product";
+public interface EclipseDirectoryLayout {
 
     /**
-     * Check the result of the application, only used internally
      * 
-     * @param resultFuture
+     * @return the base folder
      */
-    void checkResult(Future<Object> resultFuture);
+    File getBaseFolder();
+
+    /**
+     * 
+     * @return the folder where bundles are located
+     */
+    File getPluginFolder();
+
+    /**
+     * 
+     * @return the configuration/framework area
+     */
+    File getConfigurationFolder();
+
+    /**
+     * 
+     * @return the folder where features are located
+     */
+    File getFeaturesFolder();
+
+    /**
+     * 
+     * @return p2 working directory
+     */
+    File getP2Folder();
 
 }

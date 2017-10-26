@@ -16,7 +16,6 @@
 package org.ops4j.pax.exam.container.eclipse;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -30,8 +29,8 @@ import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseBundleS
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseProjectSource;
 import org.ops4j.pax.exam.container.eclipse.EclipseArtifactSource.EclipseUnitSource;
+import org.ops4j.pax.exam.container.eclipse.builder.EclipseInstallationBuilder;
 import org.ops4j.pax.exam.container.eclipse.builder.EclipseProductBuilder;
-import org.ops4j.pax.exam.container.eclipse.builder.SimpleConfiguratorBuilder;
 import org.ops4j.pax.exam.container.eclipse.impl.CombinedSource;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseEnvironment;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseLauncher;
@@ -75,23 +74,9 @@ public class EclipseOptions {
         }
     }
 
-    public static SimpleConfiguratorBuilder buildFromSimple(InputStream bundleFile)
-        throws IOException {
-        try {
-            return new SimpleConfiguratorBuilder(bundleFile);
-        }
-        finally {
-            bundleFile.close();
-        }
-    }
-
-    public static SimpleConfiguratorBuilder buildFromSimple(EclipseInstallation installation)
-        throws IOException {
-        // TODO we might read much more from the installation e.g. env, product and app id and
-        // such...
-        return buildFromSimple(new FileInputStream(new File(installation.getDirectory(),
-            "configuration/org.eclipse.equinox.simpleconfigurator/bundles.info")))
-                .source(installation);
+    public static EclipseInstallationBuilder buildFromEclipseInstallation(
+        EclipseInstallation installation) throws IOException {
+        return new EclipseInstallationBuilder(installation);
     }
 
     /**

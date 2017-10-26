@@ -147,9 +147,4 @@ public final class DefaultEclipseApplication
         }
     }
 
-    @Override
-    public boolean isIgnoreApplication() {
-        return applicationID == null;
-    }
-
 }

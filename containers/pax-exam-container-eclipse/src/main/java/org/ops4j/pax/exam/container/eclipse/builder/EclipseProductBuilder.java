@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundleOption;
+import org.ops4j.pax.exam.container.eclipse.EclipseLauncher;
 import org.ops4j.pax.exam.container.eclipse.EclipseOptions;
 import org.ops4j.pax.exam.container.eclipse.EclipseProvision;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProductParser;
@@ -58,8 +59,13 @@ public class EclipseProductBuilder
         }
         String productID = parser.getProductID();
         String application = parser.getApplication();
-        return EclipseOptions.launcher(provision, isForked()).product(productID)
-            .application(application);
+        EclipseLauncher launcher = EclipseOptions.launcher(provision, isForked());
+        if (application == null || application.trim().isEmpty()) {
+            return launcher.ignoreApp();
+        }
+        else {
+            return launcher.product(productID).application(application);
+        }
     }
 
     private void configure(List<EclipseBundleOption> bundles,

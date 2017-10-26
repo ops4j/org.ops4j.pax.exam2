@@ -23,9 +23,11 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.ops4j.pax.exam.container.eclipse.EclipseBundle;
+import org.ops4j.pax.exam.container.eclipse.EclipseDirectoryLayout;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallation;
 import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
+import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseDirectoryLayout;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.CacheableSource;
 import org.ops4j.pax.exam.options.StreamReference;
@@ -53,20 +55,23 @@ public final class DirectoryResolver extends BundleAndFeatureSource
 
     private final DirectoryEclipseFeatureSource featureSource;
 
-    private final File location;
+    private final EclipseDirectoryLayout layout;
 
     public DirectoryResolver(File folder) throws IOException {
         if (FEATURES_FOLDER.equalsIgnoreCase(folder.getName())
             || PLUGINS_FOLDER.equalsIgnoreCase(folder.getName())) {
             folder = folder.getParentFile();
         }
-        File pluginsFolder = new File(folder, PLUGINS_FOLDER);
-        File featuresFolder = new File(folder, FEATURES_FOLDER);
+        EclipseDirectoryLayout layout = new DefaultEclipseDirectoryLayout(folder);
+        File pluginsFolder = layout.getPluginFolder();
+        File featuresFolder = layout.getFeaturesFolder();
         if (pluginsFolder.exists() || featuresFolder.exists()) {
             bundleSource = new DirectoryEclipseBundleSource(pluginsFolder);
             featureSource = new DirectoryEclipseFeatureSource(featuresFolder);
         }
         else {
+            // use as an alternative layout the "
+            layout = new FlatFolderEclipseDirectoryLayout(layout);
             bundleSource = new DirectoryEclipseBundleSource();
             featureSource = new DirectoryEclipseFeatureSource();
             if (folder.exists()) {
@@ -87,12 +92,12 @@ public final class DirectoryResolver extends BundleAndFeatureSource
                 }
             }
         }
-        this.location = folder;
+        this.layout = layout;
     }
 
     @Override
-    public File getDirectory() {
-        return location;
+    public EclipseDirectoryLayout getLayout() {
+        return layout;
     }
 
     @Override
@@ -107,7 +112,7 @@ public final class DirectoryResolver extends BundleAndFeatureSource
 
     @Override
     public void writeToFolder(Properties metadata, File cacheFolder) throws IOException {
-        metadata.setProperty(DIRECTORY_KEY, getDirectory().getAbsolutePath());
+        metadata.setProperty(DIRECTORY_KEY, getLayout().getBaseFolder().getAbsolutePath());
     }
 
     public static DirectoryResolver restoreFromCache(Properties metadata, File cacheFolder)

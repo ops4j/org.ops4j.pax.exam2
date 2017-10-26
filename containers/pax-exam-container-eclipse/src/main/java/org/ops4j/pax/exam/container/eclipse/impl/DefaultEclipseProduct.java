@@ -27,10 +27,10 @@ import org.ops4j.pax.exam.container.eclipse.EclipseProduct;
 public final class DefaultEclipseProduct implements EclipseProduct {
 
     private final String productID;
-    private final EclipseLauncher launcher;
+    private final DefaultEclipseLauncher launcher;
     private DefaultEclipseApplication application;
 
-    public DefaultEclipseProduct(String productID, EclipseLauncher launcher) {
+    public DefaultEclipseProduct(String productID, DefaultEclipseLauncher launcher) {
         this.productID = productID;
         this.launcher = launcher;
     }

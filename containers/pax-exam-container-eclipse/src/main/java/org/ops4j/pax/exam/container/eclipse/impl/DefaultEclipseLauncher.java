@@ -15,6 +15,7 @@
  */
 package org.ops4j.pax.exam.container.eclipse.impl;
 
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseLauncher;
 import org.ops4j.pax.exam.container.eclipse.EclipseProvision;
@@ -48,6 +49,7 @@ public final class DefaultEclipseLauncher implements EclipseLauncher {
 
     @Override
     public EclipseApplicationOption ignoreApp() {
+        provision.option(CoreOptions.frameworkProperty("eclipse.ignoreApp").value(true));
         return product(null).application(null);
     }
 

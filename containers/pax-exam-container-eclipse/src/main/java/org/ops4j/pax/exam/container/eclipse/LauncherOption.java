@@ -15,28 +15,30 @@
  */
 package org.ops4j.pax.exam.container.eclipse;
 
-import java.util.concurrent.Future;
-
 import org.ops4j.pax.exam.Option;
 
 /**
- * 
- * The sole purpose of this is that we can validate the result of an application run and look-up
- * this in the paxExam Options
+ * An option that holds launcher properties, only works in forked mode!
  * 
  * @author Christoph Läubrich
  *
  */
-public interface EclipseApplicationOption extends EclipseApplication, Option {
+public class LauncherOption implements Option {
 
-    public static final String PROPERTY_APPLICATION_ID = "eclipse.application";
-    public static final String PROPERTY_PRODUCT_ID = "eclipse.product";
+    private final String key;
+    private final String value;
 
-    /**
-     * Check the result of the application, only used internally
-     * 
-     * @param resultFuture
-     */
-    void checkResult(Future<Object> resultFuture);
+    public LauncherOption(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
 }

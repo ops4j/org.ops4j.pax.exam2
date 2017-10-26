@@ -55,6 +55,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
 
     private final Set<String> ignoredBundles;
     private final List<EclipseBundleOption> bundles = new ArrayList<>();
+    private final List<Option> options = new ArrayList<>();
     private final Map<String, EclipseBundleOption> singletonBundles = new HashMap<>();
     private final EclipseArtifactSource source;
     private final EclipseEnvironment environment;
@@ -117,6 +118,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
         ArrayList<Option> list = new ArrayList<>();
         list.addAll(bundles);
         list.addAll(singletonBundles.values());
+        list.addAll(options);
         return CoreOptions.composite(list);
     }
 
@@ -236,6 +238,12 @@ public class DefaultEclipseProvision implements EclipseProvision {
     public EclipseProvision singletonConflictResolution(
         SingletonConflictResolution singletonConflictResolution) {
         conflictResolution = singletonConflictResolution;
+        return this;
+    }
+
+    @Override
+    public EclipseProvision option(Option option) {
+        options.add(option);
         return this;
     }
 

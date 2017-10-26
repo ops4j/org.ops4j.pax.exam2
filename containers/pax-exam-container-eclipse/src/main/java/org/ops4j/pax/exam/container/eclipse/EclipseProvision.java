@@ -99,6 +99,15 @@ public interface EclipseProvision {
     EclipseProvision singletonConflictResolution(
         SingletonConflictResolution singletonConflictResolution);
 
+    /**
+     * Adds an option that should be provisioned
+     * 
+     * @param option
+     *            the option to provision
+     * @return this for chaining
+     */
+    EclipseProvision option(Option option);
+
     Option asOption();
 
 }

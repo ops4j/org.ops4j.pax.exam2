@@ -45,8 +45,6 @@ public interface EclipseApplication {
      */
     public String applicationID();
 
-    boolean isIgnoreApplication();
-
     /**
      * Tells the test-container that the Application has to return the specified value at the end
      * 
