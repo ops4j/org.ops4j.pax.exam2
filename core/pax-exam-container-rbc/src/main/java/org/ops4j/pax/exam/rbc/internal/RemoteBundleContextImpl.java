@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link RemoteBundleContext} implementaton.
- * 
+ *
  * @author Toni Menzel (tonit)
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.1.0, June 10, 2008
@@ -60,10 +60,10 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
 
     /**
      * Constructor.
-     * 
+     *
      * @param bundleContext
      *            bundle context (cannot be null)
-     * 
+     *
      * @throws IllegalArgumentException
      *             - If bundle context is null
      */
@@ -72,32 +72,39 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         this.bundleContext = bundleContext;
     }
 
+    @Override
     public Object remoteCall(final Class<?> serviceType, final String methodName,
         final Class<?>[] methodParams, String filter, final RelativeTimeout timeout,
         final Object... actualParams) throws NoSuchServiceException, NoSuchMethodException,
         IllegalAccessException, InvocationTargetException {
         LOG.trace("Remote call of [" + serviceType.getName() + "." + methodName + "]");
-        Object service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(), filter);
+        Object service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(),
+            filter);
         Object obj = null;
         try {
             obj = serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
-        } catch (InvocationTargetException t) {
+        }
+        catch (InvocationTargetException t) {
             if (t.getTargetException().getCause() instanceof RerunTestException) {
                 LOG.debug("rerun the test");
-                service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(), filter);
+                service = ServiceLookup.getService(bundleContext, serviceType, timeout.getValue(),
+                    filter);
                 obj = serviceType.getMethod(methodName, methodParams).invoke(service, actualParams);
-            } else {
+            }
+            else {
                 throw t;
             }
         }
         return obj;
     }
 
+    @Override
     public long installBundle(final String bundleUrl) throws BundleException {
         LOG.trace("Install bundle from URL [" + bundleUrl + "]");
         return bundleContext.installBundle(bundleUrl).getBundleId();
     }
 
+    @Override
     public long installBundle(final String bundleLocation, final byte[] bundle)
         throws BundleException {
         LOG.trace("Install bundle [ location=" + bundleLocation + "] from byte array");
@@ -115,6 +122,7 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         }
     }
 
+    @Override
     public void uninstallBundle(long id) throws BundleException {
         LOG.trace("Uninstall bundle [" + id + "] ");
         try {
@@ -125,21 +133,25 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
         }
     }
 
+    @Override
     public void startBundle(long bundleId) throws BundleException {
         startBundle(bundleContext.getBundle(bundleId));
     }
 
+    @Override
     public void stopBundle(long bundleId) throws BundleException {
         bundleContext.getBundle(bundleId).stop();
 
     }
 
+    @Override
     public void setBundleStartLevel(long bundleId, int startLevel) throws RemoteException,
         BundleException {
         Bundle bundle = bundleContext.getBundle(bundleId);
         bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
     }
 
+    @Override
     public void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         Bundle bundle = bundleContext.getBundle(bundleId);
         if (bundle == null || (timeout.isNoWait() && (bundle == null || bundle.getState() < state))) {
@@ -171,10 +183,10 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
 
     /**
      * Starts a bundle.
-     * 
+     *
      * @param bundle
      *            bundle to be started
-     * 
+     *
      * @throws BundleException
      *             - If bundle cannot be started
      */
@@ -207,10 +219,10 @@ public class RemoteBundleContextImpl implements RemoteBundleContext, Serializabl
 
     /**
      * Coverts a bundle state to its string form.
-     * 
+     *
      * @param bundle
      *            bundle
-     * 
+     *
      * @return bundle state as string
      */
     private static String bundleStateToString(Bundle bundle) {

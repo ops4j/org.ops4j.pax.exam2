@@ -66,7 +66,8 @@ public class KarafConfigFile extends KarafConfigurationFile {
             final Object array = Array.newInstance(value.getClass(), 1);
             Array.set(array, 0, value);
             configuration.put(key, array);
-        } else {
+        }
+        else {
             final Class clazz = v.getClass();
             if (clazz.isArray()) {
                 final int length = Array.getLength(v);
@@ -74,9 +75,11 @@ public class KarafConfigFile extends KarafConfigurationFile {
                 System.arraycopy(v, 0, array, 0, length);
                 Array.set(array, length, value);
                 configuration.put(key, array);
-            } else if (v instanceof Collection) {
+            }
+            else if (v instanceof Collection) {
                 ((Collection) v).add(value);
-            } else {
+            }
+            else {
                 final String message = String.format("Cannot extend %s by %s.", key, value);
                 throw new IllegalArgumentException(message);
             }

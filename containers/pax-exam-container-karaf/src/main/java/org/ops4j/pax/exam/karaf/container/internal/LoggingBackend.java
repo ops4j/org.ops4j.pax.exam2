@@ -6,8 +6,7 @@ import java.util.Properties;
 /**
  * Identifies and handles the possible logging backends used by Karaf.
  */
-enum LoggingBackend
-{
+enum LoggingBackend {
     LOG4J {
         @Override
         void updatePaxLoggingConfiguration(Properties karafPropertyFile, String realLogLevel) {

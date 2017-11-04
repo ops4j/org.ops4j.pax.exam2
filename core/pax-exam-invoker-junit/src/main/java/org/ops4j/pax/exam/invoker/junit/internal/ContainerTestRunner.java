@@ -27,7 +27,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-
 import org.ops4j.pax.exam.RerunTestException;
 import org.ops4j.pax.exam.util.Injector;
 import org.osgi.framework.BundleContext;
@@ -37,9 +36,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A JUnit {@link Runner} which is aware of an {@link Injector} and a {@link BundleContext} for
  * injecting dependencies from the OSGi service registry.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 public class ContainerTestRunner extends BlockJUnit4ClassRunner {
 
@@ -50,12 +49,13 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
     /**
      * Constructs a runner for the given class which will be injected with dependencies from the
      * given bundle context by the given injector
-     * 
+     *
      * @param klass
      *            test class to be run
      * @param injector
      *            injector for injecting dependencies
-     * @throws InitializationError when test class cannot be initialized           
+     * @throws InitializationError
+     *             when test class cannot be initialized
      */
     public ContainerTestRunner(Class<?> klass, Injector injector) throws InitializationError {
         super(klass);
@@ -74,35 +74,40 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
         LOG.info("running {} in reactor", method.getName());
         runChildWithRetry(method, notifier);
     }
-    
-    
+
     protected void runChildWithRetry(final FrameworkMethod method, RunNotifier notifier) {
         Description description = describeChild(method);
         if (method.getAnnotation(Ignore.class) != null) {
             notifier.fireTestIgnored(description);
-        } else {
+        }
+        else {
             runLeafWithRetry(methodBlock(method), description, notifier);
         }
     }
-    
+
     /**
      * Runs a {@link Statement} that represents a leaf (aka atomic) test.
      */
     protected final void runLeafWithRetry(Statement statement, Description description,
-            RunNotifier notifier) {
+        RunNotifier notifier) {
         EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
         eachNotifier.fireTestStarted();
         boolean retry = false;
         try {
             statement.evaluate();
-        } catch (AssumptionViolatedException e) {
+        }
+        catch (AssumptionViolatedException e) {
             eachNotifier.addFailedAssumption(e);
-        } catch (RerunTestException e) {
+        }
+        catch (RerunTestException e) {
             retry = true;
             throw e;
-        } catch (Throwable t) {
+        }
+        // CHECKSTYLE:SKIP - catch all wanted
+        catch (Throwable t) {
             eachNotifier.addFailure(t);
-        } finally {
+        }
+        finally {
             if (!retry) {
                 eachNotifier.fireTestFinished();
             }

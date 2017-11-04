@@ -194,11 +194,11 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private boolean shouldInjectJUnitBundles(ExamSystem _system) {
-        Option[] options = _system.getOptions(OverrideJUnitBundlesOption.class);  
+        Option[] options = _system.getOptions(OverrideJUnitBundlesOption.class);
         LOGGER.info("Found {} options when requesting OverrideJUnitBundlesOption.class", options.length);
         return options.length == 0;
     }
-    
+
     private KarafManipulator createVersionAdapter(File karafBase) {
         File karafEtc = new File(karafBase, framework.getKarafEtc());
         File distributionInfo = new File(karafEtc, "distribution.info");
@@ -227,7 +227,8 @@ public class KarafTestContainer implements TestContainer {
         String[] javaEndorsedDirs = null;
         if (System.getProperty("java.version").startsWith("9")) {
             javaEndorsedDirs = new String[] {};
-        } else {
+        }
+        else {
             javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
                                                        javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
         }
@@ -500,11 +501,14 @@ public class KarafTestContainer implements TestContainer {
         karafPropertyFile.store(new FileOutputStream(customPropertiesFile), "updated by pax-exam");
     }
 
-    private LoggingBackend getLoggingBackend(File karafHome) throws IOException, FileNotFoundException {
-        File customisedSystemPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/startup.properties");
+    private LoggingBackend getLoggingBackend(File karafHome)
+        throws IOException, FileNotFoundException {
+        File customisedSystemPropertiesFile = new File(karafHome,
+            framework.getKarafEtc() + "/startup.properties");
         InputStream customisedSystemPropertiesInputStream = null;
         try {
-            customisedSystemPropertiesInputStream = new FileInputStream(customisedSystemPropertiesFile);
+            customisedSystemPropertiesInputStream = new FileInputStream(
+                customisedSystemPropertiesFile);
             Properties customisedSystemProperties = new Properties();
             customisedSystemProperties.load(customisedSystemPropertiesInputStream);
 
@@ -517,7 +521,8 @@ public class KarafTestContainer implements TestContainer {
 
             return LoggingBackend.LOG4J;
 
-        } finally {
+        }
+        finally {
             if (customisedSystemPropertiesInputStream != null) {
                 customisedSystemPropertiesInputStream.close();
             }
