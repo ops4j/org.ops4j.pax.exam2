@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
@@ -34,15 +35,14 @@ import org.junit.Test;
 import org.ops4j.io.FileUtils;
 import org.ops4j.io.StreamUtils;
 
-import com.google.common.io.Files;
 
 public class TomcatLauncherTest {
 
     private File tempDir;
 
     @Before
-    public void setUp() {
-        tempDir = Files.createTempDir();
+    public void setUp() throws IOException {
+        tempDir = Files.createTempDirectory("exam").toFile();
     }
 
     @After
@@ -53,7 +53,7 @@ public class TomcatLauncherTest {
     @Test
     public void launchTomcat() throws InterruptedException, IOException, LifecycleException {
         System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
-        String tempDir = Files.createTempDir().getAbsolutePath();
+        String tempDir = Files.createTempDirectory("exam").toFile().getAbsolutePath();
         File baseDir = new File(tempDir, "tomcat");
         File webappDir = new File(baseDir, "webapps");
         webappDir.mkdirs();

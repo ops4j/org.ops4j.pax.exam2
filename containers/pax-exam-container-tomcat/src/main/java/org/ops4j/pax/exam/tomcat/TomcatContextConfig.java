@@ -25,6 +25,7 @@ import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_MANAGER_F
 import static org.ops4j.pax.exam.spi.container.ContainerConstants.WELD_SERVLET_LISTENER;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
@@ -50,6 +51,9 @@ public class TomcatContextConfig extends ContextConfig {
         else if (listenerName.equals("openwebbeans")) {
             registerBeanManager(context, OWB_MANAGER_FACTORY, OWB_SERVLET_LISTENER);
         }
+        WebappLoader loader = new WebappLoader();
+        loader.setLoaderClass(FilteringWebappClassLoader.class.getName());
+        context.setLoader(loader);
     };
 
     private void registerBeanManager(Context appContext, String jndiObjectFactory,
