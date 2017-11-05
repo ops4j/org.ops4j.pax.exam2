@@ -12,11 +12,13 @@
     <artifactId>reactor-drivers</artifactId>
     <packaging>pom</packaging>
 
-    <name>OPS4J Pax Exam Core Reactor</name>
+    <name>OPS4J Pax Exam Drivers Reactor</name>
 
     <modules>
+        <module>pax-exam-invoker-junit5</module>
         <module>pax-exam-invoker-testng</module>
         <module>pax-exam-junit4</module>
+        <module>pax-exam-junit5</module>
         <module>pax-exam-testng</module>
         <module>pax-exam-testng-servlet-bridge</module>
     </modules>

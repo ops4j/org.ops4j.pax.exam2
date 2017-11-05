@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ops4j.pax</groupId>
+        <artifactId>exam</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
+        <relativePath>../../pom</relativePath>
+    </parent>
+
+    <groupId>org.ops4j.pax.exam</groupId>
+    <artifactId>pax-exam-junit5</artifactId>
+    <packaging>jar</packaging>
+
+    <name>OPS4J Pax Exam Driver JUnit5</name>
+    
+    <properties>
+        <dependency.junit5.version>5.0.0-ALPHA</dependency.junit5.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-invoker-junit5</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit</groupId>
+            <artifactId>junit5-engine</artifactId>
+            <version>${dependency.junit5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit</groupId>
+            <artifactId>junit-launcher</artifactId>
+            <version>${dependency.junit5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
