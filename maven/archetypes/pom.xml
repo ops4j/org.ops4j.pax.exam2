@@ -5,7 +5,7 @@
         <groupId>org.ops4j.pax</groupId>
         <artifactId>exam</artifactId>
         <version>5.0.0.M2-SNAPSHOT</version>
-        <relativePath>../pom</relativePath>
+        <relativePath>../../pom</relativePath>
     </parent>
 
     <groupId>org.ops4j.pax.exam</groupId>
