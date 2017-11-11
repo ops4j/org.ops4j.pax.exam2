@@ -15,7 +15,7 @@
     <artifactId>regression-javaee-junit5</artifactId>
     <packaging>jar</packaging>
 
-    <name>OPS4J Pax Exam Java EE Container Regression Tests</name>
+    <name>OPS4J Pax Exam Java EE Container Regression Tests with JUnit 5</name>
 
     <dependencies>
         <dependency>
@@ -149,17 +149,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
                 <executions>
                     <execution>
-                        <id>persuite</id>
+                        <id>default-test</id>
                         <configuration>
-                            <forkMode>once</forkMode>
-                            <excludes>
-                                <exclude>**/perclass/*.java</exclude>
-                            </excludes>
+                            <forkCount>1</forkCount>
+                            <reuseForks>false</reuseForks>
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>1.0.1</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <parallel>none</parallel>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>

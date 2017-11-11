@@ -18,12 +18,17 @@
 
     <name>OPS4J Pax Exam Java EE Integration Tests</name>
 
+    <properties>
+        <pax.exam.logging.manager>java.util.logging.LogManager</pax.exam.logging.manager>
+    </properties>
+
     <profiles>
 
         <profile>
             <id>matrix</id>
             <modules>
                 <module>src/it/regression-javaee</module>
+                <module>src/it/regression-javaee-junit5</module>
                 <module>src/it/regression-javaee-testng</module>
                 <module>src/it/regression-javaee-userprobe</module>
                 <module>src/it/regression-javaee-moviefun</module>
@@ -136,6 +141,7 @@
             <properties>
                 <pax.exam.container>wildfly80</pax.exam.container>
                 <pax.exam.wildfly80.home>${user.dir}/itest/javaee/target/wildfly-${dependency.wildfly.version}</pax.exam.wildfly80.home>
+                <pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
             </properties>
 
             <dependencyManagement>
@@ -259,6 +265,7 @@
             <properties>
                 <pax.exam.container>wildfly80</pax.exam.container>
                 <pax.exam.wildfly80.home>${basedir}/../../../target/wildfly-9.0.2.Final</pax.exam.wildfly80.home>
+                <pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
             </properties>
 
             <dependencyManagement>
@@ -383,6 +390,7 @@
                 <pax.exam.container>wildfly90</pax.exam.container>
                 <pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-9.0.2.Final</pax.exam.wildfly90.home>
                 <pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly90-config</pax.exam.wildfly90.config.dir>
+                <pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
             </properties>
 
             <dependencyManagement>
@@ -507,6 +515,7 @@
                 <pax.exam.container>wildfly100</pax.exam.container>
                 <pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-10.0.0.Final</pax.exam.wildfly90.home>
                 <pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly100-config</pax.exam.wildfly90.config.dir>
+                <pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
             </properties>
 
             <dependencyManagement>
@@ -638,6 +647,7 @@
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
                     <argLine>-XX:MaxPermSize=256M</argLine>
                     <systemProperties>
+                        <java.util.logging.manager>${pax.exam.logging.manager}</java.util.logging.manager>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
                         <pax.exam.wildfly80.home>${pax.exam.wildfly80.home}</pax.exam.wildfly80.home>
