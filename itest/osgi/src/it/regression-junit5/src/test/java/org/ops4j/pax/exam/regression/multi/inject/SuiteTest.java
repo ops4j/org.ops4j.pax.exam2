@@ -17,7 +17,7 @@
  */
 package org.ops4j.pax.exam.regression.multi.inject;
 
-import static org.junit.gen5.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.PrintWriter;
 import java.rmi.Remote;
@@ -29,16 +29,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.junit.gen5.api.BeforeEach;
-import org.junit.gen5.api.Test;
-import org.junit.gen5.engine.discovery.ClassSelector;
-import org.junit.gen5.launcher.Launcher;
-import org.junit.gen5.launcher.TestDiscoveryRequest;
-import org.junit.gen5.launcher.listeners.LoggingListener;
-import org.junit.gen5.launcher.listeners.SummaryGeneratingListener;
-import org.junit.gen5.launcher.listeners.TestExecutionSummary;
-import org.junit.gen5.launcher.main.LauncherFactory;
-import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.LoggingListener;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.sample9.pde.Notifier;
@@ -90,15 +90,15 @@ public class SuiteTest implements Notifier, Remote {
         registry.rebind("PaxExamNotifier", remote);
 
         Launcher launcher = LauncherFactory.create();
-        TestDiscoveryRequest request = TestDiscoveryRequestBuilder.request()
-            .select(ClassSelector.forClass(FilterTest.class), ClassSelector.forClass(InjectTest.class)).build();
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+            .selectors(DiscoverySelectors.selectClass(FilterTest.class), DiscoverySelectors.selectClass(InjectTest.class)).build();
         SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
         launcher.registerTestExecutionListeners(LoggingListener.forJavaUtilLogging(Level.FINEST), summaryListener);
         launcher.execute(request);
 
         TestExecutionSummary summary = summaryListener.getSummary();
-        assertEquals(0, summary.countFailedTests());
-        summary.printFailuresOn(new PrintWriter(System.out));
+        assertEquals(0, summary.getTestsFailedCount());
+        summary.printFailuresTo(new PrintWriter(System.out));
 
         registry.unbind("PaxExamNotifier");
         UnicastRemoteObject.unexportObject(this, true);
@@ -109,8 +109,8 @@ public class SuiteTest implements Notifier, Remote {
 
     public static void main(String[] args) {
         Launcher launcher = LauncherFactory.create();
-        TestDiscoveryRequest request = TestDiscoveryRequestBuilder.request()
-            .select(ClassSelector.forClass(SuiteTest.class)).build();
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+            .selectors(DiscoverySelectors.selectClass(SuiteTest.class)).build();
         launcher.registerTestExecutionListeners(LoggingListener.forJavaUtilLogging(Level.FINEST));
         launcher.execute(request);
     }

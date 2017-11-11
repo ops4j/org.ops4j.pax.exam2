@@ -15,13 +15,13 @@
  */
 package org.ops4j.pax.exam.regression.multi.inject;
 
-import static org.junit.gen5.api.Assertions.assertEquals;
-import static org.junit.gen5.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.inject.Inject;
 
-import org.junit.gen5.api.Test;
-import org.junit.gen5.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ops4j.pax.exam.invoker.junit5.PaxExam;
 import org.ops4j.pax.exam.sample9.pde.HelloService;
 

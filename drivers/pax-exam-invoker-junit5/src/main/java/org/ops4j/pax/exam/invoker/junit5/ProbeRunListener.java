@@ -17,9 +17,9 @@
  */
 package org.ops4j.pax.exam.invoker.junit5;
 
-import org.junit.gen5.engine.TestExecutionResult;
-import org.junit.gen5.launcher.TestExecutionListener;
-import org.junit.gen5.launcher.TestIdentifier;
+import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.TestIdentifier;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestFailure;
 import org.ops4j.pax.exam.TestListener;
@@ -50,7 +50,7 @@ public class ProbeRunListener implements TestExecutionListener {
      * @return
      */
     private TestDescription toDescription(TestIdentifier testIdentifier) {
-        String name = testIdentifier.getName();
+        String name = testIdentifier.getDisplayName();
         int hashPos = name.indexOf('#');
         String className = name.substring(0, hashPos);
         int parenPos = name.indexOf('(');
@@ -64,6 +64,8 @@ public class ProbeRunListener implements TestExecutionListener {
             delegate.testIgnored(toDescription(testIdentifier));
         }
     }
+
+
 
     @Override
     public void executionFinished(TestIdentifier testIdentifier,

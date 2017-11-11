@@ -17,17 +17,17 @@
  */
 package org.ops4j.pax.exam.invoker.junit5;
 
-import org.junit.gen5.api.extension.AfterAllExtensionPoint;
-import org.junit.gen5.api.extension.AfterEachExtensionPoint;
-import org.junit.gen5.api.extension.BeforeAllExtensionPoint;
-import org.junit.gen5.api.extension.BeforeEachExtensionPoint;
-import org.junit.gen5.api.extension.InstancePostProcessor;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
 /**
  * @author hwellmann
  *
  */
-public interface CombinedExtension extends BeforeAllExtensionPoint, AfterAllExtensionPoint,
-    BeforeEachExtensionPoint, AfterEachExtensionPoint, InstancePostProcessor {
+public interface CombinedExtension extends BeforeAllCallback, AfterAllCallback,
+    BeforeEachCallback, AfterEachCallback, TestInstancePostProcessor {
 
 }

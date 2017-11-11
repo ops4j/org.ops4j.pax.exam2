@@ -18,11 +18,12 @@
 package org.ops4j.pax.exam.junit5.impl;
 
 import java.io.IOException;
+import java.lang.reflect.AnnotatedElement;
 
-import org.junit.gen5.api.extension.ContainerExtensionContext;
-import org.junit.gen5.api.extension.TestExtensionContext;
-import org.junit.gen5.engine.TestDescriptor;
-import org.junit.gen5.engine.junit5.descriptor.WrappedExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.TestContainerException;
@@ -40,27 +41,35 @@ import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 public class DriverExtension implements CombinedExtension {
 
     private static ReactorManager manager;
-    private StagedExamReactor stagedReactor;
+    private static StagedExamReactor stagedReactor;
 
     @Override
-    public void beforeAll(ContainerExtensionContext context) throws Exception {
+    public void beforeAll(ExtensionContext context) throws Exception {
         if (manager == null) {
             manager = ReactorManager.getInstance();
-            WrappedExtensionContext wrapped = new WrappedExtensionContext(context);
-            TestDescriptor parentDescriptor = wrapped.getTestDescriptor().getParent().get();
-            parentDescriptor.getChildren().stream().forEach(this::storeTestClass);
-            context.getStore().getOrComputeIfAbsent("container", x -> true);
+            storeTestClass(context);
+            context.getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
             stagedReactor = manager.stageReactor();
         }
         manager.beforeClass(stagedReactor, context.getTestClass());
     }
 
     public void storeTestClass(TestDescriptor descriptor) {
-        String className = descriptor.getName();
-        Class<?> testClass = loadClass(className);
+        ClassSource source = (ClassSource) descriptor.getSource().get();
+        Class<?> testClass = loadClass(source.getClassName());
         Object testInstance = newInstance(testClass);
         ExamReactor examReactor = manager.prepareReactor(testClass, testInstance);
         addTestsToReactor(examReactor, testClass, testInstance);
+    }
+
+    private void storeTestClass(ExtensionContext context) {
+        AnnotatedElement element = context.getElement().orElse(null);
+        if (element instanceof Class) {
+            Class<?> testClass = (Class<?>) element;
+            Object testInstance = newInstance(testClass);
+            ExamReactor examReactor = manager.prepareReactor(testClass, testInstance);
+            addTestsToReactor(examReactor, testClass, testInstance);
+        }
     }
 
 
@@ -97,24 +106,24 @@ public class DriverExtension implements CombinedExtension {
 
 
     @Override
-    public void afterAll(ContainerExtensionContext context) throws Exception {
-        manager.afterClass(stagedReactor, context.getTestClass());
+    public void afterAll(ExtensionContext context) throws Exception {
+        manager.afterClass(stagedReactor, context.getTestClass().get());
     }
 
     @Override
-    public void beforeEach(TestExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) throws Exception {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void afterEach(TestExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) throws Exception {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void postProcessTestInstance(TestExtensionContext context) throws Exception {
+    public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
         // TODO Auto-generated method stub
 
     }

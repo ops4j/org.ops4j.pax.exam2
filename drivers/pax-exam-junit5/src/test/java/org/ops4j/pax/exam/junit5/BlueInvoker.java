@@ -19,12 +19,12 @@ package org.ops4j.pax.exam.junit5;
 
 import java.util.logging.Level;
 
-import org.junit.gen5.engine.discovery.ClassSelector;
-import org.junit.gen5.launcher.Launcher;
-import org.junit.gen5.launcher.TestDiscoveryRequest;
-import org.junit.gen5.launcher.listeners.LoggingListener;
-import org.junit.gen5.launcher.main.LauncherFactory;
-import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.LoggingListener;
 
 /**
  * @author hwellmann
@@ -34,8 +34,8 @@ public class BlueInvoker {
 
     public static void main(String[] args) {
         Launcher launcher = LauncherFactory.create();
-        TestDiscoveryRequest request = TestDiscoveryRequestBuilder.request()
-            .select(ClassSelector.forClass(BlueTest.class), ClassSelector.forClass(YellowTest.class)).build();
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+            .selectors(DiscoverySelectors.selectClass(BlueTest.class), DiscoverySelectors.selectClass(YellowTest.class)).build();
         launcher.registerTestExecutionListeners(LoggingListener.forJavaUtilLogging(Level.FINEST));
         launcher.execute(request);
     }

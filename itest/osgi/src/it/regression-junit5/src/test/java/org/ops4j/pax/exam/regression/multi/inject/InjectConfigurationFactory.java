@@ -37,7 +37,7 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
         return options(
             regressionDefaults(),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde.jar"),
-            url("file:/home/hwellmann/tmp/org.junit.gen5/target/org.junit.gen5-5.0.0-ALPHA.jar"),
+            url("file:/home/hwellmann/tmp/org.junit.gen5/target/org.junit.jupiter-5.0.1.jar"),
             systemProperty("pax.exam.invoker").value("junit5"),
             mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-junit5").versionAsInProject(),
             systemProperty("osgi.console").value("6666"),

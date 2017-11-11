@@ -19,6 +19,8 @@
         <module>pax-exam-invoker-testng</module>
         <module>pax-exam-junit4</module>
         <module>pax-exam-junit5</module>
+        <module>pax-exam-junit5-engine</module>
+        <module>pax-exam-junit5-servlet-bridge</module>
         <module>pax-exam-testng</module>
         <module>pax-exam-testng-servlet-bridge</module>
     </modules>

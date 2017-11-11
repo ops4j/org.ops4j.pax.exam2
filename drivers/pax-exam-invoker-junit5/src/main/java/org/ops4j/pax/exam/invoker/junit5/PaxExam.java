@@ -20,9 +20,8 @@ package org.ops4j.pax.exam.invoker.junit5;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-import org.junit.gen5.api.extension.ContainerExtensionContext;
-import org.junit.gen5.api.extension.ExtensionContext;
-import org.junit.gen5.api.extension.TestExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 
 /**
  * @author hwellmann
@@ -31,10 +30,20 @@ import org.junit.gen5.api.extension.TestExtensionContext;
 public class PaxExam implements CombinedExtension {
 
     private CombinedExtension getDelegate(ExtensionContext context) {
-        return (CombinedExtension) context.getStore().getOrComputeIfAbsent("delegate", this::createDelegate);
+        String key;
+        if (context.getStore(Namespace.GLOBAL).get("container") == null) {
+            key = "driverDelegate";
+        }
+        else {
+            key = "containerDelegate";
+        }
+        return (CombinedExtension) context.getStore(Namespace.GLOBAL).getOrComputeIfAbsent(key, k -> createDelegate(k, context));
     }
 
-    private CombinedExtension createDelegate(Object o) {
+    private CombinedExtension createDelegate(String key, ExtensionContext context) {
+        if ("containerDelegate".equals(key)) {
+            return new ContainerExtension();
+        }
         ServiceLoader<CombinedExtension> loader = ServiceLoader.load(CombinedExtension.class, PaxExam.class.getClassLoader());
         Iterator<CombinedExtension> it = loader.iterator();
         if (it.hasNext()) {
@@ -46,27 +55,27 @@ public class PaxExam implements CombinedExtension {
     }
 
     @Override
-    public void postProcessTestInstance(TestExtensionContext context) throws Exception {
-        getDelegate(context).postProcessTestInstance(context);
+    public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
+        getDelegate(context).postProcessTestInstance(testInstance, context);
     }
 
     @Override
-    public void afterEach(TestExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) throws Exception {
         getDelegate(context).afterEach(context);
     }
 
     @Override
-    public void beforeEach(TestExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) throws Exception {
         getDelegate(context).beforeEach(context);
     }
 
     @Override
-    public void afterAll(ContainerExtensionContext context) throws Exception {
+    public void afterAll(ExtensionContext context) throws Exception {
         getDelegate(context).afterAll(context);
     }
 
     @Override
-    public void beforeAll(ContainerExtensionContext context) throws Exception {
+    public void beforeAll(ExtensionContext context) throws Exception {
         getDelegate(context).beforeAll(context);
     }
 }

@@ -24,11 +24,11 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import org.junit.gen5.engine.discovery.ClassSelector;
-import org.junit.gen5.launcher.Launcher;
-import org.junit.gen5.launcher.TestDiscoveryRequest;
-import org.junit.gen5.launcher.main.LauncherFactory;
-import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -69,8 +69,8 @@ public class JUnit5ProbeInvoker implements ProbeInvoker {
 
     private void runTestWithJUnit(TestDescription description, TestListener listener) {
         Launcher launcher = LauncherFactory.create();
-        TestDiscoveryRequest request = TestDiscoveryRequestBuilder.request()
-            .select(ClassSelector.forClass(loadClass(description.getClassName()))).build();
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+            .selectors(DiscoverySelectors.selectClass(loadClass(description.getClassName()))).build();
         launcher.registerTestExecutionListeners(new ProbeRunListener(listener));
         launcher.execute(request);
     }

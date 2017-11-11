@@ -19,12 +19,18 @@ package org.ops4j.pax.exam.invoker.junit5;
 
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_TEST;
 
-import org.junit.gen5.api.extension.ContainerExtensionContext;
-import org.junit.gen5.api.extension.TestExtensionContext;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+
+import javax.naming.InitialContext;
+import javax.transaction.UserTransaction;
+
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
+import org.ops4j.pax.exam.util.Transactional;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.ops4j.spi.ServiceProviderFinder;
 import org.osgi.framework.BundleContext;
@@ -36,28 +42,48 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class ContainerExtension implements CombinedExtension {
 
+    private UserTransaction tx = null;
+
     @Override
-    public void beforeAll(ContainerExtensionContext context) throws Exception {
+    public void beforeAll(ExtensionContext context) throws Exception {
         // empty
     }
 
     @Override
-    public void afterAll(ContainerExtensionContext context) throws Exception {
+    public void afterAll(ExtensionContext context) throws Exception {
         // empty
     }
 
     @Override
-    public void beforeEach(TestExtensionContext context) throws Exception {
-        // empty
+    public void beforeEach(ExtensionContext context) throws Exception {
+        AnnotatedElement annotatedElement = context.getElement().orElse(null);
+        if (annotatedElement instanceof Method) {
+            Method method = (Method) annotatedElement;
+            if (isTransactional(method)) {
+                startTransaction(context);
+            }
+        }
+    }
+
+    /**
+     * @param context
+     */
+    private void startTransaction(ExtensionContext context) throws Exception {
+        InitialContext ctx = new InitialContext();
+        tx = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
+        tx.begin();
     }
 
     @Override
-    public void afterEach(TestExtensionContext context) throws Exception {
-        // empty
+    public void afterEach(ExtensionContext context) throws Exception {
+        if (tx != null) {
+            tx.rollback();
+        }
+        tx = null;
     }
 
     @Override
-    public void postProcessTestInstance(TestExtensionContext context) throws Exception {
+    public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
         ConfigurationManager cm = new ConfigurationManager();
         String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
         if (systemType.equals(EXAM_SYSTEM_TEST)) {
@@ -69,7 +95,16 @@ public class ContainerExtension implements CombinedExtension {
             InjectorFactory injectorFactory = ServiceProviderFinder
                 .loadUniqueServiceProvider(InjectorFactory.class);
             Injector injector = injectorFactory.createInjector();
-            injector.injectFields(context.getTestInstance());
+            injector.injectFields(testInstance);
         }
     }
+
+    private boolean isTransactional(Method method) {
+        return (method.getAnnotation(Transactional.class) != null) || isTransactional(method.getClass());
+    }
+
+    private boolean isTransactional(Class<?> klass) {
+        return klass.getAnnotation(Transactional.class) != null;
+    }
+
 }

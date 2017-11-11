@@ -94,6 +94,8 @@ public class ReactorManager {
     /** The reactor. */
     private ExamReactor reactor;
 
+    private StagedExamReactor stagedReactor;
+
     /**
      * A probe builder for the current test probe. A probe builder contains a number of test classes
      * and their dependent classes and a list of test methods to be executed.
@@ -181,7 +183,11 @@ public class ReactorManager {
      * @return staged reactor
      */
     public StagedExamReactor stageReactor() {
-        StagedExamReactor stagedReactor = reactor.stage(getStagingFactory(currentTestClass));
+        this.stagedReactor = reactor.stage(getStagingFactory(currentTestClass));
+        return stagedReactor;
+    }
+
+    public StagedExamReactor getStagedReactor() {
         return stagedReactor;
     }
 
