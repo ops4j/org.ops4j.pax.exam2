@@ -94,7 +94,7 @@ public class ReactorManager {
     /** The reactor. */
     private ExamReactor reactor;
 
-    private StagedExamReactor stagedReactor;
+    private StagedExamReactor currentStagedReactor;
 
     /**
      * A probe builder for the current test probe. A probe builder contains a number of test classes
@@ -192,12 +192,12 @@ public class ReactorManager {
      * @return staged reactor
      */
     public StagedExamReactor stageReactor() {
-        this.stagedReactor = reactor.stage(getStagingFactory(currentTestClass));
-        return stagedReactor;
+        this.currentStagedReactor = reactor.stage(getStagingFactory(currentTestClass));
+        return currentStagedReactor;
     }
 
     public StagedExamReactor getStagedReactor() {
-        return stagedReactor;
+        return currentStagedReactor;
     }
 
     private ExamSystem createExamSystem() throws IOException {

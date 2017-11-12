@@ -55,5 +55,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
+    <build>
+        <plugins>
+            <!-- Skip Checkstyle since this is mostly third-party code which does not match our rules -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>            
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

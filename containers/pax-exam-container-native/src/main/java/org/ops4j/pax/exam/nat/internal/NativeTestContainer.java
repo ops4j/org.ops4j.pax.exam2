@@ -104,8 +104,8 @@ public class NativeTestContainer implements TestContainer {
     @Override
     public void runTest(TestDescription description, TestListener listener) {
         BundleContext bundleContext = framework.getBundleContext();
-        ProbeInvoker probeInvokerService = ServiceLookup.getService(bundleContext, ProbeInvoker.class,
-            determineExamServiceTimeout());
+        ProbeInvoker probeInvokerService = ServiceLookup.getService(bundleContext,
+            ProbeInvoker.class, determineExamServiceTimeout());
         probeInvokerService.runTest(description, listener);
     }
 
@@ -165,8 +165,8 @@ public class NativeTestContainer implements TestContainer {
     public TestContainer start() {
         try {
             system = system.fork(new Option[] {
-                systemPackage("org.ops4j.pax.exam;version="
-                    + skipSnapshotFlag(Info.getPaxExamVersion())),
+                systemPackage(
+                    "org.ops4j.pax.exam;version=" + skipSnapshotFlag(Info.getPaxExamVersion())),
                 systemPackage("org.ops4j.pax.exam.options;version="
                     + skipSnapshotFlag(Info.getPaxExamVersion())),
                 systemPackage("org.ops4j.pax.exam.util;version="
@@ -197,8 +197,7 @@ public class NativeTestContainer implements TestContainer {
 
     private void logFrameworkEvent(FrameworkEvent frameworkEvent) {
         if (frameworkEvent.getType() == FrameworkEvent.ERROR) {
-            LOG.error(
-                String.format("Framework ERROR event %s", frameworkEvent.toString()),
+            LOG.error(String.format("Framework ERROR event %s", frameworkEvent.toString()),
                 frameworkEvent.getThrowable());
         }
         else {
@@ -335,7 +334,8 @@ public class NativeTestContainer implements TestContainer {
                 if (sl.getStartLevel() == startLevel) {
                     latch.countDown();
                 }
-            }});
+            }
+        });
         sl.setStartLevel(startLevel);
 
         // Check the current start level before starting to wait.
@@ -374,8 +374,8 @@ public class NativeTestContainer implements TestContainer {
             .peek(b -> LOG.error("Bundle [{}] is not resolved", b)).count() > 0;
 
         ConfigurationManager cm = new ConfigurationManager();
-        boolean failOnUnresolved = Boolean.parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY,
-            "false"));
+        boolean failOnUnresolved = Boolean
+            .parseBoolean(cm.getProperty(EXAM_FAIL_ON_UNRESOLVED_KEY, "false"));
         if (hasUnresolvedBundles && failOnUnresolved) {
             throw new TestContainerException(
                 "There are unresolved bundles. See previous ERROR log messages for details.");
@@ -425,8 +425,9 @@ public class NativeTestContainer implements TestContainer {
             try {
                 FrameworkEvent frameworkEvent = framework.waitForStop(timeout);
                 if (frameworkEvent.getType() != FrameworkEvent.STOPPED) {
-                    LOG.error("Framework has not yet stopped after {} ms. "
-                        + "waitForStop returned: {}", timeout, frameworkEvent);
+                    LOG.error(
+                        "Framework has not yet stopped after {} ms. " + "waitForStop returned: {}",
+                        timeout, frameworkEvent);
                 }
             }
             catch (InterruptedException exc) {

@@ -42,7 +42,7 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class ContainerExtension implements CombinedExtension {
 
-    private UserTransaction tx = null;
+    private UserTransaction tx;
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
