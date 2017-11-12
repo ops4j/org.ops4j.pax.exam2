@@ -30,7 +30,6 @@
                 <module>samples</module>
                 <module>containers</module>
                 <module>maven</module>
-                <module>patches</module>
             </modules>
         </profile>
         <profile>
