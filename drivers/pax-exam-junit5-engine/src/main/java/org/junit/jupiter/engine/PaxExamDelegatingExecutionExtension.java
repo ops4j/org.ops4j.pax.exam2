@@ -30,6 +30,7 @@ import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
@@ -132,6 +133,10 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
     @Override
     public boolean shouldDelegate(TestDescriptor testDescriptor) {
         if (isDelegating()) {
+            return false;
+        }
+
+        if (ReactorManager.getInstance().getSystemType().equals(Constants.EXAM_SYSTEM_CDI)) {
             return false;
         }
 

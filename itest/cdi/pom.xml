@@ -26,6 +26,7 @@
                 <module>src/it/regression-cdi-invalid</module>
                 <module>src/it/regression-deltaspike</module>
                 <module>src/it/regression-cdi</module>
+                <module>src/it/regression-cdi-junit5</module>
                 <module>src/it/regression-cdi-testng</module>
                 <module>src/it/regression-cdi-probe</module>
             </modules>
