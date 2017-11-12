@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -191,6 +192,12 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.configadmin</artifactId>
                 <version>1.8.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.8.0</version>
             </dependency>
 
             <dependency>
@@ -923,9 +930,9 @@
         </profile>
 
         <!-- Profiles for "Sonar" -->
-        <!-- The sonar profile should be activated by setting property 'sonar'. That's important because 
-            we need to set an empty 'jacoco.argLine' otherwise. You can't define an empty default for that property 
-            in the global properties section because the empty value will override the value from Jacoco. -->
+        <!-- The sonar profile should be activated by setting property 'sonar'. That's important because we need to set an 
+            empty 'jacoco.argLine' otherwise. You can't define an empty default for that property in the global properties section because 
+            the empty value will override the value from Jacoco. -->
         <profile>
             <id>no-sonar</id>
             <activation>
