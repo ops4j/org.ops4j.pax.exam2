@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <features name="pax-exam-features-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
-    <feature name="exam" version="${project.version}">
+    <feature name="exam-no-junit" version="${project.version}">
         <bundle>mvn:org.ops4j.base/ops4j-base-lang/${dependency.base.version}</bundle>
         <bundle>mvn:org.ops4j.base/ops4j-base-monitors/${dependency.base.version}</bundle>
         <bundle>mvn:org.ops4j.base/ops4j-base-net/${dependency.base.version}</bundle>
@@ -17,9 +17,12 @@
         <bundle>mvn:org.ops4j.pax.exam/pax-exam/${project.version}</bundle>
         <bundle>mvn:org.ops4j.pax.exam/pax-exam-extender-service/${project.version}</bundle>
         <bundle>mvn:org.ops4j.pax.exam/pax-exam-container-rbc/${project.version}</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.0</bundle>
+    </feature>
+    <feature name="exam" version="${project.version}">
+        <feature version="${project.version}">exam-no-junit</feature>
         <bundle>mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/${dependency.tipi.hamcrest.version}</bundle>
         <bundle>mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/${dependency.tipi.junit.version}</bundle>
         <bundle>mvn:org.ops4j.pax.exam/pax-exam-invoker-junit/${project.version}</bundle>
-        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.0</bundle>
     </feature>
 </features>

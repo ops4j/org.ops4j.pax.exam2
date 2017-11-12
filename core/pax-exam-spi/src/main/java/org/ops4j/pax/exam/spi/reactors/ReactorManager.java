@@ -171,8 +171,17 @@ public class ReactorManager {
         try {
             addConfigurationsToReactor(_testClass, testClassInstance);
         }
-        catch (IllegalAccessException | InvocationTargetException exc) {
+        catch (IllegalAccessException exc) {
             throw new TestContainerException(exc);
+        }
+        catch (InvocationTargetException exc) {
+            Throwable cause = exc.getCause();
+            if (cause instanceof AssertionError) {
+                throw (AssertionError)cause;
+            } 
+            else {
+                throw new TestContainerException(cause);
+            }
         }
         return reactor;
     }

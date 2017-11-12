@@ -45,6 +45,9 @@ public class SystemPackageOptionTest {
         Properties actualProps = new Properties();
         actualProps.load(new FileInputStream("etc/config.properties"));
         String actualExtra = actualProps.getProperty("org.osgi.framework.system.packages.extra");
+        // Test for our added package
         assertThat(actualExtra, containsString("org.osgi.framework.launch"));
+        // Test for one of the standard packages
+        assertThat(actualExtra, containsString("javax.xml.stream"));
     }
 }

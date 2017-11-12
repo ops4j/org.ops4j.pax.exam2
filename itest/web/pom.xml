@@ -126,35 +126,6 @@
                 </dependency>
 
             </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>unpack-weld-patch</id>
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.ops4j.pax.exam</groupId>
-                                            <artifactId>pax-exam-patch-weld</artifactId>
-                                            <version>${project.version}</version>
-                                        </artifactItem>
-                                    </artifactItems>
-                                    <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-                                    <includes>**/*.class</includes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <profile>

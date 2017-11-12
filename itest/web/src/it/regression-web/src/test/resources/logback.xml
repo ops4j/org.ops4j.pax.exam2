@@ -39,5 +39,6 @@
     <logger name="org.apache.catalina" level="INFO" />
     <logger name="org.apache.tomcat" level="INFO" />
     <logger name="org.apache.tomcat.util" level="INFO" />
+    <logger name="org.jboss.weld" level="DEBUG" />
 
 </configuration>

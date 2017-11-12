@@ -33,7 +33,7 @@
         <dependency.deltaspike.version>1.5.1</dependency.deltaspike.version>
         <dependency.glassfish.version>4.1.1</dependency.glassfish.version>
         <dependency.httpcomponents.version>4.3.2</dependency.httpcomponents.version>
-        <dependency.karaf.version>4.0.4</dependency.karaf.version>
+        <dependency.karaf.version>4.1.1</dependency.karaf.version>
 
         <!-- 1.0.8 and higher require slf4j 1.7 -->
         <dependency.logback.version>1.0.7</dependency.logback.version>

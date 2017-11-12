@@ -18,15 +18,17 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertEquals;
-import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
-import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.karafVersion;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.featureRepoStandard;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
+import static org.ops4j.pax.tinybundles.core.TinyBundles.withBnd;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -43,20 +45,17 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
-import org.ops4j.pax.exam.regression.karaf.supports.EchoServlet;
-import org.ops4j.pax.exam.regression.karaf.supports.ServletActivator;
+import org.ops4j.pax.exam.regression.karaf.servlet.EchoServlet;
+import org.ops4j.pax.exam.regression.karaf.servlet.ServletActivator;
 import org.ops4j.pax.web.service.spi.ServletEvent;
 import org.ops4j.pax.web.service.spi.ServletListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
 @RunWith(PaxExam.class)
-public class KarafWithBundleTest {
+public class ServletTest {
     @Inject
     protected BundleContext bundleContext;
-
-    private ServletListener webListener;
 
     /**
      * To make sure the tests run only when the boot features are fully installed
@@ -64,23 +63,38 @@ public class KarafWithBundleTest {
     @Inject
     BootFinished bootFinished;
 
+    @Configuration
+    public Option[] config() {
+        return new Option[]{
+            regressionDefaults("target/paxexam/unpack2/"),
+            features(featureRepoStandard(), "http"),
+            // set the system property for pax web
+            editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
+                RegressionConfiguration.HTTP_PORT),
+            streamBundle(createTestBundle())
+
+        };
+    }
+
     @Before
     public void registerListener() {
-        final Object me = this;
-        webListener = new ServletListener() {
-
+        ServletListener webListener = new ServletListener() {
             @Override
             public void servletEvent(ServletEvent event) {
                 System.out.println(event);
                 if (event.getType() == ServletEvent.DEPLOYED && EchoServlet.ALIAS.equals(event.getAlias())) {
-                    synchronized (me) {
-                        me.notify();
-                    }
+                    notifyMe();
                 }
             }
         };
         Dictionary<String, ?> properties = new Hashtable<String, String>();
         bundleContext.registerService(ServletListener.class, webListener, properties);
+    }
+
+    private void notifyMe() {
+        synchronized (this) {
+            this.notify();
+        }
     }
 
     private void waitForServlet() throws InterruptedException {
@@ -93,42 +107,32 @@ public class KarafWithBundleTest {
     public void testService() throws Exception {
         waitForServlet();
         System.out.println("Trying to get url");
-        URL url = new URL("http://localhost:" + RegressionTestSupport.HTTP_PORT + "/test/services");
+        URL url = new URL("http://localhost:" + RegressionConfiguration.HTTP_PORT + "/test/services");
         URLConnection conn = url.openConnection();
         conn.setDoOutput(true);
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write("This is a test");
-        wr.flush();
-
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String line;
-        line = rd.readLine();
-        assertEquals("Get a Wrong response", "This is a test", line);
-        wr.close();
-        rd.close();
+        writeRequest(conn, "This is a test");
+        String line = readResponse(conn);
+        assertEquals("Got a wrong response", "This is a test", line);
     }
 
-    @Configuration
-    public Option[] config() {
-        return new Option[]{
-            regressionDefaults("target/paxexam/unpack2/"),
-            keepRuntimeFolder(),
-            //logLevel(LogLevel.DEBUG),
-            features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml")
-                .classifier("features").version(karafVersion()), "http"),
-            // set the system property for pax web
-            KarafDistributionOption.editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
-                RegressionTestSupport.HTTP_PORT),
-            // create bundle to install
-            streamBundle(bundle()
-                .add(EchoServlet.class)
-                .add(ServletActivator.class)
-                .set(Constants.BUNDLE_MANIFESTVERSION, "2")
-                .set(Constants.BUNDLE_SYMBOLICNAME, "MyBundleTest")
-                .set(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())
-                .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                .build())
+    private void writeRequest(URLConnection conn, String requestMessage) throws IOException {
+        try (OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream())) {
+            wr.write(requestMessage);
+        }
+    }
 
-        };
+    private String readResponse(URLConnection conn) throws IOException {
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            return rd.readLine();
+        }
+    }
+
+    private InputStream createTestBundle() {
+        return bundle()
+            .add(EchoServlet.class)
+            .add(ServletActivator.class)
+            .set(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())
+            .set(Constants.BUNDLE_MANIFESTVERSION, "2")
+            .build(withBnd());
     }
 }

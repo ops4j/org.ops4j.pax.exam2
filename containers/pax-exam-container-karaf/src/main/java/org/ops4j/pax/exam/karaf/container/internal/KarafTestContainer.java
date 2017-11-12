@@ -27,6 +27,7 @@ import static org.ops4j.pax.exam.rbc.Constants.RMI_PORT_PROPERTY;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,12 +78,14 @@ import org.ops4j.pax.exam.karaf.options.KeepRuntimeFolderOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.karaf.options.configs.CustomProperties;
 import org.ops4j.pax.exam.karaf.options.configs.FeaturesCfg;
+import org.ops4j.pax.exam.karaf.options.libraries.OverrideJUnitBundlesOption;
 import org.ops4j.pax.exam.options.BootDelegationOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ServerModeOption;
 import org.ops4j.pax.exam.options.SystemPackageOption;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.exam.options.extra.EnvironmentOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.exam.rbc.client.RemoteBundleContextClient;
 import org.osgi.framework.Bundle;
@@ -128,15 +131,17 @@ public class KarafTestContainer implements TestContainer {
             //registry.selectGracefully();
             FreePort freePort = new FreePort(21000, 21099);
             int port = freePort.getPort();
-            LOGGER.debug("using RMI registry at port {}", port);
-            rgstry = LocateRegistry.createRegistry(port);
             FreePort invokerPortRange = new FreePort(21100, 21199);
             int invokerPort = invokerPortRange.getPort();
 
-            String host = InetAddress.getLocalHost().getHostName();
+            String host = InetAddress.getLoopbackAddress().getHostAddress();
+            LOGGER.info("Creating RMI registry server on {}:{}", host, port);
+            System.setProperty("java.rmi.server.hostname", host);
+            rgstry = LocateRegistry.createRegistry(port);
 
             ExamSystem subsystem = system
                 .fork(options(
+                    systemProperty("java.rmi.server.hostname").value(host),
                     systemProperty(RMI_HOST_PROPERTY).value(host),
                     systemProperty(RMI_PORT_PROPERTY).value(Integer.toString(port)),
                     systemProperty(RMI_NAME_PROPERTY).value(name),
@@ -161,14 +166,16 @@ public class KarafTestContainer implements TestContainer {
                 karafHome);
             deployer.copyBootClasspathLibraries();
 
-            updateLogProperties(karafHome, subsystem);
             setupSystemProperties(karafHome, subsystem);
+            updateLogProperties(karafHome, subsystem);
 
-            List<KarafDistributionConfigurationFileOption> options = new ArrayList<KarafDistributionConfigurationFileOption>(
+            List<KarafDistributionConfigurationFileOption> options = new ArrayList<>(
                 Arrays.asList(subsystem.getOptions(KarafDistributionConfigurationFileOption.class)));
             options.addAll(fromFeatureOptions(subsystem.getOptions(KarafFeaturesOption.class)));
-            options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL,
-                "exam")));
+            String usedExamFeature = shouldInjectJUnitBundles(system)
+                    ? "exam"
+                    : "exam-no-junit";
+            options.addAll(fromFeatureOptions(KarafDistributionOption.features(EXAM_REPO_URL, usedExamFeature)));
 
             if (framework.isUseDeployFolder()) {
                 deployer.copyReferencedArtifactsToDeployFolder();
@@ -190,8 +197,14 @@ public class KarafTestContainer implements TestContainer {
         return this;
     }
 
+    private boolean shouldInjectJUnitBundles(ExamSystem _system) {
+        Option[] options = _system.getOptions(OverrideJUnitBundlesOption.class);
+        LOGGER.info("Found {} options when requesting OverrideJUnitBundlesOption.class", options.length);
+        return options.length == 0;
+    }
+
     private KarafManipulator createVersionAdapter(File karafBase) {
-        File karafEtc = new File(karafBase, "etc");
+        File karafEtc = new File(karafBase, framework.getKarafEtc());
         File distributionInfo = new File(karafEtc, "distribution.info");
 
         framework = new InternalKarafDistributionConfigurationOption(framework, distributionInfo);
@@ -201,18 +214,28 @@ public class KarafTestContainer implements TestContainer {
     private void startKaraf(ExamSystem subsystem, File karafBase, File karafHome) {
         long startedAt = System.currentTimeMillis();
         File karafBin = new File(karafBase, "bin");
-        File karafEtc = new File(karafBase, "etc");
-        String karafData = karafHome + "/data";
+        File karafEtc = new File(karafBase, framework.getKarafEtc());
+        File karafData = new File(karafBase, framework.getKarafData());
         String[] classPath = buildKarafClasspath(karafHome);
         makeScriptsInBinExec(karafBin);
         File javaHome = new File(System.getProperty("java.home"));
         String main = framework.getKarafMain();
         String options = "";
-        String[] environment = new String[] {};
-        ArrayList<String> javaOpts = new ArrayList<String>();
+        List<String> environment = new ArrayList<>();
+        EnvironmentOption[] environmentOptions = subsystem.getOptions(EnvironmentOption.class);
+        for (EnvironmentOption environmentOption : environmentOptions) {
+            environment.add(environmentOption.getEnvironment());
+        }
+        ArrayList<String> javaOpts = new ArrayList<>();
         appendVmSettingsFromSystem(javaOpts, subsystem);
-        String[] javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
-            javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
+        String[] javaEndorsedDirs = null;
+        if (System.getProperty("java.version").startsWith("9")) {
+            javaEndorsedDirs = new String[] {};
+        }
+        else {
+            javaEndorsedDirs = new String[] { javaHome + "/jre/lib/endorsed",
+                                                       javaHome + "/lib/endorsed", karafHome + "/lib/endorsed" };
+        }
         String[] javaExtDirs = new String[] { javaHome + "/jre/lib/ext", javaHome + "/lib/ext",
             javaHome + "/lib/ext" };
         List<String> opts = Arrays.asList("-Dkaraf.startLocalConsole="
@@ -220,8 +243,9 @@ public class KarafTestContainer implements TestContainer {
             + shouldRemoteShellBeStarted(subsystem));
         boolean enableMBeanServerBuilder = shouldMBeanServerBuilderBeEnabled(subsystem);
         String[] karafOpts = new String[] {};
-        runner.exec(environment, karafBase, javaHome.toString(), javaOpts.toArray(new String[] {}),
-            javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData, karafEtc.toString(),
+        String[] env = environment.toArray(new String[environment.size()]);
+        runner.exec(env, karafBase, javaHome.toString(), javaOpts.toArray(new String[] {}),
+            javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData.toString(), karafEtc.toString(),
             karafOpts, opts.toArray(new String[] {}), classPath, main, options,
             enableMBeanServerBuilder);
 
@@ -339,7 +363,7 @@ public class KarafTestContainer implements TestContainer {
 
     private void updateUserSetProperties(File karafHome,
         List<KarafDistributionConfigurationFileOption> options) throws IOException {
-        HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = new HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>>();
+        HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = new HashMap<>();
         for (KarafDistributionConfigurationFileOption option : options) {
             if (!optionMap.containsKey(option.getConfigurationFilePath())) {
                 optionMap.put(option.getConfigurationFilePath(),
@@ -363,28 +387,44 @@ public class KarafTestContainer implements TestContainer {
             }
             optionEntries.get(option.getKey()).add(option);
         }
+        String karafData = framework.getKarafData();
+        String karafEtc = framework.getKarafEtc();
         Set<String> configFiles = optionMap.keySet();
         for (String configFile : configFiles) {
-
-            KarafPropertiesFile karafPropertiesFile = new KarafPropertiesFile(karafHome, configFile);
-            karafPropertiesFile.load();
+            KarafConfigurationFile karafConfigurationFile = KarafConfigurationFileFactory.create(karafHome, configFile);
+            if (!karafConfigurationFile.exists()) {
+                // some property options will come from Pax-Exam and use the default data/etc locations,
+                // in those cases when the property file doesn't exist and we have custom data/etc paths
+                // we need to consider the custom location and use that - but only if it matches+exists
+                KarafConfigurationFile customConfigurationFile = null;
+                if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
+                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafData + configFile.substring(4));
+                }
+                if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
+                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafEtc + configFile.substring(3));
+                }
+                if (customConfigurationFile != null && customConfigurationFile.exists()) {
+                    karafConfigurationFile = customConfigurationFile;
+                }
+            }
+            karafConfigurationFile.load();
             Collection<List<KarafDistributionConfigurationFileOption>> optionsToApply = optionMap
                 .get(configFile).values();
             boolean store = true;
             for (List<KarafDistributionConfigurationFileOption> optionListToApply : optionsToApply) {
                 for (KarafDistributionConfigurationFileOption optionToApply : optionListToApply) {
                     if (optionToApply instanceof KarafDistributionConfigurationFilePutOption) {
-                        karafPropertiesFile.put(optionToApply.getKey(), optionToApply.getValue());
+                        karafConfigurationFile.put(optionToApply.getKey(), optionToApply.getValue());
                     }
                     else if (optionToApply instanceof KarafDistributionConfigurationFileReplacementOption) {
-                        karafPropertiesFile
+                        karafConfigurationFile
                             .replace(((KarafDistributionConfigurationFileReplacementOption) optionToApply)
                                 .getSource());
                         store = false;
                         break;
                     }
                     else {
-                        karafPropertiesFile
+                        karafConfigurationFile
                             .extend(optionToApply.getKey(), optionToApply.getValue());
                     }
                 }
@@ -393,7 +433,7 @@ public class KarafTestContainer implements TestContainer {
                 }
             }
             if (store) {
-                karafPropertiesFile.store();
+                karafConfigurationFile.store();
             }
         }
     }
@@ -418,7 +458,7 @@ public class KarafTestContainer implements TestContainer {
 
     private Collection<? extends KarafDistributionConfigurationFileOption> fromFeatureOptions(
         KarafFeaturesOption... featuresOptions) {
-        ArrayList<KarafDistributionConfigurationFileOption> retVal = new ArrayList<KarafDistributionConfigurationFileOption>();
+        ArrayList<KarafDistributionConfigurationFileOption> retVal = new ArrayList<>();
 
         for (KarafFeaturesOption featuresOption : featuresOptions) {
             retVal.add(new KarafDistributionConfigurationFileExtendOption(FeaturesCfg.REPOSITORIES,
@@ -430,7 +470,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private void setupSystemProperties(File karafHome, ExamSystem _system) throws IOException {
-        File customPropertiesFile = new File(karafHome + "/etc/system.properties");
+        File customPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/system.properties");
         SystemPropertyOption[] customProps = _system.getOptions(SystemPropertyOption.class);
         Properties karafPropertyFile = new Properties();
         karafPropertyFile.load(new FileInputStream(customPropertiesFile));
@@ -454,12 +494,43 @@ public class KarafTestContainer implements TestContainer {
             LOGGER.info("Log file should not be modified by the test framework");
             return;
         }
+
+        LoggingBackend loggingBackend = getLoggingBackend(karafHome);
         String realLogLevel = retrieveRealLogLevel(_system);
-        File customPropertiesFile = new File(karafHome + "/etc/org.ops4j.pax.logging.cfg");
+
+        File customPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/org.ops4j.pax.logging.cfg");
         Properties karafPropertyFile = new Properties();
         karafPropertyFile.load(new FileInputStream(customPropertiesFile));
-        karafPropertyFile.put("log4j.rootLogger", realLogLevel + ", out, stdout, osgi:*");
+        loggingBackend.updatePaxLoggingConfiguration(karafPropertyFile, realLogLevel);
         karafPropertyFile.store(new FileOutputStream(customPropertiesFile), "updated by pax-exam");
+    }
+
+    private LoggingBackend getLoggingBackend(File karafHome)
+        throws IOException, FileNotFoundException {
+        File customisedSystemPropertiesFile = new File(karafHome,
+            framework.getKarafEtc() + "/startup.properties");
+        InputStream customisedSystemPropertiesInputStream = null;
+        try {
+            customisedSystemPropertiesInputStream = new FileInputStream(
+                customisedSystemPropertiesFile);
+            Properties customisedSystemProperties = new Properties();
+            customisedSystemProperties.load(customisedSystemPropertiesInputStream);
+
+            Set<Object> systemPropertyNames = customisedSystemProperties.keySet();
+            for (Object systemPropertyName : systemPropertyNames) {
+                if (systemPropertyName.toString().contains("pax-logging-log4j2")) {
+                    return LoggingBackend.LOG4J2;
+                }
+            }
+
+            return LoggingBackend.LOG4J;
+
+        }
+        finally {
+            if (customisedSystemPropertiesInputStream != null) {
+                customisedSystemPropertiesInputStream.close();
+            }
+        }
     }
 
     private String retrieveRealLogLevel(ExamSystem _system) {
@@ -469,7 +540,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private String[] buildKarafClasspath(File karafHome) {
-        List<String> cp = new ArrayList<String>();
+        List<String> cp = new ArrayList<>();
         File[] jars = new File(karafHome + "/lib").listFiles((FileFilter) new WildcardFileFilter(
             "*.jar"));
         for (File jar : jars) {
@@ -498,7 +569,7 @@ public class KarafTestContainer implements TestContainer {
      * Since we might get quite deep use a simple breath first search algorithm
      */
     private File searchKarafBase(File _targetFolder) {
-        Queue<File> searchNext = new LinkedList<File>();
+        Queue<File> searchNext = new LinkedList<>();
         searchNext.add(_targetFolder);
         while (!searchNext.isEmpty()) {
             File head = searchNext.poll();
@@ -583,6 +654,7 @@ public class KarafTestContainer implements TestContainer {
     private void waitForState(final long bundleId, final int state, final RelativeTimeout timeout) {
         target.getClientRBC().waitForState(bundleId, state, timeout);
     }
+
 
     @Override
     public synchronized long install(InputStream stream) {

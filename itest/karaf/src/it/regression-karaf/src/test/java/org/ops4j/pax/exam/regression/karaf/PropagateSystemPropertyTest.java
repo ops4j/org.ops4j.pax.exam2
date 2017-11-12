@@ -18,12 +18,12 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.propagateSystemProperty;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -43,6 +43,6 @@ public class PropagateSystemPropertyTest {
 
     @Test
     public void test() throws Exception {
-        assertThat(System.getProperty("pax.exam.test"), is("propagated"));
+        assertThat(System.getProperty("pax.exam.test"), CoreMatchers.equalTo("propagated"));
     }
 }

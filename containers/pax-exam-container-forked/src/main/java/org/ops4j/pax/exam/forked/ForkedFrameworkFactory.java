@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.forked;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
@@ -46,9 +47,9 @@ import org.slf4j.LoggerFactory;
  * machine running in a separate process.
  * <p>
  * The framework in the forked process can be controlled via a {@link RemoteFramework} interface.
- * 
+ *
  * @author Harald Wellmann
- * 
+ *
  */
 public class ForkedFrameworkFactory {
 
@@ -67,7 +68,7 @@ public class ForkedFrameworkFactory {
     /**
      * Creates a ForkedFrameworkFactory wrapping a given OSGi FrameworkFactory and a given framework
      * storage directory
-     * 
+     *
      * @param frameworkFactory
      *            OSGi framework factory
      */
@@ -87,7 +88,7 @@ public class ForkedFrameworkFactory {
      * Forks a Java VM process running an OSGi framework and returns a {@link RemoteFramework}
      * handle to it.
      * <p>
-     * 
+     *
      * @param vmArgs
      *            VM arguments
      * @param systemProperties
@@ -111,9 +112,12 @@ public class ForkedFrameworkFactory {
         String rmiName = "ExamRemoteFramework-" + UUID.randomUUID().toString();
 
         try {
+            String address = InetAddress.getLoopbackAddress().getHostAddress();
+            System.setProperty("java.rmi.server.hostname", address);
             registry = LocateRegistry.createRegistry(port);
 
-            Map<String, String> systemPropsNew = new HashMap<String, String>(systemProperties);
+            Map<String, String> systemPropsNew = new HashMap<>(systemProperties);
+            systemPropsNew.put("java.rmi.server.hostname", address);
             systemPropsNew.put(RemoteFramework.RMI_PORT_KEY, Integer.toString(port));
             systemPropsNew.put(RemoteFramework.RMI_NAME_KEY, rmiName);
             String[] vmOptions = buildSystemProperties(vmArgs, systemPropsNew);
@@ -132,7 +136,7 @@ public class ForkedFrameworkFactory {
      * Forks a Java VM process running an OSGi framework and returns a {@link RemoteFramework}
      * handle to it.
      * <p>
-     * 
+     *
      * @param vmArgs
      *            VM arguments
      * @param systemProperties
@@ -220,7 +224,8 @@ public class ForkedFrameworkFactory {
 
         do {
             try {
-                Registry reg = LocateRegistry.getRegistry(_port);
+                String address = InetAddress.getLoopbackAddress().getHostAddress();
+                Registry reg = LocateRegistry.getRegistry(address, _port);
                 framework = (RemoteFramework) reg.lookup(rmiName);
             }
             catch (RemoteException e) {
@@ -230,7 +235,7 @@ public class ForkedFrameworkFactory {
                 reason = e;
             }
         }
-        while (framework == null && (System.currentTimeMillis() < startedTrying + TIMEOUT));
+        while (framework == null && System.currentTimeMillis() < startedTrying + TIMEOUT);
         if (framework == null) {
             throw new TestContainerException("cannot find remote framework in RMI registry", reason);
         }

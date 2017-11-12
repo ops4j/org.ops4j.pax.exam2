@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Very simple asynchronous implementation of Java Runner. Exec is being invoked
- * in a fresh Thread.
+ * Very simple asynchronous implementation of Java Runner. Exec is being invoked in a fresh Thread.
  */
 public class KarafEmbeddedRunner implements Runner {
 
@@ -41,11 +40,13 @@ public class KarafEmbeddedRunner implements Runner {
     @Override
     @SuppressWarnings("deprecation")
     public synchronized void // CHECKSTYLE:SKIP : more than 10 params
-    exec(final String[] environment, final File karafBase, final String javaHome, final String[] javaOpts,
-            final String[] javaEndorsedDirs, final String[] javaExtDirs, final String karafHome, final String karafData,
-            final String karafEtc, final String[] karafOpts, final String[] opts, final String[] classPath,
+        exec(final String[] environment, final File karafBase, final String javaHome,
+            final String[] javaOpts, final String[] javaEndorsedDirs, final String[] javaExtDirs,
+            final String karafHome, final String karafData, final String karafEtc,
+            final String[] karafOpts, final String[] opts, final String[] classPath,
             final String main, final String options, final boolean security) {
         Thread thread = new Thread("KarafEmbeddedRunner") {
+
             @Override
             public void run() {
                 String cp = buildCmdSeparatedString(classPath);
@@ -55,7 +56,8 @@ public class KarafEmbeddedRunner implements Runner {
                 System.setProperty("karaf.base", karafBase.getAbsolutePath());
                 System.setProperty("karaf.data", karafData);
                 System.setProperty("karaf.etc", karafEtc);
-                System.setProperty("java.util.logging.config.file", karafEtc + "/java.util.logging.properties");
+                System.setProperty("java.util.logging.config.file",
+                    karafEtc + "/java.util.logging.properties");
 
                 final CommandLineBuilder commandLine = new CommandLineBuilder();
                 commandLine.append(karafOpts).append(opts).append("-cp").append(cp).append(options);
@@ -73,22 +75,23 @@ public class KarafEmbeddedRunner implements Runner {
                             bundleUrls[i] = mainBundles.get(i).toURL();
                         }
 
-                        URLClassLoader urlCl = new URLClassLoader(bundleUrls, this.getContextClassLoader());
+                        URLClassLoader urlCl = new URLClassLoader(bundleUrls,
+                            this.getContextClassLoader());
                         Class<?> mainClass = urlCl.loadClass(main);
                         Constructor<?> constructor = mainClass.getConstructor(String[].class);
                         constructor.setAccessible(true);
                         Object karafInstance = constructor.newInstance(new Object[] { arguments });
                         Method method = mainClass.getMethod("launch", (Class<?>[]) null);
                         method.invoke(karafInstance, (Object[]) null);
-                    } 
+                    }
                     else {
                         throw new RuntimeException("No Karaf main found");
                     }
 
-                } 
+                }
                 catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                        | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                        | SecurityException | MalformedURLException e) {
+                    | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                    | SecurityException | MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
 
@@ -113,13 +116,14 @@ public class KarafEmbeddedRunner implements Runner {
                     if (file.isDirectory() && file.getName().contains("boot")) {
                         // Karaf4 style
                         mainBundles.addAll(searchMainBundle(file.listFiles()));
-                    } 
+                    }
                     else {
-                        if (file.getPath().contains("/boot")) {
+                        if (file.getPath().contains(File.separator + "boot")) {
                             // karaf 4.x
                             mainBundles.add(file);
-                        } 
-                        else if (file.getName().startsWith("karaf") && file.getName().endsWith(".jar")) {
+                        }
+                        else if (file.getName().startsWith("karaf")
+                            && file.getName().endsWith(".jar")) {
                             // karaf version 3.x
                             mainBundles.add(file);
                         }

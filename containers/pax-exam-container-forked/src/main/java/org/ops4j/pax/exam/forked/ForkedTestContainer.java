@@ -276,10 +276,12 @@ public class ForkedTestContainer implements TestContainer {
         List<Long> bundleIds = new ArrayList<Long>();
         ProvisionOption<?>[] options = system.getOptions(ProvisionOption.class);
         Map<String, Long> remoteMappings = new HashMap<String, Long>();
+        Map<Long, String> bundlesById = new HashMap<Long, String>();
         for (ProvisionOption<?> bundle : options) {
             String localUrl = downloadBundle(workDir, bundle.getURL());
             long bundleId = remoteFramework.installBundle(localUrl);
             remoteMappings.put(bundle.getURL(), bundleId);
+            bundlesById.put(bundleId, bundle.getURL());
         }
         // All bundles are installed, we can now start the framework...
         remoteFramework.start();
@@ -301,7 +303,7 @@ public class ForkedTestContainer implements TestContainer {
             }
         }
         setFrameworkStartLevel();
-        verifyThatBundlesAreResolved(bundleIds);
+        verifyThatBundlesAreResolved(bundleIds, bundlesById);
     }
 
     private void setFrameworkStartLevel() throws RemoteException {
@@ -320,12 +322,12 @@ public class ForkedTestContainer implements TestContainer {
         }
     }
 
-    private void verifyThatBundlesAreResolved(List<Long> bundleIds) throws RemoteException {
+    private void verifyThatBundlesAreResolved(List<Long> bundleIds, Map<Long, String> bundlesById) throws RemoteException {
         boolean hasUnresolvedBundles = false;
         for (long bundleId : bundleIds) {
             try {
                 if (remoteFramework.getBundleState(bundleId) == Bundle.INSTALLED) {
-                    LOG.error("Bundle [{}] is not resolved", bundleId);
+                    LOG.error("Bundle [id:{}, url:{}] is not resolved", bundleId, bundlesById.get(bundleId));
                     hasUnresolvedBundles = true;
                 }
             }

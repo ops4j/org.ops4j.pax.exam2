@@ -85,7 +85,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         this.registry = registry;
         this.name = name;
         rmiLookupTimeout = timeout;
-        installed = new Stack<Long>();
+        installed = new Stack<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -237,8 +237,7 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
 
             do {
                 try {
-                    Registry reg = LocateRegistry.getRegistry(registry);
-                    remoteBundleContext = (RemoteBundleContext) reg.lookup(name);
+                    remoteBundleContext = (RemoteBundleContext) getRegistry(registry).lookup(name);
                 }
                 catch (RemoteException e) {
                     reason = e;
@@ -258,6 +257,21 @@ public class RemoteBundleContextClientImpl implements RemoteBundleContextClient 
         }
         return remoteBundleContext;
 
+    }
+
+    // TODO This utility is copy/pasted in pax-exam-container-forked's
+    // ForkedFrameworkFactory, and ideally perhaps should be be put into a
+    // shared utility module
+    private Registry getRegistry(int port) throws RemoteException {
+        Registry reg;
+        String hostName = System.getProperty("java.rmi.server.hostname");
+        if (hostName != null && !hostName.isEmpty()) {
+            reg = LocateRegistry.getRegistry(hostName, port);
+        }
+        else {
+            reg = LocateRegistry.getRegistry(port);
+        }
+        return reg;
     }
 
     public String getName() {
