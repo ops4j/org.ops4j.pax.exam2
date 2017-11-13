@@ -449,10 +449,9 @@ public class EclipsePlatformTestContainer implements TestContainer {
             layout.getBaseFolder().toURI().toASCIIString());
         properties.put(EquinoxLocations.PROP_HOME_LOCATION_AREA,
             layout.getPluginFolder().toURI().toASCIIString());
-        properties.put(EquinoxLocations.PROP_USER_DIR,
-            layout.getBaseFolder().toURI().toASCIIString());
         properties.put(FRAMEWORK_STORAGE, layout.getConfigurationFolder().toURI().toASCIIString());
         // These are all given as file names
+        properties.put(EquinoxLocations.PROP_USER_DIR, layout.getBaseFolder().getAbsolutePath());
         properties.put("osgi.syspath", layout.getPluginFolder().getAbsolutePath());
         properties.put("osgi.logfile",
             new File(layout.getBaseFolder(), "logfile.log").getAbsolutePath());
