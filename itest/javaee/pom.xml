@@ -640,6 +640,7 @@
                 <pax.exam.container>wildfly100</pax.exam.container>
                 <pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-11.0.0.Final</pax.exam.wildfly90.home>
                 <pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly110-config</pax.exam.wildfly90.config.dir>
+                <pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
             </properties>
 
             <dependencyManagement>
