@@ -35,10 +35,10 @@ import org.ops4j.pax.exam.sample3.ice.Chocolate;
 import org.ops4j.pax.exam.sample3.ice.IceCreamService;
 import org.ops4j.pax.exam.sample3.ice.Vanilla;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerSuite;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 @ExtendWith(PaxExam.class)
-@ExamReactorStrategy(PerSuite.class)
+@ExamReactorStrategy(PerClass.class)
 public class VanillaTest {
 
     @Inject

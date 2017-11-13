@@ -18,13 +18,12 @@
 package org.ops4j.pax.exam.junit5.impl;
 
 import java.io.IOException;
-import java.lang.reflect.AnnotatedElement;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.kohsuke.MetaInfServices;
+import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -32,6 +31,9 @@ import org.ops4j.pax.exam.invoker.junit5.CombinedExtension;
 import org.ops4j.pax.exam.spi.ExamReactor;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 import org.ops4j.pax.exam.spi.reactors.ReactorManager;
+import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.exam.util.InjectorFactory;
+import org.ops4j.spi.ServiceProviderFinder;
 
 /**
  * @author hwellmann
@@ -45,12 +47,8 @@ public class DriverExtension implements CombinedExtension {
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        if (manager == null) {
-            manager = ReactorManager.getInstance();
-            storeTestClass(context);
-            context.getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
-            stagedReactor = manager.stageReactor();
-        }
+        manager = ReactorManager.getInstance();
+        stagedReactor = manager.getStagedReactor();
         manager.beforeClass(stagedReactor, context.getTestClass());
     }
 
@@ -61,18 +59,6 @@ public class DriverExtension implements CombinedExtension {
         ExamReactor examReactor = manager.prepareReactor(testClass, testInstance);
         addTestsToReactor(examReactor, testClass, testInstance);
     }
-
-    private void storeTestClass(ExtensionContext context) {
-        AnnotatedElement element = context.getElement().orElse(null);
-        if (element instanceof Class) {
-            Class<?> testClass = (Class<?>) element;
-            Object testInstance = newInstance(testClass);
-            ExamReactor examReactor = manager.prepareReactor(testClass, testInstance);
-            addTestsToReactor(examReactor, testClass, testInstance);
-        }
-    }
-
-
 
     private Class<?> loadClass(String className) {
         try {
@@ -112,20 +98,19 @@ public class DriverExtension implements CombinedExtension {
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-        // TODO Auto-generated method stub
-
+        if (ReactorManager.getInstance().getSystemType().equals(Constants.EXAM_SYSTEM_CDI)) {
+            InjectorFactory injectorFactory = ServiceProviderFinder
+                .loadUniqueServiceProvider(InjectorFactory.class);
+            Injector injector = injectorFactory.createInjector();
+            injector.injectFields(testInstance);
+        }
     }
-
 }

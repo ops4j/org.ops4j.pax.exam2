@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
+import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.jupiter.engine.extension.DelegatingExecutionExtension;
@@ -63,19 +64,18 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
 
     @Override
     public void before(EngineExecutionContext executionContext, TestDescriptor testDescriptor) {
-        if (testDescriptor instanceof ClassTestDescriptor) {
-            ClassTestDescriptor classDescriptor = (ClassTestDescriptor) testDescriptor;
-            if (isDelegating) {
-                ((JupiterEngineExecutionContext) executionContext).getExtensionContext().getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
+        if (testDescriptor instanceof JupiterEngineDescriptor) {
+            if (!isDelegating && manager == null) {
+                manager = ReactorManager.getInstance();
+                testDescriptor.getChildren().stream().forEach(this::storeTestClass);
+                stagedReactor = manager.stageReactor();
+                manager.beforeSuite(stagedReactor);
             }
-            else {
-                if (manager == null) {
-                    manager = ReactorManager.getInstance();
-                    TestDescriptor parentDescriptor = classDescriptor.getParent().get();
-                    parentDescriptor.getChildren().stream().forEach(this::storeTestClass);
-                    stagedReactor = manager.stageReactor();
-                }
-                manager.beforeClass(stagedReactor, null);
+        }
+        else if (testDescriptor instanceof ClassTestDescriptor) {
+            if (isDelegating) {
+                ((JupiterEngineExecutionContext) executionContext).getExtensionContext()
+                    .getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
             }
         }
     }
@@ -87,8 +87,6 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
         ExamReactor examReactor = manager.prepareReactor(testClass, testInstance);
         addTestsToReactor(examReactor, testClass, testInstance);
     }
-
-
 
     private Class<?> loadClass(String className) {
         try {
@@ -108,8 +106,8 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
         }
     }
 
-    private void addTestsToReactor(ExamReactor reactor, Class<?> testClass, Object testClassInstance)
-        {
+    private void addTestsToReactor(ExamReactor reactor, Class<?> testClass,
+        Object testClassInstance) {
         try {
             TestProbeBuilder probe = manager.createProbeBuilder(testClassInstance);
             probe.addTest(testClass);
@@ -120,13 +118,10 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
         }
     }
 
-
-
     @Override
     public void after(EngineExecutionContext executionContext, TestDescriptor testDescriptor) {
-        if (!isDelegating && testDescriptor instanceof ClassTestDescriptor) {
-            ClassTestDescriptor classDescriptor = (ClassTestDescriptor) testDescriptor;
-            manager.afterClass(stagedReactor, classDescriptor.getTestClass());
+        if (!isDelegating && testDescriptor instanceof JupiterEngineDescriptor) {
+            manager.afterSuite(stagedReactor);
         }
     }
 
@@ -164,7 +159,8 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
     private void delegateTestClass(ClassTestDescriptor classDescriptor) {
         TestListener listener = new JUnit5TestListener(engineListener, root);
         try {
-            ReactorManager.getInstance().getStagedReactor().runTest(new TestDescription(classDescriptor.getTestClass().getName()), listener);
+            ReactorManager.getInstance().getStagedReactor()
+                .runTest(new TestDescription(classDescriptor.getTestClass().getName()), listener);
         }
         // CHECKSTYLE:SKIP : StagedExamReactor API
         catch (Exception exc) {
@@ -175,7 +171,9 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
     private void delegateTestMethod(TestMethodTestDescriptor methodDescriptor) {
         TestListener listener = new JUnit5TestListener(engineListener, root);
         try {
-            TestDescription testDescription = new TestDescription(methodDescriptor.getTestClass().getName(), methodDescriptor.getTestMethod().getName());
+            TestDescription testDescription = new TestDescription(
+                methodDescriptor.getTestClass().getName(),
+                methodDescriptor.getTestMethod().getName());
             ReactorManager.getInstance().getStagedReactor().runTest(testDescription, listener);
         }
         // CHECKSTYLE:SKIP : StagedExamReactor API
