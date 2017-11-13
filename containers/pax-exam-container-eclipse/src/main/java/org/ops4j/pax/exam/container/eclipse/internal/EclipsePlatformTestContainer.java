@@ -440,7 +440,6 @@ public class EclipsePlatformTestContainer implements TestContainer {
      */
     private static Map<String, String> setLocationProperties(Map<String, String> properties,
         EclipseDirectoryLayout layout) {
-        // # configure the different locations
         // These are all given as URIs
         properties.put(EquinoxLocations.PROP_INSTALL_AREA,
             layout.getBaseFolder().toURI().toASCIIString());
@@ -450,14 +449,15 @@ public class EclipsePlatformTestContainer implements TestContainer {
             layout.getBaseFolder().toURI().toASCIIString());
         properties.put(EquinoxLocations.PROP_HOME_LOCATION_AREA,
             layout.getPluginFolder().toURI().toASCIIString());
+        properties.put(EquinoxLocations.PROP_USER_DIR,
+            layout.getBaseFolder().toURI().toASCIIString());
+        properties.put(FRAMEWORK_STORAGE, layout.getConfigurationFolder().toURI().toASCIIString());
         // These are all given as file names
         properties.put("osgi.syspath", layout.getPluginFolder().getAbsolutePath());
         properties.put("osgi.logfile",
             new File(layout.getBaseFolder(), "logfile.log").getAbsolutePath());
         properties.put("osgi.tracefile",
             new File(layout.getBaseFolder(), "tracefile.log").getAbsolutePath());
-        // properties.put(EquinoxLocations.PROP_USER_DIR, getEclipseFolder().getAbsolutePath());
-        properties.put(FRAMEWORK_STORAGE, layout.getConfigurationFolder().toURI().toASCIIString());
         return properties;
     }
 
