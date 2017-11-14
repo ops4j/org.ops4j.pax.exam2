@@ -16,6 +16,7 @@
 package org.ops4j.pax.exam.container.eclipse;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -77,6 +78,16 @@ public class EclipseOptions {
     public static EclipseInstallationBuilder buildFromEclipseInstallation(
         EclipseInstallation installation) throws IOException {
         return new EclipseInstallationBuilder(installation);
+    }
+
+    public static EclipseInstallationBuilder buildFromEclipseArchive(File archive)
+        throws IOException {
+        return new EclipseInstallationBuilder(new FileInputStream(archive));
+    }
+
+    public static EclipseInstallationBuilder buildFromEclipseArchive(InputStream stream)
+        throws IOException {
+        return new EclipseInstallationBuilder(stream);
     }
 
     /**
