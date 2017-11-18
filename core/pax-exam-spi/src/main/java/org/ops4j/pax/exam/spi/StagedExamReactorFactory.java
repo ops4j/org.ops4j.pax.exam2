@@ -24,5 +24,5 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 
 public interface StagedExamReactorFactory {
 
-    StagedExamReactor create(List<TestContainer> factory, List<TestProbeBuilder> probes);
+    StagedExamReactor create(List<TestContainer> containers, TestProbeBuilder probeBuilder);
 }

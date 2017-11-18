@@ -47,7 +47,7 @@ public class DefaultExamReactor implements ExamReactor {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExamReactor.class);
 
     private final List<Option[]> configurations;
-    private final List<TestProbeBuilder> probes;
+    private TestProbeBuilder probeBuilder;
     private final TestContainerFactory testContainerFactory;
 
     private final ExamSystem system;
@@ -55,7 +55,6 @@ public class DefaultExamReactor implements ExamReactor {
     public DefaultExamReactor(ExamSystem system, TestContainerFactory factory) {
         this.system = system;
         this.configurations = new ArrayList<>();
-        this.probes = new ArrayList<>();
         this.testContainerFactory = factory;
     }
 
@@ -66,12 +65,12 @@ public class DefaultExamReactor implements ExamReactor {
 
     @Override
     public synchronized void addProbe(TestProbeBuilder builder) {
-        probes.add(builder);
+        this.probeBuilder = builder;
     }
 
     @Override
     public synchronized StagedExamReactor stage(StagedExamReactorFactory factory) {
-        LOG.debug("Staging reactor with {} probes using {} strategy", probes.size(), factory.getClass().getName());
+        LOG.debug("Staging reactor with using {} strategy", factory.getClass().getName());
         List<TestContainer> containers = new ArrayList<TestContainer>();
 
         if (configurations.isEmpty()) {
@@ -91,7 +90,7 @@ public class DefaultExamReactor implements ExamReactor {
             containers.addAll(Arrays.asList(testContainerFactory.create(system.fork(config))));
         }
 
-        return factory.create(containers, probes);
+        return factory.create(containers, probeBuilder);
     }
 
 }

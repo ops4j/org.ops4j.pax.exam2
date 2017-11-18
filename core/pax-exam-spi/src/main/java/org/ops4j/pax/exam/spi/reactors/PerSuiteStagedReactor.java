@@ -39,7 +39,7 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
 
     private StagedExamReactor delegate;
 
-    public PerSuiteStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+    public PerSuiteStagedReactor(List<TestContainer> containers, TestProbeBuilder mProbes) {
         this.delegate = SingletonStagedReactor.getInstance(containers, mProbes);
     }
 

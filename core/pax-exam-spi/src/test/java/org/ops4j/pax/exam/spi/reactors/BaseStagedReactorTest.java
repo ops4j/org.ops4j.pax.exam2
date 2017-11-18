@@ -36,12 +36,12 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 public abstract class BaseStagedReactorTest {
 
     abstract protected StagedExamReactor getReactor(List<TestContainer> containers,
-        List<TestProbeBuilder> providers);
+        TestProbeBuilder providers);
 
     @Test
     public void testEmptyContainersAndBuilders() throws IOException {
         List<TestContainer> containers = new ArrayList<TestContainer>();
-        List<TestProbeBuilder> providers = new ArrayList<TestProbeBuilder>();
+        TestProbeBuilder providers = null;
 
         StagedExamReactor reactor = getReactor(containers, providers);
         assertThat(reactor, is(notNullValue()));

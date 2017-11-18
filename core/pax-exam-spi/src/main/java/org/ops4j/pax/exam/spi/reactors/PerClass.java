@@ -34,7 +34,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 public class PerClass implements StagedExamReactorFactory {
 
     @Override
-    public StagedExamReactor create(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+    public StagedExamReactor create(List<TestContainer> containers, TestProbeBuilder mProbes) {
         return new PerClassStagedReactor(containers, mProbes);
     }
 }

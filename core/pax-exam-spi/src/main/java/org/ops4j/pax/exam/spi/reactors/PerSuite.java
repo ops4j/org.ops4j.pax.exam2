@@ -27,12 +27,13 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 /**
  * This reactor factory creates a test reactor which is used for the entire test suite. The reactor
  * is shut down lazily when the virtual machine exits.
- * 
+ *
  * @since 3.0.0
  */
 public class PerSuite implements StagedExamReactorFactory {
 
-    public StagedExamReactor create(List<TestContainer> containers, List<TestProbeBuilder> probes) {
+    @Override
+    public StagedExamReactor create(List<TestContainer> containers, TestProbeBuilder probes) {
         return new PerSuiteStagedReactor(containers, probes);
     }
 }

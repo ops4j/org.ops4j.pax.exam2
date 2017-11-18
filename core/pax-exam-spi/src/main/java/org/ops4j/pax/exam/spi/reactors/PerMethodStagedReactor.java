@@ -28,7 +28,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
  */
 public class PerMethodStagedReactor implements StagedExamReactor {
 
-    private final List<TestProbeBuilder> probes;
+    private final TestProbeBuilder probeBuilder;
     private final List<TestContainer> testContainers;
 
     /**
@@ -37,9 +37,9 @@ public class PerMethodStagedReactor implements StagedExamReactor {
      * @param probes
      *            probes to be installed
      */
-    public PerMethodStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> probes) {
+    public PerMethodStagedReactor(List<TestContainer> containers, TestProbeBuilder probes) {
         this.testContainers = containers;
-        this.probes = probes;
+        this.probeBuilder = probes;
     }
 
     public void setUp() {
@@ -85,7 +85,6 @@ public class PerMethodStagedReactor implements StagedExamReactor {
             return;
         }
         TestContainer container = testContainers.get(0);
-        TestProbeBuilder probeBuilder = probes.get(0);
         container.start();
         container.installProbe(probeBuilder.build().getStream());
         try {

@@ -43,11 +43,11 @@ public class SingletonStagedReactor implements StagedExamReactor {
     private static SingletonStagedReactor instance;
 
     private List<TestContainer> testContainers;
-    private List<TestProbeBuilder> probes;
+    private TestProbeBuilder probeBuilder;
 
-    private SingletonStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
+    private SingletonStagedReactor(List<TestContainer> containers, TestProbeBuilder mProbes) {
         testContainers = containers;
-        probes = mProbes;
+        probeBuilder = mProbes;
     }
 
     /**
@@ -58,13 +58,13 @@ public class SingletonStagedReactor implements StagedExamReactor {
      * @return staged reactor
      */
     public static synchronized StagedExamReactor getInstance(List<TestContainer> containers,
-        List<TestProbeBuilder> mProbes) {
+        TestProbeBuilder mProbes) {
         if (instance == null) {
             instance = new SingletonStagedReactor(containers, mProbes);
         }
         else {
             if ( /* ! instance.testContainers.equals( containers ) || */
-            !instance.probes.equals(mProbes)) {
+            !instance.probeBuilder.equals(mProbes)) {
                 throw new TestContainerException(
                     "using the PerSuite reactor strategy, all test classes must share the same probes");
             }
@@ -80,15 +80,13 @@ public class SingletonStagedReactor implements StagedExamReactor {
         for (TestContainer container : testContainers) {
             container.start();
 
-            for (TestProbeBuilder builder : probes) {
-                LOG.debug("installing probe " + builder);
+            LOG.debug("installing probe {}", probeBuilder);
 
-                try {
-                    container.installProbe(builder.build().getStream());
-                }
-                catch (IOException e) {
-                    throw new TestContainerException("Unable to build the probe.", e);
-                }
+            try {
+                container.installProbe(probeBuilder.build().getStream());
+            }
+            catch (IOException e) {
+                throw new TestContainerException("Unable to build the probe.", e);
             }
         }
     }

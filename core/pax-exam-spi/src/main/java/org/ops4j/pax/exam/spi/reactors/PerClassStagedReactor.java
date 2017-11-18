@@ -39,7 +39,7 @@ public class PerClassStagedReactor implements StagedExamReactor {
     private static final Logger LOG = LoggerFactory.getLogger(PerClassStagedReactor.class);
 
     private final List<TestContainer> targetContainer;
-    private final List<TestProbeBuilder> probes;
+    private final TestProbeBuilder probeBuilder;
 
     /**
      * @param containers
@@ -47,26 +47,24 @@ public class PerClassStagedReactor implements StagedExamReactor {
      * @param mProbes
      *            to be installed on all probes
      */
-    public PerClassStagedReactor(List<TestContainer> containers, List<TestProbeBuilder> mProbes) {
-        targetContainer = containers;
-        probes = mProbes;
+    public PerClassStagedReactor(List<TestContainer> containers, TestProbeBuilder mProbes) {
+        this.targetContainer = containers;
+        this.probeBuilder = mProbes;
     }
 
     public void setUp() {
         for (TestContainer container : targetContainer) {
             container.start();
 
-            for (TestProbeBuilder builder : probes) {
-                LOG.debug("installing probe " + builder);
+                LOG.debug("installing probe {}" + probeBuilder);
 
                 try {
-                    container.installProbe(builder.build().getStream());
+                    container.installProbe(probeBuilder.build().getStream());
                 }
                 catch (IOException e) {
                     throw new TestContainerException("Unable to build the probe.", e);
                 }
             }
-        }
     }
 
     public void tearDown() {
