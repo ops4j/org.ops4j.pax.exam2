@@ -71,7 +71,7 @@ public class ContainerTestRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        LOG.info("running {} in reactor", method.getName());
+        LOG.debug("running {} in reactor", method.getName());
         runChildWithRetry(method, notifier);
     }
 

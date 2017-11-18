@@ -132,7 +132,7 @@ public class ReactorManager {
         try {
             cm = new ConfigurationManager();
             system = createExamSystem();
-            reactorStrategies = new HashMap<String, StagedExamReactorFactory>(3);
+            reactorStrategies = new HashMap<>();
             reactorStrategies.put(EXAM_REACTOR_STRATEGY_PER_SUITE, new PerSuite());
             reactorStrategies.put(EXAM_REACTOR_STRATEGY_PER_CLASS, new PerClass());
             reactorStrategies.put(EXAM_REACTOR_STRATEGY_PER_METHOD, new PerMethod());
@@ -178,7 +178,7 @@ public class ReactorManager {
             Throwable cause = exc.getCause();
             if (cause instanceof AssertionError) {
                 throw (AssertionError)cause;
-            } 
+            }
             else {
                 throw new TestContainerException(cause);
             }

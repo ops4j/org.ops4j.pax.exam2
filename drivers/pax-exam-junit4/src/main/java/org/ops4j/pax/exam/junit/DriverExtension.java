@@ -74,7 +74,7 @@ public class DriverExtension extends RunnerExtension {
      */
     public void setBase(ExtensibleRunner base) throws InitializationError {
         this.base = base;
-        LOG.info("creating PaxExam runner for {}", testClass);
+        LOG.debug("creating PaxExam runner for {}", testClass);
         try {
             Object testClassInstance = testClass.newInstance();
             manager = ReactorManager.getInstance();
