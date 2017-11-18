@@ -56,7 +56,8 @@ public class PerClassStagedReactor implements StagedExamReactor {
         for (TestContainer container : targetContainer) {
             container.start();
 
-                LOG.debug("installing probe {}" + probeBuilder);
+            if (probeBuilder != null) {
+                LOG.debug("installing probe {}", probeBuilder);
 
                 try {
                     container.installProbe(probeBuilder.build().getStream());
@@ -65,6 +66,7 @@ public class PerClassStagedReactor implements StagedExamReactor {
                     throw new TestContainerException("Unable to build the probe.", e);
                 }
             }
+        }
     }
 
     public void tearDown() {

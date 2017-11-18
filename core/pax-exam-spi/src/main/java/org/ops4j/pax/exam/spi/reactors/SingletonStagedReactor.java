@@ -80,13 +80,15 @@ public class SingletonStagedReactor implements StagedExamReactor {
         for (TestContainer container : testContainers) {
             container.start();
 
-            LOG.debug("installing probe {}", probeBuilder);
+            if (probeBuilder != null) {
+                LOG.debug("installing probe {}", probeBuilder);
 
-            try {
-                container.installProbe(probeBuilder.build().getStream());
-            }
-            catch (IOException e) {
-                throw new TestContainerException("Unable to build the probe.", e);
+                try {
+                    container.installProbe(probeBuilder.build().getStream());
+                }
+                catch (IOException e) {
+                    throw new TestContainerException("Unable to build the probe.", e);
+                }
             }
         }
     }

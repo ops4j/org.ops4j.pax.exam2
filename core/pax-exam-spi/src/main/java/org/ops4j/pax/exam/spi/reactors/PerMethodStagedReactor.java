@@ -86,7 +86,9 @@ public class PerMethodStagedReactor implements StagedExamReactor {
         }
         TestContainer container = testContainers.get(0);
         container.start();
-        container.installProbe(probeBuilder.build().getStream());
+        if (probeBuilder != null) {
+            container.installProbe(probeBuilder.build().getStream());
+        }
         try {
             container.runTest(description, listener);
         }
