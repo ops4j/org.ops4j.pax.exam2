@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -53,21 +54,18 @@ public class SingletonStagedReactor implements StagedExamReactor {
     /**
      * @param containers
      *            to be used
-     * @param mProbes
+     * @param probeBuilder
      *            to be installed on all probes
      * @return staged reactor
      */
     public static synchronized StagedExamReactor getInstance(List<TestContainer> containers,
-        TestProbeBuilder mProbes) {
+        TestProbeBuilder probeBuilder) {
         if (instance == null) {
-            instance = new SingletonStagedReactor(containers, mProbes);
+            instance = new SingletonStagedReactor(containers, probeBuilder);
         }
-        else {
-            if ( /* ! instance.testContainers.equals( containers ) || */
-            !instance.probeBuilder.equals(mProbes)) {
-                throw new TestContainerException(
-                    "using the PerSuite reactor strategy, all test classes must share the same probes");
-            }
+        else if (!Objects.equals(instance.probeBuilder, probeBuilder)) {
+            throw new TestContainerException(
+                "Using the PerSuite reactor strategy, all test classes must share the same probe");
         }
         return instance;
     }
