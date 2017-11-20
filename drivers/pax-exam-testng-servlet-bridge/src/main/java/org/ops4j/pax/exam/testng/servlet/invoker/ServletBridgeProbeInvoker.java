@@ -20,7 +20,6 @@ package org.ops4j.pax.exam.testng.servlet.invoker;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -75,7 +74,7 @@ public class ServletBridgeProbeInvoker implements ProbeInvoker {
         if (description.getMethodName() != null) {
             target = target.queryParam("method", description.getMethodName());
         }
-        Future<InputStream> is = target.request().async().get(InputStream.class);
+        InputStream is = target.request().get(InputStream.class);
         TestListenerTask task = new TestListenerTask(is, listener);
         task.run();
     }

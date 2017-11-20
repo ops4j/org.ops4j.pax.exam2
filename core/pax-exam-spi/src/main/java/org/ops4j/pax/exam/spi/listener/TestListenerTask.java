@@ -41,6 +41,7 @@ public class TestListenerTask implements Runnable {
     private TestListener delegate;
     private boolean closed;
     private Future<InputStream> isFuture;
+    private InputStream is;
 
     /**
      *
@@ -52,6 +53,11 @@ public class TestListenerTask implements Runnable {
 
     public TestListenerTask(Future<InputStream> isFuture, TestListener delegate) {
         this.isFuture = isFuture;
+        this.delegate = delegate;
+    }
+
+    public TestListenerTask(InputStream is, TestListener delegate) {
+        this.is = is;
         this.delegate = delegate;
     }
 
@@ -84,6 +90,9 @@ public class TestListenerTask implements Runnable {
         if (serverSocket != null) {
             Socket socket = serverSocket.accept();
             return new ObjectInputStream(socket.getInputStream());
+        }
+        else if (is != null) {
+            return new ObjectInputStream(is);
         }
         else {
             try {

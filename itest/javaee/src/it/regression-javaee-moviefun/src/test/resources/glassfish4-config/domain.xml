@@ -56,9 +56,9 @@
   <servers>
     <server config-ref="server-config" name="server">
       <application-ref ref="__admingui" virtual-servers="__asadmin"/>
-      <application-ref ref="pax-exam-sample7-web" virtual-servers="server"/>
       <resource-ref ref="jdbc/__TimerPool"/>
       <resource-ref ref="jdbc/__default"/>
+      <resource-ref ref="jdbc/movieDatabase"/>
       <resource-ref ref="concurrent/__defaultManagedThreadFactory"/>
       <resource-ref ref="concurrent/__defaultContextService"/>
       <resource-ref ref="concurrent/__defaultManagedScheduledExecutorService"/>
@@ -448,27 +448,4 @@
     <secure-admin-principal dn="CN=localhost-instance,OU=GlassFish,O=Oracle Corporation,L=Santa Clara,ST=California,C=US"/>
   </secure-admin>
   <clusters/>
-  <applications>
-    <application context-root="/pax-exam-sample7-web" location="${com.sun.aas.instanceRootURI}/applications/pax-exam-sample7-web/" name="pax-exam-sample7-web" object-type="user">
-      <property name="org.glassfish.persistence.drop_jdbc_file_name_property.movie-unit" value="pax-exam-sample7-web_movie-unit_dropDDL.jdbc"/>
-      <property name="archiveType" value="war"/>
-      <property name="org.glassfish.persistence.create_table_value_property.movie-unit" value="true"/>
-      <property name="org.glassfish.persistence.drop_table_value_property.movie-unit" value="true"/>
-      <property name="org.glassfish.persistence.processor_type.movie-unit" value="JPA"/>
-      <property name="org.glassfish.persistence.resource_jndi_name_property.movie-unit" value="jdbc/movieDatabase"/>
-      <property name="org.glassfish.persistence.create_jdbc_file_name_property.movie-unit" value="pax-exam-sample7-web_movie-unit_createDDL.jdbc"/>
-      <property name="appLocation" value="${com.sun.aas.instanceRootURI}/applications/__internal/pax-exam-sample7-web/pax-exam-sample7-web.war"/>
-      <property name="org.glassfish.ejb.container.application_unique_id" value="89497156577460224"/>
-      <property name="org.glassfish.persistence.app_name_property" value="pax-exam-sample7-web"/>
-      <property name="defaultAppName" value="pax-exam-sample7-web"/>
-      <module name="pax-exam-sample7-web">
-        <engine sniffer="ejb"/>
-        <engine sniffer="security"/>
-        <engine sniffer="webservices"/>
-        <engine sniffer="weld"/>
-        <engine sniffer="jpa"/>
-        <engine sniffer="web"/>
-      </module>
-    </application>
-  </applications>
 </domain>
