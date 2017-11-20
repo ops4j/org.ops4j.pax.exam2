@@ -25,6 +25,7 @@
         <module>pax-exam-container-weld</module>
         <module>pax-exam-container-wildfly80</module>
         <module>pax-exam-container-wildfly90</module>
+        <module>pax-exam-container-cdi-se</module>
     </modules>
 
 </project>
