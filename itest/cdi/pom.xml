@@ -71,8 +71,6 @@
                             <systemProperties>
                                 <pax.exam.container>${pax.exam.container}</pax.exam.container>
                             </systemProperties>
-                            <!-- avoid problem with URL encoded class path segments for OWB -->
-                            <useManifestOnlyJar>false</useManifestOnlyJar>
                         </configuration>
                     </plugin>
                 </plugins>

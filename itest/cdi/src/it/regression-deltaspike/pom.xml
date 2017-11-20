@@ -87,6 +87,20 @@
         </dependency>
 
     </dependencies>
-
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
+                    </systemPropertyVariables>
+                    <!-- avoid problem with URL encoded class path segments for OWB -->
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
