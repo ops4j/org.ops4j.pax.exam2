@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,10 +48,9 @@ import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeInvoker;
+import org.ops4j.pax.exam.TestAddress;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
-import org.ops4j.pax.exam.TestDescription;
-import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.container.eclipse.CopyFilesOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 import org.ops4j.pax.exam.container.eclipse.EclipseDirectoryLayout;
@@ -102,15 +102,20 @@ public class EclipsePlatformTestContainer implements TestContainer {
 
     private final IgnoreItems ignoreItems;
 
+    private Bundle bundleProbe;
+
     public EclipsePlatformTestContainer(ExamSystem system) throws ExamConfigurationException {
         this.system = system;
-        application = system.getRequiredOption(EclipseApplicationOption.class);
-        cleanCaches = system.getOption(CleanCachesOption.class);
-        ignoreItems = system.getOption(IgnoreItems.class);
+        application = system.getSingleOption(EclipseApplicationOption.class);
+        if (application == null) {
+            throw new ExamConfigurationException("EclipseApplicationOption is required");
+        }
+        cleanCaches = system.getSingleOption(CleanCachesOption.class);
+        ignoreItems = system.getSingleOption(IgnoreItems.class);
     }
 
     @Override
-    public void start() {
+    public TestContainer start() {
         ExamSystem fork = system.fork(new Option[] {
             systemPackage("org.ops4j.pax.exam.container.eclipse;version="
                 + skipSnapshotFlag(Info.getPaxExamVersion())),
@@ -194,6 +199,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
         catch (Exception e) {
             throw new TestContainerException("Problem starting test container.", e);
         }
+        return this;
     }
 
     private String skipSnapshotFlag(String version) {
@@ -221,13 +227,14 @@ public class EclipsePlatformTestContainer implements TestContainer {
     }
 
     @Override
-    public void installProbe(InputStream stream) throws IOException {
+    public long installProbe(InputStream stream) {
         try {
-            Bundle b = frameworkContext.installBundle(system.createID("TESTPROBE"), stream);
-            b.start();
+            bundleProbe = frameworkContext.installBundle(system.createID("TESTPROBE"), stream);
+            bundleProbe.start();
+            return bundleProbe.getBundleId();
         }
         catch (BundleException e) {
-            throw new IOException("Problem installing test-probe!", e);
+            throw new TestContainerException("Problem installing test-probe!", e);
         }
     }
 
@@ -377,7 +384,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
     }
 
     @Override
-    public void stop() {
+    public TestContainer stop() {
         if (probeInvoker != null) {
             probeInvoker.close();
         }
@@ -395,6 +402,7 @@ public class EclipsePlatformTestContainer implements TestContainer {
             appExecutor.shutdownNow();
             LOG.info("Stopped.");
         }
+        return this;
     }
 
     private void shutdownEclipse() {
@@ -422,15 +430,21 @@ public class EclipsePlatformTestContainer implements TestContainer {
     }
 
     @Override
-    public void runTest(TestDescription description, TestListener listener)
-        throws InterruptedException {
+    public void call(TestAddress address) {
         long serviceTimeout = determineExamServiceTimeout();
-        ProbeInvoker probeInvokerService = probeInvoker.waitForService(serviceTimeout);
+        ProbeInvoker probeInvokerService;
+        try {
+            probeInvokerService = probeInvoker.waitForService(serviceTimeout);
+        }
+        catch (InterruptedException e) {
+            throw new TestContainerException("Wait for service timed out");
+        }
         if (probeInvokerService == null) {
             throw new TestContainerException(
                 "can't fetch ProbeInvoker within " + serviceTimeout + "ms");
         }
-        probeInvokerService.runTest(description, listener);
+        probeInvokerService.call(address);
+
     }
 
     /**
@@ -458,6 +472,33 @@ public class EclipsePlatformTestContainer implements TestContainer {
         properties.put("osgi.tracefile",
             new File(layout.getBaseFolder(), "tracefile.log").getAbsolutePath());
         return properties;
+    }
+
+    @Override
+    public long install(InputStream stream) {
+        return install(UUID.randomUUID().toString(), stream);
+    }
+
+    @Override
+    public long install(String location, InputStream stream) {
+        try {
+            return frameworkContext.installBundle(location, stream).getBundleId();
+        }
+        catch (BundleException e) {
+            throw new TestContainerException("bundle install failed", e);
+        }
+    }
+
+    @Override
+    public void uninstallProbe() {
+        if (bundleProbe != null) {
+            try {
+                bundleProbe.uninstall();
+            }
+            catch (BundleException e) {
+                //ignore then...
+            }
+        }
     }
 
 }

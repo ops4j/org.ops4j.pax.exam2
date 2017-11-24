@@ -27,8 +27,8 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.StreamReference;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseFeatureOption;
-import org.ops4j.pax.exam.options.StreamReference;
 
 /**
  * FeatureOption Option for {@link DirectoryResolver}
@@ -52,13 +52,13 @@ public final class DirectoryEclipseFeatureOption
     @Override
     public List<EclipseFeature> getIncluded() {
         return Collections
-            .unmodifiableList(getArtifactInfo().getContext().getFeature().getIncluded());
+            .<EclipseFeature>unmodifiableList(getArtifactInfo().getContext().getFeature().getIncluded());
     }
 
     @Override
     public List<EclipseFeatureBundle> getBundles() {
         return Collections
-            .unmodifiableList(getArtifactInfo().getContext().getFeature().getPlugins());
+            .<EclipseFeatureBundle>unmodifiableList(getArtifactInfo().getContext().getFeature().getPlugins());
     }
 
     @Override

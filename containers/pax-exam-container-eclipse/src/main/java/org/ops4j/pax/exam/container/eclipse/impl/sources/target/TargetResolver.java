@@ -98,7 +98,7 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
         Map<String, DirectoryResolver> directoryResolverCache = new HashMap<>();
         if (isValid(cacheFolder, target.getSequenceNumber())) {
             LOG.info("Reading cached state from folder {}...", cacheFolder);
-            combinedSource = CacheableSource.load(new File(cacheFolder, CACHE_FOLDER_NAME));
+            combinedSource = CacheableSource.StoreUtil.load(new File(cacheFolder, CACHE_FOLDER_NAME));
             LOG.info("done.");
         }
         else {
@@ -171,7 +171,7 @@ public class TargetResolver extends BundleAndFeatureAndUnitSource implements Ecl
         }
         if (cacheFolder != null) {
             if (cacheFolder.exists() || cacheFolder.mkdirs()) {
-                CacheableSource.store(combinedSource, new File(cacheFolder, CACHE_FOLDER_NAME));
+                CacheableSource.StoreUtil.store(combinedSource, new File(cacheFolder, CACHE_FOLDER_NAME));
                 Properties properties = new Properties();
                 properties.setProperty("sequenceNumber", target.getSequenceNumber());
                 try (FileOutputStream fout = new FileOutputStream(

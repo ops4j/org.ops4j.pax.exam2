@@ -24,9 +24,9 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.impl.ArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.StreamReference;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseFeatureOption;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.FeatureParser;
-import org.ops4j.pax.exam.options.StreamReference;
 
 /**
  * 
@@ -47,12 +47,12 @@ public final class P2EclipseFeatureOption extends AbstractEclipseFeatureOption<P
 
     @Override
     public List<EclipseFeature> getIncluded() {
-        return Collections.unmodifiableList(featureParser.getIncluded());
+        return Collections.<EclipseFeature> unmodifiableList(featureParser.getIncluded());
     }
 
     @Override
     public List<EclipseFeatureBundle> getBundles() {
-        return Collections.unmodifiableList(featureParser.getPlugins());
+        return Collections.<EclipseFeatureBundle>unmodifiableList(featureParser.getPlugins());
     }
 
     @Override

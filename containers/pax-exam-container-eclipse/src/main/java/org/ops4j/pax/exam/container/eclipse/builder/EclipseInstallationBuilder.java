@@ -132,7 +132,7 @@ public class EclipseInstallationBuilder
 
     private void readFromInstallation(EclipseInstallation installation)
         throws IOException, FileNotFoundException, MalformedURLException {
-        File baseFolder = installation.getLayout().getBaseFolder();
+        final File baseFolder = installation.getLayout().getBaseFolder();
         options.add(new CopyFilesOption() {
 
             @Override

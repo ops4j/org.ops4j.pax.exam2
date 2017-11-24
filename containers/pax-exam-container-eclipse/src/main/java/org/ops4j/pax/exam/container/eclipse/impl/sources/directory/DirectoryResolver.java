@@ -28,9 +28,9 @@ import org.ops4j.pax.exam.container.eclipse.EclipseFeature;
 import org.ops4j.pax.exam.container.eclipse.EclipseInstallation;
 import org.ops4j.pax.exam.container.eclipse.EclipseVersionedArtifact;
 import org.ops4j.pax.exam.container.eclipse.impl.DefaultEclipseDirectoryLayout;
+import org.ops4j.pax.exam.container.eclipse.impl.StreamReference;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.BundleAndFeatureSource;
 import org.ops4j.pax.exam.container.eclipse.impl.sources.CacheableSource;
-import org.ops4j.pax.exam.options.StreamReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

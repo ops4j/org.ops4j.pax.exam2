@@ -275,7 +275,7 @@ public final class CombinedSource implements CombinedEclipseArtifactSource, Cach
             }
             File subfolder = new File(cacheFolder, SUBFOLDER_PREFIX + i);
             FileUtils.forceMkdir(subfolder);
-            CacheableSource.store((CacheableSource) source, subfolder);
+            CacheableSource.StoreUtil.store((CacheableSource) source, subfolder);
         }
     }
 
@@ -303,7 +303,7 @@ public final class CombinedSource implements CombinedEclipseArtifactSource, Cach
         });
         EclipseArtifactSource[] sources = new EclipseArtifactSource[files.length];
         for (int i = 0; i < sources.length; i++) {
-            sources[i] = CacheableSource.load(files[i]);
+            sources[i] = CacheableSource.StoreUtil.load(files[i]);
         }
         return new CombinedSource(sources);
     }

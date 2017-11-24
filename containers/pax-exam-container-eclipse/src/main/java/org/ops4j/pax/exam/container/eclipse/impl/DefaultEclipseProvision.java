@@ -64,7 +64,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
     public DefaultEclipseProvision(EclipseArtifactSource source, EclipseEnvironment environment,
         final Set<String> ignoredBundles) {
         this.environment = environment;
-        this.source = source == null ? new CombinedSource(Collections.emptyList()) : source;
+        this.source = source == null ? new CombinedSource(Collections.<EclipseArtifactSource>emptyList()) : source;
         this.ignoredBundles = ignoredBundles;
     }
 
@@ -119,7 +119,7 @@ public class DefaultEclipseProvision implements EclipseProvision {
         list.addAll(bundles);
         list.addAll(singletonBundles.values());
         list.addAll(options);
-        return CoreOptions.composite(list);
+        return CoreOptions.composite(list.toArray(new Option[0]));
     }
 
     private String getKey(EclipseVersionedArtifact bundle) {

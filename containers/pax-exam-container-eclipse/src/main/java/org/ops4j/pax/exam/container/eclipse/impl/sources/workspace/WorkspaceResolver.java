@@ -175,7 +175,7 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
 
     @Override
     public EclipseProject project(String projectName) throws ArtifactNotFoundException {
-        ProjectParser context = projectMap.get(projectName);
+        final ProjectParser context = projectMap.get(projectName);
         if (context == null || !context.isValid()) {
             throw new ArtifactNotFoundException("can't find project " + projectName
                 + " in workspace " + workspaceFolder.getAbsolutePath());

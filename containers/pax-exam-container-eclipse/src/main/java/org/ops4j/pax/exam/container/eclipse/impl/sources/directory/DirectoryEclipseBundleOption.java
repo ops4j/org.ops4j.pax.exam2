@@ -24,8 +24,8 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.container.eclipse.ArtifactNotFoundException;
 import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.StreamReference;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
-import org.ops4j.pax.exam.options.StreamReference;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 
 /**

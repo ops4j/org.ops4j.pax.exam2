@@ -35,16 +35,18 @@ import org.ops4j.pax.exam.container.eclipse.EclipseApplicationOption;
 public class EclipsePlatformTestContainerFactory implements TestContainerFactory {
 
     @Override
-    public TestContainer create(final ExamSystem system) {
+    public TestContainer[] create(final ExamSystem system) {
         try {
             EclipseApplicationOption option = system
-                .getRequiredOption(EclipseApplicationOption.class);
+                .getSingleOption(EclipseApplicationOption.class);
+            if (option == null) {
+            	throw new TestContainerException("EclipseApplicationOption is required");
+            }
             if (option.getProduct().getLauncher().isForked()) {
                 throw new UnsupportedOperationException("Sorry not supported yet :-(");
-                // return new RemoteEclipsePlatformTestContainer(system);
             }
             else {
-                return new EclipsePlatformTestContainer(system);
+                return new TestContainer[] {new EclipsePlatformTestContainer(system)};
             }
         }
         catch (ExamConfigurationException e) {

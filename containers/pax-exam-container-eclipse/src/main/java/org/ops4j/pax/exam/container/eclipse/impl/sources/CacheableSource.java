@@ -51,49 +51,52 @@ public interface CacheableSource {
      */
     public void writeToFolder(Properties metadata, File cacheFolder) throws IOException;
 
-    public static void store(CacheableSource source, File baseFolder) throws IOException {
-        Properties properties = new Properties();
-        File dataFolder = new File(baseFolder, "data");
-        source.writeToFolder(properties, dataFolder);
-        properties.setProperty(KEY_CLASS_NAME, source.getClass().getName());
-        try (FileOutputStream out = new FileOutputStream(
-            new File(baseFolder, CACHE_METADATA_NAME))) {
-            properties.store(out, null);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T extends CacheableSource> T load(File baseFolder) throws IOException {
-        Properties properties = new Properties();
-        File dataFolder = new File(baseFolder, "data");
-        try (FileInputStream in = new FileInputStream(new File(baseFolder, CACHE_METADATA_NAME))) {
-            properties.load(in);
-        }
-        String classProperty = properties.getProperty(KEY_CLASS_NAME);
-        if (classProperty == null) {
-            throw new IllegalStateException("property " + KEY_CLASS_NAME + " is missing");
-        }
-        try {
-            Class<?> loadClass = CacheableSource.class.getClassLoader().loadClass(classProperty);
-            Method method = loadClass.getMethod("restoreFromCache", Properties.class, File.class);
-            return (T) method.invoke(null, properties, dataFolder);
-        }
-        catch (Exception e) {
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            }
-            throw new IOException("can't load source", e);
-        }
-    }
-
-    public static String encode(EclipseVersionedArtifact artifact) {
-        return artifact.getId() + ":" + artifact.getVersion();
-    }
-
-    public static ArtifactInfo<Void> decode(String key) {
-        int index = key.lastIndexOf(':');
-        String symbolicName = key.substring(0, index);
-        Version version = AbstractParser.stringToVersion(key.substring(index + 1));
-        return new ArtifactInfo<Void>(symbolicName, version, null);
+    public static final class StoreUtil {
+    
+	    public static void store(CacheableSource source, File baseFolder) throws IOException {
+	        Properties properties = new Properties();
+	        File dataFolder = new File(baseFolder, "data");
+	        source.writeToFolder(properties, dataFolder);
+	        properties.setProperty(KEY_CLASS_NAME, source.getClass().getName());
+	        try (FileOutputStream out = new FileOutputStream(
+	            new File(baseFolder, CACHE_METADATA_NAME))) {
+	            properties.store(out, null);
+	        }
+	    }
+	
+	    @SuppressWarnings("unchecked")
+	    public static <T extends CacheableSource> T load(File baseFolder) throws IOException {
+	        Properties properties = new Properties();
+	        File dataFolder = new File(baseFolder, "data");
+	        try (FileInputStream in = new FileInputStream(new File(baseFolder, CACHE_METADATA_NAME))) {
+	            properties.load(in);
+	        }
+	        String classProperty = properties.getProperty(KEY_CLASS_NAME);
+	        if (classProperty == null) {
+	            throw new IllegalStateException("property " + KEY_CLASS_NAME + " is missing");
+	        }
+	        try {
+	            Class<?> loadClass = CacheableSource.class.getClassLoader().loadClass(classProperty);
+	            Method method = loadClass.getMethod("restoreFromCache", Properties.class, File.class);
+	            return (T) method.invoke(null, properties, dataFolder);
+	        }
+	        catch (Exception e) {
+	            if (e instanceof IOException) {
+	                throw (IOException) e;
+	            }
+	            throw new IOException("can't load source", e);
+	        }
+	    }
+	
+	    public static String encode(EclipseVersionedArtifact artifact) {
+	        return artifact.getId() + ":" + artifact.getVersion();
+	    }
+	
+	    public static ArtifactInfo<Void> decode(String key) {
+	        int index = key.lastIndexOf(':');
+	        String symbolicName = key.substring(0, index);
+	        Version version = AbstractParser.stringToVersion(key.substring(index + 1));
+	        return new ArtifactInfo<Void>(symbolicName, version, null);
+	    }
     }
 }

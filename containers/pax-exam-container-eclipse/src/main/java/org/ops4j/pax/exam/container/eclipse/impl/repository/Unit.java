@@ -41,9 +41,9 @@ public final class Unit extends VersionSerializable implements EclipseVersionedA
         List<Artifact> artifacts) {
         super(version);
         this.id = id;
-        this.provides = Collections.unmodifiableList(provides);
-        this.requires = Collections.unmodifiableList(requires);
-        this.artifacts = Collections.unmodifiableList(artifacts);
+        this.provides = Collections.<UnitProviding>unmodifiableList(provides);
+        this.requires = Collections.<UnitRequirement>unmodifiableList(requires);
+        this.artifacts = Collections.<EclipseClassifiedVersionedArtifact>unmodifiableList(artifacts);
     }
 
     @Override

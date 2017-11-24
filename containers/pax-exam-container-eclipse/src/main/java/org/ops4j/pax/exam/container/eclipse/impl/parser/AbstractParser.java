@@ -212,7 +212,7 @@ public abstract class AbstractParser {
      * @throws XPathExpressionException
      */
     protected static Iterable<Node> evaluate(Node element, XPathExpression expression,
-        boolean detatch) throws XPathExpressionException {
+        final boolean detatch) throws XPathExpressionException {
         final NodeList nodeList = (NodeList) expression.evaluate(element, XPathConstants.NODESET);
         return new Iterable<Node>() {
 

@@ -22,9 +22,9 @@ import java.io.InputStream;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.container.eclipse.impl.BundleArtifactInfo;
+import org.ops4j.pax.exam.container.eclipse.impl.StreamReference;
 import org.ops4j.pax.exam.container.eclipse.impl.options.AbstractEclipseBundleOption;
 import org.ops4j.pax.exam.container.eclipse.impl.parser.ProjectParser;
-import org.ops4j.pax.exam.options.StreamReference;
 
 /**
  * Option for Workspace Bundles

@@ -73,7 +73,7 @@ public final class P2Index {
     private final MetaDataProperties metadata;
 
     public P2Index(URL url) throws IOException {
-        this(url, new ConcurrentHashMap<>());
+        this(url, new ConcurrentHashMap<String, P2Index>());
         cache.putIfAbsent(url.toExternalForm(), this);
     }
 

@@ -44,7 +44,7 @@ public class BundleArtifactInfo<Context> extends ArtifactInfo<Context> implement
         fragment = LazyBoolean.of(isFragment(attributes));
     }
 
-    public BundleArtifactInfo(BundleArtifactInfo<?> info, Context context) {
+    public BundleArtifactInfo(final BundleArtifactInfo<?> info, Context context) {
         this(info.getId(), info.getVersion(), new CachedLazyBoolean() {
 
             @Override
@@ -60,7 +60,7 @@ public class BundleArtifactInfo<Context> extends ArtifactInfo<Context> implement
         }, context);
     }
 
-    public BundleArtifactInfo(EclipseBundleOption bundle, Context context) {
+    public BundleArtifactInfo(final EclipseBundleOption bundle, Context context) {
         this(bundle.getId(), bundle.getVersion(), new CachedLazyBoolean() {
 
             @Override
