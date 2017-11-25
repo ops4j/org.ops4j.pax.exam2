@@ -14,6 +14,8 @@
     <artifactId>pax-exam-junit5-bundle</artifactId>
     <packaging>bundle</packaging>
 
+    <name>OPS4J Pax Exam JUnit 5 OSGi Bundle</name>
+
     <properties>
         <version.junit>5.0.1</version.junit>
         <version.junit.platform>1.0.1</version.junit.platform>
