@@ -40,7 +40,6 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
             systemProperty("pax.exam.invoker").value("junit5"),
             mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-junit5").versionAsInProject(),
             mavenBundle("org.ops4j.pax.exam", "pax-exam-junit5-bundle").versionAsInProject(),
-            mavenBundle("org.ops4j.pax.exam", "pax-exam-spi").versionAsInProject(),
             mavenBundle("org.apache.xbean", "xbean-bundleutils").versionAsInProject(),
             systemProperty("osgi.console").value("6666"),
             when(!rmiPort.isEmpty()).useOptions(
