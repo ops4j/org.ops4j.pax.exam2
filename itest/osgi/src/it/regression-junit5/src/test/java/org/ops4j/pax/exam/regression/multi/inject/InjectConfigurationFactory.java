@@ -37,9 +37,11 @@ public class InjectConfigurationFactory implements ConfigurationFactory {
         return options(
             regressionDefaults(),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde.jar"),
-            url("file:/home/hwellmann/tmp/org.junit.gen5/target/org.junit.jupiter-5.0.1.jar"),
             systemProperty("pax.exam.invoker").value("junit5"),
             mavenBundle("org.ops4j.pax.exam", "pax-exam-invoker-junit5").versionAsInProject(),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-junit5-bundle").versionAsInProject(),
+            mavenBundle("org.ops4j.pax.exam", "pax-exam-spi").versionAsInProject(),
+            mavenBundle("org.apache.xbean", "xbean-bundleutils").versionAsInProject(),
             systemProperty("osgi.console").value("6666"),
             when(!rmiPort.isEmpty()).useOptions(
                 systemProperty("pax.exam.regression.rmi").value(rmiPort)));

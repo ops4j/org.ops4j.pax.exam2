@@ -50,11 +50,21 @@ public class ProbeRunListener implements TestExecutionListener {
      * @return
      */
     private TestDescription toDescription(TestIdentifier testIdentifier) {
-        String name = testIdentifier.getDisplayName();
-        int hashPos = name.indexOf('#');
-        String className = name.substring(0, hashPos);
-        int parenPos = name.indexOf('(');
-        String methodName = name.substring(hashPos + 1, parenPos);
+        String uniqueId = testIdentifier.getUniqueId();
+        String[] parts = uniqueId.split("/");
+        if (parts.length < 2) {
+            return null;
+        }
+        String methodName = null;
+        if (parts.length >= 3) {
+            String methodSegment = parts[2];
+            int colon = methodSegment.indexOf(":");
+            methodName = methodSegment.substring(colon + 1, methodSegment.length() - 3);
+        }
+        String classSegment = parts[1];
+        int colon = classSegment.indexOf(":");
+        String className = classSegment.substring(colon + 1, classSegment.length() - 1);
+
         return new TestDescription(className, methodName);
     }
 

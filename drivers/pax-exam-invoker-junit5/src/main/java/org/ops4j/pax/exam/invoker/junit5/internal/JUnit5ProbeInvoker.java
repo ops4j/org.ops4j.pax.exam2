@@ -18,12 +18,15 @@
 package org.ops4j.pax.exam.invoker.junit5.internal;
 
 import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
+import static org.ops4j.pax.swissbox.core.ContextClassLoaderUtils.doWithClassLoader;
 
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 
+import org.apache.xbean.osgi.bundle.util.DelegatingBundle;
+import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -35,6 +38,9 @@ import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.invoker.junit5.ProbeRunListener;
 import org.ops4j.pax.exam.util.Injector;
+import org.ops4j.pax.swissbox.core.BundleClassLoader;
+import org.ops4j.pax.swissbox.core.BundleUtils;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -44,35 +50,60 @@ import org.osgi.framework.BundleContext;
 public class JUnit5ProbeInvoker implements ProbeInvoker {
 
     private BundleContext ctx;
-    private Injector injector;
-
-    private Class<?> testClass;
 
     public JUnit5ProbeInvoker(BundleContext bundleContext, Injector injector) {
         this.ctx = bundleContext;
-        this.injector = injector;
-    }
-
-    private Class<?> loadClass(String className) {
-        try {
-            return ctx.getBundle().loadClass(className);
-        }
-        catch (ClassNotFoundException e) {
-            throw new TestContainerException(e);
-        }
     }
 
     @Override
     public void runTest(TestDescription description, TestListener listener) {
-        runTestWithJUnit(description, listener);
+        try {
+            runTestWithContextClassLoader(description, listener);
+        }
+        catch (Exception exc) {
+            throw new TestContainerException(exc);
+        }
     }
 
-    private void runTestWithJUnit(TestDescription description, TestListener listener) {
+    private void runTestWithContextClassLoader(TestDescription description, TestListener listener)
+        throws Exception {
+        ClassLoader ccl = buildContextClassLoader();
+        doWithClassLoader(ccl, () -> runTestWithJUnit5(description, listener));
+    }
+
+    /**
+     * @return
+     */
+    private ClassLoader buildContextClassLoader() {
+        Bundle junit5Bundle = BundleUtils.getBundle(ctx, "pax-exam-junit5-bundle");
+        Bundle junit5InvokerBundle = BundleUtils.getBundle(ctx,
+            "org.ops4j.pax.exam.invoker.junit5");
+        DelegatingBundle delegatingBundle = new DelegatingBundle(
+            Arrays.asList(ctx.getBundle(), junit5Bundle, junit5InvokerBundle));
+        return new BundleClassLoader(delegatingBundle);
+    }
+
+    private Object runTestWithJUnit5(TestDescription description, TestListener listener) {
         Launcher launcher = LauncherFactory.create();
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-            .selectors(DiscoverySelectors.selectClass(loadClass(description.getClassName()))).build();
+            .selectors(toSelector(description))
+            .configurationParameter("pax.exam.delegating", "true").build();
         launcher.registerTestExecutionListeners(new ProbeRunListener(listener));
         launcher.execute(request);
+        return null;
+    }
+
+    /**
+     * @param description
+     */
+    private DiscoverySelector toSelector(TestDescription description) {
+        if (description.getMethodName() == null) {
+            return DiscoverySelectors.selectClass(description.getClassName());
+        }
+        else {
+            return DiscoverySelectors.selectMethod(description.getClassName(),
+                description.getMethodName());
+        }
     }
 
     @Override
@@ -80,9 +111,9 @@ public class JUnit5ProbeInvoker implements ProbeInvoker {
         try (Socket socket = new Socket(InetAddress.getLocalHost(), getPort())) {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             OutputStreamTestListener streamListener = new OutputStreamTestListener(oos);
-            runTestWithJUnit(TestDescription.parse(description), streamListener);
+            runTestWithContextClassLoader(TestDescription.parse(description), streamListener);
         }
-        catch (IOException exc) {
+        catch (Exception exc) {
             new TestContainerException(exc);
         }
     }

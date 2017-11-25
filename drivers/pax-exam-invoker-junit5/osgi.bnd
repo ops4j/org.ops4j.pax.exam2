@@ -11,9 +11,8 @@ Private-Package:\
   ${bundle.namespace}.*
   
 Export-Package:\
-  org.ops4j.pax.exam.invoker.junit5.extension  
+  org.ops4j.pax.exam.invoker.junit5
 
 Import-Package:\
   !${bundle.namespace}, org.slf4j;version="[1.4,2)", *
-  
   

@@ -77,6 +77,9 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
                 ((JupiterEngineExecutionContext) executionContext).getExtensionContext()
                     .getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
             }
+            else {
+                manager.beforeClass(stagedReactor, null);
+            }
         }
     }
 
@@ -123,6 +126,10 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
         if (!isDelegating && testDescriptor instanceof JupiterEngineDescriptor) {
             manager.afterSuite(stagedReactor);
         }
+
+        if (!isDelegating && testDescriptor instanceof ClassTestDescriptor) {
+            manager.afterClass(stagedReactor, null);
+        }
     }
 
     @Override
@@ -139,7 +146,7 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
             return true;
         }
 
-        if (testDescriptor instanceof ClassTestDescriptor) {
+        if (testDescriptor instanceof ClassTestDescriptor && !stagedReactor.getClass().getName().contains("PerMethod")) {
             return true;
         }
 

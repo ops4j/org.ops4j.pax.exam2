@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.invoker.junit5;
 
+import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_KEY;
 import static org.ops4j.pax.exam.Constants.EXAM_SYSTEM_TEST;
 
 import java.lang.reflect.AnnotatedElement;
@@ -26,8 +27,8 @@ import javax.naming.InitialContext;
 import javax.transaction.UserTransaction;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.ops4j.pax.exam.ConfigurationManager;
-import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 import org.ops4j.pax.exam.util.Transactional;
@@ -84,12 +85,16 @@ public class ContainerExtension implements CombinedExtension {
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
+        Boolean inContainer = (Boolean) context.getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> false);
+        if (!inContainer) {
+            return;
+        }
         ConfigurationManager cm = new ConfigurationManager();
-        String systemType = cm.getProperty(Constants.EXAM_SYSTEM_KEY);
+        String systemType = cm.getProperty(EXAM_SYSTEM_KEY, EXAM_SYSTEM_TEST);
         if (systemType.equals(EXAM_SYSTEM_TEST)) {
             BundleContext bc = FrameworkUtil.getBundle(getClass()).getBundleContext();
             Injector injector = ServiceLookup.getService(bc, Injector.class);
-            injector.injectFields(context.getTestInstance());
+            injector.injectFields(testInstance);
         }
         else {
             InjectorFactory injectorFactory = ServiceProviderFinder

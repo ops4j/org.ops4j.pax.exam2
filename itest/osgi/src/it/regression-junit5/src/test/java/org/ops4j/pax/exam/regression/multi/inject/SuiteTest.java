@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.Launcher;
@@ -45,6 +46,7 @@ import org.ops4j.pax.exam.sample9.pde.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Disabled
 public class SuiteTest implements Notifier, Remote {
 
     private static Logger LOG = LoggerFactory.getLogger(SuiteTest.class);

@@ -24,6 +24,7 @@
             <id>matrix</id>
             <modules>
                 <module>src/it/regression-multi</module>
+                <module>src/it/regression-junit5</module>
                 <module>src/it/regression-testng</module>
                 <module>src/it/regression-testng-perclass</module>
             </modules>
