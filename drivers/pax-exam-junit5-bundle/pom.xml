@@ -83,6 +83,7 @@
                             org.opentest4j*;version="1.0.0",
                             org.apiguardian*;version="1.0.0",
                         </_exportcontents>
+                        <Bundle-SymbolicName>org.ops4j.pax.exam.junit5.bundle</Bundle-SymbolicName>
                         <Embed-Dependency>*</Embed-Dependency>
                         <Import-Package>!kotlin*, org.ops4j.pax.exam.invoker.junit5, *</Import-Package>
                     </instructions>

@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.invoker.junit5.internal;
 import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
 import static org.ops4j.pax.swissbox.core.ContextClassLoaderUtils.doWithClassLoader;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -58,24 +59,17 @@ public class JUnit5ProbeInvoker implements ProbeInvoker {
     @Override
     public void runTest(TestDescription description, TestListener listener) {
         try {
-            runTestWithContextClassLoader(description, listener);
+            ClassLoader ccl = buildContextClassLoader();
+            doWithClassLoader(ccl, () -> runTestWithJUnit5(description, listener));
         }
+        // CHECKSTYLE:SKIP : Callable API
         catch (Exception exc) {
             throw new TestContainerException(exc);
         }
     }
 
-    private void runTestWithContextClassLoader(TestDescription description, TestListener listener)
-        throws Exception {
-        ClassLoader ccl = buildContextClassLoader();
-        doWithClassLoader(ccl, () -> runTestWithJUnit5(description, listener));
-    }
-
-    /**
-     * @return
-     */
     private ClassLoader buildContextClassLoader() {
-        Bundle junit5Bundle = BundleUtils.getBundle(ctx, "pax-exam-junit5-bundle");
+        Bundle junit5Bundle = BundleUtils.getBundle(ctx, "org.ops4j.pax.exam.junit5.bundle");
         Bundle junit5InvokerBundle = BundleUtils.getBundle(ctx,
             "org.ops4j.pax.exam.invoker.junit5");
         DelegatingBundle delegatingBundle = new DelegatingBundle(
@@ -111,9 +105,9 @@ public class JUnit5ProbeInvoker implements ProbeInvoker {
         try (Socket socket = new Socket(InetAddress.getLocalHost(), getPort())) {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             OutputStreamTestListener streamListener = new OutputStreamTestListener(oos);
-            runTestWithContextClassLoader(TestDescription.parse(description), streamListener);
+            runTest(TestDescription.parse(description), streamListener);
         }
-        catch (Exception exc) {
+        catch (IOException exc) {
             new TestContainerException(exc);
         }
     }
