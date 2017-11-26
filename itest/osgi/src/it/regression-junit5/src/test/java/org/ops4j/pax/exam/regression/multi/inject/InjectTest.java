@@ -24,11 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.ops4j.pax.exam.invoker.junit5.PaxExam;
 import org.ops4j.pax.exam.sample9.pde.HelloService;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 @ExtendWith(PaxExam.class)
-@ExamReactorStrategy(PerClass.class)
+//@ExamReactorStrategy(PerClass.class)
 public class InjectTest {
 
     @Inject

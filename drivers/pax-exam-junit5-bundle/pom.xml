@@ -16,12 +16,6 @@
 
     <name>OPS4J Pax Exam JUnit 5 OSGi Bundle</name>
 
-    <properties>
-        <version.junit>5.0.1</version.junit>
-        <version.junit.platform>1.0.1</version.junit.platform>
-        <version.opentest4j>1.0.0</version.opentest4j>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -34,19 +28,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apiguardian</groupId>
-            <artifactId>apiguardian-api</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-commons</artifactId>
-            <version>${version.junit.platform}</version>
+            <version>${dependency.junit.platform.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-engine</artifactId>
-            <version>${version.junit.platform}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
@@ -59,7 +47,10 @@
         <dependency>
             <groupId>org.opentest4j</groupId>
             <artifactId>opentest4j</artifactId>
-            <version>${version.opentest4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -93,7 +84,7 @@
                             org.apiguardian*;version="1.0.0",
                         </_exportcontents>
                         <Embed-Dependency>*</Embed-Dependency>
-                        <Import-Package>!org.ops4j.pax.exam.spi*, org.ops4j.pax.exam.invoker.junit5, *</Import-Package>
+                        <Import-Package>!org.ops4j.pax.exam.spi*, !kotlin*, org.ops4j.pax.exam.invoker.junit5, *</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

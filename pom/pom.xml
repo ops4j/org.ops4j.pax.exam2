@@ -49,8 +49,8 @@
         <dependency.wildfly.version>8.2.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
 
-        <org.junit.jupiter.version>5.0.1</org.junit.jupiter.version>
-        <org.junit.platform.version>1.0.1</org.junit.platform.version>
+        <dependency.junit.jupiter.version>5.1.0-M1</dependency.junit.jupiter.version>
+        <dependency.junit.platform.version>1.1.0-M1</dependency.junit.platform.version>
 
     </properties>
 
@@ -214,22 +214,37 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
-                <version>${org.junit.jupiter.version}</version>
+                <version>${dependency.junit.jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>${org.junit.jupiter.version}</version>
+                <version>${dependency.junit.jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
-                <version>${org.junit.jupiter.version}</version>
+                <version>${dependency.junit.jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-engine</artifactId>
+                <version>${dependency.junit.platform.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-launcher</artifactId>
-                <version>${org.junit.platform.version}</version>
+                <version>${dependency.junit.platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opentest4j</groupId>
+                <artifactId>opentest4j</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apiguardian</groupId>
+                <artifactId>apiguardian-api</artifactId>
+                <version>1.0.0</version>
             </dependency>
 
             <dependency>

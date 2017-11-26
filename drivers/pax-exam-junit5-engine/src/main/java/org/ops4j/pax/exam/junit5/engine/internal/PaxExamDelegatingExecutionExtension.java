@@ -53,13 +53,13 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
     private ConfigurationParameters configurationParameters;
     private ReactorManager manager;
     private StagedExamReactor stagedReactor;
-    private Boolean isDelegating;
+    private boolean isDelegating;
 
     public PaxExamDelegatingExecutionExtension(ExecutionRequest executionRequest) {
         this.engineListener = executionRequest.getEngineExecutionListener();
         this.root = executionRequest.getRootTestDescriptor();
         this.configurationParameters = executionRequest.getConfigurationParameters();
-        this.isDelegating = configurationParameters.getBoolean("pax.exam.delegating").orElse(false);
+        this.isDelegating = isDelegating();
     }
 
     @Override

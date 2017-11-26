@@ -24,14 +24,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.ops4j.pax.exam.invoker.junit5.PaxExam;
 import org.ops4j.pax.exam.sample9.pde.HelloService;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
 @ExtendWith(PaxExam.class)
-@ExamReactorStrategy(PerClass.class)
+//@ExamReactorStrategy(PerClass.class)
 public class FilterTest {
 
     @Inject
