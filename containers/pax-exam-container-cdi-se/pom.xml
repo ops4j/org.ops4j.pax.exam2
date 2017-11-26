@@ -10,7 +10,7 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>pax-exam-container-cdi-se</artifactId>
 
-    <name>OPS4J Pax Exam Weld CDI Container</name>
+    <name>OPS4J Pax Exam CDI SE Container</name>
 
     <dependencyManagement>
         <dependencies>
