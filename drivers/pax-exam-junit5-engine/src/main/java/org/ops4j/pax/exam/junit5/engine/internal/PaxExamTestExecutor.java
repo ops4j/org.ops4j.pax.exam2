@@ -8,11 +8,10 @@
  * http://www.eclipse.org/legal/epl-v20.html
  */
 
-package org.junit.jupiter.engine;
+package org.ops4j.pax.exam.junit5.engine.internal;
 
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 
-import org.junit.jupiter.engine.extension.DelegatingExecutionExtension;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -22,6 +21,7 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.Node;
 import org.junit.platform.engine.support.hierarchical.Node.SkipResult;
+import org.ops4j.pax.exam.junit5.engine.extension.DelegatingExecutionExtension;
 import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
 
 /**

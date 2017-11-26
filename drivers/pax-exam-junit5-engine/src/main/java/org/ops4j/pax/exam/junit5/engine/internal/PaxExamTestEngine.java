@@ -8,7 +8,7 @@
  * http://www.eclipse.org/legal/epl-v20.html
  */
 
-package org.junit.jupiter.engine;
+package org.ops4j.pax.exam.junit5.engine.internal;
 
 import static org.apiguardian.api.API.Status.INTERNAL;
 
@@ -40,11 +40,11 @@ public final class PaxExamTestEngine implements TestEngine {
 	}
 
 	/**
-	 * Returns {@code org.junit.jupiter} as the group ID.
+	 * Returns {@code org.ops4j.pax.exam} as the group ID.
 	 */
 	@Override
 	public Optional<String> getGroupId() {
-		return Optional.of("org.ops4j.pax.exam");
+		return Optional.of(ENGINE_ID);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public final class PaxExamTestEngine implements TestEngine {
 	 */
 	@Override
 	public Optional<String> getArtifactId() {
-		return Optional.of("pax-exam-junit5");
+		return Optional.of("pax-exam-junit5-engine");
 	}
 
 	@Override

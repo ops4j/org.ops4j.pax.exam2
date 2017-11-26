@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.junit.jupiter.engine;
+package org.ops4j.pax.exam.junit5.engine.internal;
 
 import java.util.Optional;
 

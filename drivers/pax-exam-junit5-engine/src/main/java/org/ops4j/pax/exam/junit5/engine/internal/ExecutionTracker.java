@@ -8,7 +8,7 @@
  * http://www.eclipse.org/legal/epl-v20.html
  */
 
-package org.junit.jupiter.engine;
+package org.ops4j.pax.exam.junit5.engine.internal;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

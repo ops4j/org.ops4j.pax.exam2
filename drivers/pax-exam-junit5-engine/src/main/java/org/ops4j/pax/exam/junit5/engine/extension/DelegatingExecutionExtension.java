@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.junit.jupiter.engine.extension;
+package org.ops4j.pax.exam.junit5.engine.extension;
 
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
