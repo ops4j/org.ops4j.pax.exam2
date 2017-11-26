@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.regression.multi.inject;
+package org.ops4j.pax.exam.regression.junit5;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
 import static org.ops4j.pax.exam.CoreOptions.when;
-import static org.ops4j.pax.exam.regression.multi.inject.RegressionConfiguration.regressionDefaults;
+import static org.ops4j.pax.exam.regression.junit5.RegressionConfiguration.regressionDefaults;
 
 import org.ops4j.pax.exam.ConfigurationFactory;
 import org.ops4j.pax.exam.Option;

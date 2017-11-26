@@ -1,1 +1,1 @@
-org.ops4j.pax.exam.regression.multi.inject.InjectConfigurationFactory
+org.ops4j.pax.exam.regression.junit5.InjectConfigurationFactory
