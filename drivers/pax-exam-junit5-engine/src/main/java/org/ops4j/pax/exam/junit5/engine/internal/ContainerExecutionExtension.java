@@ -15,38 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit5.engine.extension;
+package org.ops4j.pax.exam.junit5.engine.internal;
 
-import org.junit.platform.engine.ExecutionRequest;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
+import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
+import org.ops4j.pax.exam.junit5.engine.extension.DelegatingExecutionExtension;
 
 /**
  * @author Harald Wellmann
  *
  */
-public interface DelegatingExecutionExtension {
+public class ContainerExecutionExtension implements DelegatingExecutionExtension {
 
-    static DelegatingExecutionExtension NOOP = new DelegatingExecutionExtension() {
-    };
-
-    default void setExecutionRequest(ExecutionRequest executionRequest) {
-
-    }
-
-    default boolean shouldDelegate(TestDescriptor testDescriptor) {
-        return false;
-    }
-
-    default void delegate(TestDescriptor testDescriptor) {
-
-    }
-
-    default void before(EngineExecutionContext executionContext, TestDescriptor testDescriptor) {
-
-    }
-
-    default void after(EngineExecutionContext executionContext, TestDescriptor testDescriptor) {
-
+    @Override
+    public void before(EngineExecutionContext executionContext, TestDescriptor testDescriptor) {
+        if (testDescriptor instanceof ClassTestDescriptor) {
+            ((JupiterEngineExecutionContext) executionContext).getExtensionContext()
+                .getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
+        }
     }
 }

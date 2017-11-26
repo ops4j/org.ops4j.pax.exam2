@@ -12,7 +12,9 @@ package org.ops4j.pax.exam.junit5.engine.internal;
 
 import static org.apiguardian.api.API.Status.INTERNAL;
 
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.ServiceLoader;
 
 import org.apiguardian.api.API;
 import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
@@ -23,6 +25,7 @@ import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
+import org.ops4j.pax.exam.junit5.engine.extension.DelegatingExecutionExtension;
 
 /**
  * The JUnit Jupiter {@link org.junit.platform.engine.TestEngine}.
@@ -81,9 +84,22 @@ public final class PaxExamTestEngine implements TestEngine {
 
         @Override
         public void execute(ExecutionRequest request) {
-                PaxExamDelegatingExecutionExtension extension = new PaxExamDelegatingExecutionExtension(request);
+            ServiceLoader<DelegatingExecutionExtension> loader = ServiceLoader.load(DelegatingExecutionExtension.class, PaxExamTestEngine.class.getClassLoader());
+            Iterator<DelegatingExecutionExtension> it = loader.iterator();
+
+            DelegatingExecutionExtension extension;
+                if (! isDelegating(request) && it.hasNext()) {
+                    extension = it.next();
+                    extension.setExecutionRequest(request);
+                }
+                else {
+                    extension = new ContainerExecutionExtension();
+                }
                 new PaxExamTestExecutor<>(request, createExecutionContext(request), extension).execute();
         }
 
+        private boolean isDelegating(ExecutionRequest request) {
+            return request.getConfigurationParameters().getBoolean("pax.exam.delegating").orElse(false);
+        }
 
 }

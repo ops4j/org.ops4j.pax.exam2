@@ -15,16 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ops4j.pax.exam.junit5.engine.internal;
+package org.ops4j.pax.exam.junit5.impl;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
 import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
-import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
-import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -46,26 +43,23 @@ import org.ops4j.pax.exam.util.Exceptions;
  * @author Harald Wellmann
  *
  */
-public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionExtension {
+public class DriverExecutionExtension implements DelegatingExecutionExtension {
 
     private EngineExecutionListener engineListener;
     private TestDescriptor root;
-    private ConfigurationParameters configurationParameters;
     private ReactorManager manager;
     private StagedExamReactor stagedReactor;
-    private boolean isDelegating;
 
-    public PaxExamDelegatingExecutionExtension(ExecutionRequest executionRequest) {
+    @Override
+    public void setExecutionRequest(ExecutionRequest executionRequest) {
         this.engineListener = executionRequest.getEngineExecutionListener();
         this.root = executionRequest.getRootTestDescriptor();
-        this.configurationParameters = executionRequest.getConfigurationParameters();
-        this.isDelegating = isDelegating();
     }
 
     @Override
     public void before(EngineExecutionContext executionContext, TestDescriptor testDescriptor) {
         if (testDescriptor instanceof JupiterEngineDescriptor) {
-            if (!isDelegating && manager == null) {
+            if (manager == null) {
                 manager = ReactorManager.getInstance();
                 testDescriptor.getChildren().stream().forEach(this::storeTestClass);
                 stagedReactor = manager.stageReactor();
@@ -73,17 +67,13 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
             }
         }
         else if (testDescriptor instanceof ClassTestDescriptor) {
-            if (isDelegating) {
-                ((JupiterEngineExecutionContext) executionContext).getExtensionContext()
-                    .getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
-            }
-            else if (!shouldExecuteLocally()) {
+            if (!shouldExecuteLocally()) {
                 manager.beforeClass(stagedReactor, null);
             }
         }
     }
 
-    public void storeTestClass(TestDescriptor descriptor) {
+    private void storeTestClass(TestDescriptor descriptor) {
         ClassSource source = (ClassSource) descriptor.getSource().get();
         Class<?> testClass = loadClass(source.getClassName());
         Object testInstance = newInstance(testClass);
@@ -123,21 +113,17 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
 
     @Override
     public void after(EngineExecutionContext executionContext, TestDescriptor testDescriptor) {
-        if (!isDelegating && testDescriptor instanceof JupiterEngineDescriptor) {
+        if (testDescriptor instanceof JupiterEngineDescriptor) {
             manager.afterSuite(stagedReactor);
         }
 
-        if (!isDelegating && !shouldExecuteLocally() && testDescriptor instanceof ClassTestDescriptor) {
+        if (!shouldExecuteLocally() && testDescriptor instanceof ClassTestDescriptor) {
             manager.afterClass(stagedReactor, null);
         }
     }
 
     @Override
     public boolean shouldDelegate(TestDescriptor testDescriptor) {
-        if (isDelegating()) {
-            return false;
-        }
-
         if (shouldExecuteLocally()) {
             return false;
         }
@@ -187,10 +173,6 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
         catch (Exception exc) {
             throw Exceptions.unchecked(exc);
         }
-    }
-
-    private boolean isDelegating() {
-        return configurationParameters.getBoolean("pax.exam.delegating").orElse(false);
     }
 
     private boolean shouldExecuteLocally() {

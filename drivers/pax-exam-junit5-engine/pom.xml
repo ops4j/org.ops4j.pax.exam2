@@ -19,11 +19,6 @@
     <dependencies>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-invoker-junit5</artifactId>
             <version>${project.version}</version>
         </dependency>
