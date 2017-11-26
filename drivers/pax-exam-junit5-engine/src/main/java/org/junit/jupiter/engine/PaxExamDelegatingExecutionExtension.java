@@ -77,7 +77,7 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
                 ((JupiterEngineExecutionContext) executionContext).getExtensionContext()
                     .getStore(Namespace.GLOBAL).getOrComputeIfAbsent("container", x -> true);
             }
-            else {
+            else if (!shouldExecuteLocally()) {
                 manager.beforeClass(stagedReactor, null);
             }
         }
@@ -127,7 +127,7 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
             manager.afterSuite(stagedReactor);
         }
 
-        if (!isDelegating && testDescriptor instanceof ClassTestDescriptor) {
+        if (!isDelegating && !shouldExecuteLocally() && testDescriptor instanceof ClassTestDescriptor) {
             manager.afterClass(stagedReactor, null);
         }
     }
@@ -138,7 +138,7 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
             return false;
         }
 
-        if (ReactorManager.getInstance().getSystemType().equals(Constants.EXAM_SYSTEM_CDI)) {
+        if (shouldExecuteLocally()) {
             return false;
         }
 
@@ -191,5 +191,9 @@ public class PaxExamDelegatingExecutionExtension implements DelegatingExecutionE
 
     private boolean isDelegating() {
         return configurationParameters.getBoolean("pax.exam.delegating").orElse(false);
+    }
+
+    private boolean shouldExecuteLocally() {
+        return ReactorManager.getInstance().getSystemType().equals(Constants.EXAM_SYSTEM_CDI);
     }
 }

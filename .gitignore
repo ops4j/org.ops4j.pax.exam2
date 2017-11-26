@@ -19,7 +19,10 @@ felix-cache
 fwdir
 moviedb-json
 .factorypath
+drivers/pax-exam-junit5-bundle/META-INF/
+drivers/pax-exam-junit5-bundle/lib
 
 # ignore while experimental
 pax-exam-container-geronimo
 regression-mdb
+
