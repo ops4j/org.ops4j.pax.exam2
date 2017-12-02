@@ -239,7 +239,9 @@ public class ReactorManager {
             String msg = String.format("Test class %s has multiple configuration methods: %s. As of Pax Exam 5.0.0., at most one configuration method is supported", testClass, configMethods);
             throw new TestContainerException(msg);
         }
-        reactor.addConfiguration(((Option[]) configMethods.get(0).invoke(testClassInstance)));
+        if (!configMethods.isEmpty()) {
+            reactor.addConfiguration(((Option[]) configMethods.get(0).invoke(testClassInstance)));
+        }
     }
 
     private boolean isConfiguration(Method m) {
