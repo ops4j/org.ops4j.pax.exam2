@@ -17,19 +17,14 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-import java.util.List;
-
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
 
-/**
- *
- */
-public class EagerSingleStagedReactorTest extends BaseStagedReactorTest {
+public class PerClassStagedReactorTest extends BaseStagedReactorTest {
 
     @Override
-    protected StagedExamReactor getReactor(List<TestContainer> containers,
+    protected StagedExamReactor getReactor(TestContainer containers,
         TestProbeBuilder providers) {
         return new PerClassStagedReactor(containers, providers);
     }

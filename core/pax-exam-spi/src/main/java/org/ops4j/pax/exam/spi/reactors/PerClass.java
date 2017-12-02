@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-import java.util.List;
-
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.spi.StagedExamReactor;
@@ -34,7 +32,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactorFactory;
 public class PerClass implements StagedExamReactorFactory {
 
     @Override
-    public StagedExamReactor create(List<TestContainer> containers, TestProbeBuilder mProbes) {
-        return new PerClassStagedReactor(containers, mProbes);
+    public StagedExamReactor create(TestContainer container, TestProbeBuilder mProbes) {
+        return new PerClassStagedReactor(container, mProbes);
     }
 }

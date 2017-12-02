@@ -22,8 +22,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 import org.ops4j.pax.exam.TestContainer;
@@ -35,12 +33,12 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
  */
 public abstract class BaseStagedReactorTest {
 
-    abstract protected StagedExamReactor getReactor(List<TestContainer> containers,
+    abstract protected StagedExamReactor getReactor(TestContainer containers,
         TestProbeBuilder providers);
 
     @Test
     public void testEmptyContainersAndBuilders() throws IOException {
-        List<TestContainer> containers = new ArrayList<TestContainer>();
+        TestContainer containers = null;
         TestProbeBuilder providers = null;
 
         StagedExamReactor reactor = getReactor(containers, providers);

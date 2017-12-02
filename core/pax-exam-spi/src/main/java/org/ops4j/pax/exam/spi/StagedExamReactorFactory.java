@@ -17,12 +17,10 @@
  */
 package org.ops4j.pax.exam.spi;
 
-import java.util.List;
-
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestProbeBuilder;
 
 public interface StagedExamReactorFactory {
 
-    StagedExamReactor create(List<TestContainer> containers, TestProbeBuilder probeBuilder);
+    StagedExamReactor create(TestContainer container, TestProbeBuilder probeBuilder);
 }

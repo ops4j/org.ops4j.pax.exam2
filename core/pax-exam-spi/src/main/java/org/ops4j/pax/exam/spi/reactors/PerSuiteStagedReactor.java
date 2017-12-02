@@ -17,8 +17,6 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-import java.util.List;
-
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
@@ -39,8 +37,8 @@ public class PerSuiteStagedReactor implements StagedExamReactor {
 
     private StagedExamReactor delegate;
 
-    public PerSuiteStagedReactor(List<TestContainer> containers, TestProbeBuilder mProbes) {
-        this.delegate = SingletonStagedReactor.getInstance(containers, mProbes);
+    public PerSuiteStagedReactor(TestContainer container, TestProbeBuilder probeBuilder) {
+        this.delegate = SingletonStagedReactor.getInstance(container, probeBuilder);
     }
 
     @Override

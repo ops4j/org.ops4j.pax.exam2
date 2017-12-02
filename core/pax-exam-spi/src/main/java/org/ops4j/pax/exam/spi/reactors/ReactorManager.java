@@ -17,6 +17,7 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
+import static java.util.stream.Collectors.toList;
 import static org.ops4j.pax.exam.Constants.EXAM_REACTOR_STRATEGY_KEY;
 import static org.ops4j.pax.exam.Constants.EXAM_REACTOR_STRATEGY_PER_CLASS;
 import static org.ops4j.pax.exam.Constants.EXAM_REACTOR_STRATEGY_PER_METHOD;
@@ -34,8 +35,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ConfigurationManager;
@@ -122,8 +125,6 @@ public class ReactorManager {
     private ConfigurationManager cm;
 
     private boolean waitForAfterSuiteEvent;
-
-    private int numConfigurations;
 
     /**
      * Private constructor for singleton.
@@ -229,27 +230,16 @@ public class ReactorManager {
      *             when configuration method is not public
      * @throws InvocationTargetException
      *             when configuration method cannot be invoked
+     * @throws ExamConfigurationException
      */
     private void addConfigurationsToReactor(Class<?> testClass, Object testClassInstance)
         throws IllegalAccessException, InvocationTargetException {
-        numConfigurations = 0;
-        Method[] methods = testClass.getMethods();
-        for (Method m : methods) {
-            if (isConfiguration(m)) {
-                // consider as option, so prepare that one:
-                reactor.addConfiguration(((Option[]) m.invoke(testClassInstance)));
-                numConfigurations++;
-            }
+        List<Method> configMethods = Stream.of(testClass.getMethods()).filter(this::isConfiguration).collect(toList());
+        if (configMethods.size() > 1) {
+            String msg = String.format("Test class %s has multiple configuration methods: %s. As of Pax Exam 5.0.0., at most one configuration method is supported", testClass, configMethods);
+            throw new TestContainerException(msg);
         }
-    }
-
-    /**
-     * Returns the number of configurations for the current reactor.
-     *
-     * @return number of configurations
-     */
-    public int getNumConfigurations() {
-        return numConfigurations;
+        reactor.addConfiguration(((Option[]) configMethods.get(0).invoke(testClassInstance)));
     }
 
     private boolean isConfiguration(Method m) {

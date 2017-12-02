@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -38,7 +37,7 @@ public class PerClassStagedReactor implements StagedExamReactor {
 
     private static final Logger LOG = LoggerFactory.getLogger(PerClassStagedReactor.class);
 
-    private final List<TestContainer> targetContainer;
+    private final TestContainer testContainer;
     private final TestProbeBuilder probeBuilder;
 
     /**
@@ -47,32 +46,28 @@ public class PerClassStagedReactor implements StagedExamReactor {
      * @param mProbes
      *            to be installed on all probes
      */
-    public PerClassStagedReactor(List<TestContainer> containers, TestProbeBuilder mProbes) {
-        this.targetContainer = containers;
+    public PerClassStagedReactor(TestContainer container, TestProbeBuilder mProbes) {
+        this.testContainer = container;
         this.probeBuilder = mProbes;
     }
 
     public void setUp() {
-        for (TestContainer container : targetContainer) {
-            container.start();
+        testContainer.start();
 
-            if (probeBuilder != null) {
-                LOG.debug("installing probe {}", probeBuilder);
+        if (probeBuilder != null) {
+            LOG.debug("installing probe {}", probeBuilder);
 
-                try {
-                    container.installProbe(probeBuilder.build().getStream());
-                }
-                catch (IOException e) {
-                    throw new TestContainerException("Unable to build the probe.", e);
-                }
+            try {
+                testContainer.installProbe(probeBuilder.build().getStream());
+            }
+            catch (IOException e) {
+                throw new TestContainerException("Unable to build the probe.", e);
             }
         }
     }
 
     public void tearDown() {
-        for (TestContainer container : targetContainer) {
-            container.stop();
-        }
+        testContainer.stop();
     }
 
     @Override
@@ -107,7 +102,6 @@ public class PerClassStagedReactor implements StagedExamReactor {
             return;
         }
 
-        TestContainer testContainer = targetContainer.get(0);
         testContainer.runTest(description, listener);
     }
 }

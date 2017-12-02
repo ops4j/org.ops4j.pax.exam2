@@ -15,8 +15,6 @@
  */
 package org.ops4j.pax.exam.spi.reactors;
 
-import java.util.List;
-
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestListener;
@@ -29,7 +27,7 @@ import org.ops4j.pax.exam.spi.StagedExamReactor;
 public class PerMethodStagedReactor implements StagedExamReactor {
 
     private final TestProbeBuilder probeBuilder;
-    private final List<TestContainer> testContainers;
+    private final TestContainer testContainer;
 
     /**
      * @param containers
@@ -37,8 +35,8 @@ public class PerMethodStagedReactor implements StagedExamReactor {
      * @param probes
      *            probes to be installed
      */
-    public PerMethodStagedReactor(List<TestContainer> containers, TestProbeBuilder probes) {
-        this.testContainers = containers;
+    public PerMethodStagedReactor(TestContainer container, TestProbeBuilder probes) {
+        this.testContainer = container;
         this.probeBuilder = probes;
     }
 
@@ -84,16 +82,15 @@ public class PerMethodStagedReactor implements StagedExamReactor {
         if (description.getMethodName() == null) {
             return;
         }
-        TestContainer container = testContainers.get(0);
-        container.start();
+        testContainer.start();
         if (probeBuilder != null) {
-            container.installProbe(probeBuilder.build().getStream());
+            testContainer.installProbe(probeBuilder.build().getStream());
         }
         try {
-            container.runTest(description, listener);
+            testContainer.runTest(description, listener);
         }
         finally {
-            container.stop();
+            testContainer.stop();
         }
     }
 }

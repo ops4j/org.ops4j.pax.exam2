@@ -20,9 +20,7 @@ package org.ops4j.pax.exam.spi;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.ops4j.pax.exam.ConfigurationFactory;
 import org.ops4j.pax.exam.ExamSystem;
@@ -71,7 +69,6 @@ public class DefaultExamReactor implements ExamReactor {
     @Override
     public synchronized StagedExamReactor stage(StagedExamReactorFactory factory) {
         LOG.debug("Staging reactor with using {} strategy", factory.getClass().getName());
-        List<TestContainer> containers = new ArrayList<TestContainer>();
 
         if (configurations.isEmpty()) {
             List<ConfigurationFactory> configurationFactories = ServiceProviderFinder
@@ -85,12 +82,9 @@ public class DefaultExamReactor implements ExamReactor {
             LOG.debug("No configuration given. Setting an empty one.");
             configurations.add(options());
         }
-        configurations.stream().map(system::fork).map(testContainerFactory::create).collect(Collectors.toList());
-        for (Option[] config : configurations) {
-            containers.addAll(Arrays.asList(testContainerFactory.create(system.fork(config))));
-        }
-
-        return factory.create(containers, probeBuilder);
+        Option[] configuration = configurations.get(0);
+        TestContainer container = testContainerFactory.create(system.fork(configuration));
+        return factory.create(container, probeBuilder);
     }
 
 }

@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.spi.reactors;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 import org.ops4j.pax.exam.TestContainer;
@@ -43,11 +42,11 @@ public class SingletonStagedReactor implements StagedExamReactor {
 
     private static SingletonStagedReactor instance;
 
-    private List<TestContainer> testContainers;
+    private TestContainer testContainer;
     private TestProbeBuilder probeBuilder;
 
-    private SingletonStagedReactor(List<TestContainer> containers, TestProbeBuilder mProbes) {
-        testContainers = containers;
+    private SingletonStagedReactor(TestContainer container, TestProbeBuilder mProbes) {
+        testContainer = container;
         probeBuilder = mProbes;
     }
 
@@ -58,7 +57,7 @@ public class SingletonStagedReactor implements StagedExamReactor {
      *            to be installed on all probes
      * @return staged reactor
      */
-    public static synchronized StagedExamReactor getInstance(List<TestContainer> containers,
+    public static synchronized StagedExamReactor getInstance(TestContainer containers,
         TestProbeBuilder probeBuilder) {
         if (instance == null) {
             instance = new SingletonStagedReactor(containers, probeBuilder);
@@ -75,27 +74,23 @@ public class SingletonStagedReactor implements StagedExamReactor {
 
     @Override
     public void beforeSuite() {
-        for (TestContainer container : testContainers) {
-            container.start();
+        testContainer.start();
 
-            if (probeBuilder != null) {
-                LOG.debug("installing probe {}", probeBuilder);
+        if (probeBuilder != null) {
+            LOG.debug("installing probe {}", probeBuilder);
 
-                try {
-                    container.installProbe(probeBuilder.build().getStream());
-                }
-                catch (IOException e) {
-                    throw new TestContainerException("Unable to build the probe.", e);
-                }
+            try {
+                testContainer.installProbe(probeBuilder.build().getStream());
+            }
+            catch (IOException e) {
+                throw new TestContainerException("Unable to build the probe.", e);
             }
         }
     }
 
     @Override
     public void afterSuite() {
-        for (TestContainer container : testContainers) {
-            container.stop();
-        }
+        testContainer.stop();
     }
 
     @Override
@@ -109,9 +104,8 @@ public class SingletonStagedReactor implements StagedExamReactor {
 
     @Override
     public void runTest(TestDescription description, TestListener listener) throws Exception {
-        assert (description != null) : "TestAddress must not be null.";
+        assert (description != null) : "TestDescription must not be null.";
 
-        TestContainer testContainer = testContainers.get(0);
         testContainer.runTest(description, listener);
     }
 }

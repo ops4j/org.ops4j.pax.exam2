@@ -46,7 +46,7 @@ public class MultiConfigurationTest {
     private BundleContext bundleContext;
 
     // FIXME temporarily disabled for PAXEXAM-772
-    // @Configuration
+    //@Configuration
     public Option[] createConfiguration1() {
         return options(regressionDefaults(), url("reference:file:" + PathUtils.getBaseDir()
             + "/target/pax-exam-sample9-pde.jar"),
