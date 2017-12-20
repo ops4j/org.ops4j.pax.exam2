@@ -174,7 +174,7 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
     }
 
     @Override
-    public EclipseProject project(String projectName) throws ArtifactNotFoundException {
+    public EclipseProject project(final String projectName) throws ArtifactNotFoundException {
         final ProjectParser context = projectMap.get(projectName);
         if (context == null || !context.isValid()) {
             throw new ArtifactNotFoundException("can't find project " + projectName
@@ -200,6 +200,11 @@ public class WorkspaceResolver extends BundleAndFeatureSource implements Eclipse
                 catch (MalformedURLException e) {
                     throw new FileNotFoundException(e.toString());
                 }
+            }
+
+            @Override
+            public String getName() {
+                return projectName;
             }
         };
     }

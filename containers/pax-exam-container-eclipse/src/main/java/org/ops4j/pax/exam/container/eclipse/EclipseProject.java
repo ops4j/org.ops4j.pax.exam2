@@ -30,6 +30,12 @@ import org.ops4j.pax.exam.Option;
  *
  */
 public interface EclipseProject {
+    
+    /**
+     * 
+     * @return the name of the project
+     */
+    String getName();
 
     /**
      * 
