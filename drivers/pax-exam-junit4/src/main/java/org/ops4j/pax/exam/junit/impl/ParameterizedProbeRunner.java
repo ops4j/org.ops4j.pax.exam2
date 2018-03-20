@@ -215,8 +215,11 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
 
         Iterator<Object[]> it = null;
         int index = 0;
+        String parameterizedName = null;
+
         try {
             it = allParameters().iterator();
+            parameterizedName = getParametersMethod().getAnnotation(Parameters.class).name();
         }
         // CHECKSTYLE:SKIP : JUnit API
         catch (Throwable t) {
@@ -228,7 +231,7 @@ public class ParameterizedProbeRunner extends BlockJUnit4ClassRunner {
             // probe.setAnchor( testClass );
             for (FrameworkMethod s : super.getChildren()) {
                 // record the method -> adress matching
-                TestAddress address = probe.addTest(testClass, s.getMethod().getName(), index);
+                TestAddress address = probe.addTest(testClass, s.getMethod().getName(), index, parameterizedName, parameters);
                 manager.storeTestMethod(address, s);
             }
             index++;
