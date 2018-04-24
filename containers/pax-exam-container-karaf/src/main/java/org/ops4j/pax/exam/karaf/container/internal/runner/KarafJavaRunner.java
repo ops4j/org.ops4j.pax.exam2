@@ -42,7 +42,7 @@ public class KarafJavaRunner implements Runner {
                     String endDirs = buildCmdSeparatedString(javaEndorsedDirs);
                     String extDirs = buildCmdSeparatedString(javaExtDirs);
                     CommandLineBuilder commandLine = null;
-                    if (System.getProperty("java.version").startsWith("9")) {
+                    if (org.ops4j.pax.exam.karaf.container.internal.KarafTestContainer.isJava9Compatible()) {
                         commandLine = new CommandLineBuilder()
                             .append(getJavaExecutable(javaHome))
                             .append(javaOpts)

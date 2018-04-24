@@ -114,6 +114,18 @@ public class KarafTestContainer implements TestContainer {
 
     private Registry rgstry;
 
+
+    private static boolean isJava9Compatible;
+    
+    static {
+        String version = System.getProperty("java.version");
+        if (version.indexOf(".") > 0) {
+            version = version.substring(0, version.indexOf("."));
+        }
+        
+        setJava9Compatible(Integer.valueOf(version) >= 9);
+    }
+
     public KarafTestContainer(ExamSystem system,
         KarafDistributionBaseConfigurationOption framework, Runner runner) {
         this.framework = framework;
@@ -223,7 +235,7 @@ public class KarafTestContainer implements TestContainer {
         ArrayList<String> javaOpts = new ArrayList<>();
         appendVmSettingsFromSystem(javaOpts, subsystem);
         String[] javaEndorsedDirs = null;
-        if (System.getProperty("java.version").startsWith("9")) {
+        if (isJava9Compatible()) {
             javaEndorsedDirs = new String[] {};
         }
         else {
@@ -658,6 +670,14 @@ public class KarafTestContainer implements TestContainer {
     @Override
     public void runTest(TestDescription description, TestListener listener) throws IOException {
         target.runTest(description, listener);
+    }
+
+    public static boolean isJava9Compatible() {
+        return isJava9Compatible;
+    }
+
+    private static void setJava9Compatible(boolean java9Compatible) {
+        isJava9Compatible = java9Compatible;
     }
 
 }
