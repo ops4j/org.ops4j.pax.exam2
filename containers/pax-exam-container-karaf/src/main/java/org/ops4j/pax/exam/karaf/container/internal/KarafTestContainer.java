@@ -118,7 +118,7 @@ public class KarafTestContainer implements TestContainer {
     private static boolean isJava9Compatible;
     
     static {
-        setJava9Compatible(JavaVersionUtil.getMajorVersion(System.getProperty("java.version")) >= 9);
+        setJava9Compatible(JavaVersionUtil.getMajorVersion() >= 9);
     }
 
     public KarafTestContainer(ExamSystem system,

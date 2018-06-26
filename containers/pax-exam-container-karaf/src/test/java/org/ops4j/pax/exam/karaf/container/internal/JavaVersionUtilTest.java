@@ -25,8 +25,9 @@ public class JavaVersionUtilTest {
     @Test
     public void testVersions() {
         assertEquals(8, JavaVersionUtil.getMajorVersion("1.8.0_171"));
-        assertEquals(9, JavaVersionUtil.getMajorVersion("9.0.4"));
-        assertEquals(10, JavaVersionUtil.getMajorVersion("10.0.1"));
-        assertEquals(11, JavaVersionUtil.getMajorVersion("11-ea"));
+        assertEquals(9, JavaVersionUtil.getMajorVersion("9"));
+        assertEquals(10, JavaVersionUtil.getMajorVersion("10"));
+        assertEquals(11, JavaVersionUtil.getMajorVersion("11"));
+
     }
 }
