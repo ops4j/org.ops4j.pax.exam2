@@ -17,36 +17,29 @@
 package org.ops4j.pax.exam.karaf.container.internal;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class JavaVersionUtil {
 
-    private static final Pattern MAJOR_VERSION_PATTERN = Pattern.compile("^([0-9]+)[^0-9].*");
+    public static int getMajorVersion() {
+        return getMajorVersion(System.getProperty("java.specification.version"));
 
-    private static final Pattern ONE_VERSION_PATTERN = Pattern.compile("^1\\.([0-9]+)[^0-9].*");
+    }
 
-    public static int getMajorVersion(String javaVersion) {
-        Matcher majorVersionMatcher = MAJOR_VERSION_PATTERN.matcher(javaVersion);
-
-        if (!majorVersionMatcher.matches()) {
-            throw getUnableToParseVersionException(javaVersion);
+    /**
+     * Only used for testing. Use {@link #getMajorVersion()} instead. Checkout http://openjdk.java.net/jeps/223 for more information
+     * @param javaSpecVersion System.getProperty("java.specification.version")
+     * @return the current major Java version.
+     */
+    static int getMajorVersion(String javaSpecVersion) {
+        try {
+            if (javaSpecVersion.contains(".")) { //before jdk 9
+                return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
+            } else {
+                return Integer.parseInt(javaSpecVersion);
+            }
+        } catch (NumberFormatException e ){
+            throw getUnableToParseVersionException(javaSpecVersion);
         }
-
-        int majorVersion = Integer.parseInt(majorVersionMatcher.group(1));
-
-        // we are in the case of Java >= 9
-        if (majorVersion > 1) {
-            return majorVersion;
-        }
-
-        // we are in the case of Java < 9 (1.7, 1.8)
-        Matcher oneVersionMatcher = ONE_VERSION_PATTERN.matcher(javaVersion);
-        if (!oneVersionMatcher.matches()) {
-            throw getUnableToParseVersionException(javaVersion);
-        }
-
-        return Integer.parseInt(oneVersionMatcher.group(1));
     }
 
     private static IllegalArgumentException getUnableToParseVersionException(String version) {
