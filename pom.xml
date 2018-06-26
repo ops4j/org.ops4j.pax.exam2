@@ -49,6 +49,7 @@
                 <module>containers/pax-exam-container-native</module>
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-forked</module>
+                <module>containers/pax-exam-container-eclipse</module>
                 <module>containers/pax-exam-container-glassfish-embedded</module>
                 <module>containers/pax-exam-container-weld</module>
                 <module>containers/pax-exam-container-tomcat</module>

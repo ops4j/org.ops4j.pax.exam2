@@ -1,0 +1,172 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.ops4j.pax</groupId>
+		<artifactId>exam</artifactId>
+		<version>4.12.0-SNAPSHOT</version>
+		<relativePath>../../pom</relativePath>
+	</parent>
+
+	<groupId>org.ops4j.pax.exam</groupId>
+	<artifactId>pax-exam-container-eclipse</artifactId>
+	<packaging>jar</packaging>
+
+	<name>OPS4J Pax Exam TestContainer Eclipse</name>
+	<description>Leverages EclipseStarter to launch Eclipse Based applications see https://help.eclipse.org/luna/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/adaptor/EclipseStarter.html for details</description>
+
+	<properties>
+		<eclipse.eclipse.equinox.launcher>1.3.201</eclipse.eclipse.equinox.launcher>
+		<eclipse.core.resources>3.11.1</eclipse.core.resources>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.tycho</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<version>3.12.0.v20170512-1932</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.equinox.launcher</artifactId>
+			<version>${eclipse.eclipse.equinox.launcher}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.core.resources</artifactId>
+			<version>${eclipse.core.resources}</version>
+			<exclusions>
+				<!-- we only want the resources bundle -->
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+<!-- 				<exclusion> -->
+<!-- 					<groupId>org.eclipse.platform</groupId> -->
+<!-- 					<artifactId> -->
+<!-- 						org.eclipse.core.expressions -->
+<!-- 					</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>org.eclipse.platform</groupId> -->
+<!-- 					<artifactId>org.eclipse.core.filesystem</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>org.eclipse.platform</groupId> -->
+<!-- 					<artifactId>org.eclipse.core.runtime</artifactId> -->
+<!-- 				</exclusion> -->
+			</exclusions>
+		</dependency>
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.eclipse.platform</groupId> -->
+<!-- 			<artifactId>org.eclipse.core.jobs</artifactId> -->
+<!-- 			<version>3.8.0</version> -->
+<!-- 		</dependency> -->
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.eclipse.core</groupId> -->
+<!-- 			<artifactId>jobs</artifactId> -->
+<!-- 			<version>3.6.0-v20140424-0053</version> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 		</dependency> -->
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ops4j.base</groupId>
+			<artifactId>ops4j-base-exec</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-link-assembly</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-junit4</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-spi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.kohsuke.metainf-services</groupId>
+			<artifactId>metainf-services</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.ops4j.pax.swissbox</groupId>
+			<artifactId>pax-swissbox-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.swissbox</groupId>
+			<artifactId>pax-swissbox-tracker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.base</groupId>
+			<artifactId>ops4j-base-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.base</groupId>
+			<artifactId>ops4j-base-net</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.url</groupId>
+			<artifactId>pax-url-link</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.url</groupId>
+			<artifactId>pax-url-classpath</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.tukaani</groupId>
+		    <artifactId>xz</artifactId>
+		    <version>1.6</version>
+		</dependency>
+		
+	</dependencies>
+
+</project>
