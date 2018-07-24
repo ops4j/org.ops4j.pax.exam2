@@ -52,7 +52,7 @@ Run build with integration tests
 
 Releases go to Maven Central.
 
-The current release of Pax Exam is 4.11.0
+The current release of Pax Exam is [4.12.0](https://ops4j1.jira.com/browse/PAXEXAM-917?jql=project%20%3D%20PAXEXAM%20AND%20fixVersion%20%3D%204.12.0).
 
 ## Issue Tracking
 
