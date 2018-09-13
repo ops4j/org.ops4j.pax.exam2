@@ -69,13 +69,28 @@ public class KarafJavaRunner implements Runner {
                     if (security) {
                         commandLine.append("-Djavax.management.builder.initial=org.apache.karaf.management.boot.KarafMBeanServerBuilder");
                     }
-                    commandLine
+                    boolean isExternalClasspathSet = false;
+                    for (String str : javaOpts) {
+                        if ("-classpath".equals(str)) {
+                            isExternalClasspathSet = true;
+                            break;
+                        }
+                    }
+                    if (isExternalClasspathSet) {
+                        commandLine
                             .append(karafOpts)
                             .append(opts)
-                            .append("-cp")
-                            .append(cp)
                             .append(main)
                             .append(options);
+                    } else {
+                        commandLine
+                        .append(karafOpts)
+                        .append(opts)
+                        .append("-cp")
+                        .append(cp)
+                        .append(main)
+                        .append(options);
+                    }
                     runner.exec(commandLine, karafBase, environment);
                 }
 
