@@ -29,7 +29,7 @@ import org.ops4j.pax.exam.OptionUtils;
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.3.0, December 08, 2008
  */
-public class DefaultCompositeOption implements CompositeOption {
+public class DefaultCompositeOption implements ModifiableCompositeOption {
 
     /**
      * Composite options (cannot be null).
@@ -70,6 +70,18 @@ public class DefaultCompositeOption implements CompositeOption {
         if (_options != null) {
             this.options.addAll(Arrays.asList(_options));
         }
+        return this;
+    }
+
+    /**
+     * Remove option.
+     *
+     * @param option option to be removed from composite
+     * @return itself, for fluent api usage
+     */
+    @Override
+    public DefaultCompositeOption remove(Option option) {
+        this.options.remove(option);
         return this;
     }
 
