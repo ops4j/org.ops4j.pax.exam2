@@ -38,6 +38,7 @@ import org.ops4j.pax.exam.options.JarProbeOption;
 import org.ops4j.pax.exam.options.MavenArtifactDeploymentOption;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
+import org.ops4j.pax.exam.options.ModifiableCompositeOption;
 import org.ops4j.pax.exam.options.OptionalCompositeOption;
 import org.ops4j.pax.exam.options.PropagateSystemPropertyOption;
 import org.ops4j.pax.exam.options.ProvisionOption;
@@ -100,7 +101,7 @@ public class CoreOptions {
      * 
      * @return provided options
      */
-    public static Option composite(final Option... options) {
+    public static ModifiableCompositeOption composite(final Option... options) {
         return new DefaultCompositeOption(options);
     }
 
