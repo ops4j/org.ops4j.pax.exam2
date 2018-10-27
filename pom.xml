@@ -36,7 +36,6 @@
         <profile>
             <id>itest</id>
             <modules>
-                <module>pom</module>
                 <module>itest</module>
             </modules>
         </profile>

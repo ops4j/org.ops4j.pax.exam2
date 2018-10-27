@@ -59,6 +59,66 @@
                                     <cloneProjectsTo>${project.build.directory}/weld2</cloneProjectsTo>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>weld3</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>weld3</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/weld3</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>weld3-se</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>weld3-se</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/weld3-se</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>owb15</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>owb15</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/owb15</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>owb2</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>owb2</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/owb2</cloneProjectsTo>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>owb2-se</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <profiles>
+                                        <profile>owb2-se</profile>
+                                    </profiles>
+                                    <cloneProjectsTo>${project.build.directory}/owb2-se</cloneProjectsTo>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
