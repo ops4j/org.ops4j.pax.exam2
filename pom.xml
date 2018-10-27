@@ -30,6 +30,7 @@
                 <module>samples</module>
                 <module>containers</module>
                 <module>maven</module>
+                <module>doc</module>
             </modules>
         </profile>
         <profile>

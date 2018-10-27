@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ops4j.pax</groupId>
+        <artifactId>exam</artifactId>
+        <version>5.0.0.M2-SNAPSHOT</version>
+        <relativePath>../../pom</relativePath>
+    </parent>
+
+    <groupId>org.ops4j.pax.exam</groupId>
+    <artifactId>pax-exam-user-manual</artifactId>
+    <packaging>war</packaging>
+
+    <name>OPS4J Pax Exam User Manual</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>1.5.6</version>
+                <executions>
+                    <execution>
+                        <id>output-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <backend>html5</backend>
+                            <attributes>
+                                <toc />
+                                <linkcss>false</linkcss>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <headerFooter>true</headerFooter>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj</artifactId>
+                        <version>1.5.4.1</version>   
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>${project.build.directory}/generated-docs</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
