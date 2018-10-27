@@ -49,8 +49,8 @@
         <dependency.wildfly.version>8.2.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
 
-        <dependency.junit.jupiter.version>5.1.1</dependency.junit.jupiter.version>
-        <dependency.junit.platform.version>1.1.1</dependency.junit.platform.version>
+        <dependency.junit.jupiter.version>5.3.1</dependency.junit.jupiter.version>
+        <dependency.junit.platform.version>1.3.1</dependency.junit.platform.version>
 
     </properties>
 
