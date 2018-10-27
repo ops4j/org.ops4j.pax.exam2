@@ -49,8 +49,8 @@
         <dependency.wildfly.version>8.2.0.Final</dependency.wildfly.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
 
-        <dependency.junit.jupiter.version>5.1.0-M1</dependency.junit.jupiter.version>
-        <dependency.junit.platform.version>1.1.0-M1</dependency.junit.platform.version>
+        <dependency.junit.jupiter.version>5.1.1</dependency.junit.jupiter.version>
+        <dependency.junit.platform.version>1.1.1</dependency.junit.platform.version>
 
     </properties>
 
@@ -149,6 +149,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
                     <configuration>
                         <argLine>${jacoco.argLine}</argLine>
                     </configuration>
@@ -156,7 +157,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.18.1</version>
+                    <version>2.22.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
