@@ -15,7 +15,6 @@
     <groupId>org.ops4j.pax.exam</groupId>
     <artifactId>exam-itest</artifactId>
     <packaging>pom</packaging>
-                <module>pom</module>
 
     <name>OPS4J Pax Exam Integration Tests</name>
 

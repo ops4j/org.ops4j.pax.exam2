@@ -2,7 +2,7 @@ language: java
 
 jdk: oraclejdk8
 
-script: mvn -B clean install -P itest
+script: mvn -B clean install -D itest
 
 install: true
 

@@ -20,6 +20,9 @@
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>itest</name>
+                </property>
             </activation>
             <modules>
                 <module>build</module>
@@ -35,6 +38,11 @@
         </profile>
         <profile>
             <id>itest</id>
+            <activation>
+                <property>
+                    <name>itest</name>
+                </property>
+            </activation>
             <modules>
                 <module>itest</module>
             </modules>
