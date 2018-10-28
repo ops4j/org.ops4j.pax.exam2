@@ -53,7 +53,7 @@
         <profile>
             <id>osgi</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>osgi</module>
