@@ -17,7 +17,7 @@ jobs:
         -in .maven-settings.xml.enc -out .maven-settings.xml -d
       install: true      
       script: mvn -s .maven-settings.xml -B clean deploy
-    - state: test
+    - stage: test
       script: mvn -Pitest clean verify
 
 
