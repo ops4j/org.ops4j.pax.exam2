@@ -13,6 +13,8 @@ stages:
   - build
   - test
 
+script: mvn -U -Pitest -P${PROFILE} clean verify
+
 jobs:
   include:
     - stage: build
@@ -21,8 +23,7 @@ jobs:
         -in .maven-settings.xml.enc -out .maven-settings.xml -d
       install: true      
       script: mvn -s .maven-settings.xml -B clean deploy
-    - stage: test
-      script: mvn -U -Pitest -P${PROFILE} clean verify
+
 
 
 
