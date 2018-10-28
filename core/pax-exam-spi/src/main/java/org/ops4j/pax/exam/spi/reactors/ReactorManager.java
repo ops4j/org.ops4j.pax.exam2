@@ -373,7 +373,7 @@ public class ReactorManager {
         stagedReactor.afterClass();
         testClasses.remove(klass);
         if (!waitForAfterSuiteEvent && testClasses.isEmpty()) {
-            LOG.info("suite finished");
+            LOG.debug("suite finished");
             stagedReactor.afterSuite();
             suiteStarted = false;
             testClasses.clear();
