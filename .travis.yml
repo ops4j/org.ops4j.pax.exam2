@@ -1,12 +1,11 @@
 language: java
-
 jdk: oraclejdk8
-
-script: mvn -B clean install -D itest
-
+script: mvn -s .maven-settings.xml -B clean deploy
 install: true
-
 cache:
   directories:
-  - $HOME/.m2
+  - "$HOME/.m2"
 
+before_install:
+- openssl aes-256-cbc -K $encrypted_3146aa8efbe7_key -iv $encrypted_3146aa8efbe7_iv
+  -in .maven-settings.xml.enc -out .maven-settings.xml -d
