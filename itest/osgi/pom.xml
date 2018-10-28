@@ -170,23 +170,23 @@
 									<cloneProjectsTo>${project.build.directory}/felix-forked</cloneProjectsTo>
 								</configuration>
 							</execution>
-							<execution>
-								<id>knopflerfish-forked</id>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<profiles>
-										<profile>knopflerfish</profile>
-										<profile>forked</profile>
-									</profiles>
-									<cloneProjectsTo>${project.build.directory}/knopferfish-forked</cloneProjectsTo>
-									<pomExcludes>
-										<pomExclude>regression-maven-plugin/pom.xml</pomExclude>
-									    <pomExclude>regression-plumbing/pom.xml</pomExclude>
-									</pomExcludes>
-								</configuration>
-							</execution>
+<!-- 							<execution> -->
+<!-- 								<id>knopflerfish-forked</id> -->
+<!-- 								<goals> -->
+<!-- 									<goal>run</goal> -->
+<!-- 								</goals> -->
+<!-- 								<configuration> -->
+<!-- 									<profiles> -->
+<!-- 										<profile>knopflerfish</profile> -->
+<!-- 										<profile>forked</profile> -->
+<!-- 									</profiles> -->
+<!-- 									<cloneProjectsTo>${project.build.directory}/knopferfish-forked</cloneProjectsTo> -->
+<!-- 									<pomExcludes> -->
+<!-- 										<pomExclude>regression-maven-plugin/pom.xml</pomExclude> -->
+<!-- 									    <pomExclude>regression-plumbing/pom.xml</pomExclude> -->
+<!-- 									</pomExcludes> -->
+<!-- 								</configuration> -->
+<!-- 							</execution> -->
 						</executions>
 					</plugin>
 				</plugins>

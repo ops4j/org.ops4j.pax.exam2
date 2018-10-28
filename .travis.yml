@@ -8,12 +8,12 @@ cache:
 env:
   - PROFILE=cdi
   - PROFILE=javaee
+  - PROFILE=osgi
 
 stages:
   - build
   - test
 
-script: mvn -U -Pitest -P${PROFILE} clean verify
 
 jobs:
   include:
@@ -23,6 +23,8 @@ jobs:
         -in .maven-settings.xml.enc -out .maven-settings.xml -d
       install: true      
       script: mvn -s .maven-settings.xml -B clean deploy
+
+    - script: mvn -U -Pitest -P${PROFILE} clean verify
 
 
 
