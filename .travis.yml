@@ -5,6 +5,10 @@ cache:
   directories:
   - "$HOME/.m2"
 
+env:
+  - PROFILE=cdi
+  - PROFILE=javaee
+
 stages:
   - build
   - test
@@ -18,7 +22,7 @@ jobs:
       install: true      
       script: mvn -s .maven-settings.xml -B clean deploy
     - stage: test
-      script: mvn -Pitest clean verify
+      script: mvn -U -Pitest -P${PROFILE} clean verify
 
 
 
