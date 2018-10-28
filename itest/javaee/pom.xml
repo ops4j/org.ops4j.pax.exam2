@@ -129,10 +129,6 @@
 										<profile>wildfly100</profile>
 									</profiles>
 									<cloneProjectsTo>${project.build.directory}/wildfly100</cloneProjectsTo>
-									<pomExcludes>
-										<pomExclude>regression-javaee-data/pom.xml</pomExclude>
-										<pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-									</pomExcludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -145,10 +141,6 @@
 										<profile>wildfly110</profile>
 									</profiles>
 									<cloneProjectsTo>${project.build.directory}/wildfly110</cloneProjectsTo>
-									<pomExcludes>
-										<pomExclude>regression-javaee-data/pom.xml</pomExclude>
-										<pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-									</pomExcludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -161,10 +153,6 @@
 										<profile>wildfly140</profile>
 									</profiles>
 									<cloneProjectsTo>${project.build.directory}/wildfly140</cloneProjectsTo>
-									<pomExcludes>
-										<pomExclude>regression-javaee-data/pom.xml</pomExclude>
-										<pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-									</pomExcludes>
 								</configuration>
 							</execution>
 						</executions>

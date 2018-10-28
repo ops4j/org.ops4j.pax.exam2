@@ -33,7 +33,7 @@
         <profile>
             <id>javaee</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>javaee</module>
