@@ -91,34 +91,34 @@
 									</pomExcludes>
 								</configuration>
 							</execution>
-							<execution>
-								<id>wildfly80</id>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<profiles>
-										<profile>wildfly80</profile>
-									</profiles>
-									<cloneProjectsTo>${project.build.directory}/wildfly80</cloneProjectsTo>
-								</configuration>
-							</execution>
-							<execution>
-								<id>wildfly90</id>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<profiles>
-										<profile>wildfly90</profile>
-									</profiles>
-									<cloneProjectsTo>${project.build.directory}/wildfly90</cloneProjectsTo>
-									<pomExcludes>
-										<pomExclude>regression-javaee-data/pom.xml</pomExclude>
-										<pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
-									</pomExcludes>
-								</configuration>
-							</execution>
+<!-- 							<execution> -->
+<!-- 								<id>wildfly80</id> -->
+<!-- 								<goals> -->
+<!-- 									<goal>run</goal> -->
+<!-- 								</goals> -->
+<!-- 								<configuration> -->
+<!-- 									<profiles> -->
+<!-- 										<profile>wildfly80</profile> -->
+<!-- 									</profiles> -->
+<!-- 									<cloneProjectsTo>${project.build.directory}/wildfly80</cloneProjectsTo> -->
+<!-- 								</configuration> -->
+<!-- 							</execution> -->
+<!-- 							<execution> -->
+<!-- 								<id>wildfly90</id> -->
+<!-- 								<goals> -->
+<!-- 									<goal>run</goal> -->
+<!-- 								</goals> -->
+<!-- 								<configuration> -->
+<!-- 									<profiles> -->
+<!-- 										<profile>wildfly90</profile> -->
+<!-- 									</profiles> -->
+<!-- 									<cloneProjectsTo>${project.build.directory}/wildfly90</cloneProjectsTo> -->
+<!-- 									<pomExcludes> -->
+<!-- 										<pomExclude>regression-javaee-data/pom.xml</pomExclude> -->
+<!-- 										<pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude> -->
+<!-- 									</pomExcludes> -->
+<!-- 								</configuration> -->
+<!-- 							</execution> -->
 							<execution>
 								<id>wildfly100</id>
 								<goals>
@@ -621,7 +621,7 @@
 			<id>wildfly100</id>
 			<properties>
 				<pax.exam.container>wildfly100</pax.exam.container>
-				<pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-10.0.0.Final</pax.exam.wildfly90.home>
+				<pax.exam.wildfly90.home>${user.dir}/target/wildfly-10.0.0.Final</pax.exam.wildfly90.home>
 				<pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly100-config</pax.exam.wildfly90.config.dir>
 				<pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
 			</properties>
@@ -715,7 +715,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
-						<inherited>false</inherited>
 						<executions>
 							<execution>
 								<id>unpack-wildfly100</id>
@@ -723,7 +722,6 @@
 								<goals>
 									<goal>unpack</goal>
 								</goals>
-								<inherited>false</inherited>
 								<configuration>
 									<artifactItems>
 										<artifactItem>
@@ -733,7 +731,7 @@
 											<type>zip</type>
 										</artifactItem>
 									</artifactItems>
-									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputDirectory>${user.dir}/target</outputDirectory>
 								</configuration>
 							</execution>
 						</executions>
@@ -746,7 +744,7 @@
 			<id>wildfly110</id>
 			<properties>
 				<pax.exam.container>wildfly100</pax.exam.container>
-				<pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-11.0.0.Final</pax.exam.wildfly90.home>
+				<pax.exam.wildfly90.home>${user.dir}/target/wildfly-11.0.0.Final</pax.exam.wildfly90.home>
 				<pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly110-config</pax.exam.wildfly90.config.dir>
 				<pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
 			</properties>
@@ -845,7 +843,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
-						<inherited>false</inherited>
 						<executions>
 							<execution>
 								<id>unpack-wildfly110</id>
@@ -853,7 +850,6 @@
 								<goals>
 									<goal>unpack</goal>
 								</goals>
-								<inherited>false</inherited>
 								<configuration>
 									<artifactItems>
 										<artifactItem>
@@ -863,7 +859,7 @@
 											<type>zip</type>
 										</artifactItem>
 									</artifactItems>
-									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputDirectory>${user.dir}/target</outputDirectory>
 								</configuration>
 							</execution>
 						</executions>
@@ -876,7 +872,7 @@
 			<id>wildfly140</id>
 			<properties>
 				<pax.exam.container>wildfly140</pax.exam.container>
-				<pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-14.0.0.Final</pax.exam.wildfly90.home>
+				<pax.exam.wildfly90.home>${user.dir}/target/wildfly-14.0.0.Final</pax.exam.wildfly90.home>
 				<pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly140-config</pax.exam.wildfly90.config.dir>
 				<pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
 			</properties>
@@ -997,7 +993,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
-						<inherited>false</inherited>
 						<executions>
 							<execution>
 								<id>unpack-wildfly140</id>
@@ -1005,7 +1000,6 @@
 								<goals>
 									<goal>unpack</goal>
 								</goals>
-								<inherited>false</inherited>
 								<configuration>
 									<artifactItems>
 										<artifactItem>
@@ -1015,7 +1009,7 @@
 											<type>zip</type>
 										</artifactItem>
 									</artifactItems>
-									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputDirectory>${user.dir}/target</outputDirectory>
 								</configuration>
 							</execution>
 						</executions>
