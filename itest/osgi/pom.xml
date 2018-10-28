@@ -126,6 +126,7 @@
 									</profiles>
 									<cloneProjectsTo>${project.build.directory}/knopflerfish-native</cloneProjectsTo>
 									<pomExcludes>
+								        <pomExclude>regression-plumbing/pom.xml</pomExclude>
 										<pomExclude>regression-maven-plugin/pom.xml</pomExclude>
 									</pomExcludes>
 								</configuration>
@@ -182,6 +183,7 @@
 									<cloneProjectsTo>${project.build.directory}/knopferfish-forked</cloneProjectsTo>
 									<pomExcludes>
 										<pomExclude>regression-maven-plugin/pom.xml</pomExclude>
+									    <pomExclude>regression-plumbing/pom.xml</pomExclude>
 									</pomExcludes>
 								</configuration>
 							</execution>
