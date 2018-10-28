@@ -54,7 +54,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
-						<version>1.5</version>
+						<version>3.1.0</version>
 						<configuration>
 							<streamLogs>true</streamLogs>
 						</configuration>
@@ -91,34 +91,34 @@
 									</pomExcludes>
 								</configuration>
 							</execution>
-<!-- 							<execution> -->
-<!-- 								<id>wildfly80</id> -->
-<!-- 								<goals> -->
-<!-- 									<goal>run</goal> -->
-<!-- 								</goals> -->
-<!-- 								<configuration> -->
-<!-- 									<profiles> -->
-<!-- 										<profile>wildfly80</profile> -->
-<!-- 									</profiles> -->
-<!-- 									<cloneProjectsTo>${project.build.directory}/wildfly80</cloneProjectsTo> -->
-<!-- 								</configuration> -->
-<!-- 							</execution> -->
-<!-- 							<execution> -->
-<!-- 								<id>wildfly90</id> -->
-<!-- 								<goals> -->
-<!-- 									<goal>run</goal> -->
-<!-- 								</goals> -->
-<!-- 								<configuration> -->
-<!-- 									<profiles> -->
-<!-- 										<profile>wildfly90</profile> -->
-<!-- 									</profiles> -->
-<!-- 									<cloneProjectsTo>${project.build.directory}/wildfly90</cloneProjectsTo> -->
-<!-- 									<pomExcludes> -->
-<!-- 										<pomExclude>regression-javaee-data/pom.xml</pomExclude> -->
-<!-- 										<pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude> -->
-<!-- 									</pomExcludes> -->
-<!-- 								</configuration> -->
-<!-- 							</execution> -->
+							<execution>
+								<id>wildfly80</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<profiles>
+										<profile>wildfly80</profile>
+									</profiles>
+									<cloneProjectsTo>${project.build.directory}/wildfly80</cloneProjectsTo>
+								</configuration>
+							</execution>
+							<execution>
+								<id>wildfly90</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<profiles>
+										<profile>wildfly90</profile>
+									</profiles>
+									<cloneProjectsTo>${project.build.directory}/wildfly90</cloneProjectsTo>
+									<pomExcludes>
+										<pomExclude>regression-javaee-data/pom.xml</pomExclude>
+										<pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
+									</pomExcludes>
+								</configuration>
+							</execution>
 							<execution>
 								<id>wildfly100</id>
 								<goals>
@@ -484,7 +484,7 @@
 			<id>wildfly90</id>
 			<properties>
 				<pax.exam.container>wildfly90</pax.exam.container>
-				<pax.exam.wildfly90.home>${basedir}/../../../target/wildfly-9.0.2.Final</pax.exam.wildfly90.home>
+				<pax.exam.wildfly90.home>${user.dir}/target/wildfly-9.0.2.Final</pax.exam.wildfly90.home>
 				<pax.exam.wildfly90.config.dir>${basedir}/src/test/resources/wildfly90-config</pax.exam.wildfly90.config.dir>
 				<pax.exam.logging.manager>org.jboss.logmanager.LogManager</pax.exam.logging.manager>
 			</properties>
@@ -578,7 +578,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
-						<inherited>false</inherited>
 						<executions>
 							<execution>
 								<id>unpack-wildfly90</id>
@@ -586,7 +585,6 @@
 								<goals>
 									<goal>unpack</goal>
 								</goals>
-								<inherited>false</inherited>
 								<configuration>
 									<artifactItems>
 										<artifactItem>
@@ -596,7 +594,7 @@
 											<type>zip</type>
 										</artifactItem>
 									</artifactItems>
-									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputDirectory>${user.dir}/target</outputDirectory>
 								</configuration>
 							</execution>
 						</executions>
