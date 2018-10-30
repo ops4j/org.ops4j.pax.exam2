@@ -35,6 +35,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class SuiteTest implements Notifier, Remote {
+	
+	private static int portBase = 21000;
 
     private List<String> messages;
 
@@ -68,7 +70,8 @@ public class SuiteTest implements Notifier, Remote {
     }
 
     private void checkNumberOfRestartsInSuite(int numRestarts) throws Exception {
-        FreePort freePort = new FreePort(20000, 21000);
+        FreePort freePort = new FreePort(portBase, portBase + 400);
+        portBase += 500;
 
         int rmiPort = freePort.getPort();
         System.setProperty("pax.exam.regression.rmi", Integer.toString(rmiPort));
