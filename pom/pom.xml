@@ -431,6 +431,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>1.2</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.glassfish.main.common</groupId>
                 <artifactId>simple-glassfish-api</artifactId>
                 <version>${dependency.glassfish.version}</version>
