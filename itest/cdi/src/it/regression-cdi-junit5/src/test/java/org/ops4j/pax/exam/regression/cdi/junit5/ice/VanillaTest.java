@@ -28,6 +28,10 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.ops4j.pax.exam.invoker.junit5.PaxExam;
@@ -59,6 +63,27 @@ public class VanillaTest {
     @Inject
     @Any
     private Instance<Object> instance;
+    
+    @BeforeEach
+    public void beforeEach() {
+    	System.out.println("*** before each");
+    }
+    
+    @BeforeAll
+    public static void beforeAll() {
+    	System.out.println("*** before all");
+    }
+    
+    @AfterEach
+    public void afterEach() {
+    	System.out.println("*** after each");
+    }
+    
+    @AfterAll
+    public static void afterAll() {
+    	System.out.println("*** after all");
+    }
+    
 
     @Test
     public void checkVanillaFlavour() {
