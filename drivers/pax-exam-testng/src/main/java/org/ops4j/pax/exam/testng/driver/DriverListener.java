@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.TestContainerException;
@@ -51,7 +50,6 @@ import org.testng.ITestResult;
  * @author Harald Wellmann
  * @since 5.0.0
  */
-@MetaInfServices
 public class DriverListener implements CombinedListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriverListener.class);

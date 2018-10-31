@@ -19,7 +19,6 @@ package org.ops4j.pax.exam.nat.internal;
 
 import java.io.IOException;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerException;
@@ -34,7 +33,6 @@ import org.osgi.framework.launch.FrameworkFactory;
  * @author Toni Menzel
  * @since Jan 7, 2010
  */
-@MetaInfServices
 public class NativeTestContainerFactory implements TestContainerFactory {
 
     @Override
