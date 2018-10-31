@@ -61,29 +61,6 @@
 
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>m2e</id>
-            <!-- This profile is only activated when building in Eclipse with m2e.
-            
-                 We use it as a workaround for class signature issues caused by the TestNG
-                 Eclipse plugin which contains org.osgi.framework.Version in testng-remote.jar.
-            -->
-            <activation>
-                <property>
-                    <name>m2e.version</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <build>
         <plugins>
             <!-- unpack pax-exam-sample9-pde so we have an exploded bundle for testing -->

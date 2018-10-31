@@ -6,12 +6,12 @@ cache:
   - "$HOME/.m2"
 
 env:
-#  - PROFILE=cdi
-#  - PROFILE=javaee
+  - PROFILE=cdi
+  - PROFILE=javaee
   - PROFILE=osgi
 
 stages:
-#  - build
+  - build
   - test
 
 install: true
@@ -19,12 +19,12 @@ install: true
 script: mvn -U -Pitest -P${PROFILE} clean verify
 
 
-#jobs:
-#  include:
-#    - stage: build
-#      before_install:
-#      - openssl aes-256-cbc -K $encrypted_3146aa8efbe7_key -iv $encrypted_3146aa8efbe7_iv
-#        -in .maven-settings.xml.enc -out .maven-settings.xml -d
-#      install: true      
-#      script: mvn -s .maven-settings.xml -B clean deploy
+jobs:
+  include:
+    - stage: build
+      before_install:
+      - openssl aes-256-cbc -K $encrypted_3146aa8efbe7_key -iv $encrypted_3146aa8efbe7_iv
+        -in .maven-settings.xml.enc -out .maven-settings.xml -d
+      install: true      
+      script: mvn -s .maven-settings.xml -B clean deploy
 

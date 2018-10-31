@@ -70,9 +70,10 @@
 						<version>1.5</version>
 						<configuration>
 							<streamLogs>true</streamLogs>
-							<pomExcludes>
-								<pomExclude>regression-plumbing/pom.xml</pomExclude>
-							</pomExcludes>
+							<pomIncludes>
+								<pomInclude>regression-multi/pom.xml</pomInclude>
+								<pomInclude>regression-junit5/pom.xml</pomInclude>
+							</pomIncludes>
 						</configuration>
 						<executions>
 							<execution>
@@ -86,6 +87,11 @@
 										<profile>native</profile>
 									</profiles>
 									<cloneProjectsTo>${project.build.directory}/equinox-native</cloneProjectsTo>
+									<pomIncludes>
+										<pomInclude>regression-multi/pom.xml</pomInclude>
+										<pomInclude>regression-junit5/pom.xml</pomInclude>
+										<pomInclude>regression-maven-plugin/pom.xml</pomInclude>
+									</pomIncludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -112,6 +118,11 @@
 										<profile>native</profile>
 									</profiles>
 									<cloneProjectsTo>${project.build.directory}/felix-native</cloneProjectsTo>
+									<pomIncludes>
+										<pomInclude>regression-multi/pom.xml</pomInclude>
+										<pomInclude>regression-junit5/pom.xml</pomInclude>
+										<pomInclude>regression-maven-plugin/pom.xml</pomInclude>
+									</pomIncludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -125,10 +136,6 @@
 										<profile>native</profile>
 									</profiles>
 									<cloneProjectsTo>${project.build.directory}/knopflerfish-native</cloneProjectsTo>
-									<pomExcludes>
-								        <pomExclude>regression-plumbing/pom.xml</pomExclude>
-										<pomExclude>regression-maven-plugin/pom.xml</pomExclude>
-									</pomExcludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -170,23 +177,23 @@
 									<cloneProjectsTo>${project.build.directory}/felix-forked</cloneProjectsTo>
 								</configuration>
 							</execution>
-<!-- 							<execution> -->
-<!-- 								<id>knopflerfish-forked</id> -->
-<!-- 								<goals> -->
-<!-- 									<goal>run</goal> -->
-<!-- 								</goals> -->
-<!-- 								<configuration> -->
-<!-- 									<profiles> -->
-<!-- 										<profile>knopflerfish</profile> -->
-<!-- 										<profile>forked</profile> -->
-<!-- 									</profiles> -->
-<!-- 									<cloneProjectsTo>${project.build.directory}/knopferfish-forked</cloneProjectsTo> -->
-<!-- 									<pomExcludes> -->
-<!-- 										<pomExclude>regression-maven-plugin/pom.xml</pomExclude> -->
-<!-- 									    <pomExclude>regression-plumbing/pom.xml</pomExclude> -->
-<!-- 									</pomExcludes> -->
-<!-- 								</configuration> -->
-<!-- 							</execution> -->
+							<!-- <execution> -->
+							<!-- <id>knopflerfish-forked</id> -->
+							<!-- <goals> -->
+							<!-- <goal>run</goal> -->
+							<!-- </goals> -->
+							<!-- <configuration> -->
+							<!-- <profiles> -->
+							<!-- <profile>knopflerfish</profile> -->
+							<!-- <profile>forked</profile> -->
+							<!-- </profiles> -->
+							<!-- <cloneProjectsTo>${project.build.directory}/knopferfish-forked</cloneProjectsTo> -->
+							<!-- <pomExcludes> -->
+							<!-- <pomExclude>regression-maven-plugin/pom.xml</pomExclude> -->
+							<!-- <pomExclude>regression-plumbing/pom.xml</pomExclude> -->
+							<!-- </pomExcludes> -->
+							<!-- </configuration> -->
+							<!-- </execution> -->
 						</executions>
 					</plugin>
 				</plugins>
