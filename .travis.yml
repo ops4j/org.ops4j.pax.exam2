@@ -19,7 +19,6 @@ install: true
 
 script: mvn -U -Pitest -P${PROFILE} clean verify
 
-
 jobs:
   include:
     - stage: build
