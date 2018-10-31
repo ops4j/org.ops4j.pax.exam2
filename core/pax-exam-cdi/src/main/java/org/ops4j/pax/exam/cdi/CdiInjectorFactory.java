@@ -16,12 +16,10 @@
  */
 package org.ops4j.pax.exam.cdi;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.cdi.impl.CdiInjector;
 import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.exam.util.InjectorFactory;
 
-@MetaInfServices
 public class CdiInjectorFactory implements InjectorFactory {
 
     @Override

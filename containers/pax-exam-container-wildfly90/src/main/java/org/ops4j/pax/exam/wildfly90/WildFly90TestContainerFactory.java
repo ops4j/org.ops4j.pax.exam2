@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam.wildfly90;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -26,7 +25,6 @@ import org.ops4j.pax.exam.TestContainerFactory;
  * @author Harald Wellmann
  * @since 4.6.0
  */
-@MetaInfServices
 public class WildFly90TestContainerFactory implements TestContainerFactory {
 
     @Override

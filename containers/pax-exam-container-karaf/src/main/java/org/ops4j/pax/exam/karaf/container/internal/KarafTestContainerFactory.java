@@ -19,7 +19,6 @@ package org.ops4j.pax.exam.karaf.container.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -34,7 +33,6 @@ import org.ops4j.pax.exam.karaf.options.KarafDistributionKitConfigurationOption.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@MetaInfServices
 public class KarafTestContainerFactory implements TestContainerFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KarafTestContainer.class);

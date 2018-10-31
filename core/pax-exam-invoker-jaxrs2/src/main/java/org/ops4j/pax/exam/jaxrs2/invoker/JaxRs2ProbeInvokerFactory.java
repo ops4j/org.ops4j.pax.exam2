@@ -18,13 +18,11 @@ package org.ops4j.pax.exam.jaxrs2.invoker;
 
 import java.net.URI;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.ProbeInvokerFactory;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDirectory;
 
-@MetaInfServices
 public class JaxRs2ProbeInvokerFactory implements ProbeInvokerFactory {
 
     @Override

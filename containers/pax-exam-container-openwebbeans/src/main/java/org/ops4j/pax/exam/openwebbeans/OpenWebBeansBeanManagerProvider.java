@@ -19,14 +19,12 @@ package org.ops4j.pax.exam.openwebbeans;
 
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.cdi.spi.BeanManagerProvider;
 
 /**
  * @author Harald Wellmann
  * @since 3.0.0
  */
-@MetaInfServices
 public class OpenWebBeansBeanManagerProvider implements BeanManagerProvider {
 
     @Override

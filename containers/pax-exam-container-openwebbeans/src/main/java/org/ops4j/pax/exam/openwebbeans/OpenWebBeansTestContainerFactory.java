@@ -17,7 +17,6 @@
  */
 package org.ops4j.pax.exam.openwebbeans;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.TestContainerFactory;
@@ -26,7 +25,6 @@ import org.ops4j.pax.exam.TestContainerFactory;
  * @author Harald Wellmann
  * @since 3.0.0
  */
-@MetaInfServices
 public class OpenWebBeansTestContainerFactory implements TestContainerFactory {
 
     @Override

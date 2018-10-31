@@ -25,7 +25,6 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.util.Transactional;
 import org.testng.IHookCallBack;
@@ -36,7 +35,6 @@ import org.testng.ITestResult;
  * @author hwellmann
  *
  */
-@MetaInfServices
 public class TransactionalHookable implements IHookable {
 
     @Override

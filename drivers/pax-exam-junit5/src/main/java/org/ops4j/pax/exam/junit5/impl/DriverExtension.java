@@ -22,7 +22,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
-import org.kohsuke.MetaInfServices;
 import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.TestContainerException;
@@ -39,7 +38,6 @@ import org.ops4j.spi.ServiceProviderFinder;
  * @author hwellmann
  *
  */
-@MetaInfServices
 public class DriverExtension implements CombinedExtension {
 
     private static ReactorManager manager;
