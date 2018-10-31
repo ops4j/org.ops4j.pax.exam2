@@ -58,7 +58,7 @@
 		</profile>
 
 		<profile>
-			<id>invoker</id>
+			<id>native</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -138,6 +138,28 @@
 									<cloneProjectsTo>${project.build.directory}/knopflerfish-native</cloneProjectsTo>
 								</configuration>
 							</execution>
+						</executions>	
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+		<profile>
+			<id>forked</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-invoker-plugin</artifactId>
+						<version>1.5</version>
+						<configuration>
+							<streamLogs>true</streamLogs>
+							<pomIncludes>
+								<pomInclude>regression-multi/pom.xml</pomInclude>
+								<pomInclude>regression-junit5/pom.xml</pomInclude>
+							</pomIncludes>
+						</configuration>
+						<executions>
 							<execution>
 								<id>equinox-forked</id>
 								<goals>
