@@ -8,8 +8,8 @@ cache:
 env:
   - PROFILE=cdi
   - PROFILE=javaee
-  - PROFILE=osgi,native
-  - PROFILE=osgi,forked
+  - PROFILE=osgi,osgi-native
+  - PROFILE=osgi,osgi-forked
 
 stages:
   - build

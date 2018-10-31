@@ -58,7 +58,7 @@
 		</profile>
 
 		<profile>
-			<id>native</id>
+			<id>osgi-native</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -145,7 +145,7 @@
 
 		</profile>
 		<profile>
-			<id>forked</id>
+			<id>osgi-forked</id>
 			<build>
 				<plugins>
 					<plugin>
