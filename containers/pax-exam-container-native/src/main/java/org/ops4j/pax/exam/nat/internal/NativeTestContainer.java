@@ -286,7 +286,9 @@ public class NativeTestContainer implements TestContainer {
 
         String repositories = buildString(system.getOptions(RepositoryOption.class));
         if (!repositories.isEmpty()) {
-            System.setProperty("org.ops4j.pax.url.mvn.repositories", repositories);
+            // start with a plus to append default repositories from settings.xml and Maven Cental
+            // to the list of repositories defined by options
+            System.setProperty("org.ops4j.pax.url.mvn.repositories", "+" + repositories);
         }
         if (LOG.isDebugEnabled()) {
             logSystemProperties();

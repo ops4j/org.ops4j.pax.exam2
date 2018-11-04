@@ -52,14 +52,15 @@ public class RepositoryTest {
     @Inject
     private BundleContext bundleContext;
 
-    @Configuration
-    public static Option[] configuration() throws Exception {
-        return options(
-            //
-            regressionDefaults(),
-            repository("http://www.knopflerfish.org/maven2").id("knopflerfish"), cleanCaches(),
-            mavenBundle("org.knopflerfish.bundle", "demo1", "2.0.0"), junitBundles());
-    }
+	@Configuration
+	public static Option[] configuration() throws Exception {
+		return options( //
+				regressionDefaults(), //
+				repository("http://www.knopflerfish.org/maven2").id("knopflerfish"),
+				cleanCaches(), //
+				mavenBundle("org.knopflerfish.bundle", "demo1", "2.0.0"), // 
+				junitBundles());
+	}
 
     @Test
     public void bundleFromExternalRepositoryIsResolved() throws Exception {

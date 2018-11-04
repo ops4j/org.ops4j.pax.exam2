@@ -93,9 +93,7 @@ public class RepositoryOptionImpl implements RepositoryOption {
             throw new IllegalStateException(
                 "Does not make sense to disallow both releases and snapshots.");
         }
-        // start with a plus to append default repositories from settings.xml and Maven Cental
-        // to the list of repositories defined by options
-        final StringBuilder url = new StringBuilder("+");
+        final StringBuilder url = new StringBuilder();
         url.append(this.repositoryUrl);
         if (allowSnapshots) {
             url.append("@snapshots");

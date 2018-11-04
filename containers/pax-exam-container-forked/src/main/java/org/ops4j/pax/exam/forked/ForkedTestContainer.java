@@ -238,7 +238,9 @@ public class ForkedTestContainer implements TestContainer {
 
         RepositoryOption[] repositories = system.getOptions(RepositoryOption.class);
         if (repositories.length != 0) {
-            System.setProperty("org.ops4j.pax.url.mvn.repositories", buildString(repositories));
+            // start with a plus to append default repositories from settings.xml and Maven Cental
+            // to the list of repositories defined by options
+            System.setProperty("org.ops4j.pax.url.mvn.repositories", "+" + buildString(repositories));
         }
 
         return p;
