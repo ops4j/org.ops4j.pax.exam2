@@ -20,6 +20,8 @@ package org.ops4j.pax.exam.options.extra;
 
 import static org.ops4j.lang.NullArgumentException.validateNotEmpty;
 
+import java.util.Objects;
+
 /**
  * {@link RepositoryOption} implementation.
  * 
@@ -123,4 +125,25 @@ public class RepositoryOptionImpl implements RepositoryOption {
     public String getValue() {
         return getRepository();
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(allowReleases, allowSnapshots, id, repositoryUrl);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof RepositoryOptionImpl)) {
+			return false;
+		}
+		RepositoryOptionImpl other = (RepositoryOptionImpl) obj;
+		return allowReleases == other.allowReleases && allowSnapshots == other.allowSnapshots
+				&& Objects.equals(id, other.id) && Objects.equals(repositoryUrl, other.repositoryUrl);
+	}
 }
