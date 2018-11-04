@@ -23,6 +23,7 @@ import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.cleanCaches;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.frameworkStartLevel;
+import static org.ops4j.pax.exam.CoreOptions.repository;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import org.ops4j.pax.exam.Option;
@@ -57,6 +58,8 @@ public class RegressionConfiguration {
             // This way, both the driver and the container use the same configuration
             systemProperty("logback.configurationFile").value(
                 "file:" + PathUtils.getBaseDir() + "/src/test/resources/logback.xml"),
+
+            repository("https://oss.sonatype.org/content/repositories/ops4j-snapshots").id("ops4j-snapshots").allowSnapshots(),
 
             frameworkStartLevel(START_LEVEL_TEST_BUNDLE));
     }

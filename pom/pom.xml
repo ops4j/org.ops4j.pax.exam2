@@ -1121,5 +1121,20 @@
             <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
         </repository>
     </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots</url>
+            <releases>
+            	<enabled>false</enabled>
+            </releases>
+            <snapshots>
+            	<enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    
 
 </project>
