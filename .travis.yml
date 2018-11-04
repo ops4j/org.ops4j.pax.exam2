@@ -10,6 +10,7 @@ env:
   - PROFILE=javaee
   - PROFILE=osgi,osgi-native
   - PROFILE=osgi,osgi-forked
+  - PROFILE=karaf
 
 stages:
   - build

@@ -62,9 +62,6 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <profiles>
-                                        <profile>felix</profile>
-                                    </profiles>
                                     <cloneProjectsTo>${project.build.directory}/felix-karaf</cloneProjectsTo>
                                 </configuration>
                             </execution>
