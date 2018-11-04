@@ -164,6 +164,7 @@
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
                         <osgi.console>6666</osgi.console>
+                        <org.ops4j.pax.url.mvn.repositories>+https://oss.sonatype.org/content/repositories/ops4j-snapshots@id=ops4j-snapshots@snapshots</org.ops4j.pax.url.mvn.repositories>
                     </systemProperties>
                 </configuration>
             </plugin>
