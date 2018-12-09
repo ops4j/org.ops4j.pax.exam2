@@ -78,7 +78,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/ops4j/org.ops4j.pax.exam2</connection>
-        <developerConnection>scm:git:git@github.com:ops4j/org.ops4j.pax.exam2.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/ops4j/org.ops4j.pax.exam2</developerConnection>
         <url>https://github.com/ops4j/org.ops4j.pax.exam2</url>
       <tag>HEAD</tag>
   </scm>
