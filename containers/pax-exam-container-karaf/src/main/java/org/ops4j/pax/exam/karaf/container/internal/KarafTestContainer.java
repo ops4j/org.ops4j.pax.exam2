@@ -217,6 +217,7 @@ public class KarafTestContainer implements TestContainer {
         File karafBin = new File(karafBase, "bin");
         File karafEtc = new File(karafBase, framework.getKarafEtc());
         File karafData = new File(karafBase, framework.getKarafData());
+        File karafLog = new File(karafData, framework.getKarafLog());
         String[] classPath = buildKarafClasspath(karafHome);
         makeScriptsInBinExec(karafBin);
         File javaHome = new File(System.getProperty("java.home"));
@@ -246,7 +247,7 @@ public class KarafTestContainer implements TestContainer {
         String[] karafOpts = new String[] {};
         String[] env = environment.toArray(new String[environment.size()]);
         runner.exec(env, karafBase, javaHome.toString(), javaOpts.toArray(new String[] {}),
-            javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData.toString(), karafEtc.toString(),
+            javaEndorsedDirs, javaExtDirs, karafHome.toString(), karafData.toString(), karafEtc.toString(), karafLog.toString(),
             karafOpts, opts.toArray(new String[] {}), classPath, main, options,
             enableMBeanServerBuilder);
 

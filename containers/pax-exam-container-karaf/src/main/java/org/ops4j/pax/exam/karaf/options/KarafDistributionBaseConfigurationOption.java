@@ -30,6 +30,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     protected String karafMain = "org.apache.karaf.main.Main";
     protected String karafData = "data";
     protected String karafEtc = "etc";
+    protected String karafLog = "log";
     protected File unpackDirectory;
     protected boolean useDeployFolder;
     protected boolean runEmbedded;
@@ -166,6 +167,18 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     }
 
     /**
+     * Sets the location of karaf.log relative to the installation. Defaults to {@code "data/log"}.
+     *
+     * @param _karafLog
+     *              Karaf log
+     * @return this for fluent syntax
+     */
+    public KarafDistributionBaseConfigurationOption karafLog(String _karafLog) {
+        this.karafLog = _karafLog;
+        return this;
+    }
+
+    /**
      * Define the unpack directory for the karaf distribution. In this directory a UUID named
      * directory will be created for each environment.
      *
@@ -234,6 +247,8 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     public String getKarafEtc() {
       return karafEtc;
     }
+
+    public String getKarafLog() { return karafLog; }
 
     public File getUnpackDirectory() {
         return unpackDirectory;

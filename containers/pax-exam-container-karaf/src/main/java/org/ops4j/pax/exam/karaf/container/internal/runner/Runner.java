@@ -44,6 +44,8 @@ public interface Runner {
      *            Karaf data directory
      * @param karafEtc
      *            Karaf etc directory
+     * @param karafLog
+     *            Karaf log directory
      * @param karafOpts
      *            Karaf options
      * @param opts
@@ -60,7 +62,7 @@ public interface Runner {
     // CHECKSTYLE:SKIP - more than 10 params
     void exec(final String[] environment, final File karafBase, final String javaHome,
         final String[] javaOpts, final String[] javaEndorsedDirs, final String[] javaExtDirs,
-        final String karafHome, final String karafData, final String karafEtc,
+        final String karafHome, final String karafData, final String karafEtc, final String karafLog,
         final String[] karafOpts, final String[] opts, final String[] classPath, final String main,
         final String options, final boolean security);
 
