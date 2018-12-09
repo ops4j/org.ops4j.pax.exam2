@@ -42,7 +42,7 @@ public class KarafEmbeddedRunner implements Runner {
     public synchronized void // CHECKSTYLE:SKIP : more than 10 params
         exec(final String[] environment, final File karafBase, final String javaHome,
             final String[] javaOpts, final String[] javaEndorsedDirs, final String[] javaExtDirs,
-            final String karafHome, final String karafData, final String karafEtc,
+            final String karafHome, final String karafData, final String karafEtc, final String karafLog,
             final String[] karafOpts, final String[] opts, final String[] classPath,
             final String main, final String options, final boolean security) {
         Thread thread = new Thread("KarafEmbeddedRunner") {
@@ -56,6 +56,7 @@ public class KarafEmbeddedRunner implements Runner {
                 System.setProperty("karaf.base", karafBase.getAbsolutePath());
                 System.setProperty("karaf.data", karafData);
                 System.setProperty("karaf.etc", karafEtc);
+                System.setProperty("karaf.log", karafLog);
                 System.setProperty("java.util.logging.config.file",
                     karafEtc + "/java.util.logging.properties");
 
