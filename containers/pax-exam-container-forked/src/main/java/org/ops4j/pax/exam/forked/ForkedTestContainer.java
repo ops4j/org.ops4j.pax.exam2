@@ -19,7 +19,10 @@ package org.ops4j.pax.exam.forked;
 
 import static java.util.stream.Collectors.joining;
 import static org.ops4j.pax.exam.Constants.EXAM_FAIL_ON_UNRESOLVED_KEY;
+import static org.ops4j.pax.exam.Constants.EXAM_FORKED_INVOKER_PORT;
 import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT;
+import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT_RANGE_LOWERBOUND;
+import static org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT_RANGE_UPPERBOUND;
 import static org.ops4j.pax.exam.Constants.START_LEVEL_TEST_BUNDLE;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.osgi.framework.Constants.FRAMEWORK_BOOTDELEGATION;
@@ -97,7 +100,7 @@ public class ForkedTestContainer implements TestContainer {
     private final PlatformImpl platform;
     private final String name;
 
-    private FreePort port;
+    private int port;
     private HashMap<Long, String> bundlesById;
 
     public ForkedTestContainer(ExamSystem system, FrameworkFactory frameworkFactory) {
@@ -121,10 +124,10 @@ public class ForkedTestContainer implements TestContainer {
     @Override
     public void start() throws IOException {
         try {
-            port = new FreePort(20000, 21000);
+            port = getPort();
             system = system.fork(new Option[] {
                 systemProperty("java.protocol.handler.pkgs").value("org.ops4j.pax.url"),
-                systemProperty(EXAM_INVOKER_PORT).value(Integer.toString(port.getPort()))
+                systemProperty(EXAM_INVOKER_PORT).value(port)
                 });
             List<String> vmArgs = createVmArguments();
             Map<String, String> systemProperties = createSystemProperties();
@@ -159,6 +162,18 @@ public class ForkedTestContainer implements TestContainer {
         }
         catch (ExamConfigurationException e) {
             throw new TestContainerException("Problem in test container configuration", e);
+        }
+    }
+
+    protected int getPort() {
+        String configuredPort = System.getProperty(EXAM_INVOKER_PORT);
+        if (configuredPort != null) {
+            return Integer.parseInt(configuredPort);
+        } else {
+            // fails if user configure a wrong port value
+            int lowerBound = Integer.parseInt(System.getProperty(EXAM_INVOKER_PORT_RANGE_LOWERBOUND, "20000"));
+            int upperBound = Integer.parseInt(System.getProperty(EXAM_INVOKER_PORT_RANGE_UPPERBOUND, "21000"));
+            return new FreePort(lowerBound, upperBound).getPort();
         }
     }
 
@@ -237,7 +252,7 @@ public class ForkedTestContainer implements TestContainer {
 
         return p;
     }
-    
+
     private String join(ValueOption<?>[] options) {
         return Arrays.stream(options).map(o -> o.getValue().toString()).collect(joining(","));
     }
@@ -358,7 +373,7 @@ public class ForkedTestContainer implements TestContainer {
     public void runTest(TestDescription description, TestListener listener) {
         String filterExpression = "(&(objectClass=org.ops4j.pax.exam.ProbeInvoker))";
         try {
-            ServerSocket serverSocket = new ServerSocket(port.getPort());
+            ServerSocket serverSocket = new ServerSocket(port);
             TestListenerTask task = new TestListenerTask(serverSocket, listener);
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(task);

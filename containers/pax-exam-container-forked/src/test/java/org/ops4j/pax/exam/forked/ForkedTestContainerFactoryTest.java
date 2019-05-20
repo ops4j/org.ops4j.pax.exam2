@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.ExamSystem;
@@ -125,6 +127,24 @@ public class ForkedTestContainerFactoryTest {
         container.installProbe(new FileInputStream(testBundle));
 
         container.stop();
+    }
+
+    @Test()
+    public void verifyPortConfiguration() throws Exception {
+        ForkedFrameworkFactory frameworkFactory = new ForkedFrameworkFactory(null);
+
+        new SystemPropertyRunnable(org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT, "15000") {
+            @Override
+            protected void doRun() {
+                Assert.assertThat(frameworkFactory.getPort(), CoreMatchers.equalTo(15000));
+            }
+        }.run();
+        new SystemPropertyRunnable(org.ops4j.pax.exam.Constants.EXAM_INVOKER_PORT_RANGE_LOWERBOUND, "15000") {
+            @Override
+            protected void doRun() {
+                Assert.assertThat(frameworkFactory.getPort(), CoreMatchers.equalTo(15000));
+            }
+        }.run();
     }
 
     private File generateBundle() throws IOException {
