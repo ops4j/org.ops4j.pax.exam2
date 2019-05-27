@@ -133,6 +133,31 @@ public class Constants {
      */
     public static final String EXAM_INVOKER_PORT = "pax.exam.invoker.port";
 
+    /**
+     * Lower bound port range for socket-based communication with remote invoker.
+     */
+    public static final String EXAM_INVOKER_PORT_RANGE_LOWERBOUND = "pax.exam.invoker.port.range.lowerbound";
+
+    /**
+     * Upper bound port range for socket-based communication with remote invoker.
+     */
+    public static final String EXAM_INVOKER_PORT_RANGE_UPPERBOUND = "pax.exam.invoker.port.range.upperbound";
+
+    /**
+     * Port for socket-based communication with remote invoker.
+     */
+    public static final String EXAM_FORKED_INVOKER_PORT = "pax.exam.forked.invoker.port";
+
+    /**
+     * Lower bound port range for socket-based communication with forked remote invoker.
+     */
+    public static final String EXAM_FORKED_INVOKER_PORT_RANGE_LOWERBOUND = "pax.exam.forked.invoker.port.range.lowerbound";
+
+    /**
+     * Upper bound port range for socket-based communication with forked remote invoker.
+     */
+    public static final String EXAM_FORKED_INVOKER_PORT_RANGE_UPPERBOUND = "pax.exam.forked.invoker.port.range.upperbound";
+
     /** Hidden utility class constructor. */
     private Constants() {
     }
