@@ -62,6 +62,20 @@ public abstract class KarafConfigurationFileTest {
     }
 
     @Test
+    public void replace() throws Exception {
+        final String[] expected = {"1", "2", "3", "4"};
+        File dir = tempDir.newFolder();
+        final KarafConfigurationFile karafConfigFile = newKarafConfigurationFile(dir, "replace");
+        karafConfigFile.load();
+        assertNull(karafConfigFile.get("strings"));
+
+        final KarafConfigurationFile sourceConfig = newKarafConfigurationFile(KARAF_ETC, "etc/strings_4");
+        karafConfigFile.replace(sourceConfig.file);
+        String[] strings = toStrings(karafConfigFile.get("strings"));
+        assertArrayEquals(expected, strings);
+    }
+
+    @Test
     public void put() {
         final Double d = 2D;
         final KarafConfigurationFile karafConfigFile = newKarafConfigurationFile(KARAF_ETC, "etc/na");

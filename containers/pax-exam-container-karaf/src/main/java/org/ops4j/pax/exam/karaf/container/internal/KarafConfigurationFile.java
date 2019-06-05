@@ -42,6 +42,7 @@ public abstract class KarafConfigurationFile {
     public void replace(final File source) {
         try {
             FileUtils.copyFile(source, file);
+            load();
         }
         catch (IOException e) {
             throw new IllegalStateException("Error occured while replacing file " + file, e);
