@@ -17,29 +17,32 @@
  */
 package org.ops4j.pax.exam.karaf.container.internal;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Dictionary;
-import java.util.Hashtable;
-
-import org.apache.felix.cm.file.ConfigurationHandler;
-import org.junit.Test;
-
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+import java.io.File;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public abstract class KarafConfigurationFileTest {
 
     final static protected File KARAF_ETC = new File("src/test/resources");
 
+    @Rule
+    public TemporaryFolder tempDir = new TemporaryFolder();
+
     @Test
     public void store() throws Exception {
-        final String[] strings = {"1", "2", "3", "4"};
-        final Dictionary<String, Object> configuration = new Hashtable<>();
-        configuration.put("strings", strings);
-        final FileOutputStream fos = new FileOutputStream("target/store.config");
-        ConfigurationHandler.write(fos, configuration);
-        fos.close();
+        final String string = "1234";
+        File dir = tempDir.newFolder();
+        final KarafConfigurationFile karafConfigFile = newKarafConfigurationFile(dir, "/store");
+        karafConfigFile.put("string", string);
+        karafConfigFile.store();
+
+        final KarafConfigurationFile loadedKarafConfigFile = newKarafConfigurationFile(dir, "/store");
+        loadedKarafConfigFile.load();
+        final String loadedString = (String)loadedKarafConfigFile.get("string");
+        assertEquals(string, loadedString);
     }
 
     @Test
