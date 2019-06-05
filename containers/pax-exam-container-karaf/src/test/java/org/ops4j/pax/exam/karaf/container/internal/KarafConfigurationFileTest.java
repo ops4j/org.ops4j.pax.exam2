@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.karaf.container.internal;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNull;
 import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,6 +53,12 @@ public abstract class KarafConfigurationFileTest {
         karafConfigFile.load();
         final String[] strings = toStrings(karafConfigFile.get("strings"));
         assertArrayEquals(expected, strings);
+
+        // load should overwrite existing data
+        karafConfigFile.put("extra", "extra");
+        assertEquals("extra", (String) karafConfigFile.get("extra"));
+        karafConfigFile.load();
+        assertNull(karafConfigFile.get("extra"));
     }
 
     @Test

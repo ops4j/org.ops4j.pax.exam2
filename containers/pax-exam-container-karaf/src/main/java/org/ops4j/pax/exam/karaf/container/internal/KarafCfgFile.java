@@ -44,6 +44,7 @@ public class KarafCfgFile extends KarafConfigurationFile {
             return;
         }
         final FileInputStream fis = new FileInputStream(file);
+        properties.clear();
         properties.load(fis);
         fis.close();
     }
