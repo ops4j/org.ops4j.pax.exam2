@@ -363,6 +363,28 @@ public class KarafTestContainer implements TestContainer {
         }
     }
 
+    private KarafConfigurationFile getKarafConfigurationFile(File karafHome, String configFile) {
+        KarafConfigurationFile karafConfigurationFile = KarafConfigurationFileFactory.create(karafHome, configFile);
+        if (!karafConfigurationFile.exists()) {
+            // some property options will come from Pax-Exam and use the default data/etc locations,
+            // in those cases when the property file doesn't exist and we have custom data/etc paths
+            // we need to consider the custom location and use that - but only if it matches+exists
+            String karafData = framework.getKarafData();
+            String karafEtc = framework.getKarafEtc();
+            KarafConfigurationFile customConfigurationFile = null;
+            if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
+                customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafData + configFile.substring(4));
+            }
+            if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
+                customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafEtc + configFile.substring(3));
+            }
+            if (customConfigurationFile != null && customConfigurationFile.exists()) {
+                karafConfigurationFile = customConfigurationFile;
+            }
+        }
+        return karafConfigurationFile;
+    }
+
     private void updateUserSetProperties(File karafHome,
         List<KarafDistributionConfigurationFileOption> options) throws IOException {
         HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = new HashMap<>();
@@ -389,26 +411,10 @@ public class KarafTestContainer implements TestContainer {
             }
             optionEntries.get(option.getKey()).add(option);
         }
-        String karafData = framework.getKarafData();
-        String karafEtc = framework.getKarafEtc();
+
         Set<String> configFiles = optionMap.keySet();
         for (String configFile : configFiles) {
-            KarafConfigurationFile karafConfigurationFile = KarafConfigurationFileFactory.create(karafHome, configFile);
-            if (!karafConfigurationFile.exists()) {
-                // some property options will come from Pax-Exam and use the default data/etc locations,
-                // in those cases when the property file doesn't exist and we have custom data/etc paths
-                // we need to consider the custom location and use that - but only if it matches+exists
-                KarafConfigurationFile customConfigurationFile = null;
-                if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
-                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafData + configFile.substring(4));
-                }
-                if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
-                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafEtc + configFile.substring(3));
-                }
-                if (customConfigurationFile != null && customConfigurationFile.exists()) {
-                    karafConfigurationFile = customConfigurationFile;
-                }
-            }
+            KarafConfigurationFile karafConfigurationFile = getKarafConfigurationFile(karafHome, configFile);
             karafConfigurationFile.load();
             Collection<List<KarafDistributionConfigurationFileOption>> optionsToApply = optionMap
                 .get(configFile).values();
