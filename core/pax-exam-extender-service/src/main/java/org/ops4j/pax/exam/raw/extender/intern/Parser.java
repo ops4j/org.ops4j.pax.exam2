@@ -39,9 +39,22 @@ import org.slf4j.LoggerFactory;
  */
 public class Parser {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Probe.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
     private final Probe[] probes;
+
+    /**
+     * Default timeout used for service lookup when no explicit timeout is specified.
+     */
+    public static final long DEFAULT_TIMEOUT;
+
+    static {
+        final String DEFAULT_TIMEOUT_VALUE_PROPERTY =
+            "org.ops4j.pax.exam.raw.extender.intern.Parser.DEFAULT_TIMEOUT";
+        final int DEFAULT_TIMEOUT_VALUE = 10000;
+        DEFAULT_TIMEOUT = Long.getLong(DEFAULT_TIMEOUT_VALUE_PROPERTY, DEFAULT_TIMEOUT_VALUE);
+        LOG.info("Use timeout value: {}", DEFAULT_TIMEOUT);
+    }
 
     public Parser(BundleContext ctx, String sigs, List<ManifestEntry> manifestEntries) {
         List<String> signatures = new ArrayList<String>();
@@ -77,7 +90,7 @@ public class Parser {
             Map<String, String> props = new HashMap<String, String>();
             props.put("driver", invokerType);
             ProbeInvokerFactory factory = ServiceLookup.getService(ctx, ProbeInvokerFactory.class,
-                props);
+                DEFAULT_TIMEOUT, props);
             return factory.createProbeInvoker(ctx, expr);
         }
     }
