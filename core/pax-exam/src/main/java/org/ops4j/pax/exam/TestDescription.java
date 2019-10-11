@@ -30,12 +30,13 @@ public class TestDescription implements Serializable {
     private String className;
     private String methodName;
     private Integer index;
+    private TestFilter filter;
 
     /**
      *
      */
     public TestDescription(String className) {
-        this(className, null, null);
+        this(className, null);
     }
 
     public TestDescription(String className, String methodName) {
@@ -43,9 +44,14 @@ public class TestDescription implements Serializable {
     }
 
     public TestDescription(String className, String methodName, Integer index) {
+        this(className, methodName, index, null);
+    }
+
+    public TestDescription(String className, String methodName, Integer index, TestFilter filter) {
         this.className = nonEmpty(className);
         this.methodName = nonEmpty(methodName);
         this.index = index;
+        this.filter = filter;
     }
 
     private static String nonEmpty(String s) {
@@ -77,7 +83,9 @@ public class TestDescription implements Serializable {
         return index;
     }
 
-
+    public TestFilter getFilter() {
+        return this.filter;
+    }
 
     @Override
     public String toString() {
@@ -90,6 +98,10 @@ public class TestDescription implements Serializable {
         if (index != null) {
             builder.append(index);
         }
+        builder.append(':');
+        if (filter != null) {
+            builder.append(filter);
+        }
         return builder.toString();
     }
 
@@ -100,6 +112,7 @@ public class TestDescription implements Serializable {
         result = prime * result + ((className == null) ? 0 : className.hashCode());
         result = prime * result + ((index == null) ? 0 : index.hashCode());
         result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
+        result = prime * result + ((filter == null) ? 0 : filter.hashCode());
         return result;
     }
 
@@ -143,16 +156,26 @@ public class TestDescription implements Serializable {
     }
 
     public static TestDescription parse(String s) {
+        TestFilter filter = null;
+        Integer index = null;
+
         String[] parts = s.split(":");
         switch (parts.length) {
+            case 4:
+                if (nonEmpty(parts[3]) != null) {
+                    filter = TestFilter.parse(parts[3]);
+                }
+            case 3:
+                if (nonEmpty(parts[2]) != null) {
+                    index = Integer.parseInt(parts[2]);
+                }
+            case 2:
+                return new TestDescription(parts[0], parts[1], index, filter);
             case 1:
                 return new TestDescription(parts[0]);
-            case 2:
-                return new TestDescription(parts[0], parts[1]);
-            case 3:
-                return new TestDescription(parts[0], parts[1], Integer.parseInt(parts[2]));
             default:
                 throw new IllegalArgumentException(s);
         }
     }
+
 }
