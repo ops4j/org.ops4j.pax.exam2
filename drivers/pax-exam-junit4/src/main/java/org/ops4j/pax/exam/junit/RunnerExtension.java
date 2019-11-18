@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.junit;
 
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
+import org.ops4j.pax.exam.TestFilter;
 
 /**
  * @author hwellmann
@@ -55,4 +56,8 @@ public class RunnerExtension {
     public Object processTestInstance(Object test) {
         return test;
     }
+
+    public void setFilter(TestFilter filter) {
+    }
+
 }

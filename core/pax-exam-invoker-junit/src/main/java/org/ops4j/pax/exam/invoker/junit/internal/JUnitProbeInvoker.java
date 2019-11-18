@@ -33,6 +33,7 @@ import org.junit.runners.model.InitializationError;
 import org.ops4j.pax.exam.ProbeInvoker;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.TestDescription;
+import org.ops4j.pax.exam.TestFilter;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.util.Exceptions;
 import org.ops4j.pax.exam.util.Injector;
@@ -95,6 +96,19 @@ public class JUnitProbeInvoker implements ProbeInvoker {
                 Description methodName = Description
                     .createTestDescription(description.getClassName(), description.getMethodName());
                 runner.filter(Filter.matchMethodDescription(methodName));
+            }
+            TestFilter customFilter = description.getFilter();
+            if (customFilter != null) {
+                runner.filter(new Filter() {
+                    @Override
+                    public boolean shouldRun(Description description) {
+                        return customFilter.getUniqueIds().contains(String.valueOf(description.hashCode()));
+                    }
+                    @Override
+                    public String describe() {
+                        return customFilter.getDescription();
+                    }
+                });
             }
 
             JUnitCore junit = new JUnitCore();

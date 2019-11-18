@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.junit;
 
 import java.util.List;
 
+import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
@@ -26,6 +27,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.ops4j.pax.exam.TestFilter;
 
 /**
  * @author hwellmann
@@ -70,6 +72,13 @@ public class ExtensibleRunner extends BlockJUnit4ClassRunner {
     public void filter(Filter filter) throws NoTestsRemainException {
         spyingFilter = new SpyingFilter(filter);
         super.filter(spyingFilter);
+
+        TestFilter testFilter = new TestFilter(filter.describe());
+        for (Description description : spyingFilter.getMatchingChildren()) {
+            // description hash code delegate to fUniqueId that mean to be is unique again
+            testFilter.addUniqueId(String.valueOf(description.hashCode()));
+        }
+        extension.setFilter(testFilter);
     }
 
     @Override

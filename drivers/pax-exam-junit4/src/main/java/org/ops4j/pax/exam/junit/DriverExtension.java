@@ -27,6 +27,7 @@ import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.ExamConfigurationException;
 import org.ops4j.pax.exam.TestDescription;
 import org.ops4j.pax.exam.TestFailure;
+import org.ops4j.pax.exam.TestFilter;
 import org.ops4j.pax.exam.TestListener;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.impl.JUnitTestListener;
@@ -53,6 +54,8 @@ public class DriverExtension extends RunnerExtension {
     private StagedExamReactor stagedReactor;
 
     private ExtensibleRunner base;
+
+    private TestFilter filter;
 
     /**
      * @throws InitializationError
@@ -159,7 +162,8 @@ public class DriverExtension extends RunnerExtension {
     public void delegateClassBlock(RunNotifier notifier) {
         TestListener listener = new JUnitTestListener(notifier);
         try {
-            stagedReactor.runTest(new TestDescription(testClass.getName()), listener);
+            TestDescription description = new TestDescription(testClass.getName(), null, null, filter);
+            stagedReactor.runTest(description, listener);
         }
         // CHECKSTYLE:SKIP : StagedExamReactor API
         catch (Exception exc) {
@@ -182,5 +186,10 @@ public class DriverExtension extends RunnerExtension {
             testListener.testFailure(new TestFailure(description, exc));
             testListener.testFinished(description);
         }
+    }
+
+    @Override
+    public void setFilter(TestFilter filter) {
+        this.filter = filter;
     }
 }
