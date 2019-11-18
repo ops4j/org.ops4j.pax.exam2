@@ -76,6 +76,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         karafVersion = base.karafVersion;
         karafMain = base.karafMain;
         karafData = base.karafData;
+        karafLog = base.karafLog;
         karafEtc = base.karafEtc;
         unpackDirectory = base.unpackDirectory;
         useDeployFolder = base.useDeployFolder;
