@@ -52,7 +52,7 @@ public class ParameterizedTest {
     private int sum;
     
 
-    @Parameters
+    @Parameters(name = "{0} + {1} = {2}")
     public static List<Object[]> getParameters() {
         return Arrays.asList(new Object[][] {
             {2, 3, 5},

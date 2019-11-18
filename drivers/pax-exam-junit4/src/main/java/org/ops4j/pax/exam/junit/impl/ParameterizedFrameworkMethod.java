@@ -16,6 +16,8 @@
  */
 package org.ops4j.pax.exam.junit.impl;
 
+import java.text.MessageFormat;
+
 import org.junit.runners.model.FrameworkMethod;
 import org.ops4j.pax.exam.TestAddress;
 
@@ -34,6 +36,12 @@ class ParameterizedFrameworkMethod extends DecoratedFrameworkMethod {
 
     @Override
     public String getName() {
-        return String.format("%s[%d]", frameworkMethod.getName(), address.arguments()[0]);
+        return String.format("%s%s", frameworkMethod.getName(), nameFor((Integer) address.arguments()[0], (String) address.arguments()[1], (Object[]) address.arguments()[2]));
+    }
+
+    private String nameFor(int index, String namePattern, Object[] parameters) {
+        String finalPattern = namePattern.replaceAll("\\{index\\}", Integer.toString(index));
+        String name = MessageFormat.format(finalPattern, parameters);
+        return "[" + name + "]";
     }
 }
