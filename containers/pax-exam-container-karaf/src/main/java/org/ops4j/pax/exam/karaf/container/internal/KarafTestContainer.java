@@ -566,6 +566,16 @@ public class KarafTestContainer implements TestContainer {
                 cp.add(jar.toString());
             }
         }
+        
+        File [] jdk9Plus = new File(karafHome + "/lib/jdk9plus")
+            .listFiles((FileFilter) new WildcardFileFilter("*.jar"));
+        
+        if (jdk9Plus != null) {
+            for (File jar : jdk9Plus) {
+                cp.add(jar.toString());
+            }
+        }
+        
         return cp.toArray(new String[] {});
     }
 
