@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionUtils;
 
 /**
  * Default implementation of (@link CompositeOption}.
@@ -34,7 +33,7 @@ public class DefaultCompositeOption implements ModifiableCompositeOption {
     /**
      * Composite options (cannot be null).
      */
-    private final List<Option> options;
+    private final List<Option> options = new ArrayList<>();
 
     /**
      * Constructor.
@@ -43,7 +42,6 @@ public class DefaultCompositeOption implements ModifiableCompositeOption {
      *            composite options (can be null or no option specified)
      */
     public DefaultCompositeOption(final Option... options) {
-        this.options = new ArrayList<Option>();
         add(options);
     }
 
@@ -51,11 +49,26 @@ public class DefaultCompositeOption implements ModifiableCompositeOption {
      * Constructor.
      */
     public DefaultCompositeOption() {
-        this(new Option[0]);
+    }
+
+    private List<Option> expand(final Option[] options) {
+        final List<Option> expanded = new ArrayList<>();
+        if (options != null) {
+            for (final Option option : options) {
+                if (option != null) {
+                    if (option instanceof CompositeOption) {
+                        expanded.addAll(Arrays.asList(((CompositeOption) option).getOptions()));
+                    } else {
+                        expanded.add(option);
+                    }
+                }
+            }
+        }
+        return expanded;
     }
 
     public Option[] getOptions() {
-        return OptionUtils.expand(options.toArray(new Option[options.size()]));
+        return options.toArray(new Option[0]);
     }
 
     /**
@@ -68,7 +81,8 @@ public class DefaultCompositeOption implements ModifiableCompositeOption {
      */
     public DefaultCompositeOption add(final Option... _options) {
         if (_options != null) {
-            this.options.addAll(Arrays.asList(_options));
+            final List<Option> expanded = expand(_options);
+            this.options.addAll(expanded);
         }
         return this;
     }
