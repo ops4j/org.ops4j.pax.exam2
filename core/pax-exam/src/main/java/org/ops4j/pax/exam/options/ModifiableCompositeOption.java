@@ -17,12 +17,16 @@
  */
 package org.ops4j.pax.exam.options;
 
+import java.util.Collection;
+
 import org.ops4j.pax.exam.Option;
 
 public interface ModifiableCompositeOption extends CompositeOption {
 
     ModifiableCompositeOption add(final Option... options);
 
-    ModifiableCompositeOption remove(final Option option);
+    ModifiableCompositeOption remove(final Option... options);
+
+    ModifiableCompositeOption remove(final Collection<Option> options);
 
 }

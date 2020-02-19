@@ -19,6 +19,7 @@ package org.ops4j.pax.exam.options;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import org.ops4j.pax.exam.Option;
 
@@ -51,7 +52,7 @@ public class DefaultCompositeOption implements ModifiableCompositeOption {
     public DefaultCompositeOption() {
     }
 
-    private List<Option> expand(final Option[] options) {
+    private List<Option> expand(final Collection<Option> options) {
         final List<Option> expanded = new ArrayList<>();
         if (options != null) {
             for (final Option option : options) {
@@ -65,6 +66,10 @@ public class DefaultCompositeOption implements ModifiableCompositeOption {
             }
         }
         return expanded;
+    }
+
+    private List<Option> expand(final Option... options) {
+        return expand(Arrays.asList(options));
     }
 
     public Option[] getOptions() {
@@ -88,15 +93,27 @@ public class DefaultCompositeOption implements ModifiableCompositeOption {
     }
 
     /**
-     * Remove option.
+     * Remove options.
      *
-     * @param option option to be removed from composite
+     * @param options options to be removed from composite
      * @return itself, for fluent api usage
      */
     @Override
-    public DefaultCompositeOption remove(Option option) {
-        this.options.remove(option);
+    public DefaultCompositeOption remove(Collection<Option> options) {
+        final List<Option> expanded = expand(options);
+        this.options.removeAll(expanded);
         return this;
+    }
+
+    /**
+     * Remove options.
+     *
+     * @param options options to be removed from composite
+     * @return itself, for fluent api usage
+     */
+    @Override
+    public DefaultCompositeOption remove(Option... options) {
+        return remove(Arrays.asList(options));
     }
 
     /**
