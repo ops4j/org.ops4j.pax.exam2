@@ -10,7 +10,7 @@
 
     <groupId>org.ops4j.pax</groupId>
     <artifactId>exam-reactor</artifactId>
-    <version>4.13.2</version>
+    <version>4.13.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OPS4J Pax Exam (Reactor POM)</name>
@@ -80,7 +80,7 @@
         <connection>scm:git:https://github.com/ops4j/org.ops4j.pax.exam2</connection>
         <developerConnection>scm:git:https://github.com/ops4j/org.ops4j.pax.exam2</developerConnection>
         <url>https://github.com/ops4j/org.ops4j.pax.exam2</url>
-      <tag>exam-reactor-4.13.2</tag>
+      <tag>HEAD</tag>
   </scm>
 
 
