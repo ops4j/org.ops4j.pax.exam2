@@ -34,7 +34,7 @@
         <dependency.glassfish.version>4.1.1</dependency.glassfish.version>
         <dependency.httpcomponents.client.version>4.5.10</dependency.httpcomponents.client.version>
         <dependency.httpcomponents.core.version>4.4.12</dependency.httpcomponents.core.version>
-        <dependency.karaf.version>4.1.1</dependency.karaf.version>
+        <dependency.karaf.version>4.2.8</dependency.karaf.version>
 
         <!-- 1.0.8 and higher require slf4j 1.7 -->
         <dependency.logback.version>1.0.7</dependency.logback.version>
