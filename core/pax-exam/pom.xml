@@ -48,6 +48,10 @@
     <dependencies>
         <dependency>
             <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-exec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
             <artifactId>ops4j-base-io</artifactId>
         </dependency>
         <dependency>

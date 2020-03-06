@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.ops4j.exec.DefaultJavaRunner;
 import org.ops4j.exec.ExecutionException;
 import org.ops4j.net.FreePort;
+import org.ops4j.pax.exam.ExamJavaRunner;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
 import org.ops4j.pax.swissbox.framework.RemoteFrameworkImpl;
@@ -63,7 +63,7 @@ public class ForkedFrameworkFactory {
 
     private int port;
 
-    private DefaultJavaRunner javaRunner;
+    private ExamJavaRunner javaRunner;
 
     /**
      * Creates a ForkedFrameworkFactory wrapping a given OSGi FrameworkFactory and a given framework
@@ -122,7 +122,7 @@ public class ForkedFrameworkFactory {
             systemPropsNew.put(RemoteFramework.RMI_NAME_KEY, rmiName);
             String[] vmOptions = buildSystemProperties(vmArgs, systemPropsNew);
             String[] args = buildFrameworkProperties(frameworkProperties);
-            javaRunner = new DefaultJavaRunner(false);
+            javaRunner = new ExamJavaRunner(false);
             javaRunner.exec(vmOptions, buildClasspath(beforeFrameworkClasspath, afterFrameworkClasspath),
                 RemoteFrameworkImpl.class.getName(), args, getJavaHome(), null);
             return findRemoteFramework(port, rmiName);

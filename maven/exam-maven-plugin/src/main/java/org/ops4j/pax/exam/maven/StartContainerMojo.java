@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.ops4j.exec.DefaultJavaRunner;
+import org.ops4j.pax.exam.ExamJavaRunner;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 
 /**
@@ -98,7 +98,7 @@ public class StartContainerMojo extends AbstractMojo {
             getLog().debug(cp);
         }
 
-        DefaultJavaRunner javaRunner = new DefaultJavaRunner(false);
+        ExamJavaRunner javaRunner = new ExamJavaRunner(false);
         String[] options = buildProperties();
         String javaHome = System.getProperty("java.home");
         int port = getFreePort();
