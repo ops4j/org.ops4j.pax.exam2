@@ -34,7 +34,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.ops4j.exec.DefaultJavaRunner;
+import org.ops4j.pax.exam.ExamJavaRunner;
 
 /**
  * Stops a Pax Exam Container started by the start-container goal.
@@ -52,7 +52,7 @@ public class StopContainerMojo extends AbstractMojo {
             throw new MojoExecutionException(
                 "No Pax Exam container found. Did you run the start-container goal?");
         }
-        DefaultJavaRunner javaRunner = (DefaultJavaRunner) object;
+        ExamJavaRunner javaRunner = (ExamJavaRunner) object;
         
         object = getPluginContext().get(TEST_CONTAINER_PORT_KEY + mojoExecution.getExecutionId());
         if (object == null) {

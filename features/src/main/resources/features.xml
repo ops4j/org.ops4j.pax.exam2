@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <features name="pax-exam-features-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
     <feature name="exam-no-junit" version="${project.version}">
+        <bundle>mvn:org.ops4j.base/ops4j-base-exec/${dependency.base.version}</bundle>
         <bundle>mvn:org.ops4j.base/ops4j-base-lang/${dependency.base.version}</bundle>
         <bundle>mvn:org.ops4j.base/ops4j-base-monitors/${dependency.base.version}</bundle>
         <bundle>mvn:org.ops4j.base/ops4j-base-net/${dependency.base.version}</bundle>
