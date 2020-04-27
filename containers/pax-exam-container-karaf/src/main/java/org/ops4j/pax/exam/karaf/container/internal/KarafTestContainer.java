@@ -31,9 +31,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.URL;
 import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -135,13 +137,9 @@ public class KarafTestContainer implements TestContainer {
             Option invokerConfiguration = getInvokerConfiguration();
 
             //registry.selectGracefully();
-            FreePort freePort = new FreePort(21000, 21099);
-            int port = freePort.getPort();
-
-            String host = InetAddress.getLoopbackAddress().getHostAddress();
-            LOGGER.info("Creating RMI registry server on {}:{}", host, port);
-            System.setProperty("java.rmi.server.hostname", host);
-            rgstry = LocateRegistry.createRegistry(port);
+			String host = InetAddress.getLoopbackAddress().getHostAddress();
+			System.setProperty("java.rmi.server.hostname", host);
+			int port = openRegistryOnFreePort(host, 21000, 21099);
 
             ExamSystem subsystem = system
                 .fork(options(
@@ -199,6 +197,27 @@ public class KarafTestContainer implements TestContainer {
         }
         return this;
     }
+
+	private int openRegistryOnFreePort(String host, int minPort, int maxPort) throws RemoteException {
+		for (int port = minPort; port <= maxPort; port++) {
+			try {
+				LOGGER.trace("Creating RMI registry server on {}:{}", host, port);
+				rgstry = LocateRegistry.createRegistry(port);
+				LOGGER.info("Created RMI registry server on {}:{}", host, port);
+				return port;
+			} catch (RemoteException ex) {
+				if (ex.detail instanceof BindException) {
+					LOGGER.trace("Tried to open RMI registry on {}: {} but failed.", host, port, ex);
+					if (port >= maxPort) {
+						throw ex;
+					}
+				} else {
+					throw ex;
+				}
+			}
+		}
+		throw new IllegalStateException("Could not open RMI registry");
+	}
 
     private boolean shouldInjectJUnitBundles(ExamSystem _system) {
         Option[] options = _system.getOptions(OverrideJUnitBundlesOption.class);
