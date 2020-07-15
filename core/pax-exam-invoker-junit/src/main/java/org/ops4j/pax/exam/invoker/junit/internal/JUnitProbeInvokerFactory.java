@@ -23,16 +23,29 @@ import org.ops4j.pax.exam.util.Injector;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.BundleContext;
 
+
 /**
  * A {@link ProbeInvokerFactory} which creates {@link JUnitProbeInvoker}s.
- * 
+ *
  * @author Harald Wellmann
  */
 public class JUnitProbeInvokerFactory implements ProbeInvokerFactory {
 
-    public ProbeInvoker createProbeInvoker(Object context, String expr) {
-        BundleContext ctx = (BundleContext) context;
-        Injector injector = ServiceLookup.getService(ctx, Injector.class);
-        return new JUnitProbeInvoker(expr, ctx, injector);
-    }
+	/**
+	 * Default timeout used for service lookup when no explicit timeout is specified.
+	 */
+	public static final long DEFAULT_TIMEOUT;
+
+	static {
+		final String DEFAULT_TIMEOUT_VALUE_PROPERTY =
+				"org.ops4j.pax.exam.invoker.junit.internal.JUnitProbeInvokerFactory.DEFAULT_TIMEOUT";
+		final int DEFAULT_TIMEOUT_VALUE = 10000;
+		DEFAULT_TIMEOUT = Long.getLong(DEFAULT_TIMEOUT_VALUE_PROPERTY, DEFAULT_TIMEOUT_VALUE);
+	}
+
+	public ProbeInvoker createProbeInvoker(Object context, String expr) {
+		BundleContext ctx = (BundleContext) context;
+		Injector injector = ServiceLookup.getService(ctx, Injector.class, DEFAULT_TIMEOUT);
+		return new JUnitProbeInvoker(expr, ctx, injector);
+	}
 }
