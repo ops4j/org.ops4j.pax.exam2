@@ -256,11 +256,7 @@ public class KarafEmbeddedRunner implements Runner {
 
     // needs to be customizable cause tests are loaded using a custom loader and some package conflict (javax.annotation)
     private String getCustomBootDelegation() {
-        final String config = System.getProperty(getClass().getName() + ".customBootDelegation");
-        if (config.isEmpty()) {
-            return config;
-        }
-        return "";
+        return System.getProperty(getClass().getName() + ".customBootDelegation", "");
     }
 
     // let user customize it otherwise it is hard to be right for all stacks
