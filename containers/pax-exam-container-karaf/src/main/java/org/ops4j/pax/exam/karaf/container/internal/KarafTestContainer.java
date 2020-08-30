@@ -128,6 +128,10 @@ public class KarafTestContainer implements TestContainer {
         this.runner = runner;
     }
 
+    public File getTargetFolder() {
+        return targetFolder;
+    }
+
     @Override
     public synchronized void start() throws IOException {
             String name = system.createID(KARAF_TEST_CONTAINER);
