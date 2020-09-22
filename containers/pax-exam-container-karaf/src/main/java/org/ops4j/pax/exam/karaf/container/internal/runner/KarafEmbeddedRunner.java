@@ -213,7 +213,7 @@ public class KarafEmbeddedRunner implements Runner {
         final List<String> exclusions = getForcedOsgiPackages().collect(toList());
         return Stream.concat(
                 findJreProp(jreProps).stream(),
-                toVersions(configProps.getProperty("org.osgi.framework.bootdelegation", "")).stream()
+                toVersions(resolveProperty(configProps,"org.osgi.framework.bootdelegation", "")).stream()
                         .filter(it -> !it.startsWith("org.apache.karaf.")))
                 .filter(it -> exclusions.stream().noneMatch(it::startsWith))
                 .collect(toList());
@@ -238,8 +238,16 @@ public class KarafEmbeddedRunner implements Runner {
         }
         return Stream.concat(
                 getEnforcedParentPackages(),
-                toVersions(jreProps.getProperty(key)).stream())
+                toVersions(resolveProperty(jreProps, key, null)).stream())
                 .collect(toList());
+    }
+
+    private String resolveProperty(final Properties configProps, final String key, final String defaultValue) {
+        final String value = configProps.getProperty(key, defaultValue);
+        if (value != null && value.startsWith("${") && value.endsWith("}")) {
+            return resolveProperty(configProps, value.substring("${".length(), value.length() - "}".length()), defaultValue);
+        }
+        return ofNullable(value).orElse(defaultValue);
     }
 
     private Stream<String> getEnforcedParentPackages() {
