@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
@@ -367,79 +368,57 @@ public class KarafTestContainer implements TestContainer {
         }
     }
 
+    private KarafConfigurationFile getKarafConfigurationFile(File karafHome, String configFile) {
+        KarafConfigurationFile karafConfigurationFile = KarafConfigurationFileFactory.create(karafHome, configFile);
+        if (!karafConfigurationFile.exists()) {
+            // some property options will come from Pax-Exam and use the default data/etc locations,
+            // in those cases when the property file doesn't exist and we have custom data/etc paths
+            // we need to consider the custom location and use that - but only if it matches+exists
+            String karafData = framework.getKarafData();
+            String karafEtc = framework.getKarafEtc();
+            KarafConfigurationFile customConfigurationFile = null;
+            if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
+                customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafData + configFile.substring(4));
+            }
+            if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
+                customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafEtc + configFile.substring(3));
+            }
+            if (customConfigurationFile != null && customConfigurationFile.exists()) {
+                karafConfigurationFile = customConfigurationFile;
+            }
+        }
+        return karafConfigurationFile;
+    }
+
     private void updateUserSetProperties(File karafHome,
         List<KarafDistributionConfigurationFileOption> options) throws IOException {
-        HashMap<String, HashMap<String, List<KarafDistributionConfigurationFileOption>>> optionMap = new HashMap<>();
+        // group the options for each target config file separately
+        Map<String, List<KarafDistributionConfigurationFileOption>> optionMap = new HashMap<>();
         for (KarafDistributionConfigurationFileOption option : options) {
-            if (!optionMap.containsKey(option.getConfigurationFilePath())) {
-                optionMap.put(option.getConfigurationFilePath(),
-                    new HashMap<String, List<KarafDistributionConfigurationFileOption>>());
-            }
-            HashMap<String, List<KarafDistributionConfigurationFileOption>> optionEntries = optionMap
-                .get(option.getConfigurationFilePath());
-            if (!optionEntries.containsKey(option.getKey())) {
-                optionEntries.put(option.getKey(),
-                    new ArrayList<KarafDistributionConfigurationFileOption>());
-            }
-            else {
-                // if special file warn, replace and continue
-                if (!option.getConfigurationFilePath().equals(FeaturesCfg.FILE_PATH)) {
-                    LOGGER
-                        .warn("you're trying to add an additional value to a config file; you're current "
-                            + "value will be replaced.");
-                    optionEntries.put(option.getKey(),
-                        new ArrayList<KarafDistributionConfigurationFileOption>());
-                }
-            }
-            optionEntries.get(option.getKey()).add(option);
+            optionMap.computeIfAbsent(option.getConfigurationFilePath(), k -> new ArrayList<>()).add(option);
         }
-        String karafData = framework.getKarafData();
-        String karafEtc = framework.getKarafEtc();
-        Set<String> configFiles = optionMap.keySet();
-        for (String configFile : configFiles) {
-            KarafConfigurationFile karafConfigurationFile = KarafConfigurationFileFactory.create(karafHome, configFile);
-            if (!karafConfigurationFile.exists()) {
-                // some property options will come from Pax-Exam and use the default data/etc locations,
-                // in those cases when the property file doesn't exist and we have custom data/etc paths
-                // we need to consider the custom location and use that - but only if it matches+exists
-                KarafConfigurationFile customConfigurationFile = null;
-                if (configFile.startsWith("data/") && !configFile.startsWith(karafData)) {
-                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafData + configFile.substring(4));
+
+        // apply the options (in the order they appear) to each config file
+        for (String file : optionMap.keySet()) {
+            KarafConfigurationFile config = getKarafConfigurationFile(karafHome, file);
+            config.load();
+            boolean dirty = false;
+            for (KarafDistributionConfigurationFileOption option : optionMap.get(file)) {
+                if (option instanceof KarafDistributionConfigurationFilePutOption) {
+                    config.put(option.getKey(), option.getValue());
+                    dirty = true;
                 }
-                if (configFile.startsWith("etc/") && !configFile.startsWith(karafEtc)) {
-                    customConfigurationFile = KarafConfigurationFileFactory.create(karafHome, karafEtc + configFile.substring(3));
+                else if (option instanceof KarafDistributionConfigurationFileExtendOption) {
+                    config.extend(option.getKey(), option.getValue());
+                    dirty = true;
                 }
-                if (customConfigurationFile != null && customConfigurationFile.exists()) {
-                    karafConfigurationFile = customConfigurationFile;
-                }
-            }
-            karafConfigurationFile.load();
-            Collection<List<KarafDistributionConfigurationFileOption>> optionsToApply = optionMap
-                .get(configFile).values();
-            boolean store = true;
-            for (List<KarafDistributionConfigurationFileOption> optionListToApply : optionsToApply) {
-                for (KarafDistributionConfigurationFileOption optionToApply : optionListToApply) {
-                    if (optionToApply instanceof KarafDistributionConfigurationFilePutOption) {
-                        karafConfigurationFile.put(optionToApply.getKey(), optionToApply.getValue());
-                    }
-                    else if (optionToApply instanceof KarafDistributionConfigurationFileReplacementOption) {
-                        karafConfigurationFile
-                            .replace(((KarafDistributionConfigurationFileReplacementOption) optionToApply)
-                                .getSource());
-                        store = false;
-                        break;
-                    }
-                    else {
-                        karafConfigurationFile
-                            .extend(optionToApply.getKey(), optionToApply.getValue());
-                    }
-                }
-                if (!store) {
-                    break;
+                else if (option instanceof KarafDistributionConfigurationFileReplacementOption) {
+                    config.replace(((KarafDistributionConfigurationFileReplacementOption) option).getSource());
+                    dirty = false;
                 }
             }
-            if (store) {
-                karafConfigurationFile.store();
+            if (dirty) {
+                config.store();
             }
         }
     }
