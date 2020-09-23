@@ -121,7 +121,7 @@ public class KarafEmbeddedRunner implements Runner {
                     final String property = configProps.getProperty("org.osgi.framework.bootdelegation");
                     if (property != null && !property.contains("com.intellij.rt.")) {
                         try (final OutputStream outputStream = new FileOutputStream(configPropsFile)) {
-                            configProps.put("org.osgi.framework.bootdelegation", property + ",com.intellij.rt.*");
+                            configProps.put("org.osgi.framework.bootdelegation", property + getCustomBootDelegation() + ",com.intellij.rt.*");
                             configProps.store(outputStream, "adding intellij in delegation");
                         } catch (final IOException e) {
                             throw new IllegalStateException(e);
@@ -213,7 +213,7 @@ public class KarafEmbeddedRunner implements Runner {
         final List<String> exclusions = getForcedOsgiPackages().collect(toList());
         return Stream.concat(
                 findJreProp(jreProps).stream(),
-                toVersions(resolveProperty(configProps,"org.osgi.framework.bootdelegation", "")).stream()
+                toVersions(resolveProperty(configProps, "org.osgi.framework.bootdelegation", "")).stream()
                         .filter(it -> !it.startsWith("org.apache.karaf.")))
                 .filter(it -> exclusions.stream().noneMatch(it::startsWith))
                 .collect(toList());
@@ -252,6 +252,11 @@ public class KarafEmbeddedRunner implements Runner {
 
     private Stream<String> getEnforcedParentPackages() {
         return Stream.concat(Stream.of("java."), getCustomJvmPackages());
+    }
+
+    // needs to be customizable cause tests are loaded using a custom loader and some package conflict (javax.annotation)
+    private String getCustomBootDelegation() {
+        return System.getProperty(getClass().getName() + ".customBootDelegation", "");
     }
 
     // let user customize it otherwise it is hard to be right for all stacks
