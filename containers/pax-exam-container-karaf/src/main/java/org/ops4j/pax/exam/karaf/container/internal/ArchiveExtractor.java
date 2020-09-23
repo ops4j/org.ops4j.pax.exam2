@@ -50,7 +50,7 @@ public class ArchiveExtractor {
      */
     public static void extract(URL sourceURL, File targetFolder)
         throws IOException {
-        if (sourceURL.getProtocol().equals("file")) {
+        if (sourceURL.getProtocol().equals("file") || sourceURL.getProtocol().equals("http") || sourceURL.getProtocol().equals("https")) {
             if (sourceURL.getFile().indexOf(".zip") > 0) {
                 extractZipDistribution(sourceURL, targetFolder);
             }
@@ -59,7 +59,7 @@ public class ArchiveExtractor {
             }
             else {
                 throw new IllegalStateException(
-                    "Unknow packaging of distribution; only zip or tar.gz could be handled.");
+                    "Unknown packaging of distribution; only zip or tar.gz could be handled.");
             }
             return;
         }
@@ -71,7 +71,7 @@ public class ArchiveExtractor {
         }
         else {
             throw new IllegalStateException(
-                "Unknow packaging; only zip or tar.gz could be handled. URL was " + sourceURL);
+                "Unknown packaging; only zip or tar.gz could be handled. URL was " + sourceURL);
         }
     }
 

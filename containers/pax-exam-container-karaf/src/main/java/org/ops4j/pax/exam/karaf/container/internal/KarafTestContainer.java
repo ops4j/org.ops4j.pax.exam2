@@ -112,7 +112,7 @@ public class KarafTestContainer implements TestContainer {
 
     private File targetFolder;
 
-    private Registry rgstry;
+    private Registry registry;
 
 
     private static boolean isJava9Compatible;
@@ -145,7 +145,7 @@ public class KarafTestContainer implements TestContainer {
             String host = InetAddress.getLoopbackAddress().getHostAddress();
             LOGGER.info("Creating RMI registry server on {}:{}", host, port);
             System.setProperty("java.rmi.server.hostname", host);
-            rgstry = LocateRegistry.createRegistry(port);
+            registry = LocateRegistry.createRegistry(port);
             FreePort invokerPortRange = new FreePort(21100, 21199);
             int invokerPort = invokerPortRange.getPort();
 
@@ -612,7 +612,7 @@ public class KarafTestContainer implements TestContainer {
                     runner.shutdown();
                 }
                 try {
-                    UnicastRemoteObject.unexportObject(rgstry, true);
+                    UnicastRemoteObject.unexportObject(registry, true);
                     /*
                      * NOTE: javaRunner.waitForExit() works for Equinox and Felix, but not for Knopflerfish,
                      * need to investigate why. OTOH, it may be better to kill the process as we're doing
