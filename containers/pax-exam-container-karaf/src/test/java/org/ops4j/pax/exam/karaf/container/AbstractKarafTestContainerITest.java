@@ -35,8 +35,6 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ConfigurationManager;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionBaseConfigurationOption;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.osgi.framework.Bundle;
@@ -53,20 +51,12 @@ public abstract class AbstractKarafTestContainerITest {
 
     @Configuration
     public Option[] config() {
-        return doConfig();
-    }
-
-    protected Option[] doConfig() {
         String karafVersion = karafVersion();
         return new Option[] {
-            distribution().frameworkUrl(KARAF_URL.version(karafVersion))
+            karafDistributionConfiguration().frameworkUrl(KARAF_URL.version(karafVersion))
                 .karafVersion(karafVersion).useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
             configureConsole().startLocalConsole().ignoreRemoteShell(), logLevel(LogLevel.INFO)
         };
-    }
-
-    protected KarafDistributionBaseConfigurationOption distribution() {
-        return karafDistributionConfiguration();
     }
 
     public String karafVersion() {
