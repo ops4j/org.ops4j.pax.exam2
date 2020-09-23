@@ -200,10 +200,10 @@ public class KarafTestContainer implements TestContainer {
     private void backupConfigFiles() {
         try {
             File karafEtc = new File(karafBase, framework.getKarafEtc());
-            FileUtils.copyFile(new File(karafEtc, "config.properties"), new File(karafEtc, "config.properties.origin"));
-            FileUtils.copyFile(new File(karafEtc, "system.properties"), new File(karafEtc, "system.properties.origin"));
-            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg"), new File(karafEtc, "org.apache.karaf.features.cfg.origin"));
-            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg"), new File(karafEtc, "org.ops4j.pax.logging.cfg.origin"));
+            FileUtils.copyFile(new File(karafEtc, "config.properties"), new File(karafEtc, "config.properties.paxexam"));
+            FileUtils.copyFile(new File(karafEtc, "system.properties"), new File(karafEtc, "system.properties.paxexam"));
+            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg"), new File(karafEtc, "org.apache.karaf.features.cfg.paxexam"));
+            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg"), new File(karafEtc, "org.ops4j.pax.logging.cfg.paxexam"));
         } catch (Exception e) {
             LOGGER.warn("Can't backup config files", e);
         }
@@ -212,10 +212,10 @@ public class KarafTestContainer implements TestContainer {
     private void restoreConfigFiles() {
         try {
             File karafEtc = new File(karafBase, framework.getKarafEtc());
-            FileUtils.copyFile(new File(karafEtc, "config.properties.origin"), new File(karafEtc, "config.properties"));
-            FileUtils.copyFile(new File(karafEtc, "system.properties.origin"), new File(karafEtc, "system.properties"));
-            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg.origin"), new File(karafEtc, "org.apache.karaf.features.cfg"));
-            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg.origin"), new File(karafEtc, "org.ops4j.pax.logging.cfg"));
+            FileUtils.copyFile(new File(karafEtc, "config.properties.paxexam"), new File(karafEtc, "config.properties"));
+            FileUtils.copyFile(new File(karafEtc, "system.properties.paxexam"), new File(karafEtc, "system.properties"));
+            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg.paxexam"), new File(karafEtc, "org.apache.karaf.features.cfg"));
+            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg.paxexam"), new File(karafEtc, "org.ops4j.pax.logging.cfg"));
         } catch (Exception e) {
             LOGGER.warn("Can't restore config files", e);
         }
