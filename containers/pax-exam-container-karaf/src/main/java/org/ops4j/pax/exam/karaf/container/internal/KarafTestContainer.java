@@ -39,16 +39,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -111,6 +104,7 @@ public class KarafTestContainer implements TestContainer {
     private RBCRemoteTarget target;
 
     private File targetFolder;
+    private File karafBase;
 
     private Registry registry;
 
@@ -153,11 +147,15 @@ public class KarafTestContainer implements TestContainer {
 
             System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
-            URL sourceDistribution = new URL(framework.getFrameworkURL());
-            targetFolder = retrieveFinalTargetFolder(subsystem);
-            ArchiveExtractor.extract(sourceDistribution, targetFolder);
+            if (framework.getExisting() != null) {
+                targetFolder = framework.getExisting();
+            } else {
+                URL sourceDistribution = new URL(framework.getFrameworkURL());
+                targetFolder = retrieveFinalTargetFolder(subsystem);
+                ArchiveExtractor.extract(sourceDistribution, targetFolder);
+            }
 
-            File karafBase = searchKarafBase(targetFolder);
+            karafBase = searchKarafBase(targetFolder);
             File karafHome = karafBase;
 
             versionAdaptions = createVersionAdapter(karafBase);
@@ -165,6 +163,9 @@ public class KarafTestContainer implements TestContainer {
                 karafHome);
             deployer.copyBootClasspathLibraries();
 
+            if (framework.getExisting() != null) {
+                backupConfigFiles();
+            }
             setupSystemProperties(karafHome, subsystem);
             updateLogProperties(karafHome, subsystem);
 
@@ -194,6 +195,30 @@ public class KarafTestContainer implements TestContainer {
             throw new RuntimeException("Problem starting container", e);
         }
         return this;
+    }
+
+    private void backupConfigFiles() {
+        try {
+            File karafEtc = new File(karafBase, framework.getKarafEtc());
+            FileUtils.copyFile(new File(karafEtc, "config.properties"), new File(karafEtc, "config.properties.origin"));
+            FileUtils.copyFile(new File(karafEtc, "system.properties"), new File(karafEtc, "system.properties.origin"));
+            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg"), new File(karafEtc, "org.apache.karaf.features.cfg.origin"));
+            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg"), new File(karafEtc, "org.ops4j.pax.logging.cfg.origin"));
+        } catch (Exception e) {
+            LOGGER.warn("Can't backup config files", e);
+        }
+    }
+
+    private void restoreConfigFiles() {
+        try {
+            File karafEtc = new File(karafBase, framework.getKarafEtc());
+            FileUtils.copyFile(new File(karafEtc, "config.properties.origin"), new File(karafEtc, "config.properties"));
+            FileUtils.copyFile(new File(karafEtc, "system.properties.origin"), new File(karafEtc, "system.properties"));
+            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg.origin"), new File(karafEtc, "org.apache.karaf.features.cfg"));
+            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg.origin"), new File(karafEtc, "org.ops4j.pax.logging.cfg"));
+        } catch (Exception e) {
+            LOGGER.warn("Can't restore config files", e);
+        }
     }
 
 	private int openRegistryOnFreePort(String host, int minPort, int maxPort) throws RemoteException {
@@ -287,6 +312,9 @@ public class KarafTestContainer implements TestContainer {
 
     private boolean shouldDeleteRuntime() {
         boolean deleteRuntime = true;
+        if (framework.getExisting() != null) {
+            return false;
+        }
         KeepRuntimeFolderOption[] keepRuntimeFolder = system
             .getOptions(KeepRuntimeFolderOption.class);
         if (keepRuntimeFolder != null && keepRuntimeFolder.length != 0) {
@@ -361,10 +389,14 @@ public class KarafTestContainer implements TestContainer {
     private File retrieveFinalTargetFolder(ExamSystem subsystem) {
         if (framework.getUnpackDirectory() == null) {
             return subsystem.getConfigFolder();
-        }
-        else {
-            File targetDir = new File(framework.getUnpackDirectory() + "/"
-                + UUID.randomUUID().toString());
+        } else {
+            File targetDir;
+            if (framework.getDirectoryNameFormat() != null) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(framework.getDirectoryNameFormat());
+                targetDir = new File(framework.getUnpackDirectory(), simpleDateFormat.format(new Date()));
+            } else {
+                targetDir = new File(framework.getUnpackDirectory(), UUID.randomUUID().toString());
+            }
             targetDir = transformToAbsolutePath(targetDir);
             targetDir.mkdirs();
             return targetDir;
@@ -659,6 +691,9 @@ public class KarafTestContainer implements TestContainer {
         finally {
             started = false;
             target = null;
+            if (framework.getExisting() != null) {
+                restoreConfigFiles();
+            }
             if (shouldDeleteRuntime()) {
                 system.clear();
                 try {
@@ -704,7 +739,11 @@ public class KarafTestContainer implements TestContainer {
 
     @Override
     public String toString() {
-        return "KarafTestContainer{" + framework.getFrameworkURL() + "}";
+        if (framework.getExisting() != null) {
+            return "KarafTestContainer{" + framework.getExisting().getAbsolutePath() + "}";
+        } else {
+            return "KarafTestContainer{" + framework.getFrameworkURL() + "}";
+        }
     }
 
     @Override

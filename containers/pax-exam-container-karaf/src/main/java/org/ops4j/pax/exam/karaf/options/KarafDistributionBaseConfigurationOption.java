@@ -25,6 +25,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     protected String frameworkURL;
     protected MavenUrlReference frameworkURLReference;
+    protected File existing;
     protected String name;
     protected String karafVersion;
     protected String karafMain = "org.apache.karaf.main.Main";
@@ -32,12 +33,14 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     protected String karafEtc = "etc";
     protected String karafLog = "log";
     protected File unpackDirectory;
+    protected String directoryNameFormat;
     protected boolean useDeployFolder;
     protected boolean runEmbedded;
 
     public KarafDistributionBaseConfigurationOption() {
         frameworkURL = null;
         frameworkURLReference = null;
+        existing = null;
         name = null;
         karafVersion = null;
     }
@@ -48,6 +51,14 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         frameworkURLReference = null;
         this.name = name;
         this.karafVersion = karafVersion;
+    }
+
+    public KarafDistributionBaseConfigurationOption(File existing) {
+        this.frameworkURL = null;
+        this.frameworkURLReference = null;
+        this.existing = existing;
+        this.name = null;
+        this.karafVersion = null;
     }
 
     public KarafDistributionBaseConfigurationOption(MavenUrlReference frameworkURLReference,
@@ -72,6 +83,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
     public KarafDistributionBaseConfigurationOption(KarafDistributionBaseConfigurationOption base) {
         frameworkURL = base.frameworkURL;
         frameworkURLReference = base.frameworkURLReference;
+        existing = base.existing;
         name = base.name;
         karafVersion = base.karafVersion;
         karafMain = base.karafMain;
@@ -79,6 +91,7 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         karafLog = base.karafLog;
         karafEtc = base.karafEtc;
         unpackDirectory = base.unpackDirectory;
+        directoryNameFormat = base.directoryNameFormat;
         useDeployFolder = base.useDeployFolder;
     }
 
@@ -103,6 +116,11 @@ public class KarafDistributionBaseConfigurationOption implements Option {
      */
     public KarafDistributionBaseConfigurationOption frameworkUrl(MavenUrlReference _frameworkURL) {
         frameworkURLReference = _frameworkURL;
+        return this;
+    }
+
+    public KarafDistributionBaseConfigurationOption existing(File _existing) {
+        existing = _existing;
         return this;
     }
 
@@ -192,6 +210,11 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         return this;
     }
 
+    public KarafDistributionBaseConfigurationOption directoryNameFormat(String _directoryNameFormat) {
+        this.directoryNameFormat = _directoryNameFormat;
+        return this;
+    }
+
     /**
      * Per default the framework simply copies all referenced artifacts (via Pax Exam
      * DistributionOption) to the deploy folder of the karaf (based) distribution. If you don't have
@@ -229,6 +252,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
         return frameworkURL != null ? frameworkURL : frameworkURLReference.getURL();
     }
 
+    public File getExisting() {
+        return existing;
+    }
+
     public String getName() {
         return name;
     }
@@ -253,6 +280,10 @@ public class KarafDistributionBaseConfigurationOption implements Option {
 
     public File getUnpackDirectory() {
         return unpackDirectory;
+    }
+
+    public String getDirectoryNameFormat() {
+        return directoryNameFormat;
     }
 
     public boolean isUseDeployFolder() {
