@@ -52,7 +52,6 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.ops4j.net.FreePort;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.Option;
@@ -113,8 +112,7 @@ public class KarafTestContainer implements TestContainer {
 
     private File targetFolder;
 
-    private Registry rgstry;
-
+    private Registry registry;
 
     private static boolean isJava9Compatible;
     
@@ -202,7 +200,7 @@ public class KarafTestContainer implements TestContainer {
 		for (int port = minPort; port <= maxPort; port++) {
 			try {
 				LOGGER.trace("Creating RMI registry server on {}:{}", host, port);
-				rgstry = LocateRegistry.createRegistry(port);
+				registry = LocateRegistry.createRegistry(port);
 				LOGGER.info("Created RMI registry server on {}:{}", host, port);
 				return port;
 			} catch (RemoteException ex) {
@@ -642,7 +640,7 @@ public class KarafTestContainer implements TestContainer {
                     runner.shutdown();
                 }
                 try {
-                    UnicastRemoteObject.unexportObject(rgstry, true);
+                    UnicastRemoteObject.unexportObject(registry, true);
                     /*
                      * NOTE: javaRunner.waitForExit() works for Equinox and Felix, but not for Knopflerfish,
                      * need to investigate why. OTOH, it may be better to kill the process as we're doing
@@ -675,7 +673,7 @@ public class KarafTestContainer implements TestContainer {
     }
 
     private void forceCleanup() {
-        LOGGER.info("Can't remove runtime system; shedule it for exit of the jvm.");
+        LOGGER.info("Can't remove runtime system; schedule it for exit of the jvm.");
         try {
             FileUtils.forceDeleteOnExit(targetFolder);
         }
