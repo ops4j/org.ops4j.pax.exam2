@@ -23,7 +23,7 @@
         <dependency.tinybundles.version>3.0.0</dependency.tinybundles.version>
         <dependency.base.version>1.5.1</dependency.base.version>
         <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
-        <dependency.junit.version>4.12</dependency.junit.version>
+        <dependency.junit.version>4.13.1</dependency.junit.version>
         <dependency.openwebbeans.version>1.6.2</dependency.openwebbeans.version>
         <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
         <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
