@@ -45,8 +45,18 @@ public class StopContainerMojo extends AbstractMojo {
     @Parameter(defaultValue = "${mojoExecution}", readonly = true)
     private MojoExecution mojoExecution;
 
+    /**
+     * If true, skip execution.
+     */
+    @Parameter
+    private boolean skip;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            return;
+        }
+        
         Object object = getPluginContext().get(TEST_CONTAINER_RUNNER_KEY + mojoExecution.getExecutionId());
         if (object == null) {
             throw new MojoExecutionException(
