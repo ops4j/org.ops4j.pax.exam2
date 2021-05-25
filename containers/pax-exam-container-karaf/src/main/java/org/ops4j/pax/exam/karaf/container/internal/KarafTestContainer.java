@@ -510,19 +510,22 @@ public class KarafTestContainer implements TestContainer {
         File customPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/system.properties");
         SystemPropertyOption[] customProps = _system.getOptions(SystemPropertyOption.class);
         Properties karafPropertyFile = new Properties();
-        karafPropertyFile.load(new FileInputStream(customPropertiesFile));
-        for (SystemPropertyOption systemPropertyOption : customProps) {
-            karafPropertyFile.put(systemPropertyOption.getKey(), systemPropertyOption.getValue());
-        }
-        for (PropagateSystemPropertyOption option : system.getOptions(PropagateSystemPropertyOption.class)) {
-            String key = option.getKey();
-            String value = System.getProperty(key);
-            if (value != null) {
-                karafPropertyFile.put(key, value);
+        try (final FileInputStream customPropertiesInStream = new FileInputStream(customPropertiesFile)) {
+            karafPropertyFile.load(customPropertiesInStream);
+            for (SystemPropertyOption systemPropertyOption : customProps) {
+                karafPropertyFile.put(systemPropertyOption.getKey(), systemPropertyOption.getValue());
+            }
+            for (PropagateSystemPropertyOption option : system.getOptions(PropagateSystemPropertyOption.class)) {
+                String key = option.getKey();
+                String value = System.getProperty(key);
+                if (value != null) {
+                    karafPropertyFile.put(key, value);
+                }
+            }
+            try (final FileOutputStream customPropertiesOutStream = new FileOutputStream(customPropertiesFile)) {
+                karafPropertyFile.store(customPropertiesOutStream, "updated by pax-exam");
             }
         }
-
-        karafPropertyFile.store(new FileOutputStream(customPropertiesFile), "updated by pax-exam");
     }
 
     private void updateLogProperties(File karafHome, ExamSystem _system) throws IOException {
@@ -537,9 +540,13 @@ public class KarafTestContainer implements TestContainer {
 
         File customPropertiesFile = new File(karafHome, framework.getKarafEtc() + "/org.ops4j.pax.logging.cfg");
         Properties karafPropertyFile = new Properties();
-        karafPropertyFile.load(new FileInputStream(customPropertiesFile));
-        loggingBackend.updatePaxLoggingConfiguration(karafPropertyFile, realLogLevel);
-        karafPropertyFile.store(new FileOutputStream(customPropertiesFile), "updated by pax-exam");
+        try (final FileInputStream customPropertiesInStream = new FileInputStream(customPropertiesFile)) {
+            karafPropertyFile.load(customPropertiesInStream);
+            loggingBackend.updatePaxLoggingConfiguration(karafPropertyFile, realLogLevel);
+            try (final FileOutputStream customPropertiesOutStream = new FileOutputStream(customPropertiesFile)) {
+                karafPropertyFile.store(customPropertiesOutStream, "updated by pax-exam");
+            }
+        }
     }
 
     private LoggingBackend getLoggingBackend(File karafHome) throws IOException, FileNotFoundException {
