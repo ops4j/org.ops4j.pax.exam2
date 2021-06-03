@@ -688,7 +688,7 @@
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-client</artifactId>
-                <version>3.0.4.Final</version>
+                <version>4.5.7.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
