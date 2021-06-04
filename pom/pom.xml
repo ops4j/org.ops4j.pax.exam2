@@ -32,7 +32,7 @@
         <dependency.atinject.version>1.0</dependency.atinject.version>
         <dependency.deltaspike.version>1.5.1</dependency.deltaspike.version>
         <dependency.glassfish.version>4.1.1</dependency.glassfish.version>
-        <dependency.httpcomponents.client.version>4.5.10</dependency.httpcomponents.client.version>
+        <dependency.httpcomponents.client.version>4.5.13</dependency.httpcomponents.client.version>
         <dependency.httpcomponents.core.version>4.4.12</dependency.httpcomponents.core.version>
         <dependency.karaf.version>4.2.8</dependency.karaf.version>
 
