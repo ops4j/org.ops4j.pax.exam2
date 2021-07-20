@@ -61,9 +61,9 @@ public class KarafEmbeddedRunner implements Runner {
          final String[] karafOpts, final String[] opts, final String[] classpath,
          final String main, final String options, final boolean security) {
         new Thread(
-            () -> doMain(base, home, data, etc, log, karafOpts, opts, classpath, main, options),
-            "KarafEmbeddedRunner")
-        .start();
+                () -> doMain(base, home, data, etc, log, karafOpts, opts, classpath, main, options),
+                "KarafEmbeddedRunner")
+                .start();
     }
 
     private void  // CHECKSTYLE:SKIP : more than 10 params
@@ -229,7 +229,14 @@ public class KarafEmbeddedRunner implements Runner {
         if (version.startsWith("1.8")) { // 7, 6 etc... are not supported so we only need to take care of it
             key = "jre-1.8";
         } else {
-            final int sep = version.indexOf(".");
+            int sep = 0;
+            if (version.indexOf('.') > 0) {
+                sep = version.indexOf(".");
+            }            
+            if (version.indexOf('-') > 0) {
+                sep = version.indexOf('-');
+            }
+
             try {
                 key = "jre-" + Integer.parseInt(version.substring(0, sep));
             } catch (final NumberFormatException nfe) {
