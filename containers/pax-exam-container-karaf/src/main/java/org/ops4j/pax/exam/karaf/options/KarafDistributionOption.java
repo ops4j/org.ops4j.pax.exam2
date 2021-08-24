@@ -332,7 +332,7 @@ public final class KarafDistributionOption {
     }
 
     /**
-     * A very simple and convinient method to set a specific log level without the need of configure
+     * A very simple and convenient method to set a specific log level without the need of configure
      * the specific option itself.
      * 
      * @param logLevel
@@ -344,7 +344,7 @@ public final class KarafDistributionOption {
     }
 
     /**
-     * A very simple and convinient method to set a specific log level without the need of configure
+     * A very simple and convenient method to set a specific log level without the need of configure
      * the specific option itself.
      * 
      * @return option
