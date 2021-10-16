@@ -29,7 +29,7 @@
         <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
         <dependency.asm.version>3.0</dependency.asm.version>
-        <dependency.atinject.version>1.0</dependency.atinject.version>
+        <dependency.atinject.version>1.2</dependency.atinject.version>
         <dependency.deltaspike.version>1.5.1</dependency.deltaspike.version>
         <dependency.glassfish.version>4.1.1</dependency.glassfish.version>
         <dependency.httpcomponents.version>4.3.2</dependency.httpcomponents.version>
