@@ -173,7 +173,7 @@
                     <dependency>
                         <groupId>org.jboss.remoting</groupId>
                         <artifactId>jboss-remoting</artifactId>
-                        <version>4.0.6.Final</version>
+                        <version>5.0.20.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.sasl</groupId>
@@ -296,7 +296,7 @@
                     <dependency>
                         <groupId>org.jboss.remoting</groupId>
                         <artifactId>jboss-remoting</artifactId>
-                        <version>4.0.9.Final</version>
+                        <version>5.0.20.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.sasl</groupId>
@@ -420,7 +420,7 @@
                     <dependency>
                         <groupId>org.jboss.remoting</groupId>
                         <artifactId>jboss-remoting</artifactId>
-                        <version>4.0.9.Final</version>
+                        <version>5.0.20.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.sasl</groupId>
@@ -544,7 +544,7 @@
                     <dependency>
                         <groupId>org.jboss.remoting</groupId>
                         <artifactId>jboss-remoting</artifactId>
-                        <version>4.0.18.Final</version>
+                        <version>5.0.20.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jboss.sasl</groupId>
