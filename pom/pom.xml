@@ -22,7 +22,7 @@
         <dependency.swissbox.version>1.8.4</dependency.swissbox.version>
         <dependency.tinybundles.version>3.0.0</dependency.tinybundles.version>
         <dependency.base.version>1.5.1</dependency.base.version>
-        <dependency.slf4j.version>1.6.6</dependency.slf4j.version>
+        <dependency.slf4j.version>1.7.26</dependency.slf4j.version>
         <dependency.junit.version>4.12</dependency.junit.version>
         <dependency.openwebbeans.version>1.6.2</dependency.openwebbeans.version>
         <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
