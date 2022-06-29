@@ -6,7 +6,7 @@
     <version>${version}</version>
     <properties>
         <pax.exam.version>4.2.0</pax.exam.version>
-        <slf4j.version>1.7.4</slf4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <wildfly.version>8.0.0.Final</wildfly.version>
     </properties>
 
