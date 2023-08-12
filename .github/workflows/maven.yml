@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master", "v4.x" ]
+  pull_request:
+    branches: [ "master", "v4.x" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ 8 ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java-version }}
+      - run: mvn -B package --no-transfer-progress --file pom.xml
