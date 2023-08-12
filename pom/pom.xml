@@ -37,7 +37,7 @@
         <dependency.karaf.version>4.2.8</dependency.karaf.version>
 
         <!-- 1.0.8 and higher require slf4j 1.7 -->
-        <dependency.logback.version>1.0.7</dependency.logback.version>
+        <dependency.logback.version>1.2.9</dependency.logback.version>
 
         <dependency.maven.version>3.0.5</dependency.maven.version>
         <dependency.spring.version>5.3.12</dependency.spring.version>
