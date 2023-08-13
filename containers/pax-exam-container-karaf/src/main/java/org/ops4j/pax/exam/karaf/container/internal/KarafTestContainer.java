@@ -38,6 +38,7 @@ import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -229,7 +230,7 @@ public class KarafTestContainer implements TestContainer {
 				LOGGER.info("Created RMI registry server on {}:{}", host, port);
 				return port;
 			} catch (RemoteException ex) {
-				if (ex.detail instanceof BindException) {
+				if (ex instanceof ExportException || ex.detail instanceof BindException) {
 					LOGGER.trace("Tried to open RMI registry on {}: {} but failed.", host, port, ex);
 					if (port >= maxPort) {
 						throw ex;
