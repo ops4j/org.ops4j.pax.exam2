@@ -31,17 +31,25 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.BindException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.URL;
 import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -121,6 +129,15 @@ public class KarafTestContainer implements TestContainer {
         this.runner = runner;
     }
 
+    @SuppressWarnings({"java:S112", "checkstyle:IllegalCatch"})
+    private static int findFreePort() {
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            return serverSocket.getLocalPort();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public synchronized TestContainer start() {
         try {
@@ -131,7 +148,9 @@ public class KarafTestContainer implements TestContainer {
             //registry.selectGracefully();
 			String host = InetAddress.getLoopbackAddress().getHostAddress();
 			System.setProperty("java.rmi.server.hostname", host);
-			int port = openRegistryOnFreePort(host, 21000, 21099);
+            int port = findFreePort();
+            LOGGER.info("Creating RMI registry server on {}:{}", host, port);
+            registry = LocateRegistry.createRegistry(port);
 
             ExamSystem subsystem = system
                 .fork(options(
@@ -220,27 +239,6 @@ public class KarafTestContainer implements TestContainer {
             LOGGER.warn("Can't restore config files", e);
         }
     }
-
-	private int openRegistryOnFreePort(String host, int minPort, int maxPort) throws RemoteException {
-		for (int port = minPort; port <= maxPort; port++) {
-			try {
-				LOGGER.trace("Creating RMI registry server on {}:{}", host, port);
-				registry = LocateRegistry.createRegistry(port);
-				LOGGER.info("Created RMI registry server on {}:{}", host, port);
-				return port;
-			} catch (RemoteException ex) {
-				if (ex.detail instanceof BindException) {
-					LOGGER.trace("Tried to open RMI registry on {}: {} but failed.", host, port, ex);
-					if (port >= maxPort) {
-						throw ex;
-					}
-				} else {
-					throw ex;
-				}
-			}
-		}
-		throw new IllegalStateException("Could not open RMI registry");
-	}
 
     private boolean shouldInjectJUnitBundles(ExamSystem _system) {
         Option[] options = _system.getOptions(OverrideJUnitBundlesOption.class);
