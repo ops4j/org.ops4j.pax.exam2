@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class ValidateDefaultJUnitBundles extends Karaf4TestContainerIT {
+public class ValidateDefaultJUnitBundlesIT extends Karaf4TestContainerIT {
 
     @Test
     public void testDefaultJUnitBundlesPresent() throws Exception {

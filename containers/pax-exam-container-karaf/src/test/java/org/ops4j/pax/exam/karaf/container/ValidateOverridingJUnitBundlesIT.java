@@ -34,7 +34,7 @@ import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.osgi.framework.Bundle;
 
 @RunWith(PaxExam.class)
-public class ValidateOverridingJUnitBundles extends Karaf4TestContainerIT {
+public class ValidateOverridingJUnitBundlesIT extends Karaf4TestContainerIT {
 
     @Override
     @Configuration
