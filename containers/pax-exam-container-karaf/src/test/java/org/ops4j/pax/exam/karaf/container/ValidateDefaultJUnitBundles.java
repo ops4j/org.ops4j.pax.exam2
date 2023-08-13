@@ -19,16 +19,12 @@ package org.ops4j.pax.exam.karaf.container;
 
 import static org.junit.Assert.assertNotNull;
 
-import javax.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class ValidateDefaultJUnitBundles extends Karaf4TestContainerITest {
+public class ValidateDefaultJUnitBundles extends Karaf4TestContainerIT {
 
     @Test
     public void testDefaultJUnitBundlesPresent() throws Exception {

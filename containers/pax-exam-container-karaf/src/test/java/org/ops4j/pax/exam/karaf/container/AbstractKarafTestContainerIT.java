@@ -42,7 +42,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 @RunWith(PaxExam.class)
-public abstract class AbstractKarafTestContainerITest {
+public abstract class AbstractKarafTestContainerIT {
 
     private final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf").type("zip");
 

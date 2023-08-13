@@ -17,7 +17,7 @@
 
 package org.ops4j.pax.exam.karaf.container;
 
-public class Karaf4TestContainerITest extends AbstractKarafTestContainerITest {
+public class Karaf4TestContainerIT extends AbstractKarafTestContainerIT {
 
     @Override
     protected String getDefaultKarafVersion() {
