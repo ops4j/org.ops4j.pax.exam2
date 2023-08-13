@@ -26,10 +26,6 @@ public class JreProperties {
 
     public static final String FILE_PATH = "etc/jre.properties";
 
-    public static final ConfigurationPointer JRE15 = new CustomPropertiesPointer("jre-1.5");
-    public static final ConfigurationPointer JRE16 = new CustomPropertiesPointer("jre-1.6");
-    public static final ConfigurationPointer JRE17 = new CustomPropertiesPointer("jre-1.7");
-
     public static class CustomPropertiesPointer extends ConfigurationPointer {
 
         public CustomPropertiesPointer(String key) {
