@@ -130,9 +130,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
