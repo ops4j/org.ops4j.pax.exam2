@@ -20,6 +20,7 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.rbc.Constants.RMI_HOST_PROPERTY;
 import static org.ops4j.pax.exam.rbc.Constants.RMI_NAME_PROPERTY;
 import static org.ops4j.pax.exam.rbc.Constants.RMI_PORT_PROPERTY;
@@ -145,19 +146,21 @@ public class KarafTestContainer implements TestContainer {
 
             Option invokerConfiguration = getInvokerConfiguration();
 
-            //registry.selectGracefully();
 			String host = InetAddress.getLoopbackAddress().getHostAddress();
 			System.setProperty("java.rmi.server.hostname", host);
-            int port = findFreePort();
-            LOGGER.info("Creating RMI registry server on {}:{}", host, port);
-            registry = LocateRegistry.createRegistry(port);
+            final int rmiRegistryPort = findFreePort();
+            final int rmiServerPort = findFreePort();
+            LOGGER.info("Creating RMI registry server on {}:{}", host, rmiRegistryPort);
+            registry = LocateRegistry.createRegistry(rmiRegistryPort);
 
             ExamSystem subsystem = system
                 .fork(options(
                     systemProperty("java.rmi.server.hostname").value(host),
                     systemProperty(RMI_HOST_PROPERTY).value(host),
-                    systemProperty(RMI_PORT_PROPERTY).value(Integer.toString(port)),
+                    systemProperty(RMI_PORT_PROPERTY).value(Integer.toString(rmiRegistryPort)),
                     systemProperty(RMI_NAME_PROPERTY).value(name),
+                    editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiRegistryPort", Integer.toString(rmiRegistryPort)),
+                    editConfigurationFilePut("etc/org.apache.karaf.management.cfg", "rmiServerPort", Integer.toString(rmiServerPort)),
                     invokerConfiguration,
                     systemProperty(EXAM_INJECT_PROPERTY).value("true"),
                     editConfigurationFileExtend("etc/system.properties", "jline.shutdownhook",
@@ -173,7 +176,7 @@ public class KarafTestContainer implements TestContainer {
                 ArchiveExtractor.extract(sourceDistribution, targetFolder);
             }
 
-            target = new RBCRemoteTarget(name, port, subsystem.getTimeout());
+            target = new RBCRemoteTarget(name, rmiRegistryPort, subsystem.getTimeout());
 
             karafBase = searchKarafBase(targetFolder);
             File karafHome = karafBase;
