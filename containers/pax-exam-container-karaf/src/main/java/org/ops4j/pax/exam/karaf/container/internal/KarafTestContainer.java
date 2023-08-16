@@ -173,7 +173,7 @@ public class KarafTestContainer implements TestContainer {
                 ArchiveExtractor.extract(sourceDistribution, targetFolder);
             }
 
-            target = new RBCRemoteTarget(name, rmiRegistryPort, subsystem.getTimeout());
+            target = new RBCRemoteTarget(name, port, subsystem.getTimeout());
 
             karafBase = searchKarafBase(targetFolder);
             File karafHome = karafBase;
