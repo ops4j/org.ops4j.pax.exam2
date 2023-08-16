@@ -162,7 +162,6 @@ public class KarafTestContainer implements TestContainer {
                     systemProperty(EXAM_INJECT_PROPERTY).value("true"),
                     editConfigurationFileExtend("etc/system.properties", "jline.shutdownhook",
                         "true")));
-            target = new RBCRemoteTarget(name, port, subsystem.getTimeout());
 
             System.setProperty("java.protocol.handler.pkgs", "org.ops4j.pax.url");
 
@@ -173,6 +172,8 @@ public class KarafTestContainer implements TestContainer {
                 targetFolder = retrieveFinalTargetFolder(subsystem);
                 ArchiveExtractor.extract(sourceDistribution, targetFolder);
             }
+
+            target = new RBCRemoteTarget(name, rmiRegistryPort, subsystem.getTimeout());
 
             karafBase = searchKarafBase(targetFolder);
             File karafHome = karafBase;
