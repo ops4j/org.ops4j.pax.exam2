@@ -53,15 +53,12 @@
                 <module>containers/pax-exam-container-weld</module>
                 <module>containers/pax-exam-container-tomcat</module>
                 <module>containers/pax-exam-container-karaf</module>
-                <module>containers/pax-exam-container-wildfly80</module>
-                <module>containers/pax-exam-container-wildfly90</module>
                 <module>containers/pax-exam-container-openwebbeans</module>
 
                 <module>maven/exam-maven-plugin</module>
                 <module>maven/archetypes/exam-glassfish41-archetype</module>
                 <module>maven/archetypes/exam-osgi-archetype</module>
                 <module>maven/archetypes/exam-karaf-archetype</module>
-                <module>maven/archetypes/exam-wildfly80-archetype</module>
 
                 <module>patches/pax-exam-patch-weld</module>
 
