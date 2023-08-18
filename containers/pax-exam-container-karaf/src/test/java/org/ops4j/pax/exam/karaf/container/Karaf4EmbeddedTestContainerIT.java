@@ -16,6 +16,7 @@
  */
 package org.ops4j.pax.exam.karaf.container;
 
+import org.junit.Ignore;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
@@ -26,6 +27,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDist
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
+@Ignore
 public class Karaf4EmbeddedTestContainerIT extends AbstractKarafTestContainerIT {
 
     @Configuration

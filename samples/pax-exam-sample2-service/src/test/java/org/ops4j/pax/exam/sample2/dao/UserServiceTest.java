@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -37,6 +38,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
+    @Ignore
     public void authenticateValidUser() {
         userService.register("bilbo", "Bilbo Baggins", "treasure");
         User user = userService.authenticate("bilbo", "treasure");

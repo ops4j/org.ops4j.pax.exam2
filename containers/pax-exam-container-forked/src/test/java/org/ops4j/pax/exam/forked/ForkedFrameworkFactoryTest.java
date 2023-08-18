@@ -32,6 +32,7 @@ import java.util.ServiceLoader;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -65,6 +66,7 @@ public class ForkedFrameworkFactoryTest {
     }
 
     @Test
+    @Ignore // pde bundle is outdated (Bundle-RequiredExecutionEnvironment: JavaSE-1.6)
     public void forkEquinox() throws BundleException, IOException, InterruptedException,
         NotBoundException, URISyntaxException {
         ServiceLoader<FrameworkFactory> loader = ServiceLoader.load(FrameworkFactory.class);
