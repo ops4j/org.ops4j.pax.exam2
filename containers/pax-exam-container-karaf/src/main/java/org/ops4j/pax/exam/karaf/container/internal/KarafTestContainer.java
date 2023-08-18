@@ -96,6 +96,14 @@ import org.slf4j.LoggerFactory;
 
 public class KarafTestContainer implements TestContainer {
 
+    private static final String[] configs = {
+        "config.properties",
+        "system.properties",
+        "org.apache.karaf.features.cfg",
+        "org.apache.karaf.management.cfg",
+        "org.ops4j.pax.logging.cfg"
+    };
+
     private static final Logger LOGGER = LoggerFactory.getLogger(KarafTestContainer.class);
 
     private static final String KARAF_TEST_CONTAINER = "KarafTestContainer.start";
@@ -222,11 +230,10 @@ public class KarafTestContainer implements TestContainer {
 
     private void backupConfigFiles() {
         try {
-            File karafEtc = new File(karafBase, framework.getKarafEtc());
-            FileUtils.copyFile(new File(karafEtc, "config.properties"), new File(karafEtc, "config.properties.paxexam"));
-            FileUtils.copyFile(new File(karafEtc, "system.properties"), new File(karafEtc, "system.properties.paxexam"));
-            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg"), new File(karafEtc, "org.apache.karaf.features.cfg.paxexam"));
-            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg"), new File(karafEtc, "org.ops4j.pax.logging.cfg.paxexam"));
+            final File karafEtc = new File(karafBase, framework.getKarafEtc());
+            for (final String config : configs) {
+                FileUtils.copyFile(new File(karafEtc, config), new File(karafEtc, config.concat(".paxexam")));
+            }
         } catch (Exception e) {
             LOGGER.warn("Can't backup config files", e);
         }
@@ -234,11 +241,10 @@ public class KarafTestContainer implements TestContainer {
 
     private void restoreConfigFiles() {
         try {
-            File karafEtc = new File(karafBase, framework.getKarafEtc());
-            FileUtils.copyFile(new File(karafEtc, "config.properties.paxexam"), new File(karafEtc, "config.properties"));
-            FileUtils.copyFile(new File(karafEtc, "system.properties.paxexam"), new File(karafEtc, "system.properties"));
-            FileUtils.copyFile(new File(karafEtc, "org.apache.karaf.features.cfg.paxexam"), new File(karafEtc, "org.apache.karaf.features.cfg"));
-            FileUtils.copyFile(new File(karafEtc, "org.ops4j.pax.logging.cfg.paxexam"), new File(karafEtc, "org.ops4j.pax.logging.cfg"));
+            final File karafEtc = new File(karafBase, framework.getKarafEtc());
+            for (final String config : configs) {
+                FileUtils.copyFile(new File(karafEtc, config.concat(".paxexam")), new File(karafEtc, config));
+            }
         } catch (Exception e) {
             LOGGER.warn("Can't restore config files", e);
         }
@@ -303,8 +309,7 @@ public class KarafTestContainer implements TestContainer {
             + subsystem.getTimeout());
 
         if (subsystem.getOptions(ServerModeOption.class).length == 0) {
-            waitForState(org.ops4j.pax.exam.karaf.container.internal.Constants.SYSTEM_BUNDLE,
-                Bundle.ACTIVE, subsystem.getTimeout());
+            waitForState(Constants.SYSTEM_BUNDLE, Bundle.ACTIVE, subsystem.getTimeout());
         }
         else {
             LOGGER

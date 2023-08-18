@@ -14,16 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ops4j.pax.exam.karaf.container;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 import java.io.File;
 
@@ -41,49 +32,67 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
+
 @RunWith(PaxExam.class)
 public abstract class AbstractKarafTestContainerIT {
 
-    private final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf").type("zip");
+    protected static final File UNPACK_DIRECTORY = new File("target/paxexam/unpack/");
+
+    protected static final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf").type("zip");
 
     @Inject
-    private BundleContext bc;
+    private BundleContext bundleContext;
 
     @Configuration
     public Option[] config() {
-        String karafVersion = karafVersion();
-        return new Option[] {
-            karafDistributionConfiguration().frameworkUrl(KARAF_URL.version(karafVersion))
-                .karafVersion(karafVersion).useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
-            configureConsole().startLocalConsole().ignoreRemoteShell(), logLevel(LogLevel.INFO)
-        };
+        final String karafVersion = karafVersion();
+        return options(
+            karafDistributionConfiguration().
+                frameworkUrl(KARAF_URL.version(karafVersion)).
+                karafVersion(karafVersion).
+                useDeployFolder(false).
+                unpackDirectory(UNPACK_DIRECTORY),
+            configureConsole().
+                startLocalConsole().
+                ignoreRemoteShell(),
+            logLevel(LogLevel.DEBUG),
+            keepRuntimeFolder()
+        );
     }
 
     public String karafVersion() {
-        ConfigurationManager cm = new ConfigurationManager();
-        String karafVersion = cm.getProperty("pax.exam.karaf.version", getDefaultKarafVersion());
-        return karafVersion;
+        final ConfigurationManager cm = new ConfigurationManager();
+        return cm.getProperty("pax.exam.karaf.version", getDefaultKarafVersion());
     }
 
-    protected abstract String getDefaultKarafVersion();
+    protected String getDefaultKarafVersion() {
+        return "4.4.3";
+    }
 
     @Test
-    public void checkKarafSystemService() throws Exception {
-        assertThat(bc, is(notNullValue()));
-        ServiceReference<?> serviceRef = bc
-            .getServiceReference("org.apache.karaf.system.SystemService");
-        Object service = bc.getService(serviceRef);
+    public void checkKarafSystemService() {
+        assertThat(bundleContext, is(notNullValue()));
+        final ServiceReference<?> serviceRef = bundleContext.getServiceReference("org.apache.karaf.system.SystemService");
+        final Object service = bundleContext.getService(serviceRef);
         assertThat(service, is(notNullValue()));
     }
-    
-    public Bundle findBundle(String symbolicName) {
-        Bundle[] bundles = bc.getBundles();
-        for (Bundle bundle : bundles) {
+
+    public Bundle findBundle(final String symbolicName) {
+        final Bundle[] bundles = bundleContext.getBundles();
+        for (final Bundle bundle : bundles) {
             if (bundle.getSymbolicName().equals(symbolicName)) {
                 return bundle;
             }
         }
-    
         return null;
     }
 

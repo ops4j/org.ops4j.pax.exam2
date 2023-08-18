@@ -18,32 +18,32 @@ package org.ops4j.pax.exam.karaf.container;
 
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption;
-import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 
-import java.io.File;
-
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 public class Karaf4EmbeddedTestContainerIT extends AbstractKarafTestContainerIT {
 
-    private final MavenArtifactUrlReference KARAF_URL = maven("org.apache.karaf", "apache-karaf").type("zip");
-
-    @Override
-    protected String getDefaultKarafVersion() {
-        return "4.2.8";
-    }
-
     @Configuration
     public Option[] config() {
         String karafVersion = karafVersion();
-        return new Option[] {
-                karafDistributionConfiguration().runEmbedded(true).frameworkUrl(KARAF_URL.version(karafVersion))
-                        .karafVersion(karafVersion).useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
-                configureConsole().startLocalConsole().ignoreRemoteShell(), logLevel(LogLevelOption.LogLevel.INFO)
-        };
+        return options(
+            karafDistributionConfiguration().
+                runEmbedded(true).
+                frameworkUrl(KARAF_URL.version(karafVersion)).
+                karafVersion(karafVersion).
+                useDeployFolder(false).
+                unpackDirectory(UNPACK_DIRECTORY),
+            configureConsole().
+                startLocalConsole().
+                ignoreRemoteShell(),
+            logLevel(LogLevel.DEBUG),
+            keepRuntimeFolder()
+        );
     }
 
 }
