@@ -109,7 +109,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>pertest</forkMode>
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>

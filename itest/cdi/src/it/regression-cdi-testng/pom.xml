@@ -60,7 +60,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>pertest</forkMode>
                     <!-- CanDI doesn't like manifest-only JARs -->
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                 </configuration>

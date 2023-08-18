@@ -166,7 +166,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
-                    <forkMode>always</forkMode>
                     <parallel>none</parallel>
                     <threadCount>1</threadCount>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>

@@ -140,7 +140,6 @@
                     <execution>
                         <id>persuite</id>
                         <configuration>
-                            <forkMode>once</forkMode>
                             <excludes>
                                 <exclude>**/perclass/*.java</exclude>
                             </excludes>
@@ -149,7 +148,6 @@
                     <!--execution>
                         <id>perclass</id>
                         <configuration>
-                            <forkMode>always</forkMode>
                             <includes>
                               <include>**/perclass/**</include>
                             </includes>
@@ -159,7 +157,6 @@
                 <configuration>
                     <parallel>none</parallel>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
-                    <argLine>-XX:MaxPermSize=256M</argLine>
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>

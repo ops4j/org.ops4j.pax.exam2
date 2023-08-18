@@ -115,10 +115,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <forkMode>once</forkMode>
                     <parallel>none</parallel>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
-                    <argLine>-XX:MaxPermSize=256M</argLine>
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
