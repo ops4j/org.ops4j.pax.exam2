@@ -1,7 +1,7 @@
 Pax Exam
 ========
 
-[![CI](https://github.com/ops4j/org.ops4j.pax.exam2/actions/workflows/maven.yml/badge.svg)](https://github.com/ops4j/org.ops4j.pax.exam2/actions/workflows/maven.yml)
+[![CI](https://github.com/ops4j/org.ops4j.pax.exam2/actions/workflows/maven.yml/badge.svg?branch=v4.x)](https://github.com/ops4j/org.ops4j.pax.exam2/actions/workflows/maven.yml)
 
 Thanks for looking into Pax Exam.
 This is the official source repository of the OPS4J Pax Exam project for 
