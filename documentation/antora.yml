@@ -1,0 +1,5 @@
+name: pax-exam
+title: Pax Exam
+version: 4
+nav:
+  - modules/ROOT/nav.adoc
