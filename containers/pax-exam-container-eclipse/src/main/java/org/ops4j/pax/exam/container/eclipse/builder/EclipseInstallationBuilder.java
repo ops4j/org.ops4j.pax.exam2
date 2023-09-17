@@ -98,6 +98,9 @@ public class EclipseInstallationBuilder
                 while ((entry = zip.getNextEntry()) != null) {
                     String name = entry.getName();
                     File file = new File(tempFolder, name);
+                    if (!file.toPath().normalize().startsWith(tempFolder.toPath().normalize())) {
+                        throw new IOException("Bad zip entry");
+                    }
                     file.deleteOnExit();
                     if (entry.isDirectory()) {
                         FileUtils.forceMkdir(file);
