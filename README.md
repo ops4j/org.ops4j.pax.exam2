@@ -8,7 +8,7 @@ It's licensed under the Apache Software License 2.0 by the OPS4J community.
 
 ## Documentation
 
-* <http://team.ops4j.org/wiki/display/PAXEXAM4/Documentation>
+* <https://ops4j1.jira.com/wiki/x/PgA8Aw>
 
 ## Contributing
 
