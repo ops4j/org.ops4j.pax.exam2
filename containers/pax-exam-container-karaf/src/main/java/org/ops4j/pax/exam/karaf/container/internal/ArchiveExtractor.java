@@ -110,7 +110,6 @@ public class ArchiveExtractor {
             ArchiveEntry entry = is.getNextEntry();
             while (entry != null) {
                 String name = entry.getName();
-                name = name.substring(name.indexOf("/") + 1);
                 File file = new File(targetDir, name);
                 if (entry.isDirectory()) {
                     file.mkdirs();
