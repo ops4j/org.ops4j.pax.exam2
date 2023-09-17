@@ -172,6 +172,7 @@ public class KarafTestContainer implements TestContainer {
             DependenciesDeployer deployer = new DependenciesDeployer(subsystem, karafBase,
                 karafHome);
             deployer.copyBootClasspathLibraries();
+            deployer.copySystemLibraries();
 
             if (framework.getExisting() != null) {
                 backupConfigFiles();
