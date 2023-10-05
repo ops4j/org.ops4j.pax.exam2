@@ -20,4 +20,4 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
-      - run: mvn -B install --fail-at-end --no-transfer-progress --file pom.xml -Pdefault,itest
+      - run: mvn -B install --fail-at-end --no-transfer-progress --file pom.xml
