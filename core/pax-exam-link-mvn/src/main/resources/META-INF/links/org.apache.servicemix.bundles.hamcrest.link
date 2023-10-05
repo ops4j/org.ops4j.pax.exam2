@@ -1,0 +1,1 @@
+mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hamcrest/${dependency.org.apache.servicemix.bundles.hamcrest.version}

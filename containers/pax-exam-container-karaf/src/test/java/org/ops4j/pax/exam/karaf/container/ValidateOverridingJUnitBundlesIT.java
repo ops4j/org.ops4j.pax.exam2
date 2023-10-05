@@ -42,7 +42,7 @@ public class ValidateOverridingJUnitBundlesIT extends Karaf4TestContainerIT {
         return new Option[] {
             composite(super.config()),
             KarafDistributionOption.overrideJUnitBundles(),
-            mavenBundle().groupId("org.apache.servicemix.bundles").artifactId("org.apache.servicemix.bundles.hamcrest").version("1.3_1"),
+            mavenBundle().groupId("org.ops4j.pax.tipi").artifactId("org.ops4j.pax.tipi.hamcrest.core").version("1.3.0.1"),
             mavenBundle().groupId("org.ops4j.pax.tipi").artifactId("org.ops4j.pax.tipi.junit").version("4.12.0.1"),
             mavenBundle().groupId("org.ops4j.pax.exam").artifactId("pax-exam-invoker-junit").version("4.10.0")
         };
@@ -50,15 +50,15 @@ public class ValidateOverridingJUnitBundlesIT extends Karaf4TestContainerIT {
     
     @Test
     public void testOverriddenJUnitBundlesPresent() throws Exception {  
-        Bundle hamcrestBundle = findBundle("org.apache.servicemix.bundles.hamcrest");
+        Bundle hamcrestBundle = findBundle("org.ops4j.pax.tipi.hamcrest.core");
         assertNotNull(hamcrestBundle);
         assertThat(hamcrestBundle.getVersion().toString(), equalTo("1.3.0.1"));
         
         Bundle junitBundle = findBundle("org.ops4j.pax.tipi.junit");
         assertNotNull(junitBundle);
         assertThat(junitBundle.getVersion().toString(), equalTo("4.12.0.1"));
-        
-        //As we have not included it, ensure org.ops4j.pax.tipi.hamcrest.core is not present
-        assertNull(findBundle("org.ops4j.pax.tipi.hamcrest.core"));
+
+        //As we have not included it, ensure org.apache.servicemix.bundles.hamcrest is not present
+        assertNull(findBundle("org.apache.servicemix.bundles.hamcrest"));
     }
 }

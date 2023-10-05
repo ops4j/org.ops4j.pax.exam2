@@ -139,13 +139,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.pax.tipi</groupId>
-            <artifactId>org.ops4j.pax.tipi.hamcrest.core</artifactId>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.hamcrest</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.pax.tipi</groupId>
-            <artifactId>org.ops4j.pax.tipi.junit</artifactId>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.junit</artifactId>
             <scope>provided</scope>
         </dependency>
 

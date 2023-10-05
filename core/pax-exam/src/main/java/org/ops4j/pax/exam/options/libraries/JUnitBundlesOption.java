@@ -36,7 +36,7 @@ public class JUnitBundlesOption extends AbstractDelegateProvisionOption<JUnitBun
      * Constructor.
      */
     public JUnitBundlesOption() {
-        super(bundle("link:classpath:META-INF/links/org.ops4j.pax.tipi.junit.link"));
+        super(bundle("link:classpath:META-INF/links/org.apache.servicemix.bundles.junit.link"));
         noUpdate();
         startLevel(START_LEVEL_SYSTEM_BUNDLES);
     }

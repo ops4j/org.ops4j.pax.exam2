@@ -56,7 +56,7 @@ public class ContainerTestRunnerClassRequest extends ClassRequest {
     }
 
     @Override
-    public Runner getRunner() {
+    protected Runner createRunner() {
         RunnerBuilder builder = new ContainerTestRunnerBuilder(injector, index);
         return builder.safeRunnerForClass(testClass);
     }

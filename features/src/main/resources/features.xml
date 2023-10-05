@@ -23,8 +23,8 @@
     </feature>
     <feature name="exam" version="${project.version}">
         <feature version="${project.version}">exam-no-junit</feature>
-        <bundle>mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.hamcrest.core/${dependency.tipi.hamcrest.version}</bundle>
-        <bundle>mvn:org.ops4j.pax.tipi/org.ops4j.pax.tipi.junit/${dependency.tipi.junit.version}</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hamcrest/${dependency.org.apache.servicemix.bundles.hamcrest.version}</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${dependency.org.apache.servicemix.bundles.junit.version}</bundle>
         <bundle>mvn:org.ops4j.pax.exam/pax-exam-invoker-junit/${project.version}</bundle>
     </feature>
 </features>

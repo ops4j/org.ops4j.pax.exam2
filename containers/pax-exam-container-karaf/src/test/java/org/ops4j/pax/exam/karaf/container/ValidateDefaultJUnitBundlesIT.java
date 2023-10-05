@@ -27,9 +27,10 @@ import org.ops4j.pax.exam.junit.PaxExam;
 public class ValidateDefaultJUnitBundlesIT extends Karaf4TestContainerIT {
 
     @Test
-    public void testDefaultJUnitBundlesPresent() throws Exception {
-        //Test for the presence of standard test libs
-        assertNotNull(findBundle("org.ops4j.pax.tipi.hamcrest.core"));
-        assertNotNull(findBundle("org.ops4j.pax.tipi.junit"));
+    public void testDefaultJUnitBundlesPresent() {
+        // Test for the presence of standard test libs
+        assertNotNull(findBundle("org.apache.servicemix.bundles.hamcrest"));
+        assertNotNull(findBundle("org.apache.servicemix.bundles.junit"));
     }
+
 }
