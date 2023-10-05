@@ -56,9 +56,6 @@
                 <module>containers/pax-exam-container-openwebbeans</module>
 
                 <module>maven/exam-maven-plugin</module>
-                <module>maven/archetypes/exam-glassfish41-archetype</module>
-                <module>maven/archetypes/exam-osgi-archetype</module>
-                <module>maven/archetypes/exam-karaf-archetype</module>
 
             </modules>
         </profile>
