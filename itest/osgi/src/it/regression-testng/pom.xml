@@ -131,7 +131,7 @@
             <repositories>
                 <repository>
                     <id>jboss-public</id>
-                    <url>http://repository.jboss.org/nexus/content/groups/public</url>
+                    <url>https://repository.jboss.org/nexus/content/groups/public</url>
                 </repository>
             </repositories>
             <dependencies>
