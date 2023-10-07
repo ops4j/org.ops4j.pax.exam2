@@ -32,7 +32,6 @@
         <dependency.atinject.version>1.2</dependency.atinject.version>
         <dependency.deltaspike.version>1.5.1</dependency.deltaspike.version>
         <dependency.glassfish.version>5.1.0</dependency.glassfish.version>
-        <dependency.httpcomponents.version>4.5.13</dependency.httpcomponents.version>
         <dependency.karaf.version>4.4.3</dependency.karaf.version>
 
         <dependency.logback.version>1.2.3</dependency.logback.version>
@@ -701,7 +700,7 @@
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-client</artifactId>
-                <version>3.0.4.Final</version>
+                <version>6.2.5.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -726,17 +725,17 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>${dependency.httpcomponents.version}</version>
+                <version>4.5.14</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>${dependency.httpcomponents.version}</version>
+                <version>4.4.16</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
-                <version>${dependency.httpcomponents.version}</version>
+                <version>4.5.14</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
