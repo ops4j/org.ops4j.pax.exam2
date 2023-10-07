@@ -1,1 +1,1 @@
-mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${org.apache.servicemix.bundles.junit.version}
+mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${dependency.org.apache.servicemix.bundles.junit.version}
