@@ -135,7 +135,7 @@
                                 <artifactItem>
                                     <groupId>org.glassfish.main.distributions</groupId>
                                     <artifactId>glassfish</artifactId>
-                                    <version>3.1.2.2</version>
+                                    <version>${dependency.glassfish.version}</version>
                                     <type>zip</type>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                 </artifactItem>

@@ -54,16 +54,15 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>glassfish4-embedded</id>
+                                <id>glassfish-embedded</id>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <profiles>
-                                        <profile>glassfish4-embedded</profile>
-                                        <profile>glassfish4</profile>
+                                        <profile>glassfish-embedded</profile>
                                     </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/glassfish4-embedded</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/glassfish-embedded</cloneProjectsTo>
                                     <pomExcludes>
                                         <pomExclude>regression-javaee-data/pom.xml</pomExclude>
                                         <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
@@ -77,12 +76,12 @@
         </profile>
 
         <profile>
-            <id>glassfish4-embedded</id>
+            <id>glassfish-embedded</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <pax.exam.container>glassfish4-embedded</pax.exam.container>
+                <pax.exam.container>glassfish-embedded</pax.exam.container>
             </properties>
             <dependencies>
                 <dependency>
@@ -99,7 +98,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemProperties>
-                                <pax.exam.glassfish.config.dir>src/test/resources/glassfish4-config</pax.exam.glassfish.config.dir>
+                                <pax.exam.glassfish.config.dir>src/test/resources/glassfish-config</pax.exam.glassfish.config.dir>
                             </systemProperties>
                         </configuration>
                     </plugin>
