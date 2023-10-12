@@ -24,7 +24,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.featureRepoStandard;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 import static org.ops4j.pax.tinybundles.TinyBundles.bundle;
-import static org.ops4j.pax.tinybundles.TinyBundles.withBnd;
+import static org.ops4j.pax.tinybundles.TinyBundles.bndBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,7 +72,8 @@ public class ServletTest {
             editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
                 RegressionConfiguration.HTTP_PORT),
             streamBundle(createTestBundle())
-
+            mavenBundle().groupId("biz.aQute.bnd").artifactId("biz.aQute.bndlib").version("6.4.1"),
+            mavenBundle().groupId("biz.aQute.bnd").artifactId("biz.aQute.bnd.util").version("6.4.1")
         };
     }
 
