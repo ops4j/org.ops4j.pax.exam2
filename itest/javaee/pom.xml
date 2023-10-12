@@ -31,14 +31,6 @@
         </profile>
 
         <profile>
-            <id>matrix-jboss</id>
-            <modules>
-                <module>src/it/regression-javaee-jboss-module</module>
-                <module>src/it/regression-javaee-data</module>
-            </modules>
-        </profile>
-
-        <profile>
             <id>invoker</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
