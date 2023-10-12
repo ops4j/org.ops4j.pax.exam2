@@ -47,15 +47,15 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>weld2</id>
+                                <id>weld</id>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
                                     <profiles>
-                                        <profile>weld2</profile>
+                                        <profile>weld</profile>
                                     </profiles>
-                                    <cloneProjectsTo>${project.build.directory}/weld2</cloneProjectsTo>
+                                    <cloneProjectsTo>${project.build.directory}/weld</cloneProjectsTo>
                                 </configuration>
                             </execution>
                         </executions>
@@ -77,12 +77,12 @@
         </profile>
 
         <profile>
-            <id>weld2</id>
+            <id>weld</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <pax.exam.container>weld2</pax.exam.container>
+                <pax.exam.container>weld</pax.exam.container>
             </properties>
 
             <dependencies>
