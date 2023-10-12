@@ -54,7 +54,7 @@ public class TomcatContextConfig extends ContextConfig {
         WebappLoader loader = new WebappLoader();
         loader.setLoaderClass(FilteringWebappClassLoader.class.getName());
         context.setLoader(loader);
-    };
+    }
 
     private void registerBeanManager(Context appContext, String jndiObjectFactory,
         String servletListener) {

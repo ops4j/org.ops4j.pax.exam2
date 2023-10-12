@@ -38,15 +38,14 @@ public class PaxExamTomcat extends Tomcat {
     };
 
     @Override
-    public Context addWebapp(Host host, String url, String name, String path) {
+    public Context addWebapp(Host host, String contextPath, String docBase) {
 
         Context ctx = new StandardContext();
-        ctx.setName(name);
-        ctx.setPath(url);
-        ctx.setDocBase(path);
+        ctx.setPath(contextPath);
+        ctx.setDocBase(docBase);
 
         ctx.addLifecycleListener(new DefaultWebXmlListener());
-        URL configFile = getWebappConfigFile(path, url);
+        URL configFile = getWebappConfigFile(docBase, contextPath);
         ctx.setConfigFile(configFile);
 
         ContextConfig ctxCfg = new TomcatContextConfig();
@@ -63,8 +62,8 @@ public class PaxExamTomcat extends Tomcat {
     }
     
     @Override
-    protected URL getWebappConfigFile(String path, String url) {
-        URL configFile = super.getWebappConfigFile(path, url);
+    protected URL getWebappConfigFile(String path, String contextName) {
+        URL configFile = super.getWebappConfigFile(path, contextName);
         if (configFile == null) {
             for (String fileName : CONTEXT_XML) {
                 File contextXml = new File(fileName);

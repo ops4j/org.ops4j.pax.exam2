@@ -41,7 +41,7 @@
         <dependency.testng.version>6.9.10</dependency.testng.version>
         <dependency.org.apache.servicemix.bundles.hamcrest.version>1.3_1</dependency.org.apache.servicemix.bundles.hamcrest.version>
         <dependency.org.apache.servicemix.bundles.junit.version>4.13.2_1</dependency.org.apache.servicemix.bundles.junit.version>
-        <dependency.tomcat.version>8.0.21</dependency.tomcat.version>
+        <dependency.tomcat.version>9.0.81</dependency.tomcat.version>
         <dependency.weld.version>3.1.9.Final</dependency.weld.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
 

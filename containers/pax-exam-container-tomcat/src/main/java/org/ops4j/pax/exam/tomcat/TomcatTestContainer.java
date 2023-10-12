@@ -29,8 +29,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Stack;
 
-import javax.servlet.ServletException;
-
 import org.apache.catalina.Container;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
@@ -132,9 +130,6 @@ public class TomcatTestContainer implements TestContainer {
             deployed.push(applicationName);
         }
         catch (IOException exc) {
-            throw new TestContainerException("Problem deploying " + applicationName, exc);
-        }
-        catch (ServletException exc) {
             throw new TestContainerException("Problem deploying " + applicationName, exc);
         }
     }
