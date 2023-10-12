@@ -19,19 +19,10 @@ package org.ops4j.pax.exam.sample1.repo;
 import javax.enterprise.inject.Specializes;
 
 import org.apache.deltaspike.data.impl.builder.DelegateQueryBuilder;
-import org.apache.deltaspike.data.impl.handler.CdiQueryInvocationContext;
-import org.apache.deltaspike.data.impl.meta.MethodType;
-import org.apache.deltaspike.data.impl.meta.QueryInvocation;
 import org.apache.deltaspike.jpa.api.transaction.Transactional;
 
-
-@QueryInvocation(MethodType.DELEGATE)
 @Specializes
 @Transactional
 public class TransactionalDelegateQueryBuilder extends DelegateQueryBuilder {
-    
-    @Override
-    public Object execute(CdiQueryInvocationContext context) {
-        return super.execute(context);
-    }
+
 }

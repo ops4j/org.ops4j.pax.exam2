@@ -30,7 +30,7 @@
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
         <dependency.asm.version>3.0</dependency.asm.version>
         <dependency.atinject.version>1.2</dependency.atinject.version>
-        <dependency.deltaspike.version>1.5.1</dependency.deltaspike.version>
+        <dependency.deltaspike.version>1.9.6</dependency.deltaspike.version>
         <dependency.glassfish.version>5.1.0</dependency.glassfish.version>
         <dependency.karaf.version>4.4.3</dependency.karaf.version>
 
