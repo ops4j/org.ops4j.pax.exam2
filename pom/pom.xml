@@ -163,11 +163,6 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>3.1.2</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.wildfly.plugins</groupId>
-                    <artifactId>wildfly-maven-plugin</artifactId>
-                    <version>1.0.2.Final</version>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
