@@ -195,9 +195,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.eclipse.tycho</groupId>
+                <groupId>org.eclipse.platform</groupId>
                 <artifactId>org.eclipse.osgi</artifactId>
-                <version>3.7.0.v20110613</version>
+                <version>3.18.500</version>
             </dependency>
 
             <dependency>
@@ -803,7 +803,7 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.tycho</groupId>
+                    <groupId>org.eclipse.platform</groupId>
                     <artifactId>org.eclipse.osgi</artifactId>
                 </dependency>
             </dependencies>
@@ -823,15 +823,15 @@
             <dependencyManagement>
                 <dependencies>
                     <dependency>
-                        <groupId>org.eclipse.tycho</groupId>
+                        <groupId>org.eclipse.platform</groupId>
                         <artifactId>org.eclipse.osgi</artifactId>
-                        <version>3.10.0.v20140606-1445</version>
+                        <version>3.18.500</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.tycho</groupId>
+                    <groupId>org.eclipse.platform</groupId>
                     <artifactId>org.eclipse.osgi</artifactId>
                 </dependency>
             </dependencies>

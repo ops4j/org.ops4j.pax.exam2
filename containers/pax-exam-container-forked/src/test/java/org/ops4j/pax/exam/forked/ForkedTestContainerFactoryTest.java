@@ -76,11 +76,7 @@ public class ForkedTestContainerFactoryTest {
             Assert.assertNotNull(cause);
             Assert.assertEquals(ClassNotFoundException.class.getName(),
                 cause.getClass().getName());
-
-            cause.printStackTrace();
-
-            Assert.assertEquals("org.kohsuke.metainf_services.AnnotationProcessorImpl",
-                cause.getMessage());
+            Assert.assertTrue(cause.getMessage().startsWith("org.kohsuke.metainf_services.AnnotationProcessorImpl"));
         }
     }
 
