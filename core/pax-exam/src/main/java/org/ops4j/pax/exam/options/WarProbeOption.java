@@ -47,6 +47,7 @@ public class WarProbeOption implements Option {
         "glassfish-embedded-", //
         "hk2-api-", //
         "javaee-api-", //
+        "jakartaee-api", //
         "jboss-log-", //
         "jersey-client-", //
         "jersey-common-", //
