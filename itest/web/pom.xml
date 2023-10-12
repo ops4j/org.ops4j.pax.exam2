@@ -48,7 +48,7 @@
                                 <configuration>
                                     <profiles>
                                         <profile>tomcat</profile>
-                                        <profile>owb-web</profile>
+                                        <profile>openwebbeans-web</profile>
                                     </profiles>
                                     <cloneProjectsTo>${project.build.directory}/tomcat-openwebbeans</cloneProjectsTo>
                                 </configuration>
@@ -129,7 +129,7 @@
         </profile>
 
         <profile>
-            <id>owb-web</id>
+            <id>openwebbeans-web</id>
 
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -166,12 +166,6 @@
                 <dependency>
                     <groupId>org.apache.openwebbeans</groupId>
                     <artifactId>openwebbeans-web</artifactId>
-                    <scope>test</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.openwebbeans</groupId>
-                    <artifactId>openwebbeans-tomcat7</artifactId>
                     <scope>test</scope>
                 </dependency>
 

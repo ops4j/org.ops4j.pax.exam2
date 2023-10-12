@@ -106,12 +106,12 @@
         </profile>
 
         <profile>
-            <id>owb15</id>
+            <id>openwebbeans</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <pax.exam.container>owb15</pax.exam.container>
+                <pax.exam.container>openwebbeans</pax.exam.container>
             </properties>
 
             <dependencies>

@@ -24,7 +24,7 @@
         <dependency.base.version>1.5.1</dependency.base.version>
         <dependency.slf4j.version>1.7.25</dependency.slf4j.version>
         <dependency.junit.version>4.13.2</dependency.junit.version>
-        <dependency.openwebbeans.version>1.6.2</dependency.openwebbeans.version>
+        <dependency.openwebbeans.version>2.0.27</dependency.openwebbeans.version>
         <dependency.osgicore.version>4.3.1</dependency.osgicore.version>
         <dependency.osgicomp.version>4.3.1</dependency.osgicomp.version>
         <dependency.mockito.version>1.9.5</dependency.mockito.version>
@@ -513,13 +513,6 @@
                 <artifactId>openwebbeans-web</artifactId>
                 <version>${dependency.openwebbeans.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-tomcat7</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
 
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
