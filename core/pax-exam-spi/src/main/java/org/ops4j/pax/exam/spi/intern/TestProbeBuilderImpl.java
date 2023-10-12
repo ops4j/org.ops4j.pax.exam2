@@ -18,8 +18,8 @@
 package org.ops4j.pax.exam.spi.intern;
 
 import static org.ops4j.pax.exam.Constants.PROBE_EXECUTABLE;
-import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
-import static org.ops4j.pax.tinybundles.core.TinyBundles.withClassicBuilder;
+import static org.ops4j.pax.tinybundles.TinyBundles.bundle;
+import static org.ops4j.pax.tinybundles.TinyBundles.rawBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +42,7 @@ import org.ops4j.pax.exam.TestInstantiationInstruction;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.spi.ContentCollector;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundle;
 import org.ops4j.store.Store;
 import org.osgi.framework.Constants;
 
@@ -120,7 +120,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
         try {
             TinyBundle bundle = prepareProbeBundle(createExtraIgnores());
             return new DefaultTestProbeProvider(getTests(), store, store.store(bundle
-                .build(withClassicBuilder())));
+                .build(rawBuilder())));
 
         }
         catch (IOException e) {
@@ -129,20 +129,20 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     }
 
     private TinyBundle prepareProbeBundle(Properties p) throws IOException {
-        TinyBundle bundle = bundle(store).set(Constants.DYNAMICIMPORT_PACKAGE, "*");
+        TinyBundle bundle = bundle(store).setHeader(Constants.DYNAMICIMPORT_PACKAGE, "*");
 
-        bundle.set(Constants.BUNDLE_SYMBOLICNAME, "");
-        bundle.set(Constants.BUNDLE_MANIFESTVERSION, "2");
+        bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, "");
+        bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, "2");
         for (Object key : extraProperties.keySet()) {
-            bundle.set((String) key, (String) extraProperties.get(key));
+            bundle.setHeader((String) key, (String) extraProperties.get(key));
         }
         for (Object key : p.keySet()) {
-            bundle.set((String) key, (String) p.get(key));
+            bundle.setHeader((String) key, (String) p.get(key));
         }
 
         Map<String, URL> map = collectResources();
         for (String item : map.keySet()) {
-            bundle.add(item, map.get(item));
+            bundle.addResource(item, map.get(item));
         }
         return bundle;
     }

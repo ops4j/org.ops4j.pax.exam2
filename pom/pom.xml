@@ -20,7 +20,7 @@
         <dependency.paxurl.version>2.6.8</dependency.paxurl.version>
         <dependency.pax.logging.version>1.10.3</dependency.pax.logging.version>
         <dependency.swissbox.version>1.8.3</dependency.swissbox.version>
-        <dependency.tinybundles.version>2.1.1</dependency.tinybundles.version>
+        <dependency.tinybundles.version>4.0.0</dependency.tinybundles.version>
         <dependency.base.version>1.5.1</dependency.base.version>
         <dependency.slf4j.version>1.7.25</dependency.slf4j.version>
         <dependency.junit.version>4.13.2</dependency.junit.version>

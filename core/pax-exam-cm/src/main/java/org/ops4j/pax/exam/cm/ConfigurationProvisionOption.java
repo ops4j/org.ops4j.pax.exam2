@@ -31,8 +31,8 @@ import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.cm.internal.ConfigurationOptionActivator;
 import org.ops4j.pax.exam.cm.internal.ConfigurationOptionConfigurationListener;
 import org.ops4j.pax.exam.options.ProvisionOption;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.pax.tinybundles.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.Constants;
 
 /**
@@ -201,14 +201,14 @@ public class ConfigurationProvisionOption implements org.ops4j.pax.exam.cm.Confi
         }
         ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
         TinyBundle bundle = TinyBundles.bundle();
-        bundle.add(ConfigurationOptionConfigurationListener.class);
-        bundle.add(ConfigurationOptionActivator.class).add("override.obj", stream);
+        bundle.addClass(ConfigurationOptionConfigurationListener.class);
+        bundle.addClass(ConfigurationOptionActivator.class).addResource("override.obj", stream);
         bundle
-            .set(Constants.BUNDLE_SYMBOLICNAME, "PAXExamConfigurationOption-" + UUID.randomUUID());
-        bundle.set(Constants.IMPORT_PACKAGE,
+            .setHeader(Constants.BUNDLE_SYMBOLICNAME, "PAXExamConfigurationOption-" + UUID.randomUUID());
+        bundle.setHeader(Constants.IMPORT_PACKAGE,
             "org.osgi.framework,org.osgi.service.cm,org.osgi.util.tracker,org.slf4j");
-        bundle.set(Constants.BUNDLE_ACTIVATOR, ConfigurationOptionActivator.class.getName());
-        bundle.set(Constants.BUNDLE_MANIFESTVERSION, "2");
+        bundle.setHeader(Constants.BUNDLE_ACTIVATOR, ConfigurationOptionActivator.class.getName());
+        bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, "2");
         return CoreOptions.streamBundle(bundle.build()).startLevel(1).start(true).update(false);
     }
 

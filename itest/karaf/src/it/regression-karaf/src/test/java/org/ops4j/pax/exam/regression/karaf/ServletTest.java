@@ -23,8 +23,8 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfi
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.featureRepoStandard;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
-import static org.ops4j.pax.tinybundles.core.TinyBundles.bundle;
-import static org.ops4j.pax.tinybundles.core.TinyBundles.withBnd;
+import static org.ops4j.pax.tinybundles.TinyBundles.bundle;
+import static org.ops4j.pax.tinybundles.TinyBundles.withBnd;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -128,9 +128,9 @@ public class ServletTest {
 
     private InputStream createTestBundle() {
         return bundle()
-            .add(EchoServlet.class)
-            .add(ServletActivator.class)
-            .set(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())
-            .build(withBnd());
+            .addClass(EchoServlet.class)
+            .addClass(ServletActivator.class)
+            .setHeader(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())
+            .build(bndBuilder());
     }
 }

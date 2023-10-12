@@ -39,8 +39,8 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.pax.tinybundles.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundles;
 import org.ops4j.store.Handle;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
@@ -63,10 +63,10 @@ public class FragmentTest {
 
     private URL createFragmentBundle() {
         TinyBundle bundle = TinyBundles.bundle()
-            .set(Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.sample9.pde")
-            .set(Constants.BUNDLE_MANIFESTVERSION, "2")
-            .set(Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.sample9.fragment")
-            .add("messages.properties", getClass().getResource("/messages.properties"));
+            .setHeader(Constants.FRAGMENT_HOST, "org.ops4j.pax.exam.sample9.pde")
+            .setHeader(Constants.BUNDLE_MANIFESTVERSION, "2")
+            .setHeader(Constants.BUNDLE_SYMBOLICNAME, "org.ops4j.pax.exam.sample9.fragment")
+            .addResource("messages.properties", getClass().getResource("/messages.properties"));
 
         try {
             Store<InputStream> store = StoreFactory.anonymousStore();

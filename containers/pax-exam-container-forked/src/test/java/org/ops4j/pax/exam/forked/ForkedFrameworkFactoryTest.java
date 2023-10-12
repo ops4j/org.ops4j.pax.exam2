@@ -39,12 +39,14 @@ import org.junit.rules.TestName;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.TestContainerException;
 import org.ops4j.pax.swissbox.framework.RemoteFramework;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.FrameworkFactory;
+
+import static org.ops4j.pax.tinybundles.TinyBundles.rawBuilder;
 
 public class ForkedFrameworkFactoryTest {
 
@@ -150,11 +152,11 @@ public class ForkedFrameworkFactoryTest {
     }
 
     private File generateBundle() throws IOException {
-        InputStream stream = TinyBundles.bundle().add(ClasspathTestActivator.class)
-                .set(Constants.BUNDLE_SYMBOLICNAME, "boot.classpath.test.generated")
-                .set(Constants.IMPORT_PACKAGE, "org.osgi.framework, org.kohsuke.metainf_services")
-                .set(Constants.BUNDLE_ACTIVATOR, ClasspathTestActivator.class.getName())
-                .build();
+        InputStream stream = TinyBundles.bundle().addClass(ClasspathTestActivator.class)
+                .setHeader(Constants.BUNDLE_SYMBOLICNAME, "boot.classpath.test.generated")
+                .setHeader(Constants.IMPORT_PACKAGE, "org.osgi.framework, org.kohsuke.metainf_services")
+                .setHeader(Constants.BUNDLE_ACTIVATOR, ClasspathTestActivator.class.getName())
+                .build(rawBuilder());
 
         File bundle = new File("target/bundles/boot-classpath-generated.jar");
         FileUtils.copyInputStreamToFile(stream, bundle);
