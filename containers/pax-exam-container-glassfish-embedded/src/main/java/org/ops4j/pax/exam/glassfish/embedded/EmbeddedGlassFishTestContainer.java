@@ -57,7 +57,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * A {@link TestContainer} for the GlassFish 3.1 Java EE 6 application server.
+ * A {@link TestContainer} for the GlassFish application server.
  * <p>
  * This container uses Embedded GlassFish and only Java EE mode, but not OSGi mode. You deploy WAR
  * modules via Pax Exam options (but no OSGi bundles).
