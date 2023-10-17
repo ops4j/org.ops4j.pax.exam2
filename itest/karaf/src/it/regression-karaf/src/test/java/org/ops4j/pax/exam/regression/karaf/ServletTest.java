@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertEquals;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
@@ -37,6 +38,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import javax.inject.Inject;
+import javax.servlet.Servlet;
 
 import org.apache.karaf.features.BootFinished;
 import org.junit.Before;
@@ -46,9 +48,7 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.regression.karaf.servlet.EchoServlet;
-import org.ops4j.pax.exam.regression.karaf.servlet.ServletActivator;
-import org.ops4j.pax.web.service.spi.ServletEvent;
-import org.ops4j.pax.web.service.spi.ServletListener;
+import org.ops4j.pax.exam.util.Filter;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
@@ -62,50 +62,27 @@ public class ServletTest {
      */
     @Inject
     BootFinished bootFinished;
-    
+
+    @Inject
+    @Filter("(osgi.http.whiteboard.servlet.pattern=/test/services)")
+    Servlet servlet;
+
     @Configuration
     public Option[] config() {
         return new Option[]{ 
             regressionDefaults("target/paxexam/unpack2/"),
-            features(featureRepoStandard(), "http"),
+            features(featureRepoStandard(), "http-whiteboard", "scr"),
             // set the system property for pax web
             editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",
                 RegressionConfiguration.HTTP_PORT),
-            streamBundle(createTestBundle())
-            mavenBundle().groupId("biz.aQute.bnd").artifactId("biz.aQute.bndlib").version("6.4.1"),
-            mavenBundle().groupId("biz.aQute.bnd").artifactId("biz.aQute.bnd.util").version("6.4.1")
+            streamBundle(createTestBundle()),
+            mavenBundle().groupId("biz.aQute.bnd").artifactId("biz.aQute.bndlib").versionAsInProject(),
+            mavenBundle().groupId("biz.aQute.bnd").artifactId("biz.aQute.bnd.util").versionAsInProject()
         };
-    }
-
-    @Before
-    public void registerListener() {
-        ServletListener webListener = new ServletListener() {
-            public void servletEvent(ServletEvent event) {
-                System.out.println(event);
-                if (event.getType() == ServletEvent.DEPLOYED && EchoServlet.ALIAS.equals(event.getAlias())) {
-                    notifyMe();
-                }
-            }
-        };
-        Dictionary<String, ?> properties = new Hashtable<String, String>();
-        bundleContext.registerService(ServletListener.class, webListener, properties);
-    }
-    
-    private void notifyMe() {
-        synchronized (this) {
-            this.notify();
-        }
-    }
-
-    private void waitForServlet() throws InterruptedException {
-        synchronized (this) {
-            wait(1000);
-        }
     }
 
     @Test
     public void testService() throws Exception {
-        waitForServlet();
         System.out.println("Trying to get url");
         URL url = new URL("http://localhost:" + RegressionConfiguration.HTTP_PORT + "/test/services");
         URLConnection conn = url.openConnection();
@@ -130,8 +107,7 @@ public class ServletTest {
     private InputStream createTestBundle() {
         return bundle()
             .addClass(EchoServlet.class)
-            .addClass(ServletActivator.class)
-            .setHeader(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())
             .build(bndBuilder());
     }
+
 }

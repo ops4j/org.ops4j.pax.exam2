@@ -21,15 +21,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class EchoServlet extends HttpServlet {
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
 
-    private static final long serialVersionUID = 1068664967007496710L;
-    public static final String ALIAS = "/test/services";
+@Component(
+    service = {
+        Servlet.class
+    },
+    property = {
+        HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_PATTERN + "=/test/services"
+    }
+)
+public class EchoServlet extends HttpServlet {
 
     // now we just send a echo response back
     @Override

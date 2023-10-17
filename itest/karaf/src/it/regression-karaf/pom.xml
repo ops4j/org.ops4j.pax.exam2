@@ -18,6 +18,18 @@
     <name>OPS4J Pax Exam Karaf Container Regression Tests</name>
 
     <dependencies>
+        <!-- OSGi -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.http.whiteboard</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
@@ -75,6 +87,19 @@
         </dependency>
 
 
+
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>biz.aQute.bndlib</artifactId>
+            <version>6.4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>biz.aQute.bnd.util</artifactId>
+            <version>6.4.1</version>
+            <scope>test</scope>
+        </dependency>
         <!-- For sane logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
