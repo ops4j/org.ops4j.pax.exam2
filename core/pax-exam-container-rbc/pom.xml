@@ -32,7 +32,8 @@
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -66,11 +67,6 @@
 			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>test</scope>
-        </dependency>        
     </dependencies>
 
 </project>

@@ -65,7 +65,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
+                    <artifactId>osgi.core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -82,7 +82,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
+                    <artifactId>osgi.core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -139,12 +139,6 @@
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
         </dependency>
 

@@ -65,7 +65,6 @@ public class WabSampleTest {
             mavenBundle("org.eclipse.jetty", "jetty-xml").version("8.1.4.v20120524"),
             mavenBundle("org.eclipse.jetty", "jetty-servlet").version("8.1.4.v20120524"),
             mavenBundle("org.apache.geronimo.specs", "geronimo-servlet_3.0_spec").version("1.0"),
-            mavenBundle("org.osgi", "org.osgi.compendium", "4.3.0"),
 
             mavenBundle("org.slf4j", "slf4j-api", "1.6.4"),
             mavenBundle("org.slf4j", "slf4j-simple", "1.6.4").noStart(),
