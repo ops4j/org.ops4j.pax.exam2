@@ -56,6 +56,9 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
+                                <requireJavaVersion>
+                                    <version>11</version>
+                                </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>(3.0.0,)</version>
                                     <message>This project requires Maven 3</message>
@@ -134,9 +137,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <release>11</release>
                     </configuration>
                 </plugin>
                 <plugin>
