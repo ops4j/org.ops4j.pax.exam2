@@ -27,10 +27,14 @@ import org.testng.internal.ConstructorOrMethod;
 public class ReactorTestNGMethod extends ClonedMethod {
 
     private static final long serialVersionUID = 1L;
+
+    private Method method;
+
     private TestAddress address;
 
     public ReactorTestNGMethod(ITestNGMethod method, Method javaMethod, TestAddress address) {
         super(method, javaMethod);
+        this.method = javaMethod;
         this.address = address;
     }
 
@@ -41,7 +45,7 @@ public class ReactorTestNGMethod extends ClonedMethod {
 
     @Override
     public ConstructorOrMethod getConstructorOrMethod() {
-        return new ConstructorOrMethod(getMethod());
+        return new ConstructorOrMethod(method);
     }
 
     @Override
