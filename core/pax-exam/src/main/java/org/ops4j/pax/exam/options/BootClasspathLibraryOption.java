@@ -22,7 +22,7 @@ import static org.ops4j.lang.NullArgumentException.validateNotNull;
 import org.ops4j.pax.exam.Option;
 
 /**
- * Option specifying a library that will be made available in teh boot classpath.
+ * Option specifying a library that will be made available in the boot classpath.
  * 
  * @author Alin Dreghiciu (adreghiciu@gmail.com)
  * @since 0.5.0, April 29, 2009

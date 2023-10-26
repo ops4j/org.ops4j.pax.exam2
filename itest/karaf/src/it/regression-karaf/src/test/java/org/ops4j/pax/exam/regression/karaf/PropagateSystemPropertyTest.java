@@ -31,13 +31,13 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class PropagateSystemPropertyTest {
+public class PropagateSystemPropertyTest extends TestBase {
 
     @Configuration
     public Option[] config() {
         System.setProperty("pax.exam.test", "propagated");
         return options(
-            regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             propagateSystemProperty("pax.exam.test"));
     }
 

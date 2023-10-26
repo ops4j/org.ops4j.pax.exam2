@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.regression.karaf;
 import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -33,14 +34,15 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 @RunWith(PaxExam.class)
-public class UseFeatureInsteadOfDeployFolderTest {
+public class UseFeatureInsteadOfDeployFolderTest extends TestBase {
 
     @Inject
     private BundleContext bc;
 
     @Configuration
     public Option[] config() {
-        return options(RegressionConfiguration.regressionDefaults(),
+        return options(
+            regressionDefaults(unpackDirectory()),
             mavenBundle("org.slf4j", "slf4j-api", "1.6.1"));
     }
 

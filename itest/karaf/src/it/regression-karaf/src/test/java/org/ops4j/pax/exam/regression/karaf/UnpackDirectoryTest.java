@@ -30,13 +30,15 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class UnpackDirectoryTest {
-    final static String UNPACK_DIR_NAME = "unpackdirectorytest";
+public class UnpackDirectoryTest extends TestBase {
+
+    final static String UNPACK_DIR_NAME = UnpackDirectoryTest.class.getSimpleName();
 
     @Configuration
     public Option[] config() {
         return options( 
-            regressionDefaults("target/" + UNPACK_DIR_NAME));
+            regressionDefaults(unpackDirectory())
+        );
     }
 
     @Test

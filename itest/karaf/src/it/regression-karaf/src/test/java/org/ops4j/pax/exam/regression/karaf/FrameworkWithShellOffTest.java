@@ -31,14 +31,14 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
 
 @RunWith(PaxExam.class)
-public class FrameworkWithShellOffTest {
+public class FrameworkWithShellOffTest extends TestBase {
     @Inject
     BundleContext bc;
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             configureConsole().ignoreLocalConsole().ignoreRemoteShell() };
     }
 

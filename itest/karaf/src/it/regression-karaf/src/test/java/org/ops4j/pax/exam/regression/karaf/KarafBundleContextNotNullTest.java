@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertNotNull;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
 
@@ -31,7 +32,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
 
 @RunWith(PaxExam.class)
-public class KarafBundleContextNotNullTest {
+public class KarafBundleContextNotNullTest extends TestBase {
 
     @Inject
     private BundleContext bundleContext;
@@ -53,7 +54,9 @@ public class KarafBundleContextNotNullTest {
 
     @Configuration
     public Option[] config() {
-        return new Option[]{ RegressionConfiguration.regressionDefaults() };
+        return new Option[]{
+            regressionDefaults(unpackDirectory())
+        };
     }
 
     @Test

@@ -32,12 +32,12 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class BootDelegationOptionTest {
+public class BootDelegationOptionTest extends TestBase {
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             bootDelegationPackage("com.oracle.*") 
         };
     }

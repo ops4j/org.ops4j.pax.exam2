@@ -66,7 +66,7 @@ public class DependenciesDeployer {
             FileUtils.copyURLToFile(
                 new URL(libraryUrl.getURL()),
                 createUnique(libraryUrl.getURL(), new File(
-                    karafHome + "/lib"), new String[] { "jar" }));
+                    karafHome + "/lib/boot"), new String[] { "jar" }));
         }
     }
     

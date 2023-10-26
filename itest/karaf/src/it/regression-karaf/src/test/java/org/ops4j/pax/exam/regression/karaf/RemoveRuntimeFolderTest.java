@@ -29,19 +29,20 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class RemoveRuntimeFolderTest {
+public class RemoveRuntimeFolderTest extends TestBase {
 
     private static File runtimeFolder;
 
     @Configuration
     public Option[] config() {
-        return new Option[] { regressionDefaults("target/paxexam/unpack/"), };
+        return new Option[] { regressionDefaults(unpackDirectory()), };
     }
 
     @Test
     public void test() throws Exception {
         runtimeFolder = new File(".").getAbsoluteFile().getParentFile();
         Assert.assertTrue("Runtime folder should exist while test runs", runtimeFolder.exists());
+        // TODO keepRuntimeFolder() option is configured in regressionDefaults()
         System.out.println("Please check manually that the folder "
             + runtimeFolder.getAbsolutePath() + " is deleted after this test");
     }

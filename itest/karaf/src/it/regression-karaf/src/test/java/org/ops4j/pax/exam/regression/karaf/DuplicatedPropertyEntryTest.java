@@ -31,7 +31,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 @RunWith(PaxExam.class)
-public class DuplicatedPropertyEntryTest {
+public class DuplicatedPropertyEntryTest extends TestBase {
 
     @Inject
     private ConfigurationAdmin configAdmin;
@@ -39,7 +39,7 @@ public class DuplicatedPropertyEntryTest {
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             editConfigurationFileExtend("etc/tests.cfg", "mykey", "myvalue1"),
             editConfigurationFileExtend("etc/tests.cfg", "mykey", "myvalue2") };
     }

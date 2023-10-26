@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.regression.karaf;
 import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;
 
@@ -33,7 +34,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 @RunWith(PaxExam.class)
-public class DuplicatedPropertyEntryFromFileTest {
+public class DuplicatedPropertyEntryFromFileTest extends TestBase {
 
     @Inject
     private ConfigurationAdmin configAdmin;
@@ -42,7 +43,7 @@ public class DuplicatedPropertyEntryFromFileTest {
     public Option[] config() {
         return new Option[] //
         {
-         RegressionConfiguration.regressionDefaults(),
+         regressionDefaults(unpackDirectory()),
          composite(editConfigurationFileExtend("etc/tests.cfg",
                                      new File("src/test/resources/BaseKarafDefaultFrameworkDuplicatedPropertyEntryTestFirstKey"))),
          composite(editConfigurationFileExtend("etc/tests.cfg",

@@ -36,7 +36,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class FeaturesAndBootFeaturesTest {
+public class FeaturesAndBootFeaturesTest extends TestBase {
 
     @Inject
     private FeaturesService featuresService;
@@ -47,7 +47,7 @@ public class FeaturesAndBootFeaturesTest {
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             editConfigurationFilePut(BOOT, "config, log, framework, feature"),
             features(featureRepoStandard(), "kar")
         };

@@ -33,7 +33,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class FeaturesScannerProvisionTest {
+public class FeaturesScannerProvisionTest extends TestBase {
 
     @Inject
     private FeaturesService featuresService;
@@ -44,7 +44,7 @@ public class FeaturesScannerProvisionTest {
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             features(featureRepoStandard(), "scheduler", "wrapper", "http") };
     }
 

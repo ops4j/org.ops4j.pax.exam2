@@ -31,14 +31,14 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class EquinoxFrameworkTest {
+public class EquinoxFrameworkTest extends TestBase {
 
     @Inject
     SystemService systemService;
 
     @Configuration
     public Option[] config() {
-        return new Option[] { regressionDefaults() };
+        return new Option[] { regressionDefaults(unpackDirectory()) };
     }
 
     @Test

@@ -19,7 +19,6 @@ package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertEquals;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
@@ -35,7 +34,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 @RunWith(PaxExam.class)
-public class ReplaceConfigFileTest {
+public class ReplaceConfigFileTest extends TestBase {
 
     @Inject
     private ConfigurationAdmin configAdmin;
@@ -43,8 +42,7 @@ public class ReplaceConfigFileTest {
     @Configuration
     public Option[] config() {
         return options(
-            regressionDefaults("target/paxexam/unpack/"),
-            keepRuntimeFolder(),
+            regressionDefaults(unpackDirectory()),
             replaceConfigurationFile("etc/replaced.cfg",
                 new File("src/test/resources/replaced.cfg")));
     }

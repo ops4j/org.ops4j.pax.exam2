@@ -17,7 +17,6 @@
 
 package org.ops4j.pax.exam.regression.karaf;
 
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.io.File;
@@ -30,15 +29,15 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class KeepFolderTest {
+public class KeepFolderTest extends TestBase {
 
     private File runtimeFolder;
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults("target/paxexam/unpack/"),
-            keepRuntimeFolder() };
+            regressionDefaults(unpackDirectory()),
+        };
     }
 
     @Test

@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
@@ -30,13 +29,12 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 
 @RunWith(PaxExam.class)
-public class LogLevelTest {
+public class LogLevelTest extends TestBase {
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults("target/paxexam/log/"),
-            keepRuntimeFolder(),
+            regressionDefaults(unpackDirectory()),
             logLevel(LogLevel.ERROR) };
     }
 

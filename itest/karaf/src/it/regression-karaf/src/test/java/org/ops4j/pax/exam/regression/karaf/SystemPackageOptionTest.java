@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.regression.karaf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.io.FileInputStream;
 import java.util.Properties;
@@ -31,12 +32,12 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class SystemPackageOptionTest {
+public class SystemPackageOptionTest extends TestBase {
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-            RegressionConfiguration.regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             systemPackage("org.osgi.framework.launch") };
     }
 
@@ -48,6 +49,6 @@ public class SystemPackageOptionTest {
         // Test for our added package
         assertThat(actualExtra, containsString("org.osgi.framework.launch"));
         // Test for one of the standard packages
-        assertThat(actualExtra, containsString("javax.xml.stream"));
+        assertThat(actualExtra, containsString("org.apache.karaf.branding"));
     }
 }

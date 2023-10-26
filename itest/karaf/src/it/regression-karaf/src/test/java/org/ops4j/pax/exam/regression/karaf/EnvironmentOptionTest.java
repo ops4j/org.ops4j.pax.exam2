@@ -18,6 +18,7 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertEquals;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +28,12 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.options.extra.EnvironmentOption;
 
 @RunWith(PaxExam.class)
-public class EnvironmentOptionTest {
+public class EnvironmentOptionTest extends TestBase {
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-                RegressionConfiguration.regressionDefaults(),
+                regressionDefaults(unpackDirectory()),
                     new EnvironmentOption("TEST=Option") };
     }
 

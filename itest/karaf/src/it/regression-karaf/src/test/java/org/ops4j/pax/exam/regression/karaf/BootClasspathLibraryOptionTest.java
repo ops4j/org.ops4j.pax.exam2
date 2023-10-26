@@ -30,19 +30,19 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class BootClasspathLibraryOptionTest {
+public class BootClasspathLibraryOptionTest extends TestBase {
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults(),
+            regressionDefaults(unpackDirectory()),
             bootClasspathLibrary("mvn:commons-naming/commons-naming-core/20031116.223527") 
             };
     }
 
     @Test
     public void test() throws Exception {
-        File file = new File("lib");
+        File file = new File("lib/boot");
         File[] files = file.listFiles();
         int foundJarFiles = 0;
         for (File libFile : files) {
@@ -50,8 +50,8 @@ public class BootClasspathLibraryOptionTest {
                 foundJarFiles++;
             }
         }
-        // Karaf 4.1.1 has 2 boot libs, we expect another one to show up
-        assertEquals(2 + 1, foundJarFiles);
+        // Karaf 4.4.4 has 5 boot libs, we expect another one to show up
+        assertEquals(5 + 1, foundJarFiles);
     }
 
 }

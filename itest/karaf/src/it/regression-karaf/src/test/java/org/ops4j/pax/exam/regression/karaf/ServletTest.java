@@ -34,14 +34,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 import javax.inject.Inject;
 import javax.servlet.Servlet;
 
 import org.apache.karaf.features.BootFinished;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -50,10 +47,9 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.regression.karaf.servlet.EchoServlet;
 import org.ops4j.pax.exam.util.Filter;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 
 @RunWith(PaxExam.class)
-public class ServletTest {
+public class ServletTest extends TestBase {
     @Inject
     protected BundleContext bundleContext;
 
@@ -70,7 +66,7 @@ public class ServletTest {
     @Configuration
     public Option[] config() {
         return new Option[]{ 
-            regressionDefaults("target/paxexam/unpack2/"),
+            regressionDefaults( unpackDirectory()),
             features(featureRepoStandard(), "http-whiteboard", "scr"),
             // set the system property for pax web
             editConfigurationFilePut("etc/org.ops4j.pax.web.cfg", "org.osgi.service.http.port",

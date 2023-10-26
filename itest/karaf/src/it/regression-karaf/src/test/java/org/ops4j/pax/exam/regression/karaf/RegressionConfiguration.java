@@ -26,6 +26,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configure
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureSecurity;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 
 import java.io.File;
 
@@ -50,15 +51,13 @@ public class RegressionConfiguration {
 
     public static final String HTTP_PORT = "9080";
 
-    public static Option regressionDefaults() {
-        return regressionDefaults("target/exam");
-    }
-
     public static Option regressionDefaults(String unpackDir) {
         return composite(
             karafDistributionConfiguration().frameworkUrl(mvnKarafDist())
                 .unpackDirectory(unpackDir == null ? null : new File(unpackDir)),
             
+            keepRuntimeFolder(),
+
             configureConsole().ignoreLocalConsole(),
             configureConsole().ignoreRemoteShell(),
             configureSecurity().disableKarafMBeanServerBuilder(),

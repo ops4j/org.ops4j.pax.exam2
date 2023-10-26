@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.regression.karaf;
 
 import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.useOwnExamBundlesStartLevel;
 import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
@@ -33,13 +32,12 @@ import org.ops4j.pax.exam.junit.PaxExam;
  * shown and we see if this option breaks generally.
  */
 @RunWith(PaxExam.class)
-public class BundleStartLvlTest {
+public class BundleStartLvlTest extends TestBase {
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-            regressionDefaults("target/paxexam/startLvl/"),
-            keepRuntimeFolder(),
+            regressionDefaults(unpackDirectory()),
             useOwnExamBundlesStartLevel(4)
         };
     }

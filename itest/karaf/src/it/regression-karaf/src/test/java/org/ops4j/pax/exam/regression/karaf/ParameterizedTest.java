@@ -21,6 +21,7 @@ package org.ops4j.pax.exam.regression.karaf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.regression.karaf.RegressionConfiguration.regressionDefaults;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.ops4j.pax.exam.junit.PaxExamParameterized;
 import org.ops4j.pax.exam.sample8.ds.Calculator;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
+import org.ops4j.pax.exam.util.PathUtils;
 
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerClass.class)
@@ -63,8 +65,9 @@ public class ParameterizedTest {
 
     @Configuration
     public static Option[] config() {
+        final String unpackDirectory = String.format("%s/target/paxexam/%s/", PathUtils.getBaseDir(), ParameterizedTest.class.getSimpleName());
         return new Option[] {
-            RegressionConfiguration.regressionDefaults(),
+            regressionDefaults(unpackDirectory),
             mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"),
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", Info.getPaxExamVersion()) };
     }
