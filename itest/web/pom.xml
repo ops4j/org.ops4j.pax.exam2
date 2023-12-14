@@ -170,8 +170,8 @@
                 </dependency>
 
                 <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+                    <groupId>jakarta.inject</groupId>
+                    <artifactId>jakarta.inject-api</artifactId>
                     <scope>test</scope>
                 </dependency>
 
@@ -193,8 +193,8 @@
 
             <dependencies>
                 <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-atinject_1.0_spec</artifactId>
+                    <groupId>jakarta.inject</groupId>
+                    <artifactId>jakarta.inject-api</artifactId>
                 </dependency>
 
             </dependencies>

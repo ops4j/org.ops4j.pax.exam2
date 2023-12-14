@@ -40,7 +40,7 @@ public class WarProbeOption implements Option {
     public static final String[] DEFAULT_CLASS_PATH_EXCLUDES = { //
     ".cp", //
         "bndlib", //
-        "geronimo-atinject_", //
+        "jakarta.inject-api", //
         "geronimo-ejb_", //
         "geronimo-jcdi_", //
         "geronimo-jpa_", //

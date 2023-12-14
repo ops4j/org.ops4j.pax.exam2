@@ -97,11 +97,6 @@
                     <artifactId>weld-se-core</artifactId>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
-                    <groupId>javax.enterprise</groupId>
-                    <artifactId>cdi-api</artifactId>
-                    <scope>test</scope>
-                </dependency>
             </dependencies>
         </profile>
 
@@ -133,20 +128,9 @@
                     <scope>test</scope>
                 </dependency>
                 <dependency>
-                    <groupId>javax.enterprise</groupId>
-                    <artifactId>cdi-api</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
                     <version>3.1.0</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                    <version>1.2</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

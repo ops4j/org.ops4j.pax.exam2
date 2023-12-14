@@ -169,7 +169,7 @@ public class Info {
     }
 
     /**
-     * Discovers the Geronimo Atinject version. If version cannot be determined returns an empty string.
+     * Discovers the Jakarta (javax) Inject version. If version cannot be determined returns an empty string.
      * 
      * @return Pax Tinybundles version
      */
