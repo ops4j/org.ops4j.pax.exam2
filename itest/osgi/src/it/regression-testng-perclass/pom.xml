@@ -126,36 +126,4 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>jbosgi</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <pax.exam.framework>jbosgi</pax.exam.framework>
-            </properties>
-            <repositories>
-                <repository>
-                    <id>jboss-public</id>
-                    <url>https://repository.jboss.org/nexus/content/groups/public</url>
-                </repository>
-            </repositories>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.osgi.framework</groupId>
-                    <artifactId>jbosgi-framework-aggregated</artifactId>
-                    <version>1.1.0</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
-
 </project>
