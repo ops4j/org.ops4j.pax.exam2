@@ -20,15 +20,14 @@ package org.ops4j.pax.exam.nat.internal;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.ops4j.pax.exam.ExamSystem;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -51,7 +50,7 @@ public class NativeContainerTest {
     public void starting() throws IOException {
         FrameworkFactory ff = mock(FrameworkFactory.class);
         Framework fw = mock(Framework.class);
-        when(ff.newFramework(Matchers.<Map<String, String>> anyObject())).thenReturn(fw);
+        when(ff.newFramework(any())).thenReturn(fw);
         ExamSystem system = mock(ExamSystem.class);
 
         NativeTestContainer container = new NativeTestContainer(system, ff);

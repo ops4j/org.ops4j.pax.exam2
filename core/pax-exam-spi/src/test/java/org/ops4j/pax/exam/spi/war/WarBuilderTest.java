@@ -3,7 +3,7 @@ package org.ops4j.pax.exam.spi.war;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.warProbe;
 import static org.ops4j.pax.exam.spi.Probes.builder;
@@ -38,6 +38,8 @@ public class WarBuilderTest {
     private File tempDir;
     private ZipFile war;
     
+    private static final String MOCKITO_VERSION = "5.8.0"; // needs to match dependency in project
+
     @BeforeClass
     public static void setUp() throws IOException {
         File pomProperties = new File("target/classes/META-INF/maven/org.ops4j.pax.exam/pax-exam-spi/pom.properties");
@@ -118,7 +120,7 @@ public class WarBuilderTest {
     public void buildWarAutoClassPath() throws MalformedURLException, IOException {
         war = localCopy(warProbe().classPathDefaultExcludes());
         assertThat(war.getEntry("WEB-INF/beans.xml"), is(notNullValue()));
-        assertThat(war.getEntry("WEB-INF/lib/mockito-all-1.9.5.jar"), is(notNullValue()));
+        assertThat(war.getEntry(String.format("WEB-INF/lib/mockito-core-%s.jar", MOCKITO_VERSION)), is(notNullValue()));
         String entry = String.format("WEB-INF/lib/tinybundles-%s.jar", Info.getPaxTinybundlesVersion());
         assertThat(war.getEntry(entry), is(nullValue()));
     }
