@@ -56,12 +56,6 @@
                 <version>${dependency.maven.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-container-default</artifactId>
-                <version>1.5.5</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -75,7 +69,6 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.3</version>
         </dependency>
 
         <dependency>
@@ -91,7 +84,6 @@
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-common-artifact-filters</artifactId>
-            <version>1.4</version>
         </dependency>
 
         <dependency>
@@ -118,7 +110,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.3</version>
                 <executions>
                     <execution>
                         <id>default-descriptor</id>

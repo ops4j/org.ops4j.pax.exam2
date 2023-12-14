@@ -23,40 +23,36 @@
     </properties>
 
     <dependencies>
+        <!-- javax/jakarta -->
         <dependency>
-            <groupId>org.ops4j.pax.exam.samples</groupId>
-            <artifactId>pax-exam-sample9-pde</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.pax.exam.samples</groupId>
-            <artifactId>pax-exam-sample11-wab</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.exam.samples</groupId>
-            <artifactId>pax-exam-sample8-ds</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- Pax Exam -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-link-assembly</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-link-mvn</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-cm</artifactId>
@@ -69,13 +65,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+        <!-- Apache Felix -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.configadmin</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <!-- OPS4J -->
         <dependency>
             <groupId>org.ops4j.pax.tinybundles</groupId>
             <artifactId>tinybundles</artifactId>
@@ -86,8 +82,51 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-exec</artifactId>
+            <scope>test</scope>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-lang</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-monitors</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-store</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-io</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-util-property</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- For sane logging -->
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-framework</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.swissbox</groupId>
+            <artifactId>pax-swissbox-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
@@ -111,19 +150,7 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-framework</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- testing -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
@@ -136,11 +163,26 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- samples -->
         <dependency>
-            <groupId>jakarta.inject</groupId>
-            <artifactId>jakarta.inject-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.ops4j.pax.exam.samples</groupId>
+            <artifactId>pax-exam-sample9-pde</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam.samples</groupId>
+            <artifactId>pax-exam-sample11-wab</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam.samples</groupId>
+            <artifactId>pax-exam-sample8-ds</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
     <build>
@@ -148,7 +190,6 @@
             <plugin>
                 <groupId>org.apache.servicemix.tooling</groupId>
                 <artifactId>depends-maven-plugin</artifactId>
-                <version>1.2</version>
                 <executions>
                     <execution>
                         <id>generate-depends-file</id>
