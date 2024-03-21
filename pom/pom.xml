@@ -29,7 +29,7 @@
         <dependency.atinject.version>1.0.5</dependency.atinject.version>
         <dependency.deltaspike.version>1.9.6</dependency.deltaspike.version>
         <dependency.glassfish.version>5.1.0</dependency.glassfish.version>
-        <dependency.karaf.version>4.4.4</dependency.karaf.version>
+        <dependency.karaf.version>4.4.5</dependency.karaf.version>
 
         <dependency.logback.version>1.2.12</dependency.logback.version>
 
