@@ -26,7 +26,7 @@ public class PathUtils {
      * Returns the base directory of the current Maven project, used by tests that require absolute
      * paths.
      * <p>
-     * This works both when running under Surefire and when runnning a JUnit test from Eclipse,
+     * This works both when running under Surefire and when running a JUnit test from Eclipse,
      * assuming the JUnit launcher default was not changed by the user.
      * 
      * @return base directory of current project
