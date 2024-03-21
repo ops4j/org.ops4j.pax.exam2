@@ -15,10 +15,13 @@
  */
 package org.ops4j.pax.exam.sample9.pde.impl;
 
+import java.rmi.ConnectException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Hashtable;
+import java.util.Objects;
 
 import org.ops4j.pax.exam.sample9.pde.HelloService;
 import org.ops4j.pax.exam.sample9.pde.Notifier;
@@ -42,17 +45,23 @@ public class Activator implements BundleActivator {
         // Notify a remote listener of bundle startup.
         // This is used for reactor strategy regression tests
         String rmiProperty = System.getProperty("pax.exam.regression.rmi");
-        if (rmiProperty != null) {
+        if (Objects.nonNull(rmiProperty)) {
             notifyRemoteListener(rmiProperty);
         }
     }
 
     private void notifyRemoteListener(String rmiProperty) throws Exception {
         int rmiPort = Integer.parseInt(rmiProperty);
-        Registry registry = LocateRegistry.getRegistry(rmiPort);
-        Remote remote = registry.lookup("PaxExamNotifier");
-        Notifier notifier = (Notifier) remote;
-        notifier.send("bundle org.ops4j.pax.exam.sample9.pde started");
+        try {
+            Registry registry = LocateRegistry.getRegistry(rmiPort);
+            Remote remote = registry.lookup("PaxExamNotifier");
+            Notifier notifier = (Notifier) remote;
+            notifier.send("bundle org.ops4j.pax.exam.sample9.pde started");
+        } catch (ConnectException e) {
+            // pax.exam.regression.rmi is set project-wide, but current test case hasn't set up registry
+        } catch (NoSuchObjectException e) {
+            // pax.exam.regression.rmi is set project-wide, but current test case hasn't registered a notifier
+        }
     }
 
     /**
