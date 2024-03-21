@@ -56,7 +56,6 @@
                                     <cloneProjectsTo>${project.build.directory}/glassfish-embedded</cloneProjectsTo>
                                     <pomExcludes>
                                         <pomExclude>regression-javaee-data/pom.xml</pomExclude>
-                                        <pomExclude>regression-javaee-jboss-module/pom.xml</pomExclude>
                                     </pomExcludes>
                                 </configuration>
                             </execution>

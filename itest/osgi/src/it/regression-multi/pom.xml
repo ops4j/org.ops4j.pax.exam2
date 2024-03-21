@@ -254,10 +254,6 @@
                         <pax.exam.framework>${pax.exam.framework}</pax.exam.framework>
                         <pax.exam.itest.http.port>${pax.exam.itest.http.port}</pax.exam.itest.http.port>
                     </systemProperties>
-                    <excludes>
-                        <!-- This test works locally but not on our slow Hudson server -->
-                        <exclude>**/ServiceTimeoutInvokerTest.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
