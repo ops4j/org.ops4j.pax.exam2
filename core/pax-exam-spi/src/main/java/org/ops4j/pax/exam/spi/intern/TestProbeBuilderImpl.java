@@ -112,7 +112,7 @@ public class TestProbeBuilderImpl implements TestProbeBuilder {
     }
 
     public TestProbeProvider build() {
-        if (anchors.size() == 0) {
+        if (anchors.isEmpty()) {
             throw new TestContainerException("No tests added to setup!");
         }
 
