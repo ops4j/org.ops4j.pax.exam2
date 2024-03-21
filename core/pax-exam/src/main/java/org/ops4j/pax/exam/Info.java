@@ -235,7 +235,7 @@ public class Info {
 
         System.out.println();
         final String logo = "Pax Exam " + Info.getPaxExamVersion()
-            + " from OPS4J - http://www.ops4j.org";
+            + " from OPS4J - https://github.com/ops4j";
         System.out.println(logo);
         System.out
             .println("---------------------------------------------------------------------------------------------------------"
