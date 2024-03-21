@@ -162,7 +162,7 @@ public class DefaultExamSystem implements ExamSystem {
     }
 
     /**
-     * Helper method for single options. Last occurence has precedence. (support overwrite).
+     * Helper method for single options. Last occurrence has precedence. (support overwrite).
      *
      */
     @Override
