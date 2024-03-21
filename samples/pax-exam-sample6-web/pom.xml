@@ -59,6 +59,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>provided</scope>
