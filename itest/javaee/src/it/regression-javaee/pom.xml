@@ -153,6 +153,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <parallel>none</parallel>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
                     <systemProperties>
