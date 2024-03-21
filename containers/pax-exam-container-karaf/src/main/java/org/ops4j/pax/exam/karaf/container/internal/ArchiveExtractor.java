@@ -93,7 +93,7 @@ public class ArchiveExtractor {
         targetDir.mkdirs();
         ArchiveEntry entry = is.getNextEntry();
         while (entry != null) {
-            logger.debug("processing archive entry {}", entry);
+            logger.trace("processing archive entry {}", entry.getName());
             String name = entry.getName();
             name = name.substring(name.indexOf("/") + 1);
             final File file = new File(targetDir, name);
@@ -102,10 +102,9 @@ public class ArchiveExtractor {
             } else {
                 file.getParentFile().mkdirs();
                 final long number = Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                logger.debug("copied {} bytes", number);
+                logger.trace("copied {} bytes", number);
             }
             entry = is.getNextEntry();
-            logger.debug("next entry to process: {}", entry);
         }
     }
 
