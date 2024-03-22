@@ -59,7 +59,8 @@ public class AnotherUserProbeTest {
             .library(maven("org.ops4j.pax.exam", "pax-exam-spring", getPaxExamVersion()))
             .library(maven("org.ops4j.pax.exam", "pax-exam", getPaxExamVersion()))
             .library(maven("org.ops4j.base", "ops4j-base-spi", getOps4jBaseVersion()))
-            .library(maven("junit", "junit", "4.9")));
+            .library(maven().groupId("junit").artifactId("junit").versionAsInProject())
+        );
     }
 
     @Before

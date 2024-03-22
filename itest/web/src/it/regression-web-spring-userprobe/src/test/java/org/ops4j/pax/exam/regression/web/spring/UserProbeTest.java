@@ -64,8 +64,9 @@ public class UserProbeTest {
             .library(maven("org.ops4j.pax.exam", "pax-exam-spring", getPaxExamVersion()))
             .library(maven("org.ops4j.pax.exam", "pax-exam", getPaxExamVersion()))
             .library(maven("org.ops4j.base", "ops4j-base-spi", getOps4jBaseVersion()))
-            .library(maven("org.hamcrest", "hamcrest-core", "1.3"))
-            .library(maven("junit", "junit", "4.12")));
+            .library(maven().groupId("org.hamcrest").artifactId("hamcrest-core").versionAsInProject())
+            .library(maven().groupId("junit").artifactId("junit").versionAsInProject())
+        );
     }
 
     @Before
