@@ -99,7 +99,7 @@ public class JaxRs2ProbeInvoker implements ProbeInvoker {
             // find matching method
             for (Method m : testClass.getMethods()) {
                 if (m.getName().equals(method)) {
-                    // we assume its correct:
+                    // we assume it's correct:
                     invokeViaServletBridge(testClass, m, index);
                     return true;
                 }
