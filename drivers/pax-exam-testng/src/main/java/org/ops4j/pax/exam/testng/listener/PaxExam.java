@@ -88,7 +88,7 @@ import org.testng.internal.NoOpTestClass;
  *
  * In OSGi and Java EE modes, Pax Exam processes each test class twice, once by test driver and then
  * again inside the test container. The driver delegates each test method invocation to a probe
- * invoker which excutes the test method inside the container via the probe.
+ * invoker which executes the test method inside the container via the probe.
  * <p>
  * It would be nice to separate these two aspects and handle them in two separate listeners, but
  * TestNG has no way to override or disable the listener annotated on the test class.
