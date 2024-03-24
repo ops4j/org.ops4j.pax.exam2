@@ -75,7 +75,7 @@ public abstract class AbstractKarafTestContainerIT {
     }
 
     protected String getDefaultKarafVersion() {
-        return "4.4.3";
+        return "4.4.5";
     }
 
     @Test
