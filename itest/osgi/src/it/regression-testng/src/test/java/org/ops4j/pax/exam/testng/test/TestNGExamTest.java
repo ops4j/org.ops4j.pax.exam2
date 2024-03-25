@@ -21,6 +21,7 @@ import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.options.libraries.TestingOptions.testng;
 import static org.testng.Assert.assertNotNull;
 
 import javax.inject.Inject;
@@ -42,7 +43,7 @@ public class TestNGExamTest {
     public Option[] config() {
         return options(
 
-        mavenBundle("org.testng", "testng", "6.9.10"),
+        testng(),
         systemProperty("osgi.console").value("6666"));
     }
 
