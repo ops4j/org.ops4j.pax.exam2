@@ -135,7 +135,6 @@
                     <!--execution>
                         <id>perclass</id>
                         <configuration>
-                            <forkMode>always</forkMode>
                             <includes>
                               <include>**/perclass/**</include>
                             </includes>

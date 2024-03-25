@@ -247,7 +247,6 @@
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <parallel>none</parallel>
-                    <threadCount>1</threadCount>
                     <classpathDependencyScopeExclude>provided</classpathDependencyScopeExclude>
                     <systemProperties>
                         <pax.exam.container>${pax.exam.container}</pax.exam.container>

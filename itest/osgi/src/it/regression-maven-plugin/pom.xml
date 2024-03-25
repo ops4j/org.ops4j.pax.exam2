@@ -169,10 +169,7 @@
                 </executions>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <skip>false</skip>
-                    <forkMode>always</forkMode>
                     <parallel>none</parallel>
-                    <threadCount>1</threadCount>
                 </configuration>
             </plugin>
         </plugins>
