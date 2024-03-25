@@ -134,7 +134,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <!-- copy the regression-pde-bundle so we have a bundle
+                        <!-- copy the pax-exam-sample9-pde so we have a bundle
                             for testing -->
                         <id>copy-pde-bundle</id>
                         <goals>
@@ -143,9 +143,9 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.ops4j.pax.exam</groupId>
-                                    <artifactId>regression-pde-bundle</artifactId>
-                                    <version>2.3.0</version>
+                                    <groupId>org.ops4j.pax.exam.samples</groupId>
+                                    <artifactId>pax-exam-sample9-pde</artifactId>
+                                    <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}/bundles</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
