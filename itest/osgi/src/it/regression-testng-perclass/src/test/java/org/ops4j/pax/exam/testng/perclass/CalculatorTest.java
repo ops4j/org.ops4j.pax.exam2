@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.Info;
 import org.ops4j.pax.exam.sample8.ds.Calculator;
 import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.testng.annotations.Listeners;
@@ -44,7 +45,7 @@ public class CalculatorTest {
     public Option[] config() {
         return options(
 
-            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", "4.2.0"),
+            mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", Info.getPaxExamVersion()),
             mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"),
             testng(),
             systemProperty("osgi.console").value("6666"));
