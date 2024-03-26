@@ -46,7 +46,7 @@ public class CalculatorTest {
         return options(
 
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", Info.getPaxExamVersion()),
-            mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"),
+            mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.scr").versionAsInProject(),
             testng(),
             systemProperty("osgi.console").value("6666"));
     }
