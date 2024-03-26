@@ -20,6 +20,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.propagateSystemProperty;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.url;
+import static org.ops4j.pax.exam.options.libraries.TestingOptions.testng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -43,7 +44,7 @@ public class GreeterTest {
     public Option[] createConfiguration() {
         return options(
             propagateSystemProperty("pax.exam.regression.rmi"),
-            mavenBundle("org.testng", "testng", "6.9.10"),
+            testng(),
             url("reference:file:" + PathUtils.getBaseDir() + "/target/pax-exam-sample9-pde/"),
 
             systemProperty("osgi.console").value("6666"));
