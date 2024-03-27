@@ -513,42 +513,15 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
 
     /**
      * Disables BeforeMethod and AfterMethod configuration methods in the given test class.
-     * <p>
-     * NOTE: Ugly reflection hack, as TestNG does not provide an API for overriding before and after
-     * methods.
      *
      * @param testClass
      *            TestNG test class wrapper
      */
     private void disableConfigurationMethods(ITestClass testClass) {
-        NoOpTestClass instance = (NoOpTestClass) testClass;
-        ITestNGMethod[] noMethods = new ITestNGMethod[0];
-        Class<?> javaClass = NoOpTestClass.class;
-        setPrivateField(javaClass, instance, "m_beforeTestMethods", noMethods);
-        setPrivateField(javaClass, instance, "m_afterTestMethods", noMethods);
-    }
-
-    /**
-     * Sets a private field by injection
-     *
-     * @param klass
-     *            Java class where the field is declared
-     * @param instance
-     *            instance of (a subclass of) klass
-     * @param fieldName
-     *            name of field to be set
-     * @param value
-     *            new value for field
-     */
-    private void setPrivateField(Class<?> klass, Object instance, String fieldName, Object value) {
-        try {
-            Field field = NoOpTestClass.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(instance, value);
-        }
-        catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
-            | SecurityException exc) {
-            throw new TestContainerException(exc);
+        if (testClass instanceof NoOpTestClass) {
+            NoOpTestClass instance = (NoOpTestClass) testClass;
+            instance.setBeforeTestMethods(new ITestNGMethod[0]);
+            instance.setAfterTestMethod(new ITestNGMethod[0]);
         }
     }
 }
