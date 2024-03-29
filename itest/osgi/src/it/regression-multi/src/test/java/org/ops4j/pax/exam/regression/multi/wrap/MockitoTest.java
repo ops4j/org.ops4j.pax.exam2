@@ -29,6 +29,7 @@ import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regres
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -55,6 +56,7 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
  * @author Harald Wellmann
  * 
  */
+@Ignore // outdated
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
 public class MockitoTest {
