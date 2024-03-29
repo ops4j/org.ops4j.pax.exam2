@@ -145,13 +145,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ops4j.pax.web</groupId>
-            <artifactId>pax-web-spi</artifactId>
-            <version>3.0.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.ops4j.pax.exam.samples</groupId>
             <artifactId>pax-exam-sample8-ds</artifactId>
             <version>${project.version}</version>
@@ -170,7 +163,6 @@
             <plugin>
                 <groupId>org.apache.servicemix.tooling</groupId>
                 <artifactId>depends-maven-plugin</artifactId>
-                <version>1.4.0</version>
                 <executions>
                     <execution>
                         <goals>
