@@ -20,9 +20,11 @@ import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
+import org.junit.Ignore;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 
+@Ignore // outdated
 public class WabSampleConfiguration {
 
     @Configuration

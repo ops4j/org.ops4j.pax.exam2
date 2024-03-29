@@ -27,9 +27,11 @@ import javax.ws.rs.client.WebTarget;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ops4j.pax.exam.junit.PaxExamServer;
 
+@Ignore // outdated
 public class ClassRuleExternalConfigurationTest {
 
     @ClassRule

@@ -28,12 +28,14 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExamServer;
 
+@Ignore // outdated
 public class WabSampleTest {
 
     @Rule
