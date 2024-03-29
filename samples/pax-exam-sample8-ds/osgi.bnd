@@ -6,11 +6,3 @@ Bundle-SymbolicName:\
 
 Export-Package:\
   ${bundle.namespace}.*
-
-Import-Package:\
-  org.osgi.service.component, *
-  
-Service-Component: OSGI-INF/*
-
-  
-  

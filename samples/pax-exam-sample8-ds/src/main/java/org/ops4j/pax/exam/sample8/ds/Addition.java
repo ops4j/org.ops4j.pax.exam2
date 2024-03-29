@@ -16,6 +16,9 @@
  */
 package org.ops4j.pax.exam.sample8.ds;
 
+import org.osgi.service.component.annotations.Component;
+
+@Component
 public class Addition implements BinaryOperation {
 
     public int operate(int op1, int op2) {
