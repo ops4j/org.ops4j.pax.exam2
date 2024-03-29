@@ -48,7 +48,7 @@ public class FeaturesAndBootFeaturesTest extends TestBase {
     public Option[] config() {
         return new Option[]{
             regressionDefaults(unpackDirectory()),
-            editConfigurationFilePut(BOOT, "config, log, framework, feature"),
+            editConfigurationFilePut(BOOT, "config, log, framework, feature, scr"),
             features(featureRepoStandard(), "kar")
         };
     }
