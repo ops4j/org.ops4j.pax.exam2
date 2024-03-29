@@ -59,4 +59,15 @@ public class TestingOptions {
         );
     }
 
+    public static ModifiableCompositeOption scr() {
+        return composite(
+            mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.configadmin").version("1.9.26"),
+            mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.metatype").version("1.2.4"),
+            mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.scr").version("2.2.10"),
+            mavenBundle().groupId("org.osgi").artifactId("org.osgi.service.component").version("1.5.1"),
+            mavenBundle().groupId("org.osgi").artifactId("org.osgi.util.function").version("1.2.0"),
+            mavenBundle().groupId("org.osgi").artifactId("org.osgi.util.promise").version("1.3.0")
+        );
+    }
+
 }
