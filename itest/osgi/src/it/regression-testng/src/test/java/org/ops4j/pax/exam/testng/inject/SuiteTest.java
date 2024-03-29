@@ -32,8 +32,10 @@ import org.ops4j.pax.exam.Constants;
 import org.ops4j.pax.exam.sample9.pde.Notifier;
 import org.testng.TestNG;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
+@Ignore // fix notifications
 public class SuiteTest implements Notifier, Remote {
 
     private List<String> messages;

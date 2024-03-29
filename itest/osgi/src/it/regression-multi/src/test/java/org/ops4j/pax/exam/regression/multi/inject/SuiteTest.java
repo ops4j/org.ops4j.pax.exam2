@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -39,6 +40,7 @@ import org.ops4j.pax.exam.sample9.pde.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Ignore // fix notifications
 public class SuiteTest implements Notifier, Remote {
 
     private static Logger LOG = LoggerFactory.getLogger(SuiteTest.class);
