@@ -20,6 +20,7 @@ package org.ops4j.pax.exam.testng.perclass;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.options.libraries.TestingOptions.scr;
 import static org.ops4j.pax.exam.options.libraries.TestingOptions.testng;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -46,7 +47,7 @@ public class CalculatorTest {
         return options(
 
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds", Info.getPaxExamVersion()),
-            mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.scr").versionAsInProject(),
+            scr(),
             testng(),
             systemProperty("osgi.console").value("6666"));
     }

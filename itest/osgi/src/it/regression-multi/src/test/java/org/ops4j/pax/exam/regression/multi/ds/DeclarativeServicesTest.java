@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.options.libraries.TestingOptions.scr;
 import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regressionDefaults;
 
 import javax.inject.Inject;
@@ -53,9 +54,12 @@ public class DeclarativeServicesTest {
 
     @Configuration
     public Option[] config() {
-        return options(regressionDefaults(),
+        return options(
+            regressionDefaults(),
             mavenBundle("org.ops4j.pax.exam.samples", "pax-exam-sample8-ds").versionAsInProject(),
-            mavenBundle("org.apache.felix", "org.apache.felix.scr", "1.6.2"), junitBundles());
+            scr(),
+            junitBundles()
+        );
     }
 
     @Test
