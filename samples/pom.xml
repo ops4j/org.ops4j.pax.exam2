@@ -17,9 +17,6 @@
     <module>pax-exam-sample1-service</module>
     <module>pax-exam-sample1-web</module>
     <module>pax-exam-sample3-beans</module>
-    <module>pax-exam-sample4-model</module>
-    <module>pax-exam-sample4-service</module>
-    <module>pax-exam-sample4-web</module>
     <module>pax-exam-sample5-mdb</module>
     <module>pax-exam-sample6-service</module>
     <module>pax-exam-sample6-web</module>
