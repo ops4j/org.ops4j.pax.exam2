@@ -24,7 +24,6 @@
         <dependency.base.version>1.5.1</dependency.base.version>
         <dependency.slf4j.version>1.7.36</dependency.slf4j.version>
         <dependency.junit.version>4.13.2</dependency.junit.version>
-        <dependency.openwebbeans.version>2.0.27</dependency.openwebbeans.version>
         <dependency.osgicore.version>8.0.0</dependency.osgicore.version>
         <dependency.atinject.version>1.0.5</dependency.atinject.version>
         <dependency.deltaspike.version>1.9.6</dependency.deltaspike.version>
@@ -599,30 +598,6 @@
                         <artifactId>cdi-api</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-impl</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-spi</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-resource</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.openwebbeans</groupId>
-                <artifactId>openwebbeans-web</artifactId>
-                <version>${dependency.openwebbeans.version}</version>
             </dependency>
 
             <dependency>

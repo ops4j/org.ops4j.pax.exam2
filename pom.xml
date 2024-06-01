@@ -52,7 +52,6 @@
                 <module>containers/pax-exam-container-weld</module>
                 <module>containers/pax-exam-container-tomcat</module>
                 <module>containers/pax-exam-container-karaf</module>
-                <module>containers/pax-exam-container-openwebbeans</module>
 
                 <module>maven/exam-maven-plugin</module>
 
