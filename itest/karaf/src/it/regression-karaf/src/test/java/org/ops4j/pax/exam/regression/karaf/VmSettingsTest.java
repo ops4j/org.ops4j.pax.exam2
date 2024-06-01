@@ -34,8 +34,8 @@ public class VmSettingsTest extends TestBase {
     public Option[] config() {
         return new Option[]{
                 regressionDefaults(unpackDirectory()),
-                    new VMOption("-Xmx1024m"), 
-                    new VMOption("-XX:MaxPermSize=56m") };
+                    new VMOption("-Xmx1024m")
+        };
     }
 
     @Test
