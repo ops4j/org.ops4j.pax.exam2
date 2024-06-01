@@ -49,7 +49,6 @@
                 <module>containers/pax-exam-container-native</module>
                 <module>containers/pax-exam-container-remote</module>
                 <module>containers/pax-exam-container-forked</module>
-                <module>containers/pax-exam-container-tomcat</module>
                 <module>containers/pax-exam-container-karaf</module>
 
                 <module>maven/exam-maven-plugin</module>

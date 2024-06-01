@@ -1,5 +1,0 @@
-<Context>
-    <Resource auth="Container" name="jdbc/__default" type="javax.sql.DataSource"
-        url="jdbc:derby:memory:library;create=true" maxIdle="30" maxActive="100"
-        driverClassName="org.apache.derby.jdbc.EmbeddedDriver" />
-</Context>

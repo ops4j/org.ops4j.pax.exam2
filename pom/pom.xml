@@ -37,7 +37,6 @@
         <dependency.testng.version>7.9.0</dependency.testng.version>
         <dependency.org.apache.servicemix.bundles.hamcrest.version>1.3_1</dependency.org.apache.servicemix.bundles.hamcrest.version>
         <dependency.org.apache.servicemix.bundles.junit.version>4.13.2_1</dependency.org.apache.servicemix.bundles.junit.version>
-        <dependency.tomcat.version>9.0.87</dependency.tomcat.version>
         <dependency.xbean.version>3.16</dependency.xbean.version>
 
     </properties>
@@ -561,30 +560,6 @@
                 <groupId>org.jboss.logmanager</groupId>
                 <artifactId>jboss-logmanager</artifactId>
                 <version>1.2.2.GA</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${dependency.tomcat.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-logging-juli</artifactId>
-                <version>${dependency.tomcat.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-jasper</artifactId>
-                <version>${dependency.tomcat.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-dbcp</artifactId>
-                <version>${dependency.tomcat.version}</version>
             </dependency>
 
             <dependency>
