@@ -31,16 +31,6 @@
         </profile>
 
         <profile>
-            <id>javaee</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>javaee</module>
-            </modules>
-        </profile>
-
-        <profile>
             <id>karaf</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
