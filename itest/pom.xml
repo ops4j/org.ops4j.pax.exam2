@@ -21,16 +21,6 @@
     <profiles>
 
         <profile>
-            <id>cdi</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>cdi</module>
-            </modules>
-        </profile>
-
-        <profile>
             <id>karaf</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
