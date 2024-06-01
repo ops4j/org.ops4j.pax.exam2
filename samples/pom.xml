@@ -12,19 +12,12 @@
   <name>OPS4J Pax Exam Samples</name>
   
   <modules>
-    <module>pax-exam-sample1-model</module>
-    <module>pax-exam-sample1-repo</module>
-    <module>pax-exam-sample1-service</module>
-    <module>pax-exam-sample1-web</module>
     <module>pax-exam-sample3-beans</module>
     <module>pax-exam-sample5-mdb</module>
-    <module>pax-exam-sample6-service</module>
-    <module>pax-exam-sample6-web</module>
     <module>pax-exam-sample7-service</module>
     <module>pax-exam-sample7-web</module>
     <module>pax-exam-sample8-ds</module>
     <module>pax-exam-sample9-pde</module>
-    <module>pax-exam-sample10-derby</module>
     <module>pax-exam-sample11-wab</module>
     <module>exam-itest-sample-karaf</module>
   </modules>
