@@ -18,7 +18,6 @@
 package org.ops4j.pax.exam.testng.listener;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,19 +85,15 @@ import org.testng.internal.NoOpTestClass;
  * }
  * </pre>
  *
- * In OSGi and Java EE modes, Pax Exam processes each test class twice, once by test driver and then
+ * Pax Exam processes each test class twice, once by test driver and then
  * again inside the test container. The driver delegates each test method invocation to a probe
  * invoker which executes the test method inside the container via the probe.
  * <p>
  * It would be nice to separate these two aspects and handle them in two separate listeners, but
  * TestNG has no way to override or disable the listener annotated on the test class.
  * <p>
- * TestNG provides a listener callback for configuration methods, but it does not let us intercept
- * them. For this reason, we use an ugly reflection hack to disable them when running under the
- * driver and to make sure they get executed inside the test container only.
- * <p>
  * Dependencies annotated by {@link javax.inject.Inject} get injected into the test class in the
- * container (OSGi and Java EE modes) or by the driver (CDI mode).
+ * container.
  *
  * @author Harald Wellmann
  * @since 2.3.0
@@ -211,8 +206,6 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
      * and creating one or more test containers.
      * <p>
      * When using a probe invoker, we register the tests with the reactor.
-     * <p>
-     * Hack: As there is no way to intercept configuration methods, we disable them by reflection.
      *
      * @param suite
      *            test suite
@@ -223,7 +216,7 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
             methods = suite.getAllMethods();
             Class<?> testClass = methods.get(0).getRealClass();
             LOG.debug("test class = {}", testClass);
-            disableConfigurationMethods(suite);
+            disableLifecycleMethods(suite);
             Object testClassInstance = testClass.newInstance();
             return stageReactorForClass(testClass, testClassInstance);
         }
@@ -247,23 +240,21 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
     }
 
     /**
-     * Disables the {@code @BeforeMethod} and {@code @AfterMethod} configuration methods of all test
-     * classes, overriding the corresponding private fields of {@code TestClass}.
+     * Disables the {@code @BeforeMethod} and {@code @AfterMethod} lifecycle methods of all test
+     * classes.
      * <p>
      * These methods shall run only once inside the test container, but not directly under the
      * driver.
-     * <p>
-     * This is a rather ugly hack, but there does not seem to be any other way.
      *
      * @param suite
      *            test suite
      */
-    private void disableConfigurationMethods(ISuite suite) {
+    private void disableLifecycleMethods(ISuite suite) {
         Set<ITestClass> seen = new HashSet<ITestClass>();
         for (ITestNGMethod method : suite.getAllMethods()) {
             ITestClass testClass = method.getTestClass();
             if (!seen.contains(testClass)) {
-                disableConfigurationMethods(testClass);
+                disableLifecycleMethods(testClass);
                 seen.add(testClass);
             }
         }
@@ -512,43 +503,17 @@ public class PaxExam implements ISuiteListener, IMethodInterceptor, IHookable {
     }
 
     /**
-     * Disables BeforeMethod and AfterMethod configuration methods in the given test class.
-     * <p>
-     * NOTE: Ugly reflection hack, as TestNG does not provide an API for overriding before and after
-     * methods.
+     * Disables BeforeMethod and AfterMethod lifecycle methods in the given test class.
      *
      * @param testClass
      *            TestNG test class wrapper
      */
-    private void disableConfigurationMethods(ITestClass testClass) {
-        NoOpTestClass instance = (NoOpTestClass) testClass;
-        ITestNGMethod[] noMethods = new ITestNGMethod[0];
-        Class<?> javaClass = NoOpTestClass.class;
-        setPrivateField(javaClass, instance, "m_beforeTestMethods", noMethods);
-        setPrivateField(javaClass, instance, "m_afterTestMethods", noMethods);
+    private void disableLifecycleMethods(ITestClass testClass) {
+        if (testClass instanceof NoOpTestClass) {
+            NoOpTestClass instance = (NoOpTestClass) testClass;
+            instance.setBeforeTestMethods(new ITestNGMethod[0]);
+            instance.setAfterTestMethod(new ITestNGMethod[0]);
+        }
     }
 
-    /**
-     * Sets a private field by injection
-     *
-     * @param klass
-     *            Java class where the field is declared
-     * @param instance
-     *            instance of (a subclass of) klass
-     * @param fieldName
-     *            name of field to be set
-     * @param value
-     *            new value for field
-     */
-    private void setPrivateField(Class<?> klass, Object instance, String fieldName, Object value) {
-        try {
-            Field field = NoOpTestClass.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(instance, value);
-        }
-        catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
-            | SecurityException exc) {
-            throw new TestContainerException(exc);
-        }
-    }
 }
