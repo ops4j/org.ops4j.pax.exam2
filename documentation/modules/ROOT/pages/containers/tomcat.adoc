@@ -1,2 +1,0 @@
-= Tomcat Test Container
-:navtitle: Tomcat
