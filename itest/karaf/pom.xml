@@ -41,7 +41,6 @@
                             <streamLogs>true</streamLogs>
                         </configuration>
                         <executions>
-<!--
                              <execution>
                                 <id>equinox-karaf</id>
                                 <goals>
@@ -54,7 +53,6 @@
                                     <cloneProjectsTo>${project.build.directory}/equinox-karaf</cloneProjectsTo>
                                 </configuration>
                             </execution>
- -->
                              <execution>
                                 <id>felix-karaf</id>
                                 <goals>
