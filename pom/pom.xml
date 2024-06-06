@@ -556,34 +556,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>felix-osgi6</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>pax.exam.framework</name>
-                    <value>felix</value>
-                </property>
-            </activation>
-            <properties>
-                <pax.exam.framework>felix</pax.exam.framework>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.felix</groupId>
-                        <artifactId>org.apache.felix.framework</artifactId>
-                        <version>4.6.1</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.apache.felix.framework</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>equinox</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -595,34 +567,6 @@
             <properties>
                 <pax.exam.framework>equinox</pax.exam.framework>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.eclipse.platform</groupId>
-                    <artifactId>org.eclipse.osgi</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>equinox-osgi6</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>pax.exam.framework</name>
-                    <value>equinox</value>
-                </property>
-            </activation>
-            <properties>
-                <pax.exam.framework>equinox</pax.exam.framework>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.platform</groupId>
-                        <artifactId>org.eclipse.osgi</artifactId>
-                        <version>3.19.0</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
             <dependencies>
                 <dependency>
                     <groupId>org.eclipse.platform</groupId>
