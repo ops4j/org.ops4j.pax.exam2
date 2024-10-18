@@ -31,7 +31,6 @@
                 <module>core/pax-exam-invoker-jaxrs2</module>
                 <module>core/pax-exam-invoker-junit</module>
                 <module>core/pax-exam-servlet-bridge</module>
-                <module>core/pax-exam-cdi</module>
                 <module>core/pax-exam-spring</module>
                 <module>core/pax-exam-cm</module>
                 <module>drivers/pax-exam-junit4</module>
