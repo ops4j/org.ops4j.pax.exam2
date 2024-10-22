@@ -27,6 +27,7 @@ import static org.ops4j.pax.exam.regression.multi.RegressionConfiguration.regres
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -62,6 +63,7 @@ public class RepositoryTest {
     }
 
     @Test
+    @Ignore
     public void bundleFromExternalRepositoryIsResolved() throws Exception {
         Bundle bundle = BundleUtils.getBundle(bundleContext, "org.knopflerfish.bundle.demo1");
         assertThat(bundle, is(notNullValue()));

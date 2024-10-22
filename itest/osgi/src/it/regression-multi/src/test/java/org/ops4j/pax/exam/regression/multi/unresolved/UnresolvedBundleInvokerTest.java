@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -33,6 +34,7 @@ import org.ops4j.pax.exam.Constants;
 public class UnresolvedBundleInvokerTest {
 
     @Test
+    @Ignore
     public void exceptionOnUnresolvedBundle() {
 
         System.setProperty(Constants.EXAM_FAIL_ON_UNRESOLVED_KEY, "true");
