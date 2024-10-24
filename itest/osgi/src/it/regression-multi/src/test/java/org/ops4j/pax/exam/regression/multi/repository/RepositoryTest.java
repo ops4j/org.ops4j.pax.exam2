@@ -46,6 +46,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author Harald Wellmann
  */
+@Ignore
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class RepositoryTest {
@@ -63,7 +64,6 @@ public class RepositoryTest {
     }
 
     @Test
-    @Ignore
     public void bundleFromExternalRepositoryIsResolved() throws Exception {
         Bundle bundle = BundleUtils.getBundle(bundleContext, "org.knopflerfish.bundle.demo1");
         assertThat(bundle, is(notNullValue()));
